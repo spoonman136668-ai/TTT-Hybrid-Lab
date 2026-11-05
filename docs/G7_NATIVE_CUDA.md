@@ -163,8 +163,14 @@ It does **not** register, install, reconfigure, or launch a runner.
 
 **Activation boundary**:
 
-1. Merge and accept the prerequisite G4/G5/G7 source stack under the
-   normal protected-main acceptance policy. `workflow_dispatch` cannot
+1. GitHub branch metadata currently reports `main` **unprotected**
+   (verified 2026-11-05). Before any self-hosted job is allowed, a repository
+   administrator must establish effective main-branch protection or a ruleset,
+   including qualified checks and restricted changes. The workflow and the
+   PowerShell probe both **fail closed** unless `github.ref_protected` /
+   `GITHUB_REF_PROTECTED` are true. This is not a request to bypass FORGE.
+   Then merge and accept the prerequisite G4/G5/G7 source stack under the
+   project's repository acceptance policy. `workflow_dispatch` cannot
    be used on an unmerged PR workflow that is absent from the default branch.
 2. Verify the resulting exact main SHA, mandatory regression, runner label,
    runner availability, and custody. Approval of the source PR does not
