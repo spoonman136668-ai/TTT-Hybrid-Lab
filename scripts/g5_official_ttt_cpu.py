@@ -63,6 +63,11 @@ def main() -> int:
     try:
         if not identity_pass:
             fail("CANDIDATE_SHA_DRIFT")
+        # Running scripts/... sets sys.path[0] to scripts, not the repo root.
+        # Resolve both expected roots explicitly; source identity is still
+        # enforced by Git SHA/blob and inspect.getfile below.
+        sys.path.insert(0, str(ROOT))
+        sys.path.insert(0, str(args.ttt_root.resolve()))
         from authentic_preflight import source_check, module_location_check
         source_result = source_check(args.ttt_root, pin)
         module_result = module_location_check("ttt", args.ttt_root)
