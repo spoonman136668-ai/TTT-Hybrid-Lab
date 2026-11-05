@@ -1,0 +1,110 @@
+# TTT source-owned reusable job, caller-owned Mind-Palace Windows runner.
+# Strictly read-only and manual; does not install a runner or execute CUDA.
+name: G7 caller-owned Mind-Palace Windows host inventory
+
+on:
+  workflow_call:
+    inputs:
+      ttt_candidate_sha:
+        required: true
+        type: string
+        description: Full 40-character prequalified TTT-Hybrid candidate commit
+
+permissions: {}
+
+jobs:
+  mind-palace-host-inventory:
+    if: ${{ github.repository == 'spoonman136668-ai/Mind-Palace' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 6
+    steps:
+      - name: Read-only admission on existing original Mind-Palace Windows runner
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        env:
+          G7_EXPECTED_TTT_SHA: ${{ inputs.ttt_candidate_sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $report = [ordered]@{
+            schema = 'ttt-hybrid.g7-mindpalace-runner-readonly.v1'
+            captured_utc = [DateTime]::UtcNow.ToString('o')
+            scope = 'EXISTING_CALLER_RUNNER_READ_ONLY'
+            caller_repo = $env:GITHUB_REPOSITORY
+            caller_ref = $env:GITHUB_REF
+            runner = $env:RUNNER_NAME
+            expected_ttt_sha = $env:G7_EXPECTED_TTT_SHA
+            gpu = $null
+            runner_user_wsl_distro_count = $null
+            status = 'BLOCKED_NOT_ADMITTED'
+            native_mamba_ttt_cuda = 'NOT_RUN'
+            science = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+            no_install_no_wsl_launch = $true
+          }
+          $code = 2
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/Mind-Palace' -or
+                $env:GITHUB_REF -cne 'refs/heads/main' -or
+                $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1') {
+              throw 'G7_UNAUTHORIZED_CALLER_EVENT_OR_ACTOR'
+            }
+            if ($env:RUNNER_NAME -cne 'MIND-PALACE-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              throw 'G7_CALLER_RUNNER_IDENTITY_MISMATCH'
+            }
+            if ($env:G7_EXPECTED_TTT_SHA -cnotmatch '^[0-9a-f]{40}$') {
+              throw 'G7_UNPINNED_TTT_CANDIDATE'
+            }
+            # No actions/checkout: a reused workflow's default checkout is
+            # the Mind-Palace caller, never the TTT source repository.
+            $cmd = Get-Command nvidia-smi.exe -CommandType Application -ErrorAction SilentlyContinue |
+              Select-Object -First 1
+            if (-not $cmd) { throw 'G7_GPU_QUERY_TOOL_MISSING' }
+            $gpu = @(& $cmd.Source '--query-gpu=name,driver_version,memory.total,memory.free' '--format=csv,noheader,nounits' 2>&1)
+            if ($LASTEXITCODE -ne 0) { throw 'G7_GPU_QUERY_FAILED' }
+            $lines = (($gpu | Out-String).Trim() -split "[`r`n]+") |
+              Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
+            if (@($lines).Count -ne 1 -or $lines[0] -cnotmatch '^(.+),\s*([0-9.]+),\s*([0-9]+),\s*([0-9]+)$') {
+              throw 'G7_GPU_QUERY_NOT_SINGLE_NUMERIC_DEVICE'
+            }
+            $report.gpu = [ordered]@{
+              name = $Matches[1].Trim()
+              driver = $Matches[2]
+              memory_total_mib = [int]$Matches[3]
+              memory_free_mib = [int]$Matches[4]
+            }
+            if ($report.gpu.memory_total_mib -lt 4096 -or
+                $report.gpu.memory_free_mib -lt 4096 -or
+                $report.gpu.memory_free_mib -gt $report.gpu.memory_total_mib) {
+              throw 'G7_INSUFFICIENT_WINDOWS_GPU_MEMORY'
+            }
+            # Do not invoke wsl.exe: on a machine without WSL, even --version
+            # may prompt an installer. Registry-only inventory under runner SID.
+            $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss'
+            $count = 0
+            if (Test-Path -LiteralPath $key) {
+              $count = @(Get-ChildItem -LiteralPath $key -ErrorAction Stop).Count
+            }
+            $report.runner_user_wsl_distro_count = $count
+            $report.status = 'PASS_EXISTING_RUNNER_READONLY_ONLY'
+            $code = 0
+          } catch {
+            $report.status = 'BLOCKED_EXISTING_RUNNER_READONLY'
+            $report.error_class = [string]$_.Exception.Message
+          } finally {
+            $destination = Join-Path $env:RUNNER_TEMP 'ttt-g7-mind-palace-host-readonly.json'
+            $json = $report | ConvertTo-Json -Depth 5
+            [IO.File]::WriteAllText($destination, $json + [Environment]::NewLine,
+              (New-Object System.Text.UTF8Encoding($false)))
+            Write-Host $json
+          }
+          if ($code -ne 0) { throw ('G7_READONLY_HOST_BLOCKED: ' + $report.error_class) }
+      - name: Retain scoped nonsecret runner receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-reused-mp-readonly-${{ github.run_id }}
+          path: ${{ runner.temp }}/ttt-g7-mind-palace-host-readonly.json
+          if-no-files-found: warn
+          retention-days: 14
