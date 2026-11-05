@@ -39,7 +39,8 @@ def test_runner_entrypoint_cannot_dispatch_cuda():
     assert "scripts\\g7_existing_runner_inventory.ps1" in wf
     assert "ref: ${{ github.sha }}" in wf
     assert "persist-credentials: false" in wf
-    assert "shell: powershell" in wf
+    assert "shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}" in wf
+    assert "Set-ExecutionPolicy" not in wf
     assert not re.search(r"(?m)^\s*run:.*(g7_cuda_qualification|run_gate3|wsl\s+-d)", wf)
     assert "local_runs/g7_runner_inventory.json" in wf
 

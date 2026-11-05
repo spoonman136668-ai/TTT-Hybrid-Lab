@@ -28,7 +28,7 @@ jobs:
           lfs: false
           clean: true
       - name: Admit existing host without WSL startup or installations
-        shell: powershell
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
         run: |
           & .\scripts\g7_existing_runner_inventory.ps1 `
             -ProjectRoot "$env:GITHUB_WORKSPACE" `
