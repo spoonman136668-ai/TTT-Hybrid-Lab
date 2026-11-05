@@ -226,12 +226,14 @@ Instead the new
 **read-only workflow_call**, invoked only from an owner-initiated
 `workflow_dispatch` on Mind-Palace `main`. It validates runner identity
 `MIND-PALACE-WIN`, exact caller owner/repository/ref, and a syntactically
-valid full TTT candidate SHA. It reads Windows NVIDIA-SMI and HKCU distro
-registration counts, **never** invokes WSL, checks out any repository, or
-executes an actual GPU kernel. Its artifact is attached to the *Mind-Palace
-caller run*, not TTT-Hybrid. No Mind-Palace checkout, queue state, local
-models, retained memory or controller records are changed. A read-only
-host inventory receipt is not CUDA execution authority.
+valid full TTT candidate SHA. It reads only Windows NVIDIA-SMI and
+requires at least 4096 MiB reported free VRAM on a single reported GPU.
+It **never** invokes WSL, checks out any repository, installs anything,
+or executes an actual GPU kernel. The sanitized result is written to the
+*Mind-Palace caller workflow log* (no new persistent host artifact is
+created). No Mind-Palace checkout, queue state, local models, retained
+memory or controller records are changed. This preliminary Windows host
+probe is not Linux CUDA or compiled-kernel qualification.
 
 A prospective caller workflow, **not installed/activated by this source
 change**, is:
@@ -268,7 +270,7 @@ Before an actual call, separately verify:
    so relying on a protected-ref guard would block this route. The gate uses
    owner-only manual dispatch and an immutable called-workflow SHA; that
    does **not** replace branch protection for eventual repository acceptance.
-4. No credentials or third-party project files enter the TTT receipt.
+4. No credentials or third-party project files enter the bounded TTT host log.
    The runner shares **physical hardware** with other projects, so CUDA
    kernel allocation, WSL launch, installations and external source fetches
    remain **outside this gate** and require an independently qualified
@@ -277,7 +279,7 @@ Before an actual call, separately verify:
 **Source-only qualifier:** G4 hosted Linux/Windows full regression and
 negative controls on the *exact final TTT candidate SHA*. The called
 workflow's compatibility on `MIND-PALACE-WIN` is **UNVERIFIED** until a
-real owner-authorized one-shot caller run produces a receipt.
+real owner-authorized one-shot caller run produces its scoped log evidence.
 
 Official semantics:
 https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations
