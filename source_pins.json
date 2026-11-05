@@ -1,0 +1,38 @@
+{
+  "schema": "ttt-hybrid.official-source-pins.v1",
+  "captured_date": "2026-11-05",
+  "purpose": "authentic upstream code identity gate; no experiment/quality claim",
+  "sources": {
+    "mamba2": {
+      "url": "https://github.com/state-spaces/mamba",
+      "sha": "e9594ce1c732d97440f0332fdc43170a2294dbfa",
+      "required_files": [
+        "mamba_ssm/modules/mamba2.py"
+      ],
+      "observed_blob_sha": {
+        "mamba_ssm/modules/mamba2.py": "36b16d4715ed2d753697167d65da5e6abba22017"
+      },
+      "import_module": "mamba_ssm",
+      "import_symbol": "Mamba2"
+    },
+    "ttt_linear": {
+      "url": "https://github.com/test-time-training/ttt-lm-pytorch",
+      "sha": "cd831db10c8c9a0f6340f02da5613316a8a92b67",
+      "required_files": [
+        "ttt.py"
+      ],
+      "observed_blob_sha": {
+        "ttt.py": "da267f4a88196fd4709fa1e5e62235a3fa746ec6"
+      },
+      "import_module": "ttt",
+      "import_symbol": "TTTForCausalLM"
+    },
+    "ttt_e2e_reference_only": {
+      "url": "https://github.com/test-time-training/e2e",
+      "sha": "a4fc4788ace38e29b5067916d4f4be33da894085",
+      "status": "not included in executable PyTorch comparison; distinct JAX research path"
+    }
+  },
+  "mo_d_status": "pilot currently uses threshold routing; not paper-exact fixed-capacity top-k",
+  "platform_policy": "authentic Mamba GPU gate requires Linux and CUDA; Windows operator should use a qualified Linux host/WSL2 GPU"
+}

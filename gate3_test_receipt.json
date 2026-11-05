@@ -1,0 +1,13 @@
+{
+  "schema": "ttt-hybrid.gate3.engineering-tests.v1",
+  "command": "python -m pytest -q tests",
+  "exit_code": 0,
+  "stdout": ".......................                                                  [100%]\n23 passed in 1.87s",
+  "stderr": "",
+  "python": "3.13.5",
+  "torch": "2.10.0+cpu",
+  "cuda_available": false,
+  "authentic_gpu_execution": "BLOCKED_SOURCE_RUNTIME_ADMISSION",
+  "scientific_qualification": "UNVERIFIED",
+  "external_repo_mutations": "NONE"
+}

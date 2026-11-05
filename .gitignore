@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+*.pyc
+.env
+*.pem
+*.key
+ttt_hybrid_mod_gate3/
+local_runs/

@@ -1,0 +1,17 @@
+{
+  "label": "gate2_source_admission_development_verification_not_scientific_qualification",
+  "verified_at_utc": "2026-11-05",
+  "python": "3.13.5",
+  "torch": "2.10.0+cpu",
+  "cuda_available": false,
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+  "tests": {
+    "command": "python -m pytest -q tests",
+    "exit_code": 0,
+    "result": "...............                                                          [100%]\n15 passed in 1.68s"
+  },
+  "authentic_source_preflight": "BLOCKED",
+  "official_model_execution": "NOT_RUN",
+  "research_quality_or_speed_claim": "UNVERIFIED",
+  "repository_mutations": "NONE"
+}

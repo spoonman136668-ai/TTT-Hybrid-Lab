@@ -1,0 +1,68 @@
+{
+  "schema": "ttt-hybrid.authentic-gpu-smoke.v1",
+  "timestamp_utc": "2026-11-05T10:26:09.921151+00:00",
+  "runner_kind": "standalone_manual_or_existing_authorized_runner",
+  "source_pins_sha256": "44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768",
+  "script_sha256": {
+    "authentic_hybrid.py": "8990d54f6434f554b6a2900390b9559c65fe6573f57808e2475ed456f83a2101",
+    "run_gate3.py": "33743e4c38f1ac046bf4945d2d39fd44be1cc79f18b71c4c54b7ab1bba376fc6"
+  },
+  "environment": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "cuda_available": false,
+    "torch_cuda_build": null
+  },
+  "preflight": {
+    "schema": "ttt-hybrid.authentic-preflight.v1",
+    "timestamp_utc": "2026-11-05T10:26:09.921067+00:00",
+    "source_pins_sha256": "44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768",
+    "status": "BLOCKED",
+    "scientific_qualification": "UNVERIFIED",
+    "authentic_hybrid_forward_test": "NOT_RUN",
+    "checks": {
+      "mamba2": {
+        "source": {
+          "root": "/mnt/data/does-not-exist-mamba",
+          "required_commit": "e9594ce1c732d97440f0332fdc43170a2294dbfa",
+          "actual_commit": null,
+          "pass": false,
+          "reason": "SHA_MISMATCH_OR_UNREADABLE"
+        },
+        "import_origin": {
+          "pass": false,
+          "reason": "MODULE_UNAVAILABLE",
+          "module": "mamba_ssm"
+        }
+      },
+      "ttt_linear": {
+        "source": {
+          "root": "/mnt/data/does-not-exist-ttt",
+          "required_commit": "cd831db10c8c9a0f6340f02da5613316a8a92b67",
+          "actual_commit": null,
+          "pass": false,
+          "reason": "SHA_MISMATCH_OR_UNREADABLE"
+        },
+        "import_origin": {
+          "pass": false,
+          "reason": "MODULE_UNAVAILABLE",
+          "module": "ttt"
+        }
+      },
+      "hardware": {
+        "pass": false,
+        "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+        "python": "3.13.5",
+        "torch": "2.10.0+cpu",
+        "cuda_available": false,
+        "reason": "CUDA_UNAVAILABLE"
+      }
+    }
+  },
+  "status": "BLOCKED_SOURCE_RUNTIME_ADMISSION",
+  "authentic_forward": "NOT_RUN",
+  "scientific_qualification": "UNVERIFIED",
+  "model_quality_claim": "NONE",
+  "production_promotion": "NOT_AUTHORIZED"
+}

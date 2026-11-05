@@ -1,0 +1,15 @@
+{
+  "schema": "ttt-hybrid.gate2-file-sha256.v1",
+  "files": {
+    "model.py": "6055a98775aabe165f099cdbf31a711bb5bd6570091d327eb53c1f36e68add94",
+    "benchmark.py": "b398da8349ad415e88d9a17f9448f20972882d44829081aca9dea3e041689985",
+    "README.md": "aa9cc5943705efbbb58239fc9cf60cc18a1589f2501236680e7039fb2e342613",
+    "smoke_receipt.json": "fcecb45f0b7f9ef373bd1f6843af97351308c7bc6e51fcaba23e45c7f9a4735f",
+    "source_pins.json": "44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768",
+    "authentic_preflight.py": "82e043c094ba91e5f00788549c00159cbf9d66e754f88107656a2ce628b093af",
+    "authentic_preflight_receipt.json": "95c5254def608a28f229d0ed0520d318849407f5ad61f49a2450d0ef94ed990d",
+    "gate2_test_receipt.json": "6f940f7e4600bfc01510aeccffb38e847f69d027858dcaa32e2a09b0887616b4",
+    "tests/test_model.py": "76cca214631fdde235eaf072d4aee90f61fc6cacb676408c5571055f11e62821",
+    "tests/test_authentic_preflight.py": "35bf60315a0bfec92bdfbe287404515838fef38cc6aae2bb36ee3dc3b29d90ff"
+  }
+}
