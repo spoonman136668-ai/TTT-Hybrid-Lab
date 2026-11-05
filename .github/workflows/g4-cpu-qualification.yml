@@ -25,6 +25,7 @@ jobs:
       - name: Checkout exact candidate
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: false
 
       - name: Pin Python
@@ -39,13 +40,15 @@ jobs:
           python -m pip install --disable-pip-version-check --no-input -r requirements-cpu.txt --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
 
       - name: Full tests and admission-negative control
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
         run: python scripts/qualify_cpu.py --receipt local_runs/cpu_qualification.json
 
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: ttt-hybrid-g4-cpu-${{ matrix.os }}-${{ github.sha }}
+          name: ttt-hybrid-g4-cpu-${{ matrix.os }}-${{ github.event.pull_request.head.sha || github.sha }}
           path: local_runs/*.json
           if-no-files-found: warn
           retention-days: 30
