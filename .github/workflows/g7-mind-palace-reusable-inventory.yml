@@ -65,14 +65,49 @@ jobs:
             if ($LASTEXITCODE -ne 0) { throw 'G7_GPU_QUERY_FAILED' }
             $lines = (($gpu | Out-String).Trim() -split "[`r`n]+") |
               Where-Object { -not [string]::IsNullOrWhiteSpace($_) }
-            if (@($lines).Count -ne 1 -or $lines[0] -cnotmatch '^(.+),\s*([0-9.]+),\s*([0-9]+),\s*([0-9]+)$') {
-              throw 'G7_GPU_QUERY_NOT_SINGLE_NUMERIC_DEVICE'
+            if (@($lines).Count -ne 1) { throw 'G7_GPU_QUERY_NOT_SINGLE_NUMERIC_DEVICE' }
+            $gpuMatch = [regex]::Match($lines[0], '^(.+),\s*([0-9.]+),\s*([0-9]+),\s*([0-9]+)
+            if ($report.gpu.memory_total_mib -lt 4096 -or
+                $report.gpu.memory_free_mib -lt 4096 -or
+                $report.gpu.memory_free_mib -gt $report.gpu.memory_total_mib) {
+              throw 'G7_INSUFFICIENT_WINDOWS_GPU_MEMORY'
             }
+            # Do not invoke wsl.exe: on a machine without WSL, even --version
+            # may prompt an installer. Registry-only inventory under runner SID.
+            $key = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Lxss'
+            $count = 0
+            if (Test-Path -LiteralPath $key) {
+              $count = @(Get-ChildItem -LiteralPath $key -ErrorAction Stop).Count
+            }
+            $report.runner_user_wsl_distro_count = $count
+            $report.status = 'PASS_EXISTING_RUNNER_READONLY_ONLY'
+            $code = 0
+          } catch {
+            $report.status = 'BLOCKED_EXISTING_RUNNER_READONLY'
+            $report.error_class = [string]$_.Exception.Message
+          } finally {
+            $destination = Join-Path $env:RUNNER_TEMP 'ttt-g7-mind-palace-host-readonly.json'
+            $json = $report | ConvertTo-Json -Depth 5
+            [IO.File]::WriteAllText($destination, $json + [Environment]::NewLine,
+              (New-Object System.Text.UTF8Encoding($false)))
+            Write-Host $json
+          }
+          if ($code -ne 0) { throw ('G7_READONLY_HOST_BLOCKED: ' + $report.error_class) }
+      - name: Retain scoped nonsecret runner receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-reused-mp-readonly-${{ github.run_id }}
+          path: ${{ runner.temp }}/ttt-g7-mind-palace-host-readonly.json
+          if-no-files-found: warn
+          retention-days: 14
+)
+            if (-not $gpuMatch.Success) { throw 'G7_GPU_QUERY_NOT_SINGLE_NUMERIC_DEVICE' }
             $report.gpu = [ordered]@{
-              name = $Matches[1].Trim()
-              driver = $Matches[2]
-              memory_total_mib = [int]$Matches[3]
-              memory_free_mib = [int]$Matches[4]
+              name = $gpuMatch.Groups[1].Value.Trim()
+              driver = $gpuMatch.Groups[2].Value
+              memory_total_mib = [int]$gpuMatch.Groups[3].Value
+              memory_free_mib = [int]$gpuMatch.Groups[4].Value
             }
             if ($report.gpu.memory_total_mib -lt 4096 -or
                 $report.gpu.memory_free_mib -lt 4096 -or
