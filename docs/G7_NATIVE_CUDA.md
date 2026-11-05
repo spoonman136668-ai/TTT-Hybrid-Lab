@@ -153,13 +153,21 @@ It does **not** register, install, reconfigure, or launch a runner.
 - The GitHub connection available to this chat cannot enumerate or edit
   GitHub runner group/repository registration settings. No eligible
   TTT-Hybrid runner connection has yet been independently observed.
-- If an **existing organization-level** Windows runner is eligible, a
-  repository administrator can allow this TTT repository through runner-group
-  selected-repository access and a narrow runner label. Do not grant broad
-  runner-group access to all repositories. If all Windows registrations are
-  **repository-level** FORGE/CKB-only, a distinct TTT registration or another
-  independently approved GPU executor is required; a workflow cannot
-  repurpose a different repository's registration by itself.
+- **Verified repository ownership (2026-11-05):** both TTT-Hybrid-Lab
+  and FORGE are owned by the **personal GitHub account** `spoonman136668-ai`
+  (GitHub owner type `User`), not an organization. Organization runner groups
+  are **not an available sharing path for these current repos**.
+- The existing `FORGE-CODEX-REMOTE` repo-scoped runner must remain unchanged.
+  Reusing the **same physical Windows hardware** safely requires a separate
+  TTT-Hybrid repository runner **registration** (different directory/work
+  root, identity, and `ttt-hybrid-gpu-isolated` label), unless an existing
+  TTT-registered runner can first be independently verified. A runner
+  registration is **not** a new research controller or scheduler. An
+  administrative machine-access route is required for that one-time host
+  action; this chat's GitHub connector cannot perform it.
+- A physically shared host must have an independent resource/occupancy
+  admission before any TTT CUDA workload; the read-only inventory workflow
+  alone does not guarantee isolation or non-interference with FORGE.
 
 **Activation boundary**:
 
