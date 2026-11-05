@@ -49,11 +49,20 @@ def qualify(receipt_path: Path) -> dict:
     receipt_path.parent.mkdir(parents=True, exist_ok=True)
     revision = run_command(["git", "rev-parse", "HEAD"], timeout=10)
     source_sha = sha256(ROOT / "source_pins.json")
+    expected_sha = os.getenv("EXPECTED_CANDIDATE_SHA")
+    observed_sha = revision.get("stdout_tail", "").strip() if revision["exit_code"] == 0 else None
+    identity_pass = bool(observed_sha) and (
+        observed_sha == expected_sha if expected_sha else os.getenv("GITHUB_ACTIONS") != "true"
+    )
     record = {
         "schema": "ttt-hybrid.cpu-qualification.v1",
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
-        "revision": revision.get("stdout_tail", "").strip()
-            if revision["exit_code"] == 0 else None,
+        "revision": observed_sha,
+        "checkout_identity": {
+            "expected_sha": expected_sha,
+            "observed_sha": observed_sha,
+            "pass": identity_pass,
+        },
         "source_pins_sha256": source_sha,
         "platform": platform.platform(),
         "python": platform.python_version(),
@@ -113,6 +122,7 @@ def qualify(receipt_path: Path) -> dict:
     record["status"] = (
         "PASS_CPU_ENGINEERING_ONLY"
         if record["tests"]["exit_code"] == 0
+        and record["checkout_identity"]["pass"] is True
         and record["negative_control"].get("pass") is True
         else "FAIL_CPU_QUALIFICATION"
     )
