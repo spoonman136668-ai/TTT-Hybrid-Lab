@@ -133,3 +133,60 @@ and conflicting CLI/environment identities before any CUDA operation.
 The receipt records both observed and required SHAs and the admission decision.
 A different PR or merge commit needs fresh exact-head qualification; previous
 CPU PASS evidence cannot be recycled against a changed tree.
+
+
+## Existing Windows runner route — least-privilege admission only
+
+A **manual-only** workflow `.github/workflows/g7-existing-runner-admission.yml`
+now prepares a safe attachment path to an existing Windows runner.
+It does **not** register, install, reconfigure, or launch a runner.
+
+**Repo and runner scoping**:
+
+- Repository: `spoonman136668-ai/TTT-Hybrid-Lab` (private).
+- Required runner labels: `self-hosted`, `Windows`, `X64`,
+  and the **TTT-specific** `ttt-hybrid-gpu-isolated` label.
+- DO NOT relabel or broaden the existing FORGE owner runner
+  `FORGE-CODEX-REMOTE` / `forge-codex-isolated` to bypass its isolation.
+  FORGE can remain running uninterrupted; TTT must have a separately
+  granted/qualified runner slot and resource budget.
+- The GitHub connection available to this chat cannot enumerate or edit
+  GitHub runner group/repository registration settings. No eligible
+  TTT-Hybrid runner connection has yet been independently observed.
+- If an **existing organization-level** Windows runner is eligible, a
+  repository administrator can allow this TTT repository through runner-group
+  selected-repository access and a narrow runner label. Do not grant broad
+  runner-group access to all repositories. If all Windows registrations are
+  **repository-level** FORGE/CKB-only, a distinct TTT registration or another
+  independently approved GPU executor is required; a workflow cannot
+  repurpose a different repository's registration by itself.
+
+**Activation boundary**:
+
+1. Merge and accept the prerequisite G4/G5/G7 source stack under the
+   normal protected-main acceptance policy. `workflow_dispatch` cannot
+   be used on an unmerged PR workflow that is absent from the default branch.
+2. Verify the resulting exact main SHA, mandatory regression, runner label,
+   runner availability, and custody. Approval of the source PR does not
+   authorize moving FORGE's existing runner.
+3. Once the TTT runner has been attached and scoped, perform one
+   owner-initiated GitHub Actions dispatch **on main**. This workflow only
+   checks the exact SHA, repo/actor/attempt/OS and local clean Git worktree;
+   queries `nvidia-smi`; and reads the runner user's **HKCU registry only**
+   for registered distro names. It does NOT execute `wsl.exe` at all:
+   `wsl --version` on systems without WSL can unexpectedly launch an
+   installer, as observed on the owner's workstation.
+4. Preserve `local_runs/g7_runner_inventory.json` as an Actions artifact,
+   distinguishing runner-user distro registration from *actual* Linux GPU
+   capability. A clean host receipt proves only Windows host admission.
+5. Authentic Linux/WSL2 GPU execution remains **separate** and requires
+   qualified native CUDA/PyTorch ABI and exact-source checkouts, available
+   bounded resources, and explicit scoped execution authority. Do not
+   infer scientific improvement or deployment admission from this host probe.
+
+**The workflow is not triggered on PRs, pushes, comments or schedules.**
+No untrusted PR code is executed on a self-hosted runner. The sole
+`workflow_dispatch` route is restricted to this private repository,
+the protected `main` ref, the repository owner, and first attempts.
+The hosted Linux/Windows G4/G5 qualification still runs automatically
+for source changes. Its PASS is not self-hosted runner admission.
