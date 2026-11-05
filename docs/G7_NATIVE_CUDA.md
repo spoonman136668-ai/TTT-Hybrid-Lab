@@ -46,6 +46,7 @@ python scripts/g7_cuda_qualification.py \
   --mamba-root /qualified/mamba \
   --ttt-root /qualified/ttt \
   --min-free-gib 4 --max-peak-gib 2 \
+  --expected-sha <exact-qualified-PR-commit-SHA> \
   --receipt local_runs/g7_native_cuda.json
 ```
 
@@ -121,3 +122,14 @@ Interpretation: detection of a Windows GPU and a WSL2 distro alone is
 Mamba2 and TTT sources, compatible CUDA PyTorch, verified native dependencies,
 and sufficient free VRAM is still required. Ask for a separate execution
 decision before starting/installing a WSL distro or running GPU kernels.
+
+
+## Candidate identity admission
+
+The native GPU runner now **requires** an exact, full 40-digit qualified
+project commit SHA, supplied through `--expected-sha` or
+`EXPECTED_CANDIDATE_SHA`. It rejects missing/invalid/mismatched identity
+and conflicting CLI/environment identities before any CUDA operation.
+The receipt records both observed and required SHAs and the admission decision.
+A different PR or merge commit needs fresh exact-head qualification; previous
+CPU PASS evidence cannot be recycled against a changed tree.

@@ -9,6 +9,7 @@ import pytest
 
 from scripts.g7_cuda_qualification import (
     admission_policy,
+    candidate_identity_policy,
     run,
     source_module_receipt,
 )
@@ -76,3 +77,40 @@ def test_actual_gpu_smoke_is_never_claimed_without_official_upstream(tmp_path):
     assert recorded["authentic_integration"]=="NOT_RUN"
     assert recorded["scientific_qualification"]=="UNVERIFIED"
     assert json.loads(receipt.read_text())["status"]==recorded["status"]
+
+
+def test_candidate_identity_requires_exact_full_commit():
+    sha = "a1cd4fb5b3715f3bb9483760b1d0871da564f79b"
+    good = candidate_identity_policy(sha, sha)
+    assert good["pass"] and good["reason"] == "EXACT_CANDIDATE_MATCH"
+
+
+@pytest.mark.parametrize("expected,reason", [
+    (None, "MISSING_EXPECTED_CANDIDATE_SHA"),
+    ("", "MISSING_EXPECTED_CANDIDATE_SHA"),
+    ("a1cd4fb5", "INVALID_EXPECTED_CANDIDATE_SHA"),
+    ("z"*40, "INVALID_EXPECTED_CANDIDATE_SHA"),
+    ("0"*40, "PROJECT_SHA_MISMATCH"),
+])
+def test_candidate_identity_rejects_unbound_or_drifted(expected, reason):
+    sha = "a1cd4fb5b3715f3bb9483760b1d0871da564f79b"
+    result = candidate_identity_policy(sha, expected)
+    assert not result["pass"] and result["reason"] == reason
+
+
+def test_candidate_identity_rejects_unreadable_checkout():
+    result = candidate_identity_policy(None, "a1cd4fb5b3715f3bb9483760b1d0871da564f79b")
+    assert not result["pass"]
+    assert result["reason"] == "UNREADABLE_PROJECT_SHA"
+
+
+def test_gpu_entrypoint_blocks_without_expected_sha(tmp_path, monkeypatch):
+    monkeypatch.delenv("EXPECTED_CANDIDATE_SHA", raising=False)
+    receipt = tmp_path / "unbound_runtime.json"
+    result, code = run(tmp_path / "missing-mamba", tmp_path / "missing-ttt",
+                       receipt=receipt, min_free_gib=4.0, max_peak_gib=2.0)
+    assert code == 2
+    assert result["status"] == "BLOCKED_MISSING_EXPECTED_CANDIDATE_SHA"
+    assert result["authentic_integration"] == "NOT_RUN"
+    assert not result["candidate_identity"]["pass"]
+    assert json.loads(receipt.read_text())["status"] == result["status"]

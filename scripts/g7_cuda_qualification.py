@@ -11,6 +11,8 @@ from datetime import datetime, timezone
 import hashlib
 import importlib
 import inspect
+import os
+import re
 import math
 import json
 from pathlib import Path
@@ -46,6 +48,22 @@ def admission_policy(*, linux: bool, cuda: bool, free_bytes: int,
         "available_bytes": free_bytes, "total_bytes": total_bytes,
         "min_free_gib": min_free_gib, "max_peak_gib": max_peak_gib,
     }
+
+
+def candidate_identity_policy(actual: str | None, expected: str | None) -> dict:
+    """Fail closed unless the runtime is bound to an exact 40-digit Git SHA."""
+    if not expected:
+        reason = "MISSING_EXPECTED_CANDIDATE_SHA"
+    elif not re.fullmatch(r"[0-9a-f]{40}", expected):
+        reason = "INVALID_EXPECTED_CANDIDATE_SHA"
+    elif not actual or not re.fullmatch(r"[0-9a-f]{40}", actual):
+        reason = "UNREADABLE_PROJECT_SHA"
+    elif actual != expected:
+        reason = "PROJECT_SHA_MISMATCH"
+    else:
+        reason = "EXACT_CANDIDATE_MATCH"
+    return {"pass": reason == "EXACT_CANDIDATE_MATCH",
+            "reason": reason, "expected_sha": expected, "observed_sha": actual}
 
 
 def file_sha256(path: Path) -> str:
@@ -86,7 +104,8 @@ def optional_extension(module_name: str) -> dict:
 
 
 def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
-        min_free_gib: float, max_peak_gib: float) -> tuple[dict, int]:
+        min_free_gib: float, max_peak_gib: float,
+        expected_sha: str | None = None) -> tuple[dict, int]:
     started = time.perf_counter()
     mamba_root = mamba_root.resolve()
     ttt_root = ttt_root.resolve()
@@ -111,8 +130,18 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
                              text=True, capture_output=True, timeout=12, check=False)
         observed = ref.stdout.strip() if ref.returncode == 0 else None
         record["project_sha"] = observed
-        if not observed or (len(observed) != 40):
-            raise RuntimeError("PROJECT_SHA_UNREADABLE")
+        env_expected = os.environ.get("EXPECTED_CANDIDATE_SHA")
+        if expected_sha and env_expected and expected_sha != env_expected:
+            record["candidate_identity"] = {
+                "pass": False, "reason": "CONFLICTING_EXPECTED_CANDIDATE_SHA",
+                "provided_sha": expected_sha, "environment_sha": env_expected}
+            record["status"] = "BLOCKED_CONFLICTING_EXPECTED_CANDIDATE_SHA"
+            return record, 2
+        identity = candidate_identity_policy(observed, expected_sha or env_expected)
+        record["candidate_identity"] = identity
+        if not identity["pass"]:
+            record["status"] = "BLOCKED_" + identity["reason"]
+            return record, 2
         import torch
         record["torch"] = torch.__version__
         record["torch_cuda_build"] = torch.version.cuda
@@ -218,6 +247,8 @@ def main() -> int:
                         default=ROOT/"local_runs"/"g7_native_cuda.json")
     parser.add_argument("--min-free-gib", type=float, default=4.0)
     parser.add_argument("--max-peak-gib", type=float, default=2.0)
+    parser.add_argument("--expected-sha", type=str, default=None,
+                        help="Exact qualified 40-digit project commit SHA (or EXPECTED_CANDIDATE_SHA env)")
     args=parser.parse_args()
     if (not math.isfinite(args.min_free_gib) or not math.isfinite(args.max_peak_gib)
             or args.min_free_gib < 2 or args.max_peak_gib <= 0
@@ -226,7 +257,8 @@ def main() -> int:
     result, code=run(args.mamba_root,args.ttt_root,
                      receipt=args.receipt,
                      min_free_gib=args.min_free_gib,
-                     max_peak_gib=args.max_peak_gib)
+                     max_peak_gib=args.max_peak_gib,
+                     expected_sha=args.expected_sha)
     print(json.dumps({"status":result["status"], "project_sha":result["project_sha"],
                       "gpu":result.get("gpu"), "receipt":str(args.receipt),
                       "error":result.get("error_message")}))
