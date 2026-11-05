@@ -22,6 +22,10 @@ def test_reusable_only_never_autoruns():
     assert "permissions:\n  contents: read" in s
     assert "runs-on: [self-hosted, Windows, X64]" in s
     assert "timeout-minutes: 5" in s
+    # The real original Windows runner enforces Restricted policy;
+    # the bypass must be job-scoped and never change machine policy.
+    assert "shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}" in s
+    assert "Set-ExecutionPolicy" not in s
 
 
 def test_mind_palace_caller_and_runner_admission():

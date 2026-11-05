@@ -14,7 +14,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - name: Read-only existing-owner GPU inventory
-        shell: powershell
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
         env:
           EXPECTED_TTT_CANDIDATE_SHA: ${{ inputs.ttt_candidate_sha }}
         run: |
