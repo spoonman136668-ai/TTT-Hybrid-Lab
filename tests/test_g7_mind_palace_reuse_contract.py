@@ -61,6 +61,9 @@ def test_no_source_checkout_wsl_activation_or_cuda():
     assert "native_mamba_ttt_cuda = 'NOT_RUN'" in s
     assert "scientific" not in s or "science = 'UNVERIFIED'" in s
     assert "nvidia-smi.exe" in s
+    assert "[regex]::Match($lines[0]" in s
+    assert "$gpuMatch.Success" in s
+    assert "$gpuMatch.Groups[4].Value" in s
     assert "HKCU:" in s
     assert "actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02" in s
 
