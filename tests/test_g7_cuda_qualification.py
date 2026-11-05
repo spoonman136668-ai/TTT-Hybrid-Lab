@@ -47,6 +47,18 @@ def test_invalid_resource_bounds_rejected():
         with pytest.raises(ValueError, match="INVALID_RESOURCE_BOUNDS"):
             policy(min_free_gib=free,max_peak_gib=peak)
 
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_free_memory_bounds_rejected(value):
+    with pytest.raises(ValueError, match="INVALID_RESOURCE_BOUNDS"):
+        policy(min_free_gib=value)
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_nonfinite_peak_memory_bounds_rejected(value):
+    with pytest.raises(ValueError, match="INVALID_RESOURCE_BOUNDS"):
+        policy(max_peak_gib=value)
+
+
 def test_unpinned_module_origin_is_rejected(tmp_path):
     with pytest.raises(RuntimeError,match="UNPINNED_MODULE_ORIGIN"):
         source_module_receipt("json", tmp_path/"json.py")

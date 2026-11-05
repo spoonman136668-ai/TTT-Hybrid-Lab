@@ -11,6 +11,7 @@ from datetime import datetime, timezone
 import hashlib
 import importlib
 import inspect
+import math
 import json
 from pathlib import Path
 import platform
@@ -27,7 +28,8 @@ def admission_policy(*, linux: bool, cuda: bool, free_bytes: int,
                      total_bytes: int, min_free_gib: float,
                      max_peak_gib: float) -> dict:
     """Pure, portable negative-control gate; no GPU is touched here."""
-    if min_free_gib < 2 or max_peak_gib <= 0 or max_peak_gib > min_free_gib:
+    if (not math.isfinite(min_free_gib) or not math.isfinite(max_peak_gib)
+            or min_free_gib < 2 or max_peak_gib <= 0 or max_peak_gib > min_free_gib):
         raise ValueError("INVALID_RESOURCE_BOUNDS")
     if not linux:
         reason = "REQUIRES_LINUX_OR_WSL2"
@@ -217,7 +219,9 @@ def main() -> int:
     parser.add_argument("--min-free-gib", type=float, default=4.0)
     parser.add_argument("--max-peak-gib", type=float, default=2.0)
     args=parser.parse_args()
-    if args.min_free_gib < 2 or args.max_peak_gib <= 0 or args.max_peak_gib > args.min_free_gib:
+    if (not math.isfinite(args.min_free_gib) or not math.isfinite(args.max_peak_gib)
+            or args.min_free_gib < 2 or args.max_peak_gib <= 0
+            or args.max_peak_gib > args.min_free_gib):
         parser.error("Resource policy requires 2+ GiB free and 0 < peak <= free budget")
     result, code=run(args.mamba_root,args.ttt_root,
                      receipt=args.receipt,
