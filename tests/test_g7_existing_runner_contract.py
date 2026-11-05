@@ -20,6 +20,7 @@ def test_only_owner_initiated_trusted_main_can_dispatch():
         assert forbidden not in wf
     assert "github.ref == 'refs/heads/main'" in wf
     assert "github.actor == 'spoonman136668-ai'" in wf
+    assert "github.ref_protected == true" in wf
     assert "github.run_attempt == 1" in wf
     assert "permissions:\n  contents: read" in wf
     assert "timeout-minutes: 8" in wf
@@ -47,6 +48,7 @@ def test_powershell_probe_checks_repo_sha_and_workspace():
     s = PS.read_text(encoding="utf-8")
     for required in (
         "UNAUTHORIZED_REPO_REF_ACTOR_OR_RUNNER",
+        "$env:GITHUB_REF_PROTECTED -cne 'true'",
         "INVALID_OR_MISMATCHED_GITHUB_SHA",
         "CHECKOUT_SHA_DRIFT",
         "UNAUTHORIZED_WORKTREE_PATH",
