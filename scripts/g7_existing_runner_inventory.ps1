@@ -51,6 +51,7 @@ $exitCode = 2
 try {
     if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
         $env:GITHUB_REF -cne 'refs/heads/main' -or
+        $env:GITHUB_REF_PROTECTED -cne 'true' -or
         $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
         $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
         $env:GITHUB_RUN_ATTEMPT -cne '1' -or
