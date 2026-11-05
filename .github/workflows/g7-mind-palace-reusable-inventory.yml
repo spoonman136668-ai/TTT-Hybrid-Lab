@@ -1,4 +1,4 @@
-name: G7 isolated reusable validation probe
+name: G7 Mind-Palace existing-runner inventory
 on:
   workflow_call:
     inputs:
@@ -8,10 +8,50 @@ on:
 permissions:
   contents: read
 jobs:
-  probe:
+  inspect:
     if: ${{ github.repository == 'spoonman136668-ai/Mind-Palace' }}
     runs-on: [self-hosted, Windows, X64]
+    timeout-minutes: 5
     steps:
-      - name: No execution until caller authorization
+      - name: Read-only existing-owner GPU inventory
         shell: powershell
-        run: Write-Output 'G7_SOURCE_VALIDATION_ONLY'
+        env:
+          EXPECTED_TTT_CANDIDATE_SHA: ${{ inputs.ttt_candidate_sha }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/Mind-Palace' -or
+              $env:GITHUB_REF -cne 'refs/heads/main' -or
+              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+              $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
+              $env:GITHUB_RUN_ATTEMPT -cne '1') {
+            throw 'G7_UNAUTHORIZED_CALLER'
+          }
+          if ($env:RUNNER_NAME -cne 'MIND-PALACE-WIN' -or
+              $env:RUNNER_OS -cne 'Windows') {
+            throw 'G7_WRONG_ORIGINAL_RUNNER'
+          }
+          if ($env:EXPECTED_TTT_CANDIDATE_SHA -cnotmatch '^[0-9a-f]{40}$') {
+            throw 'G7_UNPINNED_TTT_CANDIDATE'
+          }
+          $nv = Get-Command -Name nvidia-smi.exe -CommandType Application -ErrorAction SilentlyContinue
+          if (-not $nv) { throw 'G7_GPU_QUERY_UNAVAILABLE' }
+          $data = @(& $nv.Source '--query-gpu=name,driver_version,memory.total,memory.free' '--format=csv,noheader,nounits')
+          if ($LASTEXITCODE -ne 0 -or $data.Count -ne 1) {
+            throw 'G7_GPU_INVENTORY_FAILED'
+          }
+          $parts = @($data[0] -split ',')
+          if ($parts.Count -ne 4) { throw 'G7_GPU_FIELDS_INVALID' }
+          $free = 0
+          $total = 0
+          if (-not [int]::TryParse($parts[2].Trim(), [ref]$total) -or
+              -not [int]::TryParse($parts[3].Trim(), [ref]$free)) {
+            throw 'G7_GPU_VRAM_NONNUMERIC'
+          }
+          if ($total -lt 4096 -or $free -lt 4096 -or $free -gt $total) {
+            throw 'G7_GPU_VRAM_UNAVAILABLE'
+          }
+          Write-Output ('TTT_G7_REUSED_RUNNER=PASS name=' + $env:RUNNER_NAME)
+          Write-Output ('TTT_G7_PINNED_SOURCE=' + $env:EXPECTED_TTT_CANDIDATE_SHA)
+          Write-Output ('TTT_G7_GPU_MIB free=' + $free + ' total=' + $total)
+          Write-Output 'TTT_G7_NATIVE_CUDA=NOT_RUN'
+          Write-Output 'TTT_G7_SCIENCE=UNVERIFIED'
