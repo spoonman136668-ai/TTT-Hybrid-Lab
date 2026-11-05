@@ -93,3 +93,31 @@ data, seeds, transfer tasks, compute/parameter/FLOP limits, causal leakage
 controls, native Mamba-2 and original MoD alternatives, retention, transfer,
 GPU memory and latency. G6's frozen development NO-GO remains a negative
 result, not permission to retune the same cohort.
+
+
+## Read-only Windows GPU inventory (added after original CPU qualification)
+
+Before attempting a new GPU setup or installing anything, check whether the
+existing machine can host an isolated WSL2 CUDA test. An intentionally small
+`scripts/g7_readonly_host_probe.ps1` is now kept in the same repository.
+
+It only queries Windows `nvidia-smi`, `wsl --version`, `wsl --list
+--verbose`, and the local project's git HEAD/status. It **does not** launch a
+WSL distribution, reserve VRAM, install a driver, create a VM, start a model,
+dispatch a workflow or touch any other project.
+
+From an already-updated, clean Windows checkout:
+
+```powershell
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\scripts\g7_readonly_host_probe.ps1 -ProjectRoot 'C:\Research\TTT-Hybrid'
+```
+
+G7 is still stacked on G5 and unmerged. If the branch is not checked out,
+read this script in the GitHub PR before bringing it into the local checkout.
+Do **not** run a remote script via an unreviewed `Invoke-Expression` pipeline.
+
+Interpretation: detection of a Windows GPU and a WSL2 distro alone is
+**not CUDA qualification**. An isolated WSL2 runtime with pinned official
+Mamba2 and TTT sources, compatible CUDA PyTorch, verified native dependencies,
+and sufficient free VRAM is still required. Ask for a separate execution
+decision before starting/installing a WSL distro or running GPU kernels.
