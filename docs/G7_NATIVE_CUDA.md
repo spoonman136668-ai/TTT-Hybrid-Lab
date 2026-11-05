@@ -204,3 +204,81 @@ No untrusted PR code is executed on a self-hosted runner. The sole
 the protected `main` ref, the repository owner, and first attempts.
 The hosted Linux/Windows G4/G5 qualification still runs automatically
 for source changes. Its PASS is not self-hosted runner admission.
+
+
+## Reuse one existing registration: Mind-Palace runner (preferred over a seventh runner)
+
+**Verified 2026-11-05:** `spoonman136668-ai/Mind-Palace` owns the
+`MIND-PALACE-WIN` Windows self-hosted runner and its native regression has
+completed successfully. GitHub documentation confirms that a called reusable
+workflow in another repository **under the same user** can schedule a
+self-hosted runner available to the **caller repository**, without a new
+registration. The called workflow inherits the caller repository's GitHub
+context and token; it does **not** implicitly check out TTT-Hybrid.
+
+The **existing** `.github/workflows/g7-existing-runner-admission.yml`
+needs a TTT-repository-level runner label and a protected `main`; it is
+**not the selected path** when sharing an already registered Mind-Palace
+runner. It must not be dispatched to bypass runner isolation.
+
+Instead the new
+`.github/workflows/g7-mind-palace-reusable-inventory.yml` is a
+**read-only workflow_call**, invoked only from an owner-initiated
+`workflow_dispatch` on Mind-Palace `main`. It validates runner identity
+`MIND-PALACE-WIN`, exact caller owner/repository/ref, and a syntactically
+valid full TTT candidate SHA. It reads Windows NVIDIA-SMI and HKCU distro
+registration counts, **never** invokes WSL, checks out any repository, or
+executes an actual GPU kernel. Its artifact is attached to the *Mind-Palace
+caller run*, not TTT-Hybrid. No Mind-Palace checkout, queue state, local
+models, retained memory or controller records are changed. A read-only
+host inventory receipt is not CUDA execution authority.
+
+A prospective caller workflow, **not installed/activated by this source
+change**, is:
+
+```yaml
+name: Owner-initiated TTT host inventory via existing Mind-Palace runner
+on:
+  workflow_dispatch:
+permissions: {}
+jobs:
+  read-only-ttt-host:
+    if: ${{ github.repository == 'spoonman136668-ai/Mind-Palace' && github.ref == 'refs/heads/main' && github.actor == 'spoonman136668-ai' && github.run_attempt == 1 }}
+    uses: spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/g7-mind-palace-reusable-inventory.yml@<EXACT_40_DIGIT_QUALIFIED_TTT_SOURCE_SHA>
+    with:
+      ttt_candidate_sha: <SAME_EXACT_40_DIGIT_QUALIFIED_TTT_SOURCE_SHA>
+```
+
+The placeholders **must be replaced** by the same qualified immutable
+40-character G7 candidate; never pin a moving branch. This is an
+**operator-independent interface example**, not a run, promotion,
+permission grant, approval to edit the Mind-Palace repository, or a
+promise to run automatically.
+
+Before an actual call, separately verify:
+1. TTT-Hybrid's private-repo **Settings → Actions → General → Access**
+   permits reusable workflows to be read by other private repositories
+   owned by `spoonman136668-ai`. The current setting could not be
+   inspected through this chat's GitHub connector.
+2. The Mind-Palace owner approves the bounded caller source change, with
+   no change to ordinary Mind-Palace regression jobs or controllers.
+3. The existing runner is available and the caller `main` is the exact
+   approved source; **never** run the reusable job from pull requests or
+   arbitrary code. GitHub reports Mind-Palace `main` currently unprotected,
+   so relying on a protected-ref guard would block this route. The gate uses
+   owner-only manual dispatch and an immutable called-workflow SHA; that
+   does **not** replace branch protection for eventual repository acceptance.
+4. No credentials or third-party project files enter the TTT receipt.
+   The runner shares **physical hardware** with other projects, so CUDA
+   kernel allocation, WSL launch, installations and external source fetches
+   remain **outside this gate** and require an independently qualified
+   project-specific resource and authority decision.
+
+**Source-only qualifier:** G4 hosted Linux/Windows full regression and
+negative controls on the *exact final TTT candidate SHA*. The called
+workflow's compatibility on `MIND-PALACE-WIN` is **UNVERIFIED** until a
+real owner-authorized one-shot caller run produces a receipt.
+
+Official semantics:
+https://docs.github.com/en/actions/reference/workflows-and-actions/reusing-workflow-configurations
+https://docs.github.com/en/actions/how-tos/reuse-automations/share-across-private-repositories
