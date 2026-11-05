@@ -3,6 +3,12 @@
 name: G7 caller-owned Mind-Palace Windows host inventory
 
 on:
+  # Direct dispatch is always job-skipped: the job requires a Mind-Palace caller.
+  workflow_dispatch:
+    inputs:
+      ttt_candidate_sha:
+        required: false
+        type: string
   workflow_call:
     inputs:
       ttt_candidate_sha:
@@ -10,7 +16,8 @@ on:
         type: string
         description: Full 40-character prequalified TTT-Hybrid candidate commit
 
-permissions: {}
+permissions:
+  contents: read
 
 jobs:
   mind-palace-host-inventory:
