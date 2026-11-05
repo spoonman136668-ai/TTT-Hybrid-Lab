@@ -159,8 +159,15 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
             optional_extension("selective_scan_cuda"),
         ]
 
-        # Force an actual CUDA operation before the integrated smoke.
+        # Limit PyTorch's caching allocator before any smoke allocations.
+        # This does not constrain third-party native allocation backends.
+        allocator_fraction = min(1.0, max_peak_gib * (1024**3) / total)
         torch.cuda.set_device(0)
+        torch.cuda.set_per_process_memory_fraction(allocator_fraction, device=0)
+        record["gpu"]["torch_allocator_memory_fraction"] = allocator_fraction
+        record["gpu"]["allocator_limit_scope"] = "PYTORCH_ONLY"
+
+        # Force an actual CUDA operation before the integrated smoke.
         a = torch.randn((16, 16), device="cuda", dtype=torch.float32)
         sample = (a @ a).sum()
         torch.cuda.synchronize(0)
