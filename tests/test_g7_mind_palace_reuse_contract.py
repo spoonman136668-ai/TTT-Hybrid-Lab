@@ -18,11 +18,14 @@ def source() -> str:
 
 def test_reusable_only_no_native_or_scheduled_dispatch():
     s = source()
-    assert re.search(r"(?m)^on:\s*\n\s+workflow_call:\s*$", s)
-    for forbidden in ("  workflow_dispatch:", "  pull_request:", "  push:",
-                      "  schedule:", "  repository_dispatch:", "  issue_comment:"):
+    assert re.search(r"(?m)^\s+workflow_call:\s*$", s)
+    assert re.search(r"(?m)^\s+workflow_dispatch:\s*$", s)
+    for forbidden in ("  pull_request:", "  push:", "  schedule:",
+                      "  repository_dispatch:", "  issue_comment:"):
         assert forbidden not in s
-    assert "permissions: {}" in s
+    assert "permissions:\n  contents: read" in s
+    # The direct TTT dispatch is guaranteed to skip the caller-only job.
+    assert "github.repository == 'spoonman136668-ai/Mind-Palace'" in s
 
 
 def test_caller_and_owner_scope():
