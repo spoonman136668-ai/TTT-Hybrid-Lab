@@ -28,8 +28,8 @@ def test_runner_registration_source_is_bounded_and_manual():
 
 def test_document_does_not_claim_runtime_or_cuda_acceptance():
     doc = DOC.read_text(encoding="utf-8")
-    assert "main is protected" in doc or "main is **currently unprotected**" in doc
-    assert "does not isolate GPU memory" in doc
+    assert "currently unprotected" in doc
+    assert "do not isolate GPU memory" in doc
     assert "read-only" in doc
     assert "registration token" in doc
 
