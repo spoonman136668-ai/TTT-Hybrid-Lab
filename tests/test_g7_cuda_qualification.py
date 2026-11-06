@@ -114,3 +114,33 @@ def test_gpu_entrypoint_blocks_without_expected_sha(tmp_path, monkeypatch):
     assert result["authentic_integration"] == "NOT_RUN"
     assert not result["candidate_identity"]["pass"]
     assert json.loads(receipt.read_text())["status"] == result["status"]
+
+
+def test_g7_r5_kernel_only_never_admits_unbound_candidate(tmp_path, monkeypatch):
+    """CPU-only negative control: opting in to one CUDA kernel cannot skip SHA admission."""
+    monkeypatch.delenv("EXPECTED_CANDIDATE_SHA", raising=False)
+    receipt = tmp_path / "r5_unbound.json"
+    result, code = run(
+        tmp_path / "missing-mamba", tmp_path / "missing-ttt",
+        receipt=receipt, min_free_gib=4.0, max_peak_gib=1.0,
+        kernel_only=True,
+    )
+    assert code == 2
+    assert result["status"] == "BLOCKED_MISSING_EXPECTED_CANDIDATE_SHA"
+    assert result["mode"] == "CUDA_KERNEL_ONLY"
+    assert result["authentic_integration"] == "NOT_RUN"
+    assert json.loads(receipt.read_text())["scientific_qualification"] == "UNVERIFIED"
+
+
+def test_g7_r5_single_matmul_precedes_optional_integrated_smoke():
+    """Static contract only: this test never imports Torch or starts a CUDA kernel."""
+    import inspect
+    source = inspect.getsource(run)
+    assert 'if kernel_only:' in source
+    assert source.index('if kernel_only:') < source.index('from run_gate3 import run as native_gate3')
+    assert '"PASS_NATIVE_CUDA_KERNEL_ONLY"' in source
+    assert '"native_mamba_forward": "NOT_RUN"' in source
+    assert '"native_ttt_forward": "NOT_RUN"' in source
+    assert 'torch.cuda.reset_peak_memory_stats(0)' in source
+    assert 'torch.cuda.max_memory_allocated(0)' in source
+    assert 'if peak > max_peak_gib * (1024**3):' in source
