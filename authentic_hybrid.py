@@ -37,18 +37,25 @@ class AuthenticHybrid(nn.Module):
     supplies it. TTT passes no cache and therefore resets at each forward.
     """
     def __init__(self, *, width=64, heads=4, mini_batch=8,
-                 use_ttt=True, use_depth=True, official_classes=None):
+                 use_ttt=True, use_depth=True, official_classes=None,
+                 mamba_mem_eff_path=True):
         super().__init__()
         if width % heads or width % 64 or mini_batch < 1:
             raise ValueError("width must be divisible by heads and 64; mini_batch >=1")
         if official_classes is None:
             raise ValueError("Official classes must be supplied from validated source check")
+        if type(mamba_mem_eff_path) is not bool:
+            raise ValueError("mamba_mem_eff_path must be a bool")
         mamba_cls, config_cls, ttt_cls = official_classes
         self.width = width
         self.mini_batch = mini_batch
         self.norm_in = nn.LayerNorm(width)
+        # The original fused path is preserved by default. An explicitly
+        # selected non-fused path uses pinned official Mamba2's native
+        # Conv1d fallback when its optional causal-conv extension is absent.
+        # The subsequent SSD scan still needs qualified Triton/CUDA support.
         self.mamba = mamba_cls(d_model=width, d_state=64, headdim=64,
-                               chunk_size=64, use_mem_eff_path=True)
+                               chunk_size=64, use_mem_eff_path=mamba_mem_eff_path)
         self.attn = CausalAttentionBlock(width, heads)
         self.norm_ttt = nn.LayerNorm(width)
         if use_ttt:

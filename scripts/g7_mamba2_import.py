@@ -73,6 +73,34 @@ def main() -> int:
             raise RuntimeError("MAMBA_CONSTRUCTOR_INVARIANT_FAILED")
         if any(p.device.type!="cpu" for p in module.parameters()):
             raise RuntimeError("UNEXPECTED_CUDA_EXECUTION")
+        # Check the exact *official pinned* forward implementation, rather
+        # than assuming a conventional Conv1d fallback exists. Constructor
+        # admission is CPU-only: no model forward or CUDA kernel is run.
+        original_forward = inspect.getsource(Mamba2.forward)
+        for marker in (
+            "if self.use_mem_eff_path and inference_params is None:",
+            "if causal_conv1d_fn is None",
+            "self.conv1d(",
+            "mamba_chunk_scan_combined(",
+        ):
+            if marker not in original_forward:
+                raise RuntimeError("PINNED_OFFICIAL_NONFUSED_SOURCE_PATH_MISSING")
+        unfused = Mamba2(
+            d_model=64, d_state=64, headdim=64, chunk_size=64,
+            use_mem_eff_path=False,
+        )
+        if (unfused.use_mem_eff_path is not False
+                or sum(p.numel() for p in unfused.parameters()) != params
+                or any(p.device.type != "cpu" for p in unfused.parameters())):
+            raise RuntimeError("NONFUSED_MAMBA_CONSTRUCTOR_INVARIANT_FAILED")
+        record["g7_r8_nonfused"] = {
+            "official_source_path_checked": True,
+            "cpu_constructor_pass": True,
+            "constructor_parameter_count_matches": True,
+            "optional_conv_fallback_source_present": True,
+            "native_gpu_forward": "NOT_RUN",
+            "binary_dependency_qualification": "UNVERIFIED",
+        }
         record["versions"]={"python":sys.version,"torch":torch.__version__,"triton":triton.__version__,
                             "cuda_build":torch.version.cuda}
         record["constructor"]={"parameters":params,"d_model":module.d_model,

@@ -55,7 +55,18 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path, forward_only: bool =
         record["environment"]["gpu"] = torch.cuda.get_device_name(device)
         record["environment"]["device_memory_bytes"] = torch.cuda.get_device_properties(device).total_memory
         torch.cuda.reset_peak_memory_stats(device)
-        model = AuthenticHybrid(official_classes=classes)
+        # G7-R8: G7-R6's authenticated forward-only fused convolution failed
+        # (TypeError, FUSED_CAUSAL_CONV1D_NOT_CALLABLE). Select the official
+        # non-fused path only in the small forward-only gate. Preserve the
+        # existing fused default for separately scoped engineering work.
+        model = AuthenticHybrid(
+            official_classes=classes,
+            mamba_mem_eff_path=not forward_only,
+        )
+        record["mamba_execution_path"] = (
+            "PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED"
+            if forward_only else "PINNED_OFFICIAL_FUSED_ENGINEERING_UNVERIFIED"
+        )
         if forward_only:
             record["checks"] = forward_only_checks(model, device=device)
         else:

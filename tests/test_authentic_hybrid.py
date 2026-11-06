@@ -144,3 +144,72 @@ def test_r6_forward_only_rejects_persistent_ttt_state_cpu():
     )
     with pytest.raises(AssertionError, match="EPISODE_RESET_NOT_DETERMINISTIC"):
         forward_only_checks(model, device=torch.device("cpu"))
+
+
+def test_g7_r8_nonfused_forward_only_constructor_selection_cpu():
+    """The one-shot retry must select official Mamba's non-fused option."""
+    from authentic_hybrid import forward_only_checks
+
+    class PathCheckedMamba(MambaDouble):
+        def __init__(self, **kwargs):
+            assert kwargs["use_mem_eff_path"] is False
+            super().__init__(**kwargs)
+
+    model = AuthenticHybrid(
+        official_classes=(PathCheckedMamba, ConfigDouble, TTTDouble),
+        mamba_mem_eff_path=False,
+    )
+    checks = forward_only_checks(model, device=torch.device("cpu"))
+    assert checks["forward_finite"] is True
+    assert checks["episode_reset_deterministic"] is True
+    assert checks["prefix_invariance"] is True
+    assert checks["suffix_negative_control"] is True
+    assert checks["gradient_execution"] == "NOT_RUN"
+    assert checks["optimizer_steps"] == 0
+    assert checks["training"] == "NOT_RUN"
+    assert all(p.grad is None for p in model.parameters())
+
+
+def test_g7_r8_preserves_fused_default_and_rejects_invalid_selector():
+    class FusedCheckedMamba(MambaDouble):
+        def __init__(self, **kwargs):
+            assert kwargs["use_mem_eff_path"] is True
+            super().__init__(**kwargs)
+
+    model = AuthenticHybrid(
+        official_classes=(FusedCheckedMamba, ConfigDouble, TTTDouble)
+    )
+    assert model(torch.randn(2, 8, 64)).shape == (2, 8, 64)
+    with pytest.raises(ValueError, match="mamba_mem_eff_path"):
+        AuthenticHybrid(official_classes=CLASSES, mamba_mem_eff_path=None)
+
+
+def test_g7_r8_gate3_forward_only_routes_to_nonfused_with_no_gpu_call():
+    """Static routing guard; never execute CUDA or official GPU forward."""
+    import inspect
+    import run_gate3
+    route = inspect.getsource(run_gate3.run)
+    assert "mamba_mem_eff_path=not forward_only" in route
+    assert "PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED" in route
+    assert "forward_only_checks(model, device=device)" in route
+    assert "integration_checks(model, device=device)" in route
+
+
+def test_g7_r8_causal_and_reset_negative_controls_retained_nonfused():
+    from authentic_hybrid import forward_only_checks
+    with pytest.raises(AssertionError, match="SUFFIX_LEAKAGE|PREFIX_INVARIANCE_FAILED"):
+        forward_only_checks(
+            AuthenticHybrid(
+                mamba_mem_eff_path=False,
+                official_classes=(LeakyMambaDouble, ConfigDouble, TTTDouble),
+            ),
+            device=torch.device("cpu"),
+        )
+    with pytest.raises(AssertionError, match="EPISODE_RESET_NOT_DETERMINISTIC"):
+        forward_only_checks(
+            AuthenticHybrid(
+                mamba_mem_eff_path=False,
+                official_classes=(MambaDouble, ConfigDouble, PersistentTTTDouble),
+            ),
+            device=torch.device("cpu"),
+        )
