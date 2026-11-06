@@ -12,7 +12,7 @@ WF = ROOT / ".github/workflows/g7-existing-runner-admission.yml"
 PS = ROOT / "scripts/g7_existing_runner_inventory.ps1"
 
 
-def test_only_owner_initiated_trusted_main_can_dispatch():
+def test_only_owner_initiated_main_can_dispatch_and_exception_is_single_run():
     wf = WF.read_text(encoding="utf-8")
     assert re.search(r"(?m)^on:\s*\n\s+workflow_dispatch:\s*$", wf)
     for forbidden in ("  pull_request:", "  push:", "  schedule:", "  issue_comment:",
@@ -21,6 +21,12 @@ def test_only_owner_initiated_trusted_main_can_dispatch():
     assert "github.ref == 'refs/heads/main'" in wf
     assert "github.actor == 'spoonman136668-ai'" in wf
     assert "github.ref_protected == true" in wf
+    assert "github.ref_protected == false" in wf
+    assert "github.run_number == 1" in wf
+    assert "github.event.inputs.admission_mode == 'g7-readonly-once'" in wf
+    assert "github.event.inputs.admission_mode == 'protected-main'" in wf
+    assert "default: protected-main" in wf
+    assert "G7_ADMISSION_MODE: ${{ github.event.inputs.admission_mode }}" in wf
     assert "github.run_attempt == 1" in wf
     assert "permissions:\n  contents: read" in wf
     assert "timeout-minutes: 8" in wf
@@ -37,7 +43,8 @@ def test_ttt_only_runner_label_not_forge():
 def test_runner_entrypoint_cannot_dispatch_cuda():
     wf = WF.read_text(encoding="utf-8")
     assert "scripts\\g7_existing_runner_inventory.ps1" in wf
-    assert "ref: ${{ github.sha }}" in wf
+    assert "ref: ${{ github.ref_protected && github.sha || '6369bd075849427691429dc8f111fb7e0dec033a' }}" in wf
+    assert '-ExpectedSha "${{ github.ref_protected && github.sha || \'6369bd075849427691429dc8f111fb7e0dec033a\' }}"' in wf
     assert "persist-credentials: false" in wf
     assert "shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}" in wf
     assert "Set-ExecutionPolicy" not in wf
@@ -49,6 +56,11 @@ def test_powershell_probe_checks_repo_sha_and_workspace():
     s = PS.read_text(encoding="utf-8")
     for required in (
         "UNAUTHORIZED_REPO_REF_ACTOR_OR_RUNNER",
+        "UNAUTHORIZED_READONLY_EXCEPTION_OR_SHA",
+        "$env:GITHUB_RUN_NUMBER -ceq '1'",
+        "$env:G7_ADMISSION_MODE -ceq 'g7-readonly-once'",
+        "$ExpectedSha -ceq '6369bd075849427691429dc8f111fb7e0dec033a'",
+        "one_time_exception_used = $false",
         "$env:GITHUB_REF_PROTECTED -cne 'true'",
         "INVALID_OR_MISMATCHED_GITHUB_SHA",
         "CHECKOUT_SHA_DRIFT",
