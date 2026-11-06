@@ -106,7 +106,8 @@ def optional_extension(module_name: str) -> dict:
 def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         min_free_gib: float, max_peak_gib: float,
         expected_sha: str | None = None,
-        kernel_only: bool = False) -> tuple[dict, int]:
+        kernel_only: bool = False,
+        forward_only: bool = False) -> tuple[dict, int]:
     started = time.perf_counter()
     mamba_root = mamba_root.resolve()
     ttt_root = ttt_root.resolve()
@@ -124,10 +125,14 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         "deployment": "NOT_AUTHORIZED",
         "resource_limit_gib": max_peak_gib,
         "binary_provenance_qualification": "PARTIAL_UNVERIFIED",
-        "mode": "CUDA_KERNEL_ONLY" if kernel_only else "CUDA_INTEGRATED_SMOKE",
+        "mode": ("CUDA_KERNEL_ONLY" if kernel_only else
+                 "AUTHENTIC_FORWARD_ONLY" if forward_only else "CUDA_INTEGRATED_SMOKE"),
     }
     code = 2
     try:
+        if kernel_only and forward_only:
+            record["status"] = "BLOCKED_MUTUALLY_EXCLUSIVE_GPU_MODES"
+            return record, 2
         ref = subprocess.run(["git", "-C", str(ROOT), "rev-parse", "HEAD"],
                              text=True, capture_output=True, timeout=12, check=False)
         observed = ref.stdout.strip() if ref.returncode == 0 else None
@@ -245,12 +250,15 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         from run_gate3 import run as native_gate3
         inner = receipt.with_name("g7_native_gate3_subreceipt.json")
         inner_result, inner_code = native_gate3(
-            mamba_root, ttt_root, receipt=inner)
+            mamba_root, ttt_root, receipt=inner,
+            forward_only=forward_only)
         record["native_gate3_status"] = inner_result.get("status")
         record["native_gate3_receipt_sha256"] = (
             file_sha256(inner) if inner.is_file() else None)
         record["native_checks"] = inner_result.get("checks")
         record["authentic_integration"] = inner_result.get("authentic_forward")
+        record["native_mode"] = inner_result.get("mode")
+        record["native_forward_checks"] = inner_result.get("checks") if forward_only else None
         if inner_code:
             record["status"] = (
                 "BLOCKED_NATIVE_GATE3" if inner_code == 2
@@ -262,7 +270,8 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         if peak > max_peak_gib * (1024**3):
             record["status"] = "FAIL_RESOURCE_CEILING_EXCEEDED"
             return record, 1
-        record["status"] = "PASS_NATIVE_CUDA_ENGINEERING_ONLY"
+        record["status"] = ("PASS_NATIVE_CUDA_FORWARD_ONLY"
+                            if forward_only else "PASS_NATIVE_CUDA_ENGINEERING_ONLY")
         return record, 0
     except Exception as exc:
         record["status"] = "FAIL_NATIVE_CUDA_INTEGRATION"
@@ -284,6 +293,8 @@ def main() -> int:
                         default=ROOT/"local_runs"/"g7_native_cuda.json")
     parser.add_argument("--min-free-gib", type=float, default=4.0)
     parser.add_argument("--max-peak-gib", type=float, default=2.0)
+    parser.add_argument("--forward-only", action="store_true",
+                        help="Authentic Mamba2 + TTT forward/causal/reset smoke only; never backward")
     parser.add_argument("--kernel-only", action="store_true",
                         help="Run one small CUDA matmul only; never run the integrated native model")
     parser.add_argument("--expected-sha", type=str, default=None,
@@ -298,7 +309,8 @@ def main() -> int:
                      min_free_gib=args.min_free_gib,
                      max_peak_gib=args.max_peak_gib,
                      expected_sha=args.expected_sha,
-                     kernel_only=args.kernel_only)
+                     kernel_only=args.kernel_only,
+                     forward_only=args.forward_only)
     print(json.dumps({"status":result["status"], "project_sha":result["project_sha"],
                       "gpu":result.get("gpu"), "receipt":str(args.receipt),
                       "error":result.get("error_message")}))
