@@ -1,0 +1,180 @@
+# G7-R12: PREPARED ONLY. Merge activates one read-only WSL2 inventory and
+# requires separate explicit owner approval; no automatic CUDA experiments.
+name: G7-R12 one-time original WSL2 C compiler inventory
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/g7-r12-one-shot-compiler-inventory.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-g7-r12-original-wsl-compiler-inventory
+  cancel-in-progress: false
+
+jobs:
+  inspect:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - name: Read-only compiler resolution and hash inventory in original WSL2 distro
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $original = 'cf207e3d2d3e02b2803548a0ebc74e3bd6511744'
+          $result = [ordered]@{
+            schema = 'ttt-hybrid.g7-r12.wsl2-host-compiler-inventory.v1'
+            original_run_id = 42300670454
+            original_sha = $original
+            diagnosed_cause = 'HOST_C_COMPILER_UNAVAILABLE_CONFIRMED'
+            diagnostic_run_id = 42313100239
+            status = 'BLOCKED_UNVERIFIED'
+            source_bound = $false
+            distro = 'Ubuntu-24.04'
+            gcc = 'UNVERIFIED'
+            clang = 'UNVERIFIED'
+            cc = 'UNVERIFIED'
+            versioned_gcc = 'UNVERIFIED'
+            versioned_clang = 'UNVERIFIED'
+            cc_environment = 'UNVERIFIED'
+            gcc_sha256 = $null
+            clang_sha256 = $null
+            cc_sha256 = $null
+            versioned_gcc_sha256 = $null
+            versioned_clang_sha256 = $null
+            method = 'READ_ONLY_PATH_AND_SHA256_NO_COMPILER_EXECUTION'
+            wsl_started_for_inventory_only = $false
+            cuda = 'NOT_STARTED'
+            model = 'NOT_RUN'
+            training = 'NOT_RUN'
+            installation = 'NOT_AUTHORIZED'
+            deployment = 'NOT_AUTHORIZED'
+            science = 'UNVERIFIED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/main' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $result.status = 'BLOCKED_UNAUTHORIZED_RUNNER'
+              throw 'BLOCKED'
+            }
+            $project = $env:GITHUB_WORKSPACE
+            if (-not $project -or -not (Test-Path -LiteralPath (Join-Path $project '.git'))) {
+              $result.status = 'BLOCKED_ORIGINAL_WORKTREE_ABSENT'
+              throw 'BLOCKED'
+            }
+            $head = (& git -C $project rev-parse HEAD | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $head -cne $original) {
+              $result.status = 'BLOCKED_ORIGINAL_SOURCE_IDENTITY_DRIFT'
+              throw 'BLOCKED'
+            }
+            $result.source_bound = $true
+            # No checkout, WSL writes, apt/dpkg installs, PATH edits, compiler
+            # invocation, CUDA import or model launch. Starting WSL2 is itself
+            # an execution action requiring the separately approved merge.
+            $probe = @'
+          set -eu
+          for tool in gcc clang cc; do
+            found=$(command -v "$tool" 2>/dev/null || true)
+            if [ -n "$found" ] && [ -f "$found" ] && [ -x "$found" ]; then
+              digest=$(/usr/bin/sha256sum -- "$found" | /usr/bin/cut -d ' ' -f 1)
+              printf '%s|PRESENT_UNQUALIFIED|%s\n' "$tool" "$digest"
+            else
+              printf '%s|NOT_FOUND|NONE\n' "$tool"
+            fi
+          done
+          for category in gcc clang; do
+            present=0
+            for f in /usr/bin/"$category"-[0-9]*; do
+              if [ -f "$f" ] && [ -x "$f" ]; then
+                digest=$(/usr/bin/sha256sum -- "$f" | /usr/bin/cut -d ' ' -f 1)
+                printf 'versioned-%s|PRESENT_UNQUALIFIED|%s\n' "$category" "$digest"
+                present=1
+                break
+              fi
+            done
+            if [ "$present" -eq 0 ]; then
+              printf 'versioned-%s|NOT_FOUND|NONE\n' "$category"
+            fi
+          done
+          if [ "${CC+x}" = x ] && [ -n "${CC}" ]; then
+            printf 'cc-environment|SET_NOT_VALIDATED|NONE\n'
+          else
+            printf 'cc-environment|NOT_SET|NONE\n'
+          fi
+          '@
+            $result.wsl_started_for_inventory_only = $true
+            $lines = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 35s /usr/bin/bash --noprofile --norc -c $probe 2>$null)
+            $subexit = $LASTEXITCODE
+            if ($subexit -ne 0 -or $lines.Count -ne 6) {
+              $result.status = 'BLOCKED_WSL_READONLY_PROBE_FAILED'
+              throw 'BLOCKED'
+            }
+            $expected = @('gcc', 'clang', 'cc', 'versioned-gcc', 'versioned-clang', 'cc-environment')
+            for ($i = 0; $i -lt $expected.Count; $i++) {
+              $fields = @([string]$lines[$i] -split '\|')
+              if ($fields.Count -ne 3 -or $fields[0] -cne $expected[$i]) {
+                $result.status = 'BLOCKED_UNEXPECTED_PROBE_OUTPUT'
+                throw 'BLOCKED'
+              }
+              if ($i -eq 5) {
+                if ($fields[1] -cnotin @('SET_NOT_VALIDATED', 'NOT_SET') -or
+                    $fields[2] -cne 'NONE') {
+                  $result.status = 'BLOCKED_CC_ENV_SCHEMA'
+                  throw 'BLOCKED'
+                }
+                $result.cc_environment = $fields[1]
+                continue
+              }
+              if ($fields[1] -cnotin @('PRESENT_UNQUALIFIED', 'NOT_FOUND') -or
+                  (($fields[1] -ceq 'PRESENT_UNQUALIFIED') -and $fields[2] -cnotmatch '^[a-f0-9]{64}$') -or
+                  (($fields[1] -ceq 'NOT_FOUND') -and $fields[2] -cne 'NONE')) {
+                $result.status = 'BLOCKED_PROVENANCE_NOT_VERIFIED'
+                throw 'BLOCKED'
+              }
+              $key = $fields[0].Replace('-', '_')
+              $result[$key] = $fields[1]
+              if ($fields[1] -ceq 'PRESENT_UNQUALIFIED') {
+                $result[$key + '_sha256'] = $fields[2]
+              }
+            }
+            if (@('gcc', 'clang', 'cc', 'versioned_gcc', 'versioned_clang') |
+                Where-Object { $result[$_] -eq 'PRESENT_UNQUALIFIED' }) {
+              $result.status = 'PRESENT_UNQUALIFIED_NO_COMPILER_EXECUTED'
+            } else {
+              $result.status = 'BLOCKED_NO_INSTALLED_COMPILER_FOUND'
+            }
+          } catch {
+            if ($result.status -eq 'BLOCKED_UNVERIFIED') {
+              $result.status = 'BLOCKED_PROBE_UNVERIFIED'
+            }
+          } finally {
+            # Never write to the original repository or emit raw environment.
+            $out = Join-Path $env:RUNNER_TEMP 'g7_r12_readonly_compiler_inventory.json'
+            $result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $out -Encoding UTF8
+            Write-Output ('G7_R12_STATUS=' + $result.status)
+            Write-Output ('G7_R12_GCC=' + $result.gcc)
+            Write-Output ('G7_R12_CLANG=' + $result.clang)
+            Write-Output ('G7_R12_CC=' + $result.cc)
+            Write-Output ('G7_R12_VERSIONED_GCC=' + $result.versioned_gcc)
+            Write-Output ('G7_R12_VERSIONED_CLANG=' + $result.versioned_clang)
+            Write-Output 'G7_R12_CUDA=NOT_STARTED'
+          }
+          if ($result.status -notin @('PRESENT_UNQUALIFIED_NO_COMPILER_EXECUTED',
+                                      'BLOCKED_NO_INSTALLED_COMPILER_FOUND')) { exit 2 }
+      - name: Retain one sanitized read-only compiler inventory
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r12-compiler-inventory-${{ github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/g7_r12_readonly_compiler_inventory.json
+          if-no-files-found: warn
+          retention-days: 30
