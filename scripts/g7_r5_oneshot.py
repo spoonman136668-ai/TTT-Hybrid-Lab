@@ -83,7 +83,10 @@ def manifest() -> tuple[str, dict]:
 
 def inner_run(args: argparse.Namespace, env_root: Path) -> int:
     """Only executed by the already-pinned venv Python after outer admission."""
-    pins = json.loads((ROOT / "source_pins.json").read_text(encoding="utf-8"))
+    package_sha256, packages = manifest()
+    guard(package_sha256 == R3_MANIFEST_SHA256, "R3_PACKAGE_MANIFEST_DRIFT")
+    guard(packages.get("torch") == TORCH and packages.get("triton") == TRITON,
+          "R3_PACKAGE_VERSION_DRIFT")
     sys.path[:0] = [
         str(ROOT),
         str(env_root / "sources" / "mamba2"),
