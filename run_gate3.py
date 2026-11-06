@@ -11,7 +11,7 @@ import traceback
 from datetime import datetime, timezone
 import torch
 from authentic_preflight import evaluate
-from authentic_hybrid import AuthenticHybrid, integration_checks, load_official_classes
+from authentic_hybrid import AuthenticHybrid, integration_checks, forward_only_checks, load_official_classes
 
 BASE = Path(__file__).resolve().parent
 
@@ -20,7 +20,7 @@ def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def run(mamba_root: Path, ttt_root: Path, *, receipt: Path):
+def run(mamba_root: Path, ttt_root: Path, *, receipt: Path, forward_only: bool = False):
     preflight = evaluate(mamba_root, ttt_root)
     record = {
         "schema":"ttt-hybrid.authentic-gpu-smoke.v1",
@@ -35,6 +35,7 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path):
                        "torch_cuda_build":torch.version.cuda},
         "preflight":preflight,
         "status":"BLOCKED_SOURCE_RUNTIME_ADMISSION",
+        "mode":"FORWARD_ONLY_NO_GRAD" if forward_only else "FULL_ENGINEERING_INTEGRATION",
         "authentic_forward":"NOT_RUN",
         "scientific_qualification":"UNVERIFIED",
         "model_quality_claim":"NONE",
@@ -55,10 +56,14 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path):
         record["environment"]["device_memory_bytes"] = torch.cuda.get_device_properties(device).total_memory
         torch.cuda.reset_peak_memory_stats(device)
         model = AuthenticHybrid(official_classes=classes)
-        record["checks"] = integration_checks(model, device=device)
+        if forward_only:
+            record["checks"] = forward_only_checks(model, device=device)
+        else:
+            record["checks"] = integration_checks(model, device=device)
         torch.cuda.synchronize(device)
         record["environment"]["peak_allocated_bytes"] = torch.cuda.max_memory_allocated(device)
-        record["status"]="PASS_AUTHENTIC_GPU_ENGINEERING_SMOKE_ONLY"
+        record["status"]=("PASS_AUTHENTIC_GPU_FORWARD_ONLY"
+                          if forward_only else "PASS_AUTHENTIC_GPU_ENGINEERING_SMOKE_ONLY")
         record["authentic_forward"]="PASS"
         return record, 0
     except Exception as exc:
@@ -73,11 +78,14 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path):
 
 def main():
     p=argparse.ArgumentParser(description=__doc__)
+    p.add_argument('--forward-only', action='store_true',
+                   help='No-grad finite forward, causal/reset controls, no backward or training')
     p.add_argument('--mamba-root',required=True,type=Path)
     p.add_argument('--ttt-root',required=True,type=Path)
     p.add_argument('--receipt',type=Path,default=BASE/'gate3_authentic_receipt.json')
     args=p.parse_args()
-    result, code=run(args.mamba_root,args.ttt_root,receipt=args.receipt)
+    result, code=run(args.mamba_root,args.ttt_root,receipt=args.receipt,
+                     forward_only=args.forward_only)
     print(json.dumps({"status":result["status"],"receipt":str(args.receipt)}))
     return code
 

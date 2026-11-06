@@ -144,3 +144,52 @@ def test_g7_r5_single_matmul_precedes_optional_integrated_smoke():
     assert 'torch.cuda.reset_peak_memory_stats(0)' in source
     assert 'torch.cuda.max_memory_allocated(0)' in source
     assert 'if peak > max_peak_gib * (1024**3):' in source
+
+
+def test_r6_mutually_exclusive_gpu_modes_fail_before_imports(tmp_path, monkeypatch):
+    monkeypatch.delenv("EXPECTED_CANDIDATE_SHA", raising=False)
+    receipt = tmp_path / "r6_exclusive.json"
+    result, code = run(
+        tmp_path / "no-mamba", tmp_path / "no-ttt",
+        receipt=receipt, min_free_gib=4.0, max_peak_gib=1.0,
+        kernel_only=True, forward_only=True,
+    )
+    assert code == 2
+    assert result["status"] == "BLOCKED_MUTUALLY_EXCLUSIVE_GPU_MODES"
+    assert result["authentic_integration"] == "NOT_RUN"
+    assert result["scientific_qualification"] == "UNVERIFIED"
+    assert json.loads(receipt.read_text())["status"] == result["status"]
+
+
+def test_r6_forward_only_requires_exact_candidate_sha(tmp_path, monkeypatch):
+    monkeypatch.delenv("EXPECTED_CANDIDATE_SHA", raising=False)
+    receipt = tmp_path / "r6_unbound.json"
+    result, code = run(
+        tmp_path / "no-mamba", tmp_path / "no-ttt",
+        receipt=receipt, min_free_gib=4.0, max_peak_gib=1.0,
+        forward_only=True,
+    )
+    assert code == 2
+    assert result["status"] == "BLOCKED_MISSING_EXPECTED_CANDIDATE_SHA"
+    assert result["mode"] == "AUTHENTIC_FORWARD_ONLY"
+    assert result["authentic_integration"] == "NOT_RUN"
+    assert json.loads(receipt.read_text())["scientific_qualification"] == "UNVERIFIED"
+
+
+def test_r6_forward_only_calls_source_bound_existing_gate():
+    """Static test, never starts CUDA or runs the authenticated source."""
+    import inspect
+    import run_gate3
+    from authentic_hybrid import forward_only_checks
+    outer = inspect.getsource(run)
+    inner = inspect.getsource(run_gate3.run)
+    forward = inspect.getsource(forward_only_checks)
+    assert "forward_only=forward_only" in outer
+    assert '"PASS_NATIVE_CUDA_FORWARD_ONLY"' in outer
+    assert '"PASS_AUTHENTIC_GPU_FORWARD_ONLY"' in inner
+    assert "forward_only_checks(model, device=device)" in inner
+    assert "integration_checks(model, device=device)" in inner
+    assert "with torch.no_grad():" in forward
+    assert "model.eval()" in forward
+    assert '"optimizer_steps": 0' in forward
+    assert '"training": "NOT_RUN"' in forward

@@ -101,3 +101,46 @@ def test_episode_reset_negative_control_rejects_carryover():
     m=AuthenticHybrid(official_classes=(MambaDouble,ConfigDouble,PersistentTTTDouble))
     with pytest.raises(AssertionError,match='EPISODE_RESET_NOT_DETERMINISTIC'):
         integration_checks(m,device=torch.device('cpu'))
+
+
+class GradForbiddenMambaDouble(MambaDouble):
+    def forward(self, x):
+        assert not torch.is_grad_enabled(), "GRAD_TRACKING_FORBIDDEN"
+        assert not self.training, "TRAIN_MODE_FORBIDDEN"
+        return super().forward(x)
+
+
+def test_r6_forward_only_no_grad_deterministic_causal_cpu():
+    """Engineering contract with test doubles; cannot qualify authentic CUDA."""
+    from authentic_hybrid import forward_only_checks
+    model = AuthenticHybrid(
+        official_classes=(GradForbiddenMambaDouble, ConfigDouble, TTTDouble),
+    )
+    report = forward_only_checks(model, device=torch.device("cpu"))
+    assert report["forward_finite"] is True
+    assert report["shape"] == [2, 16, 64]
+    assert report["episode_reset_deterministic"] is True
+    assert report["prefix_invariance"] is True
+    assert report["suffix_negative_control"] is True
+    assert report["gradient_execution"] == "NOT_RUN"
+    assert report["optimizer_steps"] == 0
+    assert report["training"] == "NOT_RUN"
+    assert all(param.grad is None for param in model.parameters())
+
+
+def test_r6_forward_only_rejects_future_suffix_leak_cpu():
+    from authentic_hybrid import forward_only_checks
+    model = AuthenticHybrid(
+        official_classes=(LeakyMambaDouble, ConfigDouble, TTTDouble),
+    )
+    with pytest.raises(AssertionError, match="SUFFIX_LEAKAGE|PREFIX_INVARIANCE_FAILED"):
+        forward_only_checks(model, device=torch.device("cpu"))
+
+
+def test_r6_forward_only_rejects_persistent_ttt_state_cpu():
+    from authentic_hybrid import forward_only_checks
+    model = AuthenticHybrid(
+        official_classes=(MambaDouble, ConfigDouble, PersistentTTTDouble),
+    )
+    with pytest.raises(AssertionError, match="EPISODE_RESET_NOT_DETERMINISTIC"):
+        forward_only_checks(model, device=torch.device("cpu"))

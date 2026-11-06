@@ -139,3 +139,50 @@ def integration_checks(model: nn.Module, *, device: torch.device,
             "depth_utilization_forced": model.depth is not None,
             "model_parameters": sum(p.numel() for p in model.parameters()),
             "interpretation":"development engineering checks only"}
+
+
+def forward_only_checks(model: nn.Module, *, device: torch.device,
+                        dtype: torch.dtype = torch.float32, seed: int = 90210):
+    """Small authentic forward smoke: no gradients, optimizer, or training.
+
+    Reuse the already established causal and episode-reset negative controls.
+    This is engineering compatibility evidence, not learning or performance.
+    """
+    torch.manual_seed(seed)
+    model = model.to(device=device, dtype=dtype)
+    if model.depth is not None:
+        with torch.no_grad():
+            model.depth.router.weight.zero_()
+            model.depth.router.bias.fill_(1.0)
+    model.eval()
+    with torch.no_grad():
+        x = torch.randn(2, 16, model.width, device=device, dtype=dtype)
+        first = model(x)
+        replay = model(x)
+        prefix = model(x[:, :8])
+        changed_input = x.clone()
+        changed_input[:, 8:] += 7.0
+        changed = model(changed_input)
+        if first.shape != x.shape:
+            raise AssertionError("BAD_OUTPUT_SHAPE")
+        if not bool(torch.isfinite(first).all()):
+            raise AssertionError("NONFINITE_FORWARD")
+        if not bool(torch.allclose(first, replay, rtol=3e-4, atol=3e-4)):
+            raise AssertionError("EPISODE_RESET_NOT_DETERMINISTIC")
+        if not bool(torch.allclose(first[:, :8], changed[:, :8], rtol=3e-4, atol=3e-4)):
+            raise AssertionError("SUFFIX_LEAKAGE")
+        if not bool(torch.allclose(first[:, :8], prefix, rtol=3e-4, atol=3e-4)):
+            raise AssertionError("PREFIX_INVARIANCE_FAILED")
+    if any(p.grad is not None for p in model.parameters()):
+        raise AssertionError("UNEXPECTED_GRADIENT_IN_FORWARD_ONLY_GATE")
+    return {
+        "forward_finite": True,
+        "shape": list(first.shape),
+        "episode_reset_deterministic": True,
+        "prefix_invariance": True,
+        "suffix_negative_control": True,
+        "gradient_execution": "NOT_RUN",
+        "optimizer_steps": 0,
+        "training": "NOT_RUN",
+        "interpretation": "engineering source-bound forward compatibility only",
+    }
