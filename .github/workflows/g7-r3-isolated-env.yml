@@ -1,8 +1,12 @@
-# G7-R3: one-shot isolated WSL environment staging, no GPU kernel execution.
+# G7-R3: a single native main-branch push triggered by this exact workflow file.
+# No manual trigger, scheduler or controller; future runs blocked by run_number.
 name: G7-R3 isolated WSL2 CUDA package and source provenance
 
 on:
-  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/g7-r3-isolated-env.yml"
 
 permissions:
   contents: read
@@ -13,7 +17,7 @@ concurrency:
 
 jobs:
   stage-environment:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 55
     steps:
@@ -31,7 +35,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
               $env:GITHUB_REF -cne 'refs/heads/main' -or
-              $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
+              $env:GITHUB_EVENT_NAME -cne 'push' -or
               $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
               $env:GITHUB_RUN_NUMBER -cne '1' -or
               $env:GITHUB_RUN_ATTEMPT -cne '1' -or
