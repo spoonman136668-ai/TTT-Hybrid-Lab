@@ -1,50 +1,35 @@
-"""G7-R12: pure static scope tests; tests cannot run the WSL2 inventory."""
+"""G7-R12 one-use read-only inventory: source-only retirement and receipt integrity."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-WF = ROOT / ".github/workflows/g7-r12-one-shot-compiler-inventory.yml"
 
 
-def test_owner_single_use_specific_isolated_runner_and_budget():
-    s = WF.read_text(encoding="utf-8")
+def test_consumed_one_use_workflow_retired():
+    assert not (ROOT / ".github/workflows/g7-r12-one-shot-compiler-inventory.yml").exists()
+
+
+def test_g7_r12_blocked_status_provenance_immutable():
+    report = (ROOT / "docs/G7_R12_RESULT.md").read_text(encoding="utf-8")
     for marker in (
-        "on:\n  push:\n    branches: [main]",
-        'paths:\n      - ".github/workflows/g7-r12-one-shot-compiler-inventory.yml"',
-        "github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab'",
-        "github.actor == 'spoonman136668-ai'",
-        "github.ref == 'refs/heads/main'",
-        "github.run_number == 1 && github.run_attempt == 1",
-        "TTT-HYBRID-GPU-WIN", "ttt-hybrid-gpu-isolated",
-        "timeout-minutes: 4", "if: always()", "retention-days: 30",
-    ):
-        assert marker in s, marker
-    for banned in (
-        "actions/checkout@", "workflow_dispatch:", "schedule:", "pull_request:",
-        "git clone", "Start-Process", "apt install", "apt-get",
-        "pip install", "torch.cuda", "nvidia-smi", "run_gate3",
-    ):
-        assert banned not in s
-
-
-def test_original_failure_sha_identity_and_bounded_inventory_only():
-    s = WF.read_text(encoding="utf-8")
-    for marker in (
+        "42314692869",
+        "13549323708",
+        "2edc9d0b78f82c06fa8cc73c40f295a80fd36ce6",
         "cf207e3d2d3e02b2803548a0ebc74e3bd6511744",
-        "42300670454", "42313100239",
-        "HOST_C_COMPILER_UNAVAILABLE_CONFIRMED",
-        "BLOCKED_ORIGINAL_SOURCE_IDENTITY_DRIFT",
-        "wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout",
-        "35s /usr/bin/bash --noprofile --norc -c $probe",
-        "command -v", "/usr/bin/sha256sum",
-        "PRESENT_UNQUALIFIED", "NOT_FOUND",
-        "BLOCKED_NO_INSTALLED_COMPILER_FOUND",
-        "cc-environment", "g7_r12_readonly_compiler_inventory.json",
-        "cuda = 'NOT_STARTED'", "model = 'NOT_RUN'",
-        "training = 'NOT_RUN'", "installation = 'NOT_AUTHORIZED'",
-        "deployment = 'NOT_AUTHORIZED'",
+        "601cb4a92db315f39a5bcdca308962d4231a87474dfc67491b06a5305164fdc4",
+        "56781ed0316ecd155ca3ace4d92bca72115e390590f24362bd790ac0bcb22aef",
+        "BLOCKED_PROBE_UNVERIFIED",
+        "source_bound=true",
+        "wsl_started_for_inventory_only=true",
+        "gcc=UNVERIFIED",
+        "clang=UNVERIFIED",
+        "NO RETRY",
     ):
-        assert marker in s, marker
-    assert "gcc --version" not in s
-    assert "clang --version" not in s
-    assert "wsl_started_for_inventory_only" in s
-    assert "$env:RUNNER_TEMP" in s
+        assert marker in report, marker
+
+
+def test_unverified_toolchain_not_treated_as_absent():
+    report = (ROOT / "docs/G7_R12_RESULT.md").read_text(encoding="utf-8")
+    assert "No reliable absence or presence conclusion" in report
+    assert "SCIENTIFIC: UNVERIFIED" in report
+    assert "DEPLOYMENT: NOT AUTHORIZED" in report
+    assert "No installation, compiler invocation, CUDA, or model execution" in report
