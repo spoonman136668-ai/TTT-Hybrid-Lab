@@ -1,5 +1,6 @@
 # Read-only inventory only. The one-time unprotected-main exception requires
-# explicit owner selection and is admissible solely on workflow run #1.
+# explicit owner selection and is admissible solely on workflow run #2,
+# after first workflow run 42190836409 was skipped with no job executed.
 # No CUDA kernel, package installation or WSL launch.
 # Route only to a TTT-Hybrid-authorized Windows self-hosted runner; do not
 # target FORGE-CODEX-REMOTE or its forge-codex-isolated label.
@@ -9,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       admission_mode:
-        description: 'Explicitly select protected-main or the first-run-only read-only exception'
+        description: 'Select g7-readonly-once for recovery run #2; protected-main skips if unprotected'
         type: choice
         required: true
         default: protected-main
@@ -26,7 +27,7 @@ concurrency:
 
 jobs:
   inventory:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_attempt == 1 && ((github.ref_protected == true && github.event.inputs.admission_mode == 'protected-main') || (github.ref_protected == false && github.event.inputs.admission_mode == 'g7-readonly-once' && github.run_number == 1)) }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_attempt == 1 && ((github.ref_protected == true && github.event.inputs.admission_mode == 'protected-main') || (github.ref_protected == false && github.event.inputs.admission_mode == 'g7-readonly-once' && github.run_number == 2)) }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 8
     steps:
@@ -41,7 +42,7 @@ jobs:
       - name: Admit existing host without WSL startup or installations
         env:
           G7_ADMISSION_MODE: ${{ github.event.inputs.admission_mode }}
-          G7_REQUIRED_SCRIPT_BLOB: 1b82a4ec9acd0e823b47e5906717349494ed4faf
+          G7_REQUIRED_SCRIPT_BLOB: b35289871334b8a772fc3b16c979e3ef30313892
         shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
         run: |
           & .\scripts\g7_existing_runner_inventory.ps1 `
