@@ -22,7 +22,7 @@ def test_only_owner_initiated_main_can_dispatch_and_exception_is_single_run():
     assert "github.actor == 'spoonman136668-ai'" in wf
     assert "github.ref_protected == true" in wf
     assert "github.ref_protected == false" in wf
-    assert "github.run_number == 1" in wf
+    assert "github.run_number == 2" in wf
     assert "github.event.inputs.admission_mode == 'g7-readonly-once'" in wf
     assert "github.event.inputs.admission_mode == 'protected-main'" in wf
     assert "default: protected-main" in wf
@@ -45,7 +45,7 @@ def test_runner_entrypoint_cannot_dispatch_cuda():
     assert "scripts\\g7_existing_runner_inventory.ps1" in wf
     assert "ref: ${{ github.sha }}" in wf
     assert '-ExpectedSha "$env:GITHUB_SHA"' in wf
-    assert "G7_REQUIRED_SCRIPT_BLOB: 1b82a4ec9acd0e823b47e5906717349494ed4faf" in wf
+    assert "G7_REQUIRED_SCRIPT_BLOB: b35289871334b8a772fc3b16c979e3ef30313892" in wf
     assert "persist-credentials: false" in wf
     assert "shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}" in wf
     assert "Set-ExecutionPolicy" not in wf
@@ -58,7 +58,7 @@ def test_powershell_probe_checks_repo_sha_and_workspace():
     for required in (
         "UNAUTHORIZED_REPO_REF_ACTOR_OR_RUNNER",
         "UNAUTHORIZED_READONLY_EXCEPTION_OR_SHA",
-        "$env:GITHUB_RUN_NUMBER -ceq '1'",
+        "$env:GITHUB_RUN_NUMBER -ceq '2'",
         "$env:G7_ADMISSION_MODE -ceq 'g7-readonly-once'",
         "$ExpectedSha -ceq $env:GITHUB_SHA",
         "EXCEPTION_SCRIPT_BLOB_DRIFT",

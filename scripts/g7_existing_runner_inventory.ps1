@@ -1,6 +1,7 @@
 # G7: read-only admission on an existing Windows runner granted to TTT-Hybrid.
 # NOT a CUDA dispatch, install, GPU kernel run, controller or runner registration.
-# Unprotected main is allowed only on owner-dispatched run #1 and only when
+# Unprotected main recovery is allowed only on owner-dispatched run #2
+# after run #1 was verified skipped, and only when
 # the reviewed inventory script plus official source-pins blobs match.
 [CmdletBinding()]
 param(
@@ -67,7 +68,7 @@ try {
         $ExpectedSha -ceq $env:GITHUB_SHA)
     $oneTimeAdmission = ($env:GITHUB_REF_PROTECTED -cne 'true' -and
         $env:G7_ADMISSION_MODE -ceq 'g7-readonly-once' -and
-        $env:GITHUB_RUN_NUMBER -ceq '1' -and
+        $env:GITHUB_RUN_NUMBER -ceq '2' -and
         $ExpectedSha -ceq $env:GITHUB_SHA)
     if (-not ($normalAdmission -or $oneTimeAdmission)) {
         throw 'UNAUTHORIZED_READONLY_EXCEPTION_OR_SHA'
