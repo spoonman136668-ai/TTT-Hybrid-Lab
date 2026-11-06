@@ -119,7 +119,18 @@ def main() -> int:
     )
     if args.child:
         guard(args.inner_receipt is not None, "MISSING_INNER_RECEIPT")
-        return inner_run(args, env_root)
+        try:
+            return inner_run(args, env_root)
+        except Blocked as exc:
+            Path(args.inner_receipt).write_text(
+                json.dumps({
+                    "status": "BLOCKED_" + str(exc),
+                    "mode": "CUDA_KERNEL_ONLY",
+                    "scientific_qualification": "UNVERIFIED",
+                    "authentic_integration": "NOT_RUN",
+                }, sort_keys=True) + "\n", encoding="utf-8"
+            )
+            return 2
 
     receipt = args.receipt.resolve()
     info = {
