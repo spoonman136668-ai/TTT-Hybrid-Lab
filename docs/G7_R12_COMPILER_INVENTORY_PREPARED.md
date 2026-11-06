@@ -1,4 +1,6 @@
-# G7-R12 — isolated WSL2 host C compiler availability: prepared only
+# G7-R12 — historical preparation for read-only WSL2 compiler inventory
+
+**COMPLETED 2026-11-06, FAILED:** The owner authorized one run via [PR #29](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/29); [run #42314692869](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42314692869) returned `BLOCKED_PROBE_UNVERIFIED`. See [G7_R12_RESULT.md](G7_R12_RESULT.md) for verified output and limitations. The original pre-execution scope follows as historical context.
 
 **Source baseline:** `fb3c7ff265a15b3d8dda9c9d8797ae202888acb6`; G4 and G5 Linux/Windows + pinned Mamba Ubuntu CPU qualification all PASS on that exact SHA. Original G7-R9 GPU forward [run 42300670454](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42300670454) FAIL; G7-R11 [run 42313100239](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42313100239) SHA256-custodied original `RuntimeError` plus `triton/runtime/build.py` frame confirm `HOST_C_COMPILER_UNAVAILABLE_CONFIRMED`. Permanent proof: `docs/G7_R11_RESULT.md`.
 
