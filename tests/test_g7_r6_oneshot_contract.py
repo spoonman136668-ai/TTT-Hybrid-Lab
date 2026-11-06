@@ -61,26 +61,9 @@ def test_fail_closed_on_source_mode_coverage_memory_and_leakage():
         assert not r6.valid_native_result(data, "a" * 40, 0), path
 
 
-def test_one_time_workflow_owner_main_only_without_global_branch_protection():
-    path = ROOT / ".github/workflows/g7-r6-one-shot-forward.yml"
-    data = path.read_text(encoding="utf-8")
-    assert "on:\n  push:\n    branches: [main]" in data
-    assert "github.ref_protected" not in data
-    assert "GITHUB_REF_PROTECTED" not in data
-    assert "github.actor == 'spoonman136668-ai'" in data
-    assert "GITHUB_ACTOR -cne 'spoonman136668-ai'" in data
-    assert "github.event_name == 'push'" in data
-    assert "github.ref == 'refs/heads/main'" in data
-    assert "github.run_number == 1 && github.run_attempt == 1" in data
-    assert "ttt-hybrid-gpu-isolated" in data
-    assert "TTT-HYBRID-GPU-WIN" in data
-    assert "timeout-minutes: 7" in data
-    assert "--expected-sha \"$env:GITHUB_SHA\"" in data
-    assert "actions/checkout@" in data and "persist-credentials: false" in data
-    assert "workflow_dispatch:" not in data
-    assert "pull_request:" not in data
-    assert "schedule:" not in data
-
+def test_consumed_one_shot_workflow_is_retired_after_attempt():
+    # Historical workflow and original failure receipt retained in docs/G7_R6_RESULT.md.
+    assert not (ROOT / ".github/workflows/g7-r6-one-shot-forward.yml").exists()
 
 def test_forward_script_reuses_pinned_r3_custody_without_training_or_installation():
     source = (ROOT / "scripts/g7_r6_oneshot.py").read_text(encoding="utf-8")
