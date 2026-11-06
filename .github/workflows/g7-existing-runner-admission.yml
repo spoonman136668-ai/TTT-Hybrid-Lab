@@ -1,0 +1,44 @@
+# First-use read-only inventory. No CUDA kernel, package installation or WSL launch.
+# Route only to a TTT-Hybrid-authorized Windows self-hosted runner; do not
+# target FORGE-CODEX-REMOTE or its forge-codex-isolated label.
+name: G7 Windows existing-runner admission
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-g7-existing-runner-admission
+  cancel-in-progress: false
+
+jobs:
+  inventory:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.ref_protected == true && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 8
+    steps:
+      - name: Checkout only the trusted default-branch commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Admit existing host without WSL startup or installations
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          & .\scripts\g7_existing_runner_inventory.ps1 `
+            -ProjectRoot "$env:GITHUB_WORKSPACE" `
+            -ExpectedSha "$env:GITHUB_SHA" `
+            -ReceiptPath (Join-Path "$env:GITHUB_WORKSPACE" 'local_runs\g7_runner_inventory.json')
+      - name: Retain the read-only host receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-host-inventory-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_runner_inventory.json
+          if-no-files-found: warn
+          retention-days: 30

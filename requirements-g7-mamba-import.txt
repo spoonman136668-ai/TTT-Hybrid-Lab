@@ -1,0 +1,7 @@
+# CPU-only official Mamba2 import/constructor smoke; NOT a CUDA qualification
+# PyTorch pinned independently by requirements-cpu.txt
+triton==3.5.0
+einops==0.8.1
+packaging==24.2
+transformers==4.44.2
+numpy==1.26.4
