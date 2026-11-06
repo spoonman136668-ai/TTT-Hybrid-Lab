@@ -1,4 +1,6 @@
-# G7-R10 — pending one-use exact G7-R9 subreceipt diagnosis
+# G7-R10 — historical preparation for read-only G7-R9 subreceipt diagnosis
+
+**COMPLETED 2026-11-06:** Owner approved PR #25 merge; run #42302765535 succeeded, recovered exact hashed G3 evidence; the one-use diagnostic is retired. See [G7_R10_RESULT.md](G7_R10_RESULT.md) for the actual result. All below describe the earlier pre-execution scope, not current state.
 
 **Parent main** `d59c024ec0eb9ea7e0383a0a6d608b3480a32b91` (G7-R9 cleanup completed, exact-main 5/5 required CI PASS). **Candidate PR does not execute the read-only runner job.**
 
