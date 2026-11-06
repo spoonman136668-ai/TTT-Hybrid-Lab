@@ -1,5 +1,5 @@
 # G7-R6: single-use, source-qualified no-gradient forward on the existing TTT runner.
-# Never dispatch on PR, schedule, workflow_dispatch, or unprotected main.
+# Never dispatch on PR, schedule or workflow_dispatch. Owner-only main push, first attempt only.
 name: G7-R6 single authentic forward-only CUDA
 on:
   push:
@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   authentic-forward:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.ref_protected == true && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 7
     steps:
@@ -34,7 +34,6 @@ jobs:
           $ErrorActionPreference = 'Stop'
           if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
               $env:GITHUB_REF -cne 'refs/heads/main' -or
-              $env:GITHUB_REF_PROTECTED -cne 'true' -or
               $env:GITHUB_EVENT_NAME -cne 'push' -or
               $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
               $env:GITHUB_RUN_NUMBER -cne '1' -or

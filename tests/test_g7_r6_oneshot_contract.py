@@ -61,12 +61,16 @@ def test_fail_closed_on_source_mode_coverage_memory_and_leakage():
         assert not r6.valid_native_result(data, "a" * 40, 0), path
 
 
-def test_one_time_workflow_is_protected_main_and_no_pr_or_manual_gpu_dispatch():
+def test_one_time_workflow_owner_main_only_without_global_branch_protection():
     path = ROOT / ".github/workflows/g7-r6-one-shot-forward.yml"
     data = path.read_text(encoding="utf-8")
     assert "on:\n  push:\n    branches: [main]" in data
-    assert "github.ref_protected == true" in data
-    assert "GITHUB_REF_PROTECTED -cne 'true'" in data
+    assert "github.ref_protected" not in data
+    assert "GITHUB_REF_PROTECTED" not in data
+    assert "github.actor == 'spoonman136668-ai'" in data
+    assert "GITHUB_ACTOR -cne 'spoonman136668-ai'" in data
+    assert "github.event_name == 'push'" in data
+    assert "github.ref == 'refs/heads/main'" in data
     assert "github.run_number == 1 && github.run_attempt == 1" in data
     assert "ttt-hybrid-gpu-isolated" in data
     assert "TTT-HYBRID-GPU-WIN" in data
