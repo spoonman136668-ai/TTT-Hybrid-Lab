@@ -105,7 +105,8 @@ def optional_extension(module_name: str) -> dict:
 
 def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         min_free_gib: float, max_peak_gib: float,
-        expected_sha: str | None = None) -> tuple[dict, int]:
+        expected_sha: str | None = None,
+        kernel_only: bool = False) -> tuple[dict, int]:
     started = time.perf_counter()
     mamba_root = mamba_root.resolve()
     ttt_root = ttt_root.resolve()
@@ -123,6 +124,7 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         "deployment": "NOT_AUTHORIZED",
         "resource_limit_gib": max_peak_gib,
         "binary_provenance_qualification": "PARTIAL_UNVERIFIED",
+        "mode": "CUDA_KERNEL_ONLY" if kernel_only else "CUDA_INTEGRATED_SMOKE",
     }
     code = 2
     try:
@@ -198,12 +200,28 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         record["gpu"]["torch_allocator_memory_fraction"] = allocator_fraction
         record["gpu"]["allocator_limit_scope"] = "PYTORCH_ONLY"
 
-        # Force an actual CUDA operation before the integrated smoke.
+        # This is the smallest native CUDA engineering gate; integration is separately qualified.
+        torch.cuda.reset_peak_memory_stats(0)
         a = torch.randn((16, 16), device="cuda", dtype=torch.float32)
         sample = (a @ a).sum()
         torch.cuda.synchronize(0)
         if not torch.isfinite(sample).item():
             raise RuntimeError("CUDA_KERNEL_NONFINITE")
+        if kernel_only:
+            peak = torch.cuda.max_memory_allocated(0)
+            record["gpu"]["peak_allocated_bytes"] = peak
+            record["kernel_only"] = {
+                "operation": "float32_16x16_matmul_and_synchronize",
+                "finite_result": True,
+                "native_mamba_forward": "NOT_RUN",
+                "native_ttt_forward": "NOT_RUN",
+                "training": "NOT_RUN",
+            }
+            if peak > max_peak_gib * (1024**3):
+                record["status"] = "FAIL_RESOURCE_CEILING_EXCEEDED"
+                return record, 1
+            record["status"] = "PASS_NATIVE_CUDA_KERNEL_ONLY"
+            return record, 0
 
         from run_gate3 import run as native_gate3
         inner = receipt.with_name("g7_native_gate3_subreceipt.json")
@@ -247,6 +265,8 @@ def main() -> int:
                         default=ROOT/"local_runs"/"g7_native_cuda.json")
     parser.add_argument("--min-free-gib", type=float, default=4.0)
     parser.add_argument("--max-peak-gib", type=float, default=2.0)
+    parser.add_argument("--kernel-only", action="store_true",
+                        help="Run one small CUDA matmul only; never run the integrated native model")
     parser.add_argument("--expected-sha", type=str, default=None,
                         help="Exact qualified 40-digit project commit SHA (or EXPECTED_CANDIDATE_SHA env)")
     args=parser.parse_args()
@@ -258,7 +278,8 @@ def main() -> int:
                      receipt=args.receipt,
                      min_free_gib=args.min_free_gib,
                      max_peak_gib=args.max_peak_gib,
-                     expected_sha=args.expected_sha)
+                     expected_sha=args.expected_sha,
+                     kernel_only=args.kernel_only)
     print(json.dumps({"status":result["status"], "project_sha":result["project_sha"],
                       "gpu":result.get("gpu"), "receipt":str(args.receipt),
                       "error":result.get("error_message")}))
