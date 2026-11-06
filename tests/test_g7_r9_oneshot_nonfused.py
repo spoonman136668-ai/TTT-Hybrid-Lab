@@ -60,23 +60,20 @@ def test_nonfused_exact_source_native_acceptance_requires_real_route_and_control
         assert not custody.valid_native_result(mutated,"a"*40,0,require_nonfused=True), path
 
 
-def test_no_fused_path_or_unscoped_cuda_trigger():
-    text=(ROOT/".github/workflows/g7-r9-one-shot-nonfused.yml").read_text()
-    assert "on:\n  push:\n    branches: [main]" in text
-    assert 'paths:\n      - ".github/workflows/g7-r9-one-shot-nonfused.yml"' in text
-    assert "github.run_number == 1 && github.run_attempt == 1" in text
-    assert "github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab'" in text
-    assert "github.actor == 'spoonman136668-ai'" in text
-    assert "TTT-HYBRID-GPU-WIN" in text
-    assert "ttt-hybrid-gpu-isolated" in text
-    assert "timeout-minutes: 7" in text
-    assert "--require-nonfused" in text
-    assert '--expected-sha "$env:GITHUB_SHA"' in text
-    assert "workflow_dispatch:" not in text
-    assert "pull_request:" not in text
-    assert "schedule:" not in text
-    assert "actions/checkout@11d5960a326750d5838078e36cf38b85af677262" in text
-    assert "persist-credentials: false" in text
+def test_consumed_g7_r9_gpu_workflow_retired_after_single_execution():
+    # The original run and hash-bound sanitized failure are preserved in docs.
+    assert not (ROOT/".github/workflows/g7-r9-one-shot-nonfused.yml").exists()
+    report=(ROOT/"docs/G7_R9_RESULT.md").read_text(encoding="utf-8")
+    for marker in (
+        "42300670454",
+        "cf207e3d2d3e02b2803548a0ebc74e3bd6511744",
+        "13543572395",
+        "c08de830e8d2cbd672bdbdf805ed8bd86c23865a6478b1b5c9f6411c4b9e533b",
+        "TRITON_OR_KERNEL_COMPATIBILITY",
+        "PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED",
+        "NO AUTOMATIC RETRY",
+    ):
+        assert marker in report, marker
 
 
 def test_existing_exact_source_custody_reused_with_budgets_and_failure_categories():
