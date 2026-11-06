@@ -1,4 +1,5 @@
-# Owner-authorized, one-time read-only recovery of G7-R9 receipts.
+# PREPARED ONLY. Merge triggers a runner-side command and requires explicit owner approval.
+# One-time read-only recovery of the original G7-R9 receipts; never execute on PR.
 # No checkout: touching/cleaning the old TTT workspace could destroy the evidence.
 # No WSL, CUDA, Python environment, model, package installation, or other project access.
 name: G7-R10 one-shot read-only G3 error custody
