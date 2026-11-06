@@ -141,11 +141,11 @@ jobs:
               $result.cause_code = 'ORIGINAL_EXCEPTION_MESSAGE_MISSING'
             } elseif ($message -match '(?i)failed to find C compiler') {
               $result.cause_code = 'HOST_C_COMPILER_MISSING'
-            } elseif ($message -match '(?i)\\d+ active drivers .*There should only be one') {
+            } elseif ($message -match '(?i)\d+ active drivers .*There should only be one') {
               $result.cause_code = 'TRITON_ACTIVE_DRIVER_COUNT'
             } elseif ($message -match '(?i)failed to load newly compiled') {
               $result.cause_code = 'TRITON_HELPER_MODULE_LOAD'
-            } elseif ($message -match '(?i)libcuda\\.so(?:\\.1)?.*(?:not found|cannot found|failed to open|no such file)') {
+            } elseif ($message -match '(?i)libcuda\.so(?:\.1)?.*(?:not found|cannot found|failed to open|no such file)') {
               $result.cause_code = 'LIBCUDA_DISCOVERY_OR_LOAD'
             } elseif ($message -match '(?i)(?:ptxas|ptx compilation|ptx version|invalid ptx|unsupported ptx)') {
               $result.cause_code = 'PTXAS_OR_PTX_COMPILATION'
@@ -167,16 +167,16 @@ jobs:
             # Only traceback_tail from authenticated original G3 is examined.
             $phase = 'UNCLASSIFIED_TRACEBACK_PHASE'
             foreach ($entry in $traceLines) {
-              $line = ([string]$entry).Replace('\\', '/')
-              if ($line -match '(?i)(?:/|^)triton/runtime/build\\.py') {
+              $line = ([string]$entry).Replace('\', '/')
+              if ($line -match '(?i)(?:/|^)triton/runtime/build\.py') {
                 $phase = 'TRITON_HOST_C_HELPER_BUILD'
-              } elseif ($line -match '(?i)(?:/|^)triton/runtime/driver\\.py') {
+              } elseif ($line -match '(?i)(?:/|^)triton/runtime/driver\.py') {
                 $phase = 'TRITON_ACTIVE_DRIVER_DISCOVERY'
-              } elseif ($line -match '(?i)(?:/|^)(?:triton/backends/nvidia|triton/third_party/nvidia/backend|third_party/nvidia/backend)/driver\\.py') {
+              } elseif ($line -match '(?i)(?:/|^)(?:triton/backends/nvidia|triton/third_party/nvidia/backend|third_party/nvidia/backend)/driver\.py') {
                 $phase = 'TRITON_NVIDIA_DRIVER_BACKEND'
-              } elseif ($line -match '(?i)(?:/|^)triton/compiler/compiler\\.py') {
+              } elseif ($line -match '(?i)(?:/|^)triton/compiler/compiler\.py') {
                 $phase = 'TRITON_KERNEL_COMPILER'
-              } elseif ($line -match '(?i)(?:/|^)triton/runtime/jit\\.py') {
+              } elseif ($line -match '(?i)(?:/|^)triton/runtime/jit\.py') {
                 $phase = 'TRITON_JIT_CALLER'
               }
             }
