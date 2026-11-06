@@ -1,0 +1,95 @@
+name: G7-R2 one-time WSL2 metadata discovery
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-g7-r2-one-time
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 8
+    steps:
+      - name: Checkout exact approved commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Inspect existing Ubuntu environment without imports or installations
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+              $env:GITHUB_REF -cne 'refs/heads/main' -or
+              $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
+              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+              $env:GITHUB_RUN_NUMBER -cne '1' -or
+              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+              $env:RUNNER_OS -cne 'Windows') {
+            throw 'G7_R2_OWNER_RUNNER_GATE_BLOCKED'
+          }
+          $head = (git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA) { throw 'G7_R2_SHA_DRIFT' }
+          $dirty = (git -C $env:GITHUB_WORKSPACE status --porcelain | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $dirty) { throw 'G7_R2_DIRTY_CHECKOUT' }
+          $probe = @'
+          import importlib.metadata as metadata
+          import json
+          from pathlib import Path
+          import re
+          import sys
+          home = Path.home()
+          wanted = {'torch','triton','mamba-ssm','causal-conv1d','transformers'}
+          def versions(paths):
+              seen = {}
+              for item in metadata.distributions(path=[str(p) for p in paths]):
+                  name = re.sub(r'[-_.]+','-',str(item.metadata.get('Name','')).lower())
+                  if name in wanted and name not in seen:
+                      v = str(item.version)
+                      seen[name] = v if re.fullmatch(r'[A-Za-z0-9_.+-]{1,80}',v) else 'REDACTED'
+              return seen
+          environments = [{'label':'system','python':'.'.join(map(str,sys.version_info[:3])),
+                           'packages':versions([Path(p) for p in sys.path if p and Path(p).is_dir()])}]
+          for label, root in [('dotvenvs',home/'.venvs'),('venvs',home/'venvs'),
+                              ('opt',Path('/opt/venvs'))]:
+              if root.is_dir():
+                  for i, child in enumerate(sorted(root.iterdir())[:8]):
+                      if child.is_dir():
+                          sites = list((child/'lib').glob('python*/site-packages'))[:3]
+                          environments.append({'label':label+'-'+str(i),
+                            'python_present':(child/'bin/python').exists(),
+                            'packages':versions(sites)})
+          print(json.dumps({'schema':'ttt-hybrid.g7-r2-wsl.v1',
+            'status':'PASS_METADATA_ONLY','distro':'Ubuntu-24.04',
+            'environments':environments,'candidate_sources':{
+            'mamba':(home/'src/mamba').is_dir(),
+            'ttt':(home/'src/ttt-lm-pytorch').is_dir()},
+            'cuda_runtime':'NOT_PROBED','cuda_kernels':'NOT_RUN',
+            'third_party_imports':'NOT_RUN','installation':'NOT_RUN',
+            'science':'UNVERIFIED'},sort_keys=True))
+          '@
+          $result = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/python3 -I -c $probe 2>&1)
+          if ($LASTEXITCODE -ne 0) { throw 'G7_R2_WSL_METADATA_PROBE_FAILED' }
+          $payload = ($result -join [Environment]::NewLine).Trim()
+          $report = $payload | ConvertFrom-Json
+          if ($report.status -cne 'PASS_METADATA_ONLY') { throw 'G7_R2_RECEIPT_INVALID' }
+          New-Item -ItemType Directory -Path 'local_runs' -Force | Out-Null
+          [IO.File]::WriteAllText((Join-Path $env:GITHUB_WORKSPACE 'local_runs\g7_r2_wsl.json'),
+              $payload + [Environment]::NewLine, [Text.UTF8Encoding]::new($false))
+          Write-Output 'G7_R2_READONLY_RECEIPT_WRITTEN'
+      - name: Store immutable one-time metadata receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r2-wsl-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_r2_wsl.json
+          if-no-files-found: warn
+          retention-days: 30
