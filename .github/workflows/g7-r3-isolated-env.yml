@@ -1,0 +1,69 @@
+# G7-R3: a single native main-branch push triggered by this exact workflow file.
+# No manual trigger, scheduler or controller; future runs blocked by run_number.
+name: G7-R3 isolated WSL2 CUDA package and source provenance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/g7-r3-isolated-env.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-g7-r3-provision-once
+  cancel-in-progress: false
+
+jobs:
+  stage-environment:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 55
+    steps:
+      - name: Checkout exact main SHA without persisting credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Provision only isolated WSL venv and verify pinned sources
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+              $env:GITHUB_REF -cne 'refs/heads/main' -or
+              $env:GITHUB_EVENT_NAME -cne 'push' -or
+              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+              $env:GITHUB_RUN_NUMBER -cne '1' -or
+              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+              $env:RUNNER_OS -cne 'Windows') {
+            throw 'G7_R3_ADMISSION_DENIED'
+          }
+          $head = (git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA) { throw 'G7_R3_SHA_MISMATCH' }
+          $dirty = (git -C $env:GITHUB_WORKSPACE status --porcelain | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $dirty) { throw 'G7_R3_DIRTY_CHECKOUT' }
+          New-Item -Path (Join-Path $env:GITHUB_WORKSPACE 'local_runs') -ItemType Directory -Force | Out-Null
+          $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+            throw 'G7_R3_WSL_WORKSPACE_UNAVAILABLE'
+          }
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/python3 -I `
+            "$linuxRoot/scripts/g7_r3_provision.py" `
+            --expected-sha "$env:GITHUB_SHA" `
+            --source-pins "$linuxRoot/source_pins.json" `
+            --receipt "$linuxRoot/local_runs/g7_r3_env.json"
+          if ($LASTEXITCODE -ne 0) { throw 'G7_R3_PROVISION_FAILED_RECEIPT_REQUIRED' }
+          Write-Output 'G7_R3_ISOLATED_PROVISION_RECEIPT_READY'
+      - name: Preserve provenance receipt even on failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r3-isolated-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_r3_env.json
+          if-no-files-found: warn
+          retention-days: 30
