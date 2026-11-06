@@ -1,0 +1,220 @@
+# PREPARED ONLY. Merge triggers a runner-side command and requires explicit owner approval.
+# Reclassify original G7-R9 RuntimeError in memory; no raw exception is exported.
+# Merge starts a single existing-runner read-only command and requires separate owner approval.
+# No checkout: touching/cleaning the old TTT workspace could destroy the evidence.
+# No WSL, CUDA, Python environment, model, package installation, or other project access.
+name: G7-R11 single exact-cause read-only diagnostic
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/g7-r11-single-readonly-receipt.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-g7-r11-original-receipt-custody
+  cancel-in-progress: false
+
+jobs:
+  recover-original:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - name: Read only original receipt, classify explicit exception cause without raw log
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $original = 'cf207e3d2d3e02b2803548a0ebc74e3bd6511744'
+          $nativeDigest = 'b3c41101ee550603cc73c8e95373081fbd4d59216ac6587f1768d96875cd9d65'
+          $g3Digest = 'c2f81f51ef75c6544ef50d4a56e9e9ee536b1c71bbc66b10015a60ceeb711d87'
+          $pinsDigest = '44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768'
+          $result = [ordered]@{
+            schema = 'ttt-hybrid.g7-r11.precise-error-custody.v1'
+            original_run_id = 42300670454
+            original_sha = $original
+            recorded_native_sha256 = $nativeDigest
+            recorded_g3_sha256 = $g3Digest
+            status = 'BLOCKED_UNVERIFIED'
+            original_source_bound = $false
+            native_digest_matched = $false
+            g3_digest_matched = $false
+            g3_status = 'UNVERIFIED'
+            native_path = 'UNVERIFIED'
+            exception_type = 'UNVERIFIED'
+            cause_code = 'UNVERIFIED'
+            frame_phase = 'UNVERIFIED'
+            precise_root_cause = 'UNVERIFIED'
+            error_signature = 'UNVERIFIED'
+            traceback_module = 'UNVERIFIED'
+            raw_error_message = 'NOT_EXPORTED'
+            raw_traceback = 'NOT_EXPORTED'
+            wsl = 'NOT_STARTED'
+            cuda = 'NOT_STARTED'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+            scientific = 'UNVERIFIED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/main' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $result.status = 'BLOCKED_WRONG_EXECUTION_CONTEXT'
+              throw 'BLOCKED'
+            }
+            # Do not checkout here. This is the original runner's existing working tree.
+            $project = $env:GITHUB_WORKSPACE
+            if (-not $project -or -not (Test-Path -LiteralPath (Join-Path $project '.git'))) {
+              $result.status = 'BLOCKED_ORIGINAL_WORKTREE_ABSENT'
+              throw 'BLOCKED'
+            }
+            $head = (& git -C $project rev-parse HEAD | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $head -cne $original) {
+              $result.status = 'BLOCKED_ORIGINAL_CHECKOUT_REPLACED'
+              throw 'BLOCKED'
+            }
+            $result.original_source_bound = $true
+            $nativePath = Join-Path $project 'local_runs\g7_r6_native_internal.json'
+            $g3Path = Join-Path $project 'local_runs\g7_native_gate3_subreceipt.json'
+            foreach ($path in @($nativePath, $g3Path)) {
+              if (-not (Test-Path -LiteralPath $path -PathType Leaf)) {
+                $result.status = 'BLOCKED_ORIGINAL_RECEIPTS_NOT_FOUND'
+                throw 'BLOCKED'
+              }
+              $f = Get-Item -LiteralPath $path -Force
+              if ($f.Length -le 0 -or $f.Length -gt 262144 -or $f.Attributes.HasFlag([IO.FileAttributes]::ReparsePoint)) {
+                $result.status = 'BLOCKED_ORIGINAL_RECEIPT_UNSAFE'
+                throw 'BLOCKED'
+              }
+            }
+            $observedNative = (Get-FileHash -LiteralPath $nativePath -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($observedNative -cne $nativeDigest) {
+              $result.status = 'BLOCKED_NATIVE_DIGEST_MISMATCH'
+              throw 'BLOCKED'
+            }
+            $result.native_digest_matched = $true
+            $native = Get-Content -LiteralPath $nativePath -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($native.project_sha -cne $original -or
+                $native.mode -cne 'AUTHENTIC_FORWARD_ONLY' -or
+                $native.native_gate3_status -cne 'FAIL_AUTHENTIC_GPU_INTEGRATION' -or
+                $native.status -cne 'FAIL_NATIVE_GATE3_INTEGRATION' -or
+                $native.source_pins_sha256 -cne $pinsDigest -or
+                $native.native_mamba_execution_path -cne 'PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED' -or
+                $native.native_gate3_error_type -cne 'RuntimeError' -or
+                $native.native_gate3_error_category -cne 'TRITON_OR_KERNEL_COMPATIBILITY') {
+              $result.status = 'BLOCKED_NATIVE_RECEIPT_IDENTITY_MISMATCH'
+              throw 'BLOCKED'
+            }
+            $observedG3 = (Get-FileHash -LiteralPath $g3Path -Algorithm SHA256).Hash.ToLowerInvariant()
+            if (-not $native.native_gate3_receipt_sha256 -or
+                $native.native_gate3_receipt_sha256.ToLowerInvariant() -cne $observedG3 -or
+                $observedG3 -cne $g3Digest) {
+              $result.status = 'BLOCKED_G3_DIGEST_MISMATCH'
+              throw 'BLOCKED'
+            }
+            $result.g3_digest_matched = $true
+            $g3 = Get-Content -LiteralPath $g3Path -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($g3.status -cne 'FAIL_AUTHENTIC_GPU_INTEGRATION' -or
+                $g3.mode -cne 'FORWARD_ONLY_NO_GRAD' -or
+                $g3.source_pins_sha256 -cne $pinsDigest -or
+                $g3.error_type -cne 'RuntimeError') {
+              $result.status = 'BLOCKED_G3_RECEIPT_IDENTITY_MISMATCH'
+              throw 'BLOCKED'
+            }
+            $result.g3_status = 'FAIL_AUTHENTIC_GPU_INTEGRATION'
+            $result.native_path = 'PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED'
+            # The two original receipt SHA256s were checked above. Do not
+            # classify by generic traceback words: "triton/compiler" commonly
+            # appears on successful paths and is NOT a root-cause signature.
+            # Use only the original exception MESSAGE for cause matching.
+            $result.exception_type = 'RuntimeError'
+            $message = [string]$g3.error_message
+            $traceLines = @($g3.traceback_tail)
+            if ([string]::IsNullOrWhiteSpace($message)) {
+              $result.cause_code = 'ORIGINAL_EXCEPTION_MESSAGE_MISSING'
+            } elseif ($message -match '(?i)failed to find C compiler') {
+              $result.cause_code = 'HOST_C_COMPILER_MISSING'
+            } elseif ($message -match '(?i)\d+ active drivers .*There should only be one') {
+              $result.cause_code = 'TRITON_ACTIVE_DRIVER_COUNT'
+            } elseif ($message -match '(?i)failed to load newly compiled') {
+              $result.cause_code = 'TRITON_HELPER_MODULE_LOAD'
+            } elseif ($message -match '(?i)libcuda\.so(?:\.1)?.*(?:not found|cannot found|failed to open|no such file)') {
+              $result.cause_code = 'LIBCUDA_DISCOVERY_OR_LOAD'
+            } elseif ($message -match '(?i)(?:ptxas|ptx compilation|ptx version|invalid ptx|unsupported ptx)') {
+              $result.cause_code = 'PTXAS_OR_PTX_COMPILATION'
+            } elseif ($message -match '(?i)(?:unsupported.*(?:sm_120|compute capability)|no kernel image|invalid device function)') {
+              $result.cause_code = 'CUDA_ARCH_OR_KERNEL_UNSUPPORTED'
+            } elseif ($message -match '(?i)(?:out of memory|CUDA.*memory allocation)') {
+              $result.cause_code = 'CUDA_OUT_OF_MEMORY'
+            } elseif ($message -match '(?i)(?:not enough shared memory|out of resources|resource exhausted)') {
+              $result.cause_code = 'TRITON_KERNEL_RESOURCE_LIMIT'
+            } elseif ($message -match '(?i)(?:llvm|compilationerror|triton.*(?:compile|backend))') {
+              $result.cause_code = 'TRITON_COMPILATION_OTHER'
+            } else {
+              $result.cause_code = 'UNCLASSIFIED_OR_INSUFFICIENT_DATA'
+            }
+            $result.error_signature = $result.cause_code
+
+            # Whitelist *full module origin* rather than the ambiguous
+            # basename "driver.py"; never copy stack paths to the artifact.
+            # Only traceback_tail from authenticated original G3 is examined.
+            $phase = 'UNCLASSIFIED_TRACEBACK_PHASE'
+            foreach ($entry in $traceLines) {
+              $line = ([string]$entry).Replace('\', '/')
+              if ($line -match '(?i)(?:/|^)triton/runtime/build\.py') {
+                $phase = 'TRITON_HOST_C_HELPER_BUILD'
+              } elseif ($line -match '(?i)(?:/|^)triton/runtime/driver\.py') {
+                $phase = 'TRITON_ACTIVE_DRIVER_DISCOVERY'
+              } elseif ($line -match '(?i)(?:/|^)(?:triton/backends/nvidia|triton/third_party/nvidia/backend|third_party/nvidia/backend)/driver\.py') {
+                $phase = 'TRITON_NVIDIA_DRIVER_BACKEND'
+              } elseif ($line -match '(?i)(?:/|^)triton/compiler/compiler\.py') {
+                $phase = 'TRITON_KERNEL_COMPILER'
+              } elseif ($line -match '(?i)(?:/|^)triton/runtime/jit\.py') {
+                $phase = 'TRITON_JIT_CALLER'
+              }
+            }
+            $result.frame_phase = $phase
+            $result.traceback_module = 'NOT_EXPORTED_AMBIGUOUS_BASENAME'
+            if ($result.cause_code -eq 'HOST_C_COMPILER_MISSING' -and $phase -eq 'TRITON_HOST_C_HELPER_BUILD') {
+              $result.precise_root_cause = 'HOST_C_COMPILER_UNAVAILABLE_CONFIRMED'
+            } elseif ($result.cause_code -eq 'TRITON_ACTIVE_DRIVER_COUNT' -and $phase -eq 'TRITON_ACTIVE_DRIVER_DISCOVERY') {
+              $result.precise_root_cause = 'ACTIVE_DRIVER_COUNT_MISMATCH_CONFIRMED'
+            } elseif ($result.cause_code -eq 'PTXAS_OR_PTX_COMPILATION' -and $phase -eq 'TRITON_KERNEL_COMPILER') {
+              $result.precise_root_cause = 'PTX_COMPILATION_FAILURE_CONFIRMED'
+            } else {
+              # In all other cases the cause is an observed message category,
+              # not a proven root cause or permission to alter dependencies.
+              $result.precise_root_cause = 'NOT_YET_CONFIRMED'
+            }
+            $result.status = 'PASS_ORIGINAL_ERROR_CUSTODY_ONLY'
+          } catch {
+            if ($result.status -eq 'BLOCKED_UNVERIFIED') {
+              $result.status = 'FAIL_READONLY_DIAGNOSTIC_' + $_.Exception.GetType().Name
+            }
+          } finally {
+            # Artifact goes only into runner temporary output, never into the old repo.
+            $out = Join-Path $env:RUNNER_TEMP 'g7_r11_readonly_diagnostic.json'
+            $result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $out -Encoding UTF8
+            Write-Output ('G7_R11_STATUS=' + $result.status)
+            Write-Output ('G7_R11_ERROR_TYPE=' + $result.exception_type)
+            Write-Output ('G7_R11_ERROR_SIGNATURE=' + $result.error_signature)
+            Write-Output ('G7_R11_CAUSE=' + $result.cause_code)
+            Write-Output ('G7_R11_FRAME_PHASE=' + $result.frame_phase)
+            Write-Output ('G7_R11_ROOT_CAUSE=' + $result.precise_root_cause)
+          }
+          if ($result.status -cne 'PASS_ORIGINAL_ERROR_CUSTODY_ONLY') { exit 2 }
+      - name: Preserve sanitized receipt only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r11-original-error-${{ github.sha }}-${{ github.run_id }}
+          path: ${{ runner.temp }}/g7_r11_readonly_diagnostic.json
+          if-no-files-found: warn
+          retention-days: 30
