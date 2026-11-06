@@ -253,6 +253,32 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
             mamba_root, ttt_root, receipt=inner,
             forward_only=forward_only)
         record["native_gate3_status"] = inner_result.get("status")
+        record["native_mamba_execution_path"] = inner_result.get("mamba_execution_path")
+        # Only controlled exception categories cross the outer receipt boundary.
+        # Raw exception messages and tracebacks stay in the inner runner workspace.
+        raw_error_type = inner_result.get("error_type")
+        record["native_gate3_error_type"] = (
+            raw_error_type if raw_error_type in {
+                "RuntimeError", "TypeError", "ValueError", "AssertionError",
+                "ImportError", "OSError", "AttributeError", "NotImplementedError",
+            } else "OTHER_EXCEPTION" if raw_error_type else None
+        )
+        raw_detail = (str(inner_result.get("error_message") or "") + " " +
+                      " ".join(inner_result.get("traceback_tail") or [])).lower()
+        if inner_result.get("status") == "FAIL_AUTHENTIC_GPU_INTEGRATION":
+            if ("causal_conv1d" in raw_detail and
+                    ("nonetype" in raw_detail or "not callable" in raw_detail)):
+                record["native_gate3_error_category"] = "FUSED_CONV_FUNCTION_UNAVAILABLE"
+            elif "out of memory" in raw_detail:
+                record["native_gate3_error_category"] = "CUDA_OOM"
+            elif "triton" in raw_detail:
+                record["native_gate3_error_category"] = "TRITON_OR_KERNEL_COMPATIBILITY"
+            elif "shape" in raw_detail or "dimension" in raw_detail:
+                record["native_gate3_error_category"] = "SHAPE_OR_INTERFACE"
+            else:
+                record["native_gate3_error_category"] = "OTHER_NATIVE_INTEGRATION_ERROR"
+        else:
+            record["native_gate3_error_category"] = None
         record["native_gate3_receipt_sha256"] = (
             file_sha256(inner) if inner.is_file() else None)
         record["native_checks"] = inner_result.get("checks")
