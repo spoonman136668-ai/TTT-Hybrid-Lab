@@ -41,7 +41,7 @@ jobs:
       - name: Admit existing host without WSL startup or installations
         env:
           G7_ADMISSION_MODE: ${{ github.event.inputs.admission_mode }}
-          G7_REQUIRED_SCRIPT_BLOB: ebc186f15ff08eea006b8b64bdf9c55802a06098
+          G7_REQUIRED_SCRIPT_BLOB: 1b82a4ec9acd0e823b47e5906717349494ed4faf
         shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
         run: |
           & .\scripts\g7_existing_runner_inventory.ps1 `
