@@ -25,7 +25,8 @@ MAX_PEAK_GIB = 1.0
 CHILD_TIMEOUT_SECONDS = 175
 
 
-def valid_native_result(inner: dict, expected_sha: str, child_code: int) -> bool:
+def valid_native_result(inner: dict, expected_sha: str, child_code: int,
+                        require_nonfused: bool = False) -> bool:
     """Pure acceptance check, including negative-control and no-training custody."""
     checks = inner.get("native_forward_checks") or {}
     gpu = inner.get("gpu") or {}
@@ -42,6 +43,9 @@ def valid_native_result(inner: dict, expected_sha: str, child_code: int) -> bool
         and inner.get("status") == "PASS_NATIVE_CUDA_FORWARD_ONLY"
         and inner.get("native_gate3_status") == "PASS_AUTHENTIC_GPU_FORWARD_ONLY"
         and inner.get("authentic_integration") == "PASS"
+        and (not require_nonfused or
+             inner.get("native_mamba_execution_path") ==
+             "PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED")
         and inner.get("scientific_qualification") == "UNVERIFIED"
         and inner.get("torch") == custody.TORCH
         and inner.get("torch_cuda_build") == "12.8"
@@ -110,6 +114,8 @@ def main() -> int:
     p.add_argument("--receipt", type=Path, required=True)
     p.add_argument("--inner-receipt", type=Path)
     p.add_argument("--child", action="store_true")
+    p.add_argument("--require-nonfused", action="store_true",
+                   help="G7-R9: fail closed unless the pinned official non-fused route executed")
     args = p.parse_args()
     env_root = Path.home().resolve() / ".local" / "share" / "ttt-hybrid" / (
         "g7-r3-" + custody.R3_SOURCE_SHA[:12]
@@ -120,7 +126,11 @@ def main() -> int:
 
     receipt = args.receipt.resolve()
     info = {
-        "schema": "ttt-hybrid.g7-r6-authentic-forward.v1",
+        "schema": ("ttt-hybrid.g7-r9-nonfused-forward.v1"
+                   if args.require_nonfused else "ttt-hybrid.g7-r6-authentic-forward.v1"),
+        "required_mamba_execution_path": (
+            "PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED"
+            if args.require_nonfused else "HISTORIC_R6"),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
         "candidate_sha": args.expected_sha,
         "status": "BLOCKED_NOT_RUN",
@@ -169,7 +179,8 @@ def main() -> int:
                 [str(python), "-I", "-B", str(ROOT / "scripts" / "g7_r6_oneshot.py"),
                  "--child", "--expected-sha", args.expected_sha,
                  "--receipt", str(receipt),
-                 "--inner-receipt", str(inner_receipt)],
+                 "--inner-receipt", str(inner_receipt)]
+                + (["--require-nonfused"] if args.require_nonfused else []),
                 capture_output=True, text=True, timeout=CHILD_TIMEOUT_SECONDS,
                 check=False,
                 env={**os.environ, "PYTHONDONTWRITEBYTECODE": "1",
@@ -185,6 +196,10 @@ def main() -> int:
         info["native_receipt_sha256"] = custody.sha256(inner_receipt)
         info["native_status"] = inner.get("status", "UNVERIFIED")
         info["native_gate3_status"] = inner.get("native_gate3_status")
+        info["native_mamba_execution_path"] = inner.get("native_mamba_execution_path")
+        info["native_gate3_receipt_sha256"] = inner.get("native_gate3_receipt_sha256")
+        info["native_failure_category"] = inner.get("native_gate3_error_category")
+        info["native_failure_type"] = inner.get("native_gate3_error_type")
         info["native_project_sha"] = inner.get("project_sha")
         info["native_mode"] = inner.get("mode")
         info["native_admission_reason"] = (
@@ -202,8 +217,10 @@ def main() -> int:
                 "prefix_invariance", "suffix_negative_control",
                 "gradient_execution", "optimizer_steps", "training")
         }
-        custody.guard(valid_native_result(inner, args.expected_sha, sub.returncode),
-                      "NATIVE_FORWARD_NOT_QUALIFIED")
+        custody.guard(valid_native_result(
+            inner, args.expected_sha, sub.returncode,
+            require_nonfused=args.require_nonfused,
+        ), "NATIVE_FORWARD_NOT_QUALIFIED")
         info["status"] = "PASS_ONE_BOUNDED_NATIVE_FORWARD_ONLY"
         code = 0
     except custody.Blocked as exc:
@@ -215,7 +232,8 @@ def main() -> int:
         receipt.parent.mkdir(parents=True, exist_ok=True)
         receipt.write_text(json.dumps(info, sort_keys=True, indent=2) + "\n",
                            encoding="utf-8")
-        print("G7_R6_STATUS=" + info["status"], flush=True)
+        print(("G7_R9_STATUS=" if args.require_nonfused else "G7_R6_STATUS=")
+              + info["status"], flush=True)
     return code
 
 
