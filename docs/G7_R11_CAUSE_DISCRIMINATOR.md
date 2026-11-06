@@ -1,4 +1,6 @@
-# G7-R11 — exact-message Triton cause discriminator: prepared / not executed
+# G7-R11 — historical source-only preparation for exact-message Triton diagnostic
+
+**Completed 2026-11-06:** Owner approved one read-only execution; [run #42313100239](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42313100239) finished PASS. The consumed one-shot is retired. See [G7_R11_RESULT.md](G7_R11_RESULT.md) for the verified finding. Statements below describe the pre-execution gate and are historical.
 
 **Baseline:** project main `841f3bfa74a4b2e1fbb63922ae2be1786f871bec`, all five required G4/G5/Mamba Linux/Windows CPU checks PASS. No other G7 diagnostic PR is open. This is one bounded **read-only diagnostic**, not a new controller or GPU qualification.
 
