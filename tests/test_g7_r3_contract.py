@@ -30,7 +30,8 @@ def embedded_windows_script():
 
 def test_one_shot_owner_only_runner_gates():
     wf = workflow()
-    assert re.search(r'(?m)^on:\s*\n  push:\s*\n    branches: \[main\]\s*
+    assert re.search(r'(?m)^on:\s*\n  push:\s*\n    branches: \[main\]\s*$', wf)
+    assert 'paths:\n      - ".github/workflows/g7-r3-isolated-env.yml"' in wf
     for disallowed in ('  workflow_dispatch:', '  pull_request:', '  schedule:',
                        '  repository_dispatch:', '  issue_comment:'):
         assert disallowed not in wf
