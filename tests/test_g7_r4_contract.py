@@ -1,53 +1,19 @@
-"""Static G7-R4 scope and syntax tests. Never execute WSL or CUDA in CI."""
+"""Retained G7-R4 runtime admission provenance and no-kernel contract tests.
+
+Run 42216104266 succeeded; consumed main-push entrypoint is retired.
+Never import torch or invoke WSL in CI from this test module.
+"""
 from __future__ import annotations
 import ast
 from pathlib import Path
-import platform
-import re
-import subprocess
-import tempfile
-import textwrap
 
 ROOT = Path(__file__).resolve().parents[1]
-WORKFLOW = ROOT / ".github/workflows/g7-r4-runtime-admission.yml"
 PROBE = ROOT / "scripts/g7_r4_runtime_probe.py"
+RETIRED_WORKFLOW = ROOT / ".github/workflows/g7-r4-runtime-admission.yml"
 
 
-def workflow():
-    return WORKFLOW.read_text(encoding="utf-8")
-
-
-def powershell_body():
-    match = re.search(r"(?ms)^        run: \|\n(.*?)^      - name: Preserve bounded", workflow())
-    assert match is not None
-    return textwrap.dedent(match.group(1))
-
-
-def test_one_shot_path_trigger_owner_and_runner_guard():
-    s = workflow()
-    assert "on:\n  push:\n    branches: [main]" in s
-    assert 'paths:\n      - ".github/workflows/g7-r4-runtime-admission.yml"' in s
-    for forbidden in ("  workflow_dispatch:", "  schedule:", "  pull_request:",
-                      "  repository_dispatch:", "  workflow_call:"):
-        assert forbidden not in s
-    for required in (
-        "github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab'",
-        "github.ref == 'refs/heads/main'",
-        "github.actor == 'spoonman136668-ai'",
-        "github.event_name == 'push'",
-        "github.run_number == 1", "github.run_attempt == 1",
-        "permissions:\n  contents: read", "cancel-in-progress: false",
-        "runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]",
-        "timeout-minutes: 12", "persist-credentials: false",
-        "ref: ${{ github.sha }}", "if: always()",
-    ):
-        assert required in s
-    ps = powershell_body()
-    for required in ("TTT-HYBRID-GPU-WIN", "G7_R4_CHECKOUT_SHA_DRIFT",
-                     "G7_R4_DIRTY_SOURCE", "wsl.exe --distribution Ubuntu-24.04",
-                     "g7_r4_runtime_probe.py", "g7_r4_runtime.json"):
-        assert required in ps
-    assert "forge-codex-isolated" not in s.lower()
+def test_one_shot_entrypoint_retired():
+    assert not RETIRED_WORKFLOW.exists()
 
 
 def test_runtime_code_syntax_and_frozen_source_baseline():
@@ -90,20 +56,3 @@ def test_forbidden_kernel_installation_and_model_execution_absent():
         "wsl --install", "workflow_dispatch", "invoke-webrequest",
     ):
         assert forbidden not in src
-
-
-def test_windows_powershell_syntax_only():
-    if platform.system() != "Windows":
-        return
-    with tempfile.TemporaryDirectory(prefix="g7-r4-ps-parse-") as tmp:
-        target = Path(tmp) / "g7-r4.ps1"
-        target.write_text(powershell_body(), encoding="utf-8")
-        cmd = (
-            "$t=$null;$e=$null;"
-            "[System.Management.Automation.Language.Parser]::ParseFile("
-            "'" + str(target).replace("'", "''") + "',[ref]$t,[ref]$e) | Out-Null;"
-            "if($e.Count -gt 0){$e | ForEach-Object{Write-Error $_};exit 1}"
-        )
-        result = subprocess.run(["powershell.exe", "-NoProfile", "-NonInteractive", "-Command", cmd],
-                                capture_output=True, text=True, timeout=25)
-        assert result.returncode == 0, result.stderr[-1300:]
