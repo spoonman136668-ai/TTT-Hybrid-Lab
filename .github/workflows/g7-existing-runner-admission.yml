@@ -1,10 +1,21 @@
-# First-use read-only inventory. No CUDA kernel, package installation or WSL launch.
+# Read-only inventory only. The one-time unprotected-main exception requires
+# explicit owner selection and is admissible solely on workflow run #1.
+# No CUDA kernel, package installation or WSL launch.
 # Route only to a TTT-Hybrid-authorized Windows self-hosted runner; do not
 # target FORGE-CODEX-REMOTE or its forge-codex-isolated label.
 name: G7 Windows existing-runner admission
 
 on:
   workflow_dispatch:
+    inputs:
+      admission_mode:
+        description: 'Explicitly select protected-main or the first-run-only read-only exception'
+        type: choice
+        required: true
+        default: protected-main
+        options:
+          - protected-main
+          - g7-readonly-once
 
 permissions:
   contents: read
@@ -15,24 +26,26 @@ concurrency:
 
 jobs:
   inventory:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.ref_protected == true && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_attempt == 1 && ((github.ref_protected == true && github.event.inputs.admission_mode == 'protected-main') || (github.ref_protected == false && github.event.inputs.admission_mode == 'g7-readonly-once' && github.run_number == 1)) }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 8
     steps:
       - name: Checkout only the trusted default-branch commit
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.sha }}
+          ref: ${{ github.ref_protected && github.sha || '6369bd075849427691429dc8f111fb7e0dec033a' }}
           persist-credentials: false
           submodules: false
           lfs: false
           clean: true
       - name: Admit existing host without WSL startup or installations
+        env:
+          G7_ADMISSION_MODE: ${{ github.event.inputs.admission_mode }}
         shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
         run: |
           & .\scripts\g7_existing_runner_inventory.ps1 `
             -ProjectRoot "$env:GITHUB_WORKSPACE" `
-            -ExpectedSha "$env:GITHUB_SHA" `
+            -ExpectedSha "${{ github.ref_protected && github.sha || '6369bd075849427691429dc8f111fb7e0dec033a' }}" `
             -ReceiptPath (Join-Path "$env:GITHUB_WORKSPACE" 'local_runs\g7_runner_inventory.json')
       - name: Retain the read-only host receipt
         if: always()
