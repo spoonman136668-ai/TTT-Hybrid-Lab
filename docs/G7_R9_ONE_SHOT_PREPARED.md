@@ -1,4 +1,6 @@
-# G7-R9 — prepared, unexecuted non-fused CUDA forward qualification
+# G7-R9 — historical preparation of non-fused CUDA forward qualification
+
+**UPDATE 2026-11-06:** Owner subsequently authorized exactly one GPU execution; PR #23 was merged and the run FAILED. See [G7_R9_RESULT.md](G7_R9_RESULT.md) for verified outcome. The statements below describe the *pre-execution gate*, not current status.
 
 **Authority:** G7-R8 source-only PR #22 is merged at `b33fa7ba09f65d7524620e5515e8f00f852cea29`, with all five post-merge G4/G5/Mamba CPU checks PASS. The user has **not** yet approved a second GPU execution. This is *preparation and exact-source qualification only*; a merge of this workflow-containing PR is a separate runtime authorization because it triggers a one-time GPU job.
 
