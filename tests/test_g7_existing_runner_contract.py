@@ -43,8 +43,9 @@ def test_ttt_only_runner_label_not_forge():
 def test_runner_entrypoint_cannot_dispatch_cuda():
     wf = WF.read_text(encoding="utf-8")
     assert "scripts\\g7_existing_runner_inventory.ps1" in wf
-    assert "ref: ${{ github.ref_protected && github.sha || '6369bd075849427691429dc8f111fb7e0dec033a' }}" in wf
-    assert '-ExpectedSha "${{ github.ref_protected && github.sha || \'6369bd075849427691429dc8f111fb7e0dec033a\' }}"' in wf
+    assert "ref: ${{ github.sha }}" in wf
+    assert '-ExpectedSha "$env:GITHUB_SHA"' in wf
+    assert "G7_REQUIRED_SCRIPT_BLOB: ebc186f15ff08eea006b8b64bdf9c55802a06098" in wf
     assert "persist-credentials: false" in wf
     assert "shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}" in wf
     assert "Set-ExecutionPolicy" not in wf
@@ -59,7 +60,10 @@ def test_powershell_probe_checks_repo_sha_and_workspace():
         "UNAUTHORIZED_READONLY_EXCEPTION_OR_SHA",
         "$env:GITHUB_RUN_NUMBER -ceq '1'",
         "$env:G7_ADMISSION_MODE -ceq 'g7-readonly-once'",
-        "$ExpectedSha -ceq '6369bd075849427691429dc8f111fb7e0dec033a'",
+        "$ExpectedSha -ceq $env:GITHUB_SHA",
+        "EXCEPTION_SCRIPT_BLOB_DRIFT",
+        "EXCEPTION_SOURCE_PINS_DRIFT",
+        "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
         "one_time_exception_used = $false",
         "$env:GITHUB_REF_PROTECTED -cne 'true'",
         "INVALID_OR_MISMATCHED_GITHUB_SHA",
