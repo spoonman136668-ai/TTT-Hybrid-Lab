@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - ".github/workflows/g7-r9-one-shot-forward.yml"
+      - ".github/workflows/g7-r9-one-shot-nonfused.yml"
 
 permissions:
   contents: read
