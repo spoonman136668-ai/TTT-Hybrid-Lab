@@ -45,7 +45,7 @@ def test_runner_entrypoint_cannot_dispatch_cuda():
     assert "scripts\\g7_existing_runner_inventory.ps1" in wf
     assert "ref: ${{ github.sha }}" in wf
     assert '-ExpectedSha "$env:GITHUB_SHA"' in wf
-    assert "G7_REQUIRED_SCRIPT_BLOB: ebc186f15ff08eea006b8b64bdf9c55802a06098" in wf
+    assert "G7_REQUIRED_SCRIPT_BLOB: 1b82a4ec9acd0e823b47e5906717349494ed4faf" in wf
     assert "persist-credentials: false" in wf
     assert "shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}" in wf
     assert "Set-ExecutionPolicy" not in wf
