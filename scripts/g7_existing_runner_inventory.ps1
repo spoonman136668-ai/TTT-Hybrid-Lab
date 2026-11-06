@@ -1,5 +1,7 @@
 # G7: read-only admission on an existing Windows runner granted to TTT-Hybrid.
 # NOT a CUDA dispatch, install, GPU kernel run, controller or runner registration.
+# Unprotected main is allowed only on owner-dispatched run #1 and only when
+# the reviewed inventory script plus official source-pins blobs match.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)][string]$ProjectRoot,
@@ -38,6 +40,9 @@ $report = [ordered]@{
     event = $env:GITHUB_EVENT_NAME
     actor = $env:GITHUB_ACTOR
     run_attempt = $env:GITHUB_RUN_ATTEMPT
+    workflow_run_number = $env:GITHUB_RUN_NUMBER
+    admission_mode = $env:G7_ADMISSION_MODE
+    one_time_exception_used = $false
     windows_gpu = $null
     wsl_registration = $null
     exact_sha = $false
@@ -51,16 +56,26 @@ $exitCode = 2
 try {
     if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
         $env:GITHUB_REF -cne 'refs/heads/main' -or
-        $env:GITHUB_REF_PROTECTED -cne 'true' -or
         $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
         $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
         $env:GITHUB_RUN_ATTEMPT -cne '1' -or
         $env:RUNNER_OS -cne 'Windows') {
         throw 'UNAUTHORIZED_REPO_REF_ACTOR_OR_RUNNER'
     }
-    if ($ExpectedSha -cnotmatch '^[0-9a-f]{40}$' -or $ExpectedSha -cne $env:GITHUB_SHA) {
+    $normalAdmission = ($env:GITHUB_REF_PROTECTED -ceq 'true' -and
+        $env:G7_ADMISSION_MODE -ceq 'protected-main' -and
+        $ExpectedSha -ceq $env:GITHUB_SHA)
+    $oneTimeAdmission = ($env:GITHUB_REF_PROTECTED -cne 'true' -and
+        $env:G7_ADMISSION_MODE -ceq 'g7-readonly-once' -and
+        $env:GITHUB_RUN_NUMBER -ceq '1' -and
+        $ExpectedSha -ceq $env:GITHUB_SHA)
+    if (-not ($normalAdmission -or $oneTimeAdmission)) {
+        throw 'UNAUTHORIZED_READONLY_EXCEPTION_OR_SHA'
+    }
+    if ($ExpectedSha -cnotmatch '^[0-9a-f]{40}$') {
         throw 'INVALID_OR_MISMATCHED_GITHUB_SHA'
     }
+    $report.one_time_exception_used = $oneTimeAdmission
     if ([IO.Path]::GetFullPath($ProjectRoot) -cne [IO.Path]::GetFullPath($env:GITHUB_WORKSPACE)) {
         throw 'UNAUTHORIZED_WORKTREE_PATH'
     }
@@ -68,6 +83,17 @@ try {
     if ($LASTEXITCODE -ne 0 -or $observed -cne $ExpectedSha) { throw 'CHECKOUT_SHA_DRIFT' }
     if ((git -C $ProjectRoot status --porcelain | Out-String).Trim().Length -ne 0) {
         throw 'DIRTY_SOURCE_TREE'
+    }
+    if ($oneTimeAdmission) {
+        $scriptBlob = (git -C $ProjectRoot rev-parse HEAD:scripts/g7_existing_runner_inventory.ps1 2>$null | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or $env:G7_REQUIRED_SCRIPT_BLOB -cnotmatch '^[0-9a-f]{40}$' -or
+            $scriptBlob -cne $env:G7_REQUIRED_SCRIPT_BLOB) {
+            throw 'EXCEPTION_SCRIPT_BLOB_DRIFT'
+        }
+        $pinsBlob = (git -C $ProjectRoot rev-parse HEAD:source_pins.json 2>$null | Out-String).Trim()
+        if ($LASTEXITCODE -ne 0 -or $pinsBlob -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630') {
+            throw 'EXCEPTION_SOURCE_PINS_DRIFT'
+        }
     }
     $report.exact_sha = $true
     # This PowerShell probe deliberately NEVER invokes wsl.exe. On a machine
