@@ -158,6 +158,13 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
         if not record["admission"]["pass"]:
             record["status"] = "BLOCKED_"+record["admission"]["reason"]
             return record, 2
+        if kernel_only:
+            if (torch.__version__ != "2.9.0+cu128"
+                    or torch.version.cuda != "12.8"
+                    or torch.cuda.device_count() != 1
+                    or tuple(torch.cuda.get_device_capability(0)) != (12, 0)):
+                record["status"] = "BLOCKED_R5_RUNTIME_DEVICE_IDENTITY"
+                return record, 2
 
         from authentic_preflight import evaluate
         preflight = evaluate(mamba_root, ttt_root)
@@ -174,23 +181,35 @@ def run(mamba_root: Path, ttt_root: Path, *, receipt: Path,
             "torch_arch_list": torch.cuda.get_arch_list(),
         }
         # Resolve Python kernels from the exact source roots, not wheels.
-        record["modules"] = [
-            source_module_receipt(
-                "mamba_ssm.modules.mamba2",
-                mamba_root / "mamba_ssm/modules/mamba2.py"),
-            source_module_receipt(
-                "mamba_ssm.ops.triton.ssd_combined",
-                mamba_root / "mamba_ssm/ops/triton/ssd_combined.py"),
-            source_module_receipt(
-                "mamba_ssm.ops.triton.layernorm_gated",
-                mamba_root / "mamba_ssm/ops/triton/layernorm_gated.py"),
-            source_module_receipt("ttt", ttt_root / "ttt.py"),
-        ]
-        record["extensions"] = [
-            optional_extension("triton"),
-            optional_extension("causal_conv1d_cuda"),
-            optional_extension("selective_scan_cuda"),
-        ]
+        # The first authorized CUDA kernel does not depend on optional
+        # Mamba Triton/native extension modules. R4 qualified both official
+        # source imports; verify exactly those again, without optional imports.
+        if kernel_only:
+            record["modules"] = [
+                source_module_receipt(
+                    "mamba_ssm.modules.mamba2",
+                    mamba_root / "mamba_ssm/modules/mamba2.py"),
+                source_module_receipt("ttt", ttt_root / "ttt.py"),
+            ]
+            record["extensions"] = "NOT_PROBED_KERNEL_ONLY"
+        else:
+            record["modules"] = [
+                source_module_receipt(
+                    "mamba_ssm.modules.mamba2",
+                    mamba_root / "mamba_ssm/modules/mamba2.py"),
+                source_module_receipt(
+                    "mamba_ssm.ops.triton.ssd_combined",
+                    mamba_root / "mamba_ssm/ops/triton/ssd_combined.py"),
+                source_module_receipt(
+                    "mamba_ssm.ops.triton.layernorm_gated",
+                    mamba_root / "mamba_ssm/ops/triton/layernorm_gated.py"),
+                source_module_receipt("ttt", ttt_root / "ttt.py"),
+            ]
+            record["extensions"] = [
+                optional_extension("triton"),
+                optional_extension("causal_conv1d_cuda"),
+                optional_extension("selective_scan_cuda"),
+            ]
 
         # Limit PyTorch's caching allocator before any smoke allocations.
         # This does not constrain third-party native allocation backends.
