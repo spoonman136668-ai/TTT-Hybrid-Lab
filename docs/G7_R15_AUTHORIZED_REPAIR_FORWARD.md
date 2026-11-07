@@ -1,4 +1,6 @@
-# G7-R15 — owner-authorized one-time GCC repair and bounded authentic GPU forward
+# G7-R15 — historical authorization and one-time execution plan
+
+**EXECUTED ONCE / BLOCKED:** The owner-authorized [run #42321056057](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42321056057) used the original WSL route and failed at `BLOCKED_GCC_SUDO_NONINTERACTIVE_DENIED`, before apt installation or GPU forward. See [G7_R15_RESULT.md](G7_R15_RESULT.md) for authenticated evidence and remaining authority limit. The one-use workflow has been retired. The text below describes the original planned scope, not a future authorization.
 
 **Baseline:** `a7e41a1e06adbf27be078b91f1bbdb5ec77b99d8`, required G4/G5 Linux+Windows and pinned Mamba Ubuntu CPU **5/5 PASS**. The original GPU G7-R9 run [42300670454](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42300670454) reached WSL2/CUDA but failed at Triton's host C helper compilation. Authenticated G7-R11 [42313100239](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42313100239) established `HOST_C_COMPILER_UNAVAILABLE_CONFIRMED`; G7-R12/R13 diagnostics failed through a separate invocation route. G7-R14 proved both legacy and explicit `cmd.exe` launch expressions on hosted Windows but did not change original-runner state.
 
