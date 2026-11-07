@@ -34,7 +34,7 @@ REGIMES = {
 
 
 class PairedS20World:
-    """Private physical state; public step data have the frozen 3 tensor fields."""
+    """Private physical state; public data carry numeric history, paired observations and executed action."""
 
     def __init__(self, seed: int, batch: int, regime: str):
         if seed not in ENGINEERING_SEEDS:
