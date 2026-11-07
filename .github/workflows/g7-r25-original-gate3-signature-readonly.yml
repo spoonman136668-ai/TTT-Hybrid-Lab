@@ -1,0 +1,179 @@
+# G7-R25: read-only failure signature extraction from original G7-R23 gate3 receipt.
+# Zero checkout/shell/model execution; no package changes; no retries.
+name: G7-R25 single read-only original Triton failure signature
+on:
+  push:
+    branches:
+      - engineering/g7-r25-readonly-original-gate3-signature-20261107
+    paths:
+      - .github/workflows/g7-r25-original-gate3-signature-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r25-one-use-original-triton-signature
+  cancel-in-progress: false
+
+jobs:
+  recover-original-gate3-signature:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r25-readonly-original-gate3-signature-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - name: Verify original receipt SHA chain and emit sanitized signature only
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $original = 'e86f934cc1f999794a47afd14e8646f10519dbe1'
+          $priorR6Hash = '6e97ce666a14c4b9fdfb1a58325d4c55662674a215e89ba8809678df602700fd'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r25.exact-original-triton-signature.v1'
+            candidate_sha = $env:GITHUB_SHA
+            prior_g7_r23_run = 42360001917
+            prior_g7_r24_run = 42360257949
+            original_r23_sha = $original
+            status = 'BLOCKED_NOT_STARTED'
+            original_receipt_sha256 = $priorR6Hash
+            gate3_receipt_sha256 = 'UNVERIFIED'
+            custody = 'UNVERIFIED'
+            error_class = 'UNVERIFIED'
+            exception_family = 'UNVERIFIED'
+            signature_tags = @()
+            source_file_hints = @()
+            failure_stage = 'UNVERIFIED'
+            raw_error_sha256 = 'UNVERIFIED'
+            gpu_execution = 'NOT_RUN'
+            package_changes = 'NONE'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r25-readonly-original-gate3-signature-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R25_OWNER_RUNNER_IDENTITY'
+            }
+            $outer = Join-Path $out 'g7_r15_native_forward.json'
+            $gate3 = Join-Path $out 'g7_native_gate3_subreceipt.json'
+            if (-not (Test-Path -LiteralPath $outer -PathType Leaf) -or
+                -not (Test-Path -LiteralPath $gate3 -PathType Leaf)) {
+              $r.status = 'BLOCKED_ORIGINAL_GATE3_RECEIPT_NOT_PERSISTED'
+              throw 'G7_R25_RECEIPT_NOT_PERSISTED'
+            }
+            $outerActual = (Get-FileHash -LiteralPath $outer -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($outerActual -cne $priorR6Hash) {
+              $r.status = 'BLOCKED_ORIGINAL_R6_HASH_DRIFT'
+              throw 'G7_R25_R6_HASH_DRIFT'
+            }
+            $r6 = Get-Content -LiteralPath $outer -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($r6.candidate_sha -cne $original -or
+                $r6.native_gate3_status -cne 'FAIL_AUTHENTIC_GPU_INTEGRATION' -or
+                $r6.native_failure_category -cne 'TRITON_OR_KERNEL_COMPATIBILITY' -or
+                $r6.native_failure_type -cne 'OTHER_EXCEPTION' -or
+                $r6.native_gate3_receipt_sha256 -cnotmatch '^[0-9a-f]{64}$') {
+              $r.status = 'BLOCKED_ORIGINAL_R6_RECEIPT_IDENTITY'
+              throw 'G7_R25_R6_RECEIPT_IDENTITY'
+            }
+            $gateActual = (Get-FileHash -LiteralPath $gate3 -Algorithm SHA256).Hash.ToLowerInvariant()
+            $r.gate3_receipt_sha256 = $gateActual
+            if ($gateActual -cne $r6.native_gate3_receipt_sha256) {
+              $r.status = 'BLOCKED_ORIGINAL_GATE3_HASH_DRIFT'
+              throw 'G7_R25_GATE3_HASH_DRIFT'
+            }
+            $g = Get-Content -LiteralPath $gate3 -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($g.schema -cne 'ttt-hybrid.authentic-gpu-smoke.v1' -or
+                $g.status -cne 'FAIL_AUTHENTIC_GPU_INTEGRATION' -or
+                $g.mode -cne 'FORWARD_ONLY_NO_GRAD' -or
+                $g.mamba_execution_path -cne 'PINNED_OFFICIAL_NONFUSED_FORWARD_UNVERIFIED' -or
+                $g.authentic_forward -cne 'NOT_RUN' -or
+                $g.scientific_qualification -cne 'UNVERIFIED' -or
+                [string]::IsNullOrWhiteSpace([string]$g.error_type)) {
+              $r.status = 'BLOCKED_GATE3_CONTENT_IDENTITY'
+              throw 'G7_R25_GATE3_CONTENT_IDENTITY'
+            }
+            $r.custody = 'PASS_ORIGINAL_R6_TO_GATE3_SHA_CHAIN'
+            $rawType = [string]$g.error_type
+            if ($rawType -cmatch '^[A-Za-z][A-Za-z0-9_]{0,79}$') {
+              $r.error_class = $rawType
+            } else {
+              $r.error_class = 'OTHER_EXCEPTION'
+            }
+            $message = [string]$g.error_message
+            $tail = @($g.traceback_tail | Select-Object -Last 10)
+            $combined = $message + [Environment]::NewLine + ($tail -join [Environment]::NewLine)
+            if ($combined.Length -gt 11000) {
+              $combined = $combined.Substring(0, 11000)
+            }
+            $hasher = [System.Security.Cryptography.SHA256]::Create()
+            try {
+              $bytes = [System.Text.Encoding]::UTF8.GetBytes($combined)
+              $r.raw_error_sha256 = ([BitConverter]::ToString($hasher.ComputeHash($bytes))).Replace('-', '').ToLowerInvariant()
+            } finally { $hasher.Dispose() }
+            # Literal diagnostic tags only: never output raw tracebacks or absolute paths.
+            $rules = [ordered]@{
+              PTXAS_FAILURE = '(?i)\bptxas\b|error.*\bptx\b'
+              TRITON_BACKEND_COMPILE = '(?i)backendcompilerfailed|compilationerror|failed to compile|compileerror'
+              TRITON_LLVM_CODEGEN = '(?i)\bllvm\b|\bttgir\b|\bttir\b|\bcodegen\b|\blowering\b'
+              TRITON_JIT = '(?i)\btriton\b.{0,120}\bjit\b|\bjit\b.{0,120}\btriton\b'
+              TRITON_AUTOTUNE = '(?i)autotun|outofresources|out of resources|num_warps'
+              CUDA_KERNEL_LAUNCH = '(?i)invalid device function|no kernel image|launch failed|invalid resource handle'
+              IMPORT_OR_API = '(?i)no module named|cannot import|has no attribute|unexpected keyword argument|not callable'
+              KERNEL_SHAPE_OR_LAYOUT = '(?i)\bshape\b|\bdimension\b|\bdtype\b|\bstrides?\b|layout mismatch'
+              MISSING_DYNAMIC_LIBRARY = '(?i)cannot open shared object file|undefined symbol|\.so:|libcuda\.so'
+              CUDA_DEVICE_ARCH = '(?i)unsupported gpu|compute capability|sm_120|unsupported arch'
+            }
+            $tags = @()
+            foreach ($key in $rules.Keys) {
+              if ($combined -match $rules[$key]) { $tags += $key }
+            }
+            $r.signature_tags = $tags
+            $r.exception_family = if ($tags -contains 'PTXAS_FAILURE') { 'PTXAS_COMPILATION' }
+              elseif ($tags -contains 'TRITON_BACKEND_COMPILE') { 'TRITON_COMPILER' }
+              elseif ($tags -contains 'TRITON_LLVM_CODEGEN') { 'TRITON_CODEGEN' }
+              elseif ($tags -contains 'CUDA_KERNEL_LAUNCH') { 'CUDA_LAUNCH' }
+              elseif ($tags -contains 'TRITON_AUTOTUNE') { 'TRITON_AUTOTUNE' }
+              elseif ($tags -contains 'IMPORT_OR_API') { 'IMPORT_OR_API_MISMATCH' }
+              elseif ($tags -contains 'MISSING_DYNAMIC_LIBRARY') { 'DYNAMIC_LIBRARY' }
+              elseif ($tags -contains 'CUDA_DEVICE_ARCH') { 'DEVICE_ARCHITECTURE' }
+              elseif ($tags -contains 'KERNEL_SHAPE_OR_LAYOUT') { 'SHAPE_OR_LAYOUT' }
+              elseif ($tags -contains 'TRITON_JIT') { 'TRITON_JIT' }
+              else { 'NOT_LOCALIZED' }
+            $r.failure_stage = if ($combined -match '(?i)\bptxas\b|backendcompilerfailed|compilationerror') { 'TRITON_COMPILER_OR_ASSEMBLER' }
+              elseif ($combined -match '(?i)\blaunch\b|cuda error') { 'GPU_LAUNCH' }
+              elseif ($combined -match '(?i)\bimport\b|\bmodule\b') { 'IMPORT_OR_SOURCE_BINDING' }
+              else { 'NATIVE_FORWARD_INTEGRATION_UNKNOWN_STAGE' }
+            $knownFiles = @('compiler.py','backend.py','jit.py','driver.py','nvidia.py','cuda.py',
+                            'ssd_combined.py','ssd_chunk_scan.py','ssd_bmm.py','ssd_state_passing.py',
+                            'authentic_hybrid.py','run_gate3.py','layernorm_gated.py','ttt.py')
+            $hints = @()
+            foreach ($filename in $knownFiles) {
+              if ($combined.Contains($filename)) { $hints += $filename }
+            }
+            $r.source_file_hints = $hints
+            $r.status = 'PASS_ORIGINAL_GATE3_SIGNATURE_SANITIZED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_r25_original_gate3_signature.json') -Encoding UTF8
+            Write-Output ('G7_R25_STATUS=' + $r.status)
+            Write-Output ('G7_R25_EXCEPTION=' + $r.error_class)
+            Write-Output ('G7_R25_FAMILY=' + $r.exception_family)
+            Write-Output ('G7_R25_TAGS=' + ($r.signature_tags -join ','))
+            Write-Output 'G7_R25_GPU=NOT_RUN'
+          }
+
+      - name: Preserve only sanitized immutable error evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r25-original-signature-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_r25_original_gate3_signature.json
+          if-no-files-found: warn
+          retention-days: 30
