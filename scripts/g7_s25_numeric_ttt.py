@@ -21,6 +21,25 @@ EPISODE_STEPS = 32
 ACTION_PAIR = (-0.8, 0.8)
 
 
+def causal_history32(history: Tensor) -> Tensor:
+    """Right-pad *observed past only*, never current intervention outcomes.
+
+    GRU training, fast-weight evaluation and the 32-frame KRR baseline receive
+    the same continuous numeric context width. Padding carries no future data.
+    A step-0 sensor-only sentinel is supplied by the already-frozen S25 world.
+    """
+    if (history.ndim != 3 or history.shape[0] < 1 or
+            history.shape[2] != 4 or not (1 <= history.shape[1] <= 32)):
+        raise ValueError("INVALID_CAUSAL_PREFIX")
+    if not torch.isfinite(history).all():
+        raise ValueError("NONFINITE_CAUSAL_PREFIX")
+    if history.shape[1] == 32:
+        return history.clone()
+    padded = history.new_zeros((history.shape[0], 32, 4))
+    padded[:, :history.shape[1]] = history
+    return padded
+
+
 class ConventionalGRU(nn.Module):
     """Conventional trained recurrent baseline structure; constructor alone proves nothing."""
     def __init__(self, hidden: int = HIDDEN):
@@ -151,7 +170,10 @@ class PrequentialTTTEpisode:
            not torch.allclose(queries[:, :, 1],
                               queries.new_tensor(ACTION_PAIR).expand_as(queries[:, :, 1])):
             raise ValueError("UNMATCHED_ACTION_INTERVENTIONS")
-        predicted, features = self.model.prequential_predict(incoming.history,
+        # Both baselines and online TTT see the same 32-slot causal prefix.
+        # All future slots are zero; model never sees the current targets.
+        history = causal_history32(incoming.history)
+        predicted, features = self.model.prequential_predict(history,
                                                               queries, self.state)
         selected = []
         for j, gate in enumerate(self.gates):
