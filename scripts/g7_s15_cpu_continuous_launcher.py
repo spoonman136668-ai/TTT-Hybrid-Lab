@@ -49,11 +49,9 @@ def main():
         require(custody.sha256(ROOT/"source_pins.json")==
                 custody.R3_PINS_SHA256,
                 "SOURCE_PIN_DRIFT")
-        manifest,packages=custody.manifest()
-        require(manifest==custody.R3_MANIFEST_SHA256
-                and packages.get("torch")==custody.TORCH
-                and packages.get("triton")==custody.TRITON,
-                "ORIGINAL_PINNED_PACKAGE_MANIFEST_DRIFT")
+        # The system Python is only the nonroot launcher. Its distribution
+        # inventory is NOT the pinned R3 venv manifest. The child validates
+        # exact torch/triton packages inside the qualified research venv.
         source=ROOT/"scripts/g7_s15_raw_analog_dynamics.py"
         spec=ROOT/"experiments/g7_s15_frozen_raw_analog_dynamics.json"
         ast.parse(source.read_text(encoding="utf-8"),filename=str(source))
@@ -89,7 +87,7 @@ def main():
         result["dpkg_before_sha256"]=before
         result["dpkg_after_sha256"]=after
         result["installed_packages_changed"]=before!=after
-        result["pinned_R3_manifest_sha256"]=manifest
+        result["pinned_R3_manifest_sha256"]=custody.R3_MANIFEST_SHA256
         receipt.write_text(
             json.dumps(result,sort_keys=True,indent=2)+"\n",
             encoding="utf-8")
@@ -104,6 +102,8 @@ def main():
                 and result.get("discrete_key_ids_used") is False
                 and result.get("next_token_loss_used") is False
                 and result.get("time_sampled_numerically") is True
+                and result.get("r3_manifest_sha256") ==
+                    custody.R3_MANIFEST_SHA256
                 and result.get("oracle_controls_pass") is True
                 and result.get("strong_rls_adaptation_controls_pass") is True
                 and result.get("training_updates_per_seed")==240
@@ -118,7 +118,7 @@ def main():
             "NORMAL_WSL_USER_REQUIRED",
             "UNQUALIFIED_CANDIDATE_TREE",
             "SOURCE_PIN_DRIFT",
-            "ORIGINAL_PINNED_PACKAGE_MANIFEST_DRIFT",
+            "PINNED_VENV_PACKAGE_MANIFEST_DRIFT",
             "FROZEN_TOKENIZATION_FREE_PROTOCOL_DRIFT",
             "PINNED_LOCAL_R3_PYTHON_MISSING",
             "READ_ONLY_DPKG_INVENTORY_UNAVAILABLE",
