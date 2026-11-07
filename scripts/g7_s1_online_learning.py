@@ -25,6 +25,12 @@ import g7_r5_oneshot as custody
 class Blocked(Exception):
     pass
 
+ACTIVE_PHASE = "NOT_STARTED"
+
+def mark_phase(value):
+    global ACTIVE_PHASE
+    ACTIVE_PHASE = value
+
 
 def require(condition, reason):
     if not condition:
@@ -107,9 +113,11 @@ def estimate_bootstrap(base, online, n, seed):
 
 
 def run(args):
+    mark_phase("IMPORT_TORCH")
     import torch
     from authentic_hybrid import AuthenticHybrid, load_official_classes
 
+    mark_phase("LOAD_FROZEN_PROTOCOL")
     protocol_bytes = args.protocol.read_bytes()
     spec = json.loads(protocol_bytes)
     require(spec.get("schema") == "ttt-hybrid.g7-s1.pre_registered_association.v1",
@@ -134,6 +142,7 @@ def run(args):
             "SOURCE_SHA_OR_TREE_DRIFT")
     require(custody.sha256(ROOT / "source_pins.json") == custody.R3_PINS_SHA256,
             "SOURCE_PINS_DRIFT")
+    mark_phase("VERIFY_PINNED_SOURCE")
     root = (Path.home().resolve() / ".local/share/ttt-hybrid" /
             ("g7-r3-" + custody.R3_SOURCE_SHA[:12]))
     manifest_hash, packages = custody.manifest()
@@ -158,6 +167,7 @@ def run(args):
     device = torch.device("cuda:0")
     free, _ = torch.cuda.mem_get_info()
     require(free >= spec["budget"]["gpu_free_bytes_min"], "FREE_VRAM_ADMISSION")
+    mark_phase("LOAD_OFFICIAL_CLASSES")
     classes = load_official_classes(root / "sources/mamba2",
                                     root / "sources/ttt_linear")
     torch.backends.cudnn.benchmark = False
@@ -170,6 +180,7 @@ def run(args):
         arms = {}
         initial_hashes = []
         for arm in spec["arms"]:
+            mark_phase("INITIALIZE_FULL_MODEL")
             torch.manual_seed(seed)
             torch.cuda.manual_seed_all(seed)
             model = AuthenticHybrid(
@@ -201,16 +212,19 @@ def run(args):
                 x = x.to(device)
                 target = target.to(device)
                 optimizer.zero_grad(set_to_none=True)
+                mark_phase("TRAIN_FORWARD")
                 prediction = model(x)[:, 8:, :16]
                 require(prediction.shape == target.shape, "BAD_TRAIN_SHAPE")
                 loss = (prediction - target).square().mean()
                 require(bool(torch.isfinite(loss)), "NONFINITE_TRAIN_LOSS")
+                mark_phase("TRAIN_BACKWARD")
                 loss.backward()
                 norm = torch.nn.utils.clip_grad_norm_(
                     [p for p in model.parameters() if p.requires_grad],
                     train["gradient_clipping"],
                 )
                 require(bool(torch.isfinite(norm)), "NONFINITE_GRADIENT")
+                mark_phase("TRAIN_OPTIMIZER")
                 optimizer.step()
                 losses.append(float(loss.detach().item()))
                 torch.cuda.synchronize(device)
@@ -219,6 +233,7 @@ def run(args):
                         "GPU_PEAK_VRAM_BUDGET_EXCEEDED")
                 require(time.monotonic()-started < spec["budget"]["total_seconds_max"],
                         "EXPERIMENT_TIME_BUDGET")
+            mark_phase("EVALUATE_HELDOUT")
             heldout, negative = evaluate(
                 model, seed, spec["episode"]["heldout_episodes_per_seed"],
                 device=device,
@@ -249,6 +264,7 @@ def run(args):
         reports.append({"seed": seed,
                         "initial_weights_sha256": initial_hashes[0],
                         "arms": arms})
+    mark_phase("AGGREGATE_HELDOUT_RESULTS")
     base = [v for item in reports
             for v in item["arms"]["static_matched"]["heldout_episode_mse"]]
     online = [v for item in reports
@@ -327,10 +343,24 @@ def main():
         code = 0
     except (Blocked, custody.Blocked) as exc:
         report["status"] = "ENGINEERING_BLOCKED_" + str(exc)
+        report["failure_phase"] = ACTIVE_PHASE
     except Exception as exc:
         report["status"] = "ENGINEERING_BLOCKED_" + type(exc).__name__
         report["error_class"] = type(exc).__name__
-        # No raw tracebacks/identifiers or environment contents in receipts.
+        report["failure_phase"] = ACTIVE_PHASE
+        raw = str(exc).lower()[:5000]
+        rules = {
+            "CUBLAS_WORKSPACE_DETERMINISM": "cublas_workspace_config" in raw,
+            "TRITON_KERNEL_COMPATIBILITY": "triton" in raw or "ptxas" in raw,
+            "AUTOGRAD_INPLACE_MODIFICATION": "inplace" in raw or "in-place" in raw,
+            "CUDA_OUT_OF_MEMORY": "out of memory" in raw or "cublas_status_alloc_failed" in raw,
+            "NOT_IMPLEMENTED_AUTOGRAD": "derivative for" in raw or "not implemented" in raw,
+            "DEVICE_SIDE_ASSERT": "device-side assert" in raw,
+            "NATIVE_LIBRARY_MISSING": "cannot open shared object" in raw,
+        }
+        report["error_categories"] = sorted(k for k, matched in rules.items() if matched) or ["OTHER_RUNTIME"]
+        report["error_text_sha256"] = hashlib.sha256(str(exc).encode("utf-8")).hexdigest()
+        # No raw tracebacks, user paths, commands or environment contents exported.
     finally:
         if (a.receipt.resolve().parent == (ROOT / "local_runs").resolve()
                 and a.receipt.name == "g7_s1_native_science.json"):
