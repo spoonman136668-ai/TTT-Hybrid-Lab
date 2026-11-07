@@ -1,12 +1,15 @@
 """G7-R16: read-only current compiler discovery, original exact source custody.
 
 Returns 0 compiler present, 3 compiler absent, 2 custody block, 1 unexpected.
-No root, sudo, apt, CUDA or model invocation.
+No privileged commands, GPU kernels or model execution.
 """
 from __future__ import annotations
 import argparse
 import sys
+from pathlib import Path
 
+# Python -I does not add the script directory to the import search path.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 import g7_r15_compiler_repair_forward as native
 
 
