@@ -1,0 +1,163 @@
+{
+  "schema": "ttt-hybrid.g7-s12.delayed-distractor-binding.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s11_run": 42383988759,
+    "s11_sha": "e4639790eff81facb4275f12d613a96475e10a63",
+    "s11_result": "INCONCLUSIVE_CAPACITY_MATCHED_ATTENTION_CONTROL",
+    "qualified_generator_git_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500"
+  },
+  "hypothesis": "After training only 16-token episodic associations, can the original Mamba2 static hybrid preserve content-addressed support bindings across 16 or 48 *unseen* blank or decoy support tokens, and does near-parameter-matched all-attention replacement show worse delayed retrieval? A fresh recall test rather than an independent reasoning or relation-transfer test.",
+  "arms": [
+    {
+      "id": "conventional",
+      "params": 1025,
+      "active": 1025,
+      "kind": "conventional"
+    },
+    {
+      "id": "full_static",
+      "params": 90259,
+      "active": 90194,
+      "kind": "full"
+    },
+    {
+      "id": "no_mamba_one_attention",
+      "params": 90259,
+      "active": 55756,
+      "kind": "no_mamba"
+    },
+    {
+      "id": "attention_replaces_mamba",
+      "params": 123795,
+      "active": 89292,
+      "kind": "attention_replace"
+    }
+  ],
+  "training": {
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "fit_steps": 512,
+    "batch_size": 64,
+    "episodes_per_seed_arm": 32768,
+    "lr_by_arm": {
+      "conventional": 0.01,
+      "full_static": 0.002,
+      "no_mamba_one_attention": 0.002,
+      "attention_replaces_mamba": 0.002
+    },
+    "source": "exact S6 get_batch; seed*10000000+step*17",
+    "original_layout_length": 16,
+    "models_initialized_fresh_each_seed": true,
+    "same_examples_optimizer_steps_across_arms": true
+  },
+  "heldout": {
+    "seed_formula": "seed*10000000+9980000+batch_index*17",
+    "batches_per_seed": 4,
+    "examples_per_batch": 64,
+    "episodes_per_seed_arm": 256,
+    "query_order": "Permute 8 queries and 4 original support key/value pairs by existing verified G7-S9 generator; targets permute with queries; no FIT overlap.",
+    "cases": [
+      {
+        "id": "base16",
+        "gap_tokens": 0,
+        "intervention": "none",
+        "total_length": 16
+      },
+      {
+        "id": "blank32",
+        "gap_tokens": 16,
+        "intervention": "zero-valued unmarked filler tokens",
+        "total_length": 32
+      },
+      {
+        "id": "decoy32",
+        "gap_tokens": 16,
+        "intervention": "eight additional independently sampled marked decoy key/value pairs",
+        "total_length": 32
+      },
+      {
+        "id": "blank64",
+        "gap_tokens": 48,
+        "intervention": "48 zero-valued unmarked filler tokens",
+        "total_length": 64
+      },
+      {
+        "id": "decoy64",
+        "gap_tokens": 48,
+        "intervention": "24 independently sampled marked decoy key/value pairs with keys distinct from original support",
+        "total_length": 64
+      },
+      {
+        "id": "decoy64_corrupted_true_support",
+        "gap_tokens": 48,
+        "intervention": "same exact decoy48 as decoy64 but cyclically roll only original true-support values; targets remain unchanged",
+        "total_length": 64
+      }
+    ],
+    "distractor_generator": "torch.Generator('cpu').manual_seed(heldout_batch_seed+451231); sample independent +/-1 keys/values, force key collisions with the original four support keys to differ by flipping the first key bit; decoys do not carry target labels.",
+    "positive_oracle": "Content-addressed exact lookup against four true original support pairs, exact MSE=0 in every case.",
+    "negative_oracle": "Cyclically roll original support values (with fixed k, q, y) and demand MSE>=1.5.",
+    "zero_predictor": "Exactly MSE=1.0 for independent ±1 value targets",
+    "conventional_reference": "The S6 conventional model receives the structured four genuine pairs and queries (without tokenized delays/decoys); therefore its accuracy is a task-positive baseline, NOT a temporal-interference comparison.",
+    "source_scope": "No gradients during heldout. No persistent model weights or history; reset between forwards. Cold checkpoint verifies parameter restoration, not autonomous long-term continual memory.",
+    "anti_leak": "Decoy input keys cannot equal original support keys; query token values always zero; queries and targets permute together; same episode seeds/input across all arms."
+  },
+  "thresholds": {
+    "oracle_correct_mse_max": 1e-12,
+    "oracle_corrupted_mse_min": 1.5,
+    "zero_predictor_mse_exact": 1,
+    "conventional_structured_mse_max": 0.1,
+    "full_base16_mse_max": 0.1,
+    "attention_base16_mse_max": 0.1,
+    "full_decoy64_absolute_mse_max": 0.1,
+    "full_decoy64_over_base16_mse_ratio_max": 4,
+    "full_all_three_seeds_below_both": true,
+    "replacement_decoy64_absolute_mse_max": 0.1,
+    "replacement_decoy64_over_base16_ratio_max": 4,
+    "mamba_vs_replacement_decoy64_ratio_max": 0.5,
+    "mamba_vs_replacement_abs_mse_advantage_min": 0.01,
+    "mamba_better_all_three_seeds": true,
+    "decoy64_corrupt_true_support_relative_error_increase_min": 0.03,
+    "all_cold_restore_max_abs_output_delta": 0
+  },
+  "classifications": {
+    "invalid": "ASSAY_INVALID_CONTROL_FAILURE",
+    "mamba_retains": "PRELIMINARY_NATIVE_DELAYED_BINDING_SIGNAL_REQUIRES_REPLICATION",
+    "native_fails": "UNFAMILIAR_DELAY_OR_DECOY_INTERFERENCE_NOT_RESOLVED",
+    "distinct_component": "EXPLORATORY_MAMBA_DELAY_ADVANTAGE if Mamba outperforms near-parameter-matched attention with preset ratio, absolute and every seed; not equal FLOP or independent science",
+    "notes": "Retain full per-seed results and negative evidence irrespective of high-level status. No post-result adjustment; do not call episodic delay long-term persistent memory, relationship transfer, or SCIENTIFIC_PASS."
+  },
+  "budget": {
+    "max_wall_seconds": 900,
+    "torch_peak_allocated_bytes_max": 1073741824,
+    "min_cuda_free_bytes": 4294967296,
+    "heldout_native_chunk_size": 16,
+    "signed_ephemeral_python_312_headers": true,
+    "original_pinned_sources_only": true,
+    "execution_runner": "TTT-HYBRID-GPU-WIN",
+    "normal_user_uid": 1000,
+    "no_root": true,
+    "no_install": true,
+    "no_paid_api": true,
+    "no_new_runner": true,
+    "no_controller": true,
+    "no_merge": true,
+    "no_deploy": true,
+    "no_live_service": true
+  },
+  "stop": [
+    "unexpected source or Git SHA/dirty tree",
+    "scientific dataset/heldout overlap",
+    "unqualified official source CUDA forward or signed runtime",
+    "nonfinite loss/gradients/predictions",
+    "oracle/zero control invalid",
+    "time/VRAM budget exceeded",
+    "installed package inventory drift",
+    "cold state restoration differs",
+    "unverified initial shared state"
+  ]
+}
