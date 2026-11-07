@@ -1,0 +1,156 @@
+{
+  "schema": "ttt-hybrid.g7-s26.reserve-aware-contradiction-timing.v1",
+  "registered_utc": "2026-11-07",
+  "state": "FROZEN_SEPARATE_HYPOTHESIS_BEFORE_S26_DEV_REPLAY_NO_SCIENCE_FIRST_USE",
+  "rationale": {
+    "preceding_negative": "S25 untrained diagnostic #42424890385: contradiction K8 consumed all updates by t=8, 0 updates at t>=20, stable-source false triggers. This S26 proposal is a distinct follow-up, not retroactive correction to S25.",
+    "warning": "S26 developed after S25 developmental null; no sealed-test claim or retrospective S25 retuning. Frozen S25 negative/null remains unchanged.",
+    "source_repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "s25_baseline_head": "108808f7b685107a76fae1ce5605b7ff9e2bac27",
+    "s25_baseline_branch": "research/g7-s25-contradiction-ttt-frozen-20261107",
+    "s25_protocol_git_blob": "31633b341403729b7ffbb7d73f3a04098ad44380",
+    "s20_world_git_blob": "ac3f9ddd5b879e53e62030707fb6419adaf732ca",
+    "prior_engineering_run": 42424890385
+  },
+  "hypotheses": {
+    "primary": "A fixed, non-oracle temporal reserve improves post-change fast-weight adaptation by preserving K8 updates while preserving total information, parameters, and observed action pairs.",
+    "mechanism": "Signed persistent action-contrast contradictions, rather than surprise alone or period scheduling, cause earlier useful post-change updates under equal quarter-block reserve.",
+    "null": "Reserve schedule offers no advantage over matched quarter-periodic, quarter-random or quarter-surprise; any apparent improvement disappears after matched total compute or fully trained conventional baselines.",
+    "falsification": "No post-switch contrast-triggered adaptive updates, lack of gain over strongest matched control, untrained artifacts, validation leakage, baseline undertraining, unqualified cost or platform regression, or insufficient retained competence."
+  },
+  "design": {
+    "episodes_steps": 32,
+    "action_pair": [
+      -0.8,
+      0.8
+    ],
+    "quarter_length_steps": 8,
+    "quarter_update_budget": 2,
+    "equal_budget_updates": 8,
+    "quarter_boundaries_end_inclusive": [
+      7,
+      15,
+      23,
+      31
+    ],
+    "update_budget_release": "Exactly 2 updates are available within each consecutive 8-step block. No unused updates carry to another block. The remaining-slots causal fallback forces unused block updates before a block ends.",
+    "frozen_boundaries_fixed_without_switch_time_lookup": true,
+    "switch_step_used_for_reporting_only": 20,
+    "guaranteed_updates_steps_24_to_31_per_world": 2,
+    "garantueed_updates_post_switch_at_least": 2,
+    "gate_signs": "Use existing S25 thresholds MIN_SIGNED_EFFECT=0.012, MIN_CONTRAST_DISAGREEMENT=0.018, 2-of-3 signed-opposition persistence, no search.",
+    "surprise_primary": "residual for actually executed observed action, never arbitrary +0.8 counterfactual; the action selector is observable and no physics coefficients are exposed.",
+    "policies_s26": [
+      "quarter_periodic",
+      "quarter_random",
+      "quarter_surprise",
+      "quarter_contradiction"
+    ],
+    "untouched_s25_comparators": [
+      "periodic",
+      "random",
+      "surprise",
+      "contradiction"
+    ],
+    "full_update_ttt": "K32 reference remains costed separately; not called equal-compute",
+    "conventional_references": [
+      "fully_trained_GRU",
+      "train_only_calibrated_RBF_KRR"
+    ],
+    "state": "The S25 frozen slow checkpoint and fast-weight capacity, learning rate 0.001, same paired observations, seeds and reset semantics are fixed across all compared K8 arms. Use S25 PrequentialTTTEpisode with injected S26 gate objects; S25 code unchanged.",
+    "schedule_ablations": [
+      "quarter_periodic",
+      "quarter_random",
+      "quarter_surprise",
+      "quarter_contradiction",
+      "unmodified_S25_K8_controls"
+    ],
+    "causal_input": "At each time predict minus and plus from past 32 padded numeric observations, observe both outcomes, get actual executed-action selector, then select update without future observations."
+  },
+  "evaluation": {
+    "first_use": "NOT_AUTHORIZED",
+    "dev_only_seed_set": [
+      3101,
+      3109,
+      3119
+    ],
+    "dev_regimes": [
+      "source_stable",
+      "source_signflip",
+      "sine_signflip",
+      "rational_signflip"
+    ],
+    "dev_worlds_per_seed_regime": 4,
+    "dev_only_engineering_metrics": [
+      "position of each fast update",
+      "selected versus forced update count",
+      "pre/post 20 update counts",
+      "post 20 selected contradiction triggers",
+      "observation stream SHA256",
+      "slow model checkpoint SHA256",
+      "resource and actual update counts"
+    ],
+    "science_seed_namespace_reserved_unconsumed": {
+      "fit": [
+        7207,
+        7219,
+        7229
+      ],
+      "validation": [
+        7307,
+        7319,
+        7327
+      ],
+      "heldout_signflip": [
+        7403,
+        7411,
+        7429
+      ],
+      "heldout_transfer": [
+        7507,
+        7517,
+        7529
+      ],
+      "negative": [
+        7603,
+        7613,
+        7627
+      ],
+      "bootstrap": 7807
+    },
+    "science_requirements": [
+      "distinct project-scoped first-use authority",
+      "qualified exact-source full Windows and Linux regression",
+      "trained GRU and KRR baselines qualified separately",
+      "strongest conventional control",
+      "shared information/action/capacity and recorded actual cost",
+      "cold retention/interference/unfamiliar transfer",
+      "paired fixed-seed reproducibility and no postresult search"
+    ],
+    "threshold_policy": "freeze decisions prior to first-use; no adjustments based on dev or heldout outcomes within S26"
+  },
+  "budgets": {
+    "training_source_min_updates": 640,
+    "training_source_max_updates": 1600,
+    "batch_worlds": 32,
+    "test_episodes_per_seed": 96,
+    "max_cpu_wall_seconds_per_arm": 900,
+    "max_rss_bytes": 2147483648,
+    "dev_diagnostic_max_wall_seconds": 170,
+    "dev_only_4worlds_and_3seeds": true,
+    "full_regression_required_platforms": [
+      "Windows",
+      "Linux"
+    ]
+  },
+  "authority": {
+    "project_scope": "TTT-Hybrid-Lab S26 draft research; no runner/controller authority from GitHub write.",
+    "scientific_first_use_authorized": false,
+    "no_scientific_training_or_fit": true,
+    "no_heldout_seed_consumption": true,
+    "no_install_or_new_runner": true,
+    "no_merge_or_promotion": true,
+    "do_not_modify_s25_pr40_or_s24_pr39": true,
+    "do_not_interrupt_forge_wingless_yggdrasil": true
+  }
+}
