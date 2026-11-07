@@ -54,7 +54,7 @@ def test_original_user_forward_and_negative_stops():
         "cuda_runtime_change = 'NONE'",
         "training = 'NOT_RUN'", "scientific = 'UNVERIFIED'",
     ): assert token in s, token
-    assert s.count("g7_r15_compiler_repair_forward.py")==2  # code and comment
+    assert s.count("g7_r15_compiler_repair_forward.py")==1  # only one call site
     assert s.count("wsl.exe --distribution Ubuntu-24.04 --user root") == 3
     assert "g7_r6_oneshot.py" in (ROOT/"scripts/g7_r15_compiler_repair_forward.py").read_text(encoding="utf-8")
 
