@@ -1,0 +1,177 @@
+# S24 final non-install regression admission on existing project runner only.
+name: G7-S24 existing-runtime Windows and WSL regression admission
+on:
+  push:
+    branches:
+      - engineering/g7-s24-phase0-independent-views-20261107
+    paths:
+      - .github/workflows/g7-s24-existing-runtime-regression.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-s24-final-existing-runtime-once
+  cancel-in-progress: false
+jobs:
+  exact-head-regression-admission:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s24-phase0-independent-views-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 12
+    steps:
+      - name: Checkout exact candidate without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s24-final-isolated
+          fetch-depth: 12
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Requalify native encoder and try preinstalled full regression on Windows and Linux
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:GITHUB_WORKSPACE 'g7-s24-final-isolated'
+          $out = Join-Path $root 'local_runs'
+          $r = [ordered]@{
+            schema='ttt-hybrid.g7-s24.existing-runtime-regression.v1'
+            sha=$env:GITHUB_SHA
+            status='BLOCKED_NOT_STARTED'
+            source='UNVERIFIED'
+            focused='NOT_RUN'
+            pinned_R3_full_regression='NOT_RUN'
+            windows_host_full_regression='NOT_RUN'
+            linux_system_full_regression='NOT_RUN'
+            required_platform_full_regression='UNVERIFIED'
+            no_new_packages=$true
+            no_cuda=$true
+            science='NOT_RUN'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s24-phase0-independent-views-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_SCOPE_OR_RUNNER'
+              throw 'BAD_SCOPE'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hc=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $cc=$LASTEXITCODE
+            $expected=@(
+              '.github/workflows/g7-s24-phase0-engineering.yml',
+              '.github/workflows/g7-s24-phase1-qualification.yml',
+              '.github/workflows/g7-s24-existing-runtime-regression.yml',
+              'scripts/g7_s24_views.py',
+              'scripts/g7_s24_phase0_engineering.py',
+              'scripts/g7_s24_phase1_qualification.py',
+              'scripts/g7_s24_encoders.py',
+              'tests/test_g7_s24_view_contract.py',
+              'tests/test_g7_s24_encoders.py'
+            )
+            if ($hc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne $expected.Count) {
+              $r.status='BLOCKED_EXACT_SHA_OR_FILE_SCOPE'
+              throw 'SOURCE_MISMATCH'
+            }
+            foreach ($name in $expected) {
+              if ($changed -cnotcontains $name) {
+                $r.status='BLOCKED_UNEXPECTED_FILE'
+                throw 'FILE_SCOPE'
+              }
+            }
+            $r.source='PASS_EXACT_HEAD_NINE_FILES'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $r.status='BLOCKED_WSL_PATH'
+              throw 'WSL_PATH'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status='BLOCKED_NORMAL_USER'
+              throw 'WSL_UID'
+            }
+            $env:CUDA_VISIBLE_DEVICES='-1'
+            $env:PYTHONDONTWRITEBYTECODE='1'
+            $env:OMP_NUM_THREADS='1'
+            $env:MKL_NUM_THREADS='1'
+            $raw=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 370s /usr/bin/python3 -I -B "$linux/scripts/g7_s24_phase1_qualification.py" --sha "$env:GITHUB_SHA")
+            $rc=$LASTEXITCODE
+            $proof=Join-Path $out 'g7_s24_phase1_engineering.json'
+            if ($rc -ne 0 -or -not (Test-Path -LiteralPath $proof)) {
+              $r.status='BLOCKED_FOCUSED_REQUALIFICATION'
+              throw 'FOCUSED_FAIL'
+            }
+            $q=Get-Content -LiteralPath $proof -Raw | ConvertFrom-Json
+            if ($q.sha -cne $env:GITHUB_SHA -or
+                $q.status -cne 'PASS_PHASE0_PHASE1_FOCUSED_ENGINEERING' -or
+                $q.phase0.count -ne 67 -or $q.phase1.count -ne 29 -or
+                $q.scientific_first_use -cne 'NOT_RUN') {
+              $r.status='BLOCKED_FOCUSED_RECEIPT'
+              throw 'FOCUSED_RECEIPT'
+            }
+            $r.focused='PASS_96_CHECKS'
+            $r.pinned_R3_full_regression=$q.full_regression.status
+
+            # Qualification is allowed only on preinstalled, exact pinned dependencies.
+            $python=(Get-Command 'py.exe' -ErrorAction SilentlyContinue)
+            if ($null -ne $python) {
+              $versions=(& py.exe -3.11 -c "import torch,pytest; print(torch.__version__+';'+pytest.__version__)" | Out-String).Trim()
+              $versionRC=$LASTEXITCODE
+              if ($versionRC -eq 0 -and $versions -in @('2.5.1+cpu;8.3.4','2.9.0+cu128;8.3.4')) {
+                Push-Location $root
+                try {
+                  $results=@(& py.exe -3.11 -m pytest -q -p no:cacheprovider tests)
+                  $testRC=$LASTEXITCODE
+                } finally {
+                  Pop-Location
+                }
+                $r.windows_host_full_regression=if($testRC -eq 0){'PASS'}else{'FAIL'}
+              } else {
+                $r.windows_host_full_regression='UNVERIFIED_NO_PINNED_PYTORCH_AND_PYTEST'
+              }
+            } else {
+              $r.windows_host_full_regression='UNVERIFIED_NO_PY_LAUNCHER'
+            }
+
+            $wslversions=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/python3 -c "import torch,pytest; print(torch.__version__+';'+pytest.__version__)" | Out-String).Trim()
+            $wslRC=$LASTEXITCODE
+            if ($wslRC -eq 0 -and $wslversions -in @('2.5.1+cpu;8.3.4','2.9.0+cu128;8.3.4')) {
+              $ls=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/env -C "$linux" /usr/bin/python3 -m pytest -q -p no:cacheprovider tests)
+              $testRC=$LASTEXITCODE
+              $r.linux_system_full_regression=if($testRC -eq 0){'PASS'}else{'FAIL'}
+            } else {
+              $r.linux_system_full_regression='UNVERIFIED_NO_PINNED_SYSTEM_PYTORCH_AND_PYTEST'
+            }
+            if ($r.windows_host_full_regression -ceq 'PASS' -and
+                $r.linux_system_full_regression -ceq 'PASS') {
+              $r.required_platform_full_regression='PASS'
+            }
+            $r.status='PASS_FOCUSED_WITH_HONEST_REGRESSION_ADMISSION'
+            Write-Output ('G7_S24_REGRESSION_WINDOWS=' + $r.windows_host_full_regression)
+            Write-Output ('G7_S24_REGRESSION_LINUX=' + $r.linux_system_full_regression)
+            Write-Output ('G7_S24_REGRESSION_COMPLETE=' + $r.required_platform_full_regression)
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s24_existing_runtime_regression.json') -Encoding UTF8
+            Write-Output ('G7_S24_REGRESSION_GATE=' + $r.status)
+            Write-Output 'G7_S24_SCIENCE=NOT_RUN'
+          }
+      - name: Retain exact-head regression attempt receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s24-final-regression-${{ github.sha }}
+          path: |
+            g7-s24-final-isolated/local_runs/g7_s24_existing_runtime_regression.json
+            g7-s24-final-isolated/local_runs/g7_s24_phase1_engineering.json
+          if-no-files-found: warn
+          retention-days: 30
