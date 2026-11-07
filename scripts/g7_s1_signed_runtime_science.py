@@ -288,6 +288,8 @@ def main():
                  str(ROOT / "scripts/g7_s1_online_learning.py"),
                  "--expected-sha", args.expected_sha,
                  "--protocol", str(ROOT / "experiments/g7_s1_frozen_protocol.json"),
+                 "--diagnostic-protocol",
+                 str(ROOT / "experiments/g7_s4_frozen_mechanism.json"),
                  "--receipt", str(science_receipt)],
                 env=scoped, timeout=465,
             )
@@ -296,15 +298,23 @@ def main():
             evidence = json.loads(result_bytes)
             result["science_receipt_sha256"] = hashlib.sha256(result_bytes).hexdigest()
             result["science_status"] = evidence.get("status")
+            support = evidence.get("support_causal_diagnostic") or {}
+            result["support_causal_status"] = support.get("status")
+            result["support_oracle_controls_pass"] = support.get(
+                "oracle_and_zero_controls_pass")
             result["science_metric"] = (evidence.get("primary") or {}).get(
                 "mean_paired_relative_reduction")
             result["native_forward"] = "SCIENCE_PILOT_COMPLETE"
             guard(child.returncode == 0
                   and evidence.get("status") in (
                       "PRELIMINARY_POSITIVE_REQUIRES_INDEPENDENT_REPLICATION",
-                      "NULL_OR_NEGATIVE"),
+                      "NULL_OR_NEGATIVE")
+                  and support.get("status") in (
+                      "ASSAY_VALID_BINDING_NOT_DEMONSTRATED",
+                      "DIAGNOSTIC_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION")
+                  and support.get("oracle_and_zero_controls_pass") is True,
                   "SCIENCE_NATIVE_CHILD_NOT_QUALIFIED")
-            result["status"] = "PASS_SIGNED_EPHEMERAL_HEADERS_AND_SCIENCE_PILOT_MEASURED"
+            result["status"] = "PASS_SIGNED_EPHEMERAL_HEADERS_AND_S4_BINDING_DIAGNOSTIC_MEASURED"
             exit_code = 0
     except previous.Blocked as exc:
         result["status"] = "BLOCKED_" + str(exc)
