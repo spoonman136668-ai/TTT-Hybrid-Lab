@@ -1,0 +1,197 @@
+# G7-R22: operator explicitly authorized exactly five new development packages,
+# and one original bounded authentic GPU forward. First single-use branch push only.
+# This changes no other Ubuntu package, CUDA, model, or production runtime.
+name: G7-R22 one-use exact-five signed dev packages and authentic GPU forward
+on:
+  push:
+    branches:
+      - engineering/g7-r22-one-use-five-signed-debs-native-forward-20261107
+    paths:
+      - .github/workflows/g7-r22-five-signed-debs-native-forward.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r22-one-use-signed-five-and-forward
+  cancel-in-progress: false
+
+jobs:
+  exact-five-and-forward:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r22-one-use-five-signed-debs-native-forward-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 7
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify five signed Ubuntu packages, install only these new files, one native forward
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r22.five-deb-one-forward.v1'
+            candidate_sha = $env:GITHUB_SHA
+            prior_verified_r21_run = 42358899629
+            prior_signed_snapshot = '20260815T000000Z'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            stage = 'NOT_RUN'
+            root_context = 'NOT_USED'
+            installation = 'NOT_RUN'
+            native_forward = 'NOT_RUN'
+            stage_cleanup = 'NOT_RUN'
+            permitted_packages = @('libc-dev-bin','libc6-dev','libcrypt-dev','linux-libc-dev','rpcsvc-proto')
+            system_glibc_version = '2.39-0ubuntu8.8'
+            existing_packages_changed = 'NONE_EXPECTED'
+            model_packages_changed = 'NONE'
+            cuda_changes = 'NONE'
+            training = 'NOT_RUN'
+            scientific = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          $didStage = $false
+          $runId = $env:GITHUB_RUN_ID
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r22-one-use-five-signed-debs-native-forward-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows' -or
+                $runId -notmatch '^[1-9][0-9]{7,14}$') {
+              $r.status = 'BLOCKED_OWNER_OR_RUNNER_IDENTITY'
+              throw 'G7_R22_OWNER_OR_RUNNER'
+            }
+            $base = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $grandparent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^' | Out-String).Trim()
+            $gc = $LASTEXITCODE
+            $r21 = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^^' | Out-String).Trim()
+            $rc = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $mustHave = @('scripts/g7_r21_signed_deb_custody.py',
+                          '.github/workflows/g7-r21-signed-deb-custody.yml',
+                          'scripts/g7_r22_exact_deb_install.py',
+                          '.github/workflows/g7-r22-five-signed-debs-native-forward.yml')
+            if ($hc -ne 0 -or $pc -ne 0 -or $gc -ne 0 -or $rc -ne 0 -or
+                $dc -ne 0 -or $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne '2a6b70a0e3a8a3ea83553d86c3a53853e453195f' -or
+                $grandparent -cne 'a5377fab798f3b39d83d890aae0db4a37fe57de5' -or
+                $r21 -cne '8102d5ea8c310d9b6f403bb12d69150469cc690f' -or
+                $dirty -or $changed.Count -ne 4) {
+              $r.status = 'BLOCKED_SOURCE_CHAIN_OR_SCOPE'
+              throw 'G7_R22_EXACT_SOURCE_CHAIN_OR_SCOPE'
+            }
+            foreach ($path in $mustHave) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_SOURCE_DIFF_SCOPE'
+                throw 'G7_R22_SOURCE_DIFF_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R22_WSL_PATH'
+            }
+            $normalUid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $normalUid -cne '1000') {
+              $r.status = 'BLOCKED_UNEXPECTED_NORMAL_UID'
+              throw 'G7_R22_NORMAL_UID'
+            }
+            $didStage = $true
+            $stageOutput = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 540s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r22_exact_deb_install.py" --phase stage --expected-sha "$env:GITHUB_SHA" --run-id "$runId" --receipt "$linuxRoot/local_runs/g7_r22_stage.json")
+            $stageExit = $LASTEXITCODE
+            $stageMark = @($stageOutput | Where-Object { $_ -match '^G7_R22_STAGE=' })
+            if ($stageMark.Count -ne 1) {
+              $r.status = 'BLOCKED_STAGE_RECEIPT_MISSING'
+              throw 'G7_R22_STAGE_RECEIPT'
+            }
+            $r.stage = $stageMark[0].Substring(13)
+            if ($stageExit -ne 0 -or $r.stage -cne 'PASS_FIVE_SIGNED_DEBS_STAGED') {
+              $r.status = 'BLOCKED_PACKAGE_STAGING'
+              throw 'G7_R22_STAGE_FAILED'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '0') {
+              $r.status = 'BLOCKED_ROOT_CONTEXT'
+              throw 'G7_R22_ROOT_CONTEXT'
+            }
+            $r.root_context = 'UID_ZERO'
+            # Root mode independently verifies exact hardcoded package SHA256,
+            # control metadata and installed dpkg versions before dpkg --install.
+            $r.installation = 'ATTEMPTED'
+            $installOutput = @(& wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/timeout --signal=TERM --kill-after=10s 200s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r22_exact_deb_install.py" --phase install --expected-sha "$env:GITHUB_SHA" --run-id "$runId" --receipt "$linuxRoot/local_runs/g7_r22_install.json")
+            $installExit = $LASTEXITCODE
+            $installMark = @($installOutput | Where-Object { $_ -match '^G7_R22_INSTALL=' })
+            if ($installMark.Count -ne 1) {
+              $r.status = 'BLOCKED_INSTALL_RECEIPT_MISSING'
+              throw 'G7_R22_INSTALL_RECEIPT'
+            }
+            $r.installation = $installMark[0].Substring(15)
+            if ($installExit -ne 0 -or $r.installation -cne 'PASS_ONLY_FIVE_NEW_DEVELOPMENT_PACKAGES_INSTALLED') {
+              $r.status = 'BLOCKED_PACKAGES_INSTALL_OR_POSTAUDIT'
+              throw 'G7_R22_PACKAGES_NOT_QUALIFIED'
+            }
+            # Only one unprivileged original authentic GPU forward after
+            # verified package installation and C host-helper linker guard.
+            $r.native_forward = 'ONE_BOUNDED_FORWARD_STARTED'
+            $nativeOutput = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 275s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r15_compiler_repair_forward.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r22_compiler_forward.json")
+            $nativeExit = $LASTEXITCODE
+            $nativeMark = @($nativeOutput | Where-Object { $_ -match '^G7_R15_STATUS=' })
+            if ($nativeMark.Count -ne 1) {
+              $r.status = 'BLOCKED_NATIVE_RECEIPT_MISSING'
+              throw 'G7_R22_NATIVE_RECEIPT'
+            }
+            $r.native_forward = $nativeMark[0].Substring(14)
+            if ($nativeExit -ne 0 -or $r.native_forward -cne 'PASS_COMPILER_REPAIR_AND_NATIVE_FORWARD') {
+              $r.status = 'BLOCKED_NATIVE_FORWARD_NOT_QUALIFIED'
+              throw 'G7_R22_NATIVE_FAILED'
+            }
+            $r.status = 'PASS_FIVE_SIGNED_DEV_PACKAGES_AND_ONE_AUTHENTIC_FORWARD'
+          } finally {
+            if ($didStage -and $linuxRoot) {
+              $clean = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r22_exact_deb_install.py" --phase cleanup --expected-sha "$env:GITHUB_SHA" --run-id "$runId" --receipt "$linuxRoot/local_runs/g7_r22_cleanup.json")
+              if ($LASTEXITCODE -eq 0) {
+                $r.stage_cleanup = 'PASS'
+              } else {
+                $r.stage_cleanup = 'NOT_QUALIFIED'
+              }
+            }
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_r22_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_R22_STATUS=' + $r.status)
+            Write-Output ('G7_R22_INSTALL=' + $r.installation)
+            Write-Output ('G7_R22_FORWARD=' + $r.native_forward)
+          }
+
+      - name: Preserve sanitized receipts even on a failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r22-five-signed-and-gpu-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r22_workflow_admission.json
+            local_runs/g7_r22_stage.json
+            local_runs/g7_r22_install.json
+            local_runs/g7_r22_cleanup.json
+            local_runs/g7_r22_compiler_forward.json
+          if-no-files-found: warn
+          retention-days: 30
