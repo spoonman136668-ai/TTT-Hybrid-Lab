@@ -1,4 +1,6 @@
-# G7-R13 — prepared one-use WSL2 compiler transport diagnosis
+# G7-R13 — historical preparation, diagnostic consumed
+
+**EXECUTED 2026-11-06 / GitHub UTC 2026-11-07:** PR #31 merged after user approval. The only [G7-R13 run #42316405581](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42316405581) finished with `BLOCKED_NATIVE_INVOCATION_EXCEPTION` at `WSL_PING`. The workflow was retired via source-only cleanup. See [G7_R13_RESULT.md](G7_R13_RESULT.md) for the authoritative observed result; the preparation scope below is historical.
 
 **Baseline** `c0d743ca0174b9baf26831644952ed8bda7079ce`, full G4/G5 Linux/Windows and pinned Mamba Ubuntu CPU **5/5 PASS**. G7-R11 proved original G7-R9 native GPU failure due to `HOST_C_COMPILER_UNAVAILABLE_CONFIRMED`, not a confirmed architectural incompatibility. G7-R12 [run #42314692869](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42314692869) failed at `BLOCKED_PROBE_UNVERIFIED`, although original G7-R9 source checkout identity was bound; `gcc/clang` current presence remains unverified.
 
