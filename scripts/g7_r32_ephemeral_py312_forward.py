@@ -22,7 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import g7_r15_compiler_repair_forward as previous
 
 ROOT = Path(__file__).resolve().parents[1]
-SNAPSHOT = "20260815T000000Z"
+SNAPSHOT = "20260901T000000Z"
 GCC_SHA = "1b99826121ae6682a634e5efe09bd3e3df58ce58e0b28f849114ab5b89139c26"
 HEX = re.compile(r"^[0-9a-f]{64}$")
 VERSION = re.compile(r"^[0-9][A-Za-z0-9.:+~_-]{1,100}$")
