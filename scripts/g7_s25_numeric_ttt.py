@@ -143,6 +143,9 @@ class WorldStep:
     history: Tensor
     query_pair: Tensor
     observed_pair: Tensor
+    # Observable action actually executed in the world (0 = -0.8, 1 = +0.8).
+    # This is an action choice, NOT evaluator-private physics or oracle data.
+    realized_action_index: Tensor
 
 
 class PrequentialTTTEpisode:
@@ -173,6 +176,13 @@ class PrequentialTTTEpisode:
         # Both baselines and online TTT see the same 32-slot causal prefix.
         # All future slots are zero; model never sees the current targets.
         history = causal_history32(incoming.history)
+        selected_actions = incoming.realized_action_index
+        if (not isinstance(selected_actions, Tensor) or
+                selected_actions.shape != (len(self.gates),) or
+                selected_actions.dtype != torch.int64 or
+                selected_actions.device != queries.device or
+                not bool(((selected_actions == 0) | (selected_actions == 1)).all())):
+            raise ValueError("INVALID_OBSERVED_REALIZED_ACTION")
         predicted, features = self.model.prequential_predict(history,
                                                               queries, self.state)
         selected = []
@@ -183,8 +193,10 @@ class PrequentialTTTEpisode:
                 predicted_plus=float(predicted[j, 1].item()),
                 observed_minus=float(incoming.observed_pair[j, 0].item()),
                 observed_plus=float(incoming.observed_pair[j, 1].item()),
-                primary_residual=float((incoming.observed_pair[j, 1]
-                                        - predicted[j, 1]).item()),
+                primary_residual=float((
+                    incoming.observed_pair[j, int(selected_actions[j].item())] -
+                    predicted[j, int(selected_actions[j].item())]
+                ).item()),
             )
             selected.append(decision.update)
         mask = torch.tensor(selected, device=self.state.device, dtype=torch.bool)
