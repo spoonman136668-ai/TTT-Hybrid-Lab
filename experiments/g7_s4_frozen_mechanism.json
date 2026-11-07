@@ -52,7 +52,7 @@
       "online_erased_relative_harm_min": 0.03,
       "all_seeds_positive": true
     },
-    "classification": "ASSAY_INVALID if any positive/zero oracle or target-leak control fails; ASSAY_VALID_MODEL_NOT_USING_BINDINGS if controls pass but trained online misses any model threshold; DIAGNOSTIC_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION if all pass. Never SCIENTIFIC_PASS on this diagnostic.",
+    "classification": "ASSAY_INVALID if any positive/zero oracle or target-leak control fails; ASSAY_VALID_BINDING_NOT_DEMONSTRATED if controls pass but trained online misses any model threshold; DIAGNOSTIC_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION if all pass. Never SCIENTIFIC_PASS on this diagnostic.",
     "safety": {
       "time_seconds_max": 420,
       "torch_vram_bytes_max": 1073741824,
