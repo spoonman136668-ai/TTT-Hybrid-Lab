@@ -1,0 +1,220 @@
+{
+  "schema": "ttt-hybrid.g7-s18.frozen-causal-raw-feature-replication.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s16_exact_sha": "ed87a20a8615f8da47ed0de8e252e6000720e4fb",
+    "s16_run": 42393985416,
+    "s16_classification": "TOKENLESS_LEARNED_PLASTICITY_ADVANTAGE_NULL_ON_FROZEN_NONLINEAR_SWITCH_TEST",
+    "s16_generator_git_blob": "12bc2b9db686531b7cf71a58f043f655d15c1708",
+    "s17_original_run": 42395873648,
+    "s17_original_candidate": "dedcc1dfbfac57bf464017d480df1b13bd6c44dd",
+    "s17_original_science_status": "ASSAY_INVALID_STRONG_KERNEL_CONTROL_OR_ORACLE",
+    "s17_training_source_git_blob": "624c2415bcaa4f76a84b50d1b67073000061f275"
+  },
+  "hypothesis": "With newly disjoint training/calibration/evaluation seeds and a mechanistically targeted post-switch-history ablation, the learned continuous-feature memory retains a pre-frozen advantage over identical random features and strong CAL-only Gaussian KRR on hidden-parameter nonlinear switched worlds.",
+  "arms": [
+    {
+      "id": "learned_features",
+      "type": "trainable 2→32→12 tanh MLP on raw state/action, 12-dim ridge adaptive coefficients per world; same initial MLP as random",
+      "train_steps": 240
+    },
+    {
+      "id": "random_features",
+      "type": "identical initial MLP but never trained; same ridge coefficient adaptation",
+      "train_steps": 0
+    },
+    {
+      "id": "rbf_kernel_ridge",
+      "type": "strong conventional RBF kernel ridge over raw (x,u); gamma, decay, regularization CALIBRATION-ONLY",
+      "train_steps": 0
+    },
+    {
+      "id": "fully_trained_gru",
+      "type": "32-unit GRU on raw 4-channel continuous history with query-conditioned 3-channel 32-unit MLP future-derivative head",
+      "train_steps": 240
+    },
+    {
+      "id": "static_derivative",
+      "type": "no adaptation constant future derivative 0",
+      "train_steps": 0
+    },
+    {
+      "id": "exact_physics_oracle",
+      "type": "evaluator uses hidden world parameters only to generate ground-truth targets",
+      "train_steps": 0
+    },
+    {
+      "id": "swapped_world_history",
+      "type": "negative context swap for learned feature and RBF predictors",
+      "train_steps": 0
+    }
+  ],
+  "world": {
+    "generator": "reuse S16 world() function byte-identically, with NO S16 analytic basis() or consequence() accessible to learned-feature, random-feature, kernel or GRU predictors. Evaluator knows true nonlinear law.",
+    "nonlinear_family": "xnext=x+dt*(-a*x+b*u+c*tanh(2*x)+d*x*u), unknown to all S17 candidate models",
+    "unseen_function_split": "xnext uses tanh(3*x) after switch, unknown to candidates; OOD parameter ranges as S16",
+    "switch_after_transition": 20,
+    "context_transitions": 32,
+    "numeric_channels": [
+      "state",
+      "applied_actuator",
+      "elapsed_time",
+      "measured_next_state"
+    ],
+    "no_tokenizer": true,
+    "no_vocabulary": true,
+    "no_discrete_event_codes": true,
+    "no_attention": true,
+    "no_language_loss": true,
+    "physics_bias_disclosure": "Estimator model uses the known Euler residual (xnext-x)/dt and supervised counterfactual target, so it has a discrete-time numerical dynamics prior, but no correct nonlinear feature formula."
+  },
+  "frozen_training": {
+    "seeds": [
+      401,
+      503,
+      607
+    ],
+    "steps": 240,
+    "batch": 48,
+    "worlds_per_seed_per_trainable_arm": 11520,
+    "exact_episode_seed": "seed*100000 + 333000 + step*37",
+    "regime_schedule": [
+      "train_switch",
+      "train_stable"
+    ],
+    "mlp_input_features": 2,
+    "mlp_hidden": 32,
+    "mlp_output": 12,
+    "feature_ridge_decay": 0.78,
+    "feature_ridge_regularization": 0.08,
+    "feature_lr": 0.004,
+    "gru_lr": 0.004,
+    "weight_decay": 0.01,
+    "gradient_clip": 1,
+    "same_train_examples_and_actions_for_mlp_and_gru": true,
+    "fixed_random_feature_initialization_equals_learned_pre_fit": true
+  },
+  "calibration": {
+    "seeds": [
+      1511,
+      1523,
+      1531
+    ],
+    "batch": 64,
+    "only_train_range_switching_worlds": true,
+    "rbf_gamma_grid": [
+      0.5,
+      2,
+      6
+    ],
+    "rbf_decay_grid": [
+      0.65,
+      0.78,
+      1
+    ],
+    "rbf_regularization_grid": [
+      0.01,
+      0.08
+    ],
+    "tie_breaker": "argmin mean calibration MSE then smaller gamma then larger decay then larger ridge; never use test splits to select",
+    "no_trainable_model_tuning_on_calibration": true
+  },
+  "evaluation": {
+    "split_seeds": {
+      "id_switch": [
+        1553,
+        1567,
+        1571
+      ],
+      "ood_switch": [
+        1601,
+        1613,
+        1627
+      ],
+      "ood_stable": [
+        1709,
+        1721,
+        1733
+      ],
+      "unfamiliar_function": [
+        1801,
+        1811,
+        1823
+      ]
+    },
+    "batch": 64,
+    "queries_per_world": 8,
+    "all_heldout_worlds_unseen": true,
+    "no_test_gradient_or_updates": true,
+    "action_intervention_flip_control": true,
+    "world_swap_negative_control": true,
+    "original_hidden_oracle_exact": true,
+    "trained_model_cold_restore_exact": true,
+    "calculate_actual_process_time_and_peak_rss": true,
+    "causal_post_switch_ablation": {
+      "type": "Remove precisely all 12 POST-SWITCH sensor/action/consequence transitions by replacing history indices 20:32 with a repeat of indices 0:12 from the same original world; leave query, true target, first 20 observations intact.",
+      "purpose": "Test whether causal recent feedback about the changed physical system is needed for predictions. The counterfactual stream is intentionally not a physically continuous trajectory; it is a negative perturbation only, NEVER an evaluation world for positive learning claims.",
+      "age_of_switch": 20,
+      "post_switch_steps_removed": 12,
+      "target_unchanged": true,
+      "intervention_from_same_world": true,
+      "apply_to": [
+        "learned_feature_model",
+        "calibrated_kernel_model"
+      ],
+      "unrelated_world_swap_retained_as_secondary_metric": true,
+      "block_causal_contamination": "No target or hidden physical coefficients supplied; ablated history constructed exclusively from observed original past state/action streams.",
+      "no_training_on_censored_sequences": true
+    }
+  },
+  "threshold": {
+    "oracle_mse_max": 1e-12,
+    "calibrated_kernel_ood_mse_max": 0.01,
+    "calibrated_kernel_relative_gain_vs_static_min": 0.2,
+    "calibrated_kernel_swapped_history_mse_ratio_min": 1.25,
+    "learned_over_random_ood_relative_mse_gain_min": 0.1,
+    "learned_over_random_ood_gain_all_three_seeds": true,
+    "learned_over_kernel_ood_relative_mse_gain_min": 0.05,
+    "learned_over_kernel_ood_absolute_mse_gain_min": 0.00002,
+    "learned_over_kernel_ood_gain_all_three_seeds": true,
+    "learned_unfamiliar_function_mse_max": 0.01,
+    "cold_restore_max_abs_diff": 0,
+    "wall_limit_seconds": 240,
+    "peak_rss_limit_bytes": 2147483648,
+    "calibrated_kernel_post_switch_ablation_mse_ratio_min": 1.25,
+    "learned_feature_post_switch_ablation_mse_ratio_min": 1.25
+  },
+  "classifications": {
+    "invalid": "ASSAY_INVALID_CAUSAL_POST_SWITCH_ABLATION_OR_ORACLE",
+    "new_positive": "PRELIMINARY_LEARNED_RAW_FEATURE_REPLICATION_NOT_INDEPENDENTLY_QUALIFIED",
+    "null": "LEARNED_RAW_FEATURE_REPLICATION_NULL_OR_NEGATIVE",
+    "report_gru": "Independent trained GRU comparator (same newly frozen worlds) always reported.",
+    "no_claim": "Fresh data and stricter causal context-ablation negative control address G7-S17's failure to meet unrelated-world-swap threshold on seed307. Original S17 result remains invalid, untouched; S18 does not retroactively qualify it and is not independent SCIENTIFIC_PASS."
+  },
+  "resource_authority": {
+    "existing_runner": "TTT-HYBRID-GPU-WIN",
+    "cpu_only": true,
+    "normal_uid": 1000,
+    "existing_pinned_R3_venv": true,
+    "no_downloads": true,
+    "no_package_install": true,
+    "no_root": true,
+    "no_paid_api": true,
+    "no_new_controller": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "stop": [
+      "source SHA/protocol drift",
+      "nonfinite gradients or loss",
+      "heldout action/target leakage",
+      "invalid privileged oracle",
+      "calibration used heldout data",
+      "failing strong kernel controls",
+      "process time/RSS cap",
+      "package inventory changed",
+      "unqualified runner/venv",
+      "checkpoint mismatch"
+    ],
+    "independent_qualification": "NOT_RUN"
+  }
+}
