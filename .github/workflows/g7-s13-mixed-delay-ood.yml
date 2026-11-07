@@ -1,0 +1,196 @@
+# G7-S1 one-use preregistered native GPU scientific pilot.
+# Authorized bounded scientific test only; exact source and frozen protocol.
+# No root, install, deployment, merges, controller, inference service or API spend.
+name: G7-S13 mixed-delay training versus fixed Mamba on new 96/128-token recall
+on:
+  push:
+    branches:
+      - engineering/g7-s13-mixed-delay-causal-retrieval-20261107
+    paths:
+      - .github/workflows/g7-s13-mixed-delay-ood.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s13-one-use-fixed-vs-mixed-training
+  cancel-in-progress: false
+
+jobs:
+  frozen-pilot:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s13-mixed-delay-causal-retrieval-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout candidate with independent receipt isolation
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s13-isolated
+          fetch-depth: 10
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Verify exact SHA, freeze, and execute one native science pilot
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s13.one-use-fixed-vs-mixed-delay.v1'
+            candidate_sha = $env:GITHUB_SHA
+            baseline_sha = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            qualifying_engineering_run = 42364516609
+            original_science_run = 42365966599
+            conventional_positive_control_run = 42368703057
+            s7_extended_native_run = 42369954172
+            s8_equal_episode_run = 42370667214
+            s9_variable_binding_run = 42371408030
+            s10_mechanistic_ablation_run = 42378398424
+            s11_capacity_matched_run = 42383988759
+            s12_delayed_interference_run = 42385309942
+            prior_rerun = 42365768248
+            prior_scientific_null_run = 42365966599
+            prior_s4_admission_failure = 42367160469
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            preregistration = 'UNVERIFIED'
+            normal_user = 'UNVERIFIED'
+            native_science = 'NOT_RUN'
+            independent_replication = 'NOT_RUN'
+            package_changes = 'NONE'
+            root = 'NOT_USED'
+            gpu_driver_changes = 'NONE'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s13-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s13-mixed-delay-causal-retrieval-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_WRONG_OWNER_RUNNER'
+              throw 'G7_S13_WRONG_OWNER_RUNNER'
+            }
+            $base = '7ae34b4cc234a9802c44eecf95254880ed6799a6'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $predecessor = (& git -C $checkout rev-parse 'HEAD~4' | Out-String).Trim()
+            $anc = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s13_frozen_mixed_delay.json',
+              'scripts/g7_s13_mixed_delay_ood.py',
+              'scripts/g7_s13_signed_temporary_runtime.py',
+              '.github/workflows/g7-s13-mixed-delay-ood.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $anc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne '6c2a6cf683784a9ebfc0f69f1a2e659e96d5d286' -or
+                $predecessor -cne '7ae34b4cc234a9802c44eecf95254880ed6799a6' -or
+                $dirty -or $changed.Count -ne 4) {
+              $r.status = 'BLOCKED_SOURCE_SHA_OR_SCOPE'
+              throw 'G7_S13_SOURCE_SHA_OR_SCOPE'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_SOURCE_DIFF_SCOPE'
+                throw 'G7_S13_SOURCE_DIFF_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_S12_PARENT_AND_FOUR_FROZEN_S13_FILES'
+            $protocol = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s13_frozen_mixed_delay.json') -Raw | ConvertFrom-Json
+            if ($protocol.schema -cne 'ttt-hybrid.g7-s13.frozen-mixed-delay-causal-retrieval.v1' -or
+                $protocol.lineage.s12_run -ne 42385309942 -or
+                $protocol.lineage.s12_sha -cne '7ae34b4cc234a9802c44eecf95254880ed6799a6' -or
+                $protocol.training.steps_per_seed_arm -ne 512 -or
+                $protocol.training.batch_size -ne 32 -or
+                $protocol.training.seeds.Count -ne 3 -or
+                $protocol.arms.Count -ne 4 -or
+                $protocol.heldout.variants.Count -ne 7 -or
+                $protocol.heldout.batches_per_seed -ne 4 -or
+                $protocol.heldout.batch_size -ne 64 -or
+                $protocol.budget.wall_seconds_max -ne 1100) {
+              $r.status = 'BLOCKED_FROZEN_S13_PROTOCOL'
+              throw 'G7_S13_FROZEN_PROTOCOL'
+            }
+            $r.preregistration = 'PASS_S13_FROZEN_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_SOURCE_PATH'
+              throw 'G7_S13_WSL_SOURCE_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NORMAL_USER'
+              throw 'G7_S13_NORMAL_USER'
+            }
+            $r.normal_user = 'UID_1000'
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 1480s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s13_signed_temporary_runtime.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_s13_ephemeral_runtime_admission.json")
+            $return = $LASTEXITCODE
+            $statusLines = @($raw | Where-Object { $_ -match '^G7_S13_STATUS=' })
+            $dpkgLines = @($raw | Where-Object { $_ -match '^G7_S13_DPKG=' })
+            if ($statusLines.Count -ne 1 -or $dpkgLines.Count -ne 1) {
+              $r.status = 'BLOCKED_NATIVE_RECEIPT_TRANSPORT'
+              throw 'G7_S13_NATIVE_RECEIPT_TRANSPORT'
+            }
+            $r.native_science = $statusLines[0].Substring('G7_S13_STATUS='.Length)
+            $r.status = $r.native_science
+            $actualDpkg = $dpkgLines[0].Substring('G7_S13_DPKG='.Length)
+            if ($actualDpkg -cne 'NONE') {
+              $r.status = 'BLOCKED_DPKG_STATE_DRIFT'
+              throw 'G7_S13_DPKG_STATE_DRIFT'
+            }
+            if ($return -ne 0 -or
+                $r.status -cne 'PASS_SIGNED_EPHEMERAL_HEADERS_AND_S13_MIXED_DELAY_MEASURED') {
+              throw 'G7_S13_SCIENCE_MEASUREMENT_NOT_QUALIFIED'
+            }
+            $sciencePath = Join-Path $out 'g7_s13_mixed_delay_evidence.json'
+            if (-not (Test-Path -LiteralPath $sciencePath -PathType Leaf)) {
+              $r.status = 'BLOCKED_FINAL_NATIVE_METRICS_MISSING'
+              throw 'G7_S13_FINAL_METRICS'
+            }
+            $measured = Get-Content -LiteralPath $sciencePath -Raw | ConvertFrom-Json
+            if ($measured.status -notin @(
+                  'PRELIMINARY_MIXED_DELAY_GAIN_REQUIRES_REPLICATION',
+                  'NULL_OR_NEGATIVE_MIXED_DELAY_GAIN') -or
+                $measured.candidate_sha -cne $env:GITHUB_SHA -or
+                $measured.oracle_controls_pass -cne $true -or
+                $measured.familiar_native_baselines_pass -cne $true -or
+                $measured.new_128token_cold_restoration_exact -cne $true -or
+                $measured.training_updates_per_seed_arm -ne 512 -or
+                $measured.training_episodes_per_seed_arm -ne 16384 -or
+                $measured.heldout_episodes_per_seed_arm -ne 256) {
+              $r.status = 'BLOCKED_FINAL_METRIC_IDENTITY'
+              throw 'G7_S13_METRIC_IDENTITY'
+            }
+            $r | Add-Member -NotePropertyName scientific_outcome -NotePropertyValue $measured.status
+            $r.status = 'PASS_S13_FIXED_VS_MIXED_DELAY_CAUSAL_MEASURED_NOT_INDEPENDENT'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s13_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S13_RESULT=' + $r.status)
+            Write-Output ('G7_S13_SCIENCE=' + $r.native_science)
+            Write-Output 'G7_S13_PROMOTION=NOT_AUTHORIZED'
+          }
+      - name: Preserve original sanitized pilot receipts on pass or fail
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s13-mixed-delay-causal-${{ github.sha }}
+          path: |
+            g7-s13-isolated/local_runs/g7_s13_workflow_admission.json
+            g7-s13-isolated/local_runs/g7_s13_ephemeral_runtime_admission.json
+            g7-s13-isolated/local_runs/g7_s13_mixed_delay_evidence.json
+          if-no-files-found: warn
+          retention-days: 30
