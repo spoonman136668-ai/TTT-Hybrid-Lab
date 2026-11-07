@@ -1,0 +1,171 @@
+# G7-S14: single-use no-attention causal three-hash sketch experiment.
+# Only pinned existing normal-user CPU environment. No package install,
+# remote APIs, new controller, CUDA use, merge, deployment or science promotion.
+name: G7-S14 CATSEM collision-aware attention-free memory
+on:
+  push:
+    branches:
+      - engineering/g7-s14-trisketch-memory-20261107
+    paths:
+      - .github/workflows/g7-s14-trisketch-exploration.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s14-unique-attention-free-memory
+  cancel-in-progress: false
+
+jobs:
+  one-use-normal-user-cpu:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s14-trisketch-memory-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Exact candidate isolated checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s14-isolated
+          fetch-depth: 10
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify source and execute CPU-only frozen tri-sketch pilot
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s14.one-use-cpu-custody.v1'
+            candidate_sha = $env:GITHUB_SHA
+            original_s13_sha = 'd6f6854930dad85f99ee5efbed2ade03facfb2a9'
+            original_s13_science_run = 42386864471
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            frozen_protocol = 'UNVERIFIED'
+            normal_wsl_user = 'UNVERIFIED'
+            measured_science = 'NOT_RUN'
+            cuda = 'NOT_RUN'
+            installed_packages = 'UNMODIFIED_EXPECTED'
+            training = 'NOT_RUN_NONPARAMETRIC_ALGORITHM'
+            independent_scientific_qualification = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s14-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s14-trisketch-memory-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_SCOPE_OR_RUNNER'
+              throw 'G7_S14_ISOLATION'
+            }
+            $base = 'd6f6854930dad85f99ee5efbed2ade03facfb2a9'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD~5' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s14_frozen_trisketch.json',
+              'scripts/g7_s14_catsem_memory.py',
+              'scripts/g7_s14_cpu_launcher.py',
+              '.github/workflows/g7-s14-trisketch-exploration.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or
+                $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne 'd554944cb2b19ba80a0f07d476032c1d8184a007' -or
+                $ancestor -cne $base -or
+                $dirty -or $changed.Count -ne 4) {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SHA'
+              throw 'G7_S14_SOURCE_CUSTODY'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_UNEXPECTED_SOURCE_SCOPE'
+                throw 'G7_S14_SOURCE_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_S13_ANCESTOR_EXACT_FOUR_FILES'
+            $p = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s14_frozen_trisketch.json') -Raw | ConvertFrom-Json
+            if ($p.schema -cne 'ttt-hybrid.g7-s14.catsem-attention-free-exploration.v1' -or
+                $p.lineage.s13_run -ne 42386864471 -or
+                $p.authority.no_cuda -cne $true -or
+                $p.authority.no_package_install -cne $true -or
+                $p.frozen_experiment.seeds.Count -ne 3 -or
+                $p.frozen_experiment.cases.Count -ne 5 -or
+                $p.controls.wall_seconds_cap -ne 180) {
+              $r.status = 'BLOCKED_FROZEN_PROVENANCE'
+              throw 'G7_S14_PRECOMMIT'
+            }
+            $r.frozen_protocol = 'PASS_COMMITTED_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_S14_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_WSL_NORMAL_USER'
+              throw 'G7_S14_NORMAL_USER'
+            }
+            $r.normal_wsl_user = 'UID_1000'
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 260s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s14_cpu_launcher.py" --expected-sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $admission = @($raw | Where-Object { $_ -match '^G7_S14_ADMISSION=' })
+            $science = @($raw | Where-Object { $_ -match '^G7_S14_SCIENCE=' })
+            if ($admission.Count -ne 1 -or $science.Count -ne 1) {
+              $r.status = 'BLOCKED_MEASUREMENT_RECEIPT_MISSING'
+              throw 'G7_S14_ADMISSION_RECEIPT'
+            }
+            $r.status = $admission[0].Substring('G7_S14_ADMISSION='.Length)
+            $r.measured_science = $science[0].Substring('G7_S14_SCIENCE='.Length)
+            if ($rc -ne 0 -or $r.status -cne 'PASS_MEASURED_CPU_ONLY' -or
+                $r.measured_science -notin @(
+                  'ATTENTION_FREE_EPISODIC_SKETCH_RETRIEVAL_POSITIVE_ENGINEERING_EXPLORATION',
+                  'ATTENTION_FREE_SKETCH_RETRIEVAL_FROZEN_LIMITS_NOT_MET')) {
+              throw 'G7_S14_CPU_TEST_FAILED_OR_INVALID'
+            }
+            $datafile = Join-Path $out 'g7_s14_catsem_evidence.json'
+            $data = Get-Content -LiteralPath $datafile -Raw | ConvertFrom-Json
+            if ($data.candidate_sha -cne $env:GITHUB_SHA -or
+                $data.all_oracle_causality_reset_controls_valid -cne $true -or
+                $data.installed_packages_changed -cne $false -or
+                $data.does_mamba_or_ttt_or_cuda_execution -cne $false -or
+                $data.learned_parameters -ne 0 -or
+                $data.heldout_episodes_per_seed -ne 192 -or
+                $data.peak_allocated_sketch_state_bytes -gt 16777216) {
+              $r.status = 'BLOCKED_INVALID_SCIENTIFIC_OR_STATE_RECEIPT'
+              throw 'G7_S14_SCIENCE_CUSTODY'
+            }
+            $r.status = 'PASS_FROZEN_CPU_SKETCH_EXPERIMENT_MEASURED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s14_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S14_RESULT=' + $r.status)
+            Write-Output ('G7_S14_SCIENCE=' + $r.measured_science)
+            Write-Output 'G7_S14_GPU=NOT_RUN'
+          }
+
+      - name: Preserve measured original scientific and custody receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s14-catsem-cpu-${{ github.sha }}
+          path: |
+            g7-s14-isolated/local_runs/g7_s14_workflow_admission.json
+            g7-s14-isolated/local_runs/g7_s14_catsem_evidence.json
+          if-no-files-found: warn
+          retention-days: 30
