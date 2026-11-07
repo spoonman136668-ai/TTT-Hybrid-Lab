@@ -1,0 +1,133 @@
+# G7-R19 read-only, single-use version-pinned dependency check.
+# No sudo, apt update/install, GPU work, retries, or controller changes.
+name: G7-R19 one-use read-only matching libc6-dev simulation
+on:
+  push:
+    branches:
+      - engineering/g7-r19-readonly-libc-version-pin-20261107
+    paths:
+      - .github/workflows/g7-r19-readonly-libc-version-pin.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r19-one-use-readonly-libc
+  cancel-in-progress: false
+
+jobs:
+  libc-version-pin:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r19-readonly-libc-version-pin-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 4
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Check source scope then perform one unprivileged read-only version simulation
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r19-admission.v1'
+            candidate_sha = $env:GITHUB_SHA
+            baseline_sha = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            normal_user = 'UNVERIFIED'
+            package_changes = 'NONE'
+            gpu_forward = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r19-readonly-libc-version-pin-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R19_IDENTITY_DENIED'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $headCode = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $parentCode = $LASTEXITCODE
+            $grandparent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^' | Out-String).Trim()
+            $grandCode = $LASTEXITCODE
+            $root = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^^' | Out-String).Trim()
+            $rootCode = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyCode = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' HEAD)
+            $diffCode = $LASTEXITCODE
+            if ($headCode -ne 0 -or $parentCode -ne 0 -or $grandCode -ne 0 -or $rootCode -ne 0 -or
+                $dirtyCode -ne 0 -or $diffCode -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne '685cda8bf766075248074c12f7dd7fc45868964e' -or
+                $grandparent -cne 'dc3a0e928d15d267e63aa33416ee374e1f080a13' -or
+                $root -cne '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' -or
+                $dirty -or $changed.Count -ne 2 -or
+                $changed -notcontains 'scripts/g7_r19_readonly_libc_pin.py' -or
+                $changed -notcontains '.github/workflows/g7-r19-readonly-libc-version-pin.yml') {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SCOPE'
+              throw 'G7_R19_EXACT_SOURCE_SCOPE'
+            }
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" 2>$null | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R19_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u 2>$null | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_UNEXPECTED_NORMAL_USER'
+              throw 'G7_R19_NORMAL_USER'
+            }
+            $r.normal_user = 'UID_1000'
+            $r.source_custody = 'PASS'
+            $result = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 100s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r19_readonly_libc_pin.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r19_libc_versions.json" 2>$null)
+            $code = $LASTEXITCODE
+            $line = @($result | Where-Object { $_ -match '^G7_R19_STATUS=' })
+            if ($code -ne 0 -or $line.Count -ne 1) {
+              $r.status = 'BLOCKED_VERSION_PIN_PROBE'
+              throw 'G7_R19_VERSION_PIN_PROBE'
+            }
+            $r.status = $line[0].Substring(14)
+            if ($r.status -notin @('NO_EXACT_MATCHING_LIBC6_DEV_IN_APT_INDEX',
+                                   'PINNED_SIMULATION_FAILED_NO_MUTATION',
+                                   'SIMULATED_SCOPE_TOO_LARGE_NO_MUTATION',
+                                   'PINNED_SIMULATION_REMOVALS_NO_MUTATION',
+                                   'PINNED_SIMULATION_CHANGES_SYSTEM_LIBC_NO_MUTATION',
+                                   'PINNED_SIMULATION_OUT_OF_SCOPE_NO_MUTATION',
+                                   'PINNED_SIMULATION_MISSING_TARGET_NO_MUTATION',
+                                   'PASS_SAFE_EXACT_VERSION_SIMULATION')) {
+              $r.status = 'BLOCKED_UNRECOGNIZED_RESULT'
+              throw 'G7_R19_UNRECOGNIZED_RESULT'
+            }
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $out 'g7_r19_admission.json') -Encoding UTF8
+            Write-Output ('G7_R19_ADMISSION=' + $r.status)
+            Write-Output ('G7_R19_PACKAGE_CHANGES=NONE')
+            Write-Output ('G7_R19_GPU=NOT_RUN')
+          }
+
+      - name: Preserve sanitized result even on blocked admission
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r19-version-pin-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r19_admission.json
+            local_runs/g7_r19_libc_versions.json
+          if-no-files-found: warn
+          retention-days: 30
