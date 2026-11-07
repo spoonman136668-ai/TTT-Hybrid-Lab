@@ -1,0 +1,271 @@
+{
+  "schema": "ttt-hybrid.g7-s23.hysteretic-changepoint-banks.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s22_science_candidate_sha": "065e8bdfd79b4624e2c3d8fed23bbba7b12453de",
+    "s22_run": 42408137211,
+    "s22_status": "UNLABELED_MEMORY_BANK_ROUTING_OR_PLASTICITY_FROZEN_NULL",
+    "s22_science_blob": "519a1d92832d2b356d50c41b4fe6584c4b995ec7",
+    "s20_world_blob": "ac3f9ddd5b879e53e62030707fb6419adaf732ca",
+    "s18_model_blob": "cfc1959b8812e9abad581018462302bc89a31d59"
+  },
+  "hypothesis": "Can a persistent sensor-prediction-error change detector with adaptive reference, hysteresis and cooldown allocate new continuous banks only for sustained regime changes, avoiding S22's immediate false double-allocation, and outperform both naive one-shot S22 novelty allocation and capacity-matched random routing on fresh hidden-state switched worlds without explicit task labels?",
+  "unconventional": {
+    "name": "Persistent Predictive Error Change-Point Memory (PPEC)",
+    "algorithm": "Each training batch calculates the best bank's prefix-24/suffix-8 numerical prediction error, with no task ID. Maintain a context-only causal exponentially updated reference error. A score is anomalous if it exceeds BOTH source-only calibration quantile AND 1.35× reference; do NOT update reference on anomalies. Create a new copied bank only after ≥5 anomalous batches in the last 6, if no refractory cooldown (36 batches) and bank count<3. On allocation, reset anomaly buffer and start 36-batch adaptation cooldown, updating reference from current observed error during cooldown. Outside anomalies, update reference with EWMA 0.10. Never reset detector on stage/family boundaries; phase labels only drive physical world generator and privileged oracle control.",
+    "features": "Identical original S18 raw real-valued 2→32→12 tanh feature map with per-episode ridge, no analytic physics formula given to the predictor.",
+    "novelty_calibration": "Once after phase A, use 16 never-trained-on source-training-range calibration batches, seeds [3331,3343,3359,3371,3389,3407,3413,3433,3449,3461,3467,3491,3511,3527,3533,3541], 48 worlds each; threshold is 90th percentile of mean validation prediction error. Fixed before phases B/C/D; no heldout seed or post-result adjustment.",
+    "historical_bias": "Surprise-triggered memory, hysteretic change-point detectors, EWMA and cooldown have considerable prior art; do not claim a new first-in-world algorithm.",
+    "training_router_task_label_used": false,
+    "evaluation_router_task_label_used": false,
+    "training_allocates_without_family_label": true,
+    "novelty_threshold_quantile": 0.9,
+    "context_fit_first_n": 24,
+    "context_score_last_n": 8,
+    "max_banks": 3,
+    "allocation_policy": "only if calibrated novelty condition and capacity, no allocation based on phase identity",
+    "copied_bank_on_allocation": "copy currently minimum-error bank, create fresh AdamW optimizer",
+    "frozen_banks_not_updated_unless_selected": true,
+    "random_capacity_control": "three banks cloned from source after A; select update bank by deterministic pseudo-random seed+step, select evaluation bank with deterministic hash of observed numeric context; never uses family/task labels.",
+    "oracle_privileged_comparator": "three bank models, train and evaluate source/sine/rational bank by explicit family label. Upper bound only and NOT counted as proof of autonomous routing.",
+    "routing_accuracy_audit": "Compute optimal one-to-one 3-family-to-3-bank assignment of recorded heldout routing counts after C, using family ID ONLY for independent evaluation. Never expose mapping to router. Report per-seed permutation-optimized accuracy.",
+    "detection": {
+      "window_length": 6,
+      "required_high": 5,
+      "relative_change_multiplier": 1.35,
+      "ema_alpha": 0.1,
+      "post_allocation_cooldown_updates": 36,
+      "source_only_negative_duration_updates": 48,
+      "negative_train_episode_seed_formula": "fit_seed*100000+2701000+step*37",
+      "reference_initialization": "mean of frozen source-only calibration batch mean errors",
+      "no_phase_boundary_reset": true,
+      "anomaly_reference_update_during_cooldown": true,
+      "anomaly_reference_update_during_detected_outlier": false,
+      "no_task_labels_in_detection": true,
+      "trigger_threshold": "score>max(source_source_only_q90,reference*1.35)"
+    },
+    "naive_S22_baseline": "Run original S22 one-step novelty-allocation on same new training worlds, source-only threshold; a separate three-bank model with identical source checkpoint and optimizer states, no old data. Include as direct matched-capacity and training-work negative control. Original S22 results remain untouched.",
+    "stationary_false_alarm_control": "48 separate source-training-range batch contexts after phase A, with the prefit source bank FROZEN and independent router state; test whether persistent change rule allocates under stationary inputs. It may not see any phase/task labels, old episodes or heldout worlds."
+  },
+  "environment": {
+    "generator": "reuse exactly pinned S20 source world. 2 latent physical state variables, only 1D noisy sensor, 3 changed nonlinear families with unknown coefficients and transition-20 switches.",
+    "input": [
+      "observed_scalar_sensor_y",
+      "continuous_applied_action_u",
+      "elapsed_time_dt",
+      "measured_next_sensor_y"
+    ],
+    "query": [
+      "current_sensor_y",
+      "new_counterfactual_u",
+      "new_dt"
+    ],
+    "hidden_task_labels_supplied_to_routing": false,
+    "hidden_latent_states_supplied": false,
+    "no_tokenizer": true,
+    "no_vocabulary": true,
+    "no_discrete_event_ids": true,
+    "no_attention": true,
+    "no_next_token_objective": true,
+    "sensor_time_numerically_sampled": true,
+    "euler_residual_inductive_bias": true
+  },
+  "arms": {
+    "self_organizing": "up to 3 banks, error-driven novelty allocation + per-world context-error routing without task labels, no replay",
+    "shared_no_replay": "single feature model ordinary fine-tuning on exactly same new-only worlds and optimizer counts",
+    "random_three_bank": "three feature banks after A, random training update and observed-context-hash evaluation; same 3-bank capacity cap, no old data",
+    "rehearsal": "single feature model with 25% old training-world episodes per batch in B/C/D, explicit extra old-task information disclosure",
+    "oracle_label_routed": "three feature banks, privileged task-label assignment for training and evaluation, only reference upper bound",
+    "GRU": "trained 32-unit raw continuous recurrence, same new-only worlds and AdamW steps but different parameter and FLOP budgets",
+    "KRR": "Gaussian RBF kernel ridge calibrated source-only once, no learned weights",
+    "random_initial_features": "never trained source-initial feature map",
+    "exact_oracle": "hidden physical evaluator only, not prediction model",
+    "naive_surprise_three_bank": "Original S22 threshold-on-single-batch training allocation, 3-bank capacity control, same source initialization and train stream as PPEC."
+  },
+  "training": {
+    "fit_seeds": [
+      1901,
+      2011,
+      2131
+    ],
+    "batch_size": 48,
+    "phases": [
+      {
+        "id": "A",
+        "family": "source",
+        "steps": 240,
+        "seed_offset": 2401000
+      },
+      {
+        "id": "B",
+        "family": "sine",
+        "steps": 96,
+        "seed_offset": 2501000
+      },
+      {
+        "id": "C",
+        "family": "rational",
+        "steps": 96,
+        "seed_offset": 2601000
+      },
+      {
+        "id": "D",
+        "family": "source",
+        "steps": 96,
+        "seed_offset": 2701000
+      }
+    ],
+    "training_example_seed": "seed*100000+phase.seed_offset+step*37",
+    "total_updates_per_trainable_arm": 528,
+    "worlds_per_trainable_arm": 25344,
+    "feature_lr": 0.004,
+    "GRU_lr": 0.004,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1,
+    "same_source_pretraining_model_and_optimizer_state_all_feature_arms": true,
+    "same_new_only_train_worlds_for_SOBM_shared_random_oracle_GRU": true,
+    "rehearsal_fraction_old_train_worlds": 0.25,
+    "rehearsal_old_data_only_from_separate_training_seeds": true,
+    "no_eval_or_calibration_worlds_in_training": true
+  },
+  "calibration": {
+    "kernel_source_seeds": [
+      4201,
+      4211,
+      4229
+    ],
+    "worlds_per_seed": 64,
+    "gamma": [
+      0.5,
+      2,
+      6
+    ],
+    "decay": [
+      0.65,
+      0.78,
+      1
+    ],
+    "ridge": [
+      0.01,
+      0.08
+    ],
+    "select_only_source_train_worlds": true,
+    "freeze_once": true,
+    "router_source_seeds": [
+      4103,
+      4111,
+      4127,
+      4133,
+      4153,
+      4163,
+      4177,
+      4187,
+      4199,
+      4231,
+      4241,
+      4253,
+      4261,
+      4271,
+      4283,
+      4297
+    ],
+    "router_worlds_per_calibration_batch": 48,
+    "strictly_disjoint_from_training_and_heldout": true
+  },
+  "evaluation": {
+    "heldout_ood_seeds": {
+      "source": [
+        4303,
+        4319,
+        4337
+      ],
+      "sine": [
+        4409,
+        4421,
+        4441
+      ],
+      "rational": [
+        4507,
+        4519,
+        4523
+      ]
+    },
+    "worlds_per_seed_per_family": 64,
+    "queries_per_world": 8,
+    "assess_after": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "same_worlds_each_stage": true,
+    "no_heldout_weight_updates": true,
+    "bank_selection_context_only": true,
+    "source_post_switch_causal_ablation": true,
+    "report_oracle_bank_upper_bound_separately": true,
+    "cold_checkpoint_restore_all_active_banks_and_other_trained_models_each_stage": true,
+    "record_bank_allocation_events_and_routes": true,
+    "record_training_wall_by_arm": true,
+    "record_inference_wall_by_arm": true,
+    "record_peak_rss": true,
+    "report_extra_inference_compute_and_parameter_capacity": true
+  },
+  "frozen_thresholds": {
+    "oracle_mse_max": 1e-12,
+    "KRR_source_ood_MSE_max": 0.03,
+    "KRR_source_gain_vs_static_min": 0.1,
+    "KRR_source_causal_ablation_ratio_min": 1.1,
+    "bank_source_retention_C_over_A_MSE_max": 1.5,
+    "bank_source_recovery_D_over_A_MSE_max": 1.25,
+    "bank_sine_retention_C_over_B_MSE_max": 1.35,
+    "bank_sine_learning_B_over_A_relative_gain_min": 0.1,
+    "bank_rational_learning_C_over_B_relative_gain_min": 0.1,
+    "bank_source_C_relative_gain_vs_shared_min": 0.15,
+    "bank_source_C_relative_gain_vs_random_three_bank_min": 0.1,
+    "minimum_banks_by_phase_C": 2,
+    "minimum_route_accuracy_per_seed_after_C": 0.6,
+    "min_source_causal_ablation_ratio": 1.1,
+    "all_three_seeds_must_pass": true,
+    "checkpoint_max_abs_output_delta": 0,
+    "cpu_rss_bytes_max": 2147483648,
+    "wall_seconds_max": 240,
+    "bank_source_C_relative_gain_vs_naive_S22_min": 0.1,
+    "maximum_banks_by_phase_B": 2,
+    "required_banks_by_phase_C": 3,
+    "max_stationary_false_allocations": 0
+  },
+  "status": {
+    "invalid": "ASSAY_INVALID_KERNEL_OR_ORACLE_OR_STATIONARY_CALIBRATION",
+    "positive": "PRELIMINARY_PERSISTENT_UNLABELED_CHANGE_MEMORY_NOT_SCIENTIFIC_PASS",
+    "null": "PERSISTENT_CHANGEPOINT_BANK_ROUTING_OR_RETENTION_NULL",
+    "independent_scientific_qualification": "NOT_RUN",
+    "no_post_result_tuning": true,
+    "limitations": "Only low-dimensional synthetic numerical sensor worlds. No continuous-time unsampled hardware, language understanding, long-term memory generality, RSI, task-free lifelong cognition or independently qualified science; bank memory 3x shared parameter capacity, full contextual routing cost un-matched."
+  },
+  "authority": {
+    "existing_qualified_runner": "TTT-HYBRID-GPU-WIN",
+    "normal_wsl_uid": 1000,
+    "pinned_R3_venv": true,
+    "cpu_only": true,
+    "no_package_install": true,
+    "no_download": true,
+    "no_root": true,
+    "no_paid_api": true,
+    "no_gpu": true,
+    "no_controller_changes": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "stop_on": [
+      "exact source drift or dirty worktree",
+      "R3 manifest drift",
+      "non-finite loss, route score, bank coefficients",
+      "invalid oracle, source positive control",
+      "source calibration sees heldout",
+      "bank router accidentally consumes family labels",
+      "timeout/RSS over frozen budget",
+      "checkpoint restoration failure",
+      "dpkg inventory change"
+    ],
+    "max_total_runner_seconds": 240
+  }
+}
