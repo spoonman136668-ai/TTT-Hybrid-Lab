@@ -36,6 +36,9 @@ REQUIRED = (
     "tests/test_g7_s25_cost_ledger.py",
     ".github/workflows/g7-s25-cost-ledger-qualification.yml",
     ".github/workflows/g7-s25-cost-ledger-qualification-r2.yml",
+    "scripts/g7_s25_baseline_admission.py",
+    "tests/test_g7_s25_baseline_admission.py",
+    ".github/workflows/g7-s25-baseline-contract-once.yml",
 )
 
 def ensure(ok: bool, cause: str) -> None:
@@ -96,7 +99,7 @@ def main():
         ensure(custody.git(ROOT, "hash-object", "--", REQUIRED[0]) ==
                "31633b341403729b7ffbb7d73f3a04098ad44380",
                "S25_FROZEN_PROTOCOL_BLOB_DRIFT")
-        status["source"] = "PASS_EXACT_FIFTEEN_FILES_FROZEN_S25_AND_S20_BLOBS"
+        status["source"] = "PASS_EXACT_EIGHTEEN_FILES_FROZEN_S25_AND_S20_BLOBS"
         venv = (Path.home().resolve() / ".local/share/ttt-hybrid"
                 / ("g7-r3-" + custody.R3_SOURCE_SHA[:12])
                 / "venv/bin/python")
@@ -136,12 +139,22 @@ def main():
                and "Ran 10 tests" in ledger["stdout_tail"]
                and "OK" in ledger["stdout_tail"],
                "G7_S25_COST_LEDGER_TEST_FAIL")
+        # This stdlib test fabricates synthetic *receipts only*, not worlds.
+        # It exercises strict data splits, plateau logic and negative controls.
+        baseline = command([sys.executable, "-I", "-B",
+                            str(ROOT / "tests/test_g7_s25_baseline_admission.py")],
+                           60, env)
+        status["baseline_receipt_admission_contract"] = baseline
+        ensure(baseline["exit_code"] == 0
+               and "Ran 16 tests" in baseline["stdout_tail"]
+               and "OK" in baseline["stdout_tail"],
+               "BASELINE_RECEIPT_CONTRACT_FAIL")
         # Full pytest regression on pinned R3 cannot be inferred from focused tests.
         check = command([str(venv), "-I", "-B", "-c",
                          "import importlib.util;print('PYTEST_PRESENT' if importlib.util.find_spec('pytest') else 'PYTEST_ABSENT')"],
                         20, env)
         status["full_regression_dependency"] = check["stdout_tail"].strip()
-        status["status"] = "PASS_38_FOCUSED_ENGINEERING_ONLY"
+        status["status"] = "PASS_54_FOCUSED_ENGINEERING_ONLY"
         rc = 0
     except Exception as exc:
         status["status"] = "BLOCKED_" + type(exc).__name__
