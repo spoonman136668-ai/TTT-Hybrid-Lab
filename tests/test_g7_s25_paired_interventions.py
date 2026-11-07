@@ -66,6 +66,7 @@ class PairedInterventionsContract(unittest.TestCase):
                 observed = xnext + .25*znext + .002*torch.randn((3,2), generator=clone_rng)
                 primary = torch.randint(0, 2, (3,), generator=clone_rng)[:,None]
                 step = world.emit()
+                self.assertTrue(torch.equal(step.realized_action_index, primary[:,0]), regime)
                 self.assertTrue(torch.equal(step.observed_pair, observed), regime)
                 self.assertTrue(torch.equal(step.query_pair[:,:,0],
                                             initial_obs.expand(-1, 2)), regime)
@@ -101,7 +102,7 @@ class PairedInterventionsContract(unittest.TestCase):
     def test_causal_history_excludes_current_probe_and_is_immutable(self):
         world = paired.PairedS20World(3101, 2, "source_signflip")
         self.assertEqual(set(ttt.WorldStep.__dataclass_fields__),
-                         {"history", "query_pair", "observed_pair"})
+                         {"history", "query_pair", "observed_pair", "realized_action_index"})
         first = world.emit()
         saved = first.history.clone()
         self.assertEqual(tuple(first.history.shape), (2,1,4))
@@ -164,11 +165,12 @@ class PairedInterventionsContract(unittest.TestCase):
 
     def test_no_synthetic_privileged_field_in_model_facing_output(self):
         sample = paired.PairedS20World(3109, 2, "sine_signflip").emit()
-        self.assertEqual(set(sample.__dict__), {"history","query_pair","observed_pair"})
+        self.assertEqual(set(sample.__dict__), {"history","query_pair","observed_pair","realized_action_index"})
         self.assertFalse(any(name in sample.__dict__ for name in (
             "_x","_z","_old","_new","family","regime","seed","coefficients")))
         self.assertEqual(sample.query_pair.dtype,torch.float32)
         self.assertEqual(sample.history.dtype,torch.float32)
+        self.assertEqual(sample.realized_action_index.dtype,torch.int64)
 
 
 if __name__ == "__main__":
