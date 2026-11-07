@@ -185,7 +185,7 @@ def main():
                             150, env)
         status["gate_mechanism_contract"] = mechanism
         ensure(mechanism["exit_code"] == 0
-               and "Ran 8 tests" in mechanism["stdout_tail"]
+               and "Ran 9 tests" in mechanism["stdout_tail"]
                and "OK" in mechanism["stdout_tail"],
                "S25_MECHANISM_DIAGNOSTIC_CONTRACT_FAIL")
         # Full pytest regression on pinned R3 cannot be inferred from focused tests.
@@ -193,7 +193,7 @@ def main():
                          "import importlib.util;print('PYTEST_PRESENT' if importlib.util.find_spec('pytest') else 'PYTEST_ABSENT')"],
                         20, env)
         status["full_regression_dependency"] = check["stdout_tail"].strip()
-        status["status"] = "PASS_78_FOCUSED_ENGINEERING_ONLY"
+        status["status"] = "PASS_79_FOCUSED_ENGINEERING_ONLY"
         rc = 0
     except Exception as exc:
         status["status"] = "BLOCKED_" + type(exc).__name__
