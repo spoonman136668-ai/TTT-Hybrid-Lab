@@ -1,0 +1,145 @@
+{
+  "schema": "ttt-hybrid.g7-s11.native-vs-capacity-matched-attention.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s10_run": 42378398424,
+    "s10_sha": "3143b309477380bddfb8ac98d5103f94c19529f6",
+    "s10_science": "MECHANISTIC_ABLATION_MEASURED_NO_INDEPENDENT_QUALIFICATION",
+    "s10_outer_job": "FAILED_ONLY_BY_POWERSHELL_MARKER_OFFSET",
+    "s10_result": "without_mamba MSE 0.753 vs full_static 0.002647; unlike no_mamba, now add enough causal-attention capacity to approximately match original trainable parameter count",
+    "conventional_source_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500"
+  },
+  "hypothesis": "Under identical training examples, optimizer updates, three seeds and newly unseen joint query/support permutations, replacing the original Mamba2 computation with two additional causal-attention blocks (~1% fewer active trainable parameters) may recover performance. The S10 Mamba ablation's large error could reflect missing capacity rather than a distinct necessary recurrent mechanism.",
+  "design": {
+    "arms": [
+      {
+        "id": "conventional",
+        "train_lr": 0.01,
+        "model": "S6 strong content-addressed positive control, 1025 trainable params",
+        "kind": "conventional"
+      },
+      {
+        "id": "full_static",
+        "train_lr": 0.002,
+        "model": "Original official nonfused Mamba2 + 1 causal attention + static TTTLinear + fixed depth",
+        "kind": "full",
+        "expected_trainable": 90194
+      },
+      {
+        "id": "no_mamba_one_attention",
+        "train_lr": 0.002,
+        "model": "Same original hybrid with Mamba/norm_in bypassed and frozen, 1 causal attention + static TTT + depth",
+        "kind": "no_mamba",
+        "expected_trainable": 55756
+      },
+      {
+        "id": "attention_replaces_mamba",
+        "train_lr": 0.002,
+        "model": "Bypass and freeze Mamba/norm_in; insert TWO additional standard CausalAttentionBlock(width64, heads4) before original causal attention. Total 3 causal-attention blocks + static TTT + depth.",
+        "kind": "attention_replace",
+        "expected_trainable": 89292
+      }
+    ],
+    "attention_replacement_is_standard": "Use unmodified repository CausalAttentionBlock; first two blocks are added after original base construction. Original shared parameter tensors have exactly same seeded initialization across all native arms.",
+    "original_full_forward_equivalence": "For full_static before training verify adapter forward bit-identically matches original AuthenticHybrid.forward on same GPU/input and exact pinned upstream sources.",
+    "active_trainable_parameter_matching": "89292 attention-replacement vs 90194 full = 0.9900 ratio (within 2% tolerance); inactive original Mamba weights retained in state_dict for custody but excluded from trainable count/optimizer.",
+    "parameter_tolerance_fraction": 0.02,
+    "compute_equivalence": false,
+    "compute_reporting": "Record each arm's actual training and evaluation wall seconds and peak CUDA allocations; example/step parity guaranteed, but training FLOPs, energy, and latency not equalized. Do not call this equal-FLOP or exact architectural matching.",
+    "no_ttt_fast_updates": true,
+    "model_specific_trainable_modules": true
+  },
+  "training": {
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "steps": 512,
+    "batch_size": 64,
+    "training_episodes_per_seed_per_arm": 32768,
+    "optimizer": "AdamW",
+    "gradient_clip": 1,
+    "weight_decay": 0,
+    "train_generator": "Exact qualified S6 source get_batch; seed*10000000+step*17",
+    "query_train_order": [
+      0,
+      1,
+      2,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "dtype": "float32"
+  },
+  "evaluation": {
+    "heldout_generator": "Same exact S6 get_batch with NEW disjoint seed*10000000+9970000+batch*17",
+    "batches_per_seed": 4,
+    "batch_size": 128,
+    "heldout_episodes_per_seed": 512,
+    "variants": [
+      "fixed_layout",
+      "joint_permuted",
+      "joint_corrupted_values"
+    ],
+    "permutation": "Unchanged G7-S9 permuted_support_queries, per-example independent nonidentity query and pair-position permutation, preserving key-value association; cyclic roll of values is negative control.",
+    "positive_oracle_exact": true,
+    "corrupt_oracle_mse_min": 1.5,
+    "zero_baseline_exact": 1,
+    "no_heldout_optimizer_updates": true,
+    "cold_restore_exact": true
+  },
+  "frozen_thresholds": {
+    "conventional_joint_mse_max": 0.1,
+    "full_joint_mse_max": 0.1,
+    "oracle_mse_max": 1e-12,
+    "oracle_corrupt_mse_min": 1.5,
+    "zero_mse_exact": 1,
+    "replacement_joint_mse_max_for_recovered_learning": 0.1,
+    "replacement_relative_to_full_mse_max_for_recovery": 2,
+    "replacement_each_seed_joint_mse_ratio_max": 2,
+    "replacement_support_corruption_harm_min": 0.03,
+    "distinct_mamba_contribution_ratio_min": 2,
+    "distinct_mamba_contribution_absolute_mse_min": 0.01,
+    "distinct_mamba_contribution_all_seeds": true,
+    "cold_restore_max_abs_output_delta": 0,
+    "active_parameter_difference_tolerance": 0.02
+  },
+  "scientific_outcome": {
+    "recovered": "ATTENTION_REPLACEMENT_RECOVERS_BINDING_ON_FROZEN_TASK (not Mamba universal non-necessity and not SCIENTIFIC_PASS)",
+    "mamba_specific": "MAMBA_ADVANTAGE_PERSISTS_VS_NEAR_PARAMETER_MATCHED_ATTENTION (not equal FLOP and not SCIENTIFIC_PASS)",
+    "inconclusive": "INCONCLUSIVE_CAPACITY_MATCHED_ATTENTION_CONTROL (report all results, no post-hoc tuning)",
+    "invalid": "ASSAY_INVALID_CONVENTIONAL_OR_ORACLE",
+    "independent_replication": "NOT_RUN",
+    "note": "Both variants still use causal attention; no transformer-free intelligence claim. G7-S10 null online TTT remains unchanged. One synthetic binding task only."
+  },
+  "budget": {
+    "gpu_runner": "TTT-HYBRID-GPU-WIN",
+    "max_wall_seconds": 900,
+    "torch_peak_bytes_max": 1073741824,
+    "min_free_cuda_bytes": 4294967296,
+    "training_optimizer_updates_all_arms": 6144,
+    "temporary_authenticated_ubuntu_python312_development_headers": true,
+    "source_repo_exact_sha": true,
+    "no_install": true,
+    "no_paid_api": true,
+    "no_new_controller": true,
+    "no_persistent_checkpoint": true,
+    "no_merge": true,
+    "no_deploy": true
+  },
+  "stop": [
+    "pinned official Mamba/TTT source hash drift",
+    "signed Python dev header mismatch",
+    "original full forward equivalence failure",
+    "native shared-weight initialization drift",
+    "parameter-count mismatch >2%",
+    "heldout leakage/oracle invalid",
+    "nonfinite losses/gradients",
+    "GPU/time cap",
+    "installed package drift",
+    "wrong runner/dirty checkout"
+  ]
+}
