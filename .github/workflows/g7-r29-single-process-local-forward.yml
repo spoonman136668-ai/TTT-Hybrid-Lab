@@ -1,0 +1,154 @@
+# G7-R29: bounded original native forward with process-local LIBRARY_PATH.
+# New nested checkout prevents overwriting the original R23/Gate3 evidence.
+# No package changes, root, persistent environment edits, training or deployment.
+name: G7-R29 one-use process-local CUDA link authentic GPU forward
+on:
+  push:
+    branches:
+      - engineering/g7-r29-process-local-cuda-link-forward-20261107
+    paths:
+      - .github/workflows/g7-r29-single-process-local-forward.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r29-one-use-process-local-libcuda-forward
+  cancel-in-progress: false
+
+jobs:
+  one-native-forward:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r29-process-local-cuda-link-forward-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact candidate in isolated nested worktree
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-r29-isolated
+          fetch-depth: 4
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify original G7-R28 custody and run exactly one original native forward
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r29.one-use-forward-admission.v1'
+            candidate_sha = $env:GITHUB_SHA
+            prior_g7_r28_sha = '5688a526245e21ee65f0c1d5e61e40f13ac0670f'
+            prior_g7_r28_run = 42361346770
+            result = 'BLOCKED_NOT_STARTED'
+            prior_custody = 'UNVERIFIED'
+            source_custody = 'UNVERIFIED'
+            normal_user = 'UNVERIFIED'
+            link_smoke = 'NOT_RUN'
+            original_native_forward = 'NOT_RUN'
+            model_changes = 'NONE'
+            package_changes = 'NONE'
+            cuda_driver_changes = 'NONE'
+            training = 'NOT_RUN'
+            scientific = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-r29-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r29-process-local-cuda-link-forward-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.result = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R29_OWNER_RUNNER_DENIED'
+            }
+            $previous = Join-Path $env:GITHUB_WORKSPACE 'local_runs/g7_r28_cuda_driver_link.json'
+            if (-not (Test-Path -LiteralPath $previous -PathType Leaf) -or
+                (Get-FileHash -LiteralPath $previous -Algorithm SHA256).Hash.ToLowerInvariant() -cne
+                '021f34a893f81cc84b313e73cfdbe17cc4e7c87d31d2fd2f4f8e81e03c9a4d38') {
+              $r.result = 'BLOCKED_SIGNED_R28_EVIDENCE_DRIFT'
+              throw 'G7_R29_R28_EVIDENCE_DRIFT'
+            }
+            $prior = Get-Content -LiteralPath $previous -Raw -Encoding UTF8 | ConvertFrom-Json
+            $qualified = @($prior.probes | Where-Object { $_.name -ceq 'cuda_explicit_wsl_path' -and $_.outcome -ceq 'PASS' })
+            if ($prior.status -cne 'PASS_ENVIRONMENT_ONLY_CUDA_LINK_ROUTE' -or
+                $prior.candidate_sha -cne $r.prior_g7_r28_sha -or
+                $qualified.Count -ne 1) {
+              $r.result = 'BLOCKED_CUDA_LINK_PROOF_INVALID'
+              throw 'G7_R29_LINK_PROOF_INVALID'
+            }
+            $r.prior_custody = 'PASS_IMMUTABLE_LINK_PROOF'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD^^^' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' HEAD)
+            $cc = $LASTEXITCODE
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne '904ac58aa99d8acd3587607eeb1c9b2d1bec5b85' -or
+                $ancestor -cne '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' -or
+                $dirty -or $changed.Count -ne 2 -or
+                $changed -notcontains 'scripts/g7_r29_process_local_forward.py' -or
+                $changed -notcontains '.github/workflows/g7-r29-single-process-local-forward.yml') {
+              $r.result = 'BLOCKED_CANDIDATE_SHA_OR_SCOPE'
+              throw 'G7_R29_CANDIDATE_SHA_OR_SCOPE'
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.result = 'BLOCKED_WSL_PATH'
+              throw 'G7_R29_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.result = 'BLOCKED_NORMAL_USER'
+              throw 'G7_R29_NORMAL_USER'
+            }
+            $r.normal_user = 'UID_1000'
+            $received = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 295s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r29_process_local_forward.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r29_process_local_forward.json")
+            $runExit = $LASTEXITCODE
+            $status = @($received | Where-Object { $_ -match '^G7_R29_STATUS=' })
+            $link = @($received | Where-Object { $_ -match '^G7_R29_LINK=' })
+            $forward = @($received | Where-Object { $_ -match '^G7_R29_FORWARD=' })
+            if ($status.Count -ne 1 -or $link.Count -ne 1 -or $forward.Count -ne 1) {
+              $r.result = 'BLOCKED_FORWARD_RECEIPT_TRANSPORT'
+              throw 'G7_R29_RECEIPT_TRANSPORT'
+            }
+            $r.result = $status[0].Substring(14)
+            $r.link_smoke = $link[0].Substring(12)
+            $r.original_native_forward = $forward[0].Substring(15)
+            if ($runExit -ne 0 -or
+                $r.result -cne 'PASS_AUTHENTIC_NONFUSED_FORWARD_WITH_TEMP_CUDA_LINK' -or
+                $r.link_smoke -cne 'PASS_PROCESS_LOCAL_GCC_LIBCUDA_LINK') {
+              throw 'G7_R29_NATIVE_NOT_QUALIFIED'
+            }
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_r29_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_R29_RESULT=' + $r.result)
+            Write-Output ('G7_R29_LINK=' + $r.link_smoke)
+            Write-Output ('G7_R29_FORWARD=' + $r.original_native_forward)
+          }
+      - name: Preserve only sanitized original-forward receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r29-one-original-native-forward
+          path: |
+            g7-r29-isolated/local_runs/g7_r29_workflow_admission.json
+            g7-r29-isolated/local_runs/g7_r29_process_local_forward.json
+            g7-r29-isolated/local_runs/g7_r29_compiler_forward.json
+          if-no-files-found: warn
+          retention-days: 30
