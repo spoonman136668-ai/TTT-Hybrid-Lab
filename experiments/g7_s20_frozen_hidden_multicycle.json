@@ -1,0 +1,255 @@
+{
+  "schema": "ttt-hybrid.g7-s20.hidden-state-multicycle.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s19_sha": "65308a66956b2bca70c48600fd5a879b5b22d388",
+    "s19_run": 42398803072,
+    "s19_frozen_result": "PRELIMINARY_CROSS_FAMILY_TOKENLESS_TRANSFER_REQUIRES_INDEPENDENT_QUALIFICATION",
+    "s19_science_blob": "a9c8beb3cc6ac3b96d7bb70c0e3f2046cbc29ec0",
+    "s18_unchanged_model_blob": "cfc1959b8812e9abad581018462302bc89a31d59",
+    "main": "6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2"
+  },
+  "hypothesis": "Do learned continuous raw (observed sensor,action) features retain transfer and supervised memory over three previously distinct nonlinear families when the physical state is only partially observed? Test catastrophic interference after source→sine→rational→source replay, holding all evaluation worlds and calibration constant. Compare strong calibrated RBF-KRR, identical untrained features and trained recurrent GRU, with explicit fairness/cost limits.",
+  "environment": {
+    "hidden_state": "(x,z) two real physical dimensions, neither directly observed; sensor is scalar y=x+0.25*z; x and z not individually identifiable from a single sensor sample.",
+    "hidden_motion": "z_next=z+dt*(-0.85*z+0.25*u+0.15*x); x_next=x+dt*(g_family(x,u,a,b,c,d)+0.35*z)",
+    "families": {
+      "source": "g=-a*x+b*u+c*tanh(2*x)+d*x*u",
+      "sine": "g=-a*x+b*u+c*sin(4*x)+d*tanh(3*u)",
+      "rational": "g=-a*tanh(2*x)+b*u+c*x^3/(1+x^2)+d*sin(3*u)"
+    },
+    "observed_input": "only y, applied u, numeric dt, measured noisy y_next; no x,z, family ID, switch marker, latent coefficient or analytic nonlinear feature given to predictor",
+    "target": "unobserved actual future y_next from fresh counterfactual u and dt",
+    "query": "last measured scalar sensor y, new continuous u and dt",
+    "regime_switch_transition": 20,
+    "transitions_per_world": 32,
+    "latent_coeff_train_ranges": {
+      "a": [
+        0.35,
+        1.4
+      ],
+      "b": [
+        0.35,
+        1.45
+      ],
+      "c": [
+        -0.45,
+        0.45
+      ],
+      "d": [
+        -0.35,
+        0.35
+      ]
+    },
+    "latent_coeff_holdout_ood_ranges": {
+      "a": [
+        1.55,
+        2.25
+      ],
+      "b": [
+        1.55,
+        2.1
+      ],
+      "c": [
+        -0.8,
+        0.8
+      ],
+      "d": [
+        -0.65,
+        0.65
+      ]
+    },
+    "z_initial_range": [
+      -0.8,
+      0.8
+    ],
+    "x_initial_range": [
+      -1,
+      1
+    ],
+    "dt": [
+      0.05,
+      0.16
+    ],
+    "u": [
+      -1,
+      1
+    ],
+    "observation_noise_sigma": 0.002,
+    "digital_time_is_sampled": true,
+    "no_tokenizer": true,
+    "no_vocabulary": true,
+    "no_discrete_codes": true,
+    "no_attention": true,
+    "no_next_token_loss": true,
+    "model_biases": "models use numerical Euler residual (observed_next-observed)/dt and fixed-length 32-sample histories; no hidden law or latent sensor decomposition provided.",
+    "difficulty_note": "2D latent dynamics and 1D sensor are intentionally partially observable, unlike S19's 1D fully observed world; success is not guaranteed."
+  },
+  "arms": {
+    "learned": "S18 exact trained 2→32→12 tanh raw sensor/action feature map followed by differentiable per-world 12D ridge estimator",
+    "untrained": "Identical initial feature map never updated, same ridge",
+    "gru": "S18 exact 32-unit GRU with query-conditioned numeric readout, trained on same numerical worlds, steps and optimizer data",
+    "conventional": "Gaussian RBF kernel ridge over raw sensor/action values only, gamma/decay/ridge selected once from calibration-only source switching worlds",
+    "static": "no-dynamics raw sensor carry-forward",
+    "oracle": "hidden-state privileged exact y_next, used only to grade",
+    "causal_ablation": "replace post-switch 12 observed transitions with first 12 from same world, do not alter query or expected future y"
+  },
+  "training": {
+    "seeds": [
+      1091,
+      1217,
+      1301
+    ],
+    "batch": 48,
+    "phase_A": {
+      "family": "source",
+      "steps": 240,
+      "seed_formula": "seed*100000+701000+step*37"
+    },
+    "phase_B": {
+      "family": "sine",
+      "steps": 96,
+      "seed_formula": "seed*100000+801000+step*37"
+    },
+    "phase_C": {
+      "family": "rational",
+      "steps": 96,
+      "seed_formula": "seed*100000+901000+step*37"
+    },
+    "phase_D": {
+      "family": "source",
+      "steps": 96,
+      "seed_formula": "seed*100000+1001000+step*37"
+    },
+    "equal_examples_and_updates_for_learned_and_gru": true,
+    "total_updates_per_trained_arm_per_seed": 528,
+    "total_worlds_per_trained_arm_per_seed": 25344,
+    "pretrained_source_from_s19": false,
+    "fresh_random_init_and_training": true,
+    "same_initial_learned_vs_untrained_features": true,
+    "optimizer": "AdamW",
+    "feature_lr": 0.004,
+    "gru_lr": 0.004,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1,
+    "fast_ridge_decay": 0.78,
+    "fast_ridge_regularization": 0.08,
+    "no_optimizer_uses_eval_or_calibration_worlds": true
+  },
+  "calibration": {
+    "seeds": [
+      2401,
+      2411,
+      2423
+    ],
+    "batch": 64,
+    "only_source_train_range": true,
+    "kernel_gamma": [
+      0.5,
+      2,
+      6
+    ],
+    "kernel_decay": [
+      0.65,
+      0.78,
+      1
+    ],
+    "kernel_ridge": [
+      0.01,
+      0.08
+    ],
+    "tie_breaker": "lowest calibration MSE then smaller gamma then larger decay then larger ridge",
+    "heldout_selection_forbidden": true,
+    "no_recalibration_after_phase_B_C_D": true
+  },
+  "evaluation": {
+    "heldout_seeds": {
+      "source": [
+        2503,
+        2521,
+        2531
+      ],
+      "sine": [
+        2609,
+        2617,
+        2621
+      ],
+      "rational": [
+        2707,
+        2713,
+        2729
+      ]
+    },
+    "unseen_ood_worlds_per_seed_family": 64,
+    "queries_per_world": 8,
+    "evaluated_after_phases": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "same_exact_heldout_worlds_all_phases": true,
+    "no_eval_updates": true,
+    "exact_hidden_state_oracle": true,
+    "source_post_switch_causal_ablation": true,
+    "world_swap_secondary_diagnostic": true,
+    "per_seed_cold_checkpoint_exact_after_each_phase": true,
+    "cost_accounting": "per-model training wall seconds, inference wall seconds per arm/family/phase, peak whole-process RSS, exact training step/world counts",
+    "compute_fairness": "trainable learned feature vs GRU match worlds and update counts, not parameters or FLOPs. Calibrated RBF-KRR untrained and no matched FLOP/energy; do NOT claim end-to-end compute-matched architectural superiority."
+  },
+  "frozen_thresholds": {
+    "exact_oracle_mse_max": 1e-12,
+    "calibrated_kernel_source_ood_mse_max": 0.03,
+    "calibrated_kernel_source_gain_vs_static_min": 0.1,
+    "calibrated_kernel_source_post_switch_ablation_ratio_min": 1.1,
+    "source_learned_post_switch_ablation_ratio_min": 1.1,
+    "zero_shot_sine_kernel_relative_mse_gain_min": 0.05,
+    "zero_shot_rational_kernel_relative_mse_gain_min": 0.05,
+    "zero_shot_sine_random_relative_mse_gain_min": 0.1,
+    "zero_shot_rational_random_relative_mse_gain_min": 0.1,
+    "zero_shot_each_seed_better_than_both_controls": true,
+    "source_retention_after_C_over_after_A_ratio_max": 1.5,
+    "source_recovery_after_D_over_after_A_ratio_max": 1.25,
+    "sine_learning_after_B_relative_error_reduction_min": 0.1,
+    "rational_learning_after_C_relative_error_reduction_min": 0.1,
+    "each_seed_must_satisfy_retention_and_both_learning_tests": true,
+    "all_checkpoint_restores_max_abs_output_delta": 0,
+    "max_cpu_rss_bytes": 2147483648,
+    "wall_seconds_max": 240
+  },
+  "classification": {
+    "invalid": "ASSAY_INVALID_PARTIAL_OBSERVABILITY_OR_CONVENTIONAL_CONTROL",
+    "positive": "PRELIMINARY_PARTIAL_OBSERVATION_MULTICYCLE_TRANSFER_NOT_SCIENTIFIC_PASS",
+    "null": "PARTIAL_OBSERVATION_OR_MULTICYCLE_LEARNING_FROZEN_NULL",
+    "report_primary": "zero-shot cross-family under hidden state, after phase A",
+    "report_sequential": "retention after C, recovery after D, acquisition after B/C; independent flags even if primary zero-shot null",
+    "no_result_tuning": true,
+    "no_grand_claim": "No general intelligence, token-free text understanding, autonomous RSI, broad long-term cognition, independent science or physical analogue computation. Numerical fixed sampling and correct Euler numerical derivative prior are disclosed."
+  },
+  "authority": {
+    "one_use_existing_runner": "TTT-HYBRID-GPU-WIN",
+    "normal_uid": 1000,
+    "cpu_only": true,
+    "existing_pinned_r3_venv": true,
+    "no_install": true,
+    "no_cuda": true,
+    "no_paid_api": true,
+    "no_new_controller": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "no_persistent_model_weights": true,
+    "no_workstation_action_required": true,
+    "independent_science_qualification": "NOT_RUN",
+    "stop_conditions": [
+      "candidate head mismatch/dirty tree",
+      "official model blob/manifest drift",
+      "different train/eval seeds",
+      "invalid oracle",
+      "weak calibrated baseline on frozen source",
+      "nonfinite gradients or outputs",
+      "wall time or resident memory beyond cap",
+      "checkpoint restoration drift",
+      "package inventory changes"
+    ]
+  }
+}
