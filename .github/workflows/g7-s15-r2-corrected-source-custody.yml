@@ -1,0 +1,176 @@
+# G7-S15: single-use tokenization-free continuous action-consequence model study.
+# Only pinned existing normal-user CPU environment. No package install,
+# remote APIs, new controller, CUDA use, merge, deployment or science promotion.
+name: G7-S15-R2 Untokenized continuous dynamics corrected source custody
+on:
+  push:
+    branches:
+      - engineering/g7-s15-untokenized-continuous-dynamics-20261107
+    paths:
+      - .github/workflows/g7-s15-r2-corrected-source-custody.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s15-r2-unique-source-custody
+  cancel-in-progress: false
+
+jobs:
+  one-use-normal-user-cpu:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s15-untokenized-continuous-dynamics-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Exact candidate isolated checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s15-isolated
+          fetch-depth: 10
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify source and execute CPU-only frozen tri-sketch pilot
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s15.one-use-continuous-world-custody.v1'
+            candidate_sha = $env:GITHUB_SHA
+            original_s14_sha = '3ba3dca7b975d38dfb9bb2c3c8d928ece65ed114'
+            original_s14_science_run = 42389153481
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            frozen_protocol = 'UNVERIFIED'
+            normal_wsl_user = 'UNVERIFIED'
+            measured_science = 'NOT_RUN'
+            cuda = 'NOT_RUN'
+            installed_packages = 'UNMODIFIED_EXPECTED'
+            training = 'TRAIN_CONTINUOUS_GRU_AND_RLS_ADAPTATION'
+            independent_scientific_qualification = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s15-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s15-untokenized-continuous-dynamics-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_SCOPE_OR_RUNNER'
+              throw 'G7_S15_ISOLATION'
+            }
+            $base = '3ba3dca7b975d38dfb9bb2c3c8d928ece65ed114'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD~5' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s15_frozen_raw_analog_dynamics.json',
+              'scripts/g7_s15_raw_analog_dynamics.py',
+              'scripts/g7_s15_cpu_continuous_launcher.py',
+              '.github/workflows/g7-s15-raw-continuous-dynamics.yml',
+              '.github/workflows/g7-s15-r2-corrected-source-custody.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or
+                $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne '918f8a64441d32046d8fb15137ce89f776f0ae4b' -or
+                $ancestor -cne $base -or
+                $dirty -or $changed.Count -ne 5) {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SHA'
+              throw 'G7_S15_SOURCE_CUSTODY'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_UNEXPECTED_SOURCE_SCOPE'
+                throw 'G7_S15_SOURCE_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_S14_ANCESTOR_EXACT_FIVE_FILES'
+            $p = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s15_frozen_raw_analog_dynamics.json') -Raw | ConvertFrom-Json
+            if ($p.schema -cne 'ttt-hybrid.g7-s15.raw-analog-dynamics.v1' -or
+                $p.lineage.g7_s14_run -ne 42389153481 -or
+                $p.resource_limits.no_cuda -cne $true -or
+                $p.resource_limits.no_new_packages -cne $true -or
+                $p.training.seeds.Count -ne 3 -or
+                $p.evaluation.ood_seeds.Count -ne 3 -or
+                $p.resource_limits.seconds_max -ne 180) {
+              $r.status = 'BLOCKED_FROZEN_PROVENANCE'
+              throw 'G7_S15_PRECOMMIT'
+            }
+            $r.frozen_protocol = 'PASS_COMMITTED_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_S15_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_WSL_NORMAL_USER'
+              throw 'G7_S15_NORMAL_USER'
+            }
+            $r.normal_wsl_user = 'UID_1000'
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 260s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s15_cpu_continuous_launcher.py" --expected-sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $admission = @($raw | Where-Object { $_ -match '^G7_S15_ADMISSION=' })
+            $science = @($raw | Where-Object { $_ -match '^G7_S15_SCIENCE=' })
+            if ($admission.Count -ne 1 -or $science.Count -ne 1) {
+              $r.status = 'BLOCKED_MEASUREMENT_RECEIPT_MISSING'
+              throw 'G7_S15_ADMISSION_RECEIPT'
+            }
+            $r.status = $admission[0].Substring('G7_S15_ADMISSION='.Length)
+            $r.measured_science = $science[0].Substring('G7_S15_SCIENCE='.Length)
+            if ($rc -ne 0 -or $r.status -cne 'PASS_CPU_RAW_CONTINUOUS_EXPERIMENT_MEASURED' -or
+                $r.measured_science -notin @(
+                  'TRAINABLE_CONTINUOUS_GRU_ADAPTATION_SIGNAL',
+                  'ANALOG_RLS_PASS_GRU_TRANSFER_NULL_OR_NEGATIVE')) {
+              throw 'G7_S15_CPU_TEST_FAILED_OR_INVALID'
+            }
+            $datafile = Join-Path $out 'g7_s15_raw_analog_results.json'
+            $data = Get-Content -LiteralPath $datafile -Raw | ConvertFrom-Json
+            if ($data.candidate_sha -cne $env:GITHUB_SHA -or
+                $data.oracle_controls_pass -cne $true -or
+                $data.strong_rls_adaptation_controls_pass -cne $true -or
+                $data.installed_packages_changed -cne $false -or
+                $data.tokenizer_used -cne $false -or
+                $data.vocabulary_used -cne $false -or
+                $data.next_token_loss_used -cne $false -or
+                $data.training_updates_per_seed -ne 240 -or
+                $data.training_worlds_per_seed -ne 11520 -or
+                $data.process_peak_rss_bytes -gt 2147483648 -or
+                $data.per_seed.Count -ne 3) {
+              $r.status = 'BLOCKED_INVALID_SCIENTIFIC_OR_STATE_RECEIPT'
+              throw 'G7_S15_SCIENCE_CUSTODY'
+            }
+            $r.status = 'PASS_RAW_UNTOKENIZED_CONTINUOUS_PHYSICS_EXPERIMENT'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s15_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S15_RESULT=' + $r.status)
+            Write-Output ('G7_S15_SCIENCE=' + $r.measured_science)
+            Write-Output 'G7_S15_GPU=NOT_RUN'
+          }
+
+      - name: Preserve measured original scientific and custody receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s15-continuous-world-cpu-${{ github.sha }}
+          path: |
+            g7-s15-isolated/local_runs/g7_s15_workflow_admission.json
+            g7-s15-isolated/local_runs/g7_s15_raw_analog_results.json
+          if-no-files-found: warn
+          retention-days: 30
