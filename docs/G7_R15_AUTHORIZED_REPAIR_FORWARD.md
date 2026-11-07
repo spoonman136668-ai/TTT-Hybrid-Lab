@@ -1,0 +1,15 @@
+# G7-R15 — owner-authorized one-time GCC repair and bounded authentic GPU forward
+
+**Baseline:** `a7e41a1e06adbf27be078b91f1bbdb5ec77b99d8`, required G4/G5 Linux+Windows and pinned Mamba Ubuntu CPU **5/5 PASS**. The original GPU G7-R9 run [42300670454](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42300670454) reached WSL2/CUDA but failed at Triton's host C helper compilation. Authenticated G7-R11 [42313100239](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42313100239) established `HOST_C_COMPILER_UNAVAILABLE_CONFIRMED`; G7-R12/R13 diagnostics failed through a separate invocation route. G7-R14 proved both legacy and explicit `cmd.exe` launch expressions on hosted Windows but did not change original-runner state.
+
+## Approved action and stop conditions
+
+User explicitly authorized **one-time compiler repair and one bounded GPU forward**, not general installation/training/deployment. Reuse original successful G7-R9 WSL route, pinned Ubuntu 24.04, existing runner `TTT-HYBRID-GPU-WIN`, exact merged source SHA, existing pinned R3 PyTorch 2.9.0+cu128/Triton 3.5.0 and official Mamba/TTT checkouts. Do not replace existing model dependencies or touch other repos.
+
+Fail closed on different runner, mismatched source SHA, dirty source/pins, missing staged R3 runtime, non-Ubuntu/WSL environment, root login, or insufficient safe elevation. If a distribution compiler already exists, reuse it. Otherwise use `sudo -n apt-get update` once and `sudo -n apt-get install -y --no-install-recommends gcc` once, with bounded timeouts. Do not change PATH, drivers, CUDA or Torch. Record selected compiler family/version/SHA256 and prove one trivial host C shared-library compilation (no GPU). Pass its absolute path to Triton **only through child-process CC environment**, no permanent shell/system configuration.
+
+Only after compiler qualification, call existing `scripts/g7_r6_oneshot.py --require-nonfused` at exact current candidate SHA **once** (original Mamba2+TTT forward, 1 GiB PyTorch peak allocator ceiling, 4 GiB free VRAM admission, 175s native child, finite/causal/reset negative controls). Do not train/optimize. All source and runtime admission remains enforced inside native script. Capture original outer native receipt SHA256/status/checks in a sanitized G7-R15 artifact; never upload raw traceback or nested G3.
+
+Single owner-only main push when workflow is first introduced, first run and attempt only. Checkout with no persistent credentials. Workflow 14 min, single WSL child 650s, contained GCC apt and forward time budgets. Retire the workflow after one use and preserve result. A failure is a measured **FAIL/BLOCKED**, not permission to silently retry.
+
+**Acceptance:** source-only exact-candidate five required CI checks must PASS; user authorization covers the bounded one-time merge/activation upon qualification. Engineering PASS requires successful compiler helper probe and authentic nonfused forward with controls, not merely CI. SCIENTIFIC and DEPLOYMENT remain UNVERIFIED/NOT AUTHORIZED.
