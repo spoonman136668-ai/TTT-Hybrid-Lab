@@ -1,0 +1,172 @@
+{
+  "schema": "ttt-hybrid.g7-s15.raw-analog-dynamics.v1",
+  "frozen_at": "2026-11-07",
+  "lineage": {
+    "g7_s14_sha": "3ba3dca7b975d38dfb9bb2c3c8d928ece65ed114",
+    "g7_s14_run": 42389153481,
+    "checkpoint_main": "6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2",
+    "program": "TTT-Hybrid-Lab independent exploratory lane; no FORGE, Wingless, Yggdrasil or Hybrid runtime modifications"
+  },
+  "research_question": "Can a model use continuous sensory/action/consequence streams to identify previously unseen physical dynamics and predict counterfactual interventions without a tokenizer, vocabulary, symbolic key-value IDs, segmented linguistic units, or a next-token loss?",
+  "numerical_input": {
+    "channels": [
+      "current_observed_continuous_state",
+      "continuous_applied_action",
+      "real_elapsed_time",
+      "measured_next_continuous_state"
+    ],
+    "tokenizer": false,
+    "vocabulary": false,
+    "one_hot_words": false,
+    "discrete_key_ids": false,
+    "event_markers": false,
+    "source": "sampled numerical sensor observations and actuator values; not unbroken mathematical time; digital sampling remains",
+    "context_length_samples": 32,
+    "query_channels": [
+      "current_state",
+      "unseen_intervention_action",
+      "elapsed_time"
+    ],
+    "target": "real-valued future world state",
+    "output_vocab": null
+  },
+  "unknown_world": {
+    "equation": "x(t+dt)=x(t)+dt*(-a*x(t)+b*u(t))",
+    "latent_damping_a_train": [
+      0.3,
+      1.6
+    ],
+    "latent_gain_b_train": [
+      0.2,
+      1.3
+    ],
+    "latent_damping_a_ood": [
+      1.65,
+      2.3
+    ],
+    "latent_gain_b_ood": [
+      1.35,
+      1.8
+    ],
+    "sensor_next_state_noise_sigma": 0.003,
+    "dt_range": [
+      0.05,
+      0.2
+    ],
+    "action_range": [
+      -1,
+      1
+    ],
+    "initial_state_range": [
+      -1,
+      1
+    ],
+    "world_parameters_hidden_from_model": true,
+    "oracle_allowed_only_for_scoring": true
+  },
+  "arms": [
+    {
+      "id": "trained_analog_gru",
+      "description": "GRU(4 continuous measurements,32 state units) with non-token 2-parameter physical readout, trained end-to-end using MSE of future consequence"
+    },
+    {
+      "id": "online_rls",
+      "description": "Strong conventional recursive least-squares adaptive two-parameter physical estimator; sees same continuous sensor/action history, no cross-world training",
+      "test_time_world_adaptation": true
+    },
+    {
+      "id": "static_global_coefficients",
+      "description": "No per-world adaptation, fixed a=0.95,b=0.75"
+    },
+    {
+      "id": "swapped_world_history",
+      "description": "Negative control: replace 32 context measurements with an unrelated world, keep original intervention queries and targets"
+    },
+    {
+      "id": "exact_physical_oracle",
+      "description": "Ground truth dynamics known to evaluator, never supplied to learning agents"
+    }
+  ],
+  "training": {
+    "steps": 240,
+    "batch": 48,
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "context_steps": 32,
+    "queries_per_world": 8,
+    "lr": 0.004,
+    "optimizer": "AdamW",
+    "weight_decay": 0.01,
+    "train_world_seed_formula": "train_seed*100000+17000+step*37",
+    "train_worlds_per_training_seed": 11520,
+    "no_eval_worlds_seen_during_train": true,
+    "training_target": "continuous x_next intervention consequence; not tokens"
+  },
+  "evaluation": {
+    "seeds": [
+      149,
+      271,
+      397
+    ],
+    "ood_seeds": [
+      557,
+      613,
+      719
+    ],
+    "batch": 64,
+    "query_count": 8,
+    "holdout_split": "NEW, different from local development seeds 137,257,389 and 541,601,701; these new seeds not executed before this protocol was committed",
+    "id_evaluation_worlds_per_seed": 64,
+    "ood_evaluation_worlds_per_seed": 64,
+    "heldout_future_queries_per_world": 8,
+    "fully_disjoint_rng": true
+  },
+  "thresholds": {
+    "rls_id_mse_max": 0.00005,
+    "rls_ood_mse_max": 0.00005,
+    "rls_gain_vs_static_min": 0.85,
+    "rls_shuffled_ratio_min": 10,
+    "oracle_mse_max": 1e-12,
+    "gru_id_gain_vs_static_min": 0.1,
+    "gru_ood_gain_vs_static_min": 0.1,
+    "gru_shuffled_ratio_min": 1.1,
+    "cold_checkpoint_max_output_delta": 0
+  },
+  "classification": {
+    "controls_invalid": "ASSAY_INVALID_ORACLE_OR_RLS_CONTROL",
+    "trained_gru_pass": "TRAINABLE_CONTINUOUS_GRU_ADAPTATION_SIGNAL only if GRU passes both ID and OOD adaptation tests on ALL three independent training seeds",
+    "trained_gru_fail": "ANALOG_RLS_PASS_GRU_TRANSFER_NULL_OR_NEGATIVE; preserve RLS outcome and GRU negative as separate evidence",
+    "independent_scientific_pass": "NOT_AUTHORIZED",
+    "originality_note": "RLS and GRU are established techniques. This first test is a tokenization-free representation and action-consequence feasibility baseline, not a novel intelligence mechanism or proof of reasoning."
+  },
+  "resource_limits": {
+    "cpu_only": true,
+    "seconds_max": 180,
+    "peak_cpu_rss_bytes_max": 2147483648,
+    "no_cuda": true,
+    "normal_wsl_uid": 1000,
+    "pinned_venv_from_r3": true,
+    "no_new_packages": true,
+    "no_paid_api": true,
+    "no_new_controller": true,
+    "no_merge": true,
+    "no_deploy": true,
+    "no_live_execution": true
+  },
+  "stop_conditions": [
+    "candidate SHA or tree drift",
+    "pinned torch runtime/manifest unavailable",
+    "absence of normal WSL user",
+    "nonfinite loss or gradients",
+    "source-control provenance missing",
+    "oracle MSE above frozen bound",
+    "RLS positive or swapped-history negative control fails",
+    "training step count mismatch",
+    "cold restore differs",
+    "wall/RSS cap exceeded",
+    "installed package change"
+  ]
+}
