@@ -113,4 +113,4 @@ class G7S25GateContract(unittest.TestCase):
 
 
 if __name__ == "__main__":
-    unittest.main()
+    unittest.main(testRunner=unittest.TextTestRunner(stream=sys.stdout, verbosity=1))
