@@ -1,0 +1,163 @@
+# G7-S1 one-use preregistered native GPU scientific pilot.
+# Authorized bounded scientific test only; exact source and frozen protocol.
+# No root, install, deployment, merges, controller, inference service or API spend.
+name: G7-S2 frozen science retry with authenticated upstream import fix
+on:
+  push:
+    branches:
+      - engineering/g7-s2-native-science-source-import-20261107
+    paths:
+      - .github/workflows/g7-s2-fixed-import-original-science.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s2-one-use-fixed-science-import
+  cancel-in-progress: false
+
+jobs:
+  frozen-pilot:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s2-native-science-source-import-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 14
+    steps:
+      - name: Checkout candidate with independent receipt isolation
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s2-isolated
+          fetch-depth: 12
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Verify exact SHA, freeze, and execute one native science pilot
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s2.one-use-same-frozen-native-science.v1'
+            candidate_sha = $env:GITHUB_SHA
+            baseline_sha = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            qualifying_engineering_run = 42364516609
+            original_science_run = 42365613325
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            preregistration = 'UNVERIFIED'
+            normal_user = 'UNVERIFIED'
+            native_science = 'NOT_RUN'
+            independent_replication = 'NOT_RUN'
+            package_changes = 'NONE'
+            root = 'NOT_USED'
+            gpu_driver_changes = 'NONE'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s2-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s2-native-science-source-import-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_WRONG_OWNER_RUNNER'
+              throw 'G7_S1_WRONG_OWNER_RUNNER'
+            }
+            $base = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $predecessor = (& git -C $checkout rev-parse 'HEAD^^^^^^' | Out-String).Trim()
+            $anc = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              '.github/workflows/g7-r35-signed-multiarch-python-forward.yml',
+              'scripts/g7_r35_ephemeral_multiarch_forward.py',
+              'experiments/g7_s1_frozen_protocol.json',
+              'scripts/g7_s1_online_learning.py',
+              'scripts/g7_s1_signed_runtime_science.py',
+              '.github/workflows/g7-s1-preregistered-native-science.yml',
+              '.github/workflows/g7-s2-fixed-import-original-science.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $anc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne '6aa3e6fd1f855403389af8a589eaeb3419b1931c' -or
+                $predecessor -cne '123bb4426726614369fe88104cd7fa9a50f6ff3e' -or
+                $dirty -or $changed.Count -ne 7) {
+              $r.status = 'BLOCKED_SOURCE_SHA_OR_SCOPE'
+              throw 'G7_S1_SOURCE_SHA_OR_SCOPE'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_SOURCE_DIFF_SCOPE'
+                throw 'G7_S1_SOURCE_DIFF_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_EXACT_CANDIDATE_AND_SEVEN_FILE_SCOPE'
+            $protocol = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s1_frozen_protocol.json') -Raw | ConvertFrom-Json
+            if ($protocol.schema -cne 'ttt-hybrid.g7-s1.pre_registered_association.v1' -or
+                $protocol.training.steps -ne 8 -or
+                $protocol.training.seeds.Count -ne 3 -or
+                $protocol.source_qualifying_run -ne 42364516609 -or
+                $protocol.arms.Count -ne 2) {
+              $r.status = 'BLOCKED_FROZEN_PROTOCOL_MISMATCH'
+              throw 'G7_S1_FROZEN_PROTOCOL'
+            }
+            $r.preregistration = 'PASS_FROZEN_BEFORE_ORIGINAL_RUN'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_SOURCE_PATH'
+              throw 'G7_S1_WSL_SOURCE_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NORMAL_USER'
+              throw 'G7_S1_NORMAL_USER'
+            }
+            $r.normal_user = 'UID_1000'
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 690s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s1_signed_runtime_science.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_s1_ephemeral_science_admission.json")
+            $return = $LASTEXITCODE
+            $statusLines = @($raw | Where-Object { $_ -match '^G7_S1_STATUS=' })
+            $dpkgLines = @($raw | Where-Object { $_ -match '^G7_S1_DPKG=' })
+            if ($statusLines.Count -ne 1 -or $dpkgLines.Count -ne 1) {
+              $r.status = 'BLOCKED_NATIVE_RECEIPT_TRANSPORT'
+              throw 'G7_S1_NATIVE_RECEIPT_TRANSPORT'
+            }
+            $r.native_science = $statusLines[0].Substring(13)
+            $r.status = $r.native_science
+            $actualDpkg = $dpkgLines[0].Substring(11)
+            if ($actualDpkg -cne 'NONE') {
+              $r.status = 'BLOCKED_DPKG_STATE_DRIFT'
+              throw 'G7_S1_DPKG_STATE_DRIFT'
+            }
+            if ($return -ne 0 -or
+                $r.status -cne 'PASS_SIGNED_EPHEMERAL_HEADERS_AND_SCIENCE_PILOT_MEASURED') {
+              throw 'G7_S1_SCIENCE_MEASUREMENT_NOT_QUALIFIED'
+            }
+            $r.status = 'PASS_ENGINEERING_PILOT_MEASURED_SCIENCE_PENDING_INDEPENDENT'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s1_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S1_RESULT=' + $r.status)
+            Write-Output ('G7_S1_SCIENCE=' + $r.native_science)
+            Write-Output 'G7_S1_PROMOTION=NOT_AUTHORIZED'
+          }
+      - name: Preserve original sanitized pilot receipts on pass or fail
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s2-frozen-native-learning-${{ github.sha }}
+          path: |
+            g7-s2-isolated/local_runs/g7_s1_workflow_admission.json
+            g7-s2-isolated/local_runs/g7_s1_ephemeral_science_admission.json
+            g7-s2-isolated/local_runs/g7_s1_native_science.json
+          if-no-files-found: warn
+          retention-days: 30
