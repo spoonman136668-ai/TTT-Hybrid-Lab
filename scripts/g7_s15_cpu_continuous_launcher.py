@@ -101,7 +101,7 @@ def main():
                 and result.get("vocabulary_used") is False
                 and result.get("discrete_key_ids_used") is False
                 and result.get("next_token_loss_used") is False
-                and result.get("time_sampled_numerically") is True
+                and result.get("numerical_time_sampling_used") is True
                 and result.get("r3_manifest_sha256") ==
                     custody.R3_MANIFEST_SHA256
                 and result.get("oracle_controls_pass") is True
