@@ -18,6 +18,12 @@ import os
 from pathlib import Path
 import time
 from collections import defaultdict
+import sys
+
+# Isolated (-I) execution omits the script directory from sys.path. Restore
+# exactly the already-checked-out script directory, never an external site,
+# package installation, or user-controlled PYTHONPATH.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 import torch
 
