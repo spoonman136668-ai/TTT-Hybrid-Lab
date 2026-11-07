@@ -2,7 +2,7 @@
 # Existing project-owned Windows runner + established pinned R3 WSL venv.
 # NO installing packages, training/fit/heldout, scientific first-use, CUDA,
 # runner/controller/scheduler modifications, merge, promotion or deployment.
-name: G7-S26 quarter-reserve development comparison exact-source R2
+name: G7-S26 quarter-reserve development comparison exact-source R3
 on:
   push:
     branches:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   qualified-development-replay:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 3 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 11
     steps:
@@ -63,7 +63,7 @@ jobs:
                 $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-quarter-reserve-20261107' -or
                 $env:GITHUB_EVENT_NAME -cne 'push' -or
                 $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
-                $env:GITHUB_RUN_NUMBER -cne '2' -or
+                $env:GITHUB_RUN_NUMBER -cne '3' -or
                 $env:GITHUB_RUN_ATTEMPT -cne '1' -or
                 $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
                 $env:RUNNER_OS -cne 'Windows') {
