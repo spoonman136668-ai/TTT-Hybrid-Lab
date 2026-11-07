@@ -111,8 +111,25 @@ def main():
                 "S15_CONTINUOUS_WORLD_RESULTS_NOT_QUALIFIED")
         outcome="PASS_CPU_RAW_CONTINUOUS_EXPERIMENT_MEASURED"
         exit_status=0
-    except (Blocked,custody.Blocked,KeyError,ValueError,
-            OSError,subprocess.TimeoutExpired,SyntaxError) as exc:
+    except (Blocked,custody.Blocked) as exc:
+        # Fixed local classifications only; never emit arbitrary traceback,
+        # workspace paths, command-line arguments or subprocess stderr.
+        allowed={
+            "NORMAL_WSL_USER_REQUIRED",
+            "UNQUALIFIED_CANDIDATE_TREE",
+            "SOURCE_PIN_DRIFT",
+            "ORIGINAL_PINNED_PACKAGE_MANIFEST_DRIFT",
+            "FROZEN_TOKENIZATION_FREE_PROTOCOL_DRIFT",
+            "PINNED_LOCAL_R3_PYTHON_MISSING",
+            "READ_ONLY_DPKG_INVENTORY_UNAVAILABLE",
+            "SCIENTIFIC_RECEIPT_NOT_WRITTEN",
+            "INSTALLED_PACKAGE_INVENTORY_DRIFT",
+            "S15_CONTINUOUS_WORLD_RESULTS_NOT_QUALIFIED",
+        }
+        code=str(exc)
+        outcome="BLOCKED_"+(code if code in allowed else "UNKNOWN_GUARD")
+    except (KeyError,ValueError,OSError,subprocess.TimeoutExpired,
+            SyntaxError) as exc:
         outcome="BLOCKED_"+type(exc).__name__
     except Exception as exc:
         outcome="BLOCKED_"+type(exc).__name__
