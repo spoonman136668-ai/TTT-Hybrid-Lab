@@ -1,0 +1,82 @@
+{
+  "schema": "ttt-hybrid.g7-s9.permutation-transfer.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s8_sha": "a1bf2608c81ae5260b5a7e53ce1847e39266192e",
+    "s8_run": 42370667214,
+    "s8_status": "ONLINE_TTT_INCREMENTAL_ADVANTAGE_NOT_DEMONSTRATED",
+    "s8_positive": "Both native arms learned fixed query-order support-conditioned outputs under 512 x 64 training; online MSE 0.004903, static 0.002500, conventional 0.000110",
+    "s8_generator_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500"
+  },
+  "scientific_question": "Does the native hybrid retrieve based on the key content, or exploit fixed support/query positions? Test unseen within-episode permutations without retraining on the shuffled ordering.",
+  "training": {
+    "unchanged_from_s8": true,
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "optimizer_steps_per_arm": 512,
+    "batch_size": 64,
+    "train_episode_seed": "seed*10000000 + step*17",
+    "arms": [
+      "conventional",
+      "online_ttt",
+      "static_matched"
+    ],
+    "native_initial_weight_match": true,
+    "fit_episode_count_per_seed_per_arm": 32768,
+    "model_sources_pinned": true
+  },
+  "heldout": {
+    "seed_formula": "seed*10000000 + 9900000 + batch_index*17",
+    "novel_split_after_s8": true,
+    "heldout_batches_per_seed": 8,
+    "examples_per_batch": 128,
+    "permutation_rng": "for each episode index in heldout batch use a new torch.Generator seeded with heldout_batch_seed + 100003 + sample_index*73; sample independent randperm(8) for query positions and randperm(4) for support pairs, forced nonidentity",
+    "variants": [
+      "fixed_layout",
+      "query_order_permuted",
+      "support_pair_positions_permuted",
+      "joint_support_and_query_permuted",
+      "joint_permuted_with_corrupted_support_values"
+    ],
+    "pair_permutations": "Move a key token with its corresponding value token; do not shuffle values independently except corrupted-value negative control",
+    "target_rule": "Query permutation moves query and associated target together; support pair permutation does not change labels. No query target appears in query input.",
+    "same_heldout_episodes_for_all_arms": true,
+    "no_gradient_on_heldout": true
+  },
+  "controls": {
+    "exact_oracle_mse_max": 1e-12,
+    "corrupted_support_oracle_mse_min": 1.5,
+    "zero_mse_exact": 1,
+    "conventional_all_4_permutations_mse_max": 0.1,
+    "native_fixed_layout_mse_max": 0.1,
+    "native_query_permuted_mse_max": 0.1,
+    "native_support_permuted_mse_max": 0.1,
+    "native_joint_permuted_mse_max": 0.1,
+    "native_joint_over_fixed_mse_ratio_max": 2,
+    "native_joint_corruption_relative_harm_min": 0.03,
+    "require_all_three_seeds": true,
+    "require_cold_restore_exact": true
+  },
+  "classification": {
+    "if_conventional_fails": "ASSAY_INVALID_CONVENTIONAL_PERMUTATION_CONTROL",
+    "if_native_passes": "PRELIMINARY_FLEXIBLE_BINDING_SIGNAL_NOT_SCIENTIFIC_PASS",
+    "if_native_fails": "FIXED_LAYOUT_LEARNING_DOES_NOT_TRANSFER_UNDER_PERMUTATION",
+    "independent_replication": "NOT_RUN",
+    "note": "This is a new post-S8 diagnostic: positive even if observed requires independent preregistered source/seed/compute replication. Do not claim broad generalization."
+  },
+  "budget": {
+    "wall_seconds_max": 900,
+    "torch_peak_allocated_bytes_max": 1073741824,
+    "cuda_free_min": 4294967296,
+    "signed_exact_py312_headers": true,
+    "no_install": true,
+    "no_paid_api": true,
+    "no_root": true,
+    "no_controller": true,
+    "no_model_weights_persist": true,
+    "no_deployment": true
+  }
+}
