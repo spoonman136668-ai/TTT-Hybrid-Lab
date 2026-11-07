@@ -1,0 +1,158 @@
+# G7-S6: genuine 512-step conventional baseline on unchanged synthetic
+# association task. One-use isolated CPU-only test, no package install/network,
+# CUDA, new controller, merge, production deployment or scientific hybrid claim.
+name: G7-S6 frozen fully trained conventional retrieval positive control
+on:
+  push:
+    branches:
+      - engineering/g7-s6-conventional-learnability-20261107
+    paths:
+      - .github/workflows/g7-s6-train-conventional-positive-control.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s6-one-use-fully-trained-conventional-positive
+  cancel-in-progress: false
+
+jobs:
+  frozen-baseline:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s6-conventional-learnability-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 8
+    steps:
+      - name: Isolated checkout of exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s6-isolated
+          fetch-depth: 10
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Freeze custody and train real conventional retrieval baseline once
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s6.cpu-only-positive-control-workflow.v1'
+            candidate_sha = $env:GITHUB_SHA
+            predecessor_s5 = '0976e1e310d36d21473eb5d8b3d77349e47c807f'
+            predecessor_science_run = 42367320764
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            preregistration = 'UNVERIFIED'
+            normal_wsl_user = 'UNVERIFIED'
+            trained_baseline = 'NOT_RUN'
+            original_hybrid_comparison = 'NOT_RUN'
+            gpu = 'NOT_RUN'
+            package_changes = 'NONE'
+            installation = 'NOT_RUN'
+            independent_replication = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s6-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s6-conventional-learnability-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_SCOPE_OR_RUNNER_IDENTITY'
+              throw 'G7_S6_OWNER_OR_RUNNER'
+            }
+            $base = '0976e1e310d36d21473eb5d8b3d77349e47c807f'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD~4' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s6_frozen_conventional_baseline.json',
+              'scripts/g7_s6_trained_conventional_baseline.py',
+              'scripts/g7_s6_cpu_baseline_launcher.py',
+              '.github/workflows/g7-s6-train-conventional-positive-control.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne 'b9d2e8f3553b64cf9946dbe33da550d42add292c' -or
+                $ancestor -cne $base -or $dirty -or $changed.Count -ne 4) {
+              $r.status = 'BLOCKED_EXACT_SHA_OR_DIRTY_TREE'
+              throw 'G7_S6_SOURCE_CUSTODY'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_UNEXPECTED_FILE_SCOPE'
+                throw 'G7_S6_SOURCE_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_EXACT_SHA_FOUR_FILE_SCOPE'
+            $p = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s6_frozen_conventional_baseline.json') -Raw | ConvertFrom-Json
+            if ($p.schema -cne 'ttt-hybrid.g7-s6.conventional-associative-baseline.v1' -or
+                $p.lineage.mechanism_diagnostic_run -ne 42367320764 -or
+                $p.baseline.steps -ne 512 -or
+                $p.baseline.train_seeds.Count -ne 3 -or
+                $p.evaluation.heldout_batches_per_seed -ne 8 -or
+                $p.thresholds.trained_correct_mse_max -ne 0.1) {
+              $r.status = 'BLOCKED_FROZEN_PROTOCOL_DRIFT'
+              throw 'G7_S6_PROTOCOL'
+            }
+            $r.preregistration = 'PASS_FROZEN_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_S6_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NORMAL_USER'
+              throw 'G7_S6_WSL_UID'
+            }
+            $r.normal_wsl_user = 'UID_1000'
+            $lines = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 340s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s6_cpu_baseline_launcher.py" --expected-sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $a = @($lines | Where-Object { $_ -match '^G7_S6_ADMISSION=' })
+            $s = @($lines | Where-Object { $_ -match '^G7_S6_SCIENCE=' })
+            if ($a.Count -ne 1) {
+              $r.status = 'BLOCKED_NATIVE_ADMISSION_NOT_RECEIVED'
+              throw 'G7_S6_RECEIPT_TRANSPORT'
+            }
+            $r.status = $a[0].Substring(16)
+            if ($s.Count -eq 1) { $r.trained_baseline = $s[0].Substring(14) }
+            if ($rc -ne 0 -or $r.status -cne 'PASS_MEASURED' -or
+                $r.trained_baseline -notin @(
+                  'TASK_LEARNABILITY_POSITIVE_CONTROL_PASS',
+                  'TASK_LEARNABILITY_POSITIVE_CONTROL_FAIL')) {
+              throw 'G7_S6_BOUNDED_TEST_NOT_QUALIFIED'
+            }
+            $r.status = 'PASS_MEASURED_NO_HYBRID_SUPERIORITY_CLAIM'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s6_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S6_RESULT=' + $r.status)
+            Write-Output ('G7_S6_SCIENCE=' + $r.trained_baseline)
+            Write-Output 'G7_S6_GPU=NOT_RUN'
+          }
+
+      - name: Preserve sanitized frozen scientific baseline and custody
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s6-fully-trained-baseline-${{ github.sha }}
+          path: |
+            g7-s6-isolated/local_runs/g7_s6_workflow_admission.json
+            g7-s6-isolated/local_runs/g7_s6_trained_baseline.json
+          if-no-files-found: warn
+          retention-days: 30
