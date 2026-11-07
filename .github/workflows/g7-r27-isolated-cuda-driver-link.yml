@@ -1,0 +1,209 @@
+# G7-R27: one-shot read-only CUDA-driver host link probe.
+# Normal WSL user; temporary tiny C compilation only. No GPU, package install,
+# persistent symlink, privileged actions, checkout, controller, or reruns.
+name: G7-R27 isolated CUDA driver link qualification
+on:
+  push:
+    branches:
+      - engineering/g7-r27-readonly-cuda-driver-link-probe-20261107
+    paths:
+      - .github/workflows/g7-r27-isolated-cuda-driver-link.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r27-one-use-cuda-link-probe
+  cancel-in-progress: false
+
+jobs:
+  c-driver-link:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r27-readonly-cuda-driver-link-probe-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Verify original receipt and perform bounded non-root CUDA link probes
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r27.nonroot-cuda-link-probe.v1'
+            candidate_sha = $env:GITHUB_SHA
+            original_r23_run = 42360001917
+            original_r26_run = 42360838584
+            original_exception_class = 'CalledProcessError'
+            original_command_tags = @('SHARED_OBJECT_BUILD','POSITION_INDEPENDENT_CODE','CUDA_DRIVER_LINK','TRITON_HOST_DRIVER')
+            status = 'BLOCKED_NOT_STARTED'
+            receipt_custody = 'UNVERIFIED'
+            link_probes = @()
+            gcc_real_executable = 'UNVERIFIED'
+            cuda_library_presence = $null
+            system_changes = 'NONE'
+            gpu = 'NOT_RUN'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r27-readonly-cuda-driver-link-probe-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R27_OWNER_RUNNER_IDENTITY'
+            }
+            $g23 = Join-Path $out 'g7_native_gate3_subreceipt.json'
+            $g26 = Join-Path $out 'g7_r26_original_subprocess.json'
+            if (-not (Test-Path -LiteralPath $g23 -PathType Leaf) -or
+                -not (Test-Path -LiteralPath $g26 -PathType Leaf)) {
+              $r.status = 'BLOCKED_ORIGINAL_PROVENANCE_MISSING'
+              throw 'G7_R27_PROVENANCE_MISSING'
+            }
+            $gateHash = (Get-FileHash -LiteralPath $g23 -Algorithm SHA256).Hash.ToLowerInvariant()
+            $r26 = Get-Content -LiteralPath $g26 -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($gateHash -cne 'e463c6a1a357bbc594509878bc02ca0cce375d472dbb3cd9ef224af951b64b35' -or
+                $r26.status -cne 'PASS_ORIGINAL_SUBPROCESS_CLASSIFIED' -or
+                $r26.original_r23_sha -cne 'e86f934cc1f999794a47afd14e8646f10519dbe1' -or
+                $r26.raw_error_fingerprint -cne 'f8797421feaf9e3c8650aec068d886e4fc9033166e1e7d6183c445be635885a6' -or
+                $r26.return_code -ne 1) {
+              $r.status = 'BLOCKED_ORIGINAL_PROVENANCE_DRIFT'
+              throw 'G7_R27_PROVENANCE_DRIFT'
+            }
+            $r.receipt_custody = 'PASS'
+            $py = @'
+          import json
+          import os
+          from pathlib import Path
+          import re
+          import subprocess
+          import tempfile
+
+          result = {
+              "schema": "ttt-hybrid.g7-r27.python-link-probe.v1",
+              "status": "BLOCKED_NOT_STARTED",
+              "uid": os.geteuid(),
+              "gcc_real_executable": "UNVERIFIED",
+              "cuda_library_presence": {},
+              "probes": [],
+          }
+          def classify(stderr):
+              data = (stderr or "").lower()[:4096]
+              tags = []
+              rules = {
+                  "CANNOT_FIND_LIBCUDA": ("cannot find -lcuda",),
+                  "MISSING_CRT": ("cannot find crti.o", "cannot find crtn.o"),
+                  "MISSING_HEADER": ("fatal error:", "no such file or directory"),
+                  "UNDEFINED_SYMBOL": ("undefined reference", "undefined symbol"),
+                  "PERMISSION": ("permission denied",),
+                  "DISK_FULL": ("no space left on device",),
+              }
+              for label, patterns in rules.items():
+                  if any(p in data for p in patterns):
+                      tags.append(label)
+              return tags or ["OTHER_OR_NO_LINKER_STDERR"]
+          def probe(name, compiler, extra, root):
+              target = root / (name + ".so")
+              args = [compiler, "-x", "c", "-", "-shared", "-fPIC",
+                      "-o", str(target), *extra]
+              try:
+                  p = subprocess.run(args, input="int g7_r27(void){return 1;}\n",
+                                     text=True, capture_output=True, check=False,
+                                     timeout=25)
+                  ok = p.returncode == 0 and target.is_file() and target.stat().st_size > 0
+                  result["probes"].append({
+                      "name": name, "outcome": "PASS" if ok else "FAIL",
+                      "return_code": p.returncode if p.returncode in range(0, 256) else None,
+                      "stderr_markers": [] if ok else classify(p.stderr),
+                  })
+                  return ok
+              except (OSError, subprocess.TimeoutExpired) as e:
+                  result["probes"].append({"name": name, "outcome": "BLOCKED",
+                                           "error_class": type(e).__name__})
+                  return False
+          try:
+              if os.geteuid() != 1000:
+                  raise RuntimeError("UNEXPECTED_UID")
+              gcc = Path("/usr/bin/gcc")
+              if not gcc.is_file():
+                  raise RuntimeError("GCC_UNAVAILABLE")
+              real = gcc.resolve().name
+              if not re.fullmatch(r"[A-Za-z0-9._+-]{1,80}", real):
+                  raise RuntimeError("UNEXPECTED_REAL_COMPILER_NAME")
+              result["gcc_real_executable"] = real
+              locations = {
+                  "wsl_libcuda_so": Path("/usr/lib/wsl/lib/libcuda.so"),
+                  "wsl_libcuda_so1": Path("/usr/lib/wsl/lib/libcuda.so.1"),
+                  "cuda_stub_so": Path("/usr/local/cuda/lib64/stubs/libcuda.so"),
+              }
+              result["cuda_library_presence"] = {
+                  name: path.is_file() for name, path in locations.items()
+              }
+              with tempfile.TemporaryDirectory(prefix="ttt-g7-r27-link-") as directory:
+                  root = Path(directory)
+                  if not probe("baseline_host_shared", str(gcc), [], root):
+                      raise RuntimeError("BASE_SHARED_LINK_FAILED")
+                  default = probe("cuda_default_link", str(gcc), ["-lcuda"], root)
+                  if default:
+                      result["status"] = "PASS_CUDA_DEFAULT_LINK"
+                  else:
+                      wsl = probe("cuda_explicit_wsl_path", str(gcc),
+                                  ["-L/usr/lib/wsl/lib", "-lcuda"], root)
+                      stub = None
+                      if locations["cuda_stub_so"].is_file():
+                          stub = probe("cuda_explicit_stub_path", str(gcc),
+                                       ["-L/usr/local/cuda/lib64/stubs", "-lcuda"], root)
+                      temporary_link = None
+                      if locations["wsl_libcuda_so1"].is_file():
+                          linkdir = root / "wsl-link"
+                          linkdir.mkdir()
+                          (linkdir / "libcuda.so").symlink_to(locations["wsl_libcuda_so1"])
+                          temporary_link = probe("cuda_temporary_linker_symlink", str(gcc),
+                                                ["-L" + str(linkdir), "-lcuda"], root)
+                      result["status"] = (
+                          "PASS_ENVIRONMENT_ONLY_CUDA_LINK_ROUTE"
+                          if any(v is True for v in (wsl, stub, temporary_link))
+                          else "BLOCKED_NO_AVAILABLE_CUDA_LINK_TARGET"
+                      )
+          except Exception as exc:
+              result["status"] = "BLOCKED_" + type(exc).__name__
+          print(json.dumps(result, sort_keys=True))
+          '@
+            $jsonLines = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 135s /usr/bin/python3 -I -B -c $py 2>$null)
+            $code = $LASTEXITCODE
+            if ($code -ne 0 -or $jsonLines.Count -ne 1) {
+              $r.status = 'BLOCKED_WSL_READONLY_LINK_DIAGNOSTIC'
+              throw 'G7_R27_WSL_DIAGNOSTIC'
+            }
+            $data = $jsonLines[0] | ConvertFrom-Json
+            if ($data.schema -cne 'ttt-hybrid.g7-r27.python-link-probe.v1' -or
+                $data.uid -ne 1000 -or
+                $data.status -notin @('PASS_CUDA_DEFAULT_LINK',
+                                     'PASS_ENVIRONMENT_ONLY_CUDA_LINK_ROUTE',
+                                     'BLOCKED_NO_AVAILABLE_CUDA_LINK_TARGET')) {
+              $r.status = 'BLOCKED_UNQUALIFIED_LINK_PROBE'
+              throw 'G7_R27_LINK_PROBE_UNQUALIFIED'
+            }
+            $r.status = $data.status
+            $r.link_probes = $data.probes
+            $r.gcc_real_executable = $data.gcc_real_executable
+            $r.cuda_library_presence = $data.cuda_library_presence
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $out 'g7_r27_cuda_driver_link.json') -Encoding UTF8
+            Write-Output ('G7_R27_STATUS=' + $r.status)
+            Write-Output ('G7_R27_GCC=' + $r.gcc_real_executable)
+            Write-Output 'G7_R27_GPU=NOT_RUN'
+            Write-Output 'G7_R27_SYSTEM_CHANGES=NONE'
+          }
+      - name: Upload only sanitized link probe results
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r27-cuda-driver-link-probe
+          path: local_runs/g7_r27_cuda_driver_link.json
+          if-no-files-found: warn
+          retention-days: 30
