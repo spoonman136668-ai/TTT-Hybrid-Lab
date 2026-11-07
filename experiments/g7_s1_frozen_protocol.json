@@ -1,0 +1,94 @@
+{
+  "schema": "ttt-hybrid.g7-s1.pre_registered_association.v1",
+  "frozen_at": "2026-11-07",
+  "source_qualifying_run": 42364516609,
+  "hypothesis": "For novel episode-specific four-key/four-value bindings, genuine official TTT-Linear within-episode adaptation (ttt_base_lr=1.0) reduces held-out query MSE relative to the same parameter-identical trained Mamba-2+attention+TTT architecture with test-time fast-weight update disabled (ttt_base_lr=0.0).",
+  "interpretation": "This tests a small native hybrid adaptation mechanism, not full language reasoning, novel generalization, autonomous science, or the independent Wingless/Yggdrasil north stars.",
+  "arms": [
+    {
+      "id": "online_ttt",
+      "ttt_base_lr": 1,
+      "architecture": "official Mamba2 nonfused -> causal attention -> official TTTLinear -> fixed active depth, train end-to-end"
+    },
+    {
+      "id": "static_matched",
+      "ttt_base_lr": 0,
+      "architecture": "exact same module types, widths, initialization, trainable parameters, AdamW steps and task data; no TTT inner update"
+    }
+  ],
+  "training": {
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "steps": 8,
+    "batch_size": 2,
+    "weight_decay": 0,
+    "gradient_clipping": 1,
+    "trainable_scope": "full hybrid except deterministic fixed router",
+    "dtype": "float32",
+    "width": 64,
+    "sequence_length": 16,
+    "ttt_minibatch": 8,
+    "params_budget": "exactly equal across arms",
+    "gradient_budget": "8 identical optimizer updates per arm per seed",
+    "strict_one_run": true
+  },
+  "episode": {
+    "support_pairs": 4,
+    "support_tokens": 8,
+    "query_tokens": 8,
+    "key_dimension": 16,
+    "value_dimension": 16,
+    "format": "support [key_i,value_i] for i=0..3 followed by query keys [0,1,2,3,3,2,1,0]. Each episode has fresh independent Rademacher keys and values, marker channels 32:35 discriminate roles; target query value not present at query tokens.",
+    "training_episode_rng": "seed*100000+step*100+example",
+    "heldout_episode_rng": "seed*100000+900000+episode",
+    "heldout_episodes_per_seed": 6,
+    "heldout_new_bindings": true,
+    "negative_control": "cyclically permute only support values within each held-out episode, retain query and target unchanged"
+  },
+  "primary_metric": "Paired per-episode normalized MSE relative improvement = (static_MSE-online_MSE)/static_MSE on held-out query values; positive favors online TTT.",
+  "threshold": {
+    "mean_relative_reduction_min": 0.05,
+    "all_three_seeds_positive": true,
+    "paired_bootstrap_95pct_lower_gt": 0,
+    "bootstrap_resamples": 1000,
+    "bootstrap_seed": 9821,
+    "shuffled_support_relative_loss_increase_min": 0.03
+  },
+  "controls": [
+    "same official upstream pinned SHAs and source blobs",
+    "same initial weights per seed and same train/eval episodes",
+    "TTT LR=0 conventional static non-adapting control retains identical trainable parameter count and compute graph",
+    "shuffled-support negative control; target values never supplied in query inputs",
+    "frozen disjoint FIT vs HELDOUT episode seeds; no test data used for optimizer updates",
+    "no gradients or updates during heldout evaluation",
+    "fresh model per arm to prevent carryover",
+    "no source/driver/package changes"
+  ],
+  "budget": {
+    "gpu_arch": "sm_120",
+    "torch": "2.9.0+cu128",
+    "triton": "3.5.0",
+    "gpu_torch_peak_bytes_max": 1073741824,
+    "gpu_free_bytes_min": 4294967296,
+    "total_seconds_max": 420,
+    "env": "previous R3 frozen Python 3.12 runtime, signed exact .16 headers in temporary CPATH, temp LIBRARY_PATH=/usr/lib/wsl/lib",
+    "no_paid_apis": true
+  },
+  "stop_conditions": [
+    "any source/runtime SHA drift",
+    "missing signed exact Python dev header or hash mismatch",
+    "any package mutation",
+    "any nonfinite grad/loss",
+    "training backward unsupported by native backend",
+    "CUDA allocation > 1 GiB or insufficient free memory",
+    "any seed/episode or arm budget mismatch",
+    "any timeout",
+    "causal future leak or episode carryover"
+  ],
+  "reporting": "Do not declare SCIENTIFIC_PASS from a single-run pilot even if thresholds met. Report PRELIMINARY_POSITIVE_REQUIRES_INDEPENDENT_REPLICATION, NULL_OR_NEGATIVE, or ENGINEERING_UNVERIFIED with full negative evidence. No deployment or merge."
+}
