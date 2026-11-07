@@ -42,7 +42,7 @@ def command(args: list[str], *, timeout: int):
 
 def installed(name: str) -> str | None:
     r = command(
-        ["/usr/bin/dpkg-query", "-W", "-f=" + "\${Status} \${Version}", name],
+        ["/usr/bin/dpkg-query", "-W", "-f=" + "${Status} ${Version}", name],
         timeout=10,
     )
     out = r.stdout.strip()
