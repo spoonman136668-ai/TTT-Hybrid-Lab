@@ -211,8 +211,8 @@ def run(args):
                 and diagnostic["design"]["seeds"] == [101,211,307]
                 and diagnostic["design"]["train_steps_per_arm"] == 8
                 and diagnostic["design"]["novel_episodes_per_seed"] == 6
-                and diagnostic["thresholds"]["zero_baseline_mse"] == 1.0
-                and diagnostic["thresholds"]["oracle_shuffled_mse_min"] == 1.5,
+                and diagnostic["design"]["thresholds"]["zero_baseline_mse"] == 1.0
+                and diagnostic["design"]["thresholds"]["oracle_shuffled_mse_min"] == 1.5,
                 "S4_PRE_REGISTERED_DIAGNOSTIC_DRIFT")
     train = spec["training"]
     require(train["seeds"] == [101, 211, 307] and train["steps"] == 8
@@ -403,9 +403,9 @@ def run(args):
         controls_pass = (
             all(abs(d[arm]["zero_baseline_mse"] - 1.0) < 1e-12 and
                 d[arm]["oracle_correct_mse"] <=
-                diagnostic["thresholds"]["oracle_correct_mse_max"] and
+                diagnostic["design"]["thresholds"]["oracle_correct_mse_max"] and
                 d[arm]["oracle_shuffled_mse"] >=
-                diagnostic["thresholds"]["oracle_shuffled_mse_min"]
+                diagnostic["design"]["thresholds"]["oracle_shuffled_mse_min"]
                 for arm in d)
         )
         zero_gain = ((1.0 - online_d["model_correct_mse"]) / 1.0)
@@ -422,9 +422,9 @@ def run(args):
         ]
         thresholds_pass = (
             controls_pass and
-            zero_gain >= diagnostic["thresholds"]["model_relative_mse_below_zero_min"] and
-            online_shuffle_harm >= diagnostic["thresholds"]["online_shuffled_relative_harm_min"] and
-            online_erase_harm >= diagnostic["thresholds"]["online_erased_relative_harm_min"] and
+            zero_gain >= diagnostic["design"]["thresholds"]["model_relative_mse_below_zero_min"] and
+            online_shuffle_harm >= diagnostic["design"]["thresholds"]["online_shuffled_relative_harm_min"] and
+            online_erase_harm >= diagnostic["design"]["thresholds"]["online_erased_relative_harm_min"] and
             all(v > 0 for v in per_seed_new)
         )
         support_causal = {
