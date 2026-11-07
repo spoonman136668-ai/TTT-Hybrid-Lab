@@ -101,10 +101,21 @@ class NumericFastWeightTTT(nn.Module):
             raise ValueError("INVALID_UPDATE_MASK")
         if not torch.isfinite(targets).all():
             raise ValueError("NONFINITE_OBSERVED_TARGETS")
-        residual = targets - preupdate_prediction
-        direction = (residual[:, :, None] * features).mean(dim=1)
+        # Compute update gradients ONLY for admitted worlds. Multiplication
+        # by an all-false mask after computing every gradient was not sparse
+        # and could leak NaNs from inactive rows (NaN * 0 == NaN).
+        if update_mask.device != state.device:
+            raise ValueError("INVALID_UPDATE_MASK_DEVICE")
+        active = torch.nonzero(update_mask, as_tuple=True)[0]
+        updated = state.detach().clone()
+        if active.numel() == 0:
+            return updated
+        residual = targets.index_select(0, active) - preupdate_prediction.index_select(0, active)
+        selected_features = features.index_select(0, active)
+        direction = (residual[:, :, None] * selected_features).mean(dim=1)
         direction = direction / direction.norm(dim=-1, keepdim=True).clamp_min(1.0)
-        return (state + self.learning_rate * direction * update_mask[:, None]).detach()
+        updated.index_add_(0, active, self.learning_rate * direction)
+        return updated.detach()
 
 
 @dataclass(frozen=True)
