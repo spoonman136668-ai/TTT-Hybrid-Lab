@@ -285,7 +285,10 @@ def execute(args):
                     # Changing *future query keys* must not affect an
                     # earlier query answer (no query writes or suffix reads).
                     changed=tokens.clone()
-                    changed[:,-1,:16]=-changed[:,-1,:16]
+                    # Replace final query with a DIFFERENT KNOWN key, so
+                    # the independent, earlier queries remain valid and
+                    # cannot be contaminated by a future read.
+                    changed[:,-1,:16]=keys[:,0,:]
                     _,_,qchanged=extract_events(torch,changed)
                     changed_out,_=retrieve(
                         torch,keys,values,qchanged,streams=3)
@@ -333,9 +336,10 @@ def execute(args):
         })
     t=p["controls"]
     tests=[]
+    validity=[]
     for entry in all_seeds:
         m=entry["tri_sketch_heldout_mse"]
-        ok=(
+        valid=(
             entry["exact_oracle_mse"]<=t["positive_oracle_correct_mse_max"]
             and entry["corrupted_true_support_oracle_mse"]>=
                 t["corrupted_oracle_mse_min"]
@@ -343,6 +347,9 @@ def execute(args):
                     t["zero_predictor_mse_exact"])<=1e-12
             and abs(entry["erased_writer_mse"]-
                     t["erasable_writer_zero_mse_exact"])<=1e-12
+        )
+        validity.append(valid)
+        ok=(valid
             and m["decoy128"]<=t["tri_sketch_decoy128_mse_max"]
             and m["decoy512"]<=t["tri_sketch_decoy512_mse_max"]
             and m["decoy1024"]<=t["tri_sketch_decoy1024_mse_max"]
@@ -362,6 +369,7 @@ def execute(args):
     check(not torch.cuda.is_initialized(),
           "CPU_ONLY_EXPERIMENT_TOUCHED_CUDA")
     status=(
+        "ASSAY_INVALID_OR_ENVIRONMENT_BLOCKED" if not all(validity) else
         "ATTENTION_FREE_EPISODIC_SKETCH_RETRIEVAL_POSITIVE_ENGINEERING_EXPLORATION"
         if all(tests) else
         "ATTENTION_FREE_SKETCH_RETRIEVAL_FROZEN_LIMITS_NOT_MET"
@@ -385,6 +393,8 @@ def execute(args):
         "aggregate_tri_sketch_mse_by_case":mean_mse,
         "aggregate_one_sketch_decoy1024_mse":statistics.mean(
             x["single_sketch_decoy1024_mse"] for x in all_seeds),
+        "all_oracle_causality_reset_controls_valid":all(validity),
+        "all_oracle_causality_reset_controls_valid_per_seed":validity,
         "all_frozen_limits_met_per_seed":tests,
         "all_frozen_limits_met":all(tests),
         "heldout_episodes_per_seed":
@@ -422,7 +432,7 @@ def main():
         phase("READ_ONLY_DPKG_BEFORE")
         before=dpkg_hash()
         result=execute(args)
-        code=0
+        code=0 if result["status"]!="ASSAY_INVALID_OR_ENVIRONMENT_BLOCKED" else 2
     except (Blocked,custody.Blocked) as exc:
         result["status"]="ENGINEERING_BLOCKED_"+str(exc)
         result["phase"]=PHASE
