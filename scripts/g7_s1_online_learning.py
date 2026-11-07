@@ -432,7 +432,7 @@ def run(args):
             "status": ("ASSAY_INVALID" if not controls_pass else
                        "DIAGNOSTIC_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION"
                        if thresholds_pass else
-                       "ASSAY_VALID_MODEL_NOT_USING_BINDINGS"),
+                       "ASSAY_VALID_BINDING_NOT_DEMONSTRATED"),
             "oracle_and_zero_controls_pass": controls_pass,
             "all_frozen_mechanism_thresholds_met": thresholds_pass,
             "online_vs_zero_relative_gain": zero_gain,
