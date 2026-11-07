@@ -24,6 +24,8 @@ import torch
 from torch import nn
 
 ROOT = Path(__file__).resolve().parents[1]
+sys.path[:0] = [str(ROOT),str(ROOT/"scripts")]
+import g7_r5_oneshot as custody
 
 class Blocked(Exception):
     pass
@@ -159,6 +161,13 @@ def run(args):
     raw=args.protocol.read_bytes()
     spec=json.loads(raw)
     frozen_check(spec)
+    # Verify the exact R3 package manifest INSIDE the prequalified venv,
+    # not in the system Python launcher used only for admission.
+    manifest,packages=custody.manifest()
+    require(manifest==custody.R3_MANIFEST_SHA256
+            and packages.get("torch")==custody.TORCH
+            and packages.get("triton")==custody.TRITON,
+            "PINNED_VENV_PACKAGE_MANIFEST_DRIFT")
     torch.set_num_threads(1)
     require(not torch.cuda.is_initialized(),
             "CPU_ONLY_SOURCE_ACCESS_BREACH")
@@ -271,6 +280,7 @@ def run(args):
         "candidate_sha":args.expected_sha,
         "status":status,
         "frozen_protocol_sha256":hashlib.sha256(raw).hexdigest(),
+        "r3_manifest_sha256":manifest,
         "direct_measurement_channels":[
             "observed_state","applied_action","elapsed_time",
             "measured_next_state"],
