@@ -1,0 +1,140 @@
+# G7-R23: single read-only post-install audit and remaining authorized native
+# GPU forward. No root, package changes, retries, training, or deployment.
+name: G7-R23 postinstall C linker gate and one authentic native GPU forward
+on:
+  push:
+    branches:
+      - engineering/g7-r23-postinstall-one-original-native-forward-20261107
+    paths:
+      - .github/workflows/g7-r23-postinstall-single-forward.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r23-one-use-postinstall-original-forward
+  cancel-in-progress: false
+
+jobs:
+  qualify-and-one-original-forward:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r23-postinstall-one-original-native-forward-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 9
+    steps:
+      - name: Checkout exact candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Postinstall audit, native shared C linker and single authorized forward
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r23.readonly-postinstall-one-gpu-forward.v1'
+            candidate_sha = $env:GITHUB_SHA
+            prior_r22_run = 42359793275
+            prior_r22_verified_zip_sha256 = '408d32d71ce12234ed025362d1b2aff3e0de7f7a834f5ea8053c6916667113e6'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            postinstall_audit = 'NOT_RUN'
+            native_forward = 'NOT_RUN'
+            package_changes = 'NONE'
+            root_context = 'NOT_USED'
+            cuda_changes = 'NONE'
+            model_installs = 'NONE'
+            training = 'NOT_RUN'
+            scientific = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r23-postinstall-one-original-native-forward-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R23_OWNER_RUNNER_IDENTITY'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' HEAD)
+            $cc = $LASTEXITCODE
+            if ($hc -ne 0 -or $pc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne 'fdc2689b525ab15cfa6d2c54839ee7dce1caaf14' -or
+                $dirty -or $changed.Count -ne 2 -or
+                $changed -notcontains '.github/workflows/g7-r23-postinstall-single-forward.yml' -or
+                $changed -notcontains 'scripts/g7_r23_postinstall_readonly.py') {
+              $r.status = 'BLOCKED_SOURCE_SHA_OR_SCOPE'
+              throw 'G7_R23_SOURCE_SHA_OR_SCOPE'
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R23_WSL_PATH'
+            }
+            $normalUid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $normalUid -cne '1000') {
+              $r.status = 'BLOCKED_UNPRIVILEGED_USER_IDENTITY'
+              throw 'G7_R23_UNPRIVILEGED_USER_IDENTITY'
+            }
+            $checkOutput = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 100s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r23_postinstall_readonly.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r23_postinstall_preflight.json")
+            $checkExit = $LASTEXITCODE
+            $checkLines = @($checkOutput | Where-Object { $_ -match '^G7_R23_PREFLIGHT=' })
+            if ($checkLines.Count -ne 1) {
+              $r.status = 'BLOCKED_POSTINSTALL_RECEIPT_MISSING'
+              throw 'G7_R23_POSTINSTALL_RECEIPT'
+            }
+            $r.postinstall_audit = $checkLines[0].Substring(17)
+            if ($checkExit -ne 0 -or $r.postinstall_audit -cne 'PASS_POSTINSTALL_VERSION_AUDIT_AND_C_LINK') {
+              $r.status = 'BLOCKED_POSTINSTALL_OR_LINKER'
+              throw 'G7_R23_POSTINSTALL_OR_LINKER'
+            }
+            $r.native_forward = 'ONE_ORIGINAL_FORWARD_STARTED'
+            $nativeOutput = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 270s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r15_compiler_repair_forward.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r23_compiler_forward.json")
+            $nativeExit = $LASTEXITCODE
+            $nativeLines = @($nativeOutput | Where-Object { $_ -match '^G7_R15_STATUS=' })
+            if ($nativeLines.Count -ne 1) {
+              $r.status = 'BLOCKED_NATIVE_OUTER_RECEIPT_MISSING'
+              throw 'G7_R23_NATIVE_OUTER_RECEIPT'
+            }
+            $r.native_forward = $nativeLines[0].Substring(14)
+            if ($nativeExit -ne 0 -or $r.native_forward -cne 'PASS_COMPILER_REPAIR_AND_NATIVE_FORWARD') {
+              $r.status = 'BLOCKED_ORIGINAL_NATIVE_FORWARD'
+              throw 'G7_R23_ORIGINAL_NATIVE_FORWARD'
+            }
+            $r.status = 'PASS_POSTINSTALL_C_LINK_AND_AUTHENTIC_FORWARD'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_r23_gate.json') -Encoding UTF8
+            Write-Output ('G7_R23_STATUS=' + $r.status)
+            Write-Output ('G7_R23_AUDIT=' + $r.postinstall_audit)
+            Write-Output ('G7_R23_FORWARD=' + $r.native_forward)
+          }
+
+      - name: Preserve bounded sanitized receipts for either outcome
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r23-postinstall-forward-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r23_gate.json
+            local_runs/g7_r23_postinstall_preflight.json
+            local_runs/g7_r23_compiler_forward.json
+          if-no-files-found: warn
+          retention-days: 30
