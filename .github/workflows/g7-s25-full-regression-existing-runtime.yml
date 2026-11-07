@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   existing-windows-and-wsl:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 3 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 22
     steps:
@@ -63,7 +63,7 @@ jobs:
                 $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
                 $env:GITHUB_EVENT_NAME -cne 'push' -or
                 $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
-                $env:GITHUB_RUN_NUMBER -cne '2' -or
+                $env:GITHUB_RUN_NUMBER -cne '3' -or
                 $env:GITHUB_RUN_ATTEMPT -cne '1' -or
                 $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
                 $env:RUNNER_OS -cne 'Windows') {
@@ -115,6 +115,10 @@ jobs:
                         $record.pytest -ceq '8.3.4' -and $record.cuda -ceq 'None')
               } catch { return $false }
             }
+            # Windows PowerShell 5.1 promotes native stderr to terminating errors
+            # under Stop even with 2>$null (py -3.11 not installed). Probes are
+            # read-only, exit-code checked and must not abort source custody.
+            $ErrorActionPreference='Continue'
             $winPython=$null
             $winCandidates=@()
             $launcher=Get-Command py.exe -ErrorAction SilentlyContinue
@@ -204,6 +208,7 @@ jobs:
                 $r.windows_full_regression='FAIL_EXECUTED_FULL_REGRESSION'
               }
             }
+            $ErrorActionPreference='Stop'
             if ($r.windows_full_regression -ceq 'PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE' -and
                 $r.linux_full_regression -ceq 'PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE') {
               $r.status='PASS_FULL_WINDOWS_AND_LINUX_EXACT_SOURCE'
