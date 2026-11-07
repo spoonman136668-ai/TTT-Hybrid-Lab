@@ -1,0 +1,130 @@
+{
+  "schema": "ttt-hybrid.g7-s14.catsem-attention-free-exploration.v1",
+  "frozen_at": "2026-11-07",
+  "purpose": "Exploratory, non-parametric no-attention/no-Mamba/no-TTT episodic content-addressed associative memory. This is a new G7 research candidate, NOT a claim of world-first novelty; count sketches and hash associative storage have prior art.",
+  "lineage": {
+    "s13_run": 42386864471,
+    "s13_sha": "d6f6854930dad85f99ee5efbed2ade03facfb2a9",
+    "s13_mean_decoy128_mamba_mixed_mse": 0.0085746,
+    "source_s6_generator_git_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500",
+    "source_s9_permutation_path": "scripts/g7_s9_permutation_transfer.py",
+    "compare_to_s13": "HISTORICAL_CONTEXT_ONLY, not same model, budget or exact sample distribution"
+  },
+  "mechanism": {
+    "name": "CATSEM - collision-aware tri-sketch episodic memory",
+    "description": "Direct event-marked pair writes to three independent bounded hash-bucket state arrays; query key code reads each bucket, picks minimum collision-occupancy sketch; no token-token softmax or dense sequence attention, and no learned weights.",
+    "writer": "read markers in first T-8 tokens; each true or distractor key token with marker32 must immediately precede value token with marker33; scatter_add value vectors and occupancy counts into key-indexed buckets.",
+    "reader": "query token marker34 in last eight slots; gather three independent bucket means and choose minimum-occupancy stream per query; state is reinitialized each episode; query cannot write.",
+    "hash": "Bitpack 16 signed binary key bits, 32-bit avalanche mixing with three independent fixed seeds; prime bucket sizes 1021,1031,1033; one-sketch control uses 1021. No learned content projection or continuous-key tolerance.",
+    "memory_scaling": "O(batch*16*(1021+1031+1033)) float32 for three 16-dim value sketches plus counts; independent of token sequence length, O(T*hashes*value_dim) writes, no O(T^2) query/key comparisons. The dense token input itself still costs O(T*64), not counted as sketch state.",
+    "inductive_bias_disclosure": "Uses privileged known marker structure, binary key encoding, and immediately paired key/value support events. Comparison with trained neural hybrid is NOT fair architectural superiority. It is an algorithmic alternative and engineering candidate to test before any native integration."
+  },
+  "frozen_experiment": {
+    "seeds": [
+      137,
+      257,
+      389
+    ],
+    "heldout_batch_seed": "seed*10000000+9910000+batch_idx*17",
+    "heldout_batches_per_seed": 3,
+    "heldout_batch_size": 64,
+    "heldout_episodes_per_seed": 192,
+    "query_support_pair_permutation": "same exact S9 source helper with deterministic nonidentity per-example permutations",
+    "query_order": [
+      0,
+      1,
+      2,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "cases": [
+      {
+        "id": "base16",
+        "gap": 0,
+        "decoys": false,
+        "total_tokens": 16
+      },
+      {
+        "id": "decoy128",
+        "gap": 112,
+        "decoys": true,
+        "total_tokens": 128
+      },
+      {
+        "id": "decoy512",
+        "gap": 496,
+        "decoys": true,
+        "total_tokens": 512
+      },
+      {
+        "id": "decoy1024",
+        "gap": 1008,
+        "decoys": true,
+        "total_tokens": 1024
+      },
+      {
+        "id": "decoy1024_corrupted_true",
+        "gap": 1008,
+        "decoys": true,
+        "corrupt_original_values": true,
+        "total_tokens": 1024
+      }
+    ],
+    "decoy_rng": "independent signed +/-1 decoy keys and values from Generator.manual_seed(heldout_seed+451231); force decoy keys not equal to any of 4 true support keys by flipping a differing bit; duplicates among decoy keys allowed and counted as collisions",
+    "all_cases_same_true_pairs_queries_targets": true,
+    "source_permutation_exact": true,
+    "no_query_target_leak": true,
+    "no_future_query_write": true,
+    "no_gradient_or_training": true,
+    "memory_state_reset_per_episode": true
+  },
+  "controls": {
+    "positive_oracle_correct_mse_max": 1e-12,
+    "corrupted_oracle_mse_min": 1.5,
+    "zero_predictor_mse_exact": 1,
+    "erasable_writer_zero_mse_exact": 1,
+    "tri_sketch_decoy128_mse_max": 0.01,
+    "tri_sketch_decoy512_mse_max": 0.03,
+    "tri_sketch_decoy1024_mse_max": 0.08,
+    "single_sketch_decoy1024_mse_min": 0.1,
+    "tri_vs_single_decoy1024_relative_error_max": 0.5,
+    "tri_sketch_decoy1024_corrupted_true_mse_min": 1.5,
+    "prefix_causality_output_delta_max": 0,
+    "cross_episode_reset_max_delta": 0,
+    "all_3_seeds_pass_each_bound": true,
+    "state_footprint_including_count_bytes_cap": 16777216,
+    "cpu_peak_rss_bytes_cap": 2147483648,
+    "wall_seconds_cap": 180
+  },
+  "falsifiers": [
+    "any source pin, exact candidate, pinned torch package manifest or official s6 data generator drift",
+    "any duplicate original support key within episode",
+    "any incorrect marker pairing, query target input, future read/write leakage or reset failure",
+    "any query has zero valid bucket count",
+    "any oracle/zero/corruption control fails",
+    "any bound exceeds frozen MSE, memory or wall limits",
+    "any changed dpkg inventory or required system installation"
+  ],
+  "interpretation": {
+    "pass": "ATTENTION_FREE_EPISODIC_SKETCH_RETRIEVAL_POSITIVE_ENGINEERING_EXPLORATION",
+    "fail": "ATTENTION_FREE_SKETCH_RETRIEVAL_FROZEN_LIMITS_NOT_MET",
+    "invalid": "ASSAY_INVALID_OR_ENVIRONMENT_BLOCKED",
+    "science": "No trainable learning, unfamiliar relationships, cold learned retention, generalized reasoning or SCIENTIFIC_PASS can be inferred. This is an algorithmic retrieval feasibility test only.",
+    "next_if_positive": "Add a trainable learned write/read gate and test continuous/noisy keys plus new relation composition against strong conventional and native controls with matched data, FLOPs, memory and wall time; only then consider hybrid attention substitution."
+  },
+  "authority": {
+    "execution": "single-use read-only CPU experiment via existing TTT-HYBRID-GPU-WIN self-hosted runner, Ubuntu normal UID1000 and pinned already-installed R3 Python venv",
+    "no_cuda": true,
+    "no_package_install": true,
+    "no_paid_api": true,
+    "no_root": true,
+    "no_controller": true,
+    "no_model_weight_download": true,
+    "no_merges": true,
+    "no_deployment": true,
+    "no_persistent_state": true
+  }
+}
