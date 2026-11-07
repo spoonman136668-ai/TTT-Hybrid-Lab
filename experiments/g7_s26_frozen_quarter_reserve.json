@@ -37,7 +37,7 @@
     "frozen_boundaries_fixed_without_switch_time_lookup": true,
     "switch_step_used_for_reporting_only": 20,
     "guaranteed_updates_steps_24_to_31_per_world": 2,
-    "garantueed_updates_post_switch_at_least": 2,
+    "guaranteed_updates_post_switch_at_least": 2,
     "gate_signs": "Use existing S25 thresholds MIN_SIGNED_EFFECT=0.012, MIN_CONTRAST_DISAGREEMENT=0.018, 2-of-3 signed-opposition persistence, no search.",
     "surprise_primary": "residual for actually executed observed action, never arbitrary +0.8 counterfactual; the action selector is observable and no physics coefficients are exposed.",
     "policies_s26": [
