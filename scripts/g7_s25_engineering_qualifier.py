@@ -32,6 +32,9 @@ REQUIRED = (
     "scripts/g7_s25_paired_interventions.py",
     "tests/test_g7_s25_paired_interventions.py",
     ".github/workflows/g7-s25-paired-physics-engineering.yml",
+    "scripts/g7_s25_cost_ledger.py",
+    "tests/test_g7_s25_cost_ledger.py",
+    ".github/workflows/g7-s25-cost-ledger-qualification.yml",
 )
 
 def ensure(ok: bool, cause: str) -> None:
@@ -92,7 +95,7 @@ def main():
         ensure(custody.git(ROOT, "hash-object", "--", REQUIRED[0]) ==
                "31633b341403729b7ffbb7d73f3a04098ad44380",
                "S25_FROZEN_PROTOCOL_BLOB_DRIFT")
-        status["source"] = "PASS_EXACT_ELEVEN_FILES_FROZEN_S25_AND_S20_BLOBS"
+        status["source"] = "PASS_EXACT_FOURTEEN_FILES_FROZEN_S25_AND_S20_BLOBS"
         venv = (Path.home().resolve() / ".local/share/ttt-hybrid"
                 / ("g7-r3-" + custody.R3_SOURCE_SHA[:12])
                 / "venv/bin/python")
@@ -124,12 +127,20 @@ def main():
         status["paired_physics_contract"] = physics
         ensure(physics["exit_code"] == 0 and "Ran 9 tests" in physics["stdout_tail"]
                and "OK" in physics["stdout_tail"], "PAIRED_PHYSICS_CONTRACT_FAIL")
+        ledger = command([str(venv), "-I", "-B",
+                          str(ROOT / "tests/test_g7_s25_cost_ledger.py")],
+                         220, env)
+        status["cost_ledger_contract"] = ledger
+        ensure(ledger["exit_code"] == 0
+               and "Ran 10 tests" in ledger["stdout_tail"]
+               and "OK" in ledger["stdout_tail"],
+               "G7_S25_COST_LEDGER_TEST_FAIL")
         # Full pytest regression on pinned R3 cannot be inferred from focused tests.
         check = command([str(venv), "-I", "-B", "-c",
                          "import importlib.util;print('PYTEST_PRESENT' if importlib.util.find_spec('pytest') else 'PYTEST_ABSENT')"],
                         20, env)
         status["full_regression_dependency"] = check["stdout_tail"].strip()
-        status["status"] = "PASS_28_FOCUSED_ENGINEERING_ONLY"
+        status["status"] = "PASS_38_FOCUSED_ENGINEERING_ONLY"
         rc = 0
     except Exception as exc:
         status["status"] = "BLOCKED_" + type(exc).__name__
