@@ -1,0 +1,169 @@
+# G7-R26: strictly read only. Classify the original pinned CalledProcessError
+# subprocess, without raw traceback, checkout, GPU rerun or package changes.
+name: G7-R26 one-use original subprocess executable classification
+on:
+  push:
+    branches:
+      - engineering/g7-r26-readonly-failed-subprocess-20261107
+    paths:
+      - .github/workflows/g7-r26-original-subprocess-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r26-single-original-subprocess-read
+  cancel-in-progress: false
+
+jobs:
+  recover-command-class:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r26-readonly-failed-subprocess-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - name: Verify original SHA-linked receipts and sanitize command signature
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r26.subprocess-signature-readonly.v1'
+            candidate_sha = $env:GITHUB_SHA
+            original_r23_sha = 'e86f934cc1f999794a47afd14e8646f10519dbe1'
+            original_run = 42360001917
+            status = 'BLOCKED_NOT_STARTED'
+            custody = 'UNVERIFIED'
+            raw_error_fingerprint = 'UNVERIFIED'
+            error_class = 'UNVERIFIED'
+            process_executable = 'UNVERIFIED'
+            process_family = 'UNVERIFIED'
+            return_code = $null
+            command_tags = @()
+            source_file_hints = @()
+            gpu = 'NOT_RUN'
+            system_changes = 'NONE'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r26-readonly-failed-subprocess-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R26_OWNER_RUNNER_IDENTITY'
+            }
+            $r6file = Join-Path $out 'g7_r15_native_forward.json'
+            $gfile = Join-Path $out 'g7_native_gate3_subreceipt.json'
+            if (-not (Test-Path -LiteralPath $r6file -PathType Leaf) -or
+                -not (Test-Path -LiteralPath $gfile -PathType Leaf)) {
+              $r.status = 'BLOCKED_ORIGINAL_RECEIPTS_MISSING'
+              throw 'G7_R26_ORIGINAL_RECEIPTS_MISSING'
+            }
+            $r6hash = (Get-FileHash -LiteralPath $r6file -Algorithm SHA256).Hash.ToLowerInvariant()
+            $ghash = (Get-FileHash -LiteralPath $gfile -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($r6hash -cne '6e97ce666a14c4b9fdfb1a58325d4c55662674a215e89ba8809678df602700fd' -or
+                $ghash -cne 'e463c6a1a357bbc594509878bc02ca0cce375d472dbb3cd9ef224af951b64b35') {
+              $r.status = 'BLOCKED_PINNED_RECEIPT_HASH_DRIFT'
+              throw 'G7_R26_PINNED_RECEIPT_HASH_DRIFT'
+            }
+            $r6 = Get-Content -LiteralPath $r6file -Raw -Encoding UTF8 | ConvertFrom-Json
+            $g = Get-Content -LiteralPath $gfile -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($r6.candidate_sha -cne $r.original_r23_sha -or
+                $r6.native_gate3_receipt_sha256 -cne $ghash -or
+                $r6.native_failure_category -cne 'TRITON_OR_KERNEL_COMPATIBILITY' -or
+                $g.schema -cne 'ttt-hybrid.authentic-gpu-smoke.v1' -or
+                $g.status -cne 'FAIL_AUTHENTIC_GPU_INTEGRATION' -or
+                $g.mode -cne 'FORWARD_ONLY_NO_GRAD' -or
+                $g.error_type -cne 'CalledProcessError') {
+              $r.status = 'BLOCKED_ORIGINAL_RECEIPT_IDENTITY'
+              throw 'G7_R26_ORIGINAL_RECEIPT_IDENTITY'
+            }
+            $message = [string]$g.error_message
+            $tail = @($g.traceback_tail | Select-Object -Last 10)
+            $combined = $message + [Environment]::NewLine + ($tail -join [Environment]::NewLine)
+            if ($combined.Length -gt 11000) { $combined = $combined.Substring(0,11000) }
+            $hasher = [System.Security.Cryptography.SHA256]::Create()
+            try {
+              $bytes = [System.Text.Encoding]::UTF8.GetBytes($combined)
+              $fingerprint = ([BitConverter]::ToString($hasher.ComputeHash($bytes))).Replace('-','').ToLowerInvariant()
+            } finally { $hasher.Dispose() }
+            if ($fingerprint -cne 'f8797421feaf9e3c8650aec068d886e4fc9033166e1e7d6183c445be635885a6') {
+              $r.status = 'BLOCKED_ORIGINAL_EXCEPTION_FINGERPRINT_DRIFT'
+              throw 'G7_R26_ORIGINAL_EXCEPTION_FINGERPRINT_DRIFT'
+            }
+            $r.raw_error_fingerprint = $fingerprint
+            $r.custody = 'PASS_GATE3_SHA_R6_SHA_AND_R25_ERROR_HASH'
+            $r.error_class = 'CalledProcessError'
+            $match = [regex]::Match($message, "^[Cc]ommand\s+'\[\s*'([^']+)'")
+            if (-not $match.Success) {
+              $match = [regex]::Match($message, "^[Cc]ommand\s+'([^']+)'")
+            }
+            if ($match.Success) {
+              $token = ($match.Groups[1].Value -split '\s+', 2)[0]
+              $basename = [regex]::Match($token, '[^\\/]+$').Value.ToLowerInvariant()
+              $known = @('gcc','gcc-13','cc','clang','clang-18','clang-17','ld',
+                         'ld.lld','ptxas','nvcc','ninja','cmake','make','python',
+                         'python3','bash','sh','objcopy')
+              $r.process_executable = if ($basename -in $known) { $basename }
+                                      else { 'OTHER_OR_UNKNOWN_EXECUTABLE' }
+            } else { $r.process_executable = 'UNKNOWN_COMMAND_FORMAT' }
+            $codeMatch = [regex]::Match($combined,'(?i)returned non-zero exit status\s+([0-9]{1,3})')
+            if ($codeMatch.Success) {
+              $number = [int]$codeMatch.Groups[1].Value
+              if ($number -ge 0 -and $number -le 255) { $r.return_code = $number }
+            }
+            $r.process_family = if ($r.process_executable -in @('gcc','gcc-13','cc','clang','clang-18','clang-17','ld','ld.lld')) {
+              'HOST_C_COMPILER_OR_LINKER'
+            } elseif ($r.process_executable -in @('ptxas','nvcc')) {
+              'CUDA_ASSEMBLER_OR_COMPILER'
+            } elseif ($r.process_executable -in @('ninja','cmake','make')) {
+              'BUILD_ORCHESTRATOR'
+            } elseif ($r.process_executable -in @('python','python3')) {
+              'PYTHON_SUBPROCESS'
+            } else { 'NOT_CLASSIFIED' }
+            $rules = [ordered]@{
+              SHARED_OBJECT_BUILD = '(?i)(?:-shared|--shared)'
+              POSITION_INDEPENDENT_CODE = '(?i)-fPIC'
+              CUDA_DRIVER_LINK = '(?i)(?:-lcuda\b|libcuda[.]so)'
+              PTX_ASSEMBLY = '(?i)\bptxas\b|[.]ptx\b'
+              TRITON_HOST_DRIVER = '(?i)\btriton\b|cuda_utils[.]c'
+              MISSING_HEADER = '(?i)fatal error:|no such file or directory'
+              UNDEFINED_SYMBOL = '(?i)undefined symbol|undefined reference'
+              ARCH_SM120 = '(?i)(?:sm_120|compute_120)'
+            }
+            $tags = @()
+            foreach ($key in $rules.Keys) {
+              if ($combined -match $rules[$key]) { $tags += $key }
+            }
+            $r.command_tags = $tags
+            $hints = @()
+            foreach ($file in @('compiler.py','backend.py','jit.py','driver.py','nvidia.py',
+                                 'cuda.py','build.py','ssd_combined.py',
+                                 'authentic_hybrid.py','run_gate3.py')) {
+              if ($combined.Contains($file)) { $hints += $file }
+            }
+            $r.source_file_hints = $hints
+            $r.status = 'PASS_ORIGINAL_SUBPROCESS_CLASSIFIED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_r26_original_subprocess.json') -Encoding UTF8
+            Write-Output ('G7_R26_STATUS=' + $r.status)
+            Write-Output ('G7_R26_EXE=' + $r.process_executable)
+            Write-Output ('G7_R26_FAMILY=' + $r.process_family)
+            Write-Output ('G7_R26_CODE=' + [string]$r.return_code)
+            Write-Output ('G7_R26_TAGS=' + ($r.command_tags -join ','))
+            Write-Output 'G7_R26_GPU=NOT_RUN'
+          }
+      - name: Upload only sanitized original-subprocess receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r26-original-failed-command
+          path: local_runs/g7_r26_original_subprocess.json
+          if-no-files-found: warn
+          retention-days: 30
