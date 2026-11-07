@@ -2,7 +2,7 @@
 # Existing project-owned Windows runner + established pinned R3 WSL venv.
 # NO installing packages, training/fit/heldout, scientific first-use, CUDA,
 # runner/controller/scheduler modifications, merge, promotion or deployment.
-name: G7-S26 preregistered quarter-reserve development comparison
+name: G7-S26 quarter-reserve development comparison exact-source R2
 on:
   push:
     branches:
@@ -16,7 +16,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   qualified-development-replay:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 11
     steps:
@@ -63,7 +63,7 @@ jobs:
                 $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-quarter-reserve-20261107' -or
                 $env:GITHUB_EVENT_NAME -cne 'push' -or
                 $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
-                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_NUMBER -cne '2' -or
                 $env:GITHUB_RUN_ATTEMPT -cne '1' -or
                 $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
                 $env:RUNNER_OS -cne 'Windows') {
@@ -136,6 +136,8 @@ jobs:
             $receipt.pinned_python_manifest='PASS_EXACT_EXISTING_R3_MANIFEST'
             $suiteOne=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/tests/test_g7_s26_reserve_gate.py")
             $suiteOneCode=$LASTEXITCODE
+            Write-Output ('S26_RESERVE_UNIT_TEST_EXIT=' + $suiteOneCode)
+            Write-Output ($suiteOne -join "`n")
             if ($suiteOneCode -ne 0 -or (($suiteOne -join "`n") -notmatch 'Ran 12 tests') -or (($suiteOne -join "`n") -notmatch 'OK')) {
               $receipt.status='BLOCKED_RESERVE_GATE_CONTRACT'
               throw 'S26_GATE_TESTS_FAILED'
@@ -143,6 +145,8 @@ jobs:
             $receipt.reserve_unit_tests='PASS_12_DEV_ONLY_TESTS'
             $suiteTwo=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/tests/test_g7_s26_comparison_contract.py")
             $suiteTwoCode=$LASTEXITCODE
+            Write-Output ('S26_COMPARISON_UNIT_TEST_EXIT=' + $suiteTwoCode)
+            Write-Output ($suiteTwo -join "`n")
             if ($suiteTwoCode -ne 0 -or (($suiteTwo -join "`n") -notmatch 'Ran 6 tests') -or (($suiteTwo -join "`n") -notmatch 'OK')) {
               $receipt.status='BLOCKED_COMPARATOR_INFORMATION_CONTRACT'
               throw 'S26_COMPARATOR_CONTRACT_TESTS_FAILED'
