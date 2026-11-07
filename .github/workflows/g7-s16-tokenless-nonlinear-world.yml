@@ -1,0 +1,176 @@
+# G7-S16: one-shot, source-pinned, nonroot, CPU-only, no vocabulary/tokenizer.
+name: G7-S16 frozen tokenless nonlinear switch adaptation
+
+on:
+  push:
+    branches:
+      - engineering/g7-s16-tokenless-nonlinear-switch-plasticity-20261107
+    paths:
+      - .github/workflows/g7-s16-tokenless-nonlinear-world.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s16-exact-one-use-nonlinear-world
+  cancel-in-progress: false
+
+jobs:
+  bounded-nonlinear-continuous-world:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s16-tokenless-nonlinear-switch-plasticity-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 8
+    steps:
+      - name: Exact candidate isolated checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s16-isolated
+          fetch-depth: 7
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify exact scope, frozen protocol, no-root CPU execution
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s16.one-use-exact-custody.v1'
+            candidate_sha = $env:GITHUB_SHA
+            predecessor_sha = '1e634322f4668b6eab2ff41b1e6fd50e2c02e9e6'
+            predecessor_s15_science_run = 42391485388
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            frozen_study = 'UNVERIFIED'
+            launcher_admission = 'NOT_RUN'
+            science = 'NOT_RUN'
+            no_cuda = $true
+            no_install = $true
+            independent_qualification = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s16-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s16-tokenless-nonlinear-switch-plasticity-20261107' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_RUNNER_OR_SCOPE'
+              throw 'G7_S16_SCOPE'
+            }
+            $base = '1e634322f4668b6eab2ff41b1e6fd50e2c02e9e6'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD~4' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s16_frozen_nonlinear_switch.json',
+              'scripts/g7_s16_nonlinear_switch.py',
+              'scripts/g7_s16_cpu_launcher.py',
+              '.github/workflows/g7-s16-tokenless-nonlinear-world.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or
+                $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne 'fa10f6aec54488197b38e8682bd7472490c46111' -or
+                $ancestor -cne $base -or $dirty -or
+                $changed.Count -ne 4) {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SHA'
+              throw 'G7_S16_SOURCE_CUSTODY'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_UNEXPECTED_SOURCE_SCOPE'
+                throw 'G7_S16_SOURCE_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_PREDECESSOR_EXACT_FOUR_FROZEN_FILES'
+            $protocol = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s16_frozen_nonlinear_switch.json') -Raw | ConvertFrom-Json
+            if ($protocol.schema -cne 'ttt-hybrid.g7-s16.tokenless-nonlinear-switch-adaptation.v1' -or
+                $protocol.predecessor.s15_patch_sha -cne $base -or
+                $protocol.train.fit_seeds.Count -ne 3 -or
+                $protocol.train.optimizer_steps_per_seed -ne 240 -or
+                $protocol.evaluation.splits.Count -ne 4 -or
+                $protocol.calibration.fixed_decay_candidates.Count -ne 6 -or
+                $protocol.budgets.cpu_only -cne $true -or
+                $protocol.budgets.no_install -cne $true -or
+                $protocol.frozen_thresholds.max_runtime_seconds -ne 200) {
+              $r.status = 'BLOCKED_FROZEN_PROTOCOL'
+              throw 'G7_S16_FROZEN_PRECOMMIT'
+            }
+            $r.frozen_study = 'PASS_PRECOMMITTED_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_S16_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NOT_NORMAL_USER'
+              throw 'G7_S16_UID'
+            }
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=12s 300s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s16_cpu_launcher.py" --expected-sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $admission = @($raw | Where-Object { $_ -match '^G7_S16_ADMISSION=' })
+            $science = @($raw | Where-Object { $_ -match '^G7_S16_SCIENCE=' })
+            if ($admission.Count -ne 1 -or $science.Count -ne 1) {
+              $r.status = 'BLOCKED_LAUNCHER_RECEIPT_MISSING'
+              throw 'G7_S16_LAUNCHER'
+            }
+            $r.launcher_admission = $admission[0].Substring('G7_S16_ADMISSION='.Length)
+            $r.science = $science[0].Substring('G7_S16_SCIENCE='.Length)
+            if ($rc -ne 0 -or
+                $r.launcher_admission -cne 'PASS_CPU_TOKENLESS_NONLINEAR_ADAPTATION_MEASURED' -or
+                $r.science -notin @(
+                  'PRELIMINARY_TOKENLESS_SURPRISE_PLASTICITY_GAIN_NOT_INDEPENDENTLY_QUALIFIED',
+                  'TOKENLESS_LEARNED_PLASTICITY_ADVANTAGE_NULL_ON_FROZEN_NONLINEAR_SWITCH_TEST')) {
+              $r.status = 'BLOCKED_SCIENCE_OR_LAUNCHER_CONTROLS'
+              throw 'G7_S16_SCIENCE'
+            }
+            $file = Join-Path $out 'g7_s16_nonlinear_switch_evidence.json'
+            $data = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+            if ($data.candidate_sha -cne $env:GITHUB_SHA -or
+                $data.oracle_controls_pass -cne $true -or
+                $data.conventional_positive_controls_pass -cne $true -or
+                $data.installed_packages_changed -cne $false -or
+                $data.tokenizer_used -cne $false -or
+                $data.vocabulary_used -cne $false -or
+                $data.next_token_objective_used -cne $false -or
+                $data.trained_updates_per_seed_per_model -ne 240 -or
+                $data.trained_worlds_per_seed_per_model -ne 11520 -or
+                $data.cold_restoration_all_models_exact -cne $true -or
+                $data.per_seed.Count -ne 3) {
+              $r.status = 'BLOCKED_UNQUALIFIED_MEASUREMENT'
+              throw 'G7_S16_MEASUREMENT_RECEIPT'
+            }
+            $r.status = 'PASS_FROZEN_TOKENLESS_NONLINEAR_WORLD_MEASURED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s16_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S16_RESULT=' + $r.status)
+            Write-Output ('G7_S16_SCIENCE=' + $r.science)
+            Write-Output ('G7_S16_CUDA=NOT_USED')
+          }
+
+      - name: Preserve frozen science and custody receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s16-tokenless-nonlinear-${{ github.sha }}
+          path: |
+            g7-s16-isolated/local_runs/g7_s16_workflow_admission.json
+            g7-s16-isolated/local_runs/g7_s16_nonlinear_switch_evidence.json
+          if-no-files-found: warn
+          retention-days: 30
