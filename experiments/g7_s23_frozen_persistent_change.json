@@ -36,7 +36,7 @@
       "ema_alpha": 0.1,
       "post_allocation_cooldown_updates": 36,
       "source_only_negative_duration_updates": 48,
-      "negative_train_episode_seed_formula": "fit_seed*100000+2701000+step*37",
+      "negative_train_episode_seed_formula": "fit_seed*100000+3101000+step*37",
       "reference_initialization": "mean of frozen source-only calibration batch mean errors",
       "no_phase_boundary_reset": true,
       "anomaly_reference_update_during_cooldown": true,
@@ -232,10 +232,11 @@
     "bank_source_C_relative_gain_vs_naive_S22_min": 0.1,
     "maximum_banks_by_phase_B": 2,
     "required_banks_by_phase_C": 3,
-    "max_stationary_false_allocations": 0
+    "max_stationary_false_allocations": 0,
+    "required_banks_by_phase_B": 2
   },
   "status": {
-    "invalid": "ASSAY_INVALID_KERNEL_OR_ORACLE_OR_STATIONARY_CALIBRATION",
+    "invalid": "ASSAY_INVALID_KERNEL_OR_ORACLE",
     "positive": "PRELIMINARY_PERSISTENT_UNLABELED_CHANGE_MEMORY_NOT_SCIENTIFIC_PASS",
     "null": "PERSISTENT_CHANGEPOINT_BANK_ROUTING_OR_RETENTION_NULL",
     "independent_scientific_qualification": "NOT_RUN",
