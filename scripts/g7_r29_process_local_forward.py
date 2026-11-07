@@ -120,8 +120,8 @@ def main() -> int:
         report["status"] = "BLOCKED_UNEXPECTED_" + type(exc).__name__
     finally:
         target = args.receipt.resolve()
-        if target.parent == (ROOT / "local_runs").resolve() and
-           target.name == "g7_r29_process_local_forward.json":
+        if (target.parent == (ROOT / "local_runs").resolve() and
+                target.name == "g7_r29_process_local_forward.json"):
             target.parent.mkdir(parents=True, exist_ok=True)
             target.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n",
                               encoding="utf-8")
