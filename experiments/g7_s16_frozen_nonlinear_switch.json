@@ -1,0 +1,263 @@
+{
+  "schema": "ttt-hybrid.g7-s16.tokenless-nonlinear-switch-adaptation.v1",
+  "frozen_on": "2026-11-07",
+  "predecessor": {
+    "s15_scientific_run": 42391485388,
+    "s15_measured_sha": "563767748de0e39710f7bc185f9be115b68899dd",
+    "s15_patch_sha": "1e634322f4668b6eab2ff41b1e6fd50e2c02e9e6",
+    "s15_science_status": "ANALOG_RLS_PASS_GRU_TRANSFER_NULL_OR_NEGATIVE",
+    "negative_result": "S15 trained GRU failed frozen learning and unfamiliar-physics transfer despite nonlinear-free RLS positive control."
+  },
+  "research_question": "Can learning a continuous-valued surprise-gated fast-state forgetting rule improve action-consequence prediction after unforeseen within-episode nonlinear dynamics switches over the strongest frozen calibrated exponential-forgetting estimator? Can a fully trained continuous GRU independently pass?",
+  "task": {
+    "observed_stream_channels": [
+      "continuous_state_x",
+      "continuous_intervention_u",
+      "elapsed_time_dt",
+      "measured_continuous_next_state"
+    ],
+    "query_channels": [
+      "last_continuous_state",
+      "counterfactual_unseen_action_u",
+      "future_elapsed_time_dt"
+    ],
+    "target": "unseen real-valued action consequence x_next",
+    "dynamics": "x_next=x+dt*(-a*x+b*u+c*tanh(2*x)+d*x*u)",
+    "latent_coefficients_hidden": true,
+    "per_episode_switch_after_observation": 20,
+    "history_length": 32,
+    "exact_known_analytic_basis_for_estimators": [
+      "-x",
+      "u",
+      "tanh(2x)",
+      "x*u"
+    ],
+    "inductive_bias_warning": "All ridge/learned-plasticity estimators know the correct nonlinear feature basis; the GRU shares the coefficient-readout basis but not closed-form system identification. This is not world-model architecture superiority.",
+    "training_parameters": {
+      "a": [
+        0.35,
+        1.4
+      ],
+      "b": [
+        0.35,
+        1.45
+      ],
+      "c": [
+        -0.45,
+        0.45
+      ],
+      "d": [
+        -0.35,
+        0.35
+      ]
+    },
+    "unfamiliar_parameters": {
+      "a": [
+        1.55,
+        2.25
+      ],
+      "b": [
+        1.55,
+        2.1
+      ],
+      "c": [
+        -0.8,
+        0.8
+      ],
+      "d": [
+        -0.65,
+        0.65
+      ]
+    },
+    "dt": [
+      0.05,
+      0.16
+    ],
+    "action": [
+      -1,
+      1
+    ],
+    "initial_state": [
+      -1,
+      1
+    ],
+    "sensor_noise_sigma": 0.002,
+    "unfamiliar_functional_form": "tanh(3*x) instead of tanh(2*x) only in separate untrained stress split; NOT counted as familiar nonlinear transfer"
+  },
+  "arms": [
+    {
+      "id": "surprise_gate",
+      "description": "Learned four-scalar forgetting rule; every sensory transition updates 4x4 sufficient statistics; no tokenizer, softmax attention, or gradient at inference; trained on switching worlds"
+    },
+    {
+      "id": "fully_trained_gru",
+      "description": "32-unit GRU ingesting identical 4 real-valued measurements; 4-coefficient nonlinear physics readout, learned with AdamW on identical worlds and seed budget"
+    },
+    {
+      "id": "fixed_decay_grid",
+      "description": "Strong calibrated conventional exponential-forgetting RLS, fixed decay selected ONLY on dedicated calibration worlds from [0.65,0.78,0.87,0.93,0.97,1.0]"
+    },
+    {
+      "id": "full_history_rls",
+      "description": "Fixed decay 1.0, all 32 observations retained; conventional no-forgetting baseline"
+    },
+    {
+      "id": "linear_rls",
+      "description": "Two-feature conventional linear RLS deliberately misspecified for nonlinear family; diagnostic only"
+    },
+    {
+      "id": "static_prior",
+      "description": "No history, fixed mean coefficients"
+    },
+    {
+      "id": "exact_hidden_oracle",
+      "description": "Ground truth actual latent post-switch coefficients, evaluator only"
+    },
+    {
+      "id": "swapped_world_context",
+      "description": "Negative control: unrelated context from another world, query from target world"
+    }
+  ],
+  "train": {
+    "fit_seeds": [
+      101,
+      211,
+      307
+    ],
+    "optimizer_steps_per_seed": 240,
+    "examples_per_optimizer_step": 48,
+    "total_worlds_per_seed": 11520,
+    "histories_per_world": 32,
+    "intervention_queries_per_world": 8,
+    "optimizer": "AdamW",
+    "lr_gru": 0.004,
+    "lr_gate": 0.02,
+    "clip_norm": 1,
+    "world_seed_formula": "seed*100000+164000+step*37",
+    "regime_schedule": [
+      "train_switch",
+      "train_stable"
+    ],
+    "switch_step": 20,
+    "same_worlds_actions_targets_for_both_trained_arms": true,
+    "no_heldout_training": true
+  },
+  "calibration": {
+    "solely_for_fixed_decay_control": true,
+    "seeds": [
+      811,
+      823,
+      839
+    ],
+    "worlds_per_seed": 64,
+    "interventions_per_world": 8,
+    "fixed_decay_candidates": [
+      0.65,
+      0.78,
+      0.87,
+      0.93,
+      0.97,
+      1
+    ],
+    "selection_rule": "lowest pooled MSE on separate CALIBRATION train-range switching worlds; ties select larger decay; never use ID or OOD heldout outcomes",
+    "no_neural_updates_on_calibration": true
+  },
+  "evaluation": {
+    "same_frozen_train_model_seeds_order": true,
+    "splits": [
+      {
+        "id": "id_switch",
+        "seeds": [
+          149,
+          271,
+          397
+        ],
+        "regime": "id_switch"
+      },
+      {
+        "id": "ood_switch",
+        "seeds": [
+          557,
+          613,
+          719
+        ],
+        "regime": "ood_switch"
+      },
+      {
+        "id": "ood_stable",
+        "seeds": [
+          743,
+          751,
+          761
+        ],
+        "regime": "ood_stable"
+      },
+      {
+        "id": "unseen_function",
+        "seeds": [
+          877,
+          883,
+          887
+        ],
+        "regime": "unseen_function"
+      }
+    ],
+    "unseen_worlds_per_split_seed": 64,
+    "counterfactual_queries_per_world": 8,
+    "no_eval_updates": true,
+    "exact_oracle": true,
+    "swapped_history_negative_control": true,
+    "prospective_action_flip_control": true,
+    "secondary_old_regime_interference_diagnostic": true,
+    "checkpoint_restore_exact": true
+  },
+  "frozen_thresholds": {
+    "oracle_max_mse": 1e-12,
+    "static_prior_min_ood_switch_mse": 0.0001,
+    "calibrated_fixed_ood_switch_mse_max": 0.02,
+    "calibrated_fixed_vs_static_ood_switch_fractional_gain_min": 0.15,
+    "calibrated_fixed_swapped_history_ratio_min": 1.2,
+    "learned_gate_min_relative_ood_switch_gain_vs_best_fixed": 0.05,
+    "learned_gate_min_absolute_ood_switch_gain_vs_best_fixed": 0.00002,
+    "learned_gate_better_all_three_ood_seeds": true,
+    "learned_gate_swapped_history_ratio_min": 1.2,
+    "gru_min_relative_gain_vs_static_ood_switch": 0.1,
+    "gru_better_than_static_on_all_three_ood_seeds": true,
+    "zero_cold_restore_max_abs_delta": 0,
+    "max_cpu_rss_bytes": 2147483648,
+    "max_runtime_seconds": 200
+  },
+  "reporting": {
+    "assay_invalid": "ASSAY_INVALID_ORACLE_OR_CONVENTIONAL_CONTROL_FAILED",
+    "learned_gate_positive": "PRELIMINARY_TOKENLESS_SURPRISE_PLASTICITY_GAIN_NOT_INDEPENDENTLY_QUALIFIED",
+    "learned_gate_null": "TOKENLESS_LEARNED_PLASTICITY_ADVANTAGE_NULL_ON_FROZEN_NONLINEAR_SWITCH_TEST",
+    "gru_result_separate": true,
+    "novelty_limit": "Surprise-dependent exponential forgetting and system identification have substantial prior art; do not claim first invention, independent intelligence, autonomous RSI, actual continuous-time analog execution, general learning, or transformer replacement",
+    "distinction": "Physical time is sampled into numeric sensor observations, but no text/token IDs, vocabulary, symbol lookup, language segmentation, attention, or next-token objective is used.",
+    "no_post_result_tuning": true
+  },
+  "budgets": {
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "cpu_only": true,
+    "uid": 1000,
+    "pinned_existing_r3_venv": true,
+    "no_gpu": true,
+    "no_install": true,
+    "no_paid_apis": true,
+    "no_weights_download": true,
+    "no_extra_controller": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "full_platform_regression": "NOT_CLAIMED_BY_THIS_ONE_USE_RESEARCH_WORKFLOW",
+    "stop": [
+      "provenance SHA mismatch",
+      "missing preexisting packages",
+      "nonfinite training",
+      "invalid exact oracles",
+      "conventional positive control fails",
+      "time or memory budget",
+      "trained checkpoint restore drift",
+      "installed-package inventory drift"
+    ]
+  }
+}
