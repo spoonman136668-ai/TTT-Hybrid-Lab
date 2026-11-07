@@ -29,6 +29,9 @@ REQUIRED = (
     "tests/test_g7_s25_numeric_ttt.py",
     "scripts/g7_s25_engineering_qualifier.py",
     ".github/workflows/g7-s25-numeric-engineering.yml",
+    "scripts/g7_s25_paired_interventions.py",
+    "tests/test_g7_s25_paired_interventions.py",
+    ".github/workflows/g7-s25-paired-physics-engineering.yml",
 )
 
 def ensure(ok: bool, cause: str) -> None:
@@ -86,7 +89,10 @@ def main():
                and protocol["authority"]["no_training_execution"] is True
                and protocol["seeds"]["engineering_only"] == [3101, 3109, 3119],
                "S25_FROZEN_PROTOCOL_DRIFT")
-        status["source"] = "PASS_EXACT_EIGHT_FILES_FROZEN_S25_AND_S20_BLOBS"
+        ensure(custody.git(ROOT, "hash-object", "--", REQUIRED[0]) ==
+               "31633b341403729b7ffbb7d73f3a04098ad44380",
+               "S25_FROZEN_PROTOCOL_BLOB_DRIFT")
+        status["source"] = "PASS_EXACT_ELEVEN_FILES_FROZEN_S25_AND_S20_BLOBS"
         venv = (Path.home().resolve() / ".local/share/ttt-hybrid"
                 / ("g7-r3-" + custody.R3_SOURCE_SHA[:12])
                 / "venv/bin/python")
@@ -112,12 +118,18 @@ def main():
         status["numeric_contract"] = model
         ensure(model["exit_code"] == 0 and "Ran 10 tests" in model["stdout_tail"]
                and "OK" in model["stdout_tail"], "NUMERIC_TTT_CONTRACT_FAIL")
+        physics = command([str(venv), "-I", "-B",
+                           str(ROOT / "tests/test_g7_s25_paired_interventions.py")],
+                          180, env)
+        status["paired_physics_contract"] = physics
+        ensure(physics["exit_code"] == 0 and "Ran 9 tests" in physics["stdout_tail"]
+               and "OK" in physics["stdout_tail"], "PAIRED_PHYSICS_CONTRACT_FAIL")
         # Full pytest regression on pinned R3 cannot be inferred from focused tests.
         check = command([str(venv), "-I", "-B", "-c",
                          "import importlib.util;print('PYTEST_PRESENT' if importlib.util.find_spec('pytest') else 'PYTEST_ABSENT')"],
                         20, env)
         status["full_regression_dependency"] = check["stdout_tail"].strip()
-        status["status"] = "PASS_19_FOCUSED_ENGINEERING_ONLY"
+        status["status"] = "PASS_28_FOCUSED_ENGINEERING_ONLY"
         rc = 0
     except Exception as exc:
         status["status"] = "BLOCKED_" + type(exc).__name__
