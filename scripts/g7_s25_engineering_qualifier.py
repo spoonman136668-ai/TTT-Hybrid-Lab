@@ -42,6 +42,9 @@ REQUIRED = (
     "scripts/g7_s25_causal_baseline_stream.py",
     "tests/test_g7_s25_causal_baseline_stream.py",
     ".github/workflows/g7-s25-causal-stream-once.yml",
+    ".github/workflows/g7-s25-full-regression-existing-runtime.yml",
+    "tests/test_g7_s25_realized_primary.py",
+    ".github/workflows/g7-s25-primary-residual-once.yml",
 )
 
 def ensure(ok: bool, cause: str) -> None:
@@ -102,7 +105,7 @@ def main():
         ensure(custody.git(ROOT, "hash-object", "--", REQUIRED[0]) ==
                "31633b341403729b7ffbb7d73f3a04098ad44380",
                "S25_FROZEN_PROTOCOL_BLOB_DRIFT")
-        status["source"] = "PASS_EXACT_TWENTYONE_FILES_FROZEN_S25_AND_S20_BLOBS"
+        status["source"] = "PASS_EXACT_TWENTYFOUR_FILES_FROZEN_S25_AND_S20_BLOBS"
         venv = (Path.home().resolve() / ".local/share/ttt-hybrid"
                 / ("g7-r3-" + custody.R3_SOURCE_SHA[:12])
                 / "venv/bin/python")
@@ -162,12 +165,22 @@ def main():
                "Ran 10 tests" in stream["stdout_tail"] and
                "OK" in stream["stdout_tail"],
                "CAUSAL_BASELINE_STREAM_TEST_FAIL")
+        # Critically, surprise gating must score residual of the action the
+        # simulator actually executed, never the arbitrary plus-action probe.
+        primary = command([str(venv), "-I", "-B",
+                           str(ROOT / "tests/test_g7_s25_realized_primary.py")],
+                          150, env)
+        status["realized_primary_contract"] = primary
+        ensure(primary["exit_code"] == 0
+               and "Ran 6 tests" in primary["stdout_tail"]
+               and "OK" in primary["stdout_tail"],
+               "S25_REALIZED_PRIMARY_RESIDUAL_TEST_FAIL")
         # Full pytest regression on pinned R3 cannot be inferred from focused tests.
         check = command([str(venv), "-I", "-B", "-c",
                          "import importlib.util;print('PYTEST_PRESENT' if importlib.util.find_spec('pytest') else 'PYTEST_ABSENT')"],
                         20, env)
         status["full_regression_dependency"] = check["stdout_tail"].strip()
-        status["status"] = "PASS_64_FOCUSED_ENGINEERING_ONLY"
+        status["status"] = "PASS_70_FOCUSED_ENGINEERING_ONLY"
         rc = 0
     except Exception as exc:
         status["status"] = "BLOCKED_" + type(exc).__name__
