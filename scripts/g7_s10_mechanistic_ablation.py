@@ -188,9 +188,9 @@ def run(args):
             if is_native:
                 model,initsha=instantiate(torch,official,arm,seed)
                 initial_native[arm_id]=initsha
+                model=model.to(device=device,dtype=torch.float32)
                 exact_delta=verify_full_forward_exact(
                     torch,official,model,arm,seed,device)
-                model=model.to(device=device,dtype=torch.float32)
                 torch.cuda.reset_peak_memory_stats(device)
             else:
                 torch.manual_seed(seed)
@@ -457,8 +457,8 @@ def main():
               (ROOT/"experiments/g7_s10_frozen_ablation.json").resolve(),
               "RECEIPT_OR_FROZEN_PROTOCOL_PATH_DENIED")
         report=run(args)
-        code=0 if report["status"]==
-            "MECHANISTIC_ABLATION_MEASURED_NO_INDEPENDENT_QUALIFICATION" else 2
+        code=(0 if report["status"] ==
+              "MECHANISTIC_ABLATION_MEASURED_NO_INDEPENDENT_QUALIFICATION" else 2)
     except (Blocked,custody.Blocked,native_source.Blocked) as exc:
         report["status"]="ENGINEERING_BLOCKED_"+str(exc)
         report["phase"]=PHASE
