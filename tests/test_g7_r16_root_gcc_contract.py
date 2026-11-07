@@ -1,69 +1,51 @@
-"""G7-R16: source-only negative controls for root GCC + one native forward."""
+"""G7-R16: consumed root-GCC single use and immutable result negative controls."""
 from pathlib import Path
 import ast
 
 ROOT=Path(__file__).resolve().parents[1]
 WF=ROOT/".github/workflows/g7-r16-root-gcc-forward.yml"
 PROBE=ROOT/"scripts/g7_r16_compiler_probe.py"
+REPORT=ROOT/"docs/G7_R16_RESULT.md"
 
-def test_one_use_only_and_exact_original_runner():
-    s=WF.read_text(encoding="utf-8")
-    for token in (
-        "on:\n  push:\n    branches: [main]",
-        'paths:\n      - ".github/workflows/g7-r16-root-gcc-forward.yml"',
-        "github.run_number == 1 && github.run_attempt == 1",
-        "github.actor == 'spoonman136668-ai'",
-        "TTT-HYBRID-GPU-WIN",
-        "ttt-hybrid-gpu-isolated",
-        "persist-credentials: false",
-        "clean: true",
-        "G7_R16_CANDIDATE_SOURCE_DRIFT",
-        "timeout-minutes: 14",
-        "retention-days: 30",
-    ): assert token in s, token
-    for token in ("workflow_dispatch:", "schedule:", "pull_request:",
-                  "wsl.exe --install", "gh workflow run", "Start-Process",
-                  "git push", "actions/setup-python"):
-        assert token not in s, token
+def test_consumed_one_shot_removed_from_tree():
+    assert not WF.exists()
 
-def test_root_only_explicit_gcc_apt_install():
-    s=WF.read_text(encoding="utf-8")
-    assert s.count("--user root --exec /usr/bin/id -u")==1
-    assert s.count("--user root --exec /usr/bin/timeout")==2
-    assert s.count("/usr/bin/apt-get -o Acquire::Retries=0 update")==1
-    assert s.count("/usr/bin/apt-get install -y --no-install-recommends gcc")==1
-    for banned in (
-        "apt-get upgrade", "apt-get dist-upgrade", "apt-get autoremove",
-        "apt-get install -y build-essential", "pip install", "uv pip",
-        "torch.optim", "nvidia-smi", "nvcc", "wsl.exe --set-default",
-        "CUDA_VISIBLE_DEVICES=", "CC=", "workflow_dispatch",
+def test_original_run_hashes_and_stages_documented():
+    s=REPORT.read_text(encoding="utf-8")
+    for marker in (
+        "42323786912",
+        "13554520874",
+        "4a32444ed9ce3b8246aa8b01e41c9ce83f8a5dee",
+        "179ab666e1d4368623eb22748b5cd13fe5c59352ff22e0c559e2e0986f07c19d",
+        "e24e53005e4afd9328b641eef2d58c9f8734080b148460a3eb7d2c5f6673fea9",
+        "c769c5b6c5ec7d564caf557e5d335dbc647c3b778504b88ac4f255f49719b6d2",
+        "source_custody=PASS",
+        "root_context=ROOT_UID_ZERO_CONFIRMED",
+        "apt_update=PASS",
+        "apt_install=PASS",
+        "compiler_after=PRESENT_UNQUALIFIED",
+        "BLOCKED_HOST_C_SHARED_BUILD_FAILED",
+        "native_forward=NOT_RUN",
+        "NO RETRY",
     ):
-        assert banned not in s, banned
+        assert marker in s, marker
 
-def test_original_user_forward_and_negative_stops():
-    s=WF.read_text(encoding="utf-8")
-    for token in (
-        "BLOCKED_UBUNTU_ROOT_CONTEXT_UNAVAILABLE",
-        "BLOCKED_GCC_APT_UPDATE_FAILED", "BLOCKED_GCC_APT_INSTALL_FAILED",
-        "BLOCKED_COMPILER_NOT_VISIBLE_TO_UNPRIVILEGED_USER",
-        "BLOCKED_NATIVE_FORWARD_OR_HOST_COMPILER_PROBE",
-        "G7_R16_COMPILER=PRESENT", "G7_R16_COMPILER=ABSENT",
-        "g7_r15_compiler_repair_forward.py",
-        "--expected-sha", "g7_r15_compiler_forward.json",
-        "g7_r16_root_gcc_forward.json",
-        "cuda_runtime_change = 'NONE'",
-        "training = 'NOT_RUN'", "scientific = 'UNVERIFIED'",
-    ): assert token in s, token
-    assert s.count("g7_r15_compiler_repair_forward.py")==1  # only one call site
-    assert s.count("wsl.exe --distribution Ubuntu-24.04 --user root") == 3
-    assert "g7_r6_oneshot.py" in (ROOT/"scripts/g7_r15_compiler_repair_forward.py").read_text(encoding="utf-8")
+def test_no_gpu_science_or_additional_privilege_claims():
+    s=REPORT.read_text(encoding="utf-8")
+    for marker in (
+        "SCIENTIFIC: UNVERIFIED",
+        "DEPLOYMENT: NOT AUTHORIZED",
+        "No GPU forward was launched",
+        "libc6-dev",
+        "hypothesis, not an independently observed root cause",
+    ):
+        assert marker in s, marker
 
-def test_readonly_compiler_probe_no_root_or_cuda():
+def test_retained_compiler_selection_probe_does_not_mutate():
     s=PROBE.read_text(encoding="utf-8")
     ast.parse(s)
     assert "native.source_custody(args.expected_sha)" in s
     assert "native.selected_compiler()" in s
-    for expected in ("G7_R16_COMPILER=PRESENT", "G7_R16_COMPILER=ABSENT"):
-        assert expected in s
-    for banned in ("apt-get", "sudo", "torch.cuda", "wsl.exe", "git checkout"):
-        assert banned not in s
+    assert "sys.path.insert(0" in s
+    for forbidden in ("apt-get", "sudo", "torch.cuda", "wsl.exe", "git checkout"):
+        assert forbidden not in s

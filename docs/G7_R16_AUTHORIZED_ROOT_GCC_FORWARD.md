@@ -1,4 +1,6 @@
-# G7-R16 — owner-authorized one root-context GCC repair and authentic nonfused GPU forward
+# G7-R16 — original approved plan (historical; executed once and blocked)
+
+**ONE ATTEMPT CONSUMED:** [G7-R16 run #42323786912](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42323786912) successfully installed GCC via Ubuntu root, but the existing G7-R15 host C shared-library probe failed before GPU forward. The single-use workflow has been retired; see [G7_R16_RESULT.md](G7_R16_RESULT.md) for the authenticated result. All plan text below is historical, not renewed authorization.
 
 **Baseline:** exact protected main `af06fc8ef1875c26a48baad809e0f1508c205d81` has all 5 G4/G5 Linux+Windows and pinned Mamba Ubuntu CPU checks PASS. Original authentic G7-R9 [run #42300670454](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42300670454) reached WSL2 and CUDA, but Triton 3.5.0 failed to find host C compiler for its runtime helper. G7-R11 independently confirmed cause; G7-R15 [run #42321056057](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42321056057) reached original WSL path and verified source/R3 custody but failed `BLOCKED_GCC_SUDO_NONINTERACTIVE_DENIED`, before installing any packages or running GPU. G7-R15 consumed workflow retired at PR #35.
 
