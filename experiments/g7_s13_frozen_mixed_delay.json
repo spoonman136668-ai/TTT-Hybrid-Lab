@@ -1,0 +1,182 @@
+{
+  "schema": "ttt-hybrid.g7-s13.frozen-mixed-delay-causal-retrieval.v1",
+  "frozen_at": "2026-11-07",
+  "lineage": {
+    "s12_sha": "7ae34b4cc234a9802c44eecf95254880ed6799a6",
+    "s12_run": 42385309942,
+    "s12_result": "UNFAMILIAR_DELAY_OR_DECOY_INTERFERENCE_NOT_RESOLVED",
+    "s12_full_decoy64_over_base16_ratio": 6.58676,
+    "s12_mamba_vs_attention_decoy64_ratio": 0.37132,
+    "verified_s11_training_source_blob": "fafb993ec3389b1b5668622d86ecd015ea659138",
+    "verified_s6_generator_git_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500"
+  },
+  "hypothesis": "Against identical inputs, trained-model capacity, optimizer steps and heldout OOD recall tests, does exposure to randomly permuted support/query episodes with controlled 16/32/64-token blank/decoy interference improve the original static-Mamba hybrid's heldout 128-token distractor retrieval relative to a fixed-16-token Mamba arm that saw the same key/value information? Does a near-active-parameter-matched 3-attention replacement perform differently on this matched mixed exposure?",
+  "arms": [
+    {
+      "id": "conventional",
+      "kind": "conventional",
+      "train_lr": 0.01,
+      "model_parameters_total": 1025,
+      "trainable_parameters": 1025,
+      "training_gap": "structured task-positive reference only, no temporal input"
+    },
+    {
+      "id": "mamba_fixed16",
+      "kind": "full",
+      "train_lr": 0.002,
+      "model_parameters_total": 90259,
+      "trainable_parameters": 90194,
+      "training_gap": "always no gap, same permuted binding episodes as mixed arms"
+    },
+    {
+      "id": "mamba_mixed",
+      "kind": "full",
+      "train_lr": 0.002,
+      "model_parameters_total": 90259,
+      "trainable_parameters": 90194,
+      "training_gap": "deterministic schedule base16, blank32, decoy32, blank64, decoy64"
+    },
+    {
+      "id": "attention_mixed",
+      "kind": "attention_replace",
+      "train_lr": 0.002,
+      "model_parameters_total": 123795,
+      "trainable_parameters": 89292,
+      "training_gap": "same exact mixed delays/decoys as mamba_mixed"
+    }
+  ],
+  "training": {
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "steps_per_seed_arm": 512,
+    "batch_size": 32,
+    "episodes_per_seed_arm": 16384,
+    "optimizer": "AdamW",
+    "weight_decay": 0,
+    "gradient_clip": 1,
+    "random_key_value_generator": "exact G7-S6 get_batch: seed*10000000+step*17",
+    "random_pair_and_query_permutation": "verified S9 per-example nonidentity permutation on same key/value episode, seed*10000000+step*17",
+    "gap_schedule": [
+      "base16",
+      "blank32",
+      "decoy32",
+      "blank64",
+      "decoy64"
+    ],
+    "cycle_length": 5,
+    "decoy_generator": "heldout/build tokens_with_delay S13; fixed K/V data, independent generated decoys per training episode seed + 451231",
+    "same_episode_key_value_content_and_optimizer_steps_all_arms": true,
+    "native_same_initial_weights_all_arms": true,
+    "no_training_on_ood_96_128": true
+  },
+  "heldout": {
+    "seed_formula": "seed*10000000+9990000+batch*17",
+    "batches_per_seed": 4,
+    "batch_size": 64,
+    "episodes_per_seed_arm": 256,
+    "variants": [
+      {
+        "id": "base16",
+        "gap": 0,
+        "decoys": false
+      },
+      {
+        "id": "decoy64",
+        "gap": 48,
+        "decoys": true
+      },
+      {
+        "id": "blank96",
+        "gap": 80,
+        "decoys": false
+      },
+      {
+        "id": "decoy96",
+        "gap": 80,
+        "decoys": true
+      },
+      {
+        "id": "blank128",
+        "gap": 112,
+        "decoys": false
+      },
+      {
+        "id": "decoy128",
+        "gap": 112,
+        "decoys": true
+      },
+      {
+        "id": "decoy128_corrupt_true",
+        "gap": 112,
+        "decoys": true,
+        "cyclically_rotate_only_true_support_values": true
+      }
+    ],
+    "split_independent_from_all_prior_16_32_64_tests": true,
+    "positive_oracle": "exact target by true 4 support pairs (0 MSE)",
+    "negative_oracle": "cyclic true support rotation error>=1.5 MSE",
+    "zero_reference": 1,
+    "reference_conventional_limit": "structured four support pairs, NOT same temporal input or matched FLOPs",
+    "cold_restore": "exact outputs on 128-token decoy episode",
+    "no_eval_gradients_or_updates": true
+  },
+  "frozen_thresholds": {
+    "oracle_exact_mse_max": 1e-12,
+    "wrong_oracle_mse_min": 1.5,
+    "zero_mse_exact": 1,
+    "conventional_base_mse_max": 0.1,
+    "mamba_fixed_base_mse_max": 0.2,
+    "mamba_mixed_base_mse_max": 0.2,
+    "attention_mixed_base_mse_max": 0.2,
+    "mixed_vs_fixed_decoy128_relative_error_reduction_min": 0.1,
+    "mixed_vs_fixed_decoy128_absolute_error_reduction_min": 0.02,
+    "mixed_vs_fixed_better_each_seed": true,
+    "mixed_ood_decoy128_mse_max": 0.25,
+    "mixed_ood_decoy128_over_decoy64_mse_ratio_max": 4,
+    "mixed_ood_all_seed_absolute_and_ratio": true,
+    "mixed_corrupt_true_support_relative_harm_min": 0.03,
+    "mamba_vs_attention128_relative_error_reduction_min": 0.05,
+    "mamba_vs_attention128_absolute_error_reduction_min": 0.01,
+    "mamba_vs_attention_better_each_seed": true,
+    "cold_delayed128_restore_exact": true
+  },
+  "reporting": {
+    "primary": "MIXED_DELAY_TRAINING_CAUSAL_GAIN only if frozen relative, absolute and three-seed criteria meet; otherwise TRAINING_EXPOSURE_GAIN_NOT_DEMONSTRATED",
+    "secondary": "NATIVE_MAMBA_VS_ATTENTION_OOD_EXPLORATORY under same mixed exposure but ~1% active parameter difference and unmatched FLOPs; only if ratio, abs and all seeds pass",
+    "robust_retention": "UNSEEN_DELAY128_ROBUSTNESS only if abs and ratio all seeds, corruption control and positive oracles pass",
+    "negative": "Always report all negative/null results; do not post-result retune thresholds.",
+    "science_limit": "No independent scientific acceptance, multi-task transfer, relationship composition, cold retention across learning episodes, or token-free intelligence demonstrated."
+  },
+  "budget": {
+    "one_shot_runner": "TTT-HYBRID-GPU-WIN",
+    "wall_seconds_max": 1100,
+    "torch_peak_bytes_max": 1073741824,
+    "cuda_free_min": 4294967296,
+    "native_holdout_chunk": 16,
+    "total_optimizer_steps": 6144,
+    "ephemeral_verified_signed_python312_headers": true,
+    "no_system_install": true,
+    "no_root": true,
+    "no_paid_api": true,
+    "no_new_controller": true,
+    "no_checkpoint_persistence": true,
+    "no_merge": true,
+    "no_deployment": true
+  },
+  "stop": [
+    "candidate/source/official source pin mismatch",
+    "signed Python 3.12 header bytes mismatch",
+    "unexpected runner or dirty tree",
+    "dataset heldout collision or query target leak",
+    "all three native initial weights differ",
+    "training/heldout episode or step count mismatch",
+    "invalid exact or negative oracle",
+    "nonfinite losses or grad",
+    "GPU allocation >1GiB or wall >1100 seconds",
+    "changed dpkg inventory",
+    "128-token cold restoration differs"
+  ]
+}
