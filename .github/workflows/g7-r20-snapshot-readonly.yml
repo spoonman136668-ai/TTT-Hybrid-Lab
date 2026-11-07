@@ -1,0 +1,125 @@
+# G7-R20 standing test authorization: ONE read-only signed Ubuntu snapshot check.
+# No system source changes, sudo, package installs/upgrades, or model/GPU execution.
+name: G7-R20 one-use signed Ubuntu snapshot read-only qualification
+on:
+  push:
+    branches:
+      - engineering/g7-r20-readonly-ubuntu-snapshot-20261107
+    paths:
+      - .github/workflows/g7-r20-snapshot-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r20-one-use-snapshot-readonly
+  cancel-in-progress: false
+
+jobs:
+  snapshot-qualification:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r20-readonly-ubuntu-snapshot-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 4
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Bounded non-root signed snapshot metadata and dependency simulation
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r20.workflow-admission.v1'
+            candidate_sha = $env:GITHUB_SHA
+            baseline_sha = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            signed_snapshot = 'UNVERIFIED'
+            ubuntu_snapshot = '20260815T000000Z'
+            package_downloads = 'NONE'
+            package_installation = 'NOT_RUN'
+            gpu_forward = 'NOT_RUN'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $base = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r20-readonly-ubuntu-snapshot-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_WRONG_OWNER_RUNNER'
+              throw 'G7_R20_WRONG_OWNER_RUNNER'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^^' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or
+                $dc -ne 0 -or $cc -ne 0 -or $dirty -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne '09af322ac8c0a1b516d116456f502d9a791c5760' -or
+                $ancestor -cne $base -or $changed.Count -ne 2 -or
+                $changed -notcontains '.github/workflows/g7-r20-snapshot-readonly.yml' -or
+                $changed -notcontains 'scripts/g7_r20_snapshot_qualification.py') {
+              $r.status = 'BLOCKED_SOURCE_SHA_SCOPE'
+              throw 'G7_R20_SOURCE_SHA_SCOPE'
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R20_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NONROOT_USER'
+              throw 'G7_R20_NONROOT_USER'
+            }
+            $result = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 210s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r20_snapshot_qualification.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r20_snapshot_qualification.json")
+            $exitCode = $LASTEXITCODE
+            $statusLines = @($result | Where-Object { $_ -match '^G7_R20_STATUS=' })
+            if ($statusLines.Count -ne 1) {
+              $r.status = 'BLOCKED_RECEIPT_STATUS_MISSING'
+              throw 'G7_R20_RECEIPT_STATUS_MISSING'
+            }
+            $r.status = $statusLines[0].Substring(14)
+            if ($exitCode -ne 0 -or $r.status -cne 'PASS_SIGNED_SNAPSHOT_EXACT_VERSION_SIMULATION') {
+              throw 'G7_R20_SNAPSHOT_NOT_QUALIFIED'
+            }
+            $r.signed_snapshot = 'PASS_METADATA_ONLY'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_r20_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_R20_ADMISSION=' + $r.status)
+            Write-Output 'G7_R20_INSTALL=NOT_RUN'
+            Write-Output 'G7_R20_GPU=NOT_RUN'
+          }
+
+      - name: Preserve only sanitized signed-snapshot and admission evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r20-snapshot-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r20_workflow_admission.json
+            local_runs/g7_r20_snapshot_qualification.json
+          if-no-files-found: warn
+          retention-days: 30
