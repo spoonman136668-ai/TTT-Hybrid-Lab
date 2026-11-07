@@ -18,8 +18,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 import g7_r15_compiler_repair_forward as original
 
 ROOT = Path(__file__).resolve().parents[1]
-VERSION_RE = re.compile(r"[0-9][A-Za-z0-9.+:~\\-]*\\Z")
-PACKAGE_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.+:-]*\\Z")
+VERSION_RE = re.compile(r"[0-9][A-Za-z0-9.+:~\-]*\Z")
+PACKAGE_RE = re.compile(r"[A-Za-z0-9][A-Za-z0-9.+:-]*\Z")
 PROTECTED = {"libc6", "libc-bin", "locales"}
 ALLOWED = {"libc6-dev", "libc-dev-bin", "linux-libc-dev",
            "libcrypt-dev", "rpcsvc-proto", "libnsl-dev", "libtirpc-dev"}
@@ -77,7 +77,7 @@ def main() -> int:
             raise original.Blocked("APT_CANDIDATE_QUERY_FAILED")
         versions = []
         for line in madison.stdout.splitlines():
-            match = re.match(r"^\\s*libc6-dev\\s*\\|\\s*([^|\\s]+)\\s*\\|", line)
+            match = re.match(r"^\s*libc6-dev\s*\|\s*([^|\s]+)\s*\|", line)
             if match and VERSION_RE.fullmatch(match.group(1)):
                 versions.append(match.group(1))
         report["available_libc6_dev_versions"] = sorted(set(versions))[:24]
@@ -133,7 +133,7 @@ def main() -> int:
         dest = args.receipt.resolve()
         if dest.name == "g7_r19_libc_versions.json" and dest.parent == (ROOT / "local_runs").resolve():
             dest.parent.mkdir(parents=True, exist_ok=True)
-            dest.write_text(json.dumps(report, sort_keys=True, indent=2) + "\\n",
+            dest.write_text(json.dumps(report, sort_keys=True, indent=2) + "\n",
                             encoding="utf-8")
         print("G7_R19_STATUS=" + report["status"], flush=True)
         print("G7_R19_SOURCE_CUSTODY=" + report["source_custody"], flush=True)
