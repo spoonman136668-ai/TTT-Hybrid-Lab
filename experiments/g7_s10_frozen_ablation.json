@@ -1,0 +1,166 @@
+{
+  "schema": "ttt-hybrid.g7-s10.leave-one-mechanism-out.v1",
+  "frozen_at": "2026-11-07",
+  "prior": {
+    "s9_run": 42371408030,
+    "s9_candidate": "d510c1f28c46b2f4b0f468a62263bc40927d10a5",
+    "s9_finding": "Full static hybrid passed variable-binding transfer; online fast-TTT failed strict all-seed robustness; neither independently qualified.",
+    "s6_conventional_generator_git_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500"
+  },
+  "question": "On the already-qualified synthetic association task, what is the effect on novel flexible variable-binding performance of removing Mamba2, causal attention, or the TTT layer from the original native hybrid? Does enabling TTT inner updates improve the full model?",
+  "design": {
+    "method": "Newly train each ablation from scratch; do not turn off pretrained components post hoc. Instantiate the same original official Mamba2+TTT native modules at matched initialization, bypass only specified blocks in forward, freeze bypassed parameters. All active blocks remain official/unchanged. Fixed depth and output preserved.",
+    "interpretation_limit": "Leave-one-out architectures differ in active trainable parameters and compute; associations are causal effects of a removal under the frozen training recipe, not independent intelligence/generalization results or equal-capacity superiority.",
+    "full_model_equivalence": "For active-all full static/online, verify forward of adapter is bit-for-bit equal to original AuthenticHybrid.forward with identical state before training.",
+    "data_equivalence": "All arms see identical training episodes and targets, same optimizer-step and episode budget. Model-specific changes to active trainable parameter count and wall/FLOPs are measured.",
+    "arms": [
+      {
+        "id": "conventional",
+        "type": "qualified S6 conventional explicit key-value content retrieval",
+        "mamba": false,
+        "attention": true,
+        "outer_ttt": false,
+        "inner_ttt_lr": null,
+        "train_lr": 0.01
+      },
+      {
+        "id": "full_static",
+        "type": "original official Mamba2 + causal attention + outer TTTLinear (inner updates disabled) + depth",
+        "mamba": true,
+        "attention": true,
+        "outer_ttt": true,
+        "inner_ttt_lr": 0,
+        "train_lr": 0.002
+      },
+      {
+        "id": "without_mamba",
+        "type": "attention + outer TTTLinear (inner updates disabled) + depth; Mamba skipped",
+        "mamba": false,
+        "attention": true,
+        "outer_ttt": true,
+        "inner_ttt_lr": 0,
+        "train_lr": 0.002
+      },
+      {
+        "id": "without_attention",
+        "type": "official nonfused Mamba2 + outer TTTLinear (inner updates disabled) + depth; causal attention skipped",
+        "mamba": true,
+        "attention": false,
+        "outer_ttt": true,
+        "inner_ttt_lr": 0,
+        "train_lr": 0.002
+      },
+      {
+        "id": "without_ttt",
+        "type": "official nonfused Mamba2 + causal attention + depth; entire TTTLinear skipped",
+        "mamba": true,
+        "attention": true,
+        "outer_ttt": false,
+        "inner_ttt_lr": 0,
+        "train_lr": 0.002
+      },
+      {
+        "id": "full_online",
+        "type": "original official Mamba2 + causal attention + outer TTTLinear (inner updates enabled) + depth",
+        "mamba": true,
+        "attention": true,
+        "outer_ttt": true,
+        "inner_ttt_lr": 1,
+        "train_lr": 0.002
+      }
+    ]
+  },
+  "training": {
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "optimizer_steps_per_seed": 512,
+    "examples_per_optimizer_step": 64,
+    "training_episodes_per_seed_per_arm": 32768,
+    "optimizer": "AdamW",
+    "weight_decay": 0,
+    "gradient_clip": 1,
+    "source": "Exact G7-S6 get_batch (git blob above), seed*10000000+step*17",
+    "query_order_train": [
+      0,
+      1,
+      2,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "dtype": "float32"
+  },
+  "evaluation": {
+    "new_heldout_seed": "seed*10000000+9960000+batch*17",
+    "heldout_batches_per_seed": 4,
+    "heldout_batch_size": 128,
+    "heldout_examples_per_arm_seed": 512,
+    "interventions": [
+      "fixed_layout",
+      "joint_support_and_query_permuted",
+      "joint_permuted_with_corrupted_support_values"
+    ],
+    "permutation": "Reuse G7-S9 per-example deterministic nonidentity query and pair permutations, with targets shuffled with their queries; no target leaks.",
+    "negative_controls": [
+      "oracle exact correct and joint 0 MSE",
+      "corrupted oracle MSE >=1.5",
+      "zero predictor exactly MSE=1.0",
+      "support corruption worsens correct model",
+      "cold weight restoration exact"
+    ],
+    "independent_fit_eval": true
+  },
+  "thresholds": {
+    "oracle_correct_mse_max": 1e-12,
+    "oracle_corrupted_mse_min": 1.5,
+    "zero_baseline_mse": 1,
+    "conventional_correct_joint_mse_max": 0.1,
+    "full_static_correct_joint_mse_max": 0.1,
+    "full_static_corrupted_joint_mse_min": 1.5,
+    "leave_one_out_mse_ratio_min": 2,
+    "leave_one_out_absolute_mse_increase_min": 0.01,
+    "leave_one_out_all_3_seeds_worse": true,
+    "online_over_static_relative_mse_gain_min": 0.05,
+    "online_better_than_static_each_seed": true,
+    "cold_restore_max_abs_output_delta": 0
+  },
+  "scientific_reporting": {
+    "baseline_task_must_pass": true,
+    "model_component_contribution": "COMPONENT_CONTRIBUTION_SIGNAL only if both frozen ratio ≥2, absolute error increase ≥0.01 and worse on ALL THREE seeds; even this is conditional, not proof fundamental necessity and is not matched parameter/FLOP test.",
+    "model_component_not_demonstrated": "NO_COMPONENT_CONTRIBUTION_DEMONSTRATED when thresholds unmet; absence of evidence not evidence of no useful contribution on other tasks.",
+    "online_ttt": "EXTRA_ONLINE_TTT_BENEFIT only when ≥5% error reduction over full_static on joint permuted split AND all 3 seeds favor online; otherwise ONLINE_TTT_ADVANTAGE_NULL.",
+    "science_status": "DIAGNOSTIC_ONLY, never SCIENTIFIC_PASS. No independence, full final regression, language understanding or learning outside this synthetic task established."
+  },
+  "budget": {
+    "wall_seconds_max": 900,
+    "torch_peak_vram_bytes_max": 1073741824,
+    "min_free_cuda_bytes": 4294967296,
+    "max_optimizer_steps_total": 9216,
+    "existing_runner": "TTT-HYBRID-GPU-WIN",
+    "ephemeral_signed_exact_python312_headers": true,
+    "original_mamba_tt_linear_source_pinned": true,
+    "no_install": true,
+    "no_paid_api": true,
+    "no_root": true,
+    "no_controller": true,
+    "no_persistent_model_weights": true,
+    "no_merge": true,
+    "no_deployment": true
+  },
+  "stop": [
+    "wrong exact source or provenance",
+    "missing official Mamba2/TTT SHA or signed Python headers",
+    "inconsistent initial state",
+    "nonfinite fit/heldout",
+    "invalid oracle",
+    "time/VRAM budget",
+    "any missing optimizer steps/episodes",
+    "unmatched input examples",
+    "changed installed dpkg inventory"
+  ]
+}
