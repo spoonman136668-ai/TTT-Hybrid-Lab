@@ -9,7 +9,7 @@ import subprocess
 import tempfile
 
 result = {
-    "schema": "ttt-hybrid.g7-r27.python-link-probe.v1",
+    "schema": "ttt-hybrid.g7-r28.python-link-probe.v1",
     "status": "BLOCKED_NOT_STARTED",
     "uid": os.geteuid(),
     "gcc_real_executable": "UNVERIFIED",
