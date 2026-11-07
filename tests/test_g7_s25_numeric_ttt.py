@@ -15,7 +15,7 @@ def input_step(batch=2, step=0):
     queries = torch.tensor([[0.2, -0.8, 0.1], [0.2, 0.8, 0.1]],
                            dtype=torch.float).unsqueeze(0).repeat(batch, 1, 1)
     observations = torch.tensor([[0.12, 0.28]], dtype=torch.float).repeat(batch, 1)
-    return m.WorldStep(history, queries, observations)
+    return m.WorldStep(history, queries, observations, torch.arange(batch, dtype=torch.int64) % 2)
 
 
 class NumericTTTTest(unittest.TestCase):
@@ -63,7 +63,7 @@ class NumericTTTTest(unittest.TestCase):
         b = m.PrequentialTTTEpisode(self.net, mode='full', seed=3101,
                                      batch=2, reference=s.query_pair)
         r1 = a.step(s)
-        altered = m.WorldStep(s.history, s.query_pair, s.observed_pair + 100.0)
+        altered = m.WorldStep(s.history, s.query_pair, s.observed_pair + 100.0, s.realized_action_index)
         r2 = b.step(altered)
         self.assertTrue(torch.equal(r1, r2))
         self.assertFalse(torch.equal(a.state, b.state))
@@ -88,7 +88,7 @@ class NumericTTTTest(unittest.TestCase):
         q = s.query_pair.clone()
         q[:, 1, 1] = 0.3
         with self.assertRaisesRegex(ValueError, 'UNMATCHED_ACTION_INTERVENTIONS'):
-            ep.step(m.WorldStep(s.history, q, s.observed_pair))
+            ep.step(m.WorldStep(s.history, q, s.observed_pair, s.realized_action_index))
         self.assertEqual(ep.steps, 0)
 
     def test_fastweight_and_baseline_budget_are_frozen(self):
