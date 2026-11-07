@@ -1,0 +1,124 @@
+# G7-R21: ONE authorized read-only exact .deb byte-custody verification.
+# No system updates, sudo/root, install, GPU model run, retries, or deployment.
+name: G7-R21 one-use signed snapshot package-byte qualification
+on:
+  push:
+    branches:
+      - engineering/g7-r21-signed-deb-byte-custody-20261107
+    paths:
+      - .github/workflows/g7-r21-signed-deb-custody.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r21-one-use-signed-deb-custody
+  cancel-in-progress: false
+
+jobs:
+  signed-payload-qualification:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r21-signed-deb-byte-custody-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 11
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Read-only SHA custody and five signed Ubuntu package hashes
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r21.workflow-admission.v1'
+            candidate_sha = $env:GITHUB_SHA
+            baseline_sha = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            signed_payloads = 'UNVERIFIED'
+            package_install = 'NOT_RUN'
+            system_changes = 'NONE'
+            gpu_forward = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $outDir = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r21-signed-deb-byte-custody-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER'
+              throw 'G7_R21_OWNER_RUNNER_DENIED'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $headResult = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $parentResult = $LASTEXITCODE
+            $grandparent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^' | Out-String).Trim()
+            $grandparentResult = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyResult = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' HEAD)
+            $changedResult = $LASTEXITCODE
+            if ($headResult -ne 0 -or $parentResult -ne 0 -or $grandparentResult -ne 0 -or
+                $dirtyResult -ne 0 -or $changedResult -ne 0 -or $dirty -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne '0fe7c61dc89f223fbb62124c0bb87f18655b9a4f' -or
+                $grandparent -cne '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' -or
+                $changed.Count -ne 2 -or
+                $changed -notcontains '.github/workflows/g7-r21-signed-deb-custody.yml' -or
+                $changed -notcontains 'scripts/g7_r21_signed_deb_custody.py') {
+              $r.status = 'BLOCKED_EXACT_CANDIDATE_SCOPE'
+              throw 'G7_R21_SOURCE_SCOPE_DENIED'
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R21_WSL_PATH_DENIED'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NORMAL_USER_IDENTITY'
+              throw 'G7_R21_UNEXPECTED_UID'
+            }
+            $value = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 400s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r21_signed_deb_custody.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r21_signed_package_payloads.json")
+            $exitValue = $LASTEXITCODE
+            $lines = @($value | Where-Object { $_ -match '^G7_R21_STATUS=' })
+            if ($lines.Count -ne 1) {
+              $r.status = 'BLOCKED_DIAGNOSTIC_RECEIPT_MISSING'
+              throw 'G7_R21_RECEIPT_MISSING'
+            }
+            $r.status = $lines[0].Substring(14)
+            if ($exitValue -ne 0 -or $r.status -cne 'PASS_FIVE_SIGNED_DEB_BYTES_EXACT_MATCH') {
+              throw 'G7_R21_PAYLOADS_NOT_QUALIFIED'
+            }
+            $r.signed_payloads = 'PASS_FIVE_EXACT_SHA256'
+          } finally {
+            New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+            $r | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $outDir 'g7_r21_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_R21_ADMISSION=' + $r.status)
+            Write-Output 'G7_R21_INSTALL=NOT_RUN'
+            Write-Output 'G7_R21_GPU=NOT_RUN'
+          }
+
+      - name: Upload only sanitized immutable custody receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r21-signed-deb-custody-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r21_workflow_admission.json
+            local_runs/g7_r21_signed_package_payloads.json
+          if-no-files-found: warn
+          retention-days: 30
