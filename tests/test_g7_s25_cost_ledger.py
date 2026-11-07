@@ -151,7 +151,8 @@ class TestCostLedger(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "LEDGER_INVALID_WORLD_STEP"):
             ledger.step(None)
         changed = numeric.WorldStep(
-            bad.history, bad.query_pair, torch.full((2,2), float('nan')))
+            bad.history, bad.query_pair, torch.full((2,2), float('nan')),
+            bad.realized_action_index)
         with self.assertRaisesRegex(ValueError, "LEDGER_NONFINITE_TENSOR"):
             ledger.step(changed)
         ledger.step(bad)
