@@ -1,0 +1,108 @@
+{
+  "schema": "ttt-hybrid.g7-s6.conventional-associative-baseline.v1",
+  "frozen_at": "2026-11-07",
+  "lineage": {
+    "negative_scientific_run": 42365966599,
+    "mechanism_diagnostic_run": 42367320764,
+    "s5_exact_sha": "0976e1e310d36d21473eb5d8b3d77349e47c807f"
+  },
+  "hypothesis": "A conventional trainable key-query/value cross-attention model with explicit structural support-pair access can learn novel key-value associations from the exact information provided to the native hybrid, giving a reliable benchmark positive control. This is task-learnability qualification only; no hybrid-versus-control superiority inference is permitted.",
+  "methodological_boundary": "The conventional comparator has an explicit content-addressed access prior and far fewer parameters than the 90k hybrid. It is intentionally a strong task-positive baseline, not a compute/parameter matched architectural superiority comparison.",
+  "task": {
+    "keys": 4,
+    "key_width": 16,
+    "value_width": 16,
+    "query_order": [
+      0,
+      1,
+      2,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "support_pair_count": 4,
+    "query_count": 8,
+    "distribution": "independent Rademacher key/value vectors resampling repeated keys within each episode",
+    "targets": "heldout query value; never present in query token features",
+    "training_seed_formula": "seed*10000000 + training_step*17",
+    "heldout_seed_formula": "seed*10000000 + 9000000 + heldout_batch*17",
+    "fresh_disjoint_splits": true
+  },
+  "baseline": {
+    "type": "trainable explicit support-key/value causal cross-attention",
+    "layers": "independent trainable linear query/key/value/output maps, learned positive attention-temperature, softmax over only preceding support keys",
+    "input_scope": "support keys and values, query key; no query target, no labels during evaluation",
+    "initialization": "torch.manual_seed(seed); standard torch Linear initialization",
+    "train_seeds": [
+      101,
+      211,
+      307
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0,
+    "steps": 512,
+    "batch_size": 64,
+    "gradient_clip": 1,
+    "device": "CPU single-thread deterministic",
+    "dtype": "float32",
+    "equal_training_budget_with_hybrid": false,
+    "training_set_num_episodes_per_seed": 32768,
+    "model_parameters_expected": 1025
+  },
+  "evaluation": {
+    "heldout_batches_per_seed": 8,
+    "heldout_batch_size": 128,
+    "heldout_episodes_per_seed": 1024,
+    "oracle_target_leak_guard": true,
+    "correct_support": true,
+    "cyclic_support_values": true,
+    "erased_support_values": true,
+    "zero_predictor": true,
+    "untrained_same_architecture": true,
+    "cold_restore_check": true,
+    "no_optimizer_updates_in_evaluation": true
+  },
+  "thresholds": {
+    "oracle_correct_mse_max": 0,
+    "oracle_corrupted_mse_min": 1.5,
+    "zero_predictor_mse_exact": 1,
+    "trained_correct_mse_max": 0.1,
+    "all_three_seeds_pass": true,
+    "corrupted_support_mse_min": 1.5,
+    "erased_support_mse_min": 0.9,
+    "train_final_32_step_loss_max": 0.1,
+    "cold_restore_max_abs_output_delta": 0,
+    "finite_parameters_gradients_outputs": true
+  },
+  "budget": {
+    "wall_seconds_max": 240,
+    "per_seed_training_steps_max": 512,
+    "peak_cpu_rss_bytes_max": 1073741824,
+    "existing_R3_python_venv_only": true,
+    "no_cuda_execution": true,
+    "no_network": true,
+    "no_paid_apis": true,
+    "no_system_changes": true,
+    "no_package_install": true,
+    "no_merge": true,
+    "no_deployment": true
+  },
+  "stop_conditions": [
+    "any pinned source/tree/torch manifest drift",
+    "any extra or fewer optimizer steps",
+    "any heldout seed overlap",
+    "nonfinite losses/gradients/outputs",
+    "any oracle/zero/data-leak control fails",
+    "resource/time budget exceeded",
+    "any package inventory change"
+  ],
+  "reporting": {
+    "positive": "TASK_LEARNABILITY_POSITIVE_CONTROL_PASS (not scientific hybrid PASS)",
+    "negative": "TASK_LEARNABILITY_POSITIVE_CONTROL_FAIL",
+    "invalid": "ASSAY_INVALID_OR_ENGINEERING_BLOCKED",
+    "future": "If task is learnable, separately freeze a matched-compute fully trained hybrid study; retain the previous eight-step hybrid NULL unchanged. If baseline fails, stop and diagnose the baseline rather than claiming hybrid capability."
+  }
+}
