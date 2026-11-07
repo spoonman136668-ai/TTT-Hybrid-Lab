@@ -1,0 +1,149 @@
+# G7-S25 paired physics engineering only; no frozen science seeds or fitting.
+name: G7-S25 paired intervention exact-S20 CPU engineering
+on:
+  push:
+    branches:
+      - research/g7-s25-contradiction-ttt-frozen-20261107
+    paths:
+      - .github/workflows/g7-s25-paired-physics-engineering.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s25-physics-engineering-one-use
+  cancel-in-progress: false
+
+jobs:
+  same-state-cloned-physics-contract:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Exact candidate isolated checkout without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-physics-isolated
+          fetch-depth: 14
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Prove source and pinned development-only physics
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-physics-isolated'
+          $out=Join-Path $root 'local_runs'
+          $r=[ordered]@{
+            schema='ttt-hybrid.g7-s25.paired-physics-once.v1'
+            sha=$env:GITHUB_SHA
+            base='7d1f8bb1547d4d39df7412091a68dabb03f0ac3f'
+            status='BLOCKED_NOT_STARTED'
+            scope='UNVERIFIED'
+            focused='NOT_RUN'
+            full_windows_linux_regression='UNVERIFIED'
+            science='NOT_RUN'
+            scientific_fit_seed_consumption='NONE'
+            heldout='NOT_RUN'
+            cuda='NOT_USED'
+            installed_packages='UNCHANGED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_SCOPE_OR_RUNNER'
+              throw 'INVALID_SCOPE'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hc=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $cc=$LASTEXITCODE
+            $expected=@(
+              'experiments/g7_s25_frozen_contradiction_ttt.json',
+              'scripts/g7_s25_contradiction_gate.py',
+              'tests/test_g7_s25_gate_contract.py',
+              '.github/workflows/g7-s25-gate-design-qualification.yml',
+              'scripts/g7_s25_numeric_ttt.py',
+              'tests/test_g7_s25_numeric_ttt.py',
+              'scripts/g7_s25_engineering_qualifier.py',
+              '.github/workflows/g7-s25-numeric-engineering.yml',
+              'scripts/g7_s25_paired_interventions.py',
+              'tests/test_g7_s25_paired_interventions.py',
+              '.github/workflows/g7-s25-paired-physics-engineering.yml'
+            )
+            if ($hc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne $expected.Count) {
+              $r.status='BLOCKED_HEAD_DRIFT_OR_SCOPE'
+              throw 'S25_SOURCE'
+            }
+            foreach ($name in $expected) {
+              if ($changed -cnotcontains $name) {
+                $r.status='BLOCKED_UNEXPECTED_CHANGED_FILE'
+                throw 'S25_FILE_SCOPE'
+              }
+            }
+            $r.scope='PASS_EXACT_SHA_ELEVEN_FILES'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $r.status='BLOCKED_WSL_PATH'
+              throw 'S25_WSL_PATH'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status='BLOCKED_NOT_NORMAL_USER'
+              throw 'S25_NORMAL_USER'
+            }
+            $output=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 290s /usr/bin/python3 -I -B "$linux/scripts/g7_s25_engineering_qualifier.py" --sha "$env:GITHUB_SHA")
+            $exit=$LASTEXITCODE
+            $proof=Join-Path $out 'g7_s25_numeric_engineering.json'
+            if ($exit -ne 0 -or -not (Test-Path -LiteralPath $proof)) {
+              $r.status='BLOCKED_NATIVE_TESTS_OR_RECEIPT'
+              throw 'S25_TESTS'
+            }
+            $q=Get-Content -LiteralPath $proof -Raw | ConvertFrom-Json
+            $r.focused=$q.status
+            if ($q.sha -cne $env:GITHUB_SHA -or
+                $q.status -cne 'PASS_28_FOCUSED_ENGINEERING_ONLY' -or
+                $q.source -cne 'PASS_EXACT_ELEVEN_FILES_FROZEN_S25_AND_S20_BLOBS' -or
+                $q.pinned_environment -cne 'PASS_EXISTING_EXACT_R3_MANIFEST' -or
+                $q.scientific_first_use -cne 'NOT_RUN' -or
+                $q.training -cne 'NOT_RUN' -or
+                $q.heldout -cne 'NOT_RUN' -or
+                $q.gpu -cne 'NOT_USED' -or
+                $q.packages_changed -cne $false) {
+              $r.status='BLOCKED_TEST_RECEIPT_INVALID'
+              throw 'S25_EVIDENCE'
+            }
+            $r.status='PASS_28_FOCUSED_ENGINEERING_ONLY'
+            Write-Output 'G7_S25_PAIRED_PHYSICS=PASS_9'
+            Write-Output 'G7_S25_ALL_FOCUSED=PASS_28'
+            Write-Output 'G7_S25_SCIENCE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s25_paired_physics_custody.json') -Encoding UTF8
+            Write-Output ('G7_S25_ENGINEERING=' + $r.status)
+          }
+
+      - name: Preserve immutable source and no-first-use evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s25-paired-physics-${{ github.sha }}
+          path: |
+            g7-s25-physics-isolated/local_runs/g7_s25_paired_physics_custody.json
+            g7-s25-physics-isolated/local_runs/g7_s25_numeric_engineering.json
+          if-no-files-found: warn
+          retention-days: 30
