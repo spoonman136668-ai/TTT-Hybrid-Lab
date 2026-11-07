@@ -269,6 +269,9 @@ def main():
                   "NEGATIVE_CONTROL_INVALID")
             scoped = dict(env)
             scoped["CPATH"] = str(include) + os.pathsep + str(extraction / "usr/include")
+            # Torch deterministic CUDA GEMMs require this process-local
+            # cuBLAS workspace setting. No global or system environment write.
+            scoped["CUBLAS_WORKSPACE_CONFIG"] = ":4096:8"
             positive = c_header_link(binary, scoped, base / "positive.so")
             result["positive_control"] = positive
             guard(positive["pass"], "TEMP_PYTHON_HEADER_COMPILE_FAILED")
