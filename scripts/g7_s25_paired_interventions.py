@@ -122,7 +122,8 @@ class PairedS20World:
         self._last_primary_index = index.clone()
         self._step += 1
         return WorldStep(history=history, query_pair=queries.clone(),
-                         observed_pair=targets.clone())
+                         observed_pair=targets.clone(),
+                         realized_action_index=index.clone())
 
     def close(self) -> dict[str, int | str]:
         if self._step != MAX_STEPS or len(self._frames) != MAX_STEPS:
