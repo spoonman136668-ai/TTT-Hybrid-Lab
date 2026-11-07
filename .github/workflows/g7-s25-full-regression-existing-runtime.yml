@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   existing-windows-and-wsl:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 22
     steps:
@@ -63,7 +63,7 @@ jobs:
                 $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
                 $env:GITHUB_EVENT_NAME -cne 'push' -or
                 $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
-                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_NUMBER -cne '2' -or
                 $env:GITHUB_RUN_ATTEMPT -cne '1' -or
                 $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
                 $env:RUNNER_OS -cne 'Windows') {
@@ -90,7 +90,7 @@ jobs:
               throw 'S25_CUSTODY'
             }
             foreach ($path in $files) {
-              if ($path -cnotmatch '^((scripts|tests)/g7_s25_|experiments/g7_s25_|\.github/workflows/g7-s25-)') {
+              if ($path -cnotmatch '^(scripts/g7_s25_|tests/test_g7_s25_|experiments/g7_s25_|\.github/workflows/g7-s25-)') {
                 $r.status='BLOCKED_UNEXPECTED_SOURCE_FILE'
                 throw 'S25_FILE_SCOPE'
               }
