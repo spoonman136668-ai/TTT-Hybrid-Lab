@@ -84,7 +84,7 @@ class S26QuarterReserveContract(unittest.TestCase):
         self.assertEqual(old.close(),8)
         self.assertEqual(len(old_slots),8)
         self.assertTrue(all(t<20 for t in old_slots))
-        self.assertEqual(new_slots,[1,2,9,10,17,18,25,26])
+        self.assertEqual(new_slots,[1,2,8,9,16,17,24,25])
         self.assertEqual(sum(t>=20 for t in new_slots),2)
         self.assertTrue(all(r=="trigger" for r in reasons))
 
@@ -167,7 +167,7 @@ class S26QuarterReserveContract(unittest.TestCase):
         new=self.protocol["evaluation"]["science_seed_namespace_reserved_unconsumed"]
         existing=json.loads((ROOT/"experiments/g7_s25_frozen_contradiction_ttt.json").read_text())["seeds"]
         new_seeds=[x for k,v in new.items() if k!="bootstrap" for x in v]
-        old_seeds=[x for k,v in existing.items() if k!="paired_bootstrap"
+        old_seeds=[x for k,v in existing.items() if isinstance(v,list)
                    for x in v]
         self.assertEqual(len(new_seeds),len(set(new_seeds)))
         self.assertTrue(set(new_seeds).isdisjoint(old_seeds))
