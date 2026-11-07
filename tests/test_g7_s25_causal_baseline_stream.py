@@ -115,12 +115,14 @@ class TestCausalBaselineStream(unittest.TestCase):
         bad[:, 1, 1] = .1
         with self.assertRaisesRegex(ValueError, "ACTION_DRIFT"):
             stream.causal_supervision(numeric.WorldStep(
-                original.history, bad, original.observed_pair))
+                original.history, bad, original.observed_pair,
+                original.realized_action_index))
         bad = original.observed_pair.clone()
         bad[0, 0] = float('nan')
         with self.assertRaisesRegex(ValueError, "NONFINITE"):
             stream.causal_supervision(numeric.WorldStep(
-                original.history, original.query_pair, bad))
+                original.history, original.query_pair, bad,
+                original.realized_action_index))
         with self.assertRaisesRegex(ValueError, "INVALID_CAUSAL_PREFIX"):
             numeric.causal_history32(torch.zeros((2, 0, 4)))
 
