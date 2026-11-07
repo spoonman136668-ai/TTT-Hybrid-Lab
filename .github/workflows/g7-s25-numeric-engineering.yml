@@ -1,0 +1,116 @@
+# One-use exact-head numerical engineering qualification. Not scientific first use.
+name: G7-S25 numeric fast-weight TTT engineering qualification
+on:
+  push:
+    branches:
+      - research/g7-s25-contradiction-ttt-frozen-20261107
+    paths:
+      - .github/workflows/g7-s25-numeric-engineering.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s25-numeric-first-engineering-only
+  cancel-in-progress: false
+jobs:
+  existing-r3-native-numeric-fastweights:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Exact isolated checkout (no retained secrets)
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-numeric-isolated
+          fetch-depth: 12
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Validate existing isolated runner and source-only numerical contracts
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-numeric-isolated'
+          $out=Join-Path $root 'local_runs'
+          $r=[ordered]@{
+            schema='ttt-hybrid.g7-s25.numeric-one-use-custody.v1'
+            sha=$env:GITHUB_SHA
+            status='BLOCKED_NOT_STARTED'
+            focused='UNVERIFIED'
+            full_regression='UNVERIFIED'
+            scientific_first_use='NOT_RUN'
+            cuda='NOT_USED'
+            package_install='NONE'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_RUNNER_OR_EVENT_SCOPE'
+              throw 'NO_AUTHORITY'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hc=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc=$LASTEXITCODE
+            if ($hc -ne 0 -or $dc -ne 0 -or $head -cne $env:GITHUB_SHA -or $dirty) {
+              $r.status='BLOCKED_EXACT_HEAD_OR_DIRTY'
+              throw 'SOURCE_MISMATCH'
+            }
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $r.status='BLOCKED_WSL_PATH'
+              throw 'WSL_PATH'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status='BLOCKED_USER_SCOPE'
+              throw 'NORMAL_USER_ONLY'
+            }
+            $raw=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=8s 240s /usr/bin/python3 -I -B "$linux/scripts/g7_s25_engineering_qualifier.py" --sha "$env:GITHUB_SHA")
+            $rc=$LASTEXITCODE
+            $receipt=Join-Path $out 'g7_s25_numeric_engineering.json'
+            if ($rc -ne 0 -or -not (Test-Path -LiteralPath $receipt)) {
+              $r.status='BLOCKED_QUALIFICATION_CHILD'
+              throw 'CHILD_FAILED'
+            }
+            $q=Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+            $r.focused=$q.status
+            if ($q.sha -cne $env:GITHUB_SHA -or
+                $q.source -cne 'PASS_EXACT_EIGHT_FILES_FROZEN_S25_AND_S20_BLOBS' -or
+                $q.pinned_environment -cne 'PASS_EXISTING_EXACT_R3_MANIFEST' -or
+                $q.status -cne 'PASS_19_FOCUSED_ENGINEERING_ONLY' -or
+                $q.scientific_first_use -cne 'NOT_RUN' -or
+                $q.training -cne 'NOT_RUN' -or
+                $q.heldout -cne 'NOT_RUN' -or
+                $q.gpu -cne 'NOT_USED') {
+              $r.status='BLOCKED_INCOMPLETE_EVIDENCE'
+              throw 'INVALID_CUSTODY'
+            }
+            $r.status='PASS_19_FOCUSED_ENGINEERING_ONLY'
+            Write-Output 'G7_S25_NUMERIC_TESTS=PASS_19'
+            Write-Output 'G7_S25_SCIENCE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s25_numeric_workflow_custody.json') -Encoding UTF8
+            Write-Output ('G7_S25_ENGINEERING_RESULT=' + $r.status)
+          }
+
+      - name: Preserve exact-source engineering evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s25-numeric-engineering-${{ github.sha }}
+          path: |
+            g7-s25-numeric-isolated/local_runs/g7_s25_numeric_workflow_custody.json
+            g7-s25-numeric-isolated/local_runs/g7_s25_numeric_engineering.json
+          if-no-files-found: warn
+          retention-days: 30
