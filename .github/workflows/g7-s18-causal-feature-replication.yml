@@ -1,0 +1,181 @@
+# G7-S18: separate one-use independent-seed raw-feature replication and causal post-switch-history negative control.
+name: G7-S18 frozen causal raw-feature independent-seed replication
+
+on:
+  push:
+    branches:
+      - engineering/g7-s18-causal-feature-replication-20261107
+    paths:
+      - .github/workflows/g7-s18-causal-feature-replication.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s18-exact-one-use-causal-feature-replication
+  cancel-in-progress: false
+
+jobs:
+  bounded-causal-feature-replication:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s18-causal-feature-replication-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 8
+    steps:
+      - name: Exact candidate isolated checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s18-isolated
+          fetch-depth: 7
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify exact scope, frozen protocol, no-root CPU execution
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s18.one-use-exact-custody.v1'
+            candidate_sha = $env:GITHUB_SHA
+            predecessor_sha = 'dedcc1dfbfac57bf464017d480df1b13bd6c44dd'
+            predecessor_s17_science_run = 42395873648
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            frozen_study = 'UNVERIFIED'
+            launcher_admission = 'NOT_RUN'
+            science = 'NOT_RUN'
+            no_cuda = $true
+            no_install = $true
+            independent_qualification = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s18-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s18-causal-feature-replication-20261107' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_RUNNER_OR_SCOPE'
+              throw 'G7_S18_SCOPE'
+            }
+            $base = 'dedcc1dfbfac57bf464017d480df1b13bd6c44dd'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD~4' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s18_frozen_causal_replication.json',
+              'scripts/g7_s18_causal_feature_replication.py',
+              'scripts/g7_s18_cpu_launcher.py',
+              '.github/workflows/g7-s18-causal-feature-replication.yml'
+            )
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or
+                $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne '2735e52f5b02324da4773ea285c1e38b3499514e' -or
+                $ancestor -cne $base -or $dirty -or
+                $changed.Count -ne 4) {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SHA'
+              throw 'G7_S18_SOURCE_CUSTODY'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_UNEXPECTED_SOURCE_SCOPE'
+                throw 'G7_S18_SOURCE_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_S17_ANCESTOR_EXACT_FOUR_FROZEN_FILES'
+            $protocol = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s18_frozen_causal_replication.json') -Raw | ConvertFrom-Json
+            if ($protocol.schema -cne 'ttt-hybrid.g7-s18.frozen-causal-raw-feature-replication.v1' -or
+                $protocol.predecessor.s17_original_candidate -cne $base -or
+                $protocol.predecessor.s17_original_run -ne 42395873648 -or
+                $protocol.frozen_training.seeds.Count -ne 3 -or
+                $protocol.frozen_training.steps -ne 240 -or
+                $protocol.evaluation.split_seeds.ood_switch.Count -ne 3 -or
+                $protocol.calibration.seeds.Count -ne 3 -or
+                $protocol.evaluation.causal_post_switch_ablation.post_switch_steps_removed -ne 12 -or
+                $protocol.threshold.calibrated_kernel_post_switch_ablation_mse_ratio_min -ne 1.25 -or
+                $protocol.resource_authority.cpu_only -cne $true -or
+                $protocol.resource_authority.no_package_install -cne $true -or
+                $protocol.threshold.wall_limit_seconds -ne 240) {
+              $r.status = 'BLOCKED_FROZEN_PROTOCOL'
+              throw 'G7_S18_FROZEN_PRECOMMIT'
+            }
+            $r.frozen_study = 'PASS_PRECOMMITTED_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_S18_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NOT_NORMAL_USER'
+              throw 'G7_S18_UID'
+            }
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=12s 300s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s18_cpu_launcher.py" --expected-sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $admission = @($raw | Where-Object { $_ -match '^G7_S18_ADMISSION=' })
+            $science = @($raw | Where-Object { $_ -match '^G7_S18_SCIENCE=' })
+            if ($admission.Count -ne 1 -or $science.Count -ne 1) {
+              $r.status = 'BLOCKED_LAUNCHER_RECEIPT_MISSING'
+              throw 'G7_S18_LAUNCHER'
+            }
+            $r.launcher_admission = $admission[0].Substring('G7_S18_ADMISSION='.Length)
+            $r.science = $science[0].Substring('G7_S18_SCIENCE='.Length)
+            if ($rc -ne 0 -or
+                $r.launcher_admission -cne 'PASS_CPU_FROZEN_CAUSAL_RAW_FEATURE_REPLICATION_MEASURED' -or
+                $r.science -notin @(
+                  'PRELIMINARY_LEARNED_RAW_FEATURE_REPLICATION_NOT_INDEPENDENTLY_QUALIFIED',
+                  'LEARNED_RAW_FEATURE_REPLICATION_NULL_OR_NEGATIVE')) {
+              $r.status = 'BLOCKED_SCIENCE_OR_LAUNCHER_CONTROLS'
+              throw 'G7_S18_SCIENCE'
+            }
+            $file = Join-Path $out 'g7_s18_causal_feature_evidence.json'
+            $data = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+            if ($data.candidate_sha -cne $env:GITHUB_SHA -or
+                $data.oracle_controls_pass -cne $true -or
+                $data.strong_calibrated_rbf_control_pass -cne $true -or
+                $data.new_post_switch_causal_history_learned_control_pass -cne $true -or
+                $data.installed_packages_changed -cne $false -or
+                $data.tokenizer_used -cne $false -or
+                $data.vocabulary_used -cne $false -or
+                $data.attention_used -cne $false -or
+                $data.known_analytic_nonlinear_basis_given_to_models -cne $false -or
+                $data.train_steps_per_seed_per_learned_model -ne 240 -or
+                $data.train_worlds_per_seed_per_learned_model -ne 11520 -or
+                $data.trained_model_cold_restore_exact -cne $true -or
+                $data.per_seed.Count -ne 3) {
+              $r.status = 'BLOCKED_UNQUALIFIED_MEASUREMENT'
+              throw 'G7_S18_MEASUREMENT_RECEIPT'
+            }
+            $r.status = 'PASS_FROZEN_TOKENLESS_CAUSAL_REPLICATION_MEASURED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s18_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S18_RESULT=' + $r.status)
+            Write-Output ('G7_S18_SCIENCE=' + $r.science)
+            Write-Output ('G7_S18_CUDA=NOT_USED')
+          }
+
+      - name: Preserve frozen science and custody receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s18-causal-feature-replication-${{ github.sha }}
+          path: |
+            g7-s18-isolated/local_runs/g7_s18_workflow_admission.json
+            g7-s18-isolated/local_runs/g7_s18_causal_feature_evidence.json
+          if-no-files-found: warn
+          retention-days: 30
