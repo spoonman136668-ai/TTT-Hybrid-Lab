@@ -1,6 +1,6 @@
 # G7-S25 one-use untrained mechanism diagnostic: actual triggers vs forced K8 budget.
 # No training, heldout world generation, new runtime, package install, or acceptance.
-name: G7-S25 untrained contradiction trigger versus budget diagnostic
+name: G7-S25 untrained trigger diagnostic isolated-entrypoint recovery R2
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   actual-untrained-trigger-ledger-engineering:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 9
     steps:
@@ -60,7 +60,7 @@ jobs:
                 $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
                 $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
                 $env:GITHUB_EVENT_NAME -cne 'push' -or
-                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_NUMBER -cne '2' -or
                 $env:GITHUB_RUN_ATTEMPT -cne '1' -or
                 $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
                 $env:RUNNER_OS -cne 'Windows') {
@@ -138,7 +138,7 @@ jobs:
             $receipt.focused_tests=$q.status
             if ($q.sha -cne $env:GITHUB_SHA -or
                 $q.source -cne 'PASS_EXACT_TWENTYSEVEN_FILES_FROZEN_S25_AND_S20_BLOBS' -or
-                $q.status -cne 'PASS_78_FOCUSED_ENGINEERING_ONLY' -or
+                $q.status -cne 'PASS_79_FOCUSED_ENGINEERING_ONLY' -or
                 $q.pinned_environment -cne 'PASS_EXISTING_EXACT_R3_MANIFEST' -or
                 $q.scientific_first_use -cne 'NOT_RUN' -or
                 $q.training -cne 'NOT_RUN' -or
@@ -193,12 +193,12 @@ jobs:
             $receipt.gate_mechanism=$data.summary.status
             $receipt.contradiction_nonforced_trigger_updates=$data.summary.untrained_contradiction_selected_trigger_world_steps
             $receipt.post_switch_nonforced_trigger_updates=$data.summary.untrained_signflip_post_switch_selected_trigger_world_steps
-            $receipt.status='PASS_78_FOCUSED_UNTRAINED_MECHANISM_DIAGNOSTIC'
+            $receipt.status='PASS_79_FOCUSED_UNTRAINED_MECHANISM_DIAGNOSTIC'
             Write-Output ('S25_MECHANISM=' + $receipt.gate_mechanism)
             Write-Output ('S25_CONTRADICTION_NONFORCED_SELECTED=' + $receipt.contradiction_nonforced_trigger_updates)
             Write-Output ('S25_POSTSWITCH_NONFORCED_SELECTED=' + $receipt.post_switch_nonforced_trigger_updates)
             Write-Output 'S25_BASELINE_CONTRACT=PASS_16_SYNTHETIC_RECEIPT_TESTS'
-            Write-Output 'S25_ALL_FOCUSED=PASS_78'
+            Write-Output 'S25_ALL_FOCUSED=PASS_79'
             Write-Output 'S25_TRAINING=NOT_RUN'
             Write-Output 'S25_SCIENCE=NOT_RUN'
           } finally {
