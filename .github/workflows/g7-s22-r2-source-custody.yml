@@ -1,0 +1,193 @@
+# G7-S22: one-use source-pinned unlabeled continuous-memory banks driven by prediction surprise, no tokenization.
+name: G7-S22-R2 surprise memory source-custody recovery
+
+on:
+  push:
+    branches:
+      - engineering/g7-s22-surprise-addressed-memory-20261107
+    paths:
+      - .github/workflows/g7-s22-r2-source-custody.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-s22-r2-one-use-source-proof
+  cancel-in-progress: false
+
+jobs:
+  bounded-surprise-bank-study:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s22-surprise-addressed-memory-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 8
+    steps:
+      - name: Exact candidate isolated checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s22-isolated
+          fetch-depth: 12
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify exact scope, frozen protocol, no-root CPU execution
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-s22.one-use-exact-custody.v1'
+            candidate_sha = $env:GITHUB_SHA
+            predecessor_sha = '5855881a2d148160a3414b843e458ddba2f15747'
+            predecessor_s21_science_run = 42406899997
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            frozen_study = 'UNVERIFIED'
+            launcher_admission = 'NOT_RUN'
+            science = 'NOT_RUN'
+            no_cuda = $true
+            no_install = $true
+            independent_qualification = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-s22-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s22-surprise-addressed-memory-20261107' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_RUNNER_OR_SCOPE'
+              throw 'G7_S22_SCOPE'
+            }
+            $base = '5855881a2d148160a3414b843e458ddba2f15747'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD~5' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $scope = @(
+              'experiments/g7_s22_frozen_surprise_banks.json',
+              'scripts/g7_s22_surprise_banks.py',
+              'scripts/g7_s22_cpu_launcher.py',
+              '.github/workflows/g7-s22-surprise-banks.yml',
+              '.github/workflows/g7-s22-r2-source-custody.yml'
+            )
+            $r.git_head_exact = ($head -ceq $env:GITHUB_SHA)
+            $r.git_parent_expected = ($parent -ceq 'b67d15318aaa01dc592c71f91bdbce182acf6100')
+            $r.git_ancestor_expected = ($ancestor -ceq $base)
+            $r.git_dirty = [bool]$dirty
+            $r.git_changed_file_count = $changed.Count
+            $r.git_checks_return_zero = ($hc -eq 0 -and $pc -eq 0 -and $ac -eq 0 -and $dc -eq 0 -and $cc -eq 0)
+
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or
+                $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne 'b67d15318aaa01dc592c71f91bdbce182acf6100' -or
+                $ancestor -cne $base -or $dirty -or
+                $changed.Count -ne 5) {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SHA'
+              throw 'G7_S22_SOURCE_CUSTODY'
+            }
+            foreach ($path in $scope) {
+              if ($changed -notcontains $path) {
+                $r.status = 'BLOCKED_UNEXPECTED_SOURCE_SCOPE'
+                throw 'G7_S22_SOURCE_SCOPE'
+              }
+            }
+            $r.source_custody = 'PASS_S21_ANCESTOR_EXACT_FIVE_FROZEN_FILES'
+            $protocol = Get-Content -LiteralPath (Join-Path $checkout 'experiments/g7_s22_frozen_surprise_banks.json') -Raw | ConvertFrom-Json
+            if ($protocol.schema -cne 'ttt-hybrid.g7-s22.surprise-addressed-tokenless-memory.v1' -or
+                $protocol.predecessor.s21_sha -cne $base -or
+                $protocol.predecessor.s21_run -ne 42406899997 -or
+                $protocol.training.fit_seeds.Count -ne 3 -or
+                $protocol.training.total_updates_per_trainable_arm -ne 528 -or
+                $protocol.training.phases.Count -ne 4 -or
+                $protocol.unconventional.max_banks -ne 3 -or
+                $protocol.unconventional.training_router_task_label_used -cne $false -or
+                $protocol.unconventional.evaluation_router_task_label_used -cne $false -or
+                $protocol.evaluation.heldout_ood_seeds.source.Count -ne 3 -or
+                $protocol.evaluation.heldout_ood_seeds.sine.Count -ne 3 -or
+                $protocol.evaluation.heldout_ood_seeds.rational.Count -ne 3 -or
+                $protocol.calibration.kernel_source_seeds.Count -ne 3 -or
+                $protocol.authority.cpu_only -cne $true -or
+                $protocol.authority.no_package_install -cne $true -or
+                $protocol.frozen_thresholds.wall_seconds_max -ne 240) {
+              $r.status = 'BLOCKED_FROZEN_PROTOCOL'
+              throw 'G7_S22_FROZEN_PRECOMMIT'
+            }
+            $r.frozen_study = 'PASS_PRECOMMITTED_BEFORE_EXECUTION'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_S22_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NOT_NORMAL_USER'
+              throw 'G7_S22_UID'
+            }
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=12s 300s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_s22_cpu_launcher.py" --expected-sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $admission = @($raw | Where-Object { $_ -match '^G7_S22_ADMISSION=' })
+            $science = @($raw | Where-Object { $_ -match '^G7_S22_SCIENCE=' })
+            if ($admission.Count -ne 1 -or $science.Count -ne 1) {
+              $r.status = 'BLOCKED_LAUNCHER_RECEIPT_MISSING'
+              throw 'G7_S22_LAUNCHER'
+            }
+            $r.launcher_admission = $admission[0].Substring('G7_S22_ADMISSION='.Length)
+            $r.science = $science[0].Substring('G7_S22_SCIENCE='.Length)
+            if ($rc -ne 0 -or
+                $r.launcher_admission -cne 'PASS_UNLABELED_SURPRISE_BANK_STUDY_MEASURED' -or
+                $r.science -notin @(
+                  'PRELIMINARY_UNLABELED_MEMORY_BANK_RETENTION_SIGNAL_NOT_SCIENTIFIC_PASS',
+                  'UNLABELED_MEMORY_BANK_ROUTING_OR_PLASTICITY_FROZEN_NULL')) {
+              $r.status = 'BLOCKED_SCIENCE_OR_LAUNCHER_CONTROLS'
+              throw 'G7_S22_SCIENCE'
+            }
+            $file = Join-Path $out 'g7_s22_surprise_banks_evidence.json'
+            $data = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+            if ($data.candidate_sha -cne $env:GITHUB_SHA -or
+                $data.source_kernel_positive_control_pass -cne $true -or
+                $data.oracle_positive_control_pass -cne $true -or
+                $data.installed_packages_changed -cne $false -or
+                $data.tokenizer_used -cne $false -or
+                $data.attention_used -cne $false -or
+                $data.task_labels_passed_to_bank_router -cne $false -or
+                $data.heldout_targets_used_for_bank_router -cne $false -or
+                $data.old_train_worlds_replayed_in_blind_bank -cne $false -or
+                $data.updates_per_trainable_arm_per_seed -ne 528 -or
+                $data.worlds_per_trainable_arm_per_seed -ne 25344 -or
+                $data.cold_restores_all_models_exact -cne $true -or
+                $data.per_seed.Count -ne 3) {
+              $r.status = 'BLOCKED_UNQUALIFIED_MEASUREMENT'
+              throw 'G7_S22_MEASUREMENT_RECEIPT'
+            }
+            $r.status = 'PASS_FROZEN_UNLABELED_BANK_MEMORY_STUDY_MEASURED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s22_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_S22_RESULT=' + $r.status)
+            Write-Output ('G7_S22_SCIENCE=' + $r.science)
+            Write-Output ('G7_S22_CUDA=NOT_USED')
+          }
+
+      - name: Preserve frozen science and custody receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s22-surprise-banks-${{ github.sha }}
+          path: |
+            g7-s22-isolated/local_runs/g7_s22_workflow_admission.json
+            g7-s22-isolated/local_runs/g7_s22_surprise_banks_evidence.json
+          if-no-files-found: warn
+          retention-days: 30
