@@ -95,7 +95,14 @@ class EpisodeWorkLedger:
             raise ValueError("LEDGER_WORLD_SHAPE")
         if world.query_pair.device.type != "cpu":
             raise ValueError("LEDGER_CPU_ONLY")
-        digest_fields = ("history", "query_pair", "observed_pair")
+        choice = world.realized_action_index
+        if (not isinstance(choice, torch.Tensor) or
+                choice.shape != (self.batch,) or
+                choice.dtype != torch.int64 or choice.device.type != "cpu" or
+                not bool(((choice == 0) | (choice == 1)).all())):
+            raise ValueError("LEDGER_INVALID_OBSERVABLE_REALIZED_ACTION")
+        digest_fields = ("history", "query_pair", "observed_pair",
+                         "realized_action_index")
         # Hash exactly the information all policy arms receive. Never hash
         # oracle x/z, physics laws, seed IDs, predictions or training labels.
         for name in digest_fields:
