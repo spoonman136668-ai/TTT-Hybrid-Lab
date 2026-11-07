@@ -1,0 +1,150 @@
+# S25 exact-source observed-work ledger: engineering only; no baseline fitting.
+name: G7-S25 equal-information ledger exact-source recovery R2
+on:
+  push:
+    branches:
+      - research/g7-s25-contradiction-ttt-frozen-20261107
+    paths:
+      - .github/workflows/g7-s25-cost-ledger-qualification-r2.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s25-cost-ledger-recovery-r2-once
+  cancel-in-progress: false
+jobs:
+  measured-cost-and-causal-information-contract:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 9
+    steps:
+      - name: Exact source isolated checkout, no tokens retained
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-cost-isolated
+          fetch-depth: 45
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify source and actual gate-update-work counting
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:GITHUB_WORKSPACE 'g7-s25-cost-isolated'
+          $out = Join-Path $root 'local_runs'
+          $r = [ordered]@{
+            schema='ttt-hybrid.g7-s25.cost-ledger-once.v1'
+            candidate=$env:GITHUB_SHA
+            frozen_base='7d1f8bb1547d4d39df7412091a68dabb03f0ac3f'
+            source='UNVERIFIED'
+            engineering='NOT_RUN'
+            full_regression='UNVERIFIED'
+            baseline_training='NOT_RUN'
+            scientific_first_use='NOT_RUN'
+            gpu='NOT_USED'
+            installed_packages='NONE'
+            status='BLOCKED_NOT_STARTED'
+            accepted_ref='UNCHANGED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_RUNNER_AUTHORITY'
+              throw 'BAD_AUTHORITY'
+            }
+            $head = (& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hCode = $LASTEXITCODE
+            $dirty = (& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dCode = $LASTEXITCODE
+            $changed = @(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $cCode = $LASTEXITCODE
+            $expected = @(
+              '.github/workflows/g7-s25-cost-ledger-qualification.yml',
+              '.github/workflows/g7-s25-gate-design-qualification.yml',
+              '.github/workflows/g7-s25-numeric-engineering.yml',
+              '.github/workflows/g7-s25-paired-physics-engineering.yml',
+              '.github/workflows/g7-s25-cost-ledger-qualification.yml',
+              'experiments/g7_s25_frozen_contradiction_ttt.json',
+              'scripts/g7_s25_contradiction_gate.py',
+              'scripts/g7_s25_numeric_ttt.py',
+              'scripts/g7_s25_paired_interventions.py',
+              'scripts/g7_s25_cost_ledger.py',
+              'scripts/g7_s25_engineering_qualifier.py',
+              'tests/test_g7_s25_gate_contract.py',
+              'tests/test_g7_s25_numeric_ttt.py',
+              'tests/test_g7_s25_paired_interventions.py',
+              'tests/test_g7_s25_cost_ledger.py'
+            )
+            if ($hCode -ne 0 -or $dCode -ne 0 -or $cCode -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne $expected.Count) {
+              $r.status = 'BLOCKED_EXACT_SHA_OR_SOURCE_SCOPE'
+              throw 'SOURCE_DRIFT'
+            }
+            foreach ($name in $expected) {
+              if ($changed -cnotcontains $name) {
+                $r.status = 'BLOCKED_UNEXPECTED_CHANGED_FILE'
+                throw 'FILE_SCOPE'
+              }
+            }
+            $r.source = 'PASS_EXACT_SHA_FIFTEEN_FILES'
+            $linux = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NORMAL_USER'
+              throw 'UID_REQUIRED'
+            }
+            $lines = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 300s /usr/bin/python3 -I -B "$linux/scripts/g7_s25_engineering_qualifier.py" --sha "$env:GITHUB_SHA")
+            $rc = $LASTEXITCODE
+            $file = Join-Path $out 'g7_s25_numeric_engineering.json'
+            if ($rc -ne 0 -or -not (Test-Path -LiteralPath $file)) {
+              $r.status = 'BLOCKED_QUALIFICATION_EXIT_OR_RECEIPT'
+              throw 'QUALIFICATION_FAILED'
+            }
+            $proof = Get-Content -LiteralPath $file -Raw | ConvertFrom-Json
+            $r.engineering = $proof.status
+            if ($proof.sha -cne $env:GITHUB_SHA -or
+                $proof.source -cne 'PASS_EXACT_FIFTEEN_FILES_FROZEN_S25_AND_S20_BLOBS' -or
+                $proof.status -cne 'PASS_38_FOCUSED_ENGINEERING_ONLY' -or
+                $proof.pinned_environment -cne 'PASS_EXISTING_EXACT_R3_MANIFEST' -or
+                $proof.scientific_first_use -cne 'NOT_RUN' -or
+                $proof.training -cne 'NOT_RUN' -or
+                $proof.calibration -cne 'NOT_RUN' -or
+                $proof.heldout -cne 'NOT_RUN' -or
+                $proof.gpu -cne 'NOT_USED' -or
+                $proof.packages_changed -cne $false) {
+              $r.status = 'BLOCKED_RECEIPT_INVALID'
+              throw 'EVIDENCE_INVALID'
+            }
+            $r.status = 'PASS_38_FOCUSED_ENGINEERING_ONLY'
+            Write-Output 'G7_S25_ENGINEERING_CHECKS=PASS_38'
+            Write-Output 'G7_S25_SCIENCE=NOT_RUN'
+            Write-Output 'G7_S25_WHOLE_PROCESS_PARITY=UNVERIFIED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s25_cost_ledger_workflow.json') -Encoding UTF8
+            Write-Output ('G7_S25_COST_GATE=' + $r.status)
+          }
+      - name: Preserve exact-head engineering and cost-control receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s25-cost-ledger-${{ github.sha }}
+          path: |
+            g7-s25-cost-isolated/local_runs/g7_s25_cost_ledger_workflow.json
+            g7-s25-cost-isolated/local_runs/g7_s25_numeric_engineering.json
+          if-no-files-found: warn
+          retention-days: 30
