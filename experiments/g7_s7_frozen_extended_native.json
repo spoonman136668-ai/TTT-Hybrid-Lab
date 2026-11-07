@@ -1,0 +1,121 @@
+{
+  "schema": "ttt-hybrid.g7-s7.extended-native-binding.v1",
+  "frozen_at": "2026-11-07",
+  "lineage": {
+    "s5_native_diagnostic_run": 42367320764,
+    "s5_sha": "0976e1e310d36d21473eb5d8b3d77349e47c807f",
+    "s6_positive_baseline_run": 42368703057,
+    "s6_sha": "ca528676cd6a6262fc0ea8052ad83dc22436c0d1",
+    "s6_baseline_scope": "Conventional 1,025-parameter explicit support-pair retrieval achieved 3-seed mean heldout MSE ~0.0000513 after 512 steps x batch64; reference positive control ONLY. Different architecture, parameters, example count and compute budget."
+  },
+  "hypothesis": "With 16 times as many optimizer updates as G7-S5 (128 vs 8), can the same unmodified official nonfused Mamba2+causal attention+TTTLinear hybrid learn to retrieve fresh associations, beat the zero predictor and become sensitive to corrupted and missing support, and does genuine online TTT outperform the identical static inner-update-disabled model?",
+  "arms": [
+    {
+      "id": "online_ttt",
+      "ttt_base_lr": 1
+    },
+    {
+      "id": "static_matched",
+      "ttt_base_lr": 0
+    }
+  ],
+  "train": {
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "steps_per_arm_per_seed": 128,
+    "batch_size": 8,
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "weight_decay": 0,
+    "gradient_clip": 1,
+    "random_episode_seed": "seed*100000+step*100",
+    "train_episodes_per_seed_per_arm": 1024,
+    "previous_s5_episodes_per_seed_per_arm": 16,
+    "full_native_parameters_expected": 90259,
+    "trainable_parameters_expected": 90194,
+    "dtype": "float32",
+    "model_width": 64,
+    "model_heads": 4,
+    "ttt_minibatch": 8,
+    "sequence_length": 16,
+    "no_early_stop_on_metric": true
+  },
+  "heldout": {
+    "seed_formula": "seed*100000+950000+index",
+    "episodes_per_seed": 24,
+    "examples_per_episode": 2,
+    "keys": 4,
+    "key_width": 16,
+    "value_width": 16,
+    "query_order": [
+      0,
+      1,
+      2,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "support_interventions": [
+      "correct",
+      "cyclic_permutation_of_support_values",
+      "erase_support_values"
+    ],
+    "oracles": [
+      "exact content-addressed positive oracle",
+      "corrupted support oracle >=1.5 MSE",
+      "zero predictor exactly 1 MSE"
+    ],
+    "no_gradient_or_update": true,
+    "fresh_disjoint_from_training": true
+  },
+  "thresholds": {
+    "oracle_correct_mse_max": 1e-12,
+    "oracle_corrupted_mse_min": 1.5,
+    "zero_predictor_mse": 1,
+    "online_correct_mse_max": 0.95,
+    "each_seed_online_better_than_zero": true,
+    "online_shuffled_relative_harm_min": 0.03,
+    "online_erased_relative_harm_min": 0.03,
+    "relative_online_vs_static_reduction_min": 0.05,
+    "each_seed_online_better_than_static": true,
+    "max_abs_cold_restore_output_delta": 0
+  },
+  "interpretation": {
+    "pass": "DEVELOPMENT_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION_AND_MATCHED_CONVENTIONAL_STUDY, never SCIENTIFIC_PASS",
+    "fail": "NULL_OR_NEGATIVE; do not retune frozen thresholds after result",
+    "invalid": "ASSAY_INVALID_OR_ENGINEERING_BLOCKED; no scientific inference",
+    "fairness": "Within the online/static hybrid pair, initial weights, input information, train examples, optimizer steps, number of trainable parameters are matched. Compute differs due to online fast-weight updates; record actual elapsed time, peak VRAM, example counts per arm. The S6 conventional positive control has 32 times more training examples per seed and explicit retrieval prior; not a compute/parameter-equivalent superiority benchmark."
+  },
+  "budget": {
+    "wall_seconds_max": 720,
+    "torch_peak_allocated_bytes_max": 1073741824,
+    "required_free_cuda_bytes_min": 4294967296,
+    "total_optimizer_steps_max": 768,
+    "training_episodes_total": 6144,
+    "same_pinned_r3_torch_triton_and_sources": true,
+    "ephemeral_signed_python_312_headers_only": true,
+    "one_use_runner": "TTT-HYBRID-GPU-WIN",
+    "no_install": true,
+    "no_cuda_driver_change": true,
+    "no_paid_apis": true,
+    "no_deployment": true,
+    "no_merge": true
+  },
+  "stop": [
+    "source revision or pinned upstream blob drift",
+    "exact signed header SHA mismatch",
+    "torch/triton/driver/GCC drift",
+    "missing WSL CUDA driver library",
+    "nonfinite gradient or loss",
+    "VRAM/time budget exceeded",
+    "negative oracle failure",
+    "parameter/episode/optimizer step imbalance",
+    "changed dpkg inventory",
+    "source checkout dirty after execution"
+  ]
+}
