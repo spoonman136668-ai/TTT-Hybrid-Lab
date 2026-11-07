@@ -1,0 +1,217 @@
+{
+  "schema": "ttt-hybrid.g7-s21.frozen-orthogonal-continuous-memory.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s20_sha": "dfdf6706a69097027490d580659be6c0f6401aea",
+    "s20_run": 42400091370,
+    "s20_status": "PARTIAL_OBSERVATION_OR_MULTICYCLE_LEARNING_FROZEN_NULL",
+    "s20_source_blob": "ac3f9ddd5b879e53e62030707fb6419adaf732ca",
+    "s18_model_blob": "cfc1959b8812e9abad581018462302bc89a31d59"
+  },
+  "hypothesis": "Gradient-subspace protection built from source and prior-task training gradient sketches WITHOUT any historical episode replay preserves original and intermediate skills across A→B→C→D better than matched ordinary and random-subspace fine-tuning while still acquiring new worlds.",
+  "mechanism": {
+    "name": "Orthogonal Episodic Gradient Sketch (OEGS)",
+    "description": "Store a low-rank orthonormal basis computed via SVD of prior-task fit gradients. Project the actual AdamW parameter update into the orthogonal complement after each step. Basis for source is recorded from final 12 source steps, extended with 12 sine and 12 rational fit gradients at task boundaries. No former training episodes touched by OEGS after leaving a phase.",
+    "prior_art": "Orthogonal-gradient protection and gradient projection have substantial prior art; unusual local combination is experimental, not claimed novel invention.",
+    "capture_last_steps_per_family": 12,
+    "svd_relative_threshold": 0.001,
+    "max_total_rank": 36,
+    "project_parameter_delta_after_adamw": true,
+    "random_control": "identical rank and projection, but randomly oriented QR subspace from deterministic seed+7300+stage; no stored training gradients.",
+    "no_replay_in_protected": true,
+    "memory_accounting": true
+  },
+  "environment": {
+    "simulator": "Original G7-S20 hidden 2D state x,z with 1D noisy sensor y=x+0.25z and three switchable physical law families. Exact original source blob pinned.",
+    "observed_channels": [
+      "sensor_y",
+      "action_u",
+      "elapsed_dt",
+      "measured_sensor_y_next"
+    ],
+    "latent_state_hidden": true,
+    "task_family_hidden": true,
+    "nonlinear_basis_hidden": true,
+    "tokenizer": false,
+    "vocabulary": false,
+    "attention": false,
+    "next_token_objective": false,
+    "numeric_time_sampled": true,
+    "euler_residual_prior": true
+  },
+  "arms": {
+    "protected": "OEGS, no replay",
+    "fine_tune": "ordinary fine-tuning, no replay",
+    "random": "equal rank random-projection, no replay",
+    "rehearsal": "same batch size and updates, 25% historic *training-world* examples in B/C/D; nonmatched information",
+    "GRU": "same current-only training worlds and update count but different model parameter/FLOP budget",
+    "KRR": "calibration-only Gaussian kernel ridge, no trainable weights",
+    "untrained": "same feature initialization never trained",
+    "oracle": "hidden physical future sensor, evaluator only"
+  },
+  "training": {
+    "seeds": [
+      1361,
+      1429,
+      1531
+    ],
+    "batch": 48,
+    "phases": [
+      {
+        "id": "A",
+        "family": "source",
+        "updates": 240,
+        "seed_offset": 1201000
+      },
+      {
+        "id": "B",
+        "family": "sine",
+        "updates": 96,
+        "seed_offset": 1301000
+      },
+      {
+        "id": "C",
+        "family": "rational",
+        "updates": 96,
+        "seed_offset": 1401000
+      },
+      {
+        "id": "D",
+        "family": "source",
+        "updates": 96,
+        "seed_offset": 1501000
+      }
+    ],
+    "episode_seed_formula": "seed*100000+offset+step*37",
+    "total_updates_per_model": 528,
+    "worlds_per_model": 25344,
+    "feature_lr": 0.004,
+    "gru_lr": 0.004,
+    "optimizer": "AdamW",
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1,
+    "identical_source_phase_A_init_and_optimizer_state_all_feature_arms": true,
+    "same_current_family_worlds_no_replay_arms": true,
+    "rehearsal": {
+      "B": {
+        "sine": 36,
+        "source": 12
+      },
+      "C": {
+        "rational": 36,
+        "source": 12
+      },
+      "D": {
+        "source": 36,
+        "sine": 6,
+        "rational": 6
+      },
+      "old_train_seed_offsets": [
+        1601000,
+        1701000
+      ],
+      "no_heldout_rehearsal": true,
+      "disclose_unequal_information": true
+    }
+  },
+  "calibration": {
+    "seeds": [
+      2819,
+      2833,
+      2843
+    ],
+    "batch": 64,
+    "gamma": [
+      0.5,
+      2,
+      6
+    ],
+    "decay": [
+      0.65,
+      0.78,
+      1
+    ],
+    "ridge": [
+      0.01,
+      0.08
+    ],
+    "source_train_range_only": true,
+    "one_time_before_eval": true,
+    "no_recalibration": true
+  },
+  "evaluation": {
+    "seeds": {
+      "source": [
+        2903,
+        2917,
+        2927
+      ],
+      "sine": [
+        3001,
+        3011,
+        3023
+      ],
+      "rational": [
+        3109,
+        3121,
+        3137
+      ]
+    },
+    "batch": 64,
+    "queries_per_world": 8,
+    "stages": [
+      "A",
+      "B",
+      "C",
+      "D"
+    ],
+    "identical_heldout_worlds_each_stage": true,
+    "no_eval_updates": true,
+    "oracle_and_post_switch_causal_ablation": true,
+    "model_cold_restore_each_phase": true,
+    "training_and_eval_arm_timings": true,
+    "whole_process_rss_and_state_memory": true
+  },
+  "thresholds": {
+    "oracle_mse_max": 1e-12,
+    "calibrated_KRR_source_mse_max": 0.03,
+    "KRR_source_gain_vs_static_min": 0.1,
+    "KRR_post_switch_ablation_ratio_min": 1.1,
+    "protected_source_C_over_A_max": 1.5,
+    "protected_source_D_over_A_max": 1.25,
+    "protected_sine_C_over_B_max": 1.35,
+    "protected_rational_gain_C_over_B_min": 0.1,
+    "protected_sine_gain_B_over_A_min": 0.1,
+    "protected_source_C_gain_vs_finetune_min": 0.15,
+    "protected_source_C_gain_vs_random_min": 0.1,
+    "require_all_three_seeds": true,
+    "minimum_source_basis_rank": 1,
+    "maximum_total_basis_rank": 36,
+    "restore_max_output_delta": 0,
+    "cpu_rss_max_bytes": 2147483648,
+    "wall_seconds_max": 240
+  },
+  "classifications": {
+    "invalid": "ASSAY_INVALID_SOURCE_CONTROL_OR_ORACLE",
+    "positive": "PRELIMINARY_ORTHOGONAL_TOKENLESS_RETENTION_GAIN_NOT_SCIENTIFIC_PASS",
+    "negative": "ORTHOGONAL_MEMORY_FROZEN_RETENTION_OR_PLASTICITY_NULL",
+    "independent_qualification": "NOT_RUN",
+    "no_posthoc_thresholds": true,
+    "rehearsal_descriptive_only": true
+  },
+  "authority": {
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "uid": 1000,
+    "cpu_only": true,
+    "existing_R3_venv": true,
+    "no_package_change": true,
+    "no_gpu": true,
+    "no_paid_API": true,
+    "no_root": true,
+    "no_downloads": true,
+    "no_new_controller": true,
+    "no_merge": true,
+    "no_deployment": true
+  },
+  "limitations": "No FLOP/energy matching between models, rehearsal sees old data again; only partially observable toy numerical worlds, not autonomous RSI, tokenless language understanding, general intelligence, or cold long-term retention."
+}
