@@ -9,26 +9,23 @@ ROOT = Path(__file__).resolve().parents[1]
 WF = ROOT / ".github/workflows/g7-r15-one-shot-compiler-forward.yml"
 SRC = ROOT / "scripts/g7_r15_compiler_repair_forward.py"
 
-def test_single_use_owner_runner_exact_head_forward_and_no_separate_controller():
-    s=WF.read_text(encoding="utf-8")
-    for key in (
-        "on:\n  push:\n    branches: [main]",
-        'paths:\n      - ".github/workflows/g7-r15-one-shot-compiler-forward.yml"',
-        "github.run_number == 1 && github.run_attempt == 1",
-        "github.actor == 'spoonman136668-ai'",
-        "TTT-HYBRID-GPU-WIN", "ttt-hybrid-gpu-isolated",
-        "github.sha", "persist-credentials: false", "clean: true",
-        "G7_R15_DIRTY_CHECKOUT", "timeout-minutes: 14",
-        "650s /usr/bin/python3 -I -B",
-        "g7_r15_compiler_repair_forward.py", "retention-days: 30",
+def test_consumed_single_use_workflow_removed_and_result_preserved():
+    assert not WF.exists()
+    report=(ROOT/"docs/G7_R15_RESULT.md").read_text(encoding="utf-8")
+    for marker in (
+        "42321056057",
+        "13553665337",
+        "e0edb0ed2e9d3c187ea1aef205cab8ea8275165a",
+        "2e9e3f6f6b56a7e32401c017d396d7898c4b997933939227c3477684e59ef329",
+        "ef2a5035b5df9f9875c328b618122646f642115d90888e320f71b086ce2f11c4",
+        "BLOCKED_GCC_SUDO_NONINTERACTIVE_DENIED",
+        "source_custody=PASS",
+        "provisioning=NOT_ATTEMPTED",
+        "native_forward=NOT_RUN",
+        "NO RETRY",
     ):
-        assert key in s, key
-    for forbidden in (
-        "workflow_dispatch:", "schedule:", "pull_request:", "git push",
-        "wsl.exe --install", "actions/setup-", "Start-Process",
-        "torch.optim", "nvidia-smi",
-    ):
-        assert forbidden not in s, forbidden
+        assert marker in report, marker
+
 
 def test_only_gcc_provision_and_no_pinned_runtime_reinstall():
     s=SRC.read_text(encoding="utf-8")
