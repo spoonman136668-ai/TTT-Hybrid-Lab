@@ -35,6 +35,7 @@ REQUIRED = (
     "scripts/g7_s25_cost_ledger.py",
     "tests/test_g7_s25_cost_ledger.py",
     ".github/workflows/g7-s25-cost-ledger-qualification.yml",
+    ".github/workflows/g7-s25-cost-ledger-qualification-r2.yml",
 )
 
 def ensure(ok: bool, cause: str) -> None:
@@ -95,7 +96,7 @@ def main():
         ensure(custody.git(ROOT, "hash-object", "--", REQUIRED[0]) ==
                "31633b341403729b7ffbb7d73f3a04098ad44380",
                "S25_FROZEN_PROTOCOL_BLOB_DRIFT")
-        status["source"] = "PASS_EXACT_FOURTEEN_FILES_FROZEN_S25_AND_S20_BLOBS"
+        status["source"] = "PASS_EXACT_FIFTEEN_FILES_FROZEN_S25_AND_S20_BLOBS"
         venv = (Path.home().resolve() / ".local/share/ttt-hybrid"
                 / ("g7-r3-" + custody.R3_SOURCE_SHA[:12])
                 / "venv/bin/python")
