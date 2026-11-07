@@ -1,0 +1,154 @@
+# G7-R28: file-based, one-use read-only GCC/libcuda linker diagnosis.
+# Preserve original ignored receipts during source checkout. Only temporary
+# C compilation; no package installs, root, GPU forward, deployment, or rerun.
+name: G7-R28 one-use file-based CUDA driver linker diagnosis
+on:
+  push:
+    branches:
+      - engineering/g7-r28-filebased-cuda-link-20261107
+    paths:
+      - .github/workflows/g7-r28-sourcefile-cuda-link.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r28-one-use-sourcefile-cuda-link
+  cancel-in-progress: false
+
+jobs:
+  sourcefile-link:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r28-filebased-cuda-link-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Checkout exact candidate preserving ignored original receipts
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 4
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: false
+      - name: Source custody and single nonroot C-link diagnostic
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r28.qualified-cuda-link-result.v1'
+            candidate_sha = $env:GITHUB_SHA
+            prior_failed_original_run = 42360001917
+            prior_readonly_attempt = 42361104335
+            status = 'BLOCKED_NOT_STARTED'
+            original_receipt_custody = 'UNVERIFIED'
+            exact_candidate_source = 'UNVERIFIED'
+            compiler_source_custody = 'UNVERIFIED'
+            gcc_real_executable = 'UNVERIFIED'
+            cuda_library_presence = $null
+            probes = @()
+            root = 'NOT_USED'
+            package_changes = 'NONE'
+            gpu = 'NOT_RUN'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $base = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r28-filebased-cuda-link-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R28_OWNER_RUNNER_IDENTITY'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^^' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $cc -ne 0 -or $dc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne 'e77c7eead67644b9f59f57b7521ae639736a6c59' -or
+                $ancestor -cne $base -or
+                $changed.Count -ne 2 -or
+                $changed -notcontains 'scripts/g7_r28_driver_link_probe.py' -or
+                $changed -notcontains '.github/workflows/g7-r28-sourcefile-cuda-link.yml' -or
+                $dirty) {
+              $r.status = 'BLOCKED_SOURCE_SHA_OR_SCOPE'
+              throw 'G7_R28_SOURCE_SHA_OR_SCOPE'
+            }
+            $r.exact_candidate_source = 'PASS'
+            $old = Join-Path $out 'g7_native_gate3_subreceipt.json'
+            $prior = Join-Path $out 'g7_r26_original_subprocess.json'
+            if (-not (Test-Path -LiteralPath $old -PathType Leaf) -or
+                -not (Test-Path -LiteralPath $prior -PathType Leaf)) {
+              $r.status = 'BLOCKED_ORIGINAL_EVIDENCE_UNAVAILABLE'
+              throw 'G7_R28_ORIGINAL_EVIDENCE_UNAVAILABLE'
+            }
+            $oldSha = (Get-FileHash -LiteralPath $old -Algorithm SHA256).Hash.ToLowerInvariant()
+            $original = Get-Content -LiteralPath $prior -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($oldSha -cne 'e463c6a1a357bbc594509878bc02ca0cce375d472dbb3cd9ef224af951b64b35' -or
+                $original.status -cne 'PASS_ORIGINAL_SUBPROCESS_CLASSIFIED' -or
+                $original.original_r23_sha -cne 'e86f934cc1f999794a47afd14e8646f10519dbe1' -or
+                $original.return_code -ne 1) {
+              $r.status = 'BLOCKED_ORIGINAL_EVIDENCE_DRIFT'
+              throw 'G7_R28_ORIGINAL_EVIDENCE_DRIFT'
+            }
+            $r.original_receipt_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PROJECT_PATH'
+              throw 'G7_R28_WSL_PROJECT_PATH'
+            }
+            $source = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r16_compiler_probe.py" --expected-sha "$env:GITHUB_SHA")
+            if ($LASTEXITCODE -ne 0 -or ($source | Out-String).Trim() -cne 'G7_R16_COMPILER=PRESENT') {
+              $r.status = 'BLOCKED_ORIGINAL_SOURCE_R3_GCC_CUSTODY'
+              throw 'G7_R28_SOURCE_CUSTODY'
+            }
+            $r.compiler_source_custody = 'PASS'
+            $rows = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 140s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r28_driver_link_probe.py" 2>$null)
+            $code = $LASTEXITCODE
+            if ($code -ne 0 -or $rows.Count -ne 1) {
+              $r.status = 'BLOCKED_LINK_PROBE_TRANSPORT'
+              throw 'G7_R28_LINK_PROBE_TRANSPORT'
+            }
+            $data = $rows[0] | ConvertFrom-Json
+            if ($data.schema -cne 'ttt-hybrid.g7-r28.python-link-probe.v1' -or
+                $data.uid -ne 1000 -or
+                $data.status -notin @('PASS_CUDA_DEFAULT_LINK',
+                                     'PASS_ENVIRONMENT_ONLY_CUDA_LINK_ROUTE',
+                                     'BLOCKED_NO_AVAILABLE_CUDA_LINK_TARGET')) {
+              $r.status = 'BLOCKED_LINK_PROBE_UNQUALIFIED'
+              throw 'G7_R28_LINK_PROBE_UNQUALIFIED'
+            }
+            $r.status = $data.status
+            $r.gcc_real_executable = $data.gcc_real_executable
+            $r.cuda_library_presence = $data.cuda_library_presence
+            $r.probes = $data.probes
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $out 'g7_r28_cuda_driver_link.json') -Encoding UTF8
+            Write-Output ('G7_R28_STATUS=' + $r.status)
+            Write-Output ('G7_R28_GCC=' + $r.gcc_real_executable)
+            Write-Output 'G7_R28_SYSTEM_CHANGES=NONE'
+            Write-Output 'G7_R28_GPU=NOT_RUN'
+          }
+      - name: Preserve sanitized one-use original-linker result
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r28-sourcefile-cuda-link
+          path: local_runs/g7_r28_cuda_driver_link.json
+          if-no-files-found: warn
+          retention-days: 30
