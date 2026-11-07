@@ -1,0 +1,142 @@
+# G7-R31: one-use non-root Python.h header compile on existing isolated GPU
+# runner. No CUDA kernel/model invocation, apt/dpkg, root, system changes.
+name: G7-R31 single test for missing Python 3.12 development header
+on:
+  push:
+    branches:
+      - engineering/g7-r31-python-header-confirmation-20261107
+    paths:
+      - .github/workflows/g7-r31-python-header-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r31-one-use-python-header-test
+  cancel-in-progress: false
+
+jobs:
+  c-python-header:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r31-python-header-confirmation-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Checkout isolated exact-source candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-r31-isolated
+          fetch-depth: 3
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify original R30 proof and compile one Python.h host C probe
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r31.one-use-host-header-admission.v1'
+            candidate_sha = $env:GITHUB_SHA
+            prior_r30_run = 42361813516
+            prior_r29_run = 42361640612
+            status = 'BLOCKED_NOT_STARTED'
+            prior_original_receipt = 'UNVERIFIED'
+            source_custody = 'UNVERIFIED'
+            gcc_header_compile = 'NOT_RUN'
+            package_changes = 'NONE'
+            gpu = 'NOT_RUN'
+            training = 'NOT_RUN'
+            scientific = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-r31-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r31-python-header-confirmation-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R31_OWNER_RUNNER'
+            }
+            $priorFile = Join-Path $env:GITHUB_WORKSPACE 'local_runs/g7_r30_postlink_failure_delta.json'
+            if (-not (Test-Path -LiteralPath $priorFile -PathType Leaf) -or
+                (Get-FileHash -LiteralPath $priorFile -Algorithm SHA256).Hash.ToLowerInvariant() -cne
+                'f10bea1835b66097f46d6a3438f83fd05da80ad8ef7184650d63a3dcf661435d') {
+              $r.status = 'BLOCKED_R30_RECEIPT_HASH_DRIFT'
+              throw 'G7_R31_R30_RECEIPT_HASH'
+            }
+            $previous = Get-Content -LiteralPath $priorFile -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($previous.status -cne 'PASS_POSTLINK_NATIVE_FAILURE_DELTA' -or
+                $previous.new_error_class -cne 'CalledProcessError' -or
+                $previous.python312_header_present -cne 'NO_DISTRO_INCLUDE' -or
+                $previous.new_command_tags -notcontains 'PYTHON_INCLUDE_PATH') {
+              $r.status = 'BLOCKED_R30_SOURCE_EVIDENCE'
+              throw 'G7_R31_R30_SOURCE_EVIDENCE'
+            }
+            $r.prior_original_receipt = 'PASS_SHA_AND_STATUS'
+            $base = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $pc = $LASTEXITCODE
+            $ancestor = (& git -C $checkout rev-parse 'HEAD^^' | Out-String).Trim()
+            $ac = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only $base HEAD)
+            $cc = $LASTEXITCODE
+            if ($hc -ne 0 -or $pc -ne 0 -or $ac -ne 0 -or $dc -ne 0 -or
+                $cc -ne 0 -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne '3819a480acdf7d09e0dca7a2364c83630c2eee3d' -or
+                $ancestor -cne $base -or $dirty -or $changed.Count -ne 2 -or
+                $changed -notcontains 'scripts/g7_r31_python_header_diagnostic.py' -or
+                $changed -notcontains '.github/workflows/g7-r31-python-header-readonly.yml') {
+              $r.status = 'BLOCKED_EXACT_SHA_OR_SCOPE'
+              throw 'G7_R31_SOURCE_SHA_OR_SCOPE'
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R31_WSL_PATH'
+            }
+            $read = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 110s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r31_python_header_diagnostic.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r31_python_header.json")
+            $return = $LASTEXITCODE
+            $statusLine = @($read | Where-Object { $_ -match '^G7_R31_STATUS=' })
+            $compileLine = @($read | Where-Object { $_ -match '^G7_R31_C_COMPILE=' })
+            if ($return -ne 0 -or $statusLine.Count -ne 1 -or $compileLine.Count -ne 1) {
+              $r.status = 'BLOCKED_HOST_HEADER_PROBE_FAILED'
+              throw 'G7_R31_HOST_HEADER_PROBE_FAILED'
+            }
+            $r.status = $statusLine[0].Substring(14)
+            $r.gcc_header_compile = $compileLine[0].Substring(17)
+            if ($r.status -notin @('PASS_CONFIRMED_MISSING_PYTHON312_DEV_HEADER',
+                                   'PASS_PYTHON_HEADER_COMPILE_AVAILABLE')) {
+              $r.status = 'BLOCKED_UNRECOGNIZED_HEADER_RESULT'
+              throw 'G7_R31_UNRECOGNIZED_HEADER_RESULT'
+            }
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_r31_admission.json') -Encoding UTF8
+            Write-Output ('G7_R31_RESULT=' + $r.status)
+            Write-Output ('G7_R31_COMPILE=' + $r.gcc_header_compile)
+            Write-Output 'G7_R31_GPU=NOT_RUN'
+            Write-Output 'G7_R31_PACKAGES=UNCHANGED'
+          }
+      - name: Preserve only sanitized header diagnostic receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r31-python-header-confirmation
+          path: |
+            g7-r31-isolated/local_runs/g7_r31_admission.json
+            g7-r31-isolated/local_runs/g7_r31_python_header.json
+          if-no-files-found: warn
+          retention-days: 30
