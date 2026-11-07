@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import os
+import resource
 from pathlib import Path
 import subprocess
 import sys
@@ -223,6 +224,11 @@ def main() -> int:
     if result.returncode!=0:
         raise SystemExit("S26_DIAGNOSTIC_S25_BASE_NOT_ANCESTOR")
     value=run_development_comparison()
+    peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024
+    require(peak_rss_bytes <= 2147483648,
+            "S26_DEVELOPMENT_2GIB_RSS_CAP_EXCEEDED")
+    value["dev_peak_rss_bytes"]=peak_rss_bytes
+    value["max_allowed_rss_bytes"]=2147483648
     value["source_sha"]=args.expected_sha
     args.receipt.parent.mkdir(parents=True,exist_ok=True)
     args.receipt.write_text(json.dumps(value,sort_keys=True,indent=2)+"\n")
