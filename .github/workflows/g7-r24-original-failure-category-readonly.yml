@@ -1,0 +1,114 @@
+# G7-R24 one-time read-only error classification from existing G7-R23
+# sanitized receipts. Deliberately NO checkout, no shell calls into WSL,
+# no package changes, CUDA, model forward, retries or production activity.
+name: G7-R24 one-use original native failure-classification read
+on:
+  push:
+    branches:
+      - engineering/g7-r24-readonly-original-failure-classification-20261107
+    paths:
+      - .github/workflows/g7-r24-original-failure-category-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r24-one-use-readonly-previous-native-classification
+  cancel-in-progress: false
+
+jobs:
+  read-original-failure-receipt:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r24-readonly-original-failure-classification-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - name: Verify immutable receipt hashes and extract whitelisted error classification
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r24.readonly-native-failure-classification.v1'
+            candidate_sha = $env:GITHUB_SHA
+            original_r23_sha = 'e86f934cc1f999794a47afd14e8646f10519dbe1'
+            original_r23_run = 42360001917
+            status = 'BLOCKED_NOT_STARTED'
+            outer_receipt_sha256 = 'd7253b05114f87ea66ce941109830984a7cd2c60e1efc1d798a9fd1fe1a44afd'
+            native_receipt_sha256 = '6e97ce666a14c4b9fdfb1a58325d4c55662674a215e89ba8809678df602700fd'
+            source_custody = 'UNVERIFIED'
+            native_gate3_status = 'UNVERIFIED'
+            native_failure_category = 'UNVERIFIED'
+            native_failure_type = 'UNVERIFIED'
+            rerun = 'NOT_RUN'
+            packages_changed = 'NONE'
+            gpu_execution = 'NOT_RUN'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $out = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r24-readonly-original-failure-classification-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R24_OWNER_RUNNER_IDENTITY'
+            }
+            $outerPath = Join-Path $out 'g7_r23_compiler_forward.json'
+            $innerPath = Join-Path $out 'g7_r15_native_forward.json'
+            if (-not (Test-Path -LiteralPath $outerPath -PathType Leaf) -or
+                -not (Test-Path -LiteralPath $innerPath -PathType Leaf)) {
+              $r.status = 'BLOCKED_ORIGINAL_RECEIPT_NOT_PERSISTED'
+              throw 'G7_R24_ORIGINAL_RECEIPT_NOT_PERSISTED'
+            }
+            $outerHash = (Get-FileHash -LiteralPath $outerPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            $innerHash = (Get-FileHash -LiteralPath $innerPath -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($outerHash -cne $r.outer_receipt_sha256 -or
+                $innerHash -cne $r.native_receipt_sha256) {
+              $r.status = 'BLOCKED_RECEIPT_HASH_DRIFT'
+              throw 'G7_R24_RECEIPT_HASH_DRIFT'
+            }
+            $outer = Get-Content -LiteralPath $outerPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            $inner = Get-Content -LiteralPath $innerPath -Raw -Encoding UTF8 | ConvertFrom-Json
+            if ($outer.candidate_sha -cne $r.original_r23_sha -or
+                $inner.candidate_sha -cne $r.original_r23_sha -or
+                $outer.native_result_status -cne 'BLOCKED_NATIVE_FORWARD_NOT_QUALIFIED' -or
+                $inner.native_gate3_status -cne 'FAIL_AUTHENTIC_GPU_INTEGRATION') {
+              $r.status = 'BLOCKED_ORIGINAL_RECEIPT_IDENTITY'
+              throw 'G7_R24_ORIGINAL_RECEIPT_IDENTITY'
+            }
+            $r.source_custody = 'PASS_IMMUTABLE_RECEIPT_HASHES'
+            $r.native_gate3_status = $inner.native_gate3_status
+            $categories = @('FUSED_CONV_FUNCTION_UNAVAILABLE','CUDA_OOM',
+                            'TRITON_OR_KERNEL_COMPATIBILITY',
+                            'SHAPE_OR_INTERFACE','OTHER_NATIVE_INTEGRATION_ERROR')
+            $types = @('RuntimeError','TypeError','ValueError','AssertionError',
+                       'ImportError','OSError','AttributeError',
+                       'NotImplementedError','OTHER_EXCEPTION')
+            if ($inner.native_failure_category -notin $categories -or
+                $inner.native_failure_type -notin $types) {
+              $r.status = 'BLOCKED_NATIVE_CATEGORY_UNAVAILABLE'
+              throw 'G7_R24_NATIVE_CATEGORY_UNAVAILABLE'
+            }
+            $r.native_failure_category = $inner.native_failure_category
+            $r.native_failure_type = $inner.native_failure_type
+            $r.status = 'PASS_ORIGINAL_NATIVE_FAILURE_CLASSIFIED'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $out 'g7_r24_native_failure_classification.json') -Encoding UTF8
+            Write-Output ('G7_R24_STATUS=' + $r.status)
+            Write-Output ('G7_R24_CATEGORY=' + $r.native_failure_category)
+            Write-Output ('G7_R24_TYPE=' + $r.native_failure_type)
+            Write-Output 'G7_R24_GPU=NOT_RUN'
+          }
+      - name: Preserve sanitized classification only
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r24-native-classification-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_r24_native_failure_classification.json
+          if-no-files-found: warn
+          retention-days: 30
