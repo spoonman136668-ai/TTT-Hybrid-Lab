@@ -1,0 +1,142 @@
+{
+  "schema": "ttt-hybrid.g7-s8.same-episodes-three-arm.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s6_run": 42368703057,
+    "s6_sha": "ca528676cd6a6262fc0ea8052ad83dc22436c0d1",
+    "s6_generator_model_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500",
+    "s7_run": 42369954172,
+    "s7_sha": "025fe65c802f5be3344985b89860617a534e64e0",
+    "s7_result": "NULL_OR_NEGATIVE for incremental online TTT superiority; absolute retrieval with 128 updates demonstrated"
+  },
+  "hypothesis": "With fully matched training episodes and 512 optimizer steps, will the original official nonfused Mamba2+TTT hybrid generalize fresh key-value bindings, and will online TTT fast-weight updates outperform the parameter-identical static TTT-disabled model? Compare both with the fully trained explicit-retrieval conventional positive control from the exact same input information.",
+  "arms": [
+    {
+      "id": "conventional",
+      "type": "S6 conventional explicit key/query/value attention",
+      "params": 1025,
+      "train_lr": 0.01,
+      "device": "cpu",
+      "ttt_inner_update": null
+    },
+    {
+      "id": "online_ttt",
+      "type": "original official Mamba2 nonfused, causal attention, TTTLinear, fixed depth",
+      "params": 90259,
+      "train_lr": 0.002,
+      "device": "cuda:0",
+      "ttt_inner_update": 1
+    },
+    {
+      "id": "static_matched",
+      "type": "same native hybrid, all same model params and initialization as online",
+      "params": 90259,
+      "train_lr": 0.002,
+      "device": "cuda:0",
+      "ttt_inner_update": 0
+    }
+  ],
+  "data": {
+    "original_generator_blob": "72ba66eebcebd3856d5251ccc765ea52ddf84500",
+    "same_generator_all_arms": true,
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "training_generator": "spoonman136668-ai/TTT-Hybrid-Lab G7-S6 get_batch; seed*10000000 + step*17",
+    "heldout_generator": "same S6 get_batch but new unseen seed*10000000 + 9800000 + batch_index*17",
+    "keys": 4,
+    "key_width": 16,
+    "value_width": 16,
+    "ordered_query_keys": [
+      0,
+      1,
+      2,
+      3,
+      3,
+      2,
+      1,
+      0
+    ],
+    "target_query_values_never_input": true,
+    "native_encoding": "four alternating support key and value tokens (8 total) followed by eight query key tokens (16 total) with original S1 marker channels 32,33,34; same information as conventional structured support tensors",
+    "fit_steps": 512,
+    "batch_size": 64,
+    "fit_episodes_per_arm_per_seed": 32768,
+    "heldout_batches_per_seed": 8,
+    "heldout_batch_size": 128,
+    "heldout_episodes_per_arm_seed": 1024,
+    "train_split_disjoint_from_heldout": true,
+    "same_training_episodes_and_targets_for_all_three_arms": true,
+    "no_training_on_heldout": true
+  },
+  "controls": [
+    "exact pinned original G7-S6 generator/model blob (not reimplemented)",
+    "no duplicates among keys in each episode",
+    "positive perfect-retrieval oracle MSE=0",
+    "corrupted-support oracle MSE≥1.5",
+    "zero predictor MSE=1.0",
+    "conventional must learn task and degrade under support corruption",
+    "fresh heldout batch seeds not used by preceding S6/S7 studies",
+    "within online/static native pair same initial weight hash, optimizer updates, input examples and parameters",
+    "native per-seed cold restore and no update during evaluation",
+    "conventional trained from scratch in the same run; do not reuse an earlier checkpoint",
+    "process-local exact signed Python 3.12 .16 headers and CUDA link only; no installs"
+  ],
+  "thresholds": {
+    "oracle_exact_mse_max": 1e-12,
+    "corrupted_oracle_mse_min": 1.5,
+    "zero_mse_exact": 1,
+    "conventional_heldout_mse_max": 0.1,
+    "conventional_corrupted_mse_min": 1.5,
+    "conventional_erased_mse_min": 0.9,
+    "online_heldout_mse_max": 0.1,
+    "online_better_than_zero_each_seed": true,
+    "online_shuffled_relative_harm_min": 0.03,
+    "online_erased_relative_harm_min": 0.03,
+    "online_vs_static_relative_reduction_min": 0.05,
+    "online_better_than_static_each_seed": true,
+    "online_cold_restore_max_abs_delta": 0,
+    "static_cold_restore_max_abs_delta": 0,
+    "all_oracle_controls_pass": true
+  },
+  "methodology": {
+    "equal_train_information_and_optimizer_steps": true,
+    "equal_train_examples_and_target_generator": true,
+    "native_parameters_matched_between_online_and_static": true,
+    "conventional_parameter_compute_matched_to_native": false,
+    "caveat": "Conventional has explicit retrieval inductive bias and 1,025 parameters; native has 90,259 parameters and different CPU/GPU cost. This is matched data/exposure against a strong conventional positive control, NOT equal-compute or parameter-matched proof of hybrid architectural superiority.",
+    "outcome_if_all_thresholds_pass": "PRELIMINARY_ASSOCIATIVE_LEARNING_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION_NOT_SCIENTIFIC_PASS",
+    "outcome_if_online_superiority_fails": "ONLINE_TTT_INCREMENTAL_ADVANTAGE_NOT_DEMONSTRATED",
+    "outcome_if_conventional_fails": "ASSAY_INVALID_CONVENTIONAL_CONTROL",
+    "independent_scientific_acceptance": "NOT_AUTHORIZED"
+  },
+  "budget": {
+    "wall_seconds_max": 900,
+    "peak_torch_allocated_bytes_max": 1073741824,
+    "min_cuda_free_bytes": 4294967296,
+    "native_optimizer_steps_total": 3072,
+    "conventional_optimizer_steps_total": 1536,
+    "n_arms": 3,
+    "no_install": true,
+    "no_new_controller": true,
+    "no_paid_api": true,
+    "no_live_service": true,
+    "no_merge": true,
+    "no_deployment": true
+  },
+  "stop_conditions": [
+    "source or upstream blob SHA drift",
+    "missing signed exact Python dev headers",
+    "non-finite loss or gradient",
+    "GPU >1GiB allocated or free <4GiB at start",
+    "system package inventory drift",
+    "time budget",
+    "wrong number of optimizer updates or training episodes",
+    "invalid oracle",
+    "dirty repo",
+    "unexpected authority boundary"
+  ],
+  "reporting": "Always report failure/null outcomes and actual CPU/GPU time, allocation, episode counts, seeds, baseline and negative controls; do not claim token-free native reasoning or superiority from this isolated synthetic task."
+}
