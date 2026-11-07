@@ -1,0 +1,158 @@
+# G7-R18: read-only one-attempt apt simulation for G7-R17 observed package-scope denial.
+# No privilege, apt update/install, new controller, CUDA/Torch/Triton, or model execution.
+name: G7-R18 single read-only apt dependency inventory
+on:
+  push:
+    branches:
+      - engineering/g7-r18-one-use-readonly-apt-simulation-20261107
+    paths:
+      - .github/workflows/g7-r18-apt-simulation-readonly.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r18-one-use-apt-simulation
+  cancel-in-progress: false
+
+jobs:
+  apt-simulation:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r18-one-use-readonly-apt-simulation-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Checkout exact SHA, no retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 2
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Authenticated unprivileged apt simulation only
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r18.apt-simulation-readonly.v1'
+            candidate_sha = $env:GITHUB_SHA
+            baseline_sha = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            prior_failure_run = 42355951614
+            prior_failure_status = 'BLOCKED_APT_SCOPE_OR_DEPENDENCY'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            runner = $env:RUNNER_NAME
+            normal_user = 'UNVERIFIED'
+            simulated_package = 'libc6-dev'
+            simulation_exit = $null
+            install_candidates = @()
+            removal_candidates = @()
+            outside_prior_allowlist = @()
+            prerequisite_libc6_dev = 'ABSENT_AS_OF_G7_R17'
+            actual_install = 'NOT_RUN'
+            gpu_forward = 'NOT_RUN'
+            root_context = 'NOT_USED'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $base = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          $outDir = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r18-one-use-readonly-apt-simulation-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_IDENTITY'
+              throw 'G7_R18_OWNER_IDENTITY'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $headCode = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $parentCode = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyCode = $LASTEXITCODE
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only $base HEAD)
+            $diffCode = $LASTEXITCODE
+            if ($headCode -ne 0 -or $parentCode -ne 0 -or
+                $dirtyCode -ne 0 -or $diffCode -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $parent -cne $base -or
+                $dirty -or $changed.Count -ne 1 -or
+                $changed[0] -cne '.github/workflows/g7-r18-apt-simulation-readonly.yml') {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SCOPE'
+              throw 'G7_R18_EXACT_SOURCE_SCOPE'
+            }
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" 2>$null | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R18_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u 2>$null | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_UNEXPECTED_WSL_USER'
+              throw 'G7_R18_UNEXPECTED_WSL_USER'
+            }
+            $r.normal_user = 'UID_1000'
+            # Reuse the prior original-source/R3/GCC custody check. No model runs.
+            $probe = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r16_compiler_probe.py" --expected-sha "$env:GITHUB_SHA" 2>$null)
+            $probeExit = $LASTEXITCODE
+            if ($probeExit -ne 0 -or ($probe | Out-String).Trim() -cne 'G7_R16_COMPILER=PRESENT') {
+              $r.status = 'BLOCKED_SOURCE_R3_COMPILER_CUSTODY'
+              throw 'G7_R18_SOURCE_R3_COMPILER_CUSTODY'
+            }
+            $r.source_custody = 'PASS'
+            # apt-get -s is strictly a simulation, without sudo or root user.
+            # Keep stdout in memory and retain only validated package names.
+            $lines = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 55s /usr/bin/apt-get -s -o Debug::NoLocking=1 -o Acquire::Retries=0 install -y --no-install-recommends libc6-dev 2>$null)
+            $r.simulation_exit = $LASTEXITCODE
+            $inst = @()
+            $remv = @()
+            foreach ($line in $lines) {
+              if ($line -match '^Inst\s+([A-Za-z0-9][A-Za-z0-9+.-]*(?::[A-Za-z0-9-]+)?)\b') { $inst += $Matches[1] }
+              if ($line -match '^Remv\s+([A-Za-z0-9][A-Za-z0-9+.-]*(?::[A-Za-z0-9-]+)?)\b') { $remv += $Matches[1] }
+            }
+            $inst = @($inst | Sort-Object -Unique)
+            $remv = @($remv | Sort-Object -Unique)
+            if ($inst.Count -gt 64 -or $remv.Count -gt 64) {
+              $r.status = 'BLOCKED_PACKAGE_OUTPUT_TOO_LARGE'
+              throw 'G7_R18_PACKAGE_OUTPUT_TOO_LARGE'
+            }
+            $r.install_candidates = $inst
+            $r.removal_candidates = $remv
+            $priorAllow = @('libc6-dev','libc-dev-bin','linux-libc-dev','libcrypt-dev','rpcsvc-proto','libnsl-dev','libtirpc-dev')
+            $r.outside_prior_allowlist = @($inst | Where-Object { $_ -notin $priorAllow })
+            if ($r.simulation_exit -ne 0) {
+              $r.status = 'SIMULATION_FAILED_NO_MUTATION'
+              throw 'G7_R18_SIMULATION_FAILED'
+            }
+            if ($remv.Count -gt 0) {
+              $r.status = 'SIMULATION_REQUIRES_REMOVALS_NO_MUTATION'
+            } elseif ($r.outside_prior_allowlist.Count -gt 0) {
+              $r.status = 'SIMULATION_OUTSIDE_PRIOR_ALLOWLIST_NO_MUTATION'
+            } elseif ($inst -notcontains 'libc6-dev') {
+              $r.status = 'SIMULATION_MISSING_TARGET_NO_MUTATION'
+            } else {
+              $r.status = 'PASS_DEPENDENCY_INVENTORY_ONLY'
+            }
+          } finally {
+            New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $outDir 'g7_r18_apt_simulation.json') -Encoding UTF8
+            Write-Output ('G7_R18_STATUS=' + $r.status)
+            Write-Output ('G7_R18_SOURCE_CUSTODY=' + $r.source_custody)
+            Write-Output ('G7_R18_INSTALL=NOT_RUN')
+            Write-Output ('G7_R18_GPU=NOT_RUN')
+          }
+
+      - name: Upload only sanitized read-only simulation evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r18-readonly-apt-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_r18_apt_simulation.json
+          if-no-files-found: warn
+          retention-days: 30
