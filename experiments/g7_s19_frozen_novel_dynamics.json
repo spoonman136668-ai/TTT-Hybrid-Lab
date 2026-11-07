@@ -1,0 +1,249 @@
+{
+  "schema": "ttt-hybrid.g7-s19.novel-dynamics-sequential-interference.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "s18_exact_sha": "affe574f00d69abb8d816589ed12d81e716fc458",
+    "s18_science_run": 42396385331,
+    "s18_original_source_git_blob": "cfc1959b8812e9abad581018462302bc89a31d59",
+    "s18_science_status": "PRELIMINARY_LEARNED_RAW_FEATURE_REPLICATION_NOT_INDEPENDENTLY_QUALIFIED",
+    "s17_original_invalid_run": 42395873648,
+    "historical_negative_unchanged": "S17 assay INVALID due kernel history-swap and S16 learned-plasticity NULL."
+  },
+  "hypothesis": "Can an attention-free learned numeric (state,action) feature representation, trained only on one nonlinear law, transfer without training to TWO distinct previously unseen nonlinear function families versus calibration-only RBF-KRR and the exact initial untrained features? Does sequential training on one of those new families preserve original-law prediction rather than catastrophic interference?",
+  "arms": [
+    {
+      "id": "learned_features",
+      "type": "trainable 2→32→12 tanh MLP on raw state/action, 12-dim ridge adaptive coefficients per world; same initial MLP as random",
+      "train_steps": 240
+    },
+    {
+      "id": "random_features",
+      "type": "identical initial MLP but never trained; same ridge coefficient adaptation",
+      "train_steps": 0
+    },
+    {
+      "id": "rbf_kernel_ridge",
+      "type": "strong conventional RBF kernel ridge over raw (x,u); gamma, decay, regularization CALIBRATION-ONLY",
+      "train_steps": 0
+    },
+    {
+      "id": "fully_trained_gru",
+      "type": "32-unit GRU on raw 4-channel continuous history with query-conditioned 3-channel 32-unit MLP future-derivative head",
+      "train_steps": 240
+    },
+    {
+      "id": "static_derivative",
+      "type": "no adaptation constant future derivative 0",
+      "train_steps": 0
+    },
+    {
+      "id": "exact_physics_oracle",
+      "type": "evaluator uses hidden world parameters only to generate ground-truth targets",
+      "train_steps": 0
+    },
+    {
+      "id": "swapped_world_history",
+      "type": "negative context swap for learned feature and RBF predictors",
+      "train_steps": 0
+    }
+  ],
+  "world": {
+    "generator": "S16 original source generation for A and original-source OOD; S19 separate evaluator law for new sine and rational worlds (hidden coefficients). No analytic nonlinear basis disclosed to learned, random, GRU or RBF controls.",
+    "nonlinear_family": "S16 original law xnext=x+dt*(-a*x+b*u+c*tanh(2*x)+d*x*u) only during phase A; zero-shot S19 laws are new functional families.",
+    "unseen_function_split": "xnext uses tanh(3*x) after switch, unknown to candidates; OOD parameter ranges as S16",
+    "switch_after_transition": 20,
+    "context_transitions": 32,
+    "numeric_channels": [
+      "state",
+      "applied_actuator",
+      "elapsed_time",
+      "measured_next_state"
+    ],
+    "no_tokenizer": true,
+    "no_vocabulary": true,
+    "no_discrete_event_codes": true,
+    "no_attention": true,
+    "no_language_loss": true,
+    "physics_bias_disclosure": "Estimator model uses the known Euler residual (xnext-x)/dt and supervised counterfactual target, so it has a discrete-time numerical dynamics prior, but no correct nonlinear feature formula."
+  },
+  "frozen_training": {
+    "seeds": [
+      701,
+      809,
+      907
+    ],
+    "steps": 240,
+    "batch": 48,
+    "worlds_per_seed_per_trainable_arm": 11520,
+    "exact_episode_seed": "seed*100000+513000+step*37",
+    "regime_schedule": [
+      "train_switch",
+      "train_stable"
+    ],
+    "mlp_input_features": 2,
+    "mlp_hidden": 32,
+    "mlp_output": 12,
+    "feature_ridge_decay": 0.78,
+    "feature_ridge_regularization": 0.08,
+    "feature_lr": 0.004,
+    "gru_lr": 0.004,
+    "weight_decay": 0.01,
+    "gradient_clip": 1,
+    "same_train_examples_and_actions_for_mlp_and_gru": true,
+    "fixed_random_feature_initialization_equals_learned_pre_fit": true
+  },
+  "calibration": {
+    "seeds": [
+      1901,
+      1913,
+      1931
+    ],
+    "batch": 64,
+    "only_train_range_switching_worlds": true,
+    "rbf_gamma_grid": [
+      0.5,
+      2,
+      6
+    ],
+    "rbf_decay_grid": [
+      0.65,
+      0.78,
+      1
+    ],
+    "rbf_regularization_grid": [
+      0.01,
+      0.08
+    ],
+    "tie_breaker": "argmin mean calibration MSE then smaller gamma then larger decay then larger ridge; never use test splits to select",
+    "no_trainable_model_tuning_on_calibration": true
+  },
+  "evaluation": {
+    "split_seeds": {
+      "source_ood_switch": [
+        2027,
+        2039,
+        2053
+      ],
+      "novel_sine_ood_switch": [
+        2101,
+        2113,
+        2129
+      ],
+      "novel_rational_ood_switch": [
+        2203,
+        2213,
+        2221
+      ]
+    },
+    "batch": 64,
+    "queries_per_world": 8,
+    "all_heldout_worlds_unseen": true,
+    "no_test_gradient_or_updates": true,
+    "action_intervention_flip_control": true,
+    "world_swap_negative_control": true,
+    "original_hidden_oracle_exact": true,
+    "trained_model_cold_restore_exact": true,
+    "calculate_actual_process_time_and_peak_rss": true,
+    "novel_holdout_after_first_phase_only": true,
+    "no_heldout_updates": true,
+    "phases": {
+      "A": "train 240 original S16 tanh(2x)/x*u worlds, then evaluate three disjoint OOD families",
+      "B": "train the same pretrained feature and GRU models for exactly 96 updates on NEW sine family with distinct train-range coefficients; then evaluate SOURCE (old) and NOVEL SINE (new) on same frozen heldout splits as before without optimizer access",
+      "calibration": "kernel hyperparameters chosen ONCE on original training-range switching worlds, never retuned on new families, original or second-phase heldouts"
+    },
+    "novel_family_definitions": {
+      "novel_sine": {
+        "hidden_dynamics": "x_next=x+dt*(-a*x+b*u+c*sin(4*x)+d*tanh(3*u))",
+        "independent_of_source": "Contains no tanh(2*x) or x*u term",
+        "phases": [
+          "A_zero_shot",
+          "B_after_96_sine_updates"
+        ]
+      },
+      "novel_rational": {
+        "hidden_dynamics": "x_next=x+dt*(-a*tanh(2*x)+b*u+c*x^3/(1+x^2)+d*sin(3*u))",
+        "independent_of_source": "Different damping law and two new nonlinear features; no source tanh(2*x) feature multiplied by c, no x*u term",
+        "phases": [
+          "A_zero_shot"
+        ]
+      },
+      "parameter_ranges": {
+        "train_A": "S16 world original latent train ranges",
+        "train_B_sine": "a [.35,1.4]; b [.35,1.45]; c [-.45,.45]; d [-.35,.35]",
+        "novel_holdout_ood": "a [1.55,2.25]; b [1.55,2.10]; c [-.8,.8]; d [-.65,.65]"
+      },
+      "world_switch": "At transition 20 of 32, replace all four latent coefficients with independently sampled unknown coefficients; no switch label in model input"
+    },
+    "sequential_interference": {
+      "phase_B_updates": 96,
+      "phase_B_seed_formula": "train_seed*100000+711000+step*37",
+      "identical_phase_B_observations_actions_targets_for_feature_and_gru": true,
+      "compare_source_holdout_MSE_before_after_B": true,
+      "compare_sine_holdout_MSE_before_after_B": true,
+      "frozen_source_retention_after_B_ratio_max": 1.5,
+      "frozen_novel_sine_after_B_relative_MSE_gain_min": 0.1,
+      "frozen_all_three_seed_requirements": true,
+      "cold_weights_restore_exact_after_both_phases": true,
+      "no_loss_of_original_A_checkpoint_evidence": true,
+      "no_extra_training_epochs": true
+    }
+  },
+  "threshold": {
+    "oracle_mse_max": 1e-12,
+    "calibrated_kernel_source_ood_mse_max": 0.01,
+    "calibrated_kernel_source_gain_over_static_min": 0.2,
+    "calibrated_kernel_source_post_switch_ablation_ratio_min": 1.25,
+    "learned_source_post_switch_ablation_ratio_min": 1.25,
+    "novel_sine_zero_shot_vs_kernel_gain_relative_min": 0.05,
+    "novel_sine_zero_shot_vs_kernel_abs_MSE_gain_min": 0.00002,
+    "novel_rational_zero_shot_vs_kernel_gain_relative_min": 0.05,
+    "novel_rational_zero_shot_vs_kernel_abs_MSE_gain_min": 0.00002,
+    "novel_sine_vs_random_gain_min": 0.1,
+    "novel_rational_vs_random_gain_min": 0.1,
+    "novel_better_each_training_seed": true,
+    "phase_B_source_retention_MSE_ratio_max": 1.5,
+    "phase_B_sine_improvement_relative_min": 0.1,
+    "phase_B_each_seed_retention_and_learning": true,
+    "cold_restore_max_abs_diff": 0,
+    "wall_limit_seconds": 240,
+    "peak_rss_limit_bytes": 2147483648
+  },
+  "classifications": {
+    "invalid": "ASSAY_INVALID_SOURCE_CONTROL_OR_ORACLE",
+    "primary_positive": "PRELIMINARY_CROSS_FAMILY_TOKENLESS_TRANSFER_REQUIRES_INDEPENDENT_QUALIFICATION",
+    "primary_null": "CROSS_FAMILY_RAW_FEATURE_TRANSFER_NULL_OR_NEGATIVE",
+    "interference_positive": "SEQUENTIAL_RETENTION_AND_NEW_FAMILY_LEARNING_FROZEN_PASS",
+    "interference_null": "SEQUENTIAL_RETENTION_OR_ADAPTATION_FROZEN_FAIL",
+    "research_bounds": "Development-only: two separately generated synthetic families. Both predictors get sampled time, Euler derivatives and online per-world regression. No general intelligence, natural world perception, unsampled analog computation, self-improvement or independent science claim.",
+    "not_posthoc": "Thresholds, sample seeds, new laws, the sequential intervention and negative controls fixed before execution; report all fails unaltered.",
+    "provenance_note": "S18 positive and S17 invalid preserved, not reinterpreted."
+  },
+  "resource_authority": {
+    "original_runner": "TTT-HYBRID-GPU-WIN",
+    "cpu_only": true,
+    "normal_wsl_uid": 1000,
+    "pinned_preexisting_R3_venv": true,
+    "no_cuda": true,
+    "no_package_install": true,
+    "no_downloads": true,
+    "no_root": true,
+    "no_paid_api": true,
+    "no_controller_changes": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "max_total_training_steps_per_seed_two_trainable_arms": 336,
+    "no_heldout_training": true,
+    "independent_qualification": "NOT_RUN",
+    "stop_conditions": [
+      "dirty tree/SHA/source blob drift",
+      "missing original R3 manifest",
+      "changed dpkg inventory",
+      "nonfinite training or gradients",
+      "invalid oracle or source positive controls",
+      "time or memory cap",
+      "cold restoration drift",
+      "new family generator label leak",
+      "any unauthorized run or runner"
+    ]
+  }
+}
