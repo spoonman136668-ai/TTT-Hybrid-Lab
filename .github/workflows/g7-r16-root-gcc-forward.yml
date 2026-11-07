@@ -1,0 +1,158 @@
+# G7-R16 owner-authorized SINGLE root-context GCC provisioning and native forward.
+# First main push adding this exact file only. No alternate controllers, dispatch or retry.
+name: G7-R16 single root GCC install and bounded authentic GPU forward
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/g7-r16-root-gcc-forward.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r16-one-use-root-gcc-forward
+  cancel-in-progress: false
+
+jobs:
+  gcc-and-native-forward:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 14
+    steps:
+      - name: Checkout exact candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Use root only for necessary GCC package install; one unprivileged native forward
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r16-root-gcc-forward.v1'
+            candidate_sha = $env:GITHUB_SHA
+            original_g7_r9_run = 42300670454
+            prior_block = 'GCC_SUDO_NONINTERACTIVE_DENIED'
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            compiler_before = 'UNVERIFIED'
+            root_context = 'NOT_USED'
+            apt_update = 'NOT_RUN'
+            apt_install = 'NOT_RUN'
+            compiler_after = 'UNVERIFIED'
+            native_forward = 'NOT_RUN'
+            runner = 'TTT-HYBRID-GPU-WIN'
+            cuda_runtime_change = 'NONE'
+            torch_triton_reinstall = 'NONE'
+            training = 'NOT_RUN'
+            deployment = 'NOT_AUTHORIZED'
+            scientific = 'UNVERIFIED'
+          }
+          $outDir = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/main' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R16_OWNER_RUNNER_DENIED'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $headCode = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            if ($headCode -ne 0 -or $LASTEXITCODE -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty) {
+              $r.status = 'BLOCKED_CANDIDATE_SOURCE_DRIFT'
+              throw 'G7_R16_CANDIDATE_SOURCE_DRIFT'
+            }
+            # Restore original G7-R9 direct WSL launch path, proven again in G7-R15.
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R16_WSL_PATH'
+            }
+            $probe = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r16_compiler_probe.py" --expected-sha "$env:GITHUB_SHA")
+            $probeCode = $LASTEXITCODE
+            $probeText = ($probe | Out-String).Trim()
+            if ($probeCode -eq 0 -and $probeText -ceq 'G7_R16_COMPILER=PRESENT') {
+              $r.source_custody = 'PASS'
+              $r.compiler_before = 'PRESENT_UNQUALIFIED'
+              $r.root_context = 'NOT_NEEDED'
+              $r.apt_update = 'SKIPPED_EXISTING_COMPILER'
+              $r.apt_install = 'SKIPPED_EXISTING_COMPILER'
+            } elseif ($probeCode -eq 3 -and $probeText -ceq 'G7_R16_COMPILER=ABSENT') {
+              $r.source_custody = 'PASS'
+              $r.compiler_before = 'ABSENT_IN_CHECKED_DISTRO_PATHS'
+              # Root execution is restricted to these fixed distro/identity/apt commands.
+              $uid = (& wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/id -u | Out-String).Trim()
+              if ($LASTEXITCODE -ne 0 -or $uid -cne '0') {
+                $r.status = 'BLOCKED_UBUNTU_ROOT_CONTEXT_UNAVAILABLE'
+                throw 'G7_R16_ROOT_CONTEXT_DENIED'
+              }
+              $r.root_context = 'ROOT_UID_ZERO_CONFIRMED'
+              $r.apt_update = 'ATTEMPTED'
+              & wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/timeout --signal=TERM --kill-after=10s 160s /usr/bin/apt-get -o Acquire::Retries=0 update
+              if ($LASTEXITCODE -ne 0) {
+                $r.status = 'BLOCKED_GCC_APT_UPDATE_FAILED'
+                throw 'G7_R16_APT_UPDATE_FAILED'
+              }
+              $r.apt_update = 'PASS'
+              $r.apt_install = 'ATTEMPTED'
+              & wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/timeout --signal=TERM --kill-after=10s 210s /usr/bin/env DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get install -y --no-install-recommends gcc
+              if ($LASTEXITCODE -ne 0) {
+                $r.status = 'BLOCKED_GCC_APT_INSTALL_FAILED'
+                throw 'G7_R16_APT_INSTALL_FAILED'
+              }
+              $r.apt_install = 'PASS'
+            } else {
+              $r.status = 'BLOCKED_COMPILER_PROBE_SOURCE_OR_TRANSPORT'
+              throw 'G7_R16_COMPILER_PROBE_UNQUALIFIED'
+            }
+            # Before calling the native path, re-verify original source/pins and
+            # compiler visibility as the NORMAL WSL user. Never run model as root.
+            $post = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r16_compiler_probe.py" --expected-sha "$env:GITHUB_SHA")
+            if ($LASTEXITCODE -ne 0 -or ($post | Out-String).Trim() -cne 'G7_R16_COMPILER=PRESENT') {
+              $r.status = 'BLOCKED_COMPILER_NOT_VISIBLE_TO_UNPRIVILEGED_USER'
+              throw 'G7_R16_GCC_PROVISION_NOT_QUALIFIED'
+            }
+            $r.compiler_after = 'PRESENT_UNQUALIFIED'
+            $r.status = 'COMPILER_PRESENT_NATIVE_FORWARD_STARTED'
+            $r.native_forward = 'ONE_BOUNDED_FORWARD_STARTED'
+            # Existing G7-R15 accepts only after host C shared-library probe and
+            # runs original pinned R6 -> G3 exact native forward/controls once.
+            # Since GCC is present this skips its sudo provisioning branch entirely.
+            & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 270s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r15_compiler_repair_forward.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r15_compiler_forward.json"
+            if ($LASTEXITCODE -ne 0) {
+              $r.status = 'BLOCKED_NATIVE_FORWARD_OR_HOST_COMPILER_PROBE'
+              $r.native_forward = 'NOT_QUALIFIED'
+              throw 'G7_R16_FORWARD_NOT_QUALIFIED'
+            }
+            $r.native_forward = 'PASS_ONE_AUTHENTIC_FORWARD'
+            $r.status = 'PASS_COMPILER_AND_BOUNDED_NATIVE_FORWARD'
+          } finally {
+            # Sanitize receipt; do not upload raw apt output or nested G3 traceback.
+            $out = Join-Path $outDir 'g7_r16_root_gcc_forward.json'
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath $out -Encoding UTF8
+            Write-Output ('G7_R16_STATUS=' + $r.status)
+            Write-Output ('G7_R16_APT_INSTALL=' + $r.apt_install)
+            Write-Output ('G7_R16_FORWARD=' + $r.native_forward)
+          }
+      - name: Preserve one sanitized admission and bounded-forward evidence set
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r16-root-gcc-forward-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r16_root_gcc_forward.json
+            local_runs/g7_r15_compiler_forward.json
+          if-no-files-found: warn
+          retention-days: 30
