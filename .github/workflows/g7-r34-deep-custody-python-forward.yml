@@ -1,0 +1,152 @@
+# G7-R34: one-use exact-version, signed Python3.12 header staging in /tmp.
+# Test-only standing authorization. No root, package install, OS/header
+# change, CUDA driver replacement, controller, training or deployment.
+# One original bounded nonfused GPU forward only after negative/positive C tests.
+name: G7-R34 corrected source custody and signed Python3.12 header forward
+on:
+  push:
+    branches:
+      - engineering/g7-r34-deep-custody-signed-py312-forward-20261107
+    paths:
+      - .github/workflows/g7-r34-deep-custody-python-forward.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r34-one-use-deep-custody-py312
+  cancel-in-progress: false
+
+jobs:
+  signed-header-and-forward:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r34-deep-custody-signed-py312-forward-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 13
+    steps:
+      - name: Checkout exact candidate in isolated worktree
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-r34-isolated
+          fetch-depth: 7
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Source SHA, signed Python.h payload, temporary C build and at most one native forward
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r34.one-use-deep-custody-py312.v1'
+            candidate_sha = $env:GITHUB_SHA
+            main_baseline = '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+            prior_r31_run = 42362001058
+            prior_r32_run = 42363941770
+            prior_r33_run = 42364151609
+            status = 'BLOCKED_NOT_STARTED'
+            source_custody = 'UNVERIFIED'
+            normal_uid = 'UNVERIFIED'
+            python_header_qualification = 'UNVERIFIED'
+            original_forward = 'NOT_RUN'
+            package_changes = 'NONE'
+            system_header_install = 'NOT_RUN'
+            root = 'NOT_USED'
+            gpu_driver_changes = 'NONE'
+            training = 'NOT_RUN'
+            scientific = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $checkout = Join-Path $env:GITHUB_WORKSPACE 'g7-r34-isolated'
+          $out = Join-Path $checkout 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r34-deep-custody-signed-py312-forward-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R32_WRONG_OWNER_RUNNER'
+            }
+            $head = (& git -C $checkout rev-parse HEAD | Out-String).Trim()
+            $headExit = $LASTEXITCODE
+            $parent = (& git -C $checkout rev-parse 'HEAD^' | Out-String).Trim()
+            $parentExit = $LASTEXITCODE
+            $grandparent = (& git -C $checkout rev-parse 'HEAD^^' | Out-String).Trim()
+            $ancestorExit = $LASTEXITCODE
+            $dirty = (& git -C $checkout status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyExit = $LASTEXITCODE
+            $changed = @(& git -C $checkout diff --name-only '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' HEAD)
+            $diffExit = $LASTEXITCODE
+            if ($headExit -ne 0 -or $parentExit -ne 0 -or $ancestorExit -ne 0 -or
+                $dirtyExit -ne 0 -or $diffExit -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or
+                $parent -cne '28671ca17b5b4a555ece3efea0d205f4e1b9cadb' -or
+                $grandparent -cne '383967c902250516b29fd38ca3c41fd37892d0de' -or
+                $dirty -or $changed.Count -ne 4 -or
+                $changed -notcontains 'scripts/g7_r32_ephemeral_py312_forward.py' -or
+                $changed -notcontains '.github/workflows/g7-r32-signed-ephemeral-python-forward.yml' -or
+                $changed -notcontains '.github/workflows/g7-r33-september-signed-python-forward.yml' -or
+                $changed -notcontains '.github/workflows/g7-r34-deep-custody-python-forward.yml') {
+              $r.status = 'BLOCKED_EXACT_SOURCE_SCOPE'
+              throw 'G7_R32_SOURCE_SCOPE'
+            }
+            $r.source_custody = 'PASS_EXACT_SHA_AND_FOUR_FILES'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$checkout" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_CHECKOUT_PATH'
+              throw 'G7_R32_WSL_PATH'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status = 'BLOCKED_NORMAL_WSL_UID'
+              throw 'G7_R32_NORMAL_UID'
+            }
+            $r.normal_uid = 'UID_1000'
+            $run = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 710s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r32_ephemeral_py312_forward.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r32_ephemeral_headers_forward.json")
+            $exit = $LASTEXITCODE
+            $statusLine = @($run | Where-Object { $_ -match '^G7_R32_STATUS=' })
+            $headerLine = @($run | Where-Object { $_ -match '^G7_R32_HEADER=' })
+            $forwardLine = @($run | Where-Object { $_ -match '^G7_R32_FORWARD=' })
+            $dpkgLine = @($run | Where-Object { $_ -match '^G7_R32_DPKG=' })
+            if ($statusLine.Count -ne 1 -or $headerLine.Count -ne 1 -or
+                $forwardLine.Count -ne 1 -or $dpkgLine.Count -ne 1) {
+              $r.status = 'BLOCKED_RECEIPT_LINE_MISSING'
+              throw 'G7_R32_RECEIPT_LINE_MISSING'
+            }
+            $r.status = $statusLine[0].Substring(14)
+            $r.python_header_qualification = $headerLine[0].Substring(14)
+            $r.original_forward = $forwardLine[0].Substring(15)
+            $dpkgStatus = $dpkgLine[0].Substring(12)
+            if ($dpkgStatus -cne 'NONE') {
+              $r.status = 'BLOCKED_SYSTEM_PACKAGE_DRIFT'
+              throw 'G7_R32_SYSTEM_PACKAGE_DRIFT'
+            }
+            if ($exit -ne 0 -or
+                $r.status -cne 'PASS_EXACT_SIGNED_TEMP_PYTHON_HEADERS_AND_ORIGINAL_FORWARD' -or
+                $r.original_forward -cne 'PASS_AUTHENTIC_NONFUSED_FORWARD') {
+              throw 'G7_R32_NATIVE_OR_HEADER_NOT_QUALIFIED'
+            }
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_r32_workflow_admission.json') -Encoding UTF8
+            Write-Output ('G7_R32_RESULT=' + $r.status)
+            Write-Output ('G7_R32_HEADER=' + $r.python_header_qualification)
+            Write-Output ('G7_R32_FORWARD=' + $r.original_forward)
+            Write-Output 'G7_R32_ROOT=NOT_USED'
+          }
+      - name: Preserve sanitized evidence even on a stopped qualification
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r34-deep-custody-py312-native
+          path: |
+            g7-r34-isolated/local_runs/g7_r32_workflow_admission.json
+            g7-r34-isolated/local_runs/g7_r32_ephemeral_headers_forward.json
+            g7-r34-isolated/local_runs/g7_r32_original_forward.json
+          if-no-files-found: warn
+          retention-days: 30
