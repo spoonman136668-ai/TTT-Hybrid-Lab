@@ -1,0 +1,226 @@
+{
+  "schema": "ttt-hybrid.g7-s24.good-view-native-continual-world-model.v1",
+  "registered_utc": "2026-11-07",
+  "research_purpose": "Determine whether good-view shared-world-state representation learning, without a tokenizer or transformer, improves intervention prediction, unfamiliar-dynamics transfer and cold retention compared with fully trained conventional alternatives; embedding alignment alone never establishes scientific success.",
+  "paper": {
+    "arxiv": "2610.39302v1",
+    "published_utc": "2026-10-29",
+    "source_repo": "galilai-group/prh-proof",
+    "source_commit": "a2b9949fa907d4fbe562742d4b1ffa7205ab7427",
+    "claimed_empirical_42x_scope": "training positive-pair SAMPLES to matched representation alignment, not GPU time, FLOPs, behavior or language capability",
+    "theorem_scope": "Shared finite world, injective renderings, identical positive-pair kernels, population-optimal modality encoders, uniqueness up to orthogonal transform (spectral gap for whitened second-order objective). No guarantee for partial observation or action-conditioned prediction.",
+    "integration": "Conceptual inspiration only; no downloaded pretrained weights, remote datasets, third-party training runtime or unqualified new dependencies."
+  },
+  "predecessor": {
+    "project_repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "exact_s23_sha": "6c548108db4a01430cae7c6700a9f597757ac6a9",
+    "s23_run": 42409486773,
+    "s23_result": "PERSISTENT_CHANGEPOINT_BANK_ROUTING_OR_RETENTION_NULL",
+    "s20_world_blob": "ac3f9ddd5b879e53e62030707fb6419adaf732ca",
+    "s18_feature_blob": "cfc1959b8812e9abad581018462302bc89a31d59"
+  },
+  "hypotheses": {
+    "H0": "A JEPA trained with good independently sampled observations of the same causal initial state improves untrained-procrustes OOD cross-view geometry over a same-trace augmentation control with identical encoder capacity and data budgets.",
+    "H1": "If H0 succeeds, fitting a separate action-conditioned predictor on the good-view latent improves held-out new-family intervention outcome MSE over the best fully trained recurrent, contrastive, predictive-only, and kernel controls at matched information/actions and measured total compute.",
+    "H2": "The latent represents causal state rather than superficial positive-pair shortcuts: shuffled-state positives destroy benefit, independent nuisance/graph permutations preserve it, post-switch context ablations damage performance, and source-family competence survives sequential new-family learning.",
+    "separation": "Embedding geometry, intervention behavior and retention are independent outcomes; H0 success without H1/H2 counts REPRESENTATION_ONLY_NOT_INTELLIGENCE_GAIN."
+  },
+  "world_and_views": {
+    "simulator": "Exact pinned G7-S20 two-dimensional hidden (x,z), source/sine/rational family, sensor y=x+0.25*z with independent noise, interventions u and continuous dt. New paired-view adapter may change only observation presentation and initial-state cloning, not scientific dynamics or coefficients; prove wrapper equivalence against original simulator.",
+    "pair_semantics": "For each synthetic world initial hidden state and physical coefficients, independently draw two DIFFERENT action schedules, independent sensor noise and nuisance. Two views share ONLY initial state/coefficient identity, NOT an identical sensor trajectory. Must not pair post-action states that differ after interventions.",
+    "view_sensor_sequence": {
+      "shape": "N×32×4",
+      "fields": [
+        "sensor_y",
+        "continuous_u",
+        "continuous_dt",
+        "measured_next_sensor"
+      ],
+      "encoder": "GRU/state-space recurrent encoder over real-valued observation transitions"
+    },
+    "view_event_graph": {
+      "nodes": "32 numeric event nodes: (sensor_y, continuous_u, dt, measured_next_sensor, measured_delta_y, normalized_observation_time)",
+      "edges": "chronological predecessor/successor and optional learned numerical similarity weighted edges; graph permutations are nuisance only",
+      "encoder": "two-round shared-parameter message-passing network with permutation-invariant pooling, no discrete vocabulary or event tokens"
+    },
+    "forbidden_inputs": [
+      "hidden x or z",
+      "law-family identity",
+      "coefficient vectors",
+      "world identifiers",
+      "heldout query outcome",
+      "view-pair correspondence IDs as features",
+      "token IDs",
+      "text captions",
+      "fixed supervised latent state"
+    ],
+    "pairing_metadata": "Hidden initial state/coefficient keys used by data generator ONLY for constructing positive pairs and calculating post-hoc analysis; never input to encoders or action heads.",
+    "theory_caveat": "Single noisy scalar sensor is not injective. Temporal interventions may make dynamics locally observable but this must be tested empirically; the published PRH theorem does not automatically apply.",
+    "positive_control": "Exact physical consequence oracle MSE zero by construction; known competent recurrent/kernel predictor must demonstrate sensor-action learnability before cross-model scientific interpretation."
+  },
+  "treatment_arms": {
+    "good_view": "Two SEPARATELY TRAINED modality-specific JEPA encoders on independent same-initial-state views; centered whitened second-order anti-collapse loss and no cross-modal gradient or correspondence labels in encoder training; fit one O(k) Procrustes matrix using train-only paired states for downstream geometry scoring.",
+    "same_trace_bad_view": "Matched dual encoders, same number of pairs, but positives are augmentations of one sampled trajectory retaining modality nuisance; independent positive-pair world relationship absent.",
+    "shuffled_positive_negative": "Matched dual encoders; random other-world positive with same family and nuisance marginals, exact corruption rate 100%; strong negative.",
+    "contrastive": "Matched architecture, good-view relationship, InfoNCE contrastive objective with same action/info budget and no label shortcuts.",
+    "predictive_only": "Matched recurrent and graph encoder budgets, supervised action-conditioned next-observation training without JEPA representation objective.",
+    "GRU_conventional": "Fully trained conventional recurrent action-conditioned world model, matched data/actions and total active compute where possible; strongest control, not merely 8 optimizer updates.",
+    "RBF_KRR": "Calibrated non-neural kernel ridge predictor, fixed train-only hyperparameter grid, as additional competent conventional control.",
+    "random_init": "Same untrained encoder and trained readout to test whether gains are actually due to learned views.",
+    "oracle": "Synthetic hidden-state physical engine, evaluation only; no learning and not a fair trained-model baseline."
+  },
+  "train": {
+    "seeds": [
+      5201,
+      5231,
+      5279
+    ],
+    "development_source_seeds": [
+      5101,
+      5113,
+      5129
+    ],
+    "validation_seeds": [
+      5303,
+      5311,
+      5323
+    ],
+    "study_stages": [
+      {
+        "phase": "A",
+        "family": "source",
+        "updates": 640
+      },
+      {
+        "phase": "B",
+        "family": "sine",
+        "updates": 320
+      },
+      {
+        "phase": "C",
+        "family": "rational",
+        "updates": 320
+      },
+      {
+        "phase": "D",
+        "family": "source",
+        "updates": 320
+      }
+    ],
+    "batch_worlds": 32,
+    "positive_views_per_world": 2,
+    "transitions_per_view": 32,
+    "intervention_queries_per_world": 8,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.01,
+    "train_step_gradient_clip": 1,
+    "embedding_width": 16,
+    "loss_coefficients": {
+      "pair_alignment": 1,
+      "whitened_variance": 1,
+      "off_diagonal_covariance": 0.1
+    },
+    "stop_gradient_policy": "separate encoders independently; within-modality paired loss compares both trainable embeddings with identical optimizer configuration",
+    "budget_rule": "Each arm receives exactly the same distinct WORLD IDs, initial states, action-probe counts and intervention labels; compare measured examples, active FLOPs, CPU wall, RSS and optimizer updates. Raw pair count is not equal to compute.",
+    "conventional_baseline_training": "Use precommitted 5-check validation plateau rule on validation-only worlds after at least 640 updates: <0.1% improvement across five spaced evaluations, maximum 1600 per phase; other arms may train to the same measured compute envelope. If conventional baseline is undertrained, science qualification invalid.",
+    "no_validation_test_leak": true,
+    "fresh_vs_pretrained": "All networks initialize from seeded random weights. No pretrained transformer, LLM, human-generated captions, web-crawled datasets, external model or paid API."
+  },
+  "test": {
+    "ood_source_seeds": [
+      5407,
+      5413,
+      5437
+    ],
+    "ood_sine_seeds": [
+      5501,
+      5507,
+      5521
+    ],
+    "ood_rational_seeds": [
+      5609,
+      5623,
+      5639
+    ],
+    "negative_control_seeds": [
+      5701,
+      5711,
+      5723
+    ],
+    "heldout_worlds_per_seed_family": 96,
+    "sample_provenance": "Disjoint train/validation/test initial states and dynamics coefficients; heldout dynamics coefficient ranges disjoint from fit/calibration with exact seed/parameter manifest. Repeated-world leakage must be automatically rejected.",
+    "metrics": [
+      "test Procrustes alignment error after rotation fitted on training-world pairs only",
+      "whitened encoder rank and variance/covariance collapse diagnostics",
+      "independent nuisance and graph-permutation invariance",
+      "action-conditioned counterfactual sensor MSE on 8 heldout interventions per world",
+      "source/sine/rational OOD zero-shot transfer and C/A,D/A cold retention ratios",
+      "post-switch observation occlusion vs true-history causal negative controls",
+      "compute-active FLOPs, total CPU seconds, peak RSS, train-world count, training samples and checkpoint bytes"
+    ],
+    "paired_bootstrap": {
+      "resamples": 2000,
+      "seed": 5801,
+      "confidence": 0.95,
+      "unit": "world (not individual query)",
+      "condition": "train-only parameters frozen prior to eval, paired on same heldout initial states and interventions"
+    },
+    "false_claim_gate": "No theorem validation or intelligence-level conclusions from these synthetic/partial-observation outcomes."
+  },
+  "preregistered_thresholds": {
+    "geometry_good_vs_bad_relative_error_reduction_min": 0.15,
+    "geometry_each_seed_positive": true,
+    "geometry_paired_bootstrap_gain_lower_95_gt": 0,
+    "OOD_intervention_mse_good_vs_strongest_competent_control_relative_gain_min": 0.1,
+    "OOD_intervention_all_seeds_strict_gain": true,
+    "OOD_intervention_paired_bootstrap_gain_lower_95_gt": 0,
+    "source_C_over_A_MSE_max": 1.25,
+    "source_D_over_A_MSE_max": 1.2,
+    "shuffled_positive_relative_gain_vs_bad_max": 0,
+    "causal_post_switch_ablation_error_ratio_min": 1.15,
+    "variance_min_per_embedding_dim": 0.05,
+    "full_rank_fraction_min": 0.75,
+    "measured_compute_ratio_to_best_control_max": 1.25,
+    "max_rss_bytes": 2147483648,
+    "max_cpu_wall_seconds_per_frozen_arm": 900,
+    "all_checks_per_seed_required": true,
+    "independent_scientific_reproduction_required_for_SCIENTIFIC_PASS": true,
+    "no_posthoc_changes": true
+  },
+  "qualifications": {
+    "phase_0": "READ_ONLY source/manifest check and independent-view pairing, deterministic seed, exact state provenance, no ID-feature leakage and graph permutation negative controls; no scientific inference.",
+    "phase_1": "ENGINEERING qualification on an exact candidate SHA and existing qualified platform; full platform regression and immutable receipts when code changes are promoted.",
+    "phase_2": "One separately authorized frozen first-use run on fresh seeds (not covered by this registration), with strong conventional controls and complete resource costs.",
+    "phase_3": "Independent source/custody reproduction and separate scientifically accepted result; never inferred from green CI.",
+    "current_status": "PROTOCOL_REGISTERED_NOT_EXECUTED",
+    "allowed_claims": [
+      "proposal prepared",
+      "no execution receipts yet"
+    ],
+    "invalid_outcomes": [
+      "dataset pairing leaks labels",
+      "same-trace or same-noise good positives",
+      "incomplete baseline training",
+      "wrong seed groups",
+      "cross-modal training when independently trained claimed",
+      "no theorem assumptions",
+      "unmatched information or compute presented as controlled"
+    ]
+  },
+  "authority_and_isolation": {
+    "project": "TTT-Hybrid-Lab isolated development research only",
+    "execution": "NO NEW SCIENTIFIC FIRST USE authorised by this record; do not run a new scientific first-use based on GitHub write permission alone.",
+    "owners": "Wingless/Yggdrasil/FORGE remain project-specific owners. No edits, PRs, runner/scheduler changes, integrations, or deployment to them.",
+    "runner": "existing project-owned qualified CPU runner only following separate authority check",
+    "no_root": true,
+    "no_new_packages": true,
+    "no_paid_apis": true,
+    "no_network_datasets": true,
+    "no_live_trading": true,
+    "no_merge": true,
+    "no_accepted_ref_mutation": true,
+    "no_deployment": true,
+    "prior_findings": "G7-S1 and G7-S20 through S23 negative and null experiments remain immutable; no reclassification or retroactive tuning."
+  }
+}
