@@ -96,6 +96,78 @@ def evaluate(model, seed, count, *, device):
     return normal, shuffled
 
 
+
+def evaluate_support_mechanism(model, seed, count, *, device):
+    """Fresh heldout: oracle and zero controls plus causal support interventions.
+
+    Caller has already trained the two original frozen arms; this adds no
+    optimizer steps, gradients, source changes, or training-data exposure.
+    """
+    import torch
+    metrics = {
+        "zero_baseline_mse": [],
+        "oracle_correct_mse": [],
+        "oracle_shuffled_mse": [],
+        "model_correct_mse": [],
+        "model_shuffled_mse": [],
+        "model_erased_mse": [],
+        "shuffled_prediction_movement_mse": [],
+        "erased_prediction_movement_mse": [],
+    }
+    model.eval()
+    with torch.no_grad():
+        for index in range(count):
+            x, target, shuffled = episode(seed*100000 + 950000 + index)
+            erased = x.clone()
+            erased[:, 1:8:2, 16:32] = 0
+            keys = x[:, 0:8:2, :16]
+            queries = x[:, 8:, :16]
+            matches = (queries[:, :, None, :] ==
+                       keys[:, None, :, :]).all(dim=-1)
+            require(bool((matches.sum(dim=-1) == 1).all()),
+                    "ORACLE_KEY_MATCH_NOT_UNIQUE")
+            require(bool((x[:, 8:, 16:32] == 0).all()) and
+                    bool((shuffled[:, 8:, :] == x[:, 8:, :]).all()) and
+                    bool((erased[:, 8:, :] == x[:, 8:, :]).all()),
+                    "QUERY_VALUE_LEAK_OR_INTERVENTION_DRIFT")
+            values = x[:, 1:8:2, 16:32]
+            wrong_values = shuffled[:, 1:8:2, 16:32]
+            lookup = matches.float()
+            oracle = torch.einsum("bqi,biv->bqv", lookup, values)
+            wrong_oracle = torch.einsum("bqi,biv->bqv", lookup, wrong_values)
+            require(bool(torch.equal(oracle, target)),
+                    "ORACLE_RETRIEVAL_OR_TARGET_BROKEN")
+            require(bool((erased[:, 1:8:2, 16:32] == 0).all())
+                    and bool((erased[:, 0:8:2, :] == x[:, 0:8:2, :]).all()),
+                    "ERASED_SUPPORT_CONTROL_INVALID")
+            x, target, shuffled, erased = (
+                x.to(device), target.to(device),
+                shuffled.to(device), erased.to(device)
+            )
+            correct = model(x)[:, 8:, :16]
+            altered = model(shuffled)[:, 8:, :16]
+            removed = model(erased)[:, 8:, :16]
+            require(bool(torch.isfinite(correct).all())
+                    and bool(torch.isfinite(altered).all())
+                    and bool(torch.isfinite(removed).all()),
+                    "NONFINITE_INTERVENTION_OUTPUT")
+            def append(label, value):
+                metrics[label].append(float(value))
+            append("zero_baseline_mse", float(target.square().mean().item()))
+            append("oracle_correct_mse", 0.0)
+            append("oracle_shuffled_mse",
+                   float((wrong_oracle - target.cpu()).square().mean().item()))
+            append("model_correct_mse", (correct - target).square().mean().item())
+            append("model_shuffled_mse", (altered - target).square().mean().item())
+            append("model_erased_mse", (removed - target).square().mean().item())
+            append("shuffled_prediction_movement_mse",
+                   (correct - altered).square().mean().item())
+            append("erased_prediction_movement_mse",
+                   (correct - removed).square().mean().item())
+    return {name: statistics.mean(values) for name, values in metrics.items()}
+
+
+
 def estimate_bootstrap(base, online, n, seed):
     rng = random.Random(seed)
     ratios = []
@@ -123,6 +195,25 @@ def run(args):
     require(spec.get("schema") == "ttt-hybrid.g7-s1.pre_registered_association.v1",
             "PROTOCOL_SCHEMA_DRIFT")
     protocol_sha = hashlib.sha256(protocol_bytes).hexdigest()
+    diagnostic = None
+    diagnostic_sha = None
+    if args.diagnostic_protocol:
+        require(args.diagnostic_protocol.resolve() ==
+                (ROOT / "experiments/g7_s4_frozen_mechanism.json").resolve(),
+                "S4_DIAGNOSTIC_PROTOCOL_PATH_DENIED")
+        raw_diagnostic = args.diagnostic_protocol.read_bytes()
+        diagnostic_sha = hashlib.sha256(raw_diagnostic).hexdigest()
+        diagnostic = json.loads(raw_diagnostic)
+        require(diagnostic["schema"] == "ttt-hybrid.g7-s4.support-causal-diagnostic.v1"
+                and diagnostic["predecessor"]["run"] == 42365966599
+                and diagnostic["predecessor"]["frozen_s1_protocol_sha256"] ==
+                protocol_sha
+                and diagnostic["design"]["seeds"] == [101,211,307]
+                and diagnostic["design"]["train_steps_per_arm"] == 8
+                and diagnostic["design"]["novel_episodes_per_seed"] == 6
+                and diagnostic["thresholds"]["zero_baseline_mse"] == 1.0
+                and diagnostic["thresholds"]["oracle_shuffled_mse_min"] == 1.5,
+                "S4_PRE_REGISTERED_DIAGNOSTIC_DRIFT")
     train = spec["training"]
     require(train["seeds"] == [101, 211, 307] and train["steps"] == 8
             and train["batch_size"] == 2 and train["sequence_length"] == 16
@@ -238,6 +329,14 @@ def run(args):
                 model, seed, spec["episode"]["heldout_episodes_per_seed"],
                 device=device,
             )
+            if diagnostic is not None:
+                mark_phase("S4_FRESH_SUPPORT_CAUSAL_DIAGNOSTIC")
+                new_measures = evaluate_support_mechanism(
+                    model, seed,
+                    diagnostic["design"]["novel_episodes_per_seed"],
+                    device=device)
+            else:
+                new_measures = None
             torch.cuda.synchronize(device)
             peak = torch.cuda.max_memory_allocated(device)
             peak_all = max(peak_all, int(peak))
@@ -248,6 +347,7 @@ def run(args):
                 "loss_first": losses[0], "loss_final": losses[-1],
                 "heldout_episode_mse": heldout,
                 "shuffled_support_episode_mse": negative,
+                "support_mechanism_diagnostic": new_measures,
                 "peak_torch_allocated_bytes": int(peak),
             }
             del model, optimizer
@@ -290,6 +390,58 @@ def run(args):
         and interval[0] > 0
         and shuffle_harm >= threshold["shuffled_support_relative_loss_increase_min"]
     )
+    support_causal = None
+    if diagnostic is not None:
+        mark_phase("S4_AGGREGATE_SUPPORT_CAUSAL_RESULTS")
+        d = {arm: {} for arm in ("online_ttt", "static_matched")}
+        for arm in d:
+            for metric in reports[0]["arms"][arm]["support_mechanism_diagnostic"]:
+                d[arm][metric] = statistics.mean(
+                    item["arms"][arm]["support_mechanism_diagnostic"][metric]
+                    for item in reports)
+        online_d, static_d = d["online_ttt"], d["static_matched"]
+        controls_pass = (
+            all(abs(d[arm]["zero_baseline_mse"] - 1.0) < 1e-12 and
+                d[arm]["oracle_correct_mse"] <=
+                diagnostic["thresholds"]["oracle_correct_mse_max"] and
+                d[arm]["oracle_shuffled_mse"] >=
+                diagnostic["thresholds"]["oracle_shuffled_mse_min"]
+                for arm in d)
+        )
+        zero_gain = ((1.0 - online_d["model_correct_mse"]) / 1.0)
+        online_shuffle_harm = (
+            (online_d["model_shuffled_mse"]-online_d["model_correct_mse"]) /
+            online_d["model_correct_mse"])
+        online_erase_harm = (
+            (online_d["model_erased_mse"]-online_d["model_correct_mse"]) /
+            online_d["model_correct_mse"])
+        per_seed_new = [
+            (1.0-item["arms"]["online_ttt"]["support_mechanism_diagnostic"]
+             ["model_correct_mse"])
+            for item in reports
+        ]
+        thresholds_pass = (
+            controls_pass and
+            zero_gain >= diagnostic["thresholds"]["model_relative_mse_below_zero_min"] and
+            online_shuffle_harm >= diagnostic["thresholds"]["online_shuffled_relative_harm_min"] and
+            online_erase_harm >= diagnostic["thresholds"]["online_erased_relative_harm_min"] and
+            all(v > 0 for v in per_seed_new)
+        )
+        support_causal = {
+            "protocol_sha256": diagnostic_sha,
+            "status": ("ASSAY_INVALID" if not controls_pass else
+                       "DIAGNOSTIC_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION"
+                       if thresholds_pass else
+                       "ASSAY_VALID_MODEL_NOT_USING_BINDINGS"),
+            "oracle_and_zero_controls_pass": controls_pass,
+            "all_frozen_mechanism_thresholds_met": thresholds_pass,
+            "online_vs_zero_relative_gain": zero_gain,
+            "online_shuffle_relative_harm": online_shuffle_harm,
+            "online_erase_relative_harm": online_erase_harm,
+            "per_seed_online_zero_gains": per_seed_new,
+            "arm_metrics": d,
+            "scientific_acceptance": "NOT_AUTHORIZED",
+        }
     return {
         "schema": "ttt-hybrid.g7-s1.authentic-native-pilot.v1",
         "status": ("PRELIMINARY_POSITIVE_REQUIRES_INDEPENDENT_REPLICATION"
@@ -301,6 +453,7 @@ def run(args):
         "task": "heldout_episodic_key_value_binding",
         "seeds": train["seeds"],
         "arms": reports,
+        "support_causal_diagnostic": support_causal,
         "primary": {
             "static_mse": base_mse,
             "online_mse": online_mse,
@@ -322,6 +475,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("--expected-sha", required=True)
     p.add_argument("--protocol", required=True, type=Path)
+    p.add_argument("--diagnostic-protocol", type=Path)
     p.add_argument("--receipt", required=True, type=Path)
     a = p.parse_args()
     report = {
