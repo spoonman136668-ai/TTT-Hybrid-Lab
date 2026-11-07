@@ -1,0 +1,70 @@
+{
+  "schema": "ttt-hybrid.g7-s4.support-causal-diagnostic.v1",
+  "frozen_at": "2026-11-07",
+  "predecessor": {
+    "run": 42365966599,
+    "candidate_sha": "16b68404408241bfa9e015857c88de8eccc97712",
+    "frozen_s1_protocol_sha256": "804f928360785591f00fd58f2b19b6245b36f81b61c858c78d20ce34711a6362",
+    "s3_receipt_sha256": "cf7c32ec3f4fef59ba7c7320ce4095c9296f622528a0e4281f08a6549594af3a",
+    "finding": "S3 heldout online MSE 1.24346, matched-static 1.25770, shuffled-support online MSE 1.23736; online is worse than zero predictor MSE 1.0."
+  },
+  "question": "Does a correctly assembled, novel support-key/value association cause accurate output changes in the authentic trained Mamba2+TTT hybrid? Or are both arms largely insensitive to episodic support?",
+  "design": {
+    "source": "Keep original G7-S1 frozen task, original upstream pinned Mamba2 and TTTLinear, and original training seeds/steps/batch/optimizer unchanged.",
+    "seeds": [
+      101,
+      211,
+      307
+    ],
+    "train_steps_per_arm": 8,
+    "arms": [
+      "online_ttt",
+      "static_matched"
+    ],
+    "head_dims": 16,
+    "novel_test_rng": "seed*100000+950000+episode_index",
+    "novel_episodes_per_seed": 6,
+    "explicit_no_overlap_with_s1_heldout": true,
+    "assay": "For each fresh episode, forward correct support, cyclically permuted support values with unchanged keys/queries/labels, and zeroed support values. Use same trained weights, no gradient or update.",
+    "controls": [
+      "Oracle lookup must reconstruct all eight query values from four preceding support pairs, squared error exactly 0.",
+      "Corrupted-support oracle must suffer mean squared error >=1.5 relative to true targets (expected ~2 for independent +/-1 values).",
+      "Zero predictor gives exactly MSE=1.0 for +/-1 targets, not a learned baseline.",
+      "Each query key occurs in exactly one of four preceding key slots; target information never appears in query token values.",
+      "Inputs in all support manipulations share unchanged query positions and labels.",
+      "No optimizer updates during fresh heldout evaluation.",
+      "Both arms same initial weights, optimizer updates, trained episodes and parameter counts."
+    ],
+    "measured": [
+      "arm-wise heldout original/shuffled/erased MSE",
+      "arm-wise RMS prediction movement when support shuffled/erased",
+      "online and static MSE relative to parameter-free zero baseline",
+      "online minus static support-corruption loss change",
+      "oracle correct vs corrupted MSE",
+      "source/runtime/VRAM/latency custody"
+    ],
+    "thresholds": {
+      "oracle_correct_mse_max": 1e-12,
+      "oracle_shuffled_mse_min": 1.5,
+      "zero_baseline_mse": 1,
+      "model_relative_mse_below_zero_min": 0.05,
+      "online_shuffled_relative_harm_min": 0.03,
+      "online_erased_relative_harm_min": 0.03,
+      "all_seeds_positive": true
+    },
+    "classification": "ASSAY_INVALID if any positive/zero oracle or target-leak control fails; ASSAY_VALID_MODEL_NOT_USING_BINDINGS if controls pass but trained online misses any model threshold; DIAGNOSTIC_SIGNAL_REQUIRES_INDEPENDENT_REPLICATION if all pass. Never SCIENTIFIC_PASS on this diagnostic.",
+    "safety": {
+      "time_seconds_max": 420,
+      "torch_vram_bytes_max": 1073741824,
+      "free_vram_bytes_min": 4294967296,
+      "root": "FORBIDDEN",
+      "pkg_install": "FORBIDDEN",
+      "external_paid_api": "FORBIDDEN",
+      "model_weights_persisted": false,
+      "upstream_changes": "FORBIDDEN",
+      "runner": "TTT-HYBRID-GPU-WIN",
+      "scientific_promotion": "NOT_AUTHORIZED",
+      "deploy": "NOT_AUTHORIZED"
+    }
+  }
+}
