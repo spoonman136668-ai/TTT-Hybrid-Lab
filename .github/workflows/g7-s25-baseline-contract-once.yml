@@ -1,0 +1,160 @@
+# One-use development-only conventional baseline receipt contract.
+# No training, heldout world generation, new runtime, package install, or acceptance.
+name: G7-S25 baseline pre-admission source and negative controls R2
+on:
+  push:
+    branches:
+      - research/g7-s25-contradiction-ttt-frozen-20261107
+    paths:
+      - .github/workflows/g7-s25-baseline-contract-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s25-baseline-admission-r2-once
+  cancel-in-progress: false
+jobs:
+  isolated-read-only-baseline-source-contract:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 9
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-baseline-isolated
+          fetch-depth: 80
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify frozen source and all source-only baseline admission tests
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-baseline-isolated'
+          $out=Join-Path $root 'local_runs'
+          $receipt=[ordered]@{
+            schema='ttt-hybrid.g7-s25.baseline-admission-once.v1'
+            candidate_sha=$env:GITHUB_SHA
+            frozen_base='7d1f8bb1547d4d39df7412091a68dabb03f0ac3f'
+            status='BLOCKED_NOT_STARTED'
+            source_custody='UNVERIFIED'
+            focused_tests='NOT_RUN'
+            baseline_training='NOT_RUN'
+            baseline_qualification='UNVERIFIED'
+            full_windows_linux_regression='UNVERIFIED'
+            scientific_first_use='NOT_RUN'
+            heldout='NOT_RUN'
+            cuda='NOT_USED'
+            package_installs='NONE'
+            accepted_ref='UNCHANGED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_RUN_NUMBER -cne '2' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $receipt.status='BLOCKED_SCOPE_OR_RUNNER'
+              throw 'INVALID_AUTHORITY'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hc=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $cc=$LASTEXITCODE
+            $expected=@(
+              '.github/workflows/g7-s25-cost-ledger-qualification.yml',
+              '.github/workflows/g7-s25-cost-ledger-qualification-r2.yml',
+              '.github/workflows/g7-s25-gate-design-qualification.yml',
+              '.github/workflows/g7-s25-numeric-engineering.yml',
+              '.github/workflows/g7-s25-paired-physics-engineering.yml',
+              '.github/workflows/g7-s25-baseline-contract-once.yml',
+              'experiments/g7_s25_frozen_contradiction_ttt.json',
+              'scripts/g7_s25_contradiction_gate.py',
+              'scripts/g7_s25_numeric_ttt.py',
+              'scripts/g7_s25_paired_interventions.py',
+              'scripts/g7_s25_cost_ledger.py',
+              'scripts/g7_s25_engineering_qualifier.py',
+              'scripts/g7_s25_baseline_admission.py',
+              'tests/test_g7_s25_gate_contract.py',
+              'tests/test_g7_s25_numeric_ttt.py',
+              'tests/test_g7_s25_paired_interventions.py',
+              'tests/test_g7_s25_cost_ledger.py',
+              'tests/test_g7_s25_baseline_admission.py'
+            )
+            $unique=@($expected | Select-Object -Unique)
+            if ($hc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $expected.Count -ne 18 -or $unique.Count -ne 18 -or
+                $changed.Count -ne $expected.Count) {
+              $receipt.status='BLOCKED_EXACT_SHA_OR_SCOPE'
+              throw 'CUSTODY_DRIFT'
+            }
+            foreach ($name in $expected) {
+              if ($changed -cnotcontains $name) {
+                $receipt.status='BLOCKED_UNEXPECTED_FILE'
+                throw 'UNEXPECTED_FILE'
+              }
+            }
+            $receipt.source_custody='PASS_EXACT_SHA_EIGHTEEN_UNIQUE_FILES'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $receipt.status='BLOCKED_WSL_PATH'
+              throw 'WSL'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $receipt.status='BLOCKED_NORMAL_USER'
+              throw 'NORMAL_USER_REQUIRED'
+            }
+            $proof=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 300s /usr/bin/python3 -I -B "$linux/scripts/g7_s25_engineering_qualifier.py" --sha "$env:GITHUB_SHA")
+            $rc=$LASTEXITCODE
+            $report=Join-Path $out 'g7_s25_numeric_engineering.json'
+            if ($rc -ne 0 -or -not (Test-Path -LiteralPath $report)) {
+              $receipt.status='BLOCKED_QUALIFICATION_OR_TESTS'
+              throw 'FOCUSED_FAILED'
+            }
+            $q=Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+            $receipt.focused_tests=$q.status
+            if ($q.sha -cne $env:GITHUB_SHA -or
+                $q.source -cne 'PASS_EXACT_EIGHTEEN_FILES_FROZEN_S25_AND_S20_BLOBS' -or
+                $q.status -cne 'PASS_54_FOCUSED_ENGINEERING_ONLY' -or
+                $q.pinned_environment -cne 'PASS_EXISTING_EXACT_R3_MANIFEST' -or
+                $q.scientific_first_use -cne 'NOT_RUN' -or
+                $q.training -cne 'NOT_RUN' -or
+                $q.calibration -cne 'NOT_RUN' -or
+                $q.heldout -cne 'NOT_RUN' -or
+                $q.gpu -cne 'NOT_USED' -or
+                $q.packages_changed -cne $false) {
+              $receipt.status='BLOCKED_UNQUALIFIED_RECEIPT'
+              throw 'INVALID_RECEIPT'
+            }
+            $receipt.status='PASS_54_FOCUSED_SOURCE_ONLY'
+            Write-Output 'S25_BASELINE_CONTRACT=PASS_16_SYNTHETIC_RECEIPT_TESTS'
+            Write-Output 'S25_ALL_FOCUSED=PASS_54'
+            Write-Output 'S25_TRAINING=NOT_RUN'
+            Write-Output 'S25_SCIENCE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s25_baseline_workflow_custody.json') -Encoding UTF8
+            Write-Output ('S25_BASELINE_ENGINEERING_GATE=' + $receipt.status)
+          }
+
+      - name: Preserve candidate-SHA and pre-first-use receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s25-baseline-pre-admission-${{ github.sha }}
+          path: |
+            g7-s25-baseline-isolated/local_runs/g7_s25_baseline_workflow_custody.json
+            g7-s25-baseline-isolated/local_runs/g7_s25_numeric_engineering.json
+          if-no-files-found: warn
+          retention-days: 30

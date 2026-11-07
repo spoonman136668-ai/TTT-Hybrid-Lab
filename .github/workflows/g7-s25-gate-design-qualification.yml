@@ -1,0 +1,124 @@
+# S25 engineering only: preregistered design and synthetic-free gate tests.
+name: G7-S25 contradiction TTT protocol and gate design-only proof
+on:
+  push:
+    branches:
+      - research/g7-s25-contradiction-ttt-frozen-20261107
+    paths:
+      - .github/workflows/g7-s25-gate-design-qualification.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-s25-contradiction-gate-design-once
+  cancel-in-progress: false
+jobs:
+  frozen-protocol-and-gate:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 5
+    steps:
+      - name: Isolated checkout at exact commit, no credentials retained
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-dev-isolated
+          fetch-depth: 8
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Validate exact frozen source and execute standard-library tests only
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:GITHUB_WORKSPACE 'g7-s25-dev-isolated'
+          $out = Join-Path $root 'local_runs'
+          $r = [ordered]@{
+            schema='ttt-hybrid.g7-s25.gate-design-custody.v1'
+            sha=$env:GITHUB_SHA
+            baseline='7d1f8bb1547d4d39df7412091a68dabb03f0ac3f'
+            result='BLOCKED_NOT_STARTED'
+            source='UNVERIFIED'
+            tests='NOT_RUN'
+            test_count=0
+            scientific_first_use='NOT_RUN'
+            trained_models='NOT_RUN'
+            frozen_fit_seeds='NOT_TOUCHED'
+            heldout_seeds='NOT_TOUCHED'
+            cuda='NOT_USED'
+            installations='NONE'
+            full_regression='NOT_RUN'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.result = 'BLOCKED_AUTHORITY_OR_RUNNER'
+              throw 'INVALID_SCOPE'
+            }
+            $head = (& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hc = $LASTEXITCODE
+            $dirty = (& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc = $LASTEXITCODE
+            $changed = @(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $cc = $LASTEXITCODE
+            $expected = @(
+              'experiments/g7_s25_frozen_contradiction_ttt.json',
+              'scripts/g7_s25_contradiction_gate.py',
+              'tests/test_g7_s25_gate_contract.py',
+              '.github/workflows/g7-s25-gate-design-qualification.yml'
+            )
+            if ($hc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne $expected.Count) {
+              $r.result = 'BLOCKED_EXACT_SOURCE'
+              throw 'SOURCE_MISMATCH'
+            }
+            foreach ($file in $expected) {
+              if ($changed -cnotcontains $file) {
+                $r.result = 'BLOCKED_UNEXPECTED_FILE_SCOPE'
+                throw 'SCOPE_MISMATCH'
+              }
+            }
+            $r.source = 'PASS_EXACT_SHA_FOUR_ISOLATED_FILES'
+            $linux = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $r.result = 'BLOCKED_WSL_PATH'
+              throw 'PATH_FAILED'
+            }
+            $uid = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.result = 'BLOCKED_NORMAL_USER'
+              throw 'USER_FAILED'
+            }
+            $raw = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 90s /usr/bin/python3 -I -B "$linux/tests/test_g7_s25_gate_contract.py")
+            $rc = $LASTEXITCODE
+            $response = ($raw | Out-String)
+            if ($rc -ne 0 -or $response -notmatch 'Ran 9 tests' -or
+                $response -notmatch 'OK') {
+              $r.result = 'BLOCKED_GATE_TESTS'
+              throw 'TESTS_FAILED'
+            }
+            $r.tests = 'PASS_NO_TRAINING_PURE_STDLIB'
+            $r.test_count = 9
+            $r.result = 'PASS_GATE_PROTOCOL_AND_DESIGN_ONLY'
+            Write-Output 'G7_S25_GATE_TESTS=PASS_9'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s25_gate_design_receipt.json') -Encoding UTF8
+            Write-Output ('G7_S25_ENGINEERING=' + $r.result)
+            Write-Output 'G7_S25_SCIENTIFIC_FIRST_USE=NOT_RUN'
+          }
+      - name: Preserve immutable design-only receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s25-gate-design-${{ github.sha }}
+          path: g7-s25-dev-isolated/local_runs/g7_s25_gate_design_receipt.json
+          if-no-files-found: warn
+          retention-days: 30

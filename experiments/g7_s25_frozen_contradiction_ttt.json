@@ -1,0 +1,209 @@
+{
+  "schema": "ttt-hybrid.g7-s25.contradiction-gated-continuous-ttt.v1",
+  "registered_utc": "2026-11-07",
+  "current_state": "FROZEN_PRE_FIRST_USE_NO_SCIENTIFIC_EXECUTION",
+  "research_goal": "Test whether selectively updating numeric test-time fast weights on repeated action-effect sign contradictions improves causal adaptation, OOD transfer, cold retention and whole-process efficiency relative to equally exposed trained controls.",
+  "provenance": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "baseline_main_sha": "6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2",
+    "s24_protocol_sha": "7d1f8bb1547d4d39df7412091a68dabb03f0ac3f",
+    "s24_phase1_reference_sha": "011c8e11dc7d004742f31bc001735dbadde91b61",
+    "s24_phase1_engineering_run": 42413529245,
+    "s20_world_git_blob": "ac3f9ddd5b879e53e62030707fb6419adaf732ca",
+    "native_g5_ttt_cpu_source_blob": "4a877a1132e1ef1170aa7a16c354df4f33ec62a0",
+    "official_ttt_linear_reference_sha": "cd831db10c8c9a0f6340f02da5613316a8a92b67",
+    "semantics": "The original G5 official TTT language stack is token-based. This scientific design concerns a continuous numeric fast-weight TTT adapter; never describe it as an already-qualified official Mamba2+TTT integrated GPU architecture.",
+    "s24_dependency": "S25 must remain an isolated research pilot. Do not promote S25 into S24 evaluation or claim JEPA integration until S24 independent qualification."
+  },
+  "hypotheses": {
+    "H0": "A contradiction-gated numeric TTT fast-weight adapter with eight online updates of identical cost can attain lower heldout intervention MSE than periodic conventional, uniform-random and surprise-triggered eight-update TTT.",
+    "H1": "The advantage is causal rather than generic residual magnitude: coherent observed action-effect sign reversals trigger additional useful updates while equal-magnitude errors without sign contradiction do not.",
+    "H2": "After adaptation to an unfamiliar sign-reversal dynamics family, original-world competence cold-retains and action-transfer success survives independent seeds, no extra information and no increase in matched total compute.",
+    "falsification": "Failure against strongest competent control, unlearnable control worlds, sign/magnitude leakage, missing paired clone equivalence, incomplete baseline, weak retention, unstable seeds or CPU cost overrun is scientific NULL/FAIL."
+  },
+  "mechanism": {
+    "input_order": [
+      "predicted_next_sensor_plus",
+      "predicted_next_sensor_minus",
+      "observed_next_sensor_plus",
+      "observed_next_sensor_minus",
+      "signed_primary_prequential_residual"
+    ],
+    "gate_history": "At each t, predict both action probe outcomes using ONLY prior state. Observe both probe outcomes, then decide whether one permitted online update occurs. No future observations or evaluator labels.",
+    "pair_actions": [
+      -0.8,
+      0.8
+    ],
+    "observed_pair_difference": "observed_sensor(+0.8)-observed_sensor(-0.8)",
+    "predicted_pair_difference": "predicted_sensor(+0.8)-predicted_sensor(-0.8)",
+    "contrast_uncertainty": "train-only noise sigma sensor=0.002; paired observation difference sigma=sqrt(2)*0.002; no use of true x,z or coefficients",
+    "contradiction_definition": "predicted and observed paired action-effect signs oppose AND both have absolute magnitude >=0.012 AND absolute difference >=0.018",
+    "persistent_contradiction_gate": "at least 2 contradictions within most recent 3 causally observed steps (including current step)",
+    "surprise_gate": "absolute primary prequential residual >=0.018; no action-effect sign checks",
+    "random_gate": "uniform without replacement under a fixed count using seeded online remaining-slots selection",
+    "conventional_gate": "periodic after steps 3,7,11,15,19,23,27,31",
+    "online_budget": "32 observations per episode; exactly eight real fast-weight updates per equal-budget arm; enforce remaining-slot fallback as necessary; full-update reference has 32 real updates and is costed separately",
+    "read_before_write": true,
+    "allowed_update_target": "Only numeric TTT fast-weight online parameter(s); trained slow encoder/GRU/backbone, episode inputs and capacity identical; same optimizer, learning rate, clips, starting weights and update data across arms.",
+    "forbidden": [
+      "true hidden states",
+      "true dynamics coefficients",
+      "law-family IDs",
+      "post-switch labels as gate inputs",
+      "future trajectories",
+      "heldout query targets",
+      "token IDs",
+      "unmatched paired actions or observation budget",
+      "postresult threshold search"
+    ]
+  },
+  "world": {
+    "base": "exact G7-S20 partially observed x,z dynamics and noisy y=x+0.25z; do not rewrite original source",
+    "source_coefficient_b_positive_range": [
+      0.35,
+      1.45
+    ],
+    "novel_signflip_b_range": [
+      -1.1,
+      -0.45
+    ],
+    "switch_step": 20,
+    "steps_per_episode": 32,
+    "paired_intervention_method": "At each observed time t, clone the same hidden physical state for a (+0.8,-0.8) paired probe and return only two numeric sensor measurements. All arms receive the same paired observations and actual training targets. Physical state and coefficient truth remain evaluator-private.",
+    "development_control_worlds": [
+      "stable positive-action effect",
+      "abrupt negative-action effect",
+      "no-sign-change equal-residual surprise",
+      "zero-action-effect",
+      "shuffled paired-action labels"
+    ],
+    "transfer_worlds": [
+      "unfamiliar nonlinear sign-flipped sine family",
+      "unfamiliar nonlinear rational family with action-effect reversal"
+    ],
+    "observability_caveat": "This is simulator-clone paired probing and is not a real-world demonstration of causal identification."
+  },
+  "arms": {
+    "periodic_TTT": "Conventional numeric fast-weight TTT with fixed periodic K=8 schedule",
+    "random_TTT": "Same numeric TTT, stochastic online K=8 gate sampled without replacement",
+    "surprise_TTT": "Same numeric TTT, prediction-error threshold with K=8 budget",
+    "contradiction_TTT": "Same numeric TTT, persistent signed action-contrast disagreement with K=8 budget",
+    "full_update_TTT": "Same TTT with K=32 (stronger conventional reference, separately costed and not called equal-compute)",
+    "GRU_fully_trained": "Independent fully trained recurrent numeric action-conditioned predictor; trained to frozen validation plateau before evaluation",
+    "RBF_KRR": "Train-only calibrated conventional kernel regression positive control",
+    "oracle": "Private physical simulator to check target learnability; not a fair learned comparator",
+    "ablations": [
+      "no fast-weight updates",
+      "shuffle action labels after generation only",
+      "remove sign check but keep absolute residual threshold",
+      "single-step contradiction without persistence",
+      "remove paired probes from ALL treatment arms",
+      "zero-action-effect false-trigger negative"
+    ]
+  },
+  "seeds": {
+    "engineering_only": [
+      3101,
+      3109,
+      3119
+    ],
+    "fit": [
+      6203,
+      6211,
+      6221
+    ],
+    "validation": [
+      6301,
+      6311,
+      6323
+    ],
+    "heldout_signflip": [
+      6407,
+      6413,
+      6421
+    ],
+    "heldout_transfer": [
+      6503,
+      6511,
+      6521
+    ],
+    "negative": [
+      6607,
+      6619,
+      6637
+    ],
+    "paired_bootstrap": 6803,
+    "no_reuse_from_S24": true
+  },
+  "budgets": {
+    "training_source_min_updates": 640,
+    "conventional_validation_plateau": "After >=640 updates, 5 validation-only spaced evaluations with <0.1% relative improvement; max 1600 updates; if no competent convergence science INVALID.",
+    "batch_worlds": 32,
+    "test_episodes_per_seed": 96,
+    "episode_steps": 32,
+    "action_probes_per_step": 2,
+    "heldout_counterfactual_queries_per_world": 8,
+    "real_updates_equal_budget_arms": 8,
+    "full_ttt_updates": 32,
+    "optimizer": "same precommitted numeric fast-weight SGD and step size 0.001 across arms",
+    "max_cpu_wall_seconds_per_arm": 900,
+    "max_rss_bytes": 2147483648,
+    "equal_budget_rule": "All K=8 arms share exact slow model checkpoint, numeric fast-weight dimensions, actions, observed transitions, update step gradient cost and real-update count. Same forward/probe work and supervision budget. Account for gate overhead and full source-training cost.",
+    "resource_metrics": [
+      "train_worlds",
+      "paired_observations",
+      "read_forward_FLOPs",
+      "fast_weight_update_FLOPs",
+      "gate_FLOPs",
+      "total_CPU_seconds",
+      "peak_RSS_bytes",
+      "checkpoint_bytes",
+      "real_updates",
+      "warmup_and_calibration_CPU_seconds"
+    ],
+    "frozen_budget_stop": "Abort without qualification on missing package/source custody, time/peak memory overruns, baseline nonconvergence, sample mismatch or unsanctioned GPU/system changes."
+  },
+  "science_gates": {
+    "max_matched_compute_ratio_to_strongest_K8_control": 1.25,
+    "min_relative_heldout_MSE_improvement_vs_best_K8_control": 0.1,
+    "all_three_fit_seeds_positive": true,
+    "paired_bootstrap_resamples": 2000,
+    "paired_bootstrap_lower_95_gain_gt": 0,
+    "max_MSE_ratio_vs_full_update_TTT": 1.05,
+    "max_total_CPU_ratio_vs_full_update_TTT": 0.8,
+    "max_source_retention_MSE_ratio": 1.2,
+    "max_stable_false_trigger_fraction": 0.1,
+    "negative_control_shuffled_pair_gain_max": 0,
+    "no_true_state_or_oracle_features": true,
+    "all_arms_adequately_trained": true,
+    "independent_exact_source_scientific_reproduction_required": true,
+    "interpretation": "Any representation-only, diagnosis-only, synthetic cue exploitation or infrastructure PASS is NOT SCIENTIFIC_PASS."
+  },
+  "qualification": {
+    "phase0": "Pure deterministic gate tests and protocol/source checks on engineering-only seeds; no scientific data generation, no training.",
+    "phase1": "Implement continuous numeric fast weights and fully trained conventional baselines; targeted component controls and final exact-head full required-platform regression with receipts.",
+    "phase2": "Separate first-use operator/project-scoped authorization, sealed-world registration, source provenance and no-posthoc-change custody before running any frozen fit/heldout science seeds.",
+    "phase3": "Independent faithful reproduction, whole-process resource accounting and separate scientific review/admission.",
+    "required_platforms": [
+      "Windows",
+      "Linux/WSL"
+    ],
+    "current_status": "PROTOCOL_AND_GATE_DESIGN_ONLY_NOT_SCIENTIFICALLY_EXECUTED"
+  },
+  "authority": {
+    "repository_scope": "TTT-Hybrid-Lab research branch only",
+    "allowed_now": "prepare isolated source, frozen protocol, engineering-only tests and code review; do not run sealed experiment",
+    "scientific_first_use_authorized": false,
+    "no_new_runner": true,
+    "no_controller": true,
+    "no_scheduled_tasks": true,
+    "no_install": true,
+    "no_paid_apis": true,
+    "no_training_execution": true,
+    "no_merge_or_promotion": true,
+    "no_GPU_scientific_execution": true,
+    "no_Wingless_Yggdrasil_FORGE_changes": true,
+    "no_live_trading": true,
+    "previous_S20_S23_negative_results_preserved": true
+  }
+}

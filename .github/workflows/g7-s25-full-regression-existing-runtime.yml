@@ -1,0 +1,239 @@
+# G7-S25 one-use read-only environment admission; run existing complete G4 regression
+# only when an already-installed exact CPU Python/torch/pytest tuple is available.
+# No install, cache mutation, runner registration, network downloads or science first-use.
+name: G7-S25 exact-head full CPU regression existing-runtime admission
+on:
+  push:
+    branches: [research/g7-s25-contradiction-ttt-frozen-20261107]
+    paths:
+      - .github/workflows/g7-s25-full-regression-existing-runtime.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-g7-s25-full-existing-once
+  cancel-in-progress: false
+jobs:
+  existing-windows-and-wsl:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 3 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 22
+    steps:
+      - name: Exact checkout without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-full-runtime-isolated
+          fetch-depth: 100
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+
+      - name: Read-only exact environment admission and complete regression if eligible
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:GITHUB_WORKSPACE 'g7-s25-full-runtime-isolated'
+          $out = Join-Path $root 'local_runs'
+          New-Item -ItemType Directory -Path $out -Force | Out-Null
+          $r = [ordered]@{
+            schema='ttt-hybrid.g7-s25.full-regression-existing-runtime.v1'
+            candidate_sha=$env:GITHUB_SHA
+            frozen_base='7d1f8bb1547d4d39df7412091a68dabb03f0ac3f'
+            status='BLOCKED_NOT_STARTED'
+            source='UNVERIFIED'
+            required_python='3.11'
+            required_torch='2.5.1+cpu'
+            required_pytest='8.3.4'
+            windows_environment='UNVERIFIED'
+            linux_environment='UNVERIFIED'
+            windows_full_regression='NOT_RUN'
+            linux_full_regression='NOT_RUN'
+            windows_negative_control='NOT_RUN'
+            linux_negative_control='NOT_RUN'
+            installed_packages='UNCHANGED'
+            scientific_first_use='NOT_RUN'
+            training='NOT_RUN'
+            heldout='NOT_RUN'
+            cuda='NOT_USED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s25-contradiction-ttt-frozen-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '3' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_UNAUTHORIZED_RUNNER_OR_EVENT'
+              throw 'S25_AUTHORITY'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hCode=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dCode=$LASTEXITCODE
+            $files=@(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $fCode=$LASTEXITCODE
+            $s20=(& git -C $root hash-object -- scripts/g7_s20_hidden_multicycle.py | Out-String).Trim()
+            $bCode=$LASTEXITCODE
+            $registration=(& git -C $root hash-object -- experiments/g7_s25_frozen_contradiction_ttt.json | Out-String).Trim()
+            $pCode=$LASTEXITCODE
+            if ($hCode -ne 0 -or $dCode -ne 0 -or $fCode -ne 0 -or
+                $bCode -ne 0 -or $pCode -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $files.Count -ne 22 -or
+                $s20 -cne 'ac3f9ddd5b879e53e62030707fb6419adaf732ca' -or
+                $registration -cne '31633b341403729b7ffbb7d73f3a04098ad44380') {
+              $r.status='BLOCKED_SOURCE_OR_FROZEN_PROTOCOL_DRIFT'
+              throw 'S25_CUSTODY'
+            }
+            foreach ($path in $files) {
+              if ($path -cnotmatch '^(scripts/g7_s25_|tests/test_g7_s25_|experiments/g7_s25_|\.github/workflows/g7-s25-)') {
+                $r.status='BLOCKED_UNEXPECTED_SOURCE_FILE'
+                throw 'S25_FILE_SCOPE'
+              }
+            }
+            $pins=Get-FileHash -LiteralPath (Join-Path $root 'source_pins.json') -Algorithm SHA256
+            if ($pins.Hash.ToLowerInvariant() -cne '44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768') {
+              $r.status='BLOCKED_SOURCE_PINS_DRIFT'
+              throw 'S25_SOURCE_PINS'
+            }
+            $r.source='PASS_EXACT_SHA_22_SCOPED_FILES_AND_FROZEN_SOURCE'
+            $env:CUDA_VISIBLE_DEVICES='-1'
+            $env:PYTHONDONTWRITEBYTECODE='1'
+            $env:PYTHONHASHSEED='0'
+            $probe='import json,sys;import torch,pytest;print(json.dumps(dict(python=list(sys.version_info[:2]),torch=str(torch.__version__),cuda=str(torch.version.cuda),pytest=str(pytest.__version__)),sort_keys=True))'
+            $allowed = {
+              param($raw)
+              try {
+                $record = $raw | ConvertFrom-Json
+                return ($record.python.Count -eq 2 -and $record.python[0] -eq 3 -and
+                        $record.python[1] -eq 11 -and
+                        $record.torch -ceq '2.5.1+cpu' -and
+                        $record.pytest -ceq '8.3.4' -and $record.cuda -ceq 'None')
+              } catch { return $false }
+            }
+            # Windows PowerShell 5.1 promotes native stderr to terminating errors
+            # under Stop even with 2>$null (py -3.11 not installed). Probes are
+            # read-only, exit-code checked and must not abort source custody.
+            $ErrorActionPreference='Continue'
+            $winPython=$null
+            $winCandidates=@()
+            $launcher=Get-Command py.exe -ErrorAction SilentlyContinue
+            $exe=Get-Command python.exe -ErrorAction SilentlyContinue
+            if ($launcher) { $winCandidates += @('py.exe','-3.11') }
+            if ($exe -and $exe.Source) { $winCandidates += @($exe.Source) }
+            if ($launcher) {
+              $raw=@(& py.exe -3.11 -I -B -c $probe 2>$null)
+              if ($LASTEXITCODE -eq 0 -and (& $allowed ($raw -join ''))) {
+                $winPython=@('py.exe','-3.11')
+                $r.windows_environment='PASS_INSTALLED_EXACT_CPU_TUPLE'
+              }
+            }
+            if (-not $winPython -and $exe -and $exe.Source) {
+              $raw=@(& $exe.Source -I -B -c $probe 2>$null)
+              if ($LASTEXITCODE -eq 0 -and (& $allowed ($raw -join ''))) {
+                $winPython=@($exe.Source)
+                $r.windows_environment='PASS_INSTALLED_EXACT_CPU_TUPLE'
+              }
+            }
+            if (-not $winPython) {
+              $r.windows_environment='BLOCKED_NO_INSTALLED_EXACT_PYTHON311_TORCH251CPU_PYTEST834'
+            }
+            $linuxPath=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            $lCode=$LASTEXITCODE
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            $uCode=$LASTEXITCODE
+            if ($lCode -ne 0 -or $uCode -ne 0 -or $linuxPath -notmatch '^/mnt/[a-z]/' -or $uid -cne '1000') {
+              $r.linux_environment='BLOCKED_WSL_NORMAL_USER_OR_WORKSPACE'
+            } else {
+              $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+              $r3='/home/'+$who+'/.local/share/ttt-hybrid/g7-r3-06a01c2c3a98/venv/bin/python'
+              $linuxCandidates=@('/usr/bin/python3.11','/usr/bin/python3',$r3)
+              $linuxPython=$null
+              foreach ($path in $linuxCandidates) {
+                $raw=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 35s $path -I -B -c $probe 2>$null)
+                if ($LASTEXITCODE -eq 0 -and (& $allowed ($raw -join ''))) {
+                  $linuxPython=$path
+                  $r.linux_environment='PASS_INSTALLED_EXACT_CPU_TUPLE'
+                  break
+                }
+              }
+              if (-not $linuxPython) {
+                $r.linux_environment='BLOCKED_NO_INSTALLED_EXACT_PYTHON311_TORCH251CPU_PYTEST834'
+              }
+              if ($linuxPython) {
+                $receipt=$linuxPath+'/local_runs/s25_full_regression_linux.json'
+                $raw=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 700s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' $linuxPython -I -B "$linuxPath/scripts/qualify_cpu.py" --receipt $receipt)
+                $code=$LASTEXITCODE
+                $json=Join-Path $out 's25_full_regression_linux.json'
+                if ($code -eq 0 -and (Test-Path -LiteralPath $json)) {
+                  $rec=Get-Content -LiteralPath $json -Raw | ConvertFrom-Json
+                  if ($rec.status -ceq 'PASS_CPU_ENGINEERING_ONLY' -and
+                      $rec.revision -ceq $env:GITHUB_SHA -and
+                      $rec.checkout_identity.pass -eq $true -and
+                      $rec.negative_control.pass -eq $true -and
+                      $rec.tests.exit_code -eq 0) {
+                    $r.linux_full_regression='PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE'
+                    $r.linux_negative_control='PASS'
+                  }
+                }
+                if ($r.linux_full_regression -cne 'PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE') {
+                  $r.linux_full_regression='FAIL_EXECUTED_FULL_REGRESSION'
+                }
+              }
+            }
+            if ($winPython) {
+              $winArgs=@()
+              if ($winPython.Count -eq 2) { $winArgs += '-3.11' }
+              $winArgs += @('-I','-B',(Join-Path $root 'scripts/qualify_cpu.py'),
+                             '--receipt',(Join-Path $out 's25_full_regression_windows.json'))
+              $raw=@(& $winPython[0] @winArgs)
+              $code=$LASTEXITCODE
+              $json=Join-Path $out 's25_full_regression_windows.json'
+              if ($code -eq 0 -and (Test-Path -LiteralPath $json)) {
+                $rec=Get-Content -LiteralPath $json -Raw | ConvertFrom-Json
+                if ($rec.status -ceq 'PASS_CPU_ENGINEERING_ONLY' -and
+                    $rec.revision -ceq $env:GITHUB_SHA -and
+                    $rec.checkout_identity.pass -eq $true -and
+                    $rec.negative_control.pass -eq $true -and
+                    $rec.tests.exit_code -eq 0) {
+                  $r.windows_full_regression='PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE'
+                  $r.windows_negative_control='PASS'
+                }
+              }
+              if ($r.windows_full_regression -cne 'PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE') {
+                $r.windows_full_regression='FAIL_EXECUTED_FULL_REGRESSION'
+              }
+            }
+            $ErrorActionPreference='Stop'
+            if ($r.windows_full_regression -ceq 'PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE' -and
+                $r.linux_full_regression -ceq 'PASS_EXACT_HEAD_COMPLETE_PYTEST_SUITE') {
+              $r.status='PASS_FULL_WINDOWS_AND_LINUX_EXACT_SOURCE'
+              Write-Output 'G7_S25_FULL_REGRESSION=PASS_BOTH_PLATFORMS'
+            } else {
+              $r.status='BLOCKED_FULL_CROSS_PLATFORM_QUALIFICATION'
+              Write-Output 'G7_S25_FULL_REGRESSION=UNVERIFIED'
+              throw 'G7_S25_NO_EXACT_BOTH_PLATFORMS'
+            }
+          } finally {
+            $r | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath (Join-Path $out 's25_full_regression_admission.json') -Encoding UTF8
+            Write-Output ('S25_REGRESSION_SOURCE=' + $r.source)
+            Write-Output ('S25_WINDOWS_ENV=' + $r.windows_environment)
+            Write-Output ('S25_LINUX_ENV=' + $r.linux_environment)
+            Write-Output ('S25_REGRESSION_RESULT=' + $r.status)
+          }
+
+      - name: Preserve immutable executed regression or blocked-environment evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s25-full-regression-admission-${{ github.sha }}
+          path: |
+            g7-s25-full-runtime-isolated/local_runs/s25_full_regression_admission.json
+            g7-s25-full-runtime-isolated/local_runs/s25_full_regression_windows.json
+            g7-s25-full-runtime-isolated/local_runs/s25_full_regression_linux.json
+          if-no-files-found: warn
+          retention-days: 30
