@@ -143,6 +143,11 @@ def run(args):
     pins = json.loads((ROOT / "source_pins.json").read_text())
     for label in ("mamba2", "ttt_linear"):
         custody.source_custody(root / "sources" / label, pins["sources"][label])
+    # G7-S2: the strict -I child suppresses PYTHONPATH; explicitly import
+    # only the two authenticated official source roots, exactly as the
+    # qualified G7-R6 native child does. This does not change science arms.
+    sys.path[:0] = [str(root / "sources/mamba2"),
+                    str(root / "sources/ttt_linear")]
     require(sys.version_info[:2] == (3,12)
             and torch.__version__ == custody.TORCH
             and torch.version.cuda == "12.8"
