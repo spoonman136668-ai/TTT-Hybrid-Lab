@@ -1,0 +1,141 @@
+# G7-S24: one-use engineering-only proof; S24 SCIENCE NOT RUN.
+name: G7-S24 phase1 native-encoder engineering verification
+on:
+  push:
+    branches:
+      - engineering/g7-s24-phase0-independent-views-20261107
+    paths:
+      - .github/workflows/g7-s24-phase1-qualification.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s24-phase1-immutable-once
+  cancel-in-progress: false
+jobs:
+  exact-head-source-and-encoder-contract:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s24-phase0-independent-views-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 9
+    steps:
+      - name: Checkout immutable candidate without changing runner environments
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s24-phase1-isolated
+          fetch-depth: 12
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Verify source scope and pinned WSL native-encoder contract
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s24-phase1-isolated'
+          $out=Join-Path $root 'local_runs'
+          $r=[ordered]@{
+            schema='ttt-hybrid.g7-s24.phase1-once-qualification.v1'
+            sha=$env:GITHUB_SHA
+            frozen_protocol_sha='7d1f8bb1547d4d39df7412091a68dabb03f0ac3f'
+            status='BLOCKED_NOT_STARTED'
+            source_custody='UNVERIFIED'
+            focused='NOT_RUN'
+            full_regression='NOT_RUN'
+            windows_regression='NOT_RUN'
+            scientific_first_use='NOT_RUN'
+            cuda='NOT_USED'
+            installation='NONE'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s24-phase0-independent-views-20261107' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows' -or
+                $env:GITHUB_EVENT_NAME -cne 'push') {
+              $r.status='BLOCKED_UNEXPECTED_SCOPE_OR_RUNNER'
+              throw 'INVALID_SCOPE'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hc=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dc=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '7d1f8bb1547d4d39df7412091a68dabb03f0ac3f' HEAD)
+            $cc=$LASTEXITCODE
+            $required=@(
+              '.github/workflows/g7-s24-phase0-engineering.yml',
+              '.github/workflows/g7-s24-phase1-qualification.yml',
+              'scripts/g7_s24_views.py',
+              'scripts/g7_s24_phase0_engineering.py',
+              'scripts/g7_s24_phase1_qualification.py',
+              'scripts/g7_s24_encoders.py',
+              'tests/test_g7_s24_view_contract.py',
+              'tests/test_g7_s24_encoders.py'
+            )
+            if ($hc -ne 0 -or $dc -ne 0 -or $cc -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne $required.Count) {
+              $r.status='BLOCKED_HEAD_DIRTY_OR_FILE_COUNT'
+              throw 'SOURCE_DRIFT'
+            }
+            foreach ($name in $required) {
+              if ($changed -cnotcontains $name) {
+                $r.status='BLOCKED_UNEXPECTED_FILE_CHANGE'
+                throw 'UNEXPECTED_CHANGE'
+              }
+            }
+            $r.source_custody='PASS_EXACT_HEAD_EIGHT_SCOPED_FILES'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $r.status='BLOCKED_MISSING_WSL_PATH'
+              throw 'WSL'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $r.status='BLOCKED_NORMAL_USER'
+              throw 'WSL_UID'
+            }
+            $lines=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=8s 385s /usr/bin/python3 -I -B "$linux/scripts/g7_s24_phase1_qualification.py" --sha "$env:GITHUB_SHA")
+            $rc=$LASTEXITCODE
+            $record=Join-Path $out 'g7_s24_phase1_engineering.json'
+            if ($rc -ne 0 -or -not (Test-Path -LiteralPath $record)) {
+              $r.status='BLOCKED_PHASE1_CHILD_RUN'
+              throw 'CHILD_FAILED'
+            }
+            $q=Get-Content -LiteralPath $record -Raw | ConvertFrom-Json
+            $r.focused=$q.status
+            $r.full_regression=$q.full_regression.status
+            if ($q.sha -cne $env:GITHUB_SHA -or
+                $q.status -cne 'PASS_PHASE0_PHASE1_FOCUSED_ENGINEERING' -or
+                $q.phase0.count -ne 67 -or
+                $q.phase1.count -ne 29 -or
+                $q.scientific_first_use -cne 'NOT_RUN' -or
+                $q.heldout_used -cne $false -or
+                $q.packages_installed -cne $false -or
+                $q.cuda -cne 'NOT_USED') {
+              $r.status='BLOCKED_PHASE1_EVIDENCE'
+              throw 'INVALID_EVIDENCE'
+            }
+            $r.status='PASS_PHASE0_PHASE1_FOCUSED_ONLY'
+            Write-Output 'G7_S24_PHASE1_FOCUSED=PASS_96_ASSERTIONS'
+            Write-Output ('G7_S24_FULL_REGRESSION=' + $r.full_regression)
+            Write-Output 'G7_S24_SCIENCE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $out 'g7_s24_phase1_workflow_custody.json') -Encoding UTF8
+            Write-Output ('G7_S24_PHASE1_STATUS=' + $r.status)
+          }
+
+      - name: Preserve engineering evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s24-phase1-${{ github.sha }}
+          path: |
+            g7-s24-phase1-isolated/local_runs/g7_s24_phase1_workflow_custody.json
+            g7-s24-phase1-isolated/local_runs/g7_s24_phase1_engineering.json
+          if-no-files-found: warn
+          retention-days: 30
