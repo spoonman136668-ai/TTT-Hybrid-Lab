@@ -5,6 +5,7 @@ No model training, optimizer runs, frozen scientific seeds or scientific gate.
 from __future__ import annotations
 
 import ast
+import subprocess
 import sys
 from pathlib import Path
 import unittest
@@ -109,6 +110,16 @@ class TestMechanismDiagnostic(unittest.TestCase):
                 "source_stable","source_stable"))
         with self.assertRaisesRegex(ValueError,"DIAGNOSTIC_TIME_LIMIT"):
             diagnostic.run_diagnostic(max_seconds=0)
+
+    def test_isolated_python_entrypoint_imports_exact_repo_source(self):
+        # Executes only argparse --help, not the development world study.
+        p=subprocess.run(
+            [sys.executable,"-I","-B",
+             str(ROOT/"scripts/g7_s25_gate_diagnostic.py"),"--help"],
+            cwd=ROOT,capture_output=True,text=True,timeout=25,check=False)
+        self.assertEqual(p.returncode,0,p.stderr[-500:])
+        self.assertIn("--expected-sha",p.stdout)
+        self.assertIn("--receipt",p.stdout)
 
     def test_missing_modes_block_mechanism_summary(self):
         rows=fake_rows(selected=1,post_selected=1)
