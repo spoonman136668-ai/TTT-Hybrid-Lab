@@ -48,6 +48,12 @@ def sha256_digest(value: Any, reason: str) -> str:
             all(c in "0123456789abcdef" for c in value), reason)
     return value
 
+def git_commit_sha1(value: Any, reason: str) -> str:
+    """Repository commits are SHA-1 hex; payload fingerprints use SHA-256."""
+    require(isinstance(value, str) and len(value) == 40 and
+            all(c in "0123456789abcdef" for c in value), reason)
+    return value
+
 
 def validate_frozen_protocol(path: Path) -> dict:
     """Read and check registration only, NEVER execute its seed allocations."""
@@ -182,7 +188,7 @@ def validate_receipt_shapes_only(
     DO NOT interpret returned status as authenticated evidence, scientific
     competence or a fully trained baseline. This is a shape/logic check only.
     """
-    sha256_digest(candidate_sha, "INVALID_CANDIDATE_SHA")
+    git_commit_sha1(candidate_sha, "INVALID_CANDIDATE_SHA")
     require(protocol["authority"]["scientific_first_use_authorized"] is False,
             "FIRST_USE_GATE_CHANGED")
     require(type(records) is list and
