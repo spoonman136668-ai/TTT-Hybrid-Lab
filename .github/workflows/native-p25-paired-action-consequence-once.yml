@@ -1,0 +1,188 @@
+# P25: original factual two-branch intervention, action-conditioned world-state prediction.
+# Public DEV only; preserve P24 negative and independent P23. No protected first-use.
+name: Native P25 source-locked physical action-consequence identification once
+on:
+  push:
+    branches:
+      - engineering/native-p25-paired-action-consequence-dev-20261108
+    paths:
+      - .github/workflows/native-p25-paired-action-consequence-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p25-factual-paired-action-oneuse
+  cancel-in-progress: false
+jobs:
+  exact-source-real-factual-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p25-paired-action-consequence-dev-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 26
+    steps:
+      - name: Checkout exact P18 candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p25-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 180
+      - name: Checkout verified original S29 independent owner source only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: 30c27ca4865e16b7574ee2b562879108db2b3796
+          path: native-p25-s29-owner
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout exact MIT Farama only, no installer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: native-p25-mit-gym
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout exact BSD3 cloudpickle only, no installer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: cloudpipe/cloudpickle
+          ref: ff54d93221082d4ce22630ecdb8fbbccc60f3b62
+          path: native-p25-bsd3-cloudpickle
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Verify original P19 ancestry and independent source and science fences
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P25_OWNER_ONCE_SCOPE_FAIL'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p25-candidate'
+          $s29=Join-Path $env:GITHUB_WORKSPACE 'native-p25-s29-owner'
+          $mit=Join-Path $env:GITHUB_WORKSPACE 'native-p25-mit-gym'
+          $bsd=Join-Path $env:GITHUB_WORKSPACE 'native-p25-bsd3-cloudpickle'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P25_CANDIDATE_SHA_MISMATCH'}
+          $owner=(& git -C $s29 rev-parse HEAD|Out-String).Trim()
+          $gym=(& git -C $mit rev-parse HEAD|Out-String).Trim()
+          $cloud=(& git -C $bsd rev-parse HEAD|Out-String).Trim()
+          if($owner -cne '30c27ca4865e16b7574ee2b562879108db2b3796' -or $gym -cne '17eff00220d210beda933f78b0e52850022b0690' -or $cloud -cne 'ff54d93221082d4ce22630ecdb8fbbccc60f3b62'){throw 'P25_INDEPENDENT_SOURCE_SHA_DRIFT'}
+          foreach($d in @($root,$s29,$mit,$bsd)){
+            $dirty=(& git -C $d status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P25_SOURCE_DIRTY:$d"}
+          }
+          & git -C $root merge-base --is-ancestor '45b7f925c28c3c58b54a7c5b61f11398474a388c' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P25_ORIGINAL_P24_PARENT_ANCESTRY_FAIL'}
+          & git -C $root merge-base --is-ancestor 'c750a638cfa95391058ae38d6a6d1f39f18ed7ef' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P25_PROSPECTIVE_PROTOCOL_FREEZE_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor 'c9fd300a9f5351ac0d2f290564916feb22659143' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P25_PREIMPLEMENTATION_METRIC_CONTRACT_NOT_ANCESTOR'}
+          $protected=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_p11_temporal_credit_dev.py'='3217e3ba6e5fdf8d88dc354e254d910cdafd87eb';
+            'scripts/native_p16_champion_guard_dev.py'='9092097ca3de7d2640ea11ed8bdd077b4bbe3085';
+            'scripts/native_p17_stable_gru_competence_dev.py'='ed5fc2e7e6217c0a4adf4c4ce094bd4d1cde016c';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586';
+            'tests/test_native_p18_real_cartpole_factual_dev.py'='a97458f5a9bc1bedc9e2e941cc0bddc987e27bc3';
+            'experiments/native_p18_real_cartpole_factual_frozen.json'='fd4828f971acb7e052dc6ff7f78314267bef202b';
+            'scripts/native_p19_factual_expert_imit_dev.py'='c26d90837fbcf31648c7a672b382955e189dd642';
+            'tests/test_native_p19_factual_expert_imit_dev.py'='2a8a86cd2ea89689fb1da4cc99389f0e61a4bea2';
+            'experiments/native_p19_factual_expert_frozen.json'='f1f824245e337480537a8169b91c6c1d5a0d4c11';
+            'scripts/native_p20_reward_only_ppo_dev.py'='cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4';
+            'tests/test_native_p20_reward_only_ppo_dev.py'='5255625cc4724f256e55c6f53f310320e2ffa85b';
+            'experiments/native_p20_reward_only_ppo_frozen.json'='e98f481009ed833b61ae0c04b1f8a6905f6a2953';
+            'experiments/native_p22_reward_only_masked_history_frozen.json'='81841eb5f55267cb17bb773436108ed6f3ff0934';
+            'scripts/native_p22_reward_only_masked_history_dev.py'='fc7d0cb89a6d24d0fca9345673462616d808c132';
+            'tests/test_native_p22_reward_only_masked_history_dev.py'='206c79390dafb0ffc3534577c15194d690f2b05c';
+            'experiments/native_p24_factual_velocity_frozen.json'='19847e0f59362f842829c067b1a37d7138d6f2d9';
+            'scripts/native_p24_factual_velocity_dev.py'='c14626626c75afe0cde895e1057ed970900e9c94';
+            'tests/test_native_p24_factual_velocity_dev.py'='03c0c02395087702ca4acee4acdbb7e6555e10ce';
+            'experiments/native_p25_paired_action_consequence_frozen.json'='05af59eb4b0d980a18c0621c94e8265b3fe9d52f';
+            'scripts/native_p25_paired_action_consequence_dev.py'='f9e7fc46f70d1b1fd8580b6b4e1d81dbef24228e';
+            'tests/test_native_p25_paired_action_consequence_dev.py'='14b16ee1051c1cd53486a5f422b5c76e9193f3fc'
+          }
+          foreach($name in $protected.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $protected[$name]){throw "P25_PROTECTED_GIT_BLOB_DRIFT:$name"}
+          }
+          $original=@{
+            'scripts/native_s29_mit_gymnasium_smoke.py'='5176d77ecd4d81c95b0ece6855c30f598eb0ae4d';
+            'experiments/s29_gymnasium_contract_smoke_frozen.json'='9ba9bc1c5ada3fd8e8d91e7208644f94fcf887dc';
+            'experiments/s29_gymnasium_cloudpickle_source_r2_frozen.json'='ee92a4bb765c2016387ba6969dc94ffa0d64ec85';
+            'scripts/native_s28_causal_wind_offline.py'='cba40ef802e0255e351772cdaa95bbb5f94cc1bd'
+          }
+          foreach($name in $original.Keys){
+            $actual=(& git -C $s29 hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $original[$name]){throw "P25_S29_OWNER_GIT_BLOB_DRIFT:$name"}
+          }
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p20_reward_only_ppo_frozen.json') -Raw|ConvertFrom-Json
+          if($m.schema -cne 'ttt-hybrid.native-p20.ppo-reward-only-frozen.v1' -or $m.science.authorized -ne $false -or $m.science.first_use_consumed -ne $false -or @($m.science.protected_science_seeds.PSObject.Properties).Count -ne 0 -or $m.design.ppo_rollouts -ne 96 -or $m.design.parallel_environments -ne 8 -or $m.design.ppo_epochs -ne 3 -or $m.design.ppo_minibatch -ne 256 -or @($m.design.train_initializations).Count -ne 3 -or @($m.design.dev_eval_seeds).Count -ne 4 -or @($m.design.dev_eval_conditions).Count -ne 3 -or $m.design.scope -cne 'ORIGINAL_S29_SOURCE_ONLY_AUTHORED_PUBLIC_DEV_REWARD_ONLY_PPO_NOT_AUTHENTIC_SCIENTIFIC_FIRST_USE'){throw 'P20_ORIGINAL_SCIENCE_OR_DEV_SOURCE_ADMISSION'}
+          $p22=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p22_reward_only_masked_history_frozen.json') -Raw|ConvertFrom-Json
+          if($p22.schema -cne 'ttt-hybrid.native-p22.reward-only-masked-history-frozen.v1' -or $p22.status -cne 'FROZEN_PROTOCOL_ONLY_NO_IMPLEMENTATION_OR_FIRST_USE' -or $p22.source.scientific_first_use -ne $false -or $p22.acceptance.scientific_pass -ne $false -or $p22.study.total_real_training_decisions -ne 737280 -or $p22.study.total_optimizer_minibatches -ne 8640 -or @($p22.study.eval_seeds).Count -ne 8){throw 'P22_FROZEN_SOURCE_OR_SCIENCE_ADMISSION_DENIED'}
+          $p24=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p24_factual_velocity_frozen.json') -Raw|ConvertFrom-Json
+          if($p24.schema -cne 'ttt-hybrid.native-p24.factual-velocity-reconstruction-frozen.v1' -or $p24.state -cne 'FROZEN_BEFORE_IMPLEMENTATION_AND_OWNER_RUN' -or $p24.source.protected_science_first_use -ne $false -or $p24.train.total_factual_training_actions -ne 737280 -or $p24.train.total_PPO_minibatch_updates -ne 8640 -or @($p24.train.seeds).Count -ne 3 -or @($p24.evaluation.seeds).Count -ne 8){throw 'P24_FROZEN_SOURCE_OR_SCIENCE_ADMISSION_DENIED'}
+          $p25=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p25_paired_action_consequence_frozen.json') -Raw|ConvertFrom-Json
+          if($p25.schema -cne 'ttt-hybrid.native-p25.paired-action-consequence-frozen.v1' -or $p25.state -cne 'PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION' -or $p25.source.protected_science_first_use -ne $false -or $p25.parent.exact_sha -cne '45b7f925c28c3c58b54a7c5b61f11398474a388c' -or @($p25.models.model_initializations).Count -ne 3 -or @($p25.paired_intervention.prefix_lengths).Count -ne 4 -or @($p25.paired_intervention.eval_seed_range).Count -ne 2 -or $p25.models.training_epochs -ne 64 -or $p25.metric_contract.zero_effect_MSE -eq $null){throw 'P25_FROZEN_SCIENCE_OR_SOURCE_ADMISSION_DENIED'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P25_ORIGINAL_OWNER_INTERPRETER_MISSING'}
+          $vers=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $vers.Count -ne 3 -or $vers[0] -cne '2.5.1+cpu' -or $vers[1] -cne '8.3.4' -or $vers[2] -cne '1.26.4'){throw 'P25_CPU_ORIGINAL_ENV_DRIFT'}
+          Write-Output 'P25_SOURCE_LOCK_NO_SCIENCE_NO_NEW_INSTALL=PASS'
+      - name: Mandatory full Windows exact-SHA regression and original negatives
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p25-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p25_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P25_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p25_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P25_WINDOWS_ORIGINAL_NEGATIVE_OR_SOURCE_FAIL'}
+          Write-Output 'P25_WINDOWS_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Mandatory full Ubuntu WSL exact-SHA regression and original negatives
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P25_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p25-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p25_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P25_WSL_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p25-candidate\local_runs\native_p25_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P25_WSL_ORIGINAL_NEGATIVE_OR_SOURCE_FAIL'}
+          Write-Output 'P25_WSL_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: P25 real paired action-outcome learning versus sham and strongest trained controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p25-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 710s /usr/bin/env 'NATIVE_P20_DEV_ONLY=1' 'NATIVE_P25_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p25_paired_action_consequence_dev.py" --s29-root "$lp/native-p25-s29-owner" --source-root "$lp/native-p25-mit-gym" --cloudpickle-root "$lp/native-p25-bsd3-cloudpickle" --receipt "$root/local_runs/native_p25_paired_action_consequence.json"
+          if($LASTEXITCODE -ne 0){throw 'P25_REAL_PHYSICAL_PAIRED_CAUSAL_LEARNING_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p25-candidate\local_runs\native_p25_paired_action_consequence.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_PUBLIC_DEV_ENGINEERING_ONLY' -or $p.science_first_use -cne 'NOT_RUN' -or $p.strongest_conventional_architecture_superiority_proven -ne $false -or @($p.records).Count -ne 3 -or $p.source_custody.train.valid_sister_pairs -lt 500 -or $p.source_custody.eval_conditions.original.valid_sister_pairs -lt 192){throw 'P25_SOURCE_QUALIFIED_CAUSAL_RECEIPT_INVALID'}{throw 'P25_SOURCE_QUALIFIED_CAUSAL_RECEIPT_INVALID'}
+          Write-Output 'P25_SOURCE_PINNED_REAL_PAIRED_ACTION_CONSEQUENCES=PASS_DEV'
+      - name: Archive real source and all factual outcomes, including nulls
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p25-paired-action-consequence-once
+          path: native-p25-candidate/local_runs/native_p25_*.json
+          retention-days: 30
+          if-no-files-found: error
