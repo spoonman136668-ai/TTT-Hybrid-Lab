@@ -101,6 +101,28 @@ def _bounded_artifact(directory: Path) -> set[str]:
     return {obj.name for obj in objects}
 
 
+
+def _close_reference(a, b) -> bool:
+    """Cross-OS fixture compatibility, not bitwise checkpoint equivalence.
+
+    Compare the independently *recomputed* one-step AdamW fixture with a fixed
+    small float tolerance for different Windows/WSL CPU math kernels. The
+    separately decoded persisted checkpoint MUST still match exactly.
+    """
+    if isinstance(a, torch.Tensor):
+        return (isinstance(b, torch.Tensor) and a.shape == b.shape
+                and a.dtype == b.dtype
+                and (bool(torch.allclose(a, b, rtol=1e-5, atol=1e-6))
+                     if a.is_floating_point() else torch.equal(a, b)))
+    if isinstance(a, dict):
+        return isinstance(b, dict) and set(a) == set(b) and all(
+            _close_reference(a[k], b[k]) for k in a)
+    if isinstance(a, (list, tuple)):
+        return isinstance(b, type(a)) and len(a) == len(b) and all(
+            _close_reference(x, y) for x, y in zip(a, b))
+    return a == b
+
+
 def produce(destination: Path, source_sha: str) -> dict:
     """Create exactly one deterministic synthetic checkpoint chain for upload."""
     _require(not destination.exists(), "OUTPUT_MUST_BE_ABSENT")
@@ -181,10 +203,24 @@ def restore(downloaded: Path, staging: Path, source_sha: str) -> dict:
     restored_native, cursor = load_checkpoint(staging, tip, model=cold,
                                               optimizer=optimizer,
                                               identity=expected_identity)
-    _require(_equal(expected_model, cold.state_dict()),
-             "COLD_MODEL_NOT_EQUAL_INDEPENDENT_FIXTURE")
-    _require(_equal(expected_optimizer, optimizer.state_dict()),
-             "COLD_OPTIMIZER_NOT_EQUAL_INDEPENDENT_FIXTURE")
+    # Remote-byte restoration must be BIT EXACT, independent of CPU math
+    # semantics. Decode the already-hash-verified persisted payload and
+    # compare every saved tensor/optimizer field against the cold state.
+    saved = torch.load(staging / (verified["payload_sha256"] + ".pt"),
+                       map_location="cpu", weights_only=True)
+    _require(_equal(saved["model"], cold.state_dict()),
+             "COLD_MODEL_CHECKPOINT_BIT_MISMATCH")
+    _require(_equal(saved["optimizer"], optimizer.state_dict()),
+             "COLD_OPTIMIZER_CHECKPOINT_BIT_MISMATCH")
+    _require(_equal(saved["native_state"], restored_native)
+             and saved["sampler"] == cursor,
+             "COLD_NATIVE_SAMPLER_CHECKPOINT_BIT_MISMATCH")
+    # An independent recomputation uses floating-point CPU kernels. Windows
+    # and WSL need numerical closeness, NOT a false bit-equality promise.
+    _require(_close_reference(expected_model, cold.state_dict()),
+             "INDEPENDENT_FIXTURE_MODEL_OUTSIDE_TOLERANCE")
+    _require(_close_reference(expected_optimizer, optimizer.state_dict()),
+             "INDEPENDENT_FIXTURE_OPTIMIZER_OUTSIDE_TOLERANCE")
     _require(_equal(expected_native, restored_native)
              and cursor == {"position": 1},
              "COLD_NATIVE_OR_CURSOR_NOT_EQUAL")
@@ -194,7 +230,7 @@ def restore(downloaded: Path, staging: Path, source_sha: str) -> dict:
             "source_sha": source_sha, "tip_manifest_sha256": tip,
             "objects_verified": mirrored["objects_verified"],
             "cold_state_equal": True, "full_ancestry_verified": True,
-            "independent_fixture_equal": True,
+            "independent_fixture_within_numeric_tolerance": True,
             "remote_artifact_transport": "EXTERNAL_WORKFLOW_DOWNLOAD",
             "storage_retention_guarantee_verified": False,
             "power_loss_survivability_verified": False,
