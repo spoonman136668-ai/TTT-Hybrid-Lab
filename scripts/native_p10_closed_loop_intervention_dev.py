@@ -93,8 +93,10 @@ def _history_tensor(history:list[tuple[int,float]])->torch.Tensor:
 def select_action(arm:str,history:list[tuple[int,float]],
                   models:dict,policy_rng:random.Random,t:int)->tuple[int,float|None]:
     """Only observed prior outcomes; no future target, latent state or oracle."""
-    if arm not in ARMS[:-1] or len(history)<HISTORY:
-        raise ValueError("P10_POLICY_OR_HISTORY_INVALID")
+    if arm not in ARMS[:-1]:
+        raise ValueError("P10_POLICY_INVALID")
+    if len(history)<HISTORY:
+        raise ValueError("P10_COMPLETED_FACTUAL_HISTORY_REQUIRED")
     if arm in ("learned_router","trained_mlp"):
         model=models[arm]
         h=_history_tensor(history)
