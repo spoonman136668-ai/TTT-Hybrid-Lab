@@ -62,7 +62,7 @@ def contrast_score(predicted: Tensor, observed: Tensor) -> dict:
     observed_big=y.abs()>=gate.MIN_SIGNED_EFFECT
     predicted_big=p.abs()>=gate.MIN_SIGNED_EFFECT
     eligible=observed_big & predicted_big
-    opposite=(p*y<0) & eligible & (p-y).abs()>=gate.MIN_CONTRAST_DISAGREEMENT
+    opposite=(p*y<0) & eligible & ((p-y).abs()>=gate.MIN_CONTRAST_DISAGREEMENT)
     correct=(p*y>0) & eligible
     # Differences in pair MSE are observable but cannot substitute for sign.
     mae=(p-y).abs()
