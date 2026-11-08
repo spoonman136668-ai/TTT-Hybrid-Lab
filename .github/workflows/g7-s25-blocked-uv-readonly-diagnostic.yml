@@ -1,0 +1,90 @@
+# Read-only custody diagnosis after the single-use CPU311 installer blocked.
+name: G7-S25 CPU311 blocked uv read-only diagnostic
+on:
+  push:
+    branches:
+      - engineering/g7-s25-cpu311-blocked-uv-readonly-diagnostic-20261107
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-g7-s25-cpu311-readonly-diagnostic-r1
+  cancel-in-progress: false
+jobs:
+  diagnose:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s25-cpu311-blocked-uv-readonly-diagnostic-20261107' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    name: blocked-installer-inspection-no-execution
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - name: Exact inspector checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Read only previously blocked scoped binaries and non-resumption state
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1'
+          $record=[ordered]@{
+            schema='ttt-hybrid.g7-s25.uv-blocker-readonly-diagnostic.v1'
+            previous_run=42430242422
+            previous_source='c86d6273c73ade2361543823668c13b34a866488'
+            status='BLOCKED_UNVERIFIED'
+            no_write_operations=$true
+            no_python_install_or_training=$true
+            r3='UNTOUCHED'
+            archive_hash='UNVERIFIED'
+            uv_count=0
+            uv_version_output='UNVERIFIED'
+            uv_exit_code=$null
+            python_directory_exists=$null
+            venv_exists=$null
+          }
+          $out=Join-Path $env:GITHUB_WORKSPACE 'local_runs\blocked_uv_readonly.json'
+          try{
+            if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+               $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+               $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+               $env:GITHUB_RUN_NUMBER -cne '1'){throw 'BLOCKED_UNAUTHORIZED_RUNNER'}
+            if(-not(Test-Path -LiteralPath $root -PathType Container)){throw 'BLOCKED_SCOPE_NOT_FOUND'}
+            $record.python_directory_exists=Test-Path -LiteralPath (Join-Path $root 'pythons')
+            $record.venv_exists=Test-Path -LiteralPath (Join-Path $root 'venv')
+            $zip=Join-Path $root 'uv.zip'
+            if(-not(Test-Path -LiteralPath $zip -PathType Leaf)){throw 'BLOCKED_RELEASE_NOT_PRESENT'}
+            $record.archive_hash=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+            if($record.archive_hash -cne 'cdfb04512c9184939f16eea02644a7133b4e41233ead69122d49847d29a45538'){throw 'BLOCKED_ZIP_HASH_DRIFT'}
+            $bin=@(Get-ChildItem -LiteralPath (Join-Path $root 'uv_release') -Recurse -Filter uv.exe -File -ErrorAction Stop)
+            $record.uv_count=$bin.Count
+            if($bin.Count -ne 1){throw 'BLOCKED_UV_BINARY_CARDINALITY'}
+            $ErrorActionPreference='Continue'
+            try{
+              $raw=(& $bin[0].FullName --version 2>&1|Out-String).Trim()
+              $record.uv_exit_code=$LASTEXITCODE
+              if($raw.Length -gt 150){$raw=$raw.Substring(0,150)}
+              if($raw -match '^[A-Za-z0-9().\s\-]+$'){$record.uv_version_output=$raw}else{$record.uv_version_output='UNSAFE_OUTPUT_REDACTED'}
+            }catch{$record.uv_version_output='EXECUTION_EXCEPTION_'+$_.Exception.GetType().Name}
+            $ErrorActionPreference='Stop'
+            if($record.uv_exit_code -eq 0 -and $record.uv_version_output -match '^uv 0\.9\.13($|\s)'){
+              $record.status='PASS_RELEASE_VERSION_BUT_OLDER_STRICT_CHECK_REJECTED'
+            }else{$record.status='BLOCKED_RELEASE_VERSION_OR_BINARY_EXECUTION'}
+            if($record.python_directory_exists -or $record.venv_exists){$record.status='BLOCKED_UNCERTAIN_PARTIAL_PYTHON_INSTALL'}
+          }catch{
+            $record.status='BLOCKED_READONLY_DIAGNOSTIC'
+            $msg=[string]$_.Exception.Message
+            if($msg -match '^BLOCKED_[A-Z_]+$'){$record.reason=$msg}
+          }finally{
+            New-Item -ItemType Directory -Path (Split-Path -Parent $out) -Force|Out-Null
+            $record|ConvertTo-Json -Depth 5|Set-Content -LiteralPath $out -Encoding UTF8
+            Write-Output ('S25_UV_DIAGNOSTIC='+$record.status)
+          }
+      - name: Preserve read-only diagnostic receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: g7-s25-uv-blocked-diagnostic-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/blocked_uv_readonly.json
+          retention-days: 30
+          if-no-files-found: warn
