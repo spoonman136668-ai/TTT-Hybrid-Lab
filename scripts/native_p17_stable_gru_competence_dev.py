@@ -234,7 +234,9 @@ def run():
     for index,seed in enumerate(INIT_SEEDS):
         original,old=train_arm(ConventionalCausalGRU,seed,fit,val)
         ext,extended=extended_train(seed,fit,val)
-        models={"original_P11_1200":original,**ext}
+        models={"original_P11_1200":original,
+                "extended_raw_3600":ext["extended_raw"],
+                "extended_ema_3600":ext["extended_ema"]}
         original_val=evaluate_model(original,val)
         before={k:hashlib.sha256(b"".join(
             p.detach().cpu().numpy().tobytes()
