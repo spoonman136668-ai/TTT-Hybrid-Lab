@@ -1,0 +1,153 @@
+{
+  "schema": "ttt-hybrid.c8.trained-history-archive-selection-dev.v1",
+  "registered_date": "2026-11-08",
+  "source_parent_c7_sha": "b7f0b53ca94d00d63bea1ae83e4093d4201d20fb",
+  "p7_original": {
+    "pr": 62,
+    "head_sha": "7658be2cd4ff66afb3fb46519b516d8071641a36",
+    "script_git_blob": "7db1fe42695f16bf2afe730f4348210156ac3c24",
+    "frozen_json_git_blob": "1ca3b8fa6b9f425bb4aea35462084c7e1fb5530e",
+    "source_reuse": "byte-identical copy with no changes to independent research branch"
+  },
+  "hypothesis": "an actually gradient-trained factual-history predictor, trained without context identity, selects the applicable archived native fast memory from past factual consequences, better than controls on known public analytic sequences",
+  "null": "trained factual-history routing fails to beat conventional equally trained predictor, untrained information negatives, or always-current selection; retain all negative outcomes",
+  "dataset": {
+    "dev_generator": "unaltered P7 synthetic_dev",
+    "train_seed": 51031,
+    "validation_seed": 51079,
+    "train_episodes": 150,
+    "validation_episodes": 48,
+    "train_examples": 6000,
+    "validation_examples": 1920,
+    "history_pairs": 8,
+    "context_labels_for_gradient_training": false,
+    "train_factual_only": true,
+    "source_family": "same public synthetic development generator, validation is independent RNG source but not new scientific world"
+  },
+  "training": {
+    "trained_seeds": [
+      303,
+      307,
+      311
+    ],
+    "native_learner_seeds": [
+      46111,
+      46117,
+      46129
+    ],
+    "zip_order": true,
+    "arms": [
+      "LearnedRouter",
+      "ConventionalMLP"
+    ],
+    "adamw_updates": 600,
+    "minibatch": 256,
+    "lr": 0.006,
+    "initialization": "exact P7 original train_one",
+    "mini_batch_indices": "same seed+9999 generator for both original train_one calls",
+    "parameters": {
+      "LearnedRouter": 828,
+      "ConventionalMLP": 849
+    },
+    "full_flops_matched": false,
+    "weights_saved_to_disk": false
+  },
+  "native": {
+    "underlying_source": "unchanged P3 40 old + 40 recent 80 factual update learner",
+    "old_checkpoint_step": 40,
+    "new_checkpoint_step": 80,
+    "checkpoint_restore": "C2 isolated separate protected cold restore",
+    "frozen_current_model": "original P3 step80 weights and optimizer",
+    "archive_old": "step40 fast weights cloned into step80 recurrent/history",
+    "archive_new": "original step80 recurrent/fast/history",
+    "new_native_fast_writes_after_training": 0,
+    "new_native_optimizer_updates_after_training": 0
+  },
+  "evaluation": {
+    "orders": [
+      [
+        "old",
+        "recent",
+        "old",
+        "recent"
+      ],
+      [
+        "recent",
+        "old",
+        "recent",
+        "old"
+      ]
+    ],
+    "events_per_block": 16,
+    "events_per_order": 64,
+    "per_event_sensor": 0,
+    "dt": 0.2,
+    "actions": "alternating -1,+1",
+    "current_event_prediction": "before current realized factual outcome",
+    "training_history": "last eight completed past (factual_action, actual observed_consequence) pairs, chronological, padded with none until eight complete",
+    "cold_start": "old initial tie-break for every trained/no-history arm until 8 completed historical outcomes",
+    "trained_selector": "calculate sign of predicted slope 0.5*(model(history,+1)-model(history,-1)); same two inference forwards per trained arm, no hidden context label",
+    "labels": "evaluator only, never train or route input",
+    "arms": [
+      "p7_trained_router",
+      "trained_conventional_mlp",
+      "p6_handcoded",
+      "oracle_upper_bound",
+      "always_recent",
+      "p7_reversed_history",
+      "p7_zero_history"
+    ],
+    "negative_controls": [
+      "same learned router with eight completed pairs in reverse chronological order",
+      "same trained router with history replaced by zeros",
+      "always newest snapshot"
+    ],
+    "source_historical_rule": "original C7 P6 FactualSlopeEvidence from P6 PR60 (hand-coded, not trained)",
+    "no_outcome_for_current_routing": true,
+    "all_archived_states_immutable": true,
+    "scoring_windows": {
+      "immediate_each_block": [
+        0,
+        4
+      ],
+      "late_each_block": [
+        4,
+        16
+      ]
+    },
+    "metric_direction": "lower factual MSE better; higher true-context diagnostic route accuracy better",
+    "hypotheses_diagnostic_only": {
+      "trained_router_late_accuracy_at_least": 0.75,
+      "trained_router_beats_always_recent_late_mse_by": 0.1,
+      "trained_router_beats_trained_mlp_late_mse_by": 0.01,
+      "trained_router_beats_reversed_history_late_mse_by": 0.05,
+      "trained_router_beats_zero_history_late_mse_by": 0.1,
+      "trained_router_near_oracle_late_mse_within": 0.05
+    }
+  },
+  "resources": {
+    "cpu_only": true,
+    "max_wall_seconds": 180,
+    "original_science_worlds": 0,
+    "max_gpu_seconds": 0,
+    "paid_apis": 0
+  },
+  "scientific": {
+    "first_use_authorized": false,
+    "independently_unseen_holdout": false,
+    "fully_trained_conventional_per_original_P7_protocol": true,
+    "compute_flops_matched": false,
+    "memory_retention_reproducibility_claim": false,
+    "matched_training_information": true,
+    "model_promotion": false
+  },
+  "limit": [
+    "Same familiar public P3 context sign tasks, not independently new world",
+    "P7 trained in its original P7 public generator; routing to fixed saved P3 memory snapshots not co-trained end-to-end",
+    "Training updates, examples, initialization and near-parameter count matched; device compute/FLOPs not independently matched",
+    "P6 heuristic fixed route is a separate untrained and compute-unmatched baseline",
+    "No cold context identification before prior factual observations and no unattended memory archive selection outside this DEV assay",
+    "No current outcome or hidden label used to choose archived state",
+    "No FORGE, P9/P10/P11, Wingless, Yggdrasil research, key custody, accepted pointer or production runner changes"
+  ]
+}
