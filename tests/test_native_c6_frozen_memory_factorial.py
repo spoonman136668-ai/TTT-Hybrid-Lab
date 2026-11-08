@@ -31,8 +31,7 @@ def test_graft_fast_copy_and_same_capacity_scrambled_negative():
     assert torch.equal(torch.sort(sham["fast_weights"].flatten()).values,
                        torch.sort(old["fast_weights"].flatten()).values)
     graft["fast_weights"].add_(13)
-    assert torch.equal(old, old_saved) if False else torch.equal(
-        old["fast_weights"], old_saved["fast_weights"])
+    assert torch.equal(old["fast_weights"], old_saved["fast_weights"])
     assert torch.equal(recent["fast_weights"], recent_saved["fast_weights"])
 
 
