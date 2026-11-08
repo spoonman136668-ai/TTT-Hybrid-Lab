@@ -1,0 +1,77 @@
+{
+  "schema": "ttt-hybrid.native-p9.existing-r3-cuda-frozen.v1",
+  "registered": "2026-11-08",
+  "intent": "ONE_BOUNDED_EXISTING_OWNER_GPU_DEVELOPMENT_COMPARISON",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 67,
+    "parent_p9_sha": "083438e51212c1e41a213001263fdd0d002dd4cc",
+    "p9_blob": "78a70f644c194e98c1e2a5c14785e5405054746f",
+    "original_pin_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "existing_r3_source_sha": "06a01c2c3a980eeb806a7ecb7cca1979a431f80c",
+    "existing_r3_pins_sha256": "44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768",
+    "existing_r3_package_manifest_sha256": "b0f674fd52f9f514d408840d27b969ce2da19ea119d90a6ce8f59fde05c073df"
+  },
+  "conditions": {
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "existing_cuda_python": "~/.local/share/ttt-hybrid/g7-r3-06a01c2c3a98/venv/bin/python",
+    "wsl_distro": "Ubuntu-24.04",
+    "torch": "2.9.0+cu128",
+    "triton": "3.5.0",
+    "cuda_build": "12.8",
+    "gpu": "RTX 5070 Ti Laptop GPU",
+    "capability": [
+      12,
+      0
+    ],
+    "min_free_gib": 8,
+    "max_gpu_utilization_percent": 20,
+    "require_zero_active_compute_processes": true,
+    "max_torch_allocated_mib": 256,
+    "max_child_seconds": 130,
+    "no_package_install": true,
+    "no_new_runner": true,
+    "no_service_changes": true,
+    "no_other_project_GPU_use": true,
+    "no_network": true,
+    "no_extension_build": true,
+    "no_training": true,
+    "no_auto_retries": true
+  },
+  "comparison": {
+    "source": "P9 existing DEV-only analytic fixture: unchanged exact SHA",
+    "seeds": [
+      613,
+      617,
+      619
+    ],
+    "steps": 64,
+    "batch": 4,
+    "timing_repetitions": 3,
+    "arms": [
+      "parallel_dense",
+      "parallel_gate",
+      "parallel_random",
+      "sequential_dense"
+    ],
+    "expected_state": "All events uninterrupted recurrence and attention cache",
+    "gating_budget": "32/64 refinements skipped, exact count matched with random",
+    "primary_latency": "actual CUDA-synchronized median wall time versus dense",
+    "secondary_quality": "untrained analytic MSE gate vs dense and random",
+    "pass_integrity_independent_of_latency_and_MSE": true,
+    "exploratory_25pct_speed_gain": true,
+    "exploratory_1pct_MSE_ceiling": true,
+    "note": "Torch eager GPU execution, NOT official fused Mamba2 nor production MoD; MAC estimates are not measured total GPU FLOPs."
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "S26_negative_preserved": true,
+    "S27_reserved_untouched": true,
+    "fully_trained_controls": "NOT_RUN",
+    "scientific_transfer": "NOT_RUN",
+    "FORGE_integration": "NOT_DONE",
+    "promotion": "NOT_DONE"
+  }
+}
