@@ -1,0 +1,103 @@
+{
+  "schema": "ttt-hybrid.native-p15.strong-control-frozen.v1",
+  "registered_on": "2026-11-08",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "P14_parent_pr": 81,
+    "P14_parent_sha": "40329f552eec61ddd498772100380020eb6f1489",
+    "P14_training_source_git_blob": "395506ec1085f6db74b336897d592b8b5074e763",
+    "P11_training_and_planner_git_blob": "3217e3ba6e5fdf8d88dc354e254d910cdafd87eb",
+    "P12_world_source_git_blob": "da6e02f9867018c029c1d5c30e791e8d5a149ff1",
+    "P10_world_source_git_blob": "b85150fb294269d9db88a2cbb194c1a6140cf081",
+    "native_original_git_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "source_pins_original_git_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Does P14's genuine reward-trained action-selection beat the much stronger preexisting fully supervised P11 two-step conventional GRU planner when the forced probes, factual observations, action choices, world noise, evaluation horizon and source are identical?",
+  "null": "P14 fails robust >=0.05 mean factual reward superiority in all 3 paired initializations on each delayed and changing dynamics and/or fails to preserve familiar prior planner competence within 0.02.",
+  "design": {
+    "scope": "DEVELOPMENT_ONLY_OLD_PUBLIC_SYNTHETIC_WORLDS_NO_SCIENTIFIC_FIRST_USE",
+    "evaluation_world_families": [
+      "instant",
+      "lagged",
+      "delay2",
+      "delay3",
+      "changing_delay",
+      "sham_no_action"
+    ],
+    "same_exact_old_dev_source": true,
+    "old_world_seeds": [
+      88031,
+      88047,
+      88063,
+      88091
+    ],
+    "old_lag_dev_seeds": [
+      88421,
+      88433,
+      88457,
+      88469
+    ],
+    "P14_model_seeds": [
+      1211,
+      1223,
+      1237
+    ],
+    "P11_paired_control_model_seeds": [
+      353,
+      359,
+      367
+    ],
+    "training_models": [
+      "original P14 causal actor reward-to-go REINFORCE",
+      "original P14 reward-credit shifted negative",
+      "original P11 conventional trained GRU plus model-based two-step plan",
+      "original P11 temporal-credit structured model plus same two-step plan"
+    ],
+    "P14_unchanged_training": "96 actual REINFORCE updates per model, each 12 actual factual-action worlds of 32 decisions, original P14 source untouched",
+    "P11_unchanged_training": "1200 AdamW factual targets per model, original 6000 supervised FIT/1920 validation, existing P11 source untouched",
+    "training_source_and_optimizer_budgets_matched": false,
+    "P14_vs_P11_equal_training_flops_or_wall": false,
+    "both_models_have_different_training_objectives": true,
+    "common_eight_initial_factual_events": true,
+    "forced_probe_slots": 16,
+    "probe_positions": "0,4,...,60 for all 7 arms",
+    "signed_probe_actions_identical_across_all_arms": true,
+    "scored_action_decisions_each_world": 64,
+    "no_heldout_future_feedback_to_policy": true,
+    "no_online_neural_training_during_eval": true,
+    "online_P13_passive_reference_receives_64_factual_updates": true,
+    "arms": [
+      "p14_reward_causal",
+      "p14_credit_corrupted",
+      "p11_conventional_gru_twostep",
+      "p11_conventional_gru_greedy",
+      "p11_structured_twostep",
+      "p13_passive_online",
+      "random_actions"
+    ],
+    "actual_scored_factual_actions": 32256,
+    "required_margin": 0.05,
+    "old_capability_max_deficit": 0.02,
+    "acceptance": "P14 exceeds existing P11 strongest GRU two-step by >=0.05 separately across ALL three paired init seeds in delay2, delay3 and changing_delay, and does not lose >.02 on instant and lagged; also beats reward-broken causal actor by >=.05",
+    "negative_controls": "original P14 corrupted rewards, exact P11 GRU with greedy action policy, original P11 structured two-step, P13 passive online and random; no-action sham action invariant",
+    "separate_scientific_confirmation_required": true,
+    "whole_process_wall_limit_seconds": 130,
+    "actual_cost_metrics": "each original model fit wall plus per-policy evaluation action wall and process-level wall, parameter counts and gradient steps; FLOPs not independently matched",
+    "no_runner_creation": true,
+    "no_new_controller": true,
+    "no_FORYGE_integration": true,
+    "no_model_promotion": true,
+    "no_deployment": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "S26_scientific_null_preserved": true,
+    "S27_source_remains_sealed": true,
+    "independently_born_unseen_source": false,
+    "independent_baseline_plateau_qualified": false,
+    "scientific_result_from_this_gate": "UNAUTHORIZED",
+    "cold_process_restoration_not_tested": true
+  }
+}
