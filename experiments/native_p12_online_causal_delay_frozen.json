@@ -1,0 +1,111 @@
+{
+  "schema": "ttt-hybrid.native-p12.online-delay-frozen.v1",
+  "registered": "2026-11-08",
+  "question": "Can factual online credit across lag 0..3 improve chosen outcomes on delayed and switching actuators over an identically updated current-only causal ablation, while detecting the no-causal-effect sham?",
+  "null": "No stable >=0.05 mean reward gain across 3 model seeds over an equal-update online current-only or action-permuted control; false action causality may persist on sham.",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_P11_pr": 76,
+    "parent_P11_sha": "bcd8ae3b2af1b54f3d93a3d2e467d6962fd7dd4f",
+    "P11_script_blob": "3217e3ba6e5fdf8d88dc354e254d910cdafd87eb",
+    "P10_script_blob": "b85150fb294269d9db88a2cbb194c1a6140cf081",
+    "native_original_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "design": {
+    "scope": "PUBLIC_HAND_AUTHORED_SYNTHETIC_DEVELOPMENT_ONLY",
+    "latent_action_delay_labels_provided_to_policies": false,
+    "training_original_P11_unchanged": true,
+    "train_seeds": [
+      54131,
+      54179
+    ],
+    "model_initializations": [
+      353,
+      359,
+      367
+    ],
+    "trained_models": [
+      "P11 structured temporal credit",
+      "P11 separate GRU"
+    ],
+    "training_examples": 6000,
+    "validation_examples": 1920,
+    "optimizer_updates_per_trained_model": 1200,
+    "same_factual_minibatch_indices": true,
+    "allowed_delays": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "new_evaluation_families": [
+      "delay2",
+      "delay3",
+      "changing_delay",
+      "sham_no_action"
+    ],
+    "evaluation_development_seeds": [
+      88421,
+      88433,
+      88457,
+      88469
+    ],
+    "world_regime_change_points": [
+      32,
+      56
+    ],
+    "sham_world_has_no_action_effect": true,
+    "sham_has_time_correlated_nuisance": true,
+    "changing_delay_has_time_correlated_nuisance": true,
+    "initial_shared_factual_observations": 8,
+    "scored_actions_per_episode": 64,
+    "online_feedback_updates": 64,
+    "online_ridge_regularization": 1,
+    "online_sufficient_stats_forget_factor": 0.96,
+    "online_random_exploration_fraction": 0.2,
+    "online_confidence_threshold": 0.08,
+    "lag_credit_model": "5x5 sequential factual regularized discounted least-squares with explicit lag0..3 causal action features. This is a strong prior not autonomous causal discovery.",
+    "equal_online_budgets": "full-lag vs current-only vs permuted-history: all same 5x5 solver/update shapes and 64 factual scored updates; no-adapt updates only 8 warmup events",
+    "evaluation_controls": [
+      "online_full",
+      "online_current",
+      "online_no_adapt",
+      "online_permuted",
+      "p11_structured",
+      "p11_gru",
+      "random",
+      "last_pair",
+      "privileged_reference"
+    ],
+    "privileged_diagnostic": "Reads source sign and lag, NOT a fair trained baseline or reliable upper bound under variable delays.",
+    "reward_primary": "per-policy actual chosen-action consequences; complete 64-step trace and SHA256 receipt",
+    "hypotheses": {
+      "online_full_vs_equal_update_current_only_min_mean_reward": 0.05,
+      "online_full_vs_no_adapt_min_mean_reward": 0.05,
+      "online_full_vs_p11_GRU_min_mean_reward": 0.05,
+      "online_full_vs_random_min_mean_reward": 0.05,
+      "online_full_vs_permuted_min_mean_reward": 0.05,
+      "sham_false_causal_max_abs_coefficient": 0.12,
+      "threshold_requirement": "each direction in all three model seeds per world family; preserve every failure"
+    },
+    "integrity": "exact common factual history; own chosen action then actual observed consequence; sham actual consequences identical across action policies; no unknown labels to models; same source-trained control updates and sampler digest; full final OS qualification",
+    "max_wall_seconds": 110,
+    "no_new_runner": true,
+    "no_model_promotion": true,
+    "no_installation": true,
+    "no_forge_activation": true,
+    "no_paid_API": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "original_S26_negative_preserved": true,
+    "S27_sealed_seeds_preserved": true,
+    "competent_baselines_independently_qualified": false,
+    "authentic_unseen_world_source_born": false,
+    "FLOP_equivalence_verified": false,
+    "transfer_scientific_first_use": "NOT_RUN"
+  }
+}
