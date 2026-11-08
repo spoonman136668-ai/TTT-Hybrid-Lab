@@ -160,11 +160,13 @@ def _common_claim(row:dict,arm:str,fit:int,validation:int,sha:str):
             and integer(row.get("validation_pair_exposures"),
                         "S26_INVALID_VALIDATION_EXPOSURE",32)>0,
             "S26_BASELINE_INSUFFICIENT_EXPOSURES")
-    number(row.get("train_wall_seconds"),"S26_INVALID_TRAIN_WALL",positive=True)
-    number(row.get("validate_wall_seconds"),"S26_INVALID_VALIDATION_WALL",positive=True)
+    train_wall=number(row.get("train_wall_seconds"),
+                      "S26_INVALID_TRAIN_WALL",positive=True)
+    validate_wall=number(row.get("validate_wall_seconds"),
+                         "S26_INVALID_VALIDATION_WALL",positive=True)
     number(row.get("train_cpu_seconds"),"S26_INVALID_TRAIN_CPU",positive=True)
     number(row.get("validate_cpu_seconds"),"S26_INVALID_VALIDATION_CPU",positive=True)
-    require(row["train_wall_seconds"]+row["validate_wall_seconds"]<=TIME_LIMIT,
+    require(train_wall+validate_wall<=TIME_LIMIT,
             "S26_BASELINE_EXECUTION_TIME_CAP_EXCEEDED")
     require(integer(row.get("peak_rss_bytes"),"S26_INVALID_RSS",1)<=RSS_LIMIT,
             "S26_BASELINE_MEMORY_BUDGET_EXCEEDED")
