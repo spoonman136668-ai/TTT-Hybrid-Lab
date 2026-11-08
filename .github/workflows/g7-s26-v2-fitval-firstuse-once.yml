@@ -1,6 +1,6 @@
 # Once-only native Windows + WSL CPU regression of versioned S25 portability.
 # No scientific first-use, model training, CUDA, R3 writes or owner changes.
-name: G7-S26-V2 registered scientific first-use conventional fit validation once
+name: G7-S26-V2 registered scientific first-use conventional fit validation once R2
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   exact-head-cross-platform:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-v2-fitval-firstuse-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-v2-fitval-firstuse-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 115
     steps:
@@ -37,7 +37,7 @@ jobs:
              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
              $env:RUNNER_OS -cne 'Windows' -or
              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
-             $env:GITHUB_RUN_NUMBER -cne '1'){throw 'BLOCKED_OWNER_OR_ONE_USE'}
+             $env:GITHUB_RUN_NUMBER -cne '2'){throw 'BLOCKED_OWNER_OR_ONE_USE'}
           $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s26-v2-firstuse'
           $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
           if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_SOURCE_HEAD'}
@@ -128,7 +128,7 @@ jobs:
           if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
              $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-v2-fitval-firstuse-20261107' -or
              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
-             $env:GITHUB_RUN_NUMBER -cne '1' -or
+             $env:GITHUB_RUN_NUMBER -cne '2' -or
              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN'){
             throw 'FIRSTUSE_OWNER_OR_ONE_USE_SCOPE_DRIFT'
@@ -145,9 +145,11 @@ jobs:
           }
           $lock=Get-Content -LiteralPath (Join-Path $root $lockPath) -Raw|ConvertFrom-Json
           $protocol=Get-Content -LiteralPath (Join-Path $root $protocolPath) -Raw|ConvertFrom-Json
+          Write-Output ('FIRSTUSE_LOCK_SOURCE_BLOB_COUNT=' + @($lock.source_blobs.PSObject.Properties).Count)
+          Write-Output ('FIRSTUSE_FROZEN_REGISTRATION_STATUS=' + $lock.status)
           if($lock.schema -cne 'ttt-hybrid.g7-s26-v2.exact-source-first-use-lock.v1' -or
              $lock.status -cne 'FROZEN_BEFORE_ANY_FIT_OR_VALIDATION_FIRST_USE' -or
-             $lock.source_blobs.PSObject.Properties.Count -ne 10 -or
+             @($lock.source_blobs.PSObject.Properties).Count -ne 10 -or
              $protocol.schema -cne 'ttt-hybrid.g7-s26-v2.fit-validation-firstuse-frozen.v1' -or
              $protocol.authority.first_use_authorized_for_this_new_protocol -ne $true -or
              $protocol.authority.heldout_transfer_negative_bootstrap_forbidden -ne $true -or
@@ -243,7 +245,7 @@ jobs:
              $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-v2-fitval-firstuse-20261107' -or
              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
-             $env:GITHUB_RUN_NUMBER -cne '1'){throw 'FIRSTUSE_OWNER_AUTHORITY_DRIFT'}
+             $env:GITHUB_RUN_NUMBER -cne '2'){throw 'FIRSTUSE_OWNER_AUTHORITY_DRIFT'}
           $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
           $userName=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
           $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
