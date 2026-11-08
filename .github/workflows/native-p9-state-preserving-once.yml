@@ -1,0 +1,131 @@
+# Project-owned one-use P9 DEV benchmark, not real fused Mamba-2 or science.
+name: Native P9 state-preserving conditional compute once
+on:
+  push:
+    branches:
+      - engineering/native-p9-parallel-scan-refinement-dev-20261108
+    paths:
+      - .github/workflows/native-p9-state-preserving-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p9-state-preserving-once
+  cancel-in-progress: false
+jobs:
+  exact-source-native-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p9-parallel-scan-refinement-dev-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p9-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 180
+      - name: Exact source P8 ancestry, immutable native original and science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P9_OWNER_ONEUSE_SCOPE_BLOCKED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p9-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P9_EXACT_SHA_DRIFT'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P9_DIRTY_SOURCE'}
+          & git -C $root merge-base --is-ancestor 'a0d749d3ec28cbc15ff212a6fdd9752799cc8578' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P9_INHERITED_P8_DRIFT'}
+          $pins=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_p8_schedule_dev.py'='2ab9018fe6d3bc68fe30af7f30a1cf189bc6433d';
+            'scripts/native_p9_parallel_refinement_dev.py'='78a70f644c194e98c1e2a5c14785e5405054746f';
+            'tests/test_native_p9_parallel_refinement_dev.py'='f24d250db6681ab79617f1b4a10781b4427c73c2';
+            'experiments/native_p9_parallel_refinement_dev_frozen.json'='161da4318bd3880a60423e4c251e1fb0904e5179'
+          }
+          foreach($name in $pins.Keys){
+            $got=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $got -cne $pins[$name]){throw "P9_FROZEN_BLOB_DRIFT:$name"}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p9_parallel_refinement_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($p.science.authorized -ne $false -or $p.science.first_use_consumed -ne $false -or @($p.science.seeds.PSObject.Properties).Count -ne 0 -or $p.design.parallel_state_width -ne 32 -or $p.design.parallel_attention_width -ne 8){throw 'P9_SCIENCE_FENCE_OR_RATIO_DRIFT'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P9_EXISTING_PROJECT_RUNTIME_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'P9_QUALIFIED_CPU_RUNTIME_DRIFT'}
+          Write-Output 'P9_EXACT_NATIVE_SOURCE_AND_NO_SCIENCE=PASS'
+      - name: Full final Windows exact-SHA native regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p9-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0';$env:OMP_NUM_THREADS='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p9_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P9_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p9_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P9_WINDOWS_QUALIFICATION_RECEIPT_INVALID'}
+          Write-Output 'P9_WINDOWS_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Full final WSL exact-SHA native regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P9_WSL_OWNER_REQUIRED'}
+          $root="$lp/native-p9-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'OMP_NUM_THREADS=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p9_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P9_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p9-candidate\local_runs\native_p9_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P9_WSL_QUALIFICATION_RECEIPT_INVALID'}
+          Write-Output 'P9_WSL_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: One bounded actual CPU skip-vs-random wall-clock test
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p9-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 125s /usr/bin/env 'NATIVE_P9_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p9_parallel_refinement_dev.py" --device cpu --steps 64 --batch 4 --repetitions 3 --receipt "$root/local_runs/native_p9_cpu_probe.json"
+          if($LASTEXITCODE -ne 0){throw 'P9_BOUNDED_ACTUAL_COMPUTE_SKIP_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p9-candidate\local_runs\native_p9_cpu_probe.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_DEV_INTEGRITY_NOT_SCIENCE' -or $p.device -cne 'cpu' -or $p.gpu_benchmark_verified -ne $false -or $p.scientific_first_use -cne 'NOT_RUN' -or @($p.scientific_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 3){throw 'P9_PROBE_RECEIPT_SCOPE_FAIL'}
+          Write-Output 'P9_ACTUAL_BYPASS_STATE_CONTINUITY=PASS_CPU_DEV_NOT_SCIENCE'
+      - name: Read-only GPU runtime/hardware admission (do not equate CPU with CUDA)
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p9-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $cuda=(& $py -I -B -c 'import torch;print("1" if torch.cuda.is_available() else "0")'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $cuda -notin @('0','1')){throw 'P9_GPU_ADMISSION_RUNTIME_QUERY_FAIL'}
+          $smi=Get-Command nvidia-smi -ErrorAction SilentlyContinue
+          $smiStatus=if($smi){'NVIDIA_SMI_PRESENT'}else{'NVIDIA_SMI_UNAVAILABLE'}
+          $receipt=@{
+            schema='ttt-hybrid.p9.gpu-admission.v1'
+            source_sha=$env:GITHUB_SHA
+            runner=$env:RUNNER_NAME
+            qualified_cpu_torch_cuda_available=($cuda -ceq '1')
+            nvidia_smi_command=$smiStatus
+            actual_cuda_benchmark='NOT_RUN'
+            reason='EXISTING_QUALIFIED_CPU_RUNTIME_IS_CPU_ONLY'
+            science_first_use='NOT_RUN'
+          }
+          $receipt | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $root 'local_runs\native_p9_gpu_admission.json') -Encoding UTF8
+          Write-Output "P9_GPU_ADMISSION_RECORDED; cuda_in_existing_cpu_env=$cuda; nvidia_smi=$smiStatus; benchmark=NOT_RUN"
+      - name: Archive original regressions, DEV benchmark and GPU admission
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p9-parallel-scan-refinement-once
+          path: native-p9-candidate/local_runs/native_p9_*.json
+          retention-days: 30
+          if-no-files-found: warn

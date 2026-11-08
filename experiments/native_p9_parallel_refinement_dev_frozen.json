@@ -1,0 +1,47 @@
+{
+  "schema": "ttt-hybrid.native-p9.parallel-refinement-frozen.v1",
+  "registered": "2026-11-08",
+  "status": "FROZEN_SYNTHETIC_DEV_BEFORE_OWNER_RUN",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_p8_sha": "a0d749d3ec28cbc15ff212a6fdd9752799cc8578",
+    "original_native_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "design": {
+    "question": "Does an actual skipped optional refinement preserve every continuous recurrence and bounded attention-cache update, and is there a measured wall-clock/quality benefit vs equal-budget random gating?",
+    "token_free": true,
+    "real_fused_mamba2": false,
+    "real_production_mod": false,
+    "parallel_state_width": 32,
+    "parallel_attention_width": 8,
+    "history_capacity": 8,
+    "same_native_model_weights_per_arm": true,
+    "arms": [
+      "parallel_dense",
+      "parallel_gate",
+      "parallel_random",
+      "sequential_dense"
+    ],
+    "gate": "Fixed >0.10 current observed sensor-channel variance; only per-event whole fixed batch, no top-k or future outcome",
+    "negative": "Random gate same skip budget, same core/weights/cache/observations",
+    "fixture": "Public continuous sensor/action/dt; 3 untrained initializations 613,617,619; 64 events, batch 4; 3 wall-clock repetitions",
+    "minimum_exploratory_latency_gain": 0.25,
+    "maximum_exploratory_MSE_increase": 0.01,
+    "claims": "A skipped MLP is actual compute bypass; only its linear MAC estimate is counted as avoidable. CPU timings are not GPU timings.",
+    "mandatory_state": "Every event advances recurrent state and bounded attention cache even if optional MLP is skipped; all arms must have identical final recurrence/cache",
+    "acceptance": "Engineering integrity PASS regardless of prospective runtime/quality losses; retain full nulls.",
+    "run_GPU": "Only if qualified existing CUDA environment is available; CPU torch does not qualify a CUDA run.",
+    "no_science_first_use": true,
+    "no_model_training": true,
+    "no_substrate_acceptance": true,
+    "no_forge_change": true
+  },
+  "science": {
+    "authorized": false,
+    "seeds": {},
+    "first_use_consumed": false,
+    "S26_negative_preserved": true,
+    "S27_reserved_untouched": true
+  }
+}
