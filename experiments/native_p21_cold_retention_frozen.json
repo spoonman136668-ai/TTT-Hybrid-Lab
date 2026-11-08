@@ -1,0 +1,89 @@
+{
+  "schema": "ttt-hybrid.native-p21.process-death-cold-retention-frozen.v1",
+  "registered": "2026-11-08",
+  "parent": {
+    "source_sha": "ad69bcd06e973f0c05546c3e5782b770a0ce0e6e",
+    "PR": 92,
+    "unchanged_P20_history_finding": "full-history GRU +118.29 mean development steps versus trained same-size current-only control (3/3); strong two-frame finite-difference still 200",
+    "original_P20_script_blob": "99ebe68151642a5c7a9f5efd95923e4450086155",
+    "original_P19_script_blob": "7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5",
+    "original_S29_sha": "30c27ca4865e16b7574ee2b562879108db2b3796"
+  },
+  "question": "Can new P20-equivalent learned non-token velocity-blind full-history and current-only GRU checkpoints be restored in TWO entirely new Python processes and produce exact identical logits, factual action traces and return without any re-training on fresh public development evaluation worlds?",
+  "null": "Cold checkpoint state is corrupt, source-mismatched, non-reproducible or performance cannot be retained without replaying supervision after Python process death. No scientific or independently unknown-world claim.",
+  "train": {
+    "model_initializations": [
+      2741,
+      2753,
+      2767
+    ],
+    "original_P20_public_train_seeds": "76000..76047",
+    "original_P20_public_validation_seeds": "77000..77007",
+    "same_unchanged_original_teacher_imitation": true,
+    "prior_P20_weights_unavailable": "P20 original run did not save model tensors; P21 is a NEW separately trained checkpoint cohort, not restoration of P20 original weights.",
+    "trained_actors": [
+      "full_history_gru",
+      "current_only_gru"
+    ],
+    "epochs": 32,
+    "batch_size": 512,
+    "learning_rate": 0.008,
+    "full_history_velocities_masked": true,
+    "current_only_previous_seven_rows_zeroed": true,
+    "checkpoint_contents": "model state tensors only, explicit model architecture/seed, exact source/variant/parameters and digest; optimizer state NOT available for continuing training"
+  },
+  "eval": {
+    "seeds": [
+      79011,
+      79012,
+      79013,
+      79014,
+      79015,
+      79016,
+      79017,
+      79018
+    ],
+    "world": "identical upstream MIT Gymnasium CartPole-v1 original physics, new public development reset seeds only",
+    "actors": [
+      "full_history_gru",
+      "current_only_gru",
+      "history_reversed_gru",
+      "finite_difference_public_history",
+      "full_observation_expert"
+    ],
+    "num_separate_restore_processes": 2,
+    "eval_online_updates": 0,
+    "cold_exactness": "same model tensor digests, byte-exact sentinel output logits, per-arm per-world action SHA256, actual per-arm reward and policy choices across both processes",
+    "min_process_restart_seconds": 0,
+    "strict_negative_controls": [
+      "one-byte corruption of saved weight ZIP is rejected BEFORE load",
+      "wrong parent source SHA rejected",
+      "wrong model seed and missing model state rejected",
+      "no training source/demonstrations accessible to cold inference function except pinned source-only Gym"
+    ],
+    "fixed_history_gain_reported_not_acceptance": "On new public development worlds only, report original preregistered P20 effect thresholds descriptively and keep negatives; do not tune P20"
+  },
+  "integrity": {
+    "source_pin_sha": "ad69bcd06e973f0c05546c3e5782b770a0ce0e6e",
+    "pinned_original_source_and_licenses": true,
+    "python_process_A_is_distinct_from_train": true,
+    "python_process_B_is_distinct_from_A": true,
+    "archive_checkpoint_sha256": true,
+    "retention_check_no_training_in_eval": true,
+    "mandatory_full_windows_and_WSL_regression": true,
+    "original_cuda_negative": true,
+    "max_training_process_seconds": 150,
+    "max_single_eval_process_seconds": 150
+  },
+  "science": {
+    "first_use_authorized": false,
+    "sealed_original_science_source_consumed": false,
+    "no_unknown_world_claim": true,
+    "no_reward_only_learning_claim": true,
+    "no_optimizer_rng_state_continuation_claim": true,
+    "no_FLOP_matched_science_claim": true,
+    "no_merge_or_deployment": true,
+    "FORGE_owner_activation": false,
+    "independent_reward_only_P20_PR93_untouched": true
+  }
+}
