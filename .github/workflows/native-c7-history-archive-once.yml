@@ -1,0 +1,121 @@
+# C7 source-locked existing owner route; no original science first use.
+name: Native C7 factual-history archived memory routing one-use
+on:
+  push:
+    branches: [engineering/native-c7-observed-history-snapshot-router-20261108]
+    paths: [.github/workflows/native-c7-history-archive-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-c7-project-owner-once
+  cancel-in-progress: false
+jobs:
+  windows-and-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-c7-observed-history-snapshot-router-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout final exact candidate without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-c7-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 190
+      - name: Lock C6 ancestry P6 extracted evidence and C7 frozen source
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_C7_OWNER_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c7-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_C7_SOURCE_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_C7_DIRTY'}
+          & git -C $root merge-base --is-ancestor '3d601a803e0d72d4bb173400d7045a55e0f80ae3' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C7_C6_ANCESTRY'}
+          $pins=@{
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_transactional_resume.py'='a2906a27794508ddd01bea6cde7278b1cec561f2';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p3_continuity.py'='ae5a42140df501bc21bc3f050e75c70cb4771c89';
+            'scripts/native_c4_measured_retention.py'='d47af3c0ced9b28c73d03d5229ceb9b247cba214';
+            'scripts/native_c5_history_readaptation.py'='fbfd3e76e512d701f4780c5b74785c2afa87e7b2';
+            'scripts/native_c6_frozen_memory_factorial.py'='9567e1f52a225610de5c134dc2e9de4a157eb116';
+            'scripts/native_c7_p6_factual_evidence.py'='a3804553b78fadf77b001b7feff3f41368d7f8fb';
+            'scripts/native_c7_history_archive_selection.py'='7c1956e1a08088dd1c63c17461f9ee3a4d04c95d';
+            'tests/test_native_c7_history_archive_selection.py'='cb6a8c4902b9ac523b74a79b45b6805185175eb4';
+            'experiments/native_c7_observed_history_archive_dev.json'='36086be8189ba2cc2d4c9fb01ca520236f40e86a';
+            'docs/NATIVE_C7_HISTORY_SNAPSHOT_ROUTING.md'='8c448ab1c7c9d98d7c6072352c8a585fbb8c5fc5';
+            'experiments/native_p3_continuity_engineering_frozen.json'='1c7ba4cb28182b026a0e82fbc33a232b4f7f0bac';
+            'experiments/native_p1_control_admission_preflight.json'='9de1caedb56f1248264ac37db08ec66b8265fe16'
+          }
+          foreach($p in $pins.Keys){
+            $actual=(& git -C $root hash-object -- $p|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $pins[$p]){throw "BLOCKED_C7_SOURCE_BLOB:$p"}
+          }
+          $pre=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_c7_observed_history_archive_dev.json') -Raw|ConvertFrom-Json
+          if($pre.science.authorized -ne $false -or $pre.science.data_consumed -ne $false -or @($pre.science.seeds.PSObject.Properties).Count -ne 0 -or $f.science.original_first_use -ne $false -or $f.science.production_owner_promotion -ne $false -or $f.train.optimizer_updates -ne 80 -or $f.eval.events_per_record -ne 64 -or @($f.eval.arms).Count -ne 6 -or $f.eval.no_new_fast_memory_writes -ne $true){throw 'BLOCKED_C7_SCIENTIFIC_SCOPE'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_C7_PYTHON'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'BLOCKED_C7_PINNED_RUNTIME'}
+          Write-Output 'NATIVE_C7_FINAL_SOURCE_FROZEN_AND_NONSCIENCE=PASS'
+      - name: Full Windows CPU regression and six-context observational routing evaluations
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c7-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          $env:NATIVE_P3_ENGINEERING_ONLY='1';$env:NATIVE_C7_ENGINEERING_ONLY='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\c7_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C7_WINDOWS_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\c7_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C7_WINDOWS_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 239){throw 'BLOCKED_C7_WINDOWS_COUNT'}
+          & $py -I -B (Join-Path $root 'scripts\native_c7_history_archive_selection.py') --receipt (Join-Path $root 'local_runs\c7_windows_assay.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C7_WINDOWS_ASSAY'}
+          $r=Get-Content -LiteralPath (Join-Path $root 'local_runs\c7_windows_assay.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_CAUSAL_HISTORY_SNAPSHOT_SELECTION_INTEGRITY_DEV' -or $r.record_count -ne 3 -or $r.orders_per_seed -ne 2 -or $r.science_first_use -cne 'NOT_RUN' -or $r.model_promoted -ne $false -or $r.new_training_loop_activated -ne $false -or $r.trained_context_router -ne $false){throw 'BLOCKED_C7_WINDOWS_RECEIPT'}
+          foreach($x in $r.records){if(@($x.evaluation_orders).Count -ne 2 -or $x.checkpoint_and_native_state_unchanged -ne $true -or $x.no_new_model_or_fast_weight_learning -ne $true){throw 'BLOCKED_C7_WINDOWS_NATIVE'}; foreach($o in $x.evaluation_orders){if(@($o.raw_event_ledger).Count -ne 64 -or @($o.measurements.PSObject.Properties).Count -ne 6 -or @($o.hypotheses.PSObject.Properties).Count -ne 5 -or $o.used_hidden_label_for_inference -ne $false -or $o.used_current_outcome_for_selection -ne $false -or $o.new_fast_memory_writes -ne 0 -or $o.postcheckpoint_optimizer_updates -ne 0){throw 'BLOCKED_C7_WINDOWS_LEAKAGE'}}}
+          Write-Output 'NATIVE_C7_WINDOWS_FULL_AND_SAVED_MEMORY_ROUTING=PASS_ENGINEERING'
+      - name: Full WSL CPU regression and six-context observational routing evaluations
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_C7_WSL_OWNER'}
+          $root="$lp/native-c7-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C7_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/c7_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C7_WSL_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c7-candidate\local_runs\c7_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C7_WSL_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 238){throw 'BLOCKED_C7_WSL_COUNT'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 150s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C7_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/native_c7_history_archive_selection.py" --receipt "$root/local_runs/c7_linux_assay.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C7_WSL_ASSAY'}
+          $r=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c7-candidate\local_runs\c7_linux_assay.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_CAUSAL_HISTORY_SNAPSHOT_SELECTION_INTEGRITY_DEV' -or $r.record_count -ne 3 -or $r.orders_per_seed -ne 2 -or $r.science_first_use -cne 'NOT_RUN' -or $r.model_promoted -ne $false -or $r.new_training_loop_activated -ne $false -or $r.trained_context_router -ne $false){throw 'BLOCKED_C7_WSL_RECEIPT'}
+          foreach($x in $r.records){if(@($x.evaluation_orders).Count -ne 2 -or $x.checkpoint_and_native_state_unchanged -ne $true -or $x.no_new_model_or_fast_weight_learning -ne $true){throw 'BLOCKED_C7_WSL_NATIVE'}; foreach($o in $x.evaluation_orders){if(@($o.raw_event_ledger).Count -ne 64 -or @($o.measurements.PSObject.Properties).Count -ne 6 -or @($o.hypotheses.PSObject.Properties).Count -ne 5 -or $o.used_hidden_label_for_inference -ne $false -or $o.used_current_outcome_for_selection -ne $false -or $o.new_fast_memory_writes -ne 0 -or $o.postcheckpoint_optimizer_updates -ne 0){throw 'BLOCKED_C7_WSL_LEAKAGE'}}}
+          Write-Output 'NATIVE_C7_WSL_FULL_AND_SAVED_MEMORY_ROUTING=PASS_ENGINEERING'
+      - name: Archive immutable C7 source-locked Windows and WSL factual evaluation receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-c7-observed-history-archive-eng-once
+          path: |
+            native-c7-candidate/local_runs/c7_windows.json
+            native-c7-candidate/local_runs/c7_linux.json
+            native-c7-candidate/local_runs/c7_windows_assay.json
+            native-c7-candidate/local_runs/c7_linux_assay.json
+          retention-days: 30
+          if-no-files-found: warn
