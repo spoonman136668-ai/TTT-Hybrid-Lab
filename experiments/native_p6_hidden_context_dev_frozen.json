@@ -1,0 +1,123 @@
+{
+  "schema": "ttt-hybrid.native-p6.hidden-context-factual-evidence.v1",
+  "registered_date": "2026-11-08",
+  "phase": "FROZEN_DEVELOPMENT_BEFORE_ONE_USE_EXACT_SOURCE_QUALIFICATION",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 58,
+    "parent_p5_sha": "c7f0253cd536666b6aea2e24e8d0313f68d5f20b",
+    "original_source_pins_git_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "unchanged_native_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "unchanged_p0_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f",
+    "unchanged_p5_blob": "e3ad1c928be230add69f8fd694ac6549290e6730"
+  },
+  "scope": {
+    "token_free": true,
+    "non_next_token": true,
+    "engineering_only": true,
+    "scientific_training": false,
+    "model_weights_frozen": true,
+    "attention_in_original_native_model_unchanged": true,
+    "actual_scientific_worlds": false,
+    "actual_transfer": false,
+    "GPU": false,
+    "no_paid_API": true,
+    "no_new_runner": true,
+    "no_controller": true,
+    "no_merge_or_promotion": true,
+    "no_research_interruption": true
+  },
+  "design": {
+    "hypothesis": "Causal evidence from opposite observed factual actions can route equal-capacity fast memory in an unmarked familiar context switch, without receiving a context identifier or schedule as a predictor input.",
+    "null": "Inferred routing does not outperform shared memory and constant/action routing on either known context recall; errors, inference lag and oracle gap must be retained.",
+    "fixture": "Two fixed public algebraic action-effects, common sensor +0.07 and elapsed time +0.2; intercept +0.05; oppositely signed slopes +0.45/-0.45, same marginal action +/-1; 24 events each context, 96 per order.",
+    "orders": [
+      [
+        "A",
+        "B",
+        "A",
+        "B"
+      ],
+      [
+        "B",
+        "A",
+        "B",
+        "A"
+      ]
+    ],
+    "development_model_initializations": [
+      361,
+      367,
+      373,
+      379,
+      383,
+      389,
+      397,
+      401
+    ],
+    "events_per_record": 96,
+    "total_records": 16,
+    "source_of_context_evidence": "Only completed factual (action, observed_next) pairs. The posterior sign is inferred from half the difference between latest positive and negative action outcomes; no simulator/world label, phase number or future target enters inference.",
+    "inference_pair_requirement": "Both action polarities actually observed; initial tie-break +; fixed slope magnitude threshold 0.2; update only after each factual outcome.",
+    "outcome_scoring": "All arms score real factual next sensor before receiving any outcome. Counterfactual prediction may be read from same prior state but alternate outcome is never observed/trained.",
+    "fast_storage_per_arm_scalars": 12,
+    "gated_per_context_scalars": 6,
+    "arms": [
+      "inferred_context_12_slots",
+      "oracle_context_12_slots",
+      "original_shared_12_slots",
+      "action_route_12_slots",
+      "constant_sensor_route_12_slots",
+      "no_feedback"
+    ],
+    "oracle_role": "ONLY a known-latent-context upper bound, not a fair automated learner.",
+    "negative_controls": "Shared unmodified original, action-sign partition, constant sensor-sign partition (cannot distinguish worlds), and no-feedback.",
+    "controls_frozen": "All arms same untrained native model parameters, sensor/action/time stream and recurrent/history dynamics. Different mask selection and runtime computations declared.",
+    "primary_windows": {
+      "revisit_1_immediate": [
+        48,
+        52
+      ],
+      "revisit_1_late": [
+        64,
+        72
+      ],
+      "revisit_2_immediate": [
+        72,
+        76
+      ],
+      "revisit_2_late": [
+        88,
+        96
+      ]
+    },
+    "infer_correctness": "Rate of correctly selected latent contexts BEFORE outcome (ground truth used only after predictions for diagnostic scoring).",
+    "phase_change_latency": "Count errors at time of switches, record inference change receipts; initial two factual results anticipated after fresh context switch.",
+    "frozen_hypotheses": [
+      "inferred_beats_shared_on_both_late_revisits",
+      "inferred_beats_action_route_on_both_late_revisits",
+      "inferred_beats_constant_sensor_route_both_late",
+      "oracle_beats_inferred_on_both_immediate_revisits",
+      "inferred_recovers_after_two_factual_events"
+    ],
+    "acceptance": "Engineering integrity only, including matching 12-slot capacity and causal chronology, complete records/negative outcomes, Windows/WSL full exact-SHA regression, and original source negatives; hypothesis support may be zero and must be reported.",
+    "runtime_budget_seconds": 45
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "consumed": false,
+    "independent_new_world_source": "NOT_REGISTERED",
+    "independent_owner_firstuse": "NOT_GRANTED",
+    "S26_predecessor": "Original first-use scientific negative preserved, never replay seeds",
+    "S27_separate": "Reserved prospective seeds untouched",
+    "scientific_success": "UNVERIFIED"
+  },
+  "limitations": [
+    "Fixed synthetic action alternation and deterministic two-context algebraic targets",
+    "A learned causal-effect sign is a hand-coded on-line estimator, not learned representation inference or JEPA",
+    "Same marginal observation distributions but known actions + realized outcomes reveal latent slope after pair; no unfamiliar-world novelty",
+    "Equal stored scalar capacity does not guarantee matched wall/compute operations; oracle uses true latent label",
+    "Model weights not trained, no retention beyond same familiar worlds, no authentic source custody"
+  ]
+}
