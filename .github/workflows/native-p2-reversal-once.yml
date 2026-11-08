@@ -1,0 +1,105 @@
+# One-use source-bound P2 engineering only. No scientific worlds, training, GPU or new owner.
+name: Native P2 factual fast-memory synthetic reversal once
+on:
+  push:
+    branches:
+      - engineering/native-p2-factual-fast-memory-20261108
+    paths:
+      - .github/workflows/native-p2-reversal-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p2-reversal-source-locked-one-use
+  cancel-in-progress: false
+jobs:
+  windows-and-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p2-factual-fast-memory-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p2-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 120
+      - name: Verify exact source, original custody, and no scientific access
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_OWNER_RUNNER_ONE_USE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p2-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_EXACT_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_DIRTY_CHECKOUT'}
+          & git -C $root merge-base --is-ancestor '706658b5038c11642829868b0f292ac2fe4452e0' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P1_ANCESTOR'}
+          $known=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f'
+          }
+          foreach($path in $known.Keys){
+            $blob=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $known[$path]){throw "BLOCKED_ORIGINAL_SOURCE_BLOB:$path"}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p2_synthetic_reversal_engineering.json') -Raw|ConvertFrom-Json
+          if($p.science.authorized -ne $false -or $p.science.data_consumed -ne $false -or @($p.science.seed_allocations.PSObject.Properties).Count -ne 0 -or $p.scope.model_fit_updates -ne 0){throw 'BLOCKED_SCIENTIFIC_FIRST_USE'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_EXISTING_CPU_ENV'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu'){throw 'BLOCKED_TORCH_VERSION'}
+          Write-Output 'P2_EXACT_SOURCE_AND_SCIENCE_FIRSTUSE_FENCE=PASS'
+      - name: Full native Windows regression and original negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p2-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p2_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WIN_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p2_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_WINDOWS_RECEIPT'}
+          Write-Output 'P2_WINDOWS_FULL_REGRESSION=PASS'
+      - name: Full Linux WSL regression and original negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_WSL_OWNER'}
+          $root="$lp/native-p2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p2_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WSL_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p2-candidate\local_runs\native_p2_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_LINUX_RECEIPT'}
+          Write-Output 'P2_WSL_FULL_REGRESSION=PASS'
+      - name: Bounded engineering-only factual versus negative synthetic reversal
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'NATIVE_P2_SYNTHETIC_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p2_synthetic_adaptation.py" --receipt "$root/local_runs/native_p2_synthetic_result.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P2_SYNTHETIC_NEGATIVE'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p2-candidate\local_runs\native_p2_synthetic_result.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_SYNTHETIC_ENGINEERING_ONLY' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.scientific_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 8 -or $p.model_fit_updates -ne 0){throw 'BLOCKED_P2_RESULT_RECEIPT'}
+          Write-Output 'P2_SYNTHETIC_FAST_MEMORY=PASS_ENGINEERING_ONLY'
+      - name: Publish source-scoped receipts for both OS and synthetic negative
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p2-synthetic-reversal-once
+          path: native-p2-candidate/local_runs/native_p2_*.json
+          retention-days: 30
+          if-no-files-found: warn
