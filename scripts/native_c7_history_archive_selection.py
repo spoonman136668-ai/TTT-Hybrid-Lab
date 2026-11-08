@@ -55,9 +55,6 @@ def _spec():
     d = spec["eval"]
     _require(spec["schema"] == "ttt-hybrid.c7.observed-history-archive-selection-dev.v1"
              and spec["source_parent_sha"] == "3d601a803e0d72d4bb173400d7045a55e0f80ae3"
-             and spec["seeds"] if False else True, "UNREACHABLE")
-    _require(spec["schema"] == "ttt-hybrid.c7.observed-history-archive-selection-dev.v1"
-             and spec["source_parent_sha"] == "3d601a803e0d72d4bb173400d7045a55e0f80ae3"
              and spec["train"]["model_seeds"] == list(factual.MODEL_INITIALIZATIONS)
              and spec["train"]["optimizer_updates"] == factual.TOTAL_EVENTS == 80
              and d["arms"] == list(ARMS)
