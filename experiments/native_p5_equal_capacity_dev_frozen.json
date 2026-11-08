@@ -1,0 +1,113 @@
+{
+  "schema": "ttt-hybrid.native-p5.equal-capacity-dev-frozen.v1",
+  "registered_utc": "2026-11-08",
+  "status": "FROZEN_BEFORE_FIRST_PROJECT_RUN_DEV_ONLY",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_interference_pr": 56,
+    "parent_interference_pr56_sha": "b84b910833d80db7296fe07dda5607b61c9040f1",
+    "original_native_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_prequential_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f",
+    "original_p4_dev_blob": "8b76e020d6f193967b1413746ba8e00871dd770d",
+    "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Does routing one fixed-size fast tensor by observable context preserve both opposed action consequences better than same-capacity original or action-based partition after interference?",
+  "null": "Equal-capacity sensor-sign gating does not beat shared full-width and action-sign gating on immediately revisited A and B contexts.",
+  "arms": {
+    "name_list": [
+      "original_shared_factual",
+      "sensor_sign_gated_equal_capacity",
+      "action_sign_gated_equal_capacity",
+      "no_feedback"
+    ],
+    "same_untrained_native_weights": true,
+    "same_recurrent_history": true,
+    "same_factual_actions_and_sensor_time": true,
+    "same_original_model_capacity": true,
+    "same_total_fast_storage_across_all_arms": true,
+    "gated_total_fast_slots": 12,
+    "per_context_fast_slots": 6,
+    "routed_key_normalized_to_unit_length": true,
+    "full_key_normalized_to_unit_length": true,
+    "routing_current_measurement_only": true,
+    "sensor_route": "observed sensor sign: +0.35=A, -0.35=B",
+    "negative_route": "factual action sign, not context",
+    "no_feedback_route": "zero fast-memory update",
+    "model_gradient_updates": 0
+  },
+  "fixture": {
+    "type": "PUBLIC_ANALYTIC_DEVELOPMENT_ONLY",
+    "model_initialization_values": [
+      361,
+      367,
+      373,
+      379,
+      383,
+      389,
+      397,
+      401
+    ],
+    "contexts": [
+      "A",
+      "B",
+      "A",
+      "B"
+    ],
+    "events_per_context_block": 24,
+    "total_events": 96,
+    "same_algebraic_outcomes_as_pr56": true,
+    "effect_A_positive_minus_negative": 0.9,
+    "effect_B_positive_minus_negative": -0.9,
+    "immediate_recall_windows": {
+      "A": [
+        48,
+        52
+      ],
+      "B": [
+        72,
+        76
+      ]
+    },
+    "late_recall_windows": {
+      "A": [
+        64,
+        72
+      ],
+      "B": [
+        88,
+        96
+      ]
+    },
+    "factual_only_prequential": true,
+    "unavailable_counterfactual_feedback": "FORBIDDEN",
+    "max_dev_runtime_seconds": 50
+  },
+  "falsification": {
+    "metric": "mean squared factual next-sensor prediction error scored BEFORE outcome",
+    "primary": "sensor-gated fast memory lower immediate-recall MSE than both original shared and action-gated same-storage controls on each A/B revisit, across 8 DEV initializations",
+    "secondary": "sensor-gated lower late-recall MSE than no-feedback; action-effect sign+eligible coverage logged",
+    "negative_findings_policy": "Never fail pipeline because scientific hypothesis did not hold. Report all support counts and per-initialization losses without retuning.",
+    "qualification": "PASS_DEV_INTEGRITY_NOT_SCIENCE requires no leakage, correct masks and equal memory, correct causal order and full exact-source regression, regardless of performance."
+  },
+  "limits": {
+    "same_total_fast_scalar_capacity_not_same_compute": true,
+    "per_context_effective_capacity_is_half": true,
+    "routing_sensor_sign_is_trivial_observable_context_not_latent_inference": true,
+    "original_native_bounded_attention_remains_unchanged": true,
+    "no_genuine_world_training": true,
+    "no_unfamiliar_world_transfer": true,
+    "no_matched_trained_conventional_control": true,
+    "no_GPU_execution": true,
+    "no_accepted_checkpoint_update": true,
+    "no_merge_deployment_controller": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "S26_past_fail_preserved": true,
+    "S27_reserved_seeds_untouched": true,
+    "independent_source_birth": "NOT_REGISTERED",
+    "separate_science_owner_firstuse_required": true
+  }
+}
