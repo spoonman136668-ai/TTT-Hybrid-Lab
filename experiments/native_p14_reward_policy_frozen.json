@@ -1,0 +1,96 @@
+{
+  "schema": "ttt-hybrid.native-p14.reward-policy-frozen.v1",
+  "registration_date": "2026-11-08",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_P13_pr": 79,
+    "parent_P13_sha": "065de52f2a6a698508e15db9c9bdb1e021201441",
+    "original_p13_source_blob": "0289c567db007fd9c4a30f7a959f5aea01b04aca",
+    "original_p12_source_blob": "da6e02f9867018c029c1d5c30e791e8d5a149ff1",
+    "original_p11_source_blob": "3217e3ba6e5fdf8d88dc354e254d910cdafd87eb",
+    "native_substrate_original_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "source_pins_original_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Can learned intervention decisions trained by observed reward-to-go outperform conventional recurrent decisions and corrupted reward-credit when factual intervention consequences have delayed effects and reversals?",
+  "null": "Reward-trained causal-feature actor fails to outperform equally trained conventional recurrent policy, incorrect credit-assignment negative and passive/random P13 controls by >=0.05 mean factual reward/action on all independent initialization seeds per known delayed environment; retained familiar competence uncertain.",
+  "design": {
+    "scope": "ONLY_AUTHORED_SYNTHETIC_DEV_NO_AUTHENTIC_FIRST_USE",
+    "architectures": [
+      "CausalFeaturePolicy (20->20->1, 441 params, raw 8 factual pairs + hand-derived 0..3 temporal action/outcome correlations)",
+      "ConventionalGRUPolicy (GRU 2->10 + 10->1, 431 params, same raw 8 factual pairs)",
+      "CausalFeaturePolicy with reward-to-go shifted across time and world/episode during policy-gradient update"
+    ],
+    "parameter_difference_max_fraction": 0.05,
+    "train_world_source": "fresh local authored development action-consequence generator with episode lag sampled from 0..3, varying hidden action-gain sign, unknown regime change, same exogenous cohort seeds for every training class",
+    "registered_training_world_seed_base": 211000,
+    "model_initializations": [
+      1211,
+      1223,
+      1237
+    ],
+    "actual_policy_gradient_updates": 96,
+    "training_worlds_each_update": 12,
+    "training_action_steps_each_world": 32,
+    "training_factual_prefix_length": 8,
+    "optimizer": "AdamW learning rate 0.003, REINFORCE reward-to-go gamma=0.97, per-time batch normalization of advantage, entropy regularization 0.01, gradient clip 3.0",
+    "do_not_provide_latent_sign_or_lag_labels_to_policy": true,
+    "sampled_actions_real_and_only_realized_outcomes_observed": true,
+    "reward_credit_negative": "roll reward-to-go 16 time steps and one world across batch, preserves histogram but destroys correct factual action attribution",
+    "actual_training_updates_matched_for_all_actors": true,
+    "same_world_cohort_fingerprint_per_step": true,
+    "training_trajectories_may_differ_due_to_onpolicy_actions": true,
+    "source_evaluation": "UNCHANGED prior known P10 instant/lagged DEV and P12 delay2, delay3, changing_delay and no action sham DEV, four original DEV seeds each; these are NOT independently born heldout science",
+    "old_evaluation_world_seeds": [
+      88031,
+      88047,
+      88063,
+      88091
+    ],
+    "lag_evaluation_world_seeds": [
+      88421,
+      88433,
+      88457,
+      88469
+    ],
+    "evaluated_development_families": [
+      "instant",
+      "lagged",
+      "delay2",
+      "delay3",
+      "changing_delay",
+      "sham_no_action"
+    ],
+    "evaluation_factual_scored_actions_each": 64,
+    "same_number_eval_probe_slots": 16,
+    "probe_schedule": "all control arms forced actions at 0,4,...60; trained candidate, conventional GRU, and reward credit-negative use exact same signed action choices for these 16 slots, others may use their frozen 16-slot policy",
+    "eval_controls": [
+      "trainable reward-aligned causal feature actor",
+      "equally trained and information-parity conventional GRU",
+      "same size actor reward-misalignment gradient negative",
+      "original P13 hardcoded active and passive ridge probes",
+      "seeded random"
+    ],
+    "scored_factual_interventions_total": 27648,
+    "learned_actor_training_factual_interventions_total": 331776,
+    "prospective_directional_reward_margin": 0.05,
+    "required_support": "all three model initialization seeds per each distinct authored structure; do NOT count repeated procedural world seeds as independent science",
+    "old_capability_retention": "familiar instant and one-lag worlds must not lose more than .02 reward/action relative to conventional GRU for any of three model seeds, diagnostic; no cold process retention claimed",
+    "sham_invariant": "exact realized reward sequence for all arms irrespective of chosen action",
+    "trained_actor_gradient_test": "optimizer updates must actually change source weights",
+    "same_budget_control": "same actor-reward update steps and shared world cohort, near-matched parameter count; different actor FLOPs and on-policy trajectories NOT independently matched",
+    "no_model_promotion": true,
+    "no_forge_research_loop_activation": true,
+    "no_new_runner_or_paid_API": true,
+    "max_process_seconds": 115
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "independent_source_birth": false,
+    "pretrained_control_convergence_unverified": true,
+    "cold_process_retention_unverified": true,
+    "S26_negative_preserved": true,
+    "S27_reserved_science_seeds_untouched": true
+  }
+}
