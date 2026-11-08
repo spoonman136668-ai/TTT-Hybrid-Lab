@@ -1,0 +1,134 @@
+# S28 exact-source OFFLINE external-source audit and fixture-only factual adapter.
+# No upstream execution/import, installs, science first-use, controller, or model updates.
+name: Native S28 offline CausalWind source and factual adapter once
+on:
+  push:
+    branches: [engineering/s28-offline-causal-wind-adapter-20261108]
+    paths: [.github/workflows/native-s28-causal-wind-offline-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-s28-offline-owner-single-use
+  cancel-in-progress: false
+jobs:
+  exact-source-windows-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/s28-offline-causal-wind-adapter-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 18
+    steps:
+      - name: Checkout clean Hybrid exact candidate without saved credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: s28-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 12
+      - name: Checkout ONLY pinned public third-party source files, no install
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: CausalAILab/Causal-Gymnasium
+          ref: c94e9a4cd3641588b6b8507e71ccee5c27032bdf
+          path: s28-upstream-source
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+          sparse-checkout-cone-mode: false
+          sparse-checkout: |
+            causal_gym/envs/cartpole_wind.py
+            causal_gym/envs/__init__.py
+            causal_gym/core/__init__.py
+            causal_gym/core/scm.py
+            causal_gym/core/pch.py
+            causal_gym/core/task.py
+            causal_gym/core/types.py
+            causal_gym/core/policy_scope.py
+            causal_gym/core/graph.py
+            setup.py
+            LICENSE
+      - name: Source-only and science-first-use custody preflight
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_S28_PROJECT_OWNER_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 's28-candidate'
+          $up=Join-Path $env:GITHUB_WORKSPACE 's28-upstream-source'
+          $sha=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          $orig=(& git -C $up rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $sha -cne $env:GITHUB_SHA -or $orig -cne 'c94e9a4cd3641588b6b8507e71ccee5c27032bdf'){throw 'BLOCKED_S28_CANDIDATE_OR_UPSTREAM_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_S28_CANDIDATE_DIRTY'}
+          & git -C $root merge-base --is-ancestor 6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2 HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S28_MAIN_ANCESTRY'}
+          $pins=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'scripts/qualify_cpu.py'='53fe5747d6308d4470d571011adab6210c9426dd';
+            'scripts/native_s28_causal_wind_offline.py'='cba40ef802e0255e351772cdaa95bbb5f94cc1bd';
+            'tests/test_native_s28_causal_wind_offline.py'='a7fc1fd558fcbe528818f8d12fbad14e11ed2f97';
+            'experiments/s28_offline_causal_wind_adapter_frozen.json'='182702d92c1e2881e56386120c24fb073552f897';
+            'docs/NATIVE_S28_OFFLINE_WIND_ADAPTER.md'='a127b13236063a8e7741f360ced65f79ba64e467'
+          }
+          foreach($path in $pins.Keys){
+            $got=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $got -cne $pins[$path]){throw "BLOCKED_S28_SOURCE_DRIFT:$path"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/s28_offline_causal_wind_adapter_frozen.json') -Raw|ConvertFrom-Json
+          if($f.schema -cne 'ttt-hybrid.s28.offline-wind-source-adapter-feasibility.v1' -or $f.parent_main_sha -cne '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' -or $f.upstream.commit -cne 'c94e9a4cd3641588b6b8507e71ccee5c27032bdf' -or $f.qualification.science_first_use_authorized -ne $false -or $f.qualification.upstream_source_license_approved -ne $false -or $f.adapter.no_simulator_construction -ne $true -or $f.adapter.no_package_install -ne $true){throw 'BLOCKED_S28_FROZEN_AUTHORITY'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_S28_PINNED_PYTHON'}
+          $ver=@(& $py -I -B -c 'import torch,pytest;print(torch.__version__);print(pytest.__version__)')
+          if($LASTEXITCODE -ne 0 -or $ver.Count -lt 2 -or $ver[0] -cne '2.5.1+cpu' -or $ver[1] -cne '8.3.4'){throw 'BLOCKED_S28_PINNED_TEST_RUNTIME'}
+          Write-Output 'S28_SOURCE_AND_FIRST_USE_DENIAL=PASS'
+      - name: Complete Windows CPU regression plus static public upstream identity audit
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 's28-candidate'
+          $up=Join-Path $env:GITHUB_WORKSPACE 's28-upstream-source'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\s28_win_full.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S28_WINDOWS_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\s28_win_full.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true -or $q.tests.stdout_tail -notmatch '(\d+) passed'){throw 'BLOCKED_S28_WINDOWS_NEGATIVE_OR_TESTS'}
+          & $py -I -B (Join-Path $root 'scripts\native_s28_causal_wind_offline.py') --source-root $up --receipt (Join-Path $root 'local_runs\s28_win_source.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S28_WINDOWS_UPSTREAM_SOURCE'}
+          $a=Get-Content -LiteralPath (Join-Path $root 'local_runs\s28_win_source.json') -Raw|ConvertFrom-Json
+          if($a.status -cne 'PASS_S28_OFFLINE_INTERFACE_AND_SOURCE_PREPARATION_ONLY' -or $a.upstream.status -cne 'PASS_EXACT_UPSTREAM_SOURCE_STATIC_ONLY' -or $a.upstream.checked_required_git_blob_count -ne 11 -or $a.upstream.license_or_redistribution_cleared -ne $false -or $a.upstream.upstream_runtime_imported_or_instantiated -ne $false -or $a.ready_to_import_and_run_upstream -ne $false -or $a.scientific_first_use -cne 'NOT_AUTHORIZED_NOT_RUN'){throw 'BLOCKED_S28_WINDOWS_AUDIT_NOT_CLOSED'}
+          Write-Output 'S28_WINDOWS_FULL_STATIC_SOURCE_LICENSE_BLOCK=PASS_ENGINEERING'
+      - name: Complete Ubuntu WSL CPU regression and same immutable upstream source audit
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_S28_WSL_OWNER'}
+          $root="$lp/s28-candidate"
+          $up="$lp/s28-upstream-source"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/s28_wsl_full.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S28_WSL_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 's28-candidate\local_runs\s28_wsl_full.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true -or $q.tests.stdout_tail -notmatch '(\d+) passed'){throw 'BLOCKED_S28_WSL_NEGATIVE_OR_TESTS'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 40s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_s28_causal_wind_offline.py" --source-root $up --receipt "$root/local_runs/s28_wsl_source.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S28_WSL_UPSTREAM_SOURCE'}
+          $a=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 's28-candidate\local_runs\s28_wsl_source.json') -Raw|ConvertFrom-Json
+          if($a.status -cne 'PASS_S28_OFFLINE_INTERFACE_AND_SOURCE_PREPARATION_ONLY' -or $a.upstream.status -cne 'PASS_EXACT_UPSTREAM_SOURCE_STATIC_ONLY' -or $a.upstream.checked_required_git_blob_count -ne 11 -or $a.upstream.license_or_redistribution_cleared -ne $false -or $a.upstream.upstream_runtime_imported_or_instantiated -ne $false -or $a.ready_to_import_and_run_upstream -ne $false -or $a.scientific_first_use -cne 'NOT_AUTHORIZED_NOT_RUN'){throw 'BLOCKED_S28_WSL_AUDIT_NOT_CLOSED'}
+          Write-Output 'S28_WSL_FULL_STATIC_SOURCE_LICENSE_BLOCK=PASS_ENGINEERING'
+      - name: Retain original source identity receipts, not third-party source files
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-s28-offline-wind-adapter-and-source-audit-once
+          path: |
+            s28-candidate/local_runs/s28_win_full.json
+            s28-candidate/local_runs/s28_wsl_full.json
+            s28-candidate/local_runs/s28_win_source.json
+            s28-candidate/local_runs/s28_wsl_source.json
+          if-no-files-found: warn
+          retention-days: 30
