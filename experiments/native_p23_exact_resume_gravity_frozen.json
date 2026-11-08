@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.native-p23.exact-resume-gravity-frozen.v1",
+  "registered": "2026-11-08",
+  "source": {
+    "parent_P21_SHA": "c1587ad5012d66a1ee9d368e52d38a6c3e81573c",
+    "prior_P21_pr": 94,
+    "prior_P22_PR": 95,
+    "prior_P22_reward_only_masked_result": "FAIL 0/3 pretrained, model seed 3359/3371/3383 original rewards 36.5/9.5/9.5, no claimed reward-only success",
+    "S29_original_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_Gym_source": "17eff00220d210beda933f78b0e52850022b0690",
+    "BSD3_cloudpickle": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "original_P21_blob": "7813df2010751215f9e0c1d66fc1d1e48f9a9ee9",
+    "original_P20_blob": "99ebe68151642a5c7a9f5efd95923e4450086155"
+  },
+  "hypothesis": "Can supervised history GRU state and all optimiser/sampler/host RNG state be checkpointed halfway through training and resumed in a fresh Python process, producing bit-identical final model parameters, optimizer buffers, RNG and factual actions as a never-interrupted run, and what is learned-history versus strong conventional policy behavior under a prospective gravity change?",
+  "null": "Any of the six resumed models differs in final checkpoint semantic digest or action-outcome traces from an independent uninterrupted run. Historical advantage under gravity perturbation may fail; retain all nulls.",
+  "training": {
+    "trained_arms": [
+      "full_history_gru",
+      "current_only_gru"
+    ],
+    "model_initializations": [
+      2741,
+      2753,
+      2767
+    ],
+    "episodes_teacher_source": "reuse publicly observed P20 original DEV 76000..76047 only, no sealed scientific first-use",
+    "validation_teacher_source": "reuse publicly observed P20 original DEV 77000..77007",
+    "training_information": "teacher-supervised factual reset/step action demonstrations; exact source P20 velocity masks (columns 1 and 3 zeroed); NOT reward-only RL",
+    "total_epochs": 32,
+    "interruption_after_epoch": 16,
+    "AdamW_learning_rate": 0.008,
+    "weight_decay": 0,
+    "batch_size": 512,
+    "gradient_clip": 3,
+    "uninterrupted_and_resumed_same_exact_optimizer_algo": true,
+    "sampler": "torch.Generator per model initialization with fixed seed+710000; each epoch consumes exact torch.randperm",
+    "required_persistence": [
+      "full native model parameters and buffers",
+      "full AdamW optimizer state including moments and step",
+      "CPU torch RNG state",
+      "Python random state",
+      "numpy RNG state",
+      "torch Generator sampler state",
+      "completed epoch and mini-batch optimizer count",
+      "factual demonstration tensor+teacher-label SHA256",
+      "exact candidate SHA + immutable P21 parent",
+      "architecture, original source model seed and mask",
+      "checkpoint archive SHA256 and semantic state hash"
+    ],
+    "train_checkpoint_file_creation": "one-shot; do not overwrite or replay already consumed continuation",
+    "no_CUDA_ambient_state_claim": true,
+    "CPU_only": true
+  },
+  "transfer": {
+    "source": "original upstream MIT CartPole-v1 with declared per-instance gravity modification, no new original-source implementation, training exclusively at original gravity",
+    "environment_conditions": [
+      {
+        "name": "original",
+        "gravity_factor": 1
+      },
+      {
+        "name": "gravity_x0.75",
+        "gravity_factor": 0.75
+      },
+      {
+        "name": "gravity_x1.25",
+        "gravity_factor": 1.25
+      }
+    ],
+    "evaluation_world_seeds": [
+      81011,
+      81012,
+      81013,
+      81014,
+      81015,
+      81016,
+      81017,
+      81018
+    ],
+    "max_actions_per_episode": 200,
+    "evaluate_arms": [
+      "resumed_full_history_gru",
+      "uninterrupted_full_history_gru",
+      "resumed_current_only_gru",
+      "uninterrupted_current_only_gru",
+      "two_frame_finite_difference",
+      "full_public_sensor_handcoded_teacher"
+    ],
+    "no_retraining_during_eval": true,
+    "exactness_threshold": "all six models identical final state semantic digests, model logits, action choices, factual SHA256 and mean rewards across uninterrupted/resumed reference after cold process",
+    "development_history_gain_threshold": "full-history cold-resumed better than cold-resumed current-only by >=15 mean real reward on BOTH modified-gravity conditions in at least 2/3 initialization seeds; descriptive positive DEV only",
+    "strongest_conventional": "2-frame past-only finite difference 200 upper-bound if saturated; never claim improved performance beyond max 200",
+    "source_independence": "gravity variations authored inside original source instance, not independent unfamiliar physics or sealed science"
+  },
+  "custody": {
+    "original_owner_runner": "TTT-HYBRID-GPU-WIN",
+    "one_use_exact_source_workflow": true,
+    "no_install": true,
+    "no_paid_api": true,
+    "full_Windows_and_ubuntu_regression_required": true,
+    "negative_corrupted_zip_wrong_source_missing_optimizer_missing_rng_wrong_epoch": true,
+    "no_new_runner_or_controller": true,
+    "original_S26_S27_first_use": false,
+    "scientific_first_use_authorized": false,
+    "promotion_or_merge_allowed_by_this_dev": false,
+    "FORGE_owner_active": false
+  }
+}
