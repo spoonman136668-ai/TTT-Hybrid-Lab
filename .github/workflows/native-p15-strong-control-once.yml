@@ -1,0 +1,119 @@
+# Native P15 one-use: compare frozen P14 actor to original P11 strong two-step planner.
+# Original architectures unchanged, old public synthetic DEV only, no scientific first-use.
+name: Native P15 strongest P11 conventional planner direct evaluation once
+on:
+  push:
+    branches:
+      - engineering/native-p15-strong-control-20261108
+    paths:
+      - .github/workflows/native-p15-strong-control-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p15-strong-control-oneuse
+  cancel-in-progress: false
+jobs:
+  source-locked-trained-policy:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p15-strong-control-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate with no retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p15-candidate
+          persist-credentials: false
+          clean: true
+          submodules: false
+          lfs: false
+          fetch-depth: 180
+      - name: Verify original native source P13 ancestry and frozen DEV-only training
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P15_OWNER_ONCE_SCOPE_FAIL'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p15-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P15_CANDIDATE_SHA_MISMATCH'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P15_CANDIDATE_SOURCE_DIRTY'}
+          & git -C $root merge-base --is-ancestor '40329f552eec61ddd498772100380020eb6f1489' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P15_PARENT_P14_ANCESTRY_FAIL'}
+          $locked=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p10_closed_loop_intervention_dev.py'='b85150fb294269d9db88a2cbb194c1a6140cf081';
+            'scripts/native_p11_temporal_credit_dev.py'='3217e3ba6e5fdf8d88dc354e254d910cdafd87eb';
+            'scripts/native_p12_online_causal_delay_dev.py'='da6e02f9867018c029c1d5c30e791e8d5a149ff1';
+            'scripts/native_p13_active_causal_probe_dev.py'='0289c567db007fd9c4a30f7a959f5aea01b04aca';
+            'experiments/native_p13_active_causal_probe_frozen.json'='b7869fe51d2cdb13753820448ef761096751b0f8';
+            'scripts/native_p14_reward_trained_intervention_dev.py'='395506ec1085f6db74b336897d592b8b5074e763';
+            'tests/test_native_p14_reward_trained_intervention_dev.py'='54ae9070f6d3d05534f9828c42a41cb6ab9edbfa';
+            'experiments/native_p14_reward_policy_frozen.json'='cea2eacb50866d83a9a5ef94997c194a5ae66d2d';
+            'scripts/native_p15_strong_control_dev.py'='b5c9f8c1feee31e5694f0c7059bc2a0526d0b082';
+            'tests/test_native_p15_strong_control_dev.py'='deffdca66d8e304986dcd565a8d8d269fe088ef6';
+            'experiments/native_p15_strong_control_frozen.json'='eacd187105289d3f0bb30b85dda7f6a69c64cf36'
+          }
+          foreach($name in $locked.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $locked[$name]){throw "P15_LOCKED_BLOB_DRIFT:$name"}
+          }
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p15_strong_control_frozen.json') -Raw|ConvertFrom-Json
+          if($m.science.authorized -ne $false -or $m.science.first_use_consumed -ne $false -or @($m.science.world_seeds.PSObject.Properties).Count -ne 0 -or $m.design.forced_probe_slots -ne 16 -or $m.design.required_margin -ne 0.05 -or $m.design.old_capability_max_deficit -ne 0.02 -or @($m.design.P14_model_seeds).Count -ne 3 -or @($m.design.P11_paired_control_model_seeds).Count -ne 3 -or $m.design.scope -cne 'DEVELOPMENT_ONLY_OLD_PUBLIC_SYNTHETIC_WORLDS_NO_SCIENTIFIC_FIRST_USE'){throw 'P15_FROZEN_HYPOTHESIS_OR_SCIENCE_ADMISSION_FAIL'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P15_QUALIFIED_OWNER_CPU_RUNTIME_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          $numpy=(& $py -I -B -c 'import numpy;print(numpy.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4' -or $numpy -cne '1.26.4'){throw 'P15_OWNER_CPU_ENV_DRIFT'}
+          Write-Output 'P15_EXACT_SOURCE_TRAINING_SCOPED_NO_SCIENCE=PASS'
+      - name: Mandatory full Windows source-locked regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p15-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0';$env:OMP_NUM_THREADS='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p15_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P15_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p15_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P15_WINDOWS_RECEIPT_OR_NEGATIVE_FAILED'}
+          Write-Output 'P15_WINDOWS_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Mandatory full Ubuntu WSL regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P15_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p15-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'OMP_NUM_THREADS=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p15_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P15_LINUX_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p15-candidate\local_runs\native_p15_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P15_LINUX_RECEIPT_OR_NEGATIVE_FAILED'}
+          Write-Output 'P15_LINUX_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: One bounded direct evaluation against strongest existing P11 planner
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p15-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 190s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P15_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p15_strong_control_dev.py" --receipt "$root/local_runs/native_p15_strong_control.json"
+          if($LASTEXITCODE -ne 0){throw 'P15_BOUNDED_REAL_REWARD_TRAINING_EXECUTION_FAIL'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p15-candidate\local_runs\native_p15_strong_control.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_STRONGEST_CONTROL_FROZEN_DEV_NOT_SCIENCE' -or $p.scientific_first_use -cne 'NOT_RUN' -or @($p.original_science_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 3 -or @($p.per_control_training_update_budgets).Count -ne 4 -or $p.strict_factual_probe_action_equality -ne $true -or $p.total_factual_test_actions -ne 32256){throw 'P15_FROZEN_REAL_TRAINING_RECEIPT_INVALID'}
+          Write-Output 'P15_STRONG_CONTROL_NEGATIVES_RETAINED=PASS_DEV'
+      - name: Preserve exact source and all factual action and training receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p15-strong-control-once
+          path: native-p15-candidate/local_runs/native_p15_*.json
+          retention-days: 30
+          if-no-files-found: error
