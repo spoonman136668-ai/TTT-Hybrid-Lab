@@ -18,7 +18,6 @@ import io
 import json
 import math
 from pathlib import Path
-import resource
 import sys
 import time
 from statistics import mean
@@ -26,6 +25,7 @@ from statistics import mean
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT),str(ROOT/"scripts")]
 import g7_r5_oneshot as custody
+from g7_process_peak_memory import read_peak_memory
 
 class Blocked(Exception):
     pass
@@ -254,6 +254,8 @@ def cold_exact(model,history,query,cls):
     return sha,float((before-after).abs().max())
 
 def run(args):
+    # Original frozen S16 peak-RSS criterion is Linux-only.
+    check(sys.platform == 'linux', 'S16_FROZEN_RSS_REQUIRES_LINUX')
     from torch.nn import functional as F
     protocol_bytes=args.protocol.read_bytes()
     p=json.loads(protocol_bytes)
@@ -392,7 +394,10 @@ def run(args):
             "PRELIMINARY_TOKENLESS_SURPRISE_PLASTICITY_GAIN_NOT_INDEPENDENTLY_QUALIFIED"
             if learned_positive else
             "TOKENLESS_LEARNED_PLASTICITY_ADVANTAGE_NULL_ON_FROZEN_NONLINEAR_SWITCH_TEST")
-    rss=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024
+    peak=read_peak_memory()
+    check(peak.metric == 'linux_ru_maxrss_bytes' and peak.comparable_to_linux_ru_maxrss,
+          'S16_FROZEN_RSS_METRIC_NOT_EQUIVALENT')
+    rss=peak.peak_bytes
     check(rss<=t["max_cpu_rss_bytes"],"CPU_RESIDENT_MEMORY_CAP_EXCEEDED")
     check(not torch.cuda.is_initialized(),"CUDA_WRONGFUL_USE")
     return {

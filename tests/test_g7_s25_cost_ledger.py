@@ -18,6 +18,8 @@ import g7_s25_numeric_ttt as numeric
 import g7_s25_paired_interventions as physics
 import g7_s25_cost_ledger as accounting
 import g7_s20_hidden_multicycle as original_s20
+import g7_s18_causal_feature_replication as original_s18
+import g7_s16_nonlinear_switch as original_s16
 from g7_process_peak_memory import PeakMemory, MemoryProbeBlocked
 
 
@@ -187,6 +189,13 @@ class TestCostLedger(unittest.TestCase):
             with self.assertRaisesRegex(original_s20.Blocked,
                                          "S20_FROZEN_RSS_REQUIRES_LINUX"):
                 original_s20.run(object())
+
+    def test_transitive_frozen_science_16_and_18_refuses_windows_before_seeds(self):
+        with mock.patch.object(original_s20.sys, 'platform', 'win32'):
+            with self.assertRaisesRegex(original_s16.Blocked, 'S16_FROZEN_RSS_REQUIRES_LINUX'):
+                original_s16.run(object())
+            with self.assertRaisesRegex(original_s18.Blocked, 'S18_FROZEN_RSS_REQUIRES_LINUX'):
+                original_s18.run(object())
 
     def test_reuse_and_invalid_sample_or_nonfinite_observation_rejected(self):
         world = physics.PairedS20World(3101, 2, "source_stable")

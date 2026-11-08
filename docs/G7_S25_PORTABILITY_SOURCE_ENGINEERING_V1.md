@@ -49,3 +49,21 @@ receipt, and separate explicit scientific approval before first-use.
 If the original frozen source-pin admission flags the S20 change, that is
 a required FAIL-CLOSED scientific custody result, **not a test-waiver**.
 No new controller, scheduler, GPU experiment, accepted-ref or deployed model.
+
+
+## V2 transitive Windows import repair
+
+The exact V1 candidate `2ac15597e92281508944b96eca4ed8128d508a06` failed native Windows full test collection in
+[run #42432389524](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42432389524), artifact `13598007421`:
+S20 imports S18, which imports S16, and both original modules still imported
+Unix-only `resource`. Pinned Windows NumPy 1.26.4 was successfully installed;
+source and original negative admission controls passed, scientific work NOT RUN.
+
+V2 makes **versioned copies** of the S16 and S18 source importable on Windows.
+Their frozen scientific `run()` methods reject all non-Linux platforms
+*before reading science protocols or using seeds*. Linux peak RSS remains the
+same original ru_maxrss×1024 bytes and frozen cap; underlying physics,
+models, losses, training seeds/splits and frozen protocol JSON are unchanged.
+Original S16 and S18 source-pin hashes now intentionally differ in V2:
+scientific first-use must still FAIL CLOSED. Added Windows denial negative
+controls and independent one-use full-platform qualification workflow.
