@@ -1,0 +1,138 @@
+{
+  "schema": "ttt-hybrid.native-p25.paired-action-consequence-frozen.v1",
+  "registered": "2026-11-08",
+  "state": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 96,
+    "exact_sha": "45b7f925c28c3c58b54a7c5b61f11398474a388c",
+    "p24_result": "P24 engineering PASS, public reward-only PPO acquired target 0/3; reconstructed velocity helps over raw masked but not strong conventional control",
+    "p24_owner_run": 42535132660,
+    "science_first_use_not_run": true
+  },
+  "question": "Can a token-free recurrent learner identify the factual effect of its actually executed intervention on two-step observable state, when initial world and prior action history are matched, and can it beat equal-data action-blind and action-association-corrupted controls without using expert actions or hidden world physics?",
+  "null": "Under paired real action interventions the action-conditioned GRU fails to improve heldout two-step causal effect MSE versus action-blind and independently trained sham-action controls across all initializations; strongest trained conventional ridge/MLP are not outperformed.",
+  "source": {
+    "S29": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "FaramaMIT": "17eff00220d210beda933f78b0e52850022b0690",
+    "cloudpickleBSD3": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "original_admission": "scripts/native_p18_real_cartpole_factual_dev.py::admit_gymnasium",
+    "not_novel_environment": true,
+    "protected_science_first_use": false,
+    "source_mutation_denied": true,
+    "paid_APIs_denied": true
+  },
+  "paired_intervention": {
+    "environment": "CartPole-v1 from source-pinned upstream, public DEV only",
+    "history_rows": 8,
+    "raw_input_each_row": "cart position, zero velocity, pole angle, zero velocity, prior actually executed action, prior observed reward",
+    "prefix_lengths": [
+      0,
+      3,
+      6,
+      9
+    ],
+    "prefix_policy": "Seed-derived deterministic randomized action sequence (identical replay for sister worlds) with no expert guidance",
+    "world_pair": "Two separate real upstream engine instances reset identically at same seed, replay same executed prefix actions and observations, then execute distinct first interventions a=0 and a=1; execute the same constant second action 0 in both sister instances; only then observe two-step actual positional outcome. Both alternatives are PHYSICALLY EXECUTED, not fabricated counterfactual rewards.",
+    "output_target": "Two-step observed delta in [cart_position, pole_angle] from real public source, scaled by [1,10] respectively, no hidden velocities or unavailable future inputs",
+    "source_action_effect": "For each matched original prefix, factual target difference delta(a=1) - delta(a=0) on actually executed sister branches",
+    "skip_rule": "If either sister world terminates during the common prefix or on first intervention, label pair invalid with original seed and do not replace from sealed pool. If episode terminates at second action, still keep actual observed consequence.",
+    "train_seed_range": [
+      101000,
+      101255
+    ],
+    "validation_seed_range": [
+      102000,
+      102063
+    ],
+    "eval_seed_range": [
+      103000,
+      103095
+    ],
+    "no_seed_overlap": true,
+    "training_conditions": [
+      "original"
+    ],
+    "evaluation_conditions": [
+      "original",
+      "gravity_x0.75",
+      "gravity_x1.25"
+    ],
+    "physics": "Change only isolated source instance gravity before reset, recompute no hidden actor input; never edit source file, no novel independent world claim.",
+    "test_zero_online_fit": true,
+    "action_choices_prefix": "random.Random(seed*997+prefix_length*31+71) and rng.randrange(2); same list used in both source instances"
+  },
+  "models": {
+    "architecture": "Continuous-history GRU(6,9) and action-conditioned linear output to two observed next position deltas, no tokenization/attention and no future labels at decision time",
+    "arms": [
+      "action_conditioned_factual_GRU",
+      "sham_independent_action_GRU",
+      "action_blind_same_capacity_GRU",
+      "factual_action_MLP",
+      "factual_finite_difference_ridge"
+    ],
+    "negative_sham": "In every training pair, independently shuffle the action input mapping using deterministic pair-specific RNG; same actual targets and 2 action branches but assigned input actions do not correspond to actual action consequences. Hold true action at evaluation.",
+    "negative_blind": "Same GRU params and update count, action input zero at training and eval, so cannot resolve two matched causal branches",
+    "strong_ridge": "Fully fitted ridge with latest angle/position and 2-frame prior differences, trigonometric features, factual chosen action and action-state interactions. Fit only training pairs, no test refit.",
+    "strong_mlp": "Fully trained MLP with same historical input and factual action, same optimization budget, report parameter/FLOP differences",
+    "model_initializations": [
+      3671,
+      3691,
+      3701
+    ],
+    "training_epochs": 64,
+    "AdamW_lr": 0.008,
+    "batch_size": 256,
+    "checkpoint_rule": "Use final precommitted epoch, no best-eval selection",
+    "train_actions_no_policy_teacher": true,
+    "train_data_pairs_per_seed_max": 1024,
+    "validation_pairs_max": 256,
+    "eval_pairs_per_condition_max": 384,
+    "fixed_updates_per_arm": "64 epochs x ceil(valid training examples /256), common within all arms"
+  },
+  "prespecified": {
+    "mechanism_positive_all_three_seeds": true,
+    "original_heldout_causal_effect_MSE_ratio_vs_sham_max": 0.5,
+    "original_heldout_causal_effect_MSE_ratio_vs_action_blind_max": 0.5,
+    "original_heldout_effect_R2_min": 0.8,
+    "gravity_variant_effect_R2_min": 0.7,
+    "no_information_asymmetry_between_arms": true,
+    "all_actual_paired_effect_receipts": true,
+    "strong_conventional_MLP_and_ridge_compared_and_reported": true,
+    "architecture_superiority_requires": "Factual GRU effect MSE <=0.90 x strongest correctly trained MLP AND ridge with whole-process cost parity; otherwise no architecture superiority claim",
+    "sign_inversion_not_control": "P24 consistent sign flip is invertible and cannot test action causal understanding; this study uses randomized action association and matched historical sister worlds."
+  },
+  "integrity": {
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "full_final_windows_regression": true,
+    "full_final_ubuntu_WSL_regression": true,
+    "original_negative_controls": true,
+    "unmodified_original_source_sha": true,
+    "no_new_runner_controller_scheduler": true,
+    "no_overlap_independent_P23": true,
+    "stop_if": "source/custody/negative/full final regression failure, unexpected external first-use, invalid RNG/paired replay, non-finite loss, compute cap, or unregistered seed",
+    "experiment_wall_cap_seconds": 600,
+    "archive_actual_sister_action_outcomes_and_hashes": true
+  },
+  "claims": {
+    "public_DEV_mechanism_only": true,
+    "novel_hybrid_architecture_superiority_unverified": true,
+    "reward_only_policy_learning_not_tested": true,
+    "general_transfer_unverified": true,
+    "scientific_first_use_not_authorized": true,
+    "merge_deployment_model_promotion_not_done": true,
+    "FORGE_activation_forbidden": true,
+    "other_project_loop_untouched": true
+  },
+  "metric_contract": {
+    "action_effect_truth": "For each valid sister pair: y(a=1) minus y(a=0), where y is 2-step actual source positional delta [next_cart_x-original_cart_x, 10*(next_pole_theta-original_pole_theta)]",
+    "action_effect_MSE": "Mean squared difference across both target coordinates and all valid heldout sister pairs, using independent actual executed a=0/1 branches.",
+    "zero_effect_MSE": "Mean square of true action-effect delta itself; zero means an action-blind predictor cannot distinguish chosen interventions.",
+    "effect_R2_against_zero_effect": "1 - action_effect_MSE / zero_effect_MSE; this is NOT conventional centered statistical R2. All thresholds in prespecified original_heldout_effect_R2_min and gravity_variant_effect_R2_min mean this specific zero-effect reference measure.",
+    "sham_training": "Randomly flip the sign of the selected action feature per paired world (both examples in that pair) using deterministic RNG; the factual targets are NOT modified. True action labels are restored for heldout evaluation. This destroys consistent action/target associations and is NOT equivalent to a global reversible sign flip.",
+    "same_initialization": "All GRU arms share EXACT same initialization per model seed; update order and minibatch permutations are synchronized, though gradients/learned policies can differ. Dataset is fixed and identical across all arms; no on-policy training divergence.",
+    "ridge": "Fit ridge on each actually executed action branch with identical training examples only; report strong ridge and fully trained MLP alongside GRU. No hidden velocity and no test refit.",
+    "training_public_teacher": "No expert decision labels; the only supervised targets are actual next physical observations produced by own chosen training interventions. No hidden source parameters are available to models.",
+    "numerical_stability": "Reject zero_effect_MSE<=1e-12 and any nonfinite model output/gradient. Freeze output scaling as [1,10] and no eval optimizer updates."
+  }
+}
