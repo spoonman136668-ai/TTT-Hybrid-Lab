@@ -91,9 +91,12 @@ class S26V2EngineeringCustody(unittest.TestCase):
           "experiments/g7_s26_v2_engineering_overlay_custody.json",
           "tests/test_g7_s26_v2_engineering_custody.py",
           ".github/workflows/g7-s26-v2-engineering-once.yml",
+          "scripts/g7_s26_v2_baseline_observations.py",
+          "tests/test_g7_s26_v2_baseline_observations.py",
+          ".github/workflows/g7-s26-v2-baseline-input-once.yml",
         }
         self.assertEqual(paths,expected)
-        self.assertEqual(len(paths),18)
+        self.assertEqual(len(paths),21)
         self.assertEqual(git("status","--porcelain","--untracked-files=all"),"")
 
     def test_separate_dev_comparator_has_no_unix_resource_import(self):
