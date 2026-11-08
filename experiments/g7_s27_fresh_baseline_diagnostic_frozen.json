@@ -1,0 +1,145 @@
+{
+  "schema": "ttt-hybrid.g7-s27.baseline-mechanism-diagnostic-preregistered.v1",
+  "registered_utc": "2026-11-07",
+  "state": "FROZEN_PREPARATION_ONLY_NOT_SCIENCE_FIRST_USE",
+  "source_lineage": {
+    "predecessor_pr": 46,
+    "predecessor_exact_sha": "5c7c6f24d1555b6779fc541530e7425c114b5862",
+    "predecessor_firstuse_run": 42436940650,
+    "predecessor_frozen_protocol_blob": "d72b9bb41e5e7e5dd9229c7bc5053f5a42f9750d",
+    "predecessor_source_lock_blob": "0e86bd0ffd46aaeef9f57dbfcd21a39fdd83addf",
+    "predecessor_scientific_result": "FAIL_CONVENTIONAL_BASELINE_COMPETENCE_OR_PLATEAU",
+    "predecessor_fit_seeds_consumed": [
+      7207,
+      7219,
+      7229
+    ],
+    "predecessor_validation_seeds_consumed": [
+      7307,
+      7319,
+      7327
+    ],
+    "predecessor_checkpoints_sha256": {
+      "GRU_7207": "d7de1f7252ddc3720b48870cc6d0a03d4b3a9f6c48e8a52810bf88a2f98fccc8",
+      "GRU_7219": "7431144cb6250c3f81e193ae0eed04c319399409c7dbfa34fce54d4f64c6b57e",
+      "GRU_7229": "94f5d9354ff5395d30a5e2f12edd796e8ae9aa7e21e8c1ae147ad1dacb136d5e",
+      "KRR_7207": "50e01612e99f859adf20667dddd31e3f985cf08",
+      "KRR_7219": "25039a17de1aec3339af9807394a47469960511440ec0ebd850307903561383e",
+      "KRR_7229": "91ceaf92a70f0bc5e371637b487ada1f463c9a6d23e6a4016e40789ad92f4481"
+    },
+    "no_change_to_original_pr46_results": true
+  },
+  "hypotheses": {
+    "H1_gru": "The prior frozen 0.1% five-check plateau gate was not met despite competent signed action-effect predictions; a new experiment must distinguish persistent optimizer oscillation from progress or overfitting, not relabel the previous FAIL.",
+    "H2_krr": "The original uncentered target kernel ridge regression is not equivariant to a uniform target offset because ridge shrinkage pulls far-away predictions toward zero.",
+    "H3_krr_residual": "A train-only residual-to-current-sensor target produces shift-equivariant predictions under equal offsets applied to both current sensor and next sensor, separating offset extrapolation from raw-kernel representation errors.",
+    "H0": "New target centering/residualization does not improve disjoint validation error or signed action-effect competence over the original six-grid raw-target KRR; GRU diagnostic stability does not translate to competent previously unseen worlds."
+  },
+  "policies": {
+    "current_gate": "Only frozen preregistration, code-only synthetic controls, and exact source dual-platform engineering qualification. No science fit or validation, no checkpoint learning, no fresh-world data.",
+    "next_firstuse_needs_new_explicit_project_authority": true,
+    "engineering_synthetic_examples_are_not_science": true,
+    "actual_scientific_firstuse_granted": false,
+    "never_replay_predecessor_scientific_seeds": true,
+    "never_retune_previous_plateau_or_hyperparameters": true,
+    "no_heldout_transfer_negative_bootstrap": true,
+    "original_PR46_stays_draft_and_unchanged": true,
+    "no_merge_promotion_GPU_or_paid_API": true,
+    "no_new_controller_or_runner": true,
+    "no_workflow_schedule": true
+  },
+  "candidate_science_seed_reservations": {
+    "status": "PROSPECTIVE_ONLY_NOT_CONSUMED_OR_AUTHORIZED",
+    "qualification_required_before_firstuse": "Repository-wide source custody collision check, then external experiment ownership check; any overlap fails closed",
+    "fit": [
+      92017,
+      92029,
+      92041
+    ],
+    "validation": [
+      93017,
+      93029,
+      93041
+    ],
+    "heldout_signflip": [
+      94017,
+      94029,
+      94041
+    ],
+    "heldout_transfer": [
+      95017,
+      95029,
+      95041
+    ],
+    "negative": [
+      96017,
+      96029,
+      96041
+    ],
+    "bootstrap": [
+      98017
+    ],
+    "engineering_synthetic_fixture_seed": 1,
+    "no_science_seed_consumption_in_current_gate": true
+  },
+  "prospective_science_design": {
+    "regulator": "New G7-S27 source/version registration would be separate from S25/S26, no relabeling frozen negative result.",
+    "action_pair": [
+      -0.8,
+      0.8
+    ],
+    "world": "Existing causal 32-frame numeric S20 paired-world protocol only after separate source qualification",
+    "same_unique_information_across_arms": true,
+    "controls": [
+      "original_s26_v2_GRU_fully_trained",
+      "original_raw_KRR",
+      "train_only_mean_centered_KRR",
+      "current_sensor_residual_KRR",
+      "current_sensor_no_action_static"
+    ],
+    "kernel_grid_gamma": [
+      0.5,
+      2,
+      6
+    ],
+    "kernel_grid_ridge": [
+      0.01,
+      0.08
+    ],
+    "kernel_inputs": "original 131-dimensional causal history plus action query, no private x,z or future outputs",
+    "normalization": "train-only for every KRR arm, same observed query matrix",
+    "selection": "validation-only, no heldout hyperparameter selection",
+    "training_budget": "new versioned GRU training budget/plateau frozen prior to first use; compare original raw five-check gate as separate diagnostic, never retroactively alter S26",
+    "comparators_frozen_before_execution": true,
+    "paired_sign_threshold": 0.012,
+    "required_report": [
+      "source_SHA_and_blob",
+      "seed_roles_and_stream_hashes",
+      "heldout_unused",
+      "all_fit_seed_results",
+      "all_val_seed_results",
+      "sign_accuracy_and_coverage",
+      "per_action_and_action_effect_MSE",
+      "training_MSE",
+      "validation_MSE",
+      "fit_time_CPU_seconds",
+      "validation_time_CPU_seconds",
+      "peak_Linux_RSS",
+      "model_and_checkpoint_SHA256",
+      "cold_restore",
+      "original_0.1pct_plateau_diagnostic"
+    ],
+    "prospective_scientific_success": "Must beat best precommitted conventional and static control on all three fresh validation seeds, with signed-effect correctness, adequate coverage, whole-process cost and independent reproduction. No claim about S26 TTT learning until separate comparison.",
+    "fail_closed": "Record null/negative results, no postresult tuning, no seed replay, stop on leakage or budget/receipt failure"
+  },
+  "synthetic_engineering_negative_controls": [
+    "Uniform target shift: uncentered baseline changes non-equivariantly; mean-centered kernel must be exactly shift-equivariant at fixed train fit/validation inputs.",
+    "Current-sensor/target common shift: residual KRR predictions shift by same constant; never read future labels into query features.",
+    "Action-pair output shape and same-state/time query order preserved.",
+    "Train-only mean and scale: changing validation targets must NOT change fitted kernel parameters or train-only centering.",
+    "Reject malformed/nonfinite tensors, wrong shape and missing fitted state.",
+    "GRU plateau reconstruction: preserve original strict max-min/min < 0.001 and report 0/3 from immutable previous receipts without changing verdict.",
+    "All heldout/transfer seeds rejected before any world construction.",
+    "No scientific seed namespace imported or evaluated in synthetic tests."
+  ]
+}
