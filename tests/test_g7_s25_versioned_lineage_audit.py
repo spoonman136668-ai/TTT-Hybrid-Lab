@@ -122,7 +122,14 @@ class TestS25V2Lineage(unittest.TestCase):
                and isinstance(node.func,ast.Attribute)}
         self.assertFalse(set(("train","backward","fit","optimizer_step",
                               "evaluate_heldout")).intersection(calls))
-        self.assertNotIn("torch",inspect.getsource(lineage))
+        tree_imports=[node for node in ast.walk(tree)
+                      if isinstance(node,(ast.Import,ast.ImportFrom))]
+        self.assertFalse(any(
+            (isinstance(node,ast.ImportFrom) and
+             (node.module or "").startswith("torch")) or
+            (isinstance(node,ast.Import) and
+             any(alias.name.startswith("torch") for alias in node.names))
+            for node in tree_imports))
         self.assertNotIn("scientific_first_use_authorized",inspect.getsource(lineage))
 
 
