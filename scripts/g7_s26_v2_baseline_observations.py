@@ -17,8 +17,11 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import sys
 from typing import Callable
 
+# -I omits the script directory. Admit only this exact checkout's scripts.
+sys.path.insert(0,str(Path(__file__).resolve().parent))
 import torch
 from torch import Tensor
 from g7_s25_numeric_ttt import causal_history32, WorldStep
