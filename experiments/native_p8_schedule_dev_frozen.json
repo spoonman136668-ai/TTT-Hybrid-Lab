@@ -1,0 +1,115 @@
+{
+  "schema": "ttt-hybrid.native-p8.schedule-stability-dev.v1",
+  "registered_at": "2026-11-08",
+  "kind": "FROZEN_ENGINEERING_DEVELOPMENT_BEFORE_EXACT_OWNER_RUN",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 62,
+    "parent_pr62_sha": "7658be2cd4ff66afb3fb46519b516d8071641a36",
+    "native_original_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "prequential_original_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f",
+    "p7_original_blob": "7db1fe42695f16bf2afe730f4348210156ac3c24",
+    "p7_test_original_blob": "0be05579ba1ec11bd95a86000be46ad9efac4dc7",
+    "p7_protocol_original_blob": "1ca3b8fa6b9f425bb4aea35462084c7e1fb5530",
+    "original_pin_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Can a prespecified learning-rate decay reduce the P7 nonplateau without disguising conventional trained-MLP superiority?",
+  "null": "No improvement of strict five-checkpoint 1% stability or validation prediction MSE from the decay under equal train examples, optimizer updates and initial weights for both architectures.",
+  "design": {
+    "fixed_arms": [
+      "LearnedRouter",
+      "ConventionalMLP"
+    ],
+    "schedules": [
+      "fixed",
+      "cosine_decay"
+    ],
+    "optimizer": "AdamW",
+    "exact_lr_initial": 0.006,
+    "fixed_lr": 0.006,
+    "cosine_min_lr": 0.0006,
+    "cosine_total_update_steps": 1200,
+    "actual_stepwise_schedule": "eta_min + 0.5*(eta_max-eta_min)*(1+cos(pi*step/1200))",
+    "steps_per_training_arm": 1200,
+    "epoch_requirement": "none; random factual example minibatches",
+    "batch_size": 256,
+    "identical_minibatch_samples_for_same_seed_all_four_arms": true,
+    "same_initial_weights_for_same_seed_same_architecture": true,
+    "model_initialization_seeds": [
+      303,
+      307,
+      311
+    ],
+    "training_rng_seed": 51031,
+    "validation_rng_seed": 51079,
+    "history_negative_shuffle_seed": 51997,
+    "training_examples": 6000,
+    "development_validation_examples": 1920,
+    "measured_model_count": 12,
+    "parameters_router": 828,
+    "parameters_mlp": 849,
+    "max_parameter_count_difference_fraction": 0.05,
+    "validation_observation_steps": [
+      100,
+      200,
+      300,
+      400,
+      500,
+      600,
+      700,
+      800,
+      900,
+      1000,
+      1100,
+      1200
+    ],
+    "plateau_last_five_step_points": [
+      800,
+      900,
+      1000,
+      1100,
+      1200
+    ],
+    "strict_plateau_relative_max_minus_min_threshold": 0.01,
+    "no_posthoc_checkpoint_selection": true,
+    "fixed_training_budget_for_all_arms": true,
+    "actual_gradient_and_model_weight_change_required": true,
+    "no_context_labels_in_fit": true,
+    "training_target": "factual continuous action-conditioned next sensor delta",
+    "ablations": [
+      "untrained initial network",
+      "scrambled already factual 8-event history",
+      "zero factual history",
+      "P6 hardcoded last pair"
+    ],
+    "per_arm_mse_and_curve_all_seeds_required": true,
+    "per_arm_wall_seconds_and_sampler_sha_required": true,
+    "full_process_wall_seconds_required": true,
+    "compute_limit": "Optimizer updates/minibatches/parameter counts comparable, FLOPs not independently proven equal.",
+    "success": "Integrity/actual-factual-gradient source qualification only, even if all improvement and plateau diagnostics are FALSE.",
+    "outcome_reporting": [
+      "cosine vs fixed for router MSE",
+      "cosine vs fixed for conventional MLP MSE",
+      "router vs conventional for fixed and cosine",
+      "strict last five 1 percent plateau for all four arms, not just best model",
+      "all adverse results retained without adjustment"
+    ],
+    "maximum_dev_wall_seconds": 100,
+    "origin_note": "Follow-up to P7 engineering outcome 0/3 superiority, 0/3 strict plateau; no prior P7 run reclassified or repeated."
+  },
+  "science": {
+    "authorized": false,
+    "seeds": {},
+    "first_use_consumed": false,
+    "science_original_source_birth": "NOT_REGISTERED",
+    "official_worlds_used": 0,
+    "S26_negative_unchanged": true,
+    "S27_reservations_untouched": true,
+    "independent_original_first_use": "NOT_GRANTED",
+    "new_unfamiliar_world_transfer": "NOT_TESTED",
+    "deployment_or_promoted_model": false,
+    "no_new_controller_or_runner": true,
+    "no_forced_forge_integration": true,
+    "no_paid_API": true
+  }
+}
