@@ -1,0 +1,106 @@
+{
+  "schema": "ttt-hybrid.native-p16.champion-guard-frozen.v1",
+  "registered_date": "2026-11-08",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "P15_parent_pr": 84,
+    "P15_parent_sha": "205291c7e1fcd7a3df0343ba7dbcd17a2fa225e0",
+    "original_P15_script_blob": "b5c9f8c1feee31e5694f0c7059bc2a0526d0b082",
+    "original_P14_script_blob": "395506ec1085f6db74b336897d592b8b5074e763",
+    "original_P11_script_blob": "3217e3ba6e5fdf8d88dc354e254d910cdafd87eb",
+    "original_native_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Can a separately trained factual reward credit gate selectively exploit P14 improvements without losing more than 0.02 per-action performance on familiar domains against the frozen strongest P11 GRU planner?",
+  "null": "A learned gate cannot robustly exceed the frozen P11 planner and a random same-cap gate on harder delays without losing familiar ability; a hard cap on action substitutions does not guarantee low reward regret.",
+  "design": {
+    "scope": "TRAIN_AND_TEST_ONLY_ALREADY_AUTHORED_SYNTHETIC_DEV_NO_FIRST_USE",
+    "original_champion": "unchanged original P11 ConventionalCausalGRU 2step model-based planner, same P11 6000 FIT/1920 VAL, actual 1200 AdamW updates, seeds [353,359,367]",
+    "original_challenger": "unchanged original P14 reward-trained CausalFeaturePolicy 441 params, 96 REINFORCE AdamW updates, seeds [1211,1223,1237]",
+    "models_same_training_factual_source_or_FLOPs": false,
+    "champion_control_training_plateau_qualified": false,
+    "new_gate": "LearnedGuard 18->24->1 MLP reading 8 fully observed historical action-outcome pairs, champion's proposed action, challenger policy logit; Bernoulli selects challenger only when actions disagree, no future latent labels or unrealized outcome given",
+    "gate_training_seed_base": 311000,
+    "gate_training_worlds_per_update": 8,
+    "gate_training_horizon": 24,
+    "gate_gradient_updates": 32,
+    "gate_training_challenger_deviation_cap": 5,
+    "gate_learning_rate": 0.003,
+    "gate_discount": 0.97,
+    "gate_entropy_weight": 0.01,
+    "gate_train_negative": "same exact training world cohort and update budget, same gate architecture/initial weights but reward-to-go rotated 12 time steps and one world before credit attribution",
+    "learned_guard_decision_threshold": 0.55,
+    "gate_control": [
+      "same-champion frozen (no deviation)",
+      "unrestricted P14 challenger",
+      "learned champion-protected gate",
+      "same-size misattributed-reward gate",
+      "same-cap random challenger-switch gate"
+    ],
+    "old_worlds_already_seen": [
+      "instant",
+      "lagged",
+      "delay2",
+      "delay3",
+      "changing_delay",
+      "sham_no_action"
+    ],
+    "old_development_seeds": [
+      88031,
+      88047,
+      88063,
+      88091
+    ],
+    "later_dev_seeds": [
+      88421,
+      88433,
+      88457,
+      88469
+    ],
+    "model_pairs": [
+      [
+        1211,
+        353
+      ],
+      [
+        1223,
+        359
+      ],
+      [
+        1237,
+        367
+      ]
+    ],
+    "same_initial_actual_factual_history": 8,
+    "fixed_forced_probes": 16,
+    "same_signed_forced_probe_actions_for_all_arms": true,
+    "actual_factual_decisions_per_episode": 64,
+    "max_evaluation_challenger_deviations": 12,
+    "deviation_cap_guarantees_outcome_not_worse": false,
+    "frozen_per_seed_promotion_threshold": {
+      "new_gate_vs_champion_reward_margin": 0.05,
+      "new_gate_vs_random_guard_reward_margin": 0.05,
+      "new_gate_vs_miscredit_guard_reward_margin": 0.05,
+      "max_old_instant_and_lagged_return_deficit": 0.02,
+      "required_all_3_pairs_each_delayed_family": true
+    },
+    "no_post_result_threshold_tuning": true,
+    "genuine_scientific_firstuse_not_authorized": true,
+    "max_experiment_seconds": 155,
+    "fully_qualified_CPU_environment_only": true,
+    "no_FORYGE_runtime_integration": true,
+    "no_science_seeds_burned": true,
+    "no_merge_or_accepted_model_pointer": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "independent_novel_world_born": false,
+    "matched_training_flops": false,
+    "competent_baselines_stable": false,
+    "S26_negative_preserved": true,
+    "S27_sealed_seeds_untouched": true,
+    "persistent_interepisode_memory_or_cold_resume_not_tested": true
+  }
+}
