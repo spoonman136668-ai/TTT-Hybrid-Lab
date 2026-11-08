@@ -1,0 +1,119 @@
+# C6: single-use project-owned synthetic DEV qualification; no science first-use.
+name: Native C6 frozen memory state-factorial once
+on:
+  push:
+    branches: [engineering/native-c6-frozen-memory-factorial-20261108]
+    paths: [.github/workflows/native-c6-frozen-memory-factorial-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-c6-project-owned-single-use
+  cancel-in-progress: false
+jobs:
+  windows-and-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-c6-frozen-memory-factorial-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-c6-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 190
+      - name: Exact C5 parent, P3 core, C6 source and science first-use custody
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_C6_OWNER_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c6-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_C6_SOURCE_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_C6_DIRTY'}
+          & git -C $root merge-base --is-ancestor '23d35015df39a91a4cb0e26e4e82d4c22f6fea67' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C6_C5_ANCESTRY'}
+          $pins=@{
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_transactional_resume.py'='a2906a27794508ddd01bea6cde7278b1cec561f2';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p3_continuity.py'='ae5a42140df501bc21bc3f050e75c70cb4771c89';
+            'scripts/native_c4_measured_retention.py'='d47af3c0ced9b28c73d03d5229ceb9b247cba214';
+            'scripts/native_c5_history_readaptation.py'='fbfd3e76e512d701f4780c5b74785c2afa87e7b2';
+            'scripts/native_c6_frozen_memory_factorial.py'='9567e1f52a225610de5c134dc2e9de4a157eb116';
+            'tests/test_native_c6_frozen_memory_factorial.py'='5a7ba9bc63b503fafc46b441fa0e995966bafd24';
+            'experiments/native_c6_frozen_memory_factorial_dev.json'='bb94a6da9e869e4eb3c0bb9356fab68d2bcabfbd';
+            'docs/NATIVE_C6_FROZEN_MEMORY_FACTORIAL.md'='0053f326bd7a1c2fb334a389317008da54ea2c9c';
+            'experiments/native_p3_continuity_engineering_frozen.json'='1c7ba4cb28182b026a0e82fbc33a232b4f7f0bac';
+            'experiments/native_p1_control_admission_preflight.json'='9de1caedb56f1248264ac37db08ec66b8265fe16'
+          }
+          foreach($p in $pins.Keys){
+            $actual=(& git -C $root hash-object -- $p|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $pins[$p]){throw "BLOCKED_C6_SOURCE_BLOB:$p"}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_c6_frozen_memory_factorial_dev.json') -Raw|ConvertFrom-Json
+          if($p.science.authorized -ne $false -or $p.science.data_consumed -ne $false -or @($p.science.seeds.PSObject.Properties).Count -ne 0 -or $f.science_first_use -ne $false -or $f.model_training_updates -ne 80 -or $f.experiments.optimizer_updates_during_evaluation -ne 0 -or $f.experiments.fast_memory_writes_during_evaluation -ne 0 -or @($f.experiments.arms).Count -ne 7){throw 'BLOCKED_C6_SCIENCE_SCOPE'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_C6_ENV'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'BLOCKED_C6_ENV_VERSION'}
+          Write-Output 'NATIVE_C6_SOURCE_AND_NONSCIENCE_ADMISSION=PASS'
+      - name: Windows full regression and saved-state factorial
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c6-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          $env:NATIVE_P3_ENGINEERING_ONLY='1';$env:NATIVE_C6_ENGINEERING_ONLY='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\c6_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C6_WIN_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\c6_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C6_WIN_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 235){throw 'BLOCKED_C6_WIN_COUNT'}
+          & $py -I -B (Join-Path $root 'scripts\native_c6_frozen_memory_factorial.py') --receipt (Join-Path $root 'local_runs\c6_windows_assay.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C6_WIN_ASSAY'}
+          $r=Get-Content -LiteralPath (Join-Path $root 'local_runs\c6_windows_assay.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_NO_FEEDBACK_MEMORY_WEIGHT_FACTORIAL_DEV' -or $r.record_count -ne 3 -or $r.science_first_use -cne 'NOT_RUN' -or $r.model_promoted -ne $false -or $r.trainer_activated -ne $false){throw 'BLOCKED_C6_WIN_RECEIPT'}
+          foreach($x in $r.records){if(@($x.variants.PSObject.Properties).Count -ne 7 -or @($x.diagnostic_hypotheses.PSObject.Properties).Count -ne 5 -or $x.all_models_optimizers_and_saved_memory_unchanged -ne $true -or $x.fast_memory_writes_during_evaluation -ne 0 -or $x.optimizer_updates_during_evaluation -ne 0){throw 'BLOCKED_C6_WIN_POLICY'}; foreach($a in $x.variants.PSObject.Properties){if($a.Value.samples_per_regime -ne 16 -or $a.Value.raw_evidence.vectors.old_regime_mse.Count -ne 16 -or $a.Value.raw_evidence.vectors.postreversal_mse.Count -ne 16){throw 'BLOCKED_C6_WIN_VECTORS'}}}
+          Write-Output 'NATIVE_C6_WINDOWS_FULL_AND_FACTORIAL=PASS_ENG_ONLY'
+      - name: WSL full regression and saved-state factorial
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_C6_WSL_OWNER'}
+          $root="$lp/native-c6-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C6_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/c6_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C6_WSL_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c6-candidate\local_runs\c6_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C6_WSL_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 234){throw 'BLOCKED_C6_WSL_COUNT'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 150s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C6_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/native_c6_frozen_memory_factorial.py" --receipt "$root/local_runs/c6_linux_assay.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C6_WSL_ASSAY'}
+          $r=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c6-candidate\local_runs\c6_linux_assay.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_NO_FEEDBACK_MEMORY_WEIGHT_FACTORIAL_DEV' -or $r.record_count -ne 3 -or $r.science_first_use -cne 'NOT_RUN' -or $r.model_promoted -ne $false -or $r.trainer_activated -ne $false){throw 'BLOCKED_C6_WSL_RECEIPT'}
+          foreach($x in $r.records){if(@($x.variants.PSObject.Properties).Count -ne 7 -or @($x.diagnostic_hypotheses.PSObject.Properties).Count -ne 5 -or $x.all_models_optimizers_and_saved_memory_unchanged -ne $true -or $x.fast_memory_writes_during_evaluation -ne 0 -or $x.optimizer_updates_during_evaluation -ne 0){throw 'BLOCKED_C6_WSL_POLICY'}; foreach($a in $x.variants.PSObject.Properties){if($a.Value.samples_per_regime -ne 16 -or $a.Value.raw_evidence.vectors.old_regime_mse.Count -ne 16 -or $a.Value.raw_evidence.vectors.postreversal_mse.Count -ne 16){throw 'BLOCKED_C6_WSL_VECTORS'}}}
+          Write-Output 'NATIVE_C6_WSL_FULL_AND_FACTORIAL=PASS_ENG_ONLY'
+      - name: Archive exact source Windows and WSL engineering and observed negative receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-c6-frozen-memory-factorial-eng-once
+          path: |
+            native-c6-candidate/local_runs/c6_windows.json
+            native-c6-candidate/local_runs/c6_linux.json
+            native-c6-candidate/local_runs/c6_windows_assay.json
+            native-c6-candidate/local_runs/c6_linux_assay.json
+          retention-days: 30
+          if-no-files-found: warn
