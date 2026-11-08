@@ -55,7 +55,7 @@ def test_mit_source_owned_no_scientific_first_use_and_locked_world_budget(monkey
     assert d["design"]["training_arms"]==list(TRAIN_ARMS)
     assert d["design"]["max_process_seconds"]==MAX_PROCESS_SECONDS==220
     monkeypatch.setenv("NATIVE_P18_DEV_ONLY","0")
-    with pytest.raises(RuntimeError,match="SCIENTIFIC_FIRST_USE_NOT_AUTHORIZED"):
+    with pytest.raises(RuntimeError,match="P18_SCIENCE_FIRST_USE_NOT_AUTHORIZED"):
         require_dev()
 
 def test_self_contained_help_no_install_or_live_science():
