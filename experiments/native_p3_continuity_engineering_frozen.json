@@ -1,0 +1,70 @@
+{
+  "schema": "ttt-hybrid.native-p3.continuity-engineering.v1",
+  "registered_utc": "2026-11-08",
+  "status": "ENGINEERING_INTEGRATION_FROZEN_NO_SCIENCE_FIRST_USE",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "parents": {
+    "checkpoint_pr": 53,
+    "checkpoint_pr53_sha": "c42ad43d6451ada13159ef81e5978de55c7e8b4b",
+    "fast_memory_pr": 52,
+    "fast_memory_pr52_sha": "2fb2be9e23361baee915a0450ce79b7d58e7772c",
+    "common_p1_sha": "706658b5038c11642829868b0f292ac2fe4452e0",
+    "native_v1_source_sha": "7df69c701dd80799b0d1ae49cc0b7c51536051df",
+    "source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "checkpoint_library_blob": "57728c0fc164cf5954449cec86f31b9c0e9d16e8",
+    "factual_p2_script_blob": "8f5bd76a38f715f29bd76fa60452b43da2152866"
+  },
+  "scope": {
+    "engineering_only": true,
+    "real_factual_gradient_updates_on_public_analytic_fixture": true,
+    "native_factual_fast_memory_updates": true,
+    "no_counterfactual_learning": true,
+    "actual_scientific_worlds": false,
+    "actual_sealed_transfer": false,
+    "native_architecture_modified": false,
+    "original_p0_modified": false,
+    "accepted_model_pointer_mutated": false,
+    "external_host_store": false,
+    "gpu": false,
+    "new_runner": false,
+    "new_controller": false,
+    "merge": false,
+    "deployment": false
+  },
+  "training": {
+    "dev_initialization_seeds": [
+      46111,
+      46117,
+      46129
+    ],
+    "analytic_dev_optimizer_steps": 80,
+    "cold_resume_after_step": 40,
+    "batch_size": 1,
+    "unique_analytic_events_per_initialization": 80,
+    "loss": "mean squared factual observed next sensor",
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "stochastic_training_jitter_amplitude": 0.0005,
+    "memory": "P0 read-before-write factual fast memory, bounded history 4",
+    "freeze": "training targets never read until after episode.predict()",
+    "exact_resume": "model weights + AdamW moments + CPU/Python/optional NumPy RNG + NativeContinuousState + sampler cursor + immutable two-manifest ancestry",
+    "success": "bit-identical post-checkpoint prequential predictions, final model/optimizer/native-state and torch RNG across uninterrupted/cold restart for each of 3 DEV model seeds",
+    "checkpoint_bundles": "ephemeral CPU DEV only, manifests and SHA256 receipts retained, no research model acceptance"
+  },
+  "science_first_use": {
+    "authorized": false,
+    "seed_assignments": {},
+    "scientific_worlds_consumed": 0,
+    "s26_pr46": "Negative baseline immutable, prior seeds not reused",
+    "s27_pr48": "Prospective science not run, reserved seeds not reused",
+    "independent_scientific_source_birth": "NOT_REGISTERED",
+    "no_improvement_claim": true
+  },
+  "engineering_regression": {
+    "Windows": "full exact-SHA project-owned native regression with original negative controls",
+    "WSL": "full exact-SHA project-owned native regression with original negative controls",
+    "new_integration_test": "actual paired feedback and supervised gradient, full source/optimizer/memory/RNG cold continuation",
+    "expected_result": "PASS_ENGINEERING_ONLY_OR_PRESERVE_FAILURE",
+    "mandatory_unchanged_originals": true
+  }
+}
