@@ -1,0 +1,112 @@
+{
+  "schema": "ttt-hybrid.native-p20.ppo-reward-only-frozen.v1",
+  "registered_at": "2026-11-08",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "P19_parent_pr": 90,
+    "P19_parent_sha": "631647d8d03d150a6c537be6b8b0e3361c27e5a0",
+    "P19_model_source_git_blob": "c26d90837fbcf31648c7a672b382955e189dd642",
+    "P18_rewardonly_model_source_git_blob": "0c5c0079614624d1264e477ea90b483cbe63d586",
+    "P19_original_frozen_manifest_git_blob": "f1f824245e337480537a8169b91c6c1d5a0d4c11",
+    "S29_owner_pr": 87,
+    "S29_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "FaramaMIT_commit": "17eff00220d210beda933f78b0e52850022b0690",
+    "CloudpickleBSD3_commit": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62"
+  },
+  "question": "Can an unchanged 489-parameter continuous-history GRU discover a competent real CartPole policy from only its own executed actions and observed rewards using PPO, compared to a similarly parameterized MLP, equal-budget reward-credit corruption, random/untrained actors and a fully competent supervised conventional P19 control?",
+  "null": "Across any of 3 initialization seeds, the reward-only GRU does not attain >=150/200 on new public DEV CartPole seeds, fails to exceed same-source random/untrained controls by >=75 or the same-budget reward-credit-corrupted GRU by >=40, or fails to retain >=100/200 on short and long source-instance pole length perturbations. Such failures are retained, never retuned on exposed eval seeds.",
+  "design": {
+    "scope": "ORIGINAL_S29_SOURCE_ONLY_AUTHORED_PUBLIC_DEV_REWARD_ONLY_PPO_NOT_AUTHENTIC_SCIENTIFIC_FIRST_USE",
+    "train_initializations": [
+      3119,
+      3137,
+      3167
+    ],
+    "train_arm_types": [
+      "reward_gru",
+      "reward_mlp",
+      "wrong_credit_gru"
+    ],
+    "actors": "Unchanged original P18 489-param HistoryGRU and 471-param FullHistoryMLP (no tokens or transformer) both 8 factual rows, four real sensed state variables + previous actually executed action + already observed reward.",
+    "positive_gradient_signal": "Clipped PPO Categorical policy gradient from each actor's OWN executed action, real reward-to-go GAE, learned true value baseline, no teacher action labels, no engine hidden state.",
+    "credit_negative": "Same GRU architecture / old initialization and PPO batch/epochs/horizon, but actor advantage is rotated 32 time steps and one environment. Critic value targets remain factual; source reward samples remain genuine; invalid causal attribution is deliberate.",
+    "ppo_rollouts": 96,
+    "parallel_environments": 8,
+    "rollout_steps": 64,
+    "ppo_epochs": 3,
+    "ppo_minibatch": 256,
+    "ppo_gradient_updates_per_actor": 576,
+    "real_factual_train_actions_per_actor": 49152,
+    "total_gradient_updates": 5184,
+    "total_reward_only_real_factual_train_actions": 442368,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "clip": 0.2,
+    "entropy": 0.015,
+    "value_coefficient": 0.5,
+    "adamw_lr": 0.0015,
+    "grad_norm_max": 1,
+    "train_reset_seed_rule": "Initial reset of env slot j: 82000+1000*j; on completed episode k reset 82000+1000*j+k; same deterministic source rule and actions budget, naturally different trajectories per learned policy, no science seeds.",
+    "dev_eval_seeds": [
+      92013,
+      92029,
+      92041,
+      92053
+    ],
+    "dev_eval_conditions": [
+      "original",
+      "short_pole",
+      "long_pole"
+    ],
+    "source_dynamics": "Real pinned Gymnasium CartPole-v1 source instances; short pole length ratio 0.7 and long 1.3. Also set source-instance polemass_length derived from same public engine parameter. Actual physics changed before reset; models cannot access ratio or engine parameters. This is a developer-authored variation of one known environment, NOT independently novel science.",
+    "eval_arms": [
+      "reward_ppo_gru",
+      "reward_ppo_mlp",
+      "wrong_credit_ppo_gru",
+      "untrained_gru",
+      "ppo_gru_zero_prior_history",
+      "p19_factual_supervised_linear",
+      "p19_factual_supervised_gru",
+      "handcoded_observation_controller",
+      "seeded_random"
+    ],
+    "P19_supervised_comparator": "Original P19 source trains observation-only linear 700 and history GRU 900 AdamW on original 48 factual supervised teacher episodes, each comparator seed [2819,2833,2843]. It is strictly a frozen evaluation reference, never an action label for any PPO learner.",
+    "no_expert_labels_ever_used_for_rewardonly_actor": true,
+    "strong_saturated_champion_not_required_to_be_beaten": true,
+    "frozen_rewardonly_target": {
+      "standard_avg_episode_reward_min": 150,
+      "vs_same_source_random_gain_min": 75,
+      "vs_untrained_same_init_GRU_gain_min": 75,
+      "vs_same_budget_miscredited_reward_GRU_gain_min": 40,
+      "vs_MLP_not_worse_than": 20,
+      "short_pole_gru_reward_min": 100,
+      "long_pole_gru_reward_min": 100,
+      "reference_P19_linear_requalify_min": 175,
+      "reference_P19_gru_requalify_min": 175,
+      "all_three_model_seeds_required": true,
+      "engineering_success_not_equivalent_to_rewardonly_gain": true
+    },
+    "factual_trace_provenance": true,
+    "model_inprocess_weights_restoration_not_process_death": true,
+    "actual_action_count_per_arm_matched": true,
+    "training_sample_information_interface_equal": true,
+    "whole_process_training_flops_not_equal": true,
+    "process_wall_time_cap_seconds": 600,
+    "no_install_new_runner_paid_API_controller": true,
+    "mandatory_full_Windows_and_WSL_regression_final_exact_SHA": true,
+    "no_source_promotion_or_forGE_integration": true
+  },
+  "science": {
+    "authorized": false,
+    "first_use_consumed": false,
+    "protected_science_seeds": {},
+    "original_S26_negative_preserved": true,
+    "S27_independent_prospective_source_untouched": true,
+    "S29_owner_source_unchanged": true,
+    "independent_P19_sibling_pr91_untouched": true,
+    "genuine_novel_external_source_birth": false,
+    "actual_matched_whole_process_compute": false,
+    "cold_process_death_learner_recovery_unverified": true,
+    "scientific_pass_unproven": true
+  }
+}
