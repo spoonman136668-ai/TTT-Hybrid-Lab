@@ -26,9 +26,9 @@ from scripts import native_p20_reward_only_ppo_dev as p20
 SCHEMA="ttt-hybrid.native-p25.paired-action-consequence-dev.v1"
 PROTOCOL=ROOT/"experiments/native_p25_paired_action_consequence_frozen.json"
 MODEL_SEEDS=(3671,3691,3701)
-TRAIN_SEEDS=range(101000,101256)
-VAL_SEEDS=range(102000,102064)
-EVAL_SEEDS=range(103000,103096)
+TRAIN_SEEDS=range(104000,104256)
+VAL_SEEDS=range(105000,105064)
+EVAL_SEEDS=range(106000,106096)
 PREFIX_LENGTHS=(0,3,6,9)
 EVAL_CONDITIONS=("original","gravity_x0.75","gravity_x1.25")
 MODEL_ARMS=("action_conditioned_factual_GRU","sham_independent_action_GRU",
@@ -54,6 +54,15 @@ def frozen():
         or "metric_contract" not in j
         or "zero_effect_MSE" not in j["metric_contract"]):
         raise RuntimeError("P25_FROZEN_PROTOCOL_DRIFT")
+    repair=json.loads((ROOT/"experiments/native_p25r1_json_custody_repair_frozen.json").read_text(encoding="utf-8"))
+    if (repair.get("schema")!="ttt-hybrid.native-p25r1.json-factual-custody-repair-frozen.v1"
+        or repair["state"]!="FROZEN_BEFORE_REPAIR_SOURCE_AND_FRESH_RETRY"
+        or repair["origin"]["original_P25_head_sha"]!="74e1fd846a00dce4b2e0dc48f182c91cc29cbf03"
+        or repair["fresh_public_dev"]["train"]!=[104000,104255]
+        or repair["fresh_public_dev"]["validation"]!=[105000,105063]
+        or repair["fresh_public_dev"]["evaluation"]!=[106000,106095]
+        or repair["qualification"]["science_first_use_authorized"] is not False):
+        raise RuntimeError("P25R1_FRESH_SOURCE_RECOVERY_NOT_FROZEN")
     return j
 
 def require_dev():
@@ -69,6 +78,10 @@ def visible_history(rows):
         r[1]=0.0
         r[3]=0.0
     return p20.scaled_history(mask).reshape(p20.HISTORY,6).detach().clone()
+
+def real_floats(observation):
+    """Canonical JSON of observed upstream NumPy float32/64, not hidden state."""
+    return [float(v) for v in observation]
 
 def condition_env(env,condition):
     if condition not in EVAL_CONDITIONS:
@@ -117,7 +130,7 @@ def source_pairs(gym,seeds,condition,split):
                     if (list(nxt0)!=list(nxt1) or r0!=r1 or
                         t0!=t1 or z0!=z1):
                         raise RuntimeError("P25_SISTER_PREFIX_MISMATCH")
-                    digest.update(json.dumps([seed,prefix_len,a,list(nxt0),float(r0),
+                    digest.update(json.dumps([seed,prefix_len,a,real_floats(nxt0),float(r0),
                                                bool(t0),bool(z0)],
                                               allow_nan=False,separators=(",",":")).encode())
                     rows.append(p20.factual_row(nxt0,2*a-1,float(r0)))
@@ -139,7 +152,7 @@ def source_pairs(gym,seeds,condition,split):
                     records.append({**event,"valid":False,
                                     "reason":"FIRST_INTERVENTION_TERMINATED"})
                     digest.update(json.dumps([seed,prefix_len,
-                                              list(next0),list(next1),True],
+                                              real_floats(next0),real_floats(next1),True],
                                              allow_nan=False,separators=(",",":")).encode())
                     continue
                 last0,reward0,term0,trunc0,_=e0.step(0)
@@ -160,8 +173,8 @@ def source_pairs(gym,seeds,condition,split):
                     "original_masked_observation":rows[-1][0:4],
                     "executed_intervention_actions":[0,1],
                     "identical_followup_actions":[0,0],
-                    "actual_2step_0":list(last0),
-                    "actual_2step_1":list(last1),
+                    "actual_2step_0":real_floats(last0),
+                    "actual_2step_1":real_floats(last1),
                     "factual_2step_position_targets_0":y0.tolist(),
                     "factual_2step_position_targets_1":y1.tolist(),
                     "terminated_second_action":[bool(term0 or trunc0),bool(term1 or trunc1)],
