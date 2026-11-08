@@ -1,0 +1,90 @@
+{
+  "schema": "ttt-hybrid.native-p13.active-probe-frozen.v1",
+  "registered": "2026-11-08",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 78,
+    "parent_P12_sha": "e2d5ea4ff4650f7f3b6d6686c0575885c3e23e48",
+    "original_P12_source_blob": "da6e02f9867018c029c1d5c30e791e8d5a149ff1",
+    "original_P11_source_blob": "3217e3ba6e5fdf8d88dc354e254d910cdafd87eb",
+    "native_original_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Can actively chosen causal-disambiguation probes increase actual delayed/reversing-world reward over the same exact probe count and online updater with random probes, and an independently adaptive recurrent baseline?",
+  "null": "Active information probes do not consistently yield >=.05 reward-per-action advantage across delay2, delay3 and changing_delay over matched passive probes, same updater no probes, deliberately action-history-corrupted learning, and adapted GRU; action-effect sham remains unverifiable beyond its known synthetic settings.",
+  "design": {
+    "scope": "PUBLIC_AUTHORED_SYNTHETIC_DEV_ONLY_NOT_INDEPENDENT_SCIENCE",
+    "worlds": [
+      "delay2",
+      "delay3",
+      "changing_delay",
+      "sham_no_action"
+    ],
+    "world_dev_seeds": [
+      88421,
+      88433,
+      88457,
+      88469
+    ],
+    "trained_model_initializations": [
+      353,
+      359,
+      367
+    ],
+    "original_fit_dev_seed": 54131,
+    "original_val_dev_seed": 54179,
+    "original_factual_fit_examples": 6000,
+    "original_validation_examples": 1920,
+    "original_GRU_pretraining_optimizer_updates": 1200,
+    "original_GRU_training_plateau_required_to_claim_science": true,
+    "initial_common_real_factual_events": 8,
+    "scored_decisions_per_policy": 64,
+    "online_feedback_updates": 64,
+    "fixed_probe_slots": 16,
+    "probe_schedule": "At scored times 0,4,...,60. Fixed before outcomes for active, random probe, scrambled history, adaptive GRU, frozen GRU. No probe arm has zero required probes.",
+    "lag_design": "Full discounted regularized 5×5 P12 sufficient statistics; action-conditioned [a_t,a_t-1,a_t-2,a_t-3]. Only factual chosen-action outcomes update.",
+    "active_probe": "Before each fixed probe, maximize x(a)^T G^-1 x(a) separately for +1 and -1 actions using current completed factual history. Never inspect future outcome or hidden world lag.",
+    "passive_random_probe": "At exact same 16 probe slots, compute both D-opt scores but choose ±1 from registered seeded random draw. Identical updater, dimensionality, feedback and opportunities; comparable matrix operations.",
+    "exploitation": "Nonprobe chooses sign of sum of learned current+future lag coefficients for expected 4-event action effect, or random if absolute effect under 0.08. Equal across online arms.",
+    "incorrect_timing_negative": "At factual update, shuffle historic action order before forming lag features; breaks lag→result alignment, NOT merely permuting coefficient columns.",
+    "no_probe_negative": "Same online optimizer + 64 factual updates but zero mandatory exploratory probes",
+    "baseline_adaptive_GRU": "Clone exact original P11 trained GRU, same history/action/observed consequence each step, model-parameter AdamW lr .001 after each factual result, 64 online updates; same 16 forced random probes; measured wall time and no unobserved targets. FLOPs not equal to ridge.",
+    "baseline_frozen_GRU": "Exact same pre-trained GRU and 16 probe opportunities but zero online model updates",
+    "other_controls": [
+      "seeded_random",
+      "informed_privileged_diagnostic_not_a_fair_control"
+    ],
+    "no_other_world_outcome_used_by_policy": true,
+    "no_model_gradient_updates_during_eval_except_explicit_adaptive_GRU": true,
+    "factual_action_outcome_trace_digest": "SHA256 per controller/world/seed",
+    "measured_process_wall_seconds": true,
+    "per_arm_policy_and_updates_wall_seconds": true,
+    "no_external_sci_source": true,
+    "original_HYPOTHESIS_thresholds": {
+      "minimum_actual_mean_reward_advantage": 0.05,
+      "worlds_required": [
+        "delay2",
+        "delay3",
+        "changing_delay"
+      ],
+      "support": "3/3 original model initializations AND separate four DEV world seeds, recognizing repeated source world seeds across inits",
+      "sham_max_spurious_action_coefficient": 0.12,
+      "no_post_result_retuning": true
+    },
+    "engineering_PASS_independent_of_hypothesis_success": true,
+    "maximum_process_wall_seconds": 115,
+    "no_expanded_runner_or_paid_api": true,
+    "no_promotion_or_FORGE_integration": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "independently_born_sources": false,
+    "novelty_not_claimed": true,
+    "S26_negative_preserved": true,
+    "S27_sealed_seeds_preserved": true,
+    "trained_baseline_plateau_unverified": true,
+    "compute_matched_baseline_unverified": true
+  }
+}
