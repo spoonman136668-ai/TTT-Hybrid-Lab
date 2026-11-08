@@ -44,6 +44,7 @@ def test_resume_refuses_reset_and_wrong_identity(tmp_path):
     ep=NativeCausalEpisode(model)
     ident=identity()
     root=save_completed(tmp_path,ident,model,opt,ep,0,None)
+    transact(model,opt,ep,0)
     with pytest.raises(CheckpointRejected,match="UNDECLARED_RESTART"):
         save_completed(tmp_path,ident,model,opt,ep,1,None)
     wrong=dict(ident);wrong["protocol_sha256"]="f"*64

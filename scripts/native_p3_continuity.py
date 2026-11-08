@@ -257,6 +257,8 @@ def run()->dict:
         "records":records,
         "wall_seconds":time.perf_counter()-start,
     }
+    if result["wall_seconds"]>MAX_WALL_SECONDS:
+        result["status"]="BLOCKED_DEV_RUNTIME_BUDGET"
     return result
 
 
