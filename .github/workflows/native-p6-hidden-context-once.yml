@@ -1,0 +1,112 @@
+# One-use original-source pinned P6 causal-evidence inference, engineering only.
+name: Native P6 hidden causal-context inference CPU once
+on:
+  push:
+    branches:
+      - engineering/native-p6-hidden-context-causal-inference-20261108
+    paths:
+      - .github/workflows/native-p6-hidden-context-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p6-hidden-context-oneuse
+  cancel-in-progress: false
+jobs:
+  windows-wsl-and-bounded-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p6-hidden-context-causal-inference-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p6-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 120
+      - name: Admit immutable source and zero science-world custody
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P6_OWNER_ONEUSE_REQUIRED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p6-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P6_EXACT_SHA_REQUIRED'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P6_CLEAN_CHECKOUT_REQUIRED'}
+          & git -C $root merge-base --is-ancestor 'c7f0253cd536666b6aea2e24e8d0313f68d5f20b' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P6_PR58_ANCESTRY_REQUIRED'}
+          $pins=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p5_equal_capacity_dev.py'='e3ad1c928be230add69f8fd694ac6549290e6730';
+            'tests/test_native_p5_equal_capacity_dev.py'='139da5a8c4d25ff2c0e9bb9693dd4025c7a8968a';
+            'experiments/native_p5_equal_capacity_dev_frozen.json'='e480de32fa86d9c9d4f7ceab335b4ff05c73f8b0';
+            'scripts/native_p6_hidden_context_dev.py'='7f21b73d6255f2611512969e87446352c1dee90c';
+            'tests/test_native_p6_hidden_context_dev.py'='3a16d3ed413988f1d270cc7cdb20f5de867f6ea2';
+            'experiments/native_p6_hidden_context_dev_frozen.json'='e273d01cb5f0ef073b343496d4dc7b35fad8b88b'
+          }
+          foreach($path in $pins.Keys){
+            $observed=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $observed -cne $pins[$path]){throw "P6_ORIGINAL_OR_PROTOCOL_BLOB_DRIFT:$path"}
+          }
+          $manifest=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p6_hidden_context_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($manifest.science.authorized -ne $false -or $manifest.science.consumed -ne $false -or @($manifest.science.world_seeds.PSObject.Properties).Count -ne 0 -or $manifest.design.fast_storage_per_arm_scalars -ne 12 -or $manifest.design.total_records -ne 16){throw 'P6_SCIENCE_FENCE_OR_PROTOCOL_FAILED'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P6_PINNED_CPU_ENV_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'P6_CPU_ENVIRONMENT_DRIFT'}
+          Write-Output 'P6_EXACT_SOURCE_AND_SCIENCE_FENCE=PASS'
+      - name: Full Windows exact-SHA regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p6-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p6_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P6_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p6_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P6_WINDOWS_SOURCE_RECEIPT_FAIL'}
+          Write-Output 'P6_WINDOWS_FULL_ENGINEERING=PASS'
+      - name: Full WSL exact-SHA regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P6_WSL_OWNER_REQUIRED'}
+          $root="$lp/native-p6-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p6_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P6_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p6-candidate\local_runs\native_p6_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P6_WSL_SOURCE_RECEIPT_FAIL'}
+          Write-Output 'P6_WSL_FULL_ENGINEERING=PASS'
+      - name: Execute bounded hidden-context causal-evidence DEV falsification
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p6-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 110s /usr/bin/env 'NATIVE_P6_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p6_hidden_context_dev.py" --receipt "$root/local_runs/native_p6_hidden_context.json"
+          if($LASTEXITCODE -ne 0){throw 'P6_DEV_EVIDENCE_EXECUTION_FAIL'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p6-candidate\local_runs\native_p6_hidden_context.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_DEV_INTEGRITY_NOT_SCIENCE' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.world_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 16 -or $p.memory_scalar_budget_each_arm -ne 12 -or $p.optimizer_updates -ne 0){throw 'P6_DEV_RECEIPT_SCOPE_FAIL'}
+          Write-Output 'P6_HIDDEN_CONTEXT_DEV_INTEGRITY_AND_NEGATIVES_RETAINED=PASS'
+      - name: Archive exact-source cross-platform and causal-mechanism receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p6-hidden-context-once
+          path: native-p6-candidate/local_runs/native_p6_*.json
+          retention-days: 30
+          if-no-files-found: warn
