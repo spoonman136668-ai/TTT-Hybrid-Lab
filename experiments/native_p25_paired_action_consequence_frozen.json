@@ -59,7 +59,8 @@
       "gravity_x1.25"
     ],
     "physics": "Change only isolated source instance gravity before reset, recompute no hidden actor input; never edit source file, no novel independent world claim.",
-    "test_zero_online_fit": true
+    "test_zero_online_fit": true,
+    "action_choices_prefix": "random.Random(seed*997+prefix_length*31+71) and rng.randrange(2); same list used in both source instances"
   },
   "models": {
     "architecture": "Continuous-history GRU(6,9) and action-conditioned linear output to two observed next position deltas, no tokenization/attention and no future labels at decision time",
@@ -122,5 +123,16 @@
     "merge_deployment_model_promotion_not_done": true,
     "FORGE_activation_forbidden": true,
     "other_project_loop_untouched": true
+  },
+  "metric_contract": {
+    "action_effect_truth": "For each valid sister pair: y(a=1) minus y(a=0), where y is 2-step actual source positional delta [next_cart_x-original_cart_x, 10*(next_pole_theta-original_pole_theta)]",
+    "action_effect_MSE": "Mean squared difference across both target coordinates and all valid heldout sister pairs, using independent actual executed a=0/1 branches.",
+    "zero_effect_MSE": "Mean square of true action-effect delta itself; zero means an action-blind predictor cannot distinguish chosen interventions.",
+    "effect_R2_against_zero_effect": "1 - action_effect_MSE / zero_effect_MSE; this is NOT conventional centered statistical R2. All thresholds in prespecified original_heldout_effect_R2_min and gravity_variant_effect_R2_min mean this specific zero-effect reference measure.",
+    "sham_training": "Randomly flip the sign of the selected action feature per paired world (both examples in that pair) using deterministic RNG; the factual targets are NOT modified. True action labels are restored for heldout evaluation. This destroys consistent action/target associations and is NOT equivalent to a global reversible sign flip.",
+    "same_initialization": "All GRU arms share EXACT same initialization per model seed; update order and minibatch permutations are synchronized, though gradients/learned policies can differ. Dataset is fixed and identical across all arms; no on-policy training divergence.",
+    "ridge": "Fit ridge on each actually executed action branch with identical training examples only; report strong ridge and fully trained MLP alongside GRU. No hidden velocity and no test refit.",
+    "training_public_teacher": "No expert decision labels; the only supervised targets are actual next physical observations produced by own chosen training interventions. No hidden source parameters are available to models.",
+    "numerical_stability": "Reject zero_effect_MSE<=1e-12 and any nonfinite model output/gradient. Freeze output scaling as [1,10] and no eval optimizer updates."
   }
 }
