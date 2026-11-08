@@ -1,0 +1,80 @@
+{
+  "schema": "ttt-hybrid.s29.mit-gymnasium-actual-api-engineering-smoke.v1",
+  "source_parent_s28_sha": "1041d1496c7c39182694a508778d1defab07e26c",
+  "upstream": {
+    "repo": "Farama-Foundation/Gymnasium",
+    "ref": "v1.1.1",
+    "exact_commit": "17eff00220d210beda933f78b0e52850022b0690",
+    "git_blobs": {
+      "LICENSE": "ac10bf443756cdc02724943ac09021092ce9e737",
+      "pyproject.toml": "f7af86ade9bb45181760cb9ec393d56436e3bc5f",
+      "gymnasium/__init__.py": "a5066ac6bae2208d25896cabd8f2447f23fdcd3b",
+      "gymnasium/envs/classic_control/cartpole.py": "9bd08a0153bc68f23776e83a975a6bbca6bb9a11"
+    },
+    "license": "MIT",
+    "license_cleared_for_source_reuse": "applies to exact Farama source only; no CausalAILab upstream rights claim",
+    "dependency_policy": "read-only preexisting pinned test interpreter; no pip installs, downloads, modifications to shared environment; no extras",
+    "minimal_declared_deps": [
+      "numpy >=1.21.0",
+      "cloudpickle >=1.2.0",
+      "typing-extensions >=4.3.0",
+      "farama-notifications >=0.0.1 (source guards import)"
+    ],
+    "nonrequired_extras": [
+      "gymnasium[all]",
+      "box2d",
+      "pygame",
+      "mujoco",
+      "atari",
+      "Causal-Gymnasium"
+    ]
+  },
+  "smoke": {
+    "only_env_id": "CartPole-v1",
+    "public_engineering_smoke_seeds": [
+      42,
+      43
+    ],
+    "repeat_per_seed": 2,
+    "max_steps_per_repetition": 32,
+    "action_policy": "deterministic alternating public actions 0,1; no model or learning",
+    "render_mode": null,
+    "non_graphic_cpu": true,
+    "same_source_main_api": "gymnasium.make; reset; step; close",
+    "factual_adapter": "scripts/native_s28_causal_wind_offline.py FactualWindTransitionLedger",
+    "output_fields": [
+      "previous_observation",
+      "executed_action",
+      "next_observation",
+      "factual_reward",
+      "terminated",
+      "truncated"
+    ],
+    "privileged_data_forwarded": false,
+    "expected_observation_dim": 4,
+    "action_space_n": 2,
+    "expected_determinism": "same-source same-env same-seed same-action sequence compare exact receipts on same OS",
+    "source_runtime_import_allowed": true,
+    "only_official_gymnasium_import_allowed": true,
+    "causal_gym_source_import_allowed": false,
+    "third_party_wind_scm_instantiation_allowed": false,
+    "protected_first_use_allowed": false,
+    "trainer_activation_allowed": false,
+    "scientific_claims_allowed": false
+  },
+  "qualification": {
+    "exact_candidate_sha": true,
+    "source_only_github_checkout": true,
+    "source_files_always_pinned_by_sha": true,
+    "source_license_exact_mit_verified": true,
+    "non_sci_public_smoke_only": true,
+    "no_experimental_original_world_seeds": true,
+    "same_source_windows_wsl_full_regression": true,
+    "negative_controls_original_cuda": true,
+    "no_environment_install_or_global_mutation": true,
+    "same_runner_as_s28": true,
+    "no_new_controller": true,
+    "no_merge_or_model_promotion": true,
+    "missing_dependency_means_runtime_blocked_not_auto_installed": true
+  }
+}

@@ -1,0 +1,123 @@
+# S29: only MIT-licensed Farama standard CartPole reference, no CausalGym.
+# One-use source-only qualification; no installs, protected world first-use or ML.
+name: Native S29 pinned MIT Gymnasium CartPole factual API once
+on:
+  push:
+    branches: [engineering/s29-mit-gymnasium-contract-smoke-20261108]
+    paths: [.github/workflows/native-s29-mit-gymnasium-smoke-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-s29-mit-gym-source-once
+  cancel-in-progress: false
+jobs:
+  source-bound-factual-api:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/s29-mit-gymnasium-contract-smoke-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact S29 candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: s29-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 20
+      - name: Checkout exact MIT Farama source only, never execute install
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: s29-farama-source
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Preflight exact source and frozen non-science boundaries
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_S29_OWNER_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 's29-candidate'
+          $src=Join-Path $env:GITHUB_WORKSPACE 's29-farama-source'
+          $candidate=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          $original=(& git -C $src rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $candidate -cne $env:GITHUB_SHA -or $original -cne '17eff00220d210beda933f78b0e52850022b0690'){throw 'BLOCKED_S29_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_S29_DIRTY'}
+          & git -C $root merge-base --is-ancestor '1041d1496c7c39182694a508778d1defab07e26c' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S29_S28_PARENT'}
+          $pins=@{
+            'scripts/qualify_cpu.py'='53fe5747d6308d4470d571011adab6210c9426dd';
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'scripts/native_s28_causal_wind_offline.py'='cba40ef802e0255e351772cdaa95bbb5f94cc1bd';
+            'scripts/native_s29_mit_gymnasium_smoke.py'='8d23099e1aaf46b4fdc099f03c467a76970f30b2';
+            'tests/test_native_s29_mit_gymnasium_smoke.py'='b1b0672a69d65e042d48bb4149ae4781d9f82ef7';
+            'experiments/s29_gymnasium_contract_smoke_frozen.json'='9ba9bc1c5ada3fd8e8d91e7208644f94fcf887dc';
+            'docs/NATIVE_S29_MIT_CARTPOLE_SMOKE.md'='27db801d65d2242bd9acaa6c25681f840c183a04'
+          }
+          foreach($path in $pins.Keys){
+            $sha=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $sha -cne $pins[$path]){throw "BLOCKED_S29_BLOB:$path"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/s29_gymnasium_contract_smoke_frozen.json') -Raw|ConvertFrom-Json
+          if($f.schema -cne 'ttt-hybrid.s29.mit-gymnasium-actual-api-engineering-smoke.v1' -or $f.upstream.exact_commit -cne '17eff00220d210beda933f78b0e52850022b0690' -or $f.upstream.license -cne 'MIT' -or @($f.smoke.public_engineering_smoke_seeds).Count -ne 2 -or $f.smoke.protected_first_use_allowed -ne $false -or $f.qualification.no_environment_install_or_global_mutation -ne $true){throw 'BLOCKED_S29_FROZEN_AUTHORITY'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_S29_INTERPRETER'}
+          $versions=@(& $py -I -B -c 'import torch,pytest;print(torch.__version__);print(pytest.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -lt 2 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4'){throw 'BLOCKED_S29_TEST_ENV_VERSION'}
+          Write-Output 'S29_EXACT_PINS_AND_NO_PROTECTED_FIRST_USE=PASS'
+      - name: Full Windows regression then real MIT CartPole public-seed smoke
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 's29-candidate'
+          $src=Join-Path $env:GITHUB_WORKSPACE 's29-farama-source'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          $env:NATIVE_S28_ENGINEERING_ONLY='1';$env:NATIVE_S29_ENGINEERING_ONLY='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\s29_windows_full.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S29_WINDOWS_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\s29_windows_full.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true -or $q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 123){throw 'BLOCKED_S29_WINDOWS_FULL_NEGATIVES'}
+          & $py -I -B (Join-Path $root 'scripts\native_s29_mit_gymnasium_smoke.py') --source-root $src --receipt (Join-Path $root 'local_runs\s29_windows_real_cartpole.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S29_WINDOWS_REQUIRED_EXISTING_GYM_DEPS_OR_SOURCE'}
+          $z=Get-Content -LiteralPath (Join-Path $root 'local_runs\s29_windows_real_cartpole.json') -Raw|ConvertFrom-Json
+          if($z.status -cne 'PASS_ACTUAL_FARAMA_CARTPOLE_ENGINEERING_SMOKE_NOT_CAUSAL_WIND' -or $z.total_episodes -ne 4 -or $z.record_count -ne 2 -or $z.upstream.license_complete_mit -ne $true -or $z.upstream.license_applies_only_to_farama_not_causalailab -ne $true -or $z.original_protected_science_first_use -cne 'NOT_RUN' -or $z.real_causal_wind_environment_executed -ne $false -or $z.installed_any_package -ne $false){throw 'BLOCKED_S29_WINDOWS_REAL_SMOKE_CLAIM'}
+          Write-Output 'S29_WINDOWS_FULL_AND_REAL_FARAMA_ONLY=PASS_ENGINEERING'
+      - name: Full Ubuntu WSL regression then real MIT CartPole public-seed smoke
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_S29_WSL_OWNER'}
+          $root="$lp/s29-candidate"
+          $src="$lp/s29-farama-source"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'NATIVE_S28_ENGINEERING_ONLY=1' 'NATIVE_S29_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/s29_linux_full.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S29_WSL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 's29-candidate\local_runs\s29_linux_full.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true -or $q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 122){throw 'BLOCKED_S29_WSL_FULL_NEGATIVES'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'NATIVE_S28_ENGINEERING_ONLY=1' 'NATIVE_S29_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/native_s29_mit_gymnasium_smoke.py" --source-root $src --receipt "$root/local_runs/s29_linux_real_cartpole.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_S29_WSL_REQUIRED_EXISTING_GYM_DEPS_OR_SOURCE'}
+          $z=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 's29-candidate\local_runs\s29_linux_real_cartpole.json') -Raw|ConvertFrom-Json
+          if($z.status -cne 'PASS_ACTUAL_FARAMA_CARTPOLE_ENGINEERING_SMOKE_NOT_CAUSAL_WIND' -or $z.total_episodes -ne 4 -or $z.record_count -ne 2 -or $z.upstream.license_complete_mit -ne $true -or $z.upstream.license_applies_only_to_farama_not_causalailab -ne $true -or $z.original_protected_science_first_use -cne 'NOT_RUN' -or $z.real_causal_wind_environment_executed -ne $false -or $z.installed_any_package -ne $false){throw 'BLOCKED_S29_WSL_REAL_SMOKE_CLAIM'}
+          Write-Output 'S29_WSL_FULL_AND_REAL_FARAMA_ONLY=PASS_ENGINEERING'
+      - name: Retain only source and factual public engineering receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-s29-mit-farama-standard-cartpole-api-once
+          path: |
+            s29-candidate/local_runs/s29_windows_full.json
+            s29-candidate/local_runs/s29_windows_real_cartpole.json
+            s29-candidate/local_runs/s29_linux_full.json
+            s29-candidate/local_runs/s29_linux_real_cartpole.json
+          retention-days: 30
+          if-no-files-found: warn

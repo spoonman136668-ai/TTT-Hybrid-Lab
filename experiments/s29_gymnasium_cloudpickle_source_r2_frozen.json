@@ -1,0 +1,45 @@
+{
+  "schema": "ttt-hybrid.s29.r2.cloudpickle-source-only-runtime-feasibility.v1",
+  "parent_r1_sha": "b9428a5824874996c11094a56c0d852df0b9115b",
+  "r1_run": 42523092142,
+  "r1_disposition": "SOURCE_PASS_WINDOWS_123_PASS_MINIMAL_DEPENDENCY_ADMISSION_BLOCKED_NO_GYM_EXECUTION",
+  "reason": "Gymnasium 1.1.1 requires cloudpickle; original pinned runtime does not have every base dependency. Supply separately licensed source-only checkout, not package installation.",
+  "provider": "cloudpipe/cloudpickle",
+  "provider_tag": "v3.1.1",
+  "exact_commit": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+  "license": "BSD-3-Clause",
+  "git_blobs": {
+    "LICENSE": "d112c4806aa90b4c911b360fa0ce1d0ee7c031ce",
+    "pyproject.toml": "aaee1f0c0887137da702d77643e9576bf4230a21",
+    "cloudpickle/__init__.py": "3768a936efd38d3799af95d4420457525c119a42",
+    "cloudpickle/cloudpickle.py": "4d532e5de9f2cd4fc82bb7cd9e982d47c26dc5e5"
+  },
+  "cloudpickle_source_import_allowed": true,
+  "cloudpickle_source_import_expected_file": "cloudpickle/__init__.py",
+  "cloudpickle_version_expected": "3.1.1",
+  "cloudpickle_code_modification_allowed": false,
+  "existing_numpy_and_typing_extensions_required": true,
+  "cloudpickle_or_gymnasium_installer_allowed": false,
+  "system_site_packages_modification_allowed": false,
+  "new_dependency_network_access_from_python_allowed": false,
+  "existing_s29_public_seeds_and_action_policy_unchanged": true,
+  "original_s28_and_causal_gym_license_block_unchanged": true,
+  "protected_scientific_first_use_authorized": false,
+  "real_causal_wind_environment_allowed": false,
+  "accepted_model_promotion_allowed": false,
+  "gpu_and_paid_compute_allowed": false,
+  "qualification": {
+    "full_final_exact_sha_windows_wsl_regression": true,
+    "original_cuda_negative_controls": true,
+    "exact_gym_and_cloud_pickle_public_source_sha_license_and_git_blobs": true,
+    "same_existing_owner_runner": true,
+    "public_smoke_seeds_and_repeats": [
+      42,
+      43,
+      2
+    ],
+    "no_science_data_or_model_training": true,
+    "full_src_outcome_receipts": true,
+    "no_new_controller_queue_runner_or_paid_api": true
+  }
+}
