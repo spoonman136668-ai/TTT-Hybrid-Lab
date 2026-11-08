@@ -1,6 +1,6 @@
 # Once-only native Windows + WSL CPU regression of versioned S25 portability.
 # No scientific first-use, model training, CUDA, R3 writes or owner changes.
-name: G7-S26 development baseline input contracts and full dual-platform regression
+name: G7-S26 development baseline input contracts and full dual-platform regression R2
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   exact-head-cross-platform:
-    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s26-on-v2-qualification-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s26-on-v2-qualification-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1 }}
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 24
     steps:
@@ -37,7 +37,7 @@ jobs:
              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
              $env:RUNNER_OS -cne 'Windows' -or
              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
-             $env:GITHUB_RUN_NUMBER -cne '1'){throw 'BLOCKED_OWNER_OR_ONE_USE'}
+             $env:GITHUB_RUN_NUMBER -cne '2'){throw 'BLOCKED_OWNER_OR_ONE_USE'}
           $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s26-v2-engineering'
           $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
           if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_SOURCE_HEAD'}
