@@ -1,0 +1,103 @@
+{
+  "schema": "ttt-hybrid.c7.observed-history-archive-selection-dev.v1",
+  "source_parent_sha": "3d601a803e0d72d4bb173400d7045a55e0f80ae3",
+  "evidence_predecessor": {
+    "pr": 60,
+    "head_sha": "1123a8aee15572f7f2602bce135a0f38c7b9909a",
+    "source_git_blob": "7f21b73d6255f2611512969e87446352c1dee90c",
+    "symbol": "FactualSlopeEvidence",
+    "threshold": 0.2,
+    "license": "same-owned-repo code, narrowly extracted"
+  },
+  "learned_router_predecessor": {
+    "pr": 62,
+    "head_sha": "7658be2cd4ff66afb3fb46519b516d8071641a36",
+    "status": "independent trained research; not integrated or modified"
+  },
+  "train": {
+    "model_seeds": [
+      46111,
+      46117,
+      46129
+    ],
+    "optimizer_updates": 80,
+    "step40_archive": true,
+    "step80_current": true,
+    "underlying_learner": "unchanged P3 native factual fast-memory+AdamW"
+  },
+  "eval": {
+    "context_orders": [
+      [
+        "old",
+        "recent",
+        "old",
+        "recent"
+      ],
+      [
+        "recent",
+        "old",
+        "recent",
+        "old"
+      ]
+    ],
+    "events_per_block": 16,
+    "events_per_record": 64,
+    "actions": "deterministic alternating -1,+1, all contexts identical",
+    "sensor": 0,
+    "elapsed_time": 0.2,
+    "factual_outcomes": "original P3 analytic_consequence(action,t=0 for old, t=40 for recent) computed by evaluator only after all predictions",
+    "router_input": "only last genuinely observed factual (action, consequence) pairs, never regime label, t or current outcome",
+    "source_predictor": "fixed step80 trained model + evaluator chosen copy of saved step40 or step80 native fast weights, recent recurrent/history",
+    "no_new_fast_memory_writes": true,
+    "no_optimizer_updates_after_checkpoints": true,
+    "arms": [
+      "inferred_p6",
+      "oracle_upper_bound",
+      "always_recent",
+      "always_old",
+      "action_sign",
+      "anti_action_evidence"
+    ],
+    "arm_note": "anti-action evidence uses same completed outcomes but deliberately swaps the sign of its paired factual action; negative control, not deployable",
+    "inference_initial_route": "old (same initial tie-break as P6)",
+    "response_effect_threshold": 0.2,
+    "late_window": "events 4-15 of each 16-event block, after real factual observations; first four scored separately",
+    "metrics": [
+      "per-event predictions and squared errors",
+      "pre-outcome route assignments",
+      "route changes",
+      "route accuracy on late events",
+      "mean late MSE",
+      "mean immediate MSE",
+      "wall time",
+      "saved checkpoint lineage"
+    ],
+    "hypotheses": {
+      "inferred_late_mse_better_than_always_recent_by_at_least": 0.1,
+      "inferred_late_mse_better_than_action_sign_by_at_least": 0.1,
+      "inferred_late_mse_better_than_anti_action_evidence_by_at_least": 0.1,
+      "inferred_late_route_accuracy_at_least": 0.875,
+      "oracle_late_mse_no_worse_than_inferred_tolerance": 0.00001
+    }
+  },
+  "science": {
+    "original_first_use": false,
+    "heldout_worlds": 0,
+    "scientifically_accepted": false,
+    "production_owner_promotion": false,
+    "conventional_trained_matched": false
+  },
+  "resources": {
+    "max_wall_seconds": 120,
+    "gpu_seconds": 0,
+    "provider_paid_apis": 0
+  },
+  "limits": [
+    "public analytic regime previously observed in P3 training",
+    "hand-coded P6 effect-sign selector; not P7 learned history encoder",
+    "causal context is inferred after prior factual outcomes, not zero-observation passive retrieval",
+    "no compute-matched trained controls and no independent held-out scientific success",
+    "stored old/new fast memories are evaluator-provided at design time and source-bound; no authentic durable encrypted memory archive",
+    "no active FORGE or Hybrid training controller and no accepted model change"
+  ]
+}
