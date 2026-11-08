@@ -105,7 +105,7 @@ def model_for_arm(arm,seed):
 def actor_tensor(history):
     # Exactly the same public 4D sensor + preceding factual action/reward
     # input scale as P19's separately qualified learned controller.
-    return scaled_history(history)
+    return scaled_history(history[-HISTORY:])
 
 
 def corrupt_action_credit(gae):
