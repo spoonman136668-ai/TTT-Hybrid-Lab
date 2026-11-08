@@ -1,0 +1,146 @@
+{
+  "schema": "ttt-hybrid.native-p24.factual-velocity-reconstruction-frozen.v1",
+  "registered": "2026-11-08",
+  "state": "FROZEN_BEFORE_IMPLEMENTATION_AND_OWNER_RUN",
+  "original": {
+    "P22_pr": 95,
+    "P22_sha": "25213b4f02ac0771667428cb176fcb6f962d7a1d",
+    "P22_dev_result": "0/3 masked PPO target FAIL; 0/3 unmasked calibration threshold; strongest finite-difference achieved 200; preserved",
+    "P22_frozen_protocol_commit": "94439a18b0cd6157a01cfae9fd91018b90442dbe",
+    "P22_owner_run": 42534104096,
+    "isolated_P23_branch": "engineering/native-p23-exact-training-resume-gravity-dev-20261108",
+    "isolated_P21_pr": 94
+  },
+  "question": "Does deterministic, past-only reconstruction of velocity from previously executed public observations let the unchanged token-free 489-parameter GRU learn a better factual reward-only CartPole controller, compared with same-budget raw masked histories, deliberately wrong-signed reconstructed velocities, wrong action-credit and unmasked upper-bound calibration?",
+  "null": "Past-derived velocity does not reach 150 mean reward on each new initialization; fails to gain >=25 against raw masked history or >=15 against wrong-signed feature, or unmasked calibration also fails and prevents attribution solely to missing velocities.",
+  "source": {
+    "S29_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_Farama_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "cloudpickle_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "source_lineage_p20_rewardonly_original_sha": "ceb54837a8066176a6b591fb3eb101c463c5d02e",
+    "factual_reward_only": true,
+    "external_original_source_only": true,
+    "unmodified_original_engine": true,
+    "protected_science_first_use": false
+  },
+  "models": {
+    "architecture": "Original unchanged P18/P20 489-param HistoryGRU, eight 6-value rows; no tokens and no transformer",
+    "views": [
+      {
+        "name": "masked_raw",
+        "description": "All velocity columns [1,3] zero throughout chronological 8-history"
+      },
+      {
+        "name": "reconstructed_from_past",
+        "description": "Per historical row, reconstruct cart and pole velocity as (position_now - previous position)/0.02 using ONLY factual previous observations in current episode. If prior row unavailable, set both 0; no engine internal state or future observation."
+      },
+      {
+        "name": "inverted_reconstructed_velocity",
+        "description": "Same exact past-derived finite differences with sign inverted for both estimated velocity columns. Preserve scale/distribution and computation but corrupt directional meaning."
+      },
+      {
+        "name": "unmasked_full_4d",
+        "description": "Real public current sensors, diagnostic calibration only"
+      },
+      {
+        "name": "reconstructed_wrong_reward_credit",
+        "description": "Past-derived finite differences, true reward-to-go critic, actor advantages shifted 32 steps and one environment."
+      }
+    ],
+    "same_model_size_all_arms": true,
+    "no_teacher_actions_or_future_obs": true
+  },
+  "train": {
+    "seeds": [
+      3491,
+      3503,
+      3517
+    ],
+    "reset_rule": "Original env slot j reset seed 86000+1000*j+completed_episode_count; identical planned reset rule per arm but diverging real on-policy trajectories",
+    "rollouts": 96,
+    "envs": 8,
+    "steps_per_rollout": 64,
+    "ppo_epochs": 3,
+    "minibatch": 256,
+    "learning_rate": 0.0015,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "entropy": 0.015,
+    "critic_coefficient": 0.5,
+    "clip": 0.2,
+    "optimizer": "Original unchanged P20 AdamW / PPO",
+    "arms": 5,
+    "actions_per_arm_seed": 49152,
+    "minibatch_updates_per_arm_seed": 576,
+    "total_factual_training_actions": 737280,
+    "total_PPO_minibatch_updates": 8640,
+    "seeded_determinism": true
+  },
+  "evaluation": {
+    "seeds": [
+      96011,
+      96017,
+      96023,
+      96029,
+      96035,
+      96041,
+      96047,
+      96053
+    ],
+    "same_source_conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "max_return": 200,
+    "greedy_policy_eval_frozen": true,
+    "no_train_eval_seed_reuse": true,
+    "nonlearned_controls": [
+      "finite_difference_public_two_frame",
+      "seeded_random"
+    ],
+    "strongest_transparent_reference_not_required_to_be_outperformed": true
+  },
+  "frozen_primary": {
+    "all_three_model_seeds_required": true,
+    "reconstruction_real_reward_at_least": 150,
+    "reconstruction_gain_over_raw_masked_at_least": 25,
+    "reconstruction_gain_over_wrong_signed_at_least": 15,
+    "reconstruction_gain_over_wrong_credit_at_least": 40,
+    "short_pole_at_least": 100,
+    "long_pole_at_least": 100,
+    "unmasked_full_observation_calibration_at_least": 150,
+    "report_and_preserve_if_any_rule_failed": true,
+    "nonlearned_finite_difference_must_be_reported": true
+  },
+  "required_integrity": {
+    "frozen_protocol_separate_ancestor_commit_before_model_script": true,
+    "exact_source_original_owner_and_all_git_blobs": true,
+    "full_Windows_and_Ubuntu_WSL_final_regression_plus_negatives": true,
+    "record_all_real_actions_reward_sequences_hashes": true,
+    "independent_each_arm_initializations_and_equal_optimizer_action_budgets": true,
+    "training_model_weights_digests": true,
+    "episode_reset_zero_previous_state": true,
+    "report_train_stochastic_curve_versus_eval_greedy_separately": true,
+    "stop_on_regression_or_source_drift": true,
+    "max_public_experiment_seconds": 600,
+    "science_source_consumption": false,
+    "no_package_install": true,
+    "original_owner_runner": "TTT-HYBRID-GPU-WIN",
+    "no_parallel_owner_run_or_scheduler": true
+  },
+  "interpretation": {
+    "if_reconstruction_passes_and_unmasked_calibration_passes": "Supports a state-feature extraction bottleneck on public DEV only, not novel cognitive generality",
+    "if_reconstruction_fails_and_unmasked_calibration_fails": "Reward-only PPO or exploration/credit remains primary confound; do not blame history alone",
+    "if_reconstruction_and_unmasked_pass_but_raw_fails": "Supports reconstructability as a candidate bottleneck; stronger matched compute controls still required",
+    "nonclaims": [
+      "no scientific PASS",
+      "no protected S26 S27 first-use",
+      "no unfamiliar-world transfer",
+      "no training-resume equality",
+      "no claim superiority to finite-difference",
+      "no accepted checkpoint",
+      "no merge or FORGE activation"
+    ]
+  }
+}
