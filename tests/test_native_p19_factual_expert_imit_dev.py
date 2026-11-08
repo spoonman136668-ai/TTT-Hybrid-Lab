@@ -73,6 +73,6 @@ def test_source_only_cli_has_no_install_permission():
     assert p.returncode==0,p.stderr[-1500:]
     s=(root/"scripts/native_p19_factual_expert_imit_dev.py").read_text()
     assert "pip install" not in s
-    assert "source_identity" not in s
+    assert "\"environment_source_identity\"" in s
     assert "admit_gymnasium" in s
     assert "not_reward_only_autonomous_learning" in s
