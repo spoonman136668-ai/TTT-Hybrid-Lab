@@ -26,6 +26,13 @@ from scripts.native_s28_causal_wind_offline import (
 )
 
 FROZEN=ROOT/"experiments"/"s29_gymnasium_contract_smoke_frozen.json"
+R2_FROZEN=ROOT/"experiments"/"s29_gymnasium_cloudpickle_source_r2_frozen.json"
+CLOUD_PINS={
+    "LICENSE":"d112c4806aa90b4c911b360fa0ce1d0ee7c031ce",
+    "pyproject.toml":"aaee1f0c0887137da702d77643e9576bf4230a21",
+    "cloudpickle/__init__.py":"3768a936efd38d3799af95d4420457525c119a42",
+    "cloudpickle/cloudpickle.py":"4d532e5de9f2cd4fc82bb7cd9e982d47c26dc5e5",
+}
 SCHEMA="ttt-hybrid.s29.mit-gymnasium-contract-smoke-result.v1"
 PINS={
     "LICENSE":"ac10bf443756cdc02724943ac09021092ce9e737",
@@ -121,14 +128,69 @@ def source_identity(source:Path,v:dict)->dict:
     }
 
 
+def frozen_r2()->dict:
+    v=json.loads(R2_FROZEN.read_text("utf-8"))
+    require(v["schema"]=="ttt-hybrid.s29.r2.cloudpickle-source-only-runtime-feasibility.v1"
+            and v["parent_r1_sha"]=="b9428a5824874996c11094a56c0d852df0b9115b"
+            and v["exact_commit"]=="ff54d93221082d4ce22630ecdb8fbbccc60f3b62"
+            and v["license"]=="BSD-3-Clause"
+            and v["git_blobs"]==CLOUD_PINS
+            and v["cloudpickle_or_gymnasium_installer_allowed"] is False
+            and v["protected_scientific_first_use_authorized"] is False
+            and v["real_causal_wind_environment_allowed"] is False,
+            "R2_FROZEN_PROTOCOL_DRIFT")
+    return v
+
+
+def cloudpickle_source_identity(source:Path,v:dict)->dict:
+    root=Path(source).resolve(strict=True)
+    require(root.is_dir(),"CLOUD_SOURCE_MISSING")
+    require(git(root,"rev-parse","HEAD")==v["exact_commit"],"CLOUD_SOURCE_SHA_CHANGED")
+    require(git(root,"status","--porcelain","--untracked-files=all")=="",
+            "CLOUD_SOURCE_DIRTY")
+    blobs={}
+    for rel,pin in sorted(CLOUD_PINS.items()):
+        file=root/rel
+        require(file.is_file() and not file.is_symlink(),
+                "CLOUD_SOURCE_REQUIRED_FILE_MISSING")
+        part=root
+        for component in Path(rel).parts:
+            part=part/component
+            require(not part.is_symlink(),"CLOUD_SOURCE_SYMLINK")
+        require(file.resolve(strict=True).is_relative_to(root),
+                "CLOUD_SOURCE_PATH_ESCAPE")
+        got=git_blob_sha(file.read_bytes())
+        require(got==pin,"CLOUD_SOURCE_BLOB_CHANGED_"+rel)
+        blobs[rel]=got
+    lic=(root/"LICENSE").read_text("utf-8")
+    py=tomllib.loads((root/"pyproject.toml").read_text("utf-8"))
+    module=(root/"cloudpickle/__init__.py").read_text("utf-8")
+    require(
+        "Redistribution and use in source and binary forms" in lic
+        and "Neither the name of the University of California" in lic
+        and "THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS" in lic
+        and "@@ -" not in lic and len(lic)>1600
+        and py["tool"]["flit"]["metadata"]["license"]=="BSD-3-Clause"
+        and '__version__ = "3.1.1"' in module,
+        "CLOUD_SOURCE_LICENSE_OR_VERSION_DRIFT")
+    return {
+        "status":"PASS_PINNED_BSD3_SOURCE_NO_INSTALL",
+        "source_sha":v["exact_commit"],"source_git_blobs":blobs,
+        "license_sha256":hashlib.sha256(lic.encode("utf-8")).hexdigest(),
+        "source_runtime_version":"3.1.1",
+        "license_complete_bsd3":True,
+        "third_party_source_vendored_or_installed":False,
+    }
+
+
 def dependencies_preexisting()->dict:
     found={}
-    for name in ("numpy","cloudpickle","typing_extensions"):
+    for name in ("numpy","typing_extensions"):
         try:
             found[name]=metadata.version(name)
         except metadata.PackageNotFoundError:
             found[name]=None
-    require(all(found.values()),"PREEXISTING_MINIMAL_DEPENDENCIES_MISSING")
+    require(all(found.values()),"PREEXISTING_NUMPY_OR_TYPING_EXTENSIONS_MISSING")
     return {"status":"PASS_PREEXISTING_BASE_DEPENDENCY_METADATA",
             "distributions":found,"new_dependencies_installed":0,
             "broad_optional_extra_installed":False}
@@ -156,17 +218,25 @@ def _one_episode(gym,seed:int,max_steps:int)->dict:
         env.close()
 
 
-def run(source:Path)->dict:
+def run(source:Path, cloud_root:Path|None=None)->dict:
     if any(os.environ.get(k,"1")!="1" for k in (
         "NATIVE_S29_ENGINEERING_ONLY","NATIVE_S28_ENGINEERING_ONLY")):
         raise S29Blocked("S29_SCIENCE_FIRST_USE_DENIED")
     t0=time.perf_counter()
     v=frozen()
+    r2=frozen_r2()
+    require(cloud_root is not None,"CLOUD_SOURCE_ROOT_REQUIRED")
     upstream=source_identity(source,v)
+    cloud=cloudpickle_source_identity(cloud_root,r2)
     deps=dependencies_preexisting()
-    # Import only pinned MIT Gymnasium in the in-memory Python path; do not
-    # use the host's potentially different global Gymnasium.
+    # In-memory paths only: pin both source projects, never pip install.
+    sys.path.insert(0,str(Path(cloud_root).resolve()))
     sys.path.insert(0,str(Path(source).resolve()))
+    cp=import_module("cloudpickle")
+    require(Path(cp.__file__).resolve(strict=True)
+            ==Path(cloud_root).resolve()/"cloudpickle"/"__init__.py"
+            and cp.__version__=="3.1.1",
+            "CLOUD_SOURCE_IMPORT_MISMATCH")
     gym=import_module("gymnasium")
     module=Path(gym.__file__).resolve(strict=True)
     require(module==Path(source).resolve()/"gymnasium"/"__init__.py",
@@ -195,7 +265,8 @@ def run(source:Path)->dict:
     return {
         "schema":SCHEMA,
         "status":"PASS_ACTUAL_FARAMA_CARTPOLE_ENGINEERING_SMOKE_NOT_CAUSAL_WIND",
-        "upstream":upstream,"dependency_metadata":deps,
+        "upstream":upstream,"cloudpickle_source":cloud,
+        "dependency_metadata":deps,
         "gymnasium_runtime_version_reported_by_source":gym.__version__,
         "environment":"CartPole-v1",
         "same_version_source_runtime_import_verified":True,
@@ -204,6 +275,7 @@ def run(source:Path)->dict:
         "source_qualified_real_environment_steps":sum(x["steps"] for x in records)*2,
         "episodes":records,
         "frozen_protocol_sha256":hashlib.sha256(FROZEN.read_bytes()).hexdigest(),
+        "frozen_r2_sha256":hashlib.sha256(R2_FROZEN.read_bytes()).hexdigest(),
         "original_protected_science_first_use":"NOT_RUN",
         "scientific_benchmark_or_transfer_claim":False,
         "real_causal_wind_environment_executed":False,
@@ -217,14 +289,16 @@ def run(source:Path)->dict:
 def main()->int:
     p=argparse.ArgumentParser(description=__doc__)
     p.add_argument("--source-root",type=Path,required=True)
+    p.add_argument("--cloudpickle-root",type=Path,required=True)
     p.add_argument("--receipt",type=Path,required=True)
     args=p.parse_args()
-    result=run(args.source_root)
+    result=run(args.source_root,args.cloudpickle_root)
     args.receipt.parent.mkdir(parents=True,exist_ok=True)
     args.receipt.write_text(json.dumps(result,sort_keys=True,indent=2)+"\n",encoding="utf-8")
     print(json.dumps({
         "status":result["status"],"total_episodes":result["total_episodes"],
         "source":result["upstream"]["upstream_sha"],
+        "cloudpickle_source":result["cloudpickle_source"]["source_sha"],
         "factual_steps":result["source_qualified_real_environment_steps"],
         "runtime_version":result["gymnasium_runtime_version_reported_by_source"],
         "protected_science_first_use":result["original_protected_science_first_use"],
