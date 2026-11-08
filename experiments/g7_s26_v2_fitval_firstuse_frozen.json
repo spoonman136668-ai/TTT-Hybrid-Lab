@@ -1,0 +1,162 @@
+{
+  "schema": "ttt-hybrid.g7-s26-v2.fit-validation-firstuse-frozen.v1",
+  "freeze_utc": "2026-11-07",
+  "freeze_state": "PRE_FIRST_USE_REGISTERED_NO_FIT_OR_VALIDATION_SEEDS_CONSUMED",
+  "parent_qualified_engineering_sha": "255aa654bd3dfc6d5b36f137555e4d33dcf95cb1",
+  "parent_crossplatform_run_id": 42435381024,
+  "original_frozen_s26_sha": "b8f4bc6628e15057b76dc1f085c6067b972cd5f9",
+  "original_s26_protocol_blob": "34251b2cde6373ed484dbc21e4617c9165047e93",
+  "original_s25_protocol_blob": "31633b341403729b7ffbb7d73f3a04098ad44380",
+  "original_s25_paired_world_blob": "d344d5fea213ea5ce5c6d6d411e12ba26537fb7",
+  "original_s25_numeric_baselines_blob": "7608b55f8abe5238ea37f16a2039e99c20fbb38f",
+  "derivative_v2_s20_physics_blob": "bc3e9f255a4d1b967252ada8782ac9f8c000f7b7",
+  "source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+  "authority": {
+    "source": "Explicit operator authorization in this conversation after the assistant specifically requested S26-V2 scientific first-use preparation and fit/validation-only GRU/KRR training",
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "exact_project_scope": "S26-V2 new research-source registration, existing project CPU runner, conventional GRU and RBF-KRR fit/validation-only training with independently verifiable receipts",
+    "first_use_authorized_for_this_new_protocol": true,
+    "original_s25_and_s26_frozen_scientific_admission_still_blocked": true,
+    "original_pr40_pr41_pr43_pr44_untouched": true,
+    "heldout_transfer_negative_bootstrap_forbidden": true,
+    "GPU_training_forbidden": true,
+    "new_runner_controller_queue_forbidden": true,
+    "package_install_or_paid_API_forbidden": true,
+    "merge_promotion_deployment_forbidden": true
+  },
+  "role_seeds": {
+    "development": [
+      3101,
+      3109,
+      3119
+    ],
+    "fit": [
+      7207,
+      7219,
+      7229
+    ],
+    "validation": [
+      7307,
+      7319,
+      7327
+    ],
+    "excluded_heldout_signflip": [
+      7403,
+      7411,
+      7429
+    ],
+    "excluded_heldout_transfer": [
+      7507,
+      7517,
+      7529
+    ],
+    "excluded_negative": [
+      7603,
+      7613,
+      7627
+    ],
+    "excluded_bootstrap": [
+      7807
+    ],
+    "no_other_scientific_seeds_allowed": true
+  },
+  "world": {
+    "source_mechanism": "Exact PairedS20World numeric mechanism retained; only explicit seed-role access is added on isolated scientific version",
+    "regime": "source_stable",
+    "one_seed_one_world_per_role": true,
+    "physical_worlds_per_seed": 32,
+    "steps_per_world": 32,
+    "paired_actions": [
+      -0.8,
+      0.8
+    ],
+    "private_x_z_coefficients_never_predictor_inputs": true,
+    "causal_history_length": 32,
+    "per_role_world_step_samples": 1024,
+    "same_seed_pairing_between_conventional_controls": true,
+    "dataset_selection": "exact first sample index 0 then every 8th prequential row from 1024, yields 128 world-step examples in natural chronological order",
+    "selected_samples_per_role_seed": 128,
+    "selected_action_queries_per_role_seed": 256,
+    "derived_validation_stream_disjoint_from_fit": true,
+    "no_future_query_target_in_prior_history": true
+  },
+  "controls": {
+    "arms": [
+      "GRU_fully_trained",
+      "RBF_KRR"
+    ],
+    "GRU_fully_trained": {
+      "implementation": "Existing ConventionalGRU and fit_conventional_gru, no model edits",
+      "hidden_width": 32,
+      "optimizer": "AdamW",
+      "lr": 0.001,
+      "weight_decay": 0.01,
+      "gradient_clip_norm": 1,
+      "full_training_updates_min": 640,
+      "max_updates": 1600,
+      "training_batch_size_world_steps": 32,
+      "epoch_sample_order": "four consecutive 32-row batches of the same fixed 128 training examples, cycle 4 times deterministically, no random drawn data",
+      "validation_on_same_128_disjoint_seed_samples": true,
+      "checkpoint_validation_first_update": 640,
+      "checkpoint_validation_spacing_updates": 64,
+      "plateau_window": 5,
+      "plateau_relative_range_max_exclusive": 0.001,
+      "failure_if_no_plateau": true
+    },
+    "RBF_KRR": {
+      "implementation": "Existing CalibratedRBFKernelRidge.fit_calibrated, no kernel edits",
+      "gamma_grid": [
+        0.5,
+        2,
+        6
+      ],
+      "ridge_grid": [
+        0.01,
+        0.08
+      ],
+      "train_only_normalization": true,
+      "model_select_validation_only": true,
+      "numeric_vectors_131_dimensions": true,
+      "no_heldout_calibration": true
+    }
+  },
+  "readout": {
+    "real_trained_checkpoints_required": true,
+    "checkpoint_cold_restoration_before_final_validation": true,
+    "compare_validation_same_sources_with_both_arms": true,
+    "non_oracle_comparator": "zero-action-effect static baseline that predicts current sensor for both next-action probes",
+    "per_action_pair_MSE_vs_static_required": true,
+    "actual_effect_sign_significance_threshold": 0.012,
+    "predicted_effect_significance_threshold": 0.012,
+    "action_effect_correct_sign_must_outnumber_wrong": true,
+    "evaluable_contrast_coverage_min_exclusive": 0.5,
+    "effect_mae_required": true,
+    "model_checkpoint_sha256_required": true,
+    "observations_sha256_required": true,
+    "whole_process_cpu_wall_rss_time_recorded": true,
+    "no_scientific_pass_without_both_arms_per_seed_competent": true,
+    "no_exclusion_of_null_or_failed_seed": true,
+    "no_post_result_hyperparameter_change": true,
+    "no_heldout_or_transfer_in_this_execution": true
+  },
+  "budget": {
+    "cpu_only": true,
+    "linux_ru_maxrss_only_as_scientific_memory_metric": true,
+    "max_peak_rss_bytes": 2147483648,
+    "max_wall_seconds_per_arm_per_seed": 900,
+    "max_cpu_seconds_per_arm_per_seed": 900,
+    "max_training_updates_per_seed": 1600,
+    "fail_if_platform_package_source_or_seed_drift": true,
+    "full_exact_sha_regression_required_native_Windows_and_WSL_before_firstuse": true,
+    "independent_authoritative_run_receipt_and_checkpoint_hashes_required": true,
+    "no_backtracking_after_scientific_firstuse": true
+  },
+  "interpretation": {
+    "this_is_new_source_lineage_not_original_s25_s26_scientific_firstuse": true,
+    "conventional_controls_only_firstuse_no_TTT_heldout_evaluation": true,
+    "if_strong_controls_fail": "SCIENTIFIC_BASELINE_NOT_QUALIFIED preserve failure and do not tune post-result",
+    "if_conventional_controls_pass": "BASELINES_QUALIFIED_FOR_FUTURE_SEPARATELY_AUTHORIZED_RESEARCH_SOURCE_EVALUATION no S26 learning claim yet",
+    "matched_information_actions_yes_but_training_compute_must_be_measured_not_assumed_equal": true,
+    "no_independent_reproduction_claim_without_new_run": true
+  }
+}
