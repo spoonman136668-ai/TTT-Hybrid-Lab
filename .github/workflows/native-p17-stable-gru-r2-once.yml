@@ -1,0 +1,125 @@
+# Native P17 R2: exact corrected arm-label identity at new source SHA; project-owned one-use full regression.
+# Already used synthetic DEV only. All science sources and independent lanes sealed.
+name: Native P17 R2 corrected exact-SHA stable original GRU competence once
+on:
+  push:
+    branches:
+      - engineering/native-p17-stable-gru-competence-dev-20261108
+    paths:
+      - .github/workflows/native-p17-stable-gru-r2-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p17-stable-gru-r2-oneuse
+  cancel-in-progress: false
+jobs:
+  source-locked-trained-policy:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p17-stable-gru-competence-dev-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate with no retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p17-candidate
+          persist-credentials: false
+          clean: true
+          submodules: false
+          lfs: false
+          fetch-depth: 180
+      - name: Verify original native source P13 ancestry and frozen DEV-only training
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P17_OWNER_ONCE_SCOPE_FAIL'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p17-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P17_CANDIDATE_SHA_MISMATCH'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P17_CANDIDATE_SOURCE_DIRTY'}
+          & git -C $root merge-base --is-ancestor '96e66cd70c5f9d45665b63f7c2b886c288bb5090' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P17_PARENT_P16_ANCESTRY_FAIL'}
+          $locked=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p10_closed_loop_intervention_dev.py'='b85150fb294269d9db88a2cbb194c1a6140cf081';
+            'scripts/native_p11_temporal_credit_dev.py'='3217e3ba6e5fdf8d88dc354e254d910cdafd87eb';
+            'scripts/native_p12_online_causal_delay_dev.py'='da6e02f9867018c029c1d5c30e791e8d5a149ff1';
+            'scripts/native_p13_active_causal_probe_dev.py'='0289c567db007fd9c4a30f7a959f5aea01b04aca';
+            'experiments/native_p13_active_causal_probe_frozen.json'='b7869fe51d2cdb13753820448ef761096751b0f8';
+            'scripts/native_p14_reward_trained_intervention_dev.py'='395506ec1085f6db74b336897d592b8b5074e763';
+            'tests/test_native_p14_reward_trained_intervention_dev.py'='54ae9070f6d3d05534f9828c42a41cb6ab9edbfa';
+            'experiments/native_p14_reward_policy_frozen.json'='cea2eacb50866d83a9a5ef94997c194a5ae66d2d';
+            'scripts/native_p15_strong_control_dev.py'='b5c9f8c1feee31e5694f0c7059bc2a0526d0b082';
+            'tests/test_native_p15_strong_control_dev.py'='deffdca66d8e304986dcd565a8d8d269fe088ef6';
+            'experiments/native_p15_strong_control_frozen.json'='eacd187105289d3f0bb30b85dda7f6a69c64cf36';
+            'scripts/native_p16_champion_guard_dev.py'='9092097ca3de7d2640ea11ed8bdd077b4bbe3085';
+            'tests/test_native_p16_champion_guard_dev.py'='aad9fd237ef33df9dc061c9ec928d9d7612b7886';
+            'experiments/native_p16_champion_guard_frozen.json'='90e5d52e6ef13c08d416caba17fe2a618948dd6a';
+            'scripts/native_p17_stable_gru_competence_dev.py'='ed5fc2e7e6217c0a4adf4c4ce094bd4d1cde016c';
+            'tests/test_native_p17_stable_gru_competence_dev.py'='9ad67c180c6240f6f8b244eca0495fee33076844';
+            'experiments/native_p17_stable_gru_frozen.json'='6ed4fb3f358466bb8392c7e51bdc96acfdcf9f59'
+          }
+          foreach($name in $locked.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $locked[$name]){throw "P17_LOCKED_BLOB_DRIFT:$name"}
+          }
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p17_stable_gru_frozen.json') -Raw|ConvertFrom-Json
+          if($m.science.authorized -ne $false -or $m.science.first_use_consumed -ne $false -or @($m.science.world_seeds.PSObject.Properties).Count -ne 0 -or $m.design.extended_updates -ne 3600 -or $m.design.original_updates -ne 1200 -or $m.design.EMA_decay -ne 0.995 -or $m.design.plateau_5_last_check_max_spread -ne 0.01 -or @($m.design.model_initializations).Count -ne 3 -or $m.design.scope -cne 'PUBLIC_DEVELOPMENT_ONLY_BASELINE_COMPETENCE_DIAGNOSTIC_NOT_SCIENCE'){throw 'P17_FROZEN_HYPOTHESIS_OR_SCIENCE_ADMISSION_FAIL'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P17_QUALIFIED_OWNER_CPU_RUNTIME_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          $numpy=(& $py -I -B -c 'import numpy;print(numpy.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4' -or $numpy -cne '1.26.4'){throw 'P17_OWNER_CPU_ENV_DRIFT'}
+          Write-Output 'P17_EXACT_SOURCE_TRAINING_SCOPED_NO_SCIENCE=PASS'
+      - name: Mandatory full Windows source-locked regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p17-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0';$env:OMP_NUM_THREADS='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p17_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P17_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p17_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P17_WINDOWS_RECEIPT_OR_NEGATIVE_FAILED'}
+          Write-Output 'P17_WINDOWS_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Mandatory full Ubuntu WSL regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P17_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p17-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'OMP_NUM_THREADS=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p17_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P17_LINUX_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p17-candidate\local_runs\native_p17_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P17_LINUX_RECEIPT_OR_NEGATIVE_FAILED'}
+          Write-Output 'P17_LINUX_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: One bounded extended baseline competence and old skill retention DEV assay
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p17-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 190s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P17_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p17_stable_gru_competence_dev.py" --receipt "$root/local_runs/native_p17_stable_gru.json"
+          if($LASTEXITCODE -ne 0){throw 'P17_BOUNDED_REAL_REWARD_TRAINING_EXECUTION_FAIL'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p17-candidate\local_runs\native_p17_stable_gru.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_EXTENDED_COMPETENCE_DEV_INTEGRITY_NOT_SCIENCE' -or $p.scientific_first_use -cne 'NOT_RUN' -or @($p.scientific_world_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 3 -or $p.extended_supervised_updates_total -ne 10800 -or $p.original_P11_supervised_updates_total -ne 3600 -or $p.recorded_factual_interventions -ne 6912){throw 'P17_FROZEN_REAL_TRAINING_RECEIPT_INVALID'}
+          Write-Output 'P17_CONVENTIONAL_COMPETENCE_NEGATIVES_RETAINED=PASS_DEV'
+      - name: Preserve exact source and all factual action and training receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p17-stable-gru-r2-once
+          path: native-p17-candidate/local_runs/native_p17_*.json
+          retention-days: 30
+          if-no-files-found: error

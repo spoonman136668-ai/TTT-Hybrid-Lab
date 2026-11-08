@@ -1,0 +1,82 @@
+{
+  "schema": "ttt-hybrid.native-p17.stable-gru-frozen.v1",
+  "registered": "2026-11-08",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "P16_parent_pr": 86,
+    "P16_parent_sha": "96e66cd70c5f9d45665b63f7c2b886c288bb5090",
+    "original_P11_script_blob": "3217e3ba6e5fdf8d88dc354e254d910cdafd87eb",
+    "original_P10_world_source_blob": "b85150fb294269d9db88a2cbb194c1a6140cf081",
+    "original_P16_script_blob": "9092097ca3de7d2640ea11ed8bdd077b4bbe3085",
+    "native_original_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Can the original strongest conventional P11 causal GRU achieve a preregistered stable factual-val plateau and retain old closed-loop action competence using a longer fixed training budget and EMA, without new world data?",
+  "null": "Extended 3600-step conventional control fails preregistered <=1% last-five EMA validation spread and/or violates original <=0.02 familiar reward-retention; original P11 1200-step plateau failures preserved.",
+  "design": {
+    "scope": "PUBLIC_DEVELOPMENT_ONLY_BASELINE_COMPETENCE_DIAGNOSTIC_NOT_SCIENCE",
+    "original_model": "Original P11 833-parameter ConventionalCausalGRU and original train_arm with 1200 AdamW steps, no modification, 3 original training seeds",
+    "source_fit_seed": 54131,
+    "source_val_seed": 54179,
+    "source_fit_factual_examples": 6000,
+    "source_validation_examples": 1920,
+    "model_initializations": [
+      353,
+      359,
+      367
+    ],
+    "original_updates": 1200,
+    "extended_updates": 3600,
+    "extended_model_begins_at_original_initialization_not_original_fitted_weights": true,
+    "extended_first_1200_minibatch_indices_exactly_match_original": true,
+    "extended_schedule": "Fresh independent 3600-step cosine lr from 0.006 to 0.0001, AdamW same 256 factual minibatch, same original torch generator as P11; not a continuation of original 1200 schedule",
+    "EMA_begins_after_step": 2400,
+    "EMA_decay": 0.995,
+    "validation_every_steps": 200,
+    "plateau_5_last_check_max_spread": 0.01,
+    "raw_and_ema_plateau_reported_separately": true,
+    "EMA_validation_mse_at_most": 0.08,
+    "EMA_max_extra_validation_mse_vs_original": 0.005,
+    "EMA_mse_history_advantage_vs_history_zeroed_min": 0.02,
+    "no_history_negative": "Use identical trained model, validation actions and labels but replace all past factual action/outcome features with zeros to test whether history matters; no shift in current actual action",
+    "evaluation_known_families": [
+      "instant",
+      "lagged",
+      "confounded"
+    ],
+    "evaluation_old_DEV_world_seeds": [
+      88031,
+      88047,
+      88063,
+      88091
+    ],
+    "actual_scored_actions_each_episode": 64,
+    "same_initial_eight_real_factual_observations": true,
+    "forced_probe_positions": "0,4,...,60",
+    "same_exact_signed_forced_action_probes_all_policies": true,
+    "arms": [
+      "unchanged original P11 1200 GRU planner",
+      "extended raw 3600 GRU with original same planning",
+      "extended EMA 3600 GRU with same planning"
+    ],
+    "old_instant_and_lagged_reward_max_deficit": 0.02,
+    "source_qualification_threshold": "For each of 3 original model-init seeds, EMA fifth 200-step validation 1% spread, MSE<=.08, no worse than original by .005, history negative stronger than no-history by .02, original instant and lagged return within .02. Fail if ANY seed fails. Do NOT change criteria post-run.",
+    "engineering_pass_requirements": "true source SHA and immutable ancestry, unchanged original P11 and P10 blob identity, real unchanged 1200 and extended 3600 updates, original equal prefix sampler index hash, exact fixed factual histories, action opportunities and probes, no science first-use, complete negative results and mandatory final full Windows/WSL regression. Engineering PASS does not depend on actual scientific competence.",
+    "no_science_first_use": true,
+    "no_FORYGE_research_loop_activation": true,
+    "no_model_promotion_or_merge": true,
+    "whole_process_wall_limit_seconds": 145,
+    "no_paid_API_or_new_runner": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "S26_negative_preserved": true,
+    "S27_sealed_seeds_preserved": true,
+    "independent_source_birth": false,
+    "baseline_accepted_as_science": false,
+    "cold_process_memory_retention_not_tested": true,
+    "training_compute_parity_to_new_challenger": false
+  }
+}
