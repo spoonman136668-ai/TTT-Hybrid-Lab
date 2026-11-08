@@ -115,8 +115,8 @@ class TestS26DirectionPreAdmission(unittest.TestCase):
 
     def test_nearly_zero_effect_sign_with_low_mse_is_not_readiness(self):
         m=self.claims[0]["action_effect_validation"]
-        m.update(model_effect_significant=10,sign_correct=8,
-                 sign_wrong=0,uninformative_model_effect=312)
+        m.update(model_effect_significant=20,sign_correct=16,
+                 sign_wrong=0,uninformative_model_effect=304)
         self.claims[0]["validation_paired_mse"]=0.002
         with self.assertRaisesRegex(ValueError,"SIGN_COVERAGE_UNINFORMATIVE"):
             self.validate()
