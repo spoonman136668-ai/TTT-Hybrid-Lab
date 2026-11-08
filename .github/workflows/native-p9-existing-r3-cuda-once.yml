@@ -1,0 +1,113 @@
+# P9 G1: one-use exact-source GPU admission; no install, training or science.
+name: Native P9 G1 existing R3 CUDA admission and bounded comparison once
+on:
+  push:
+    branches:
+      - engineering/native-p9-gpu-existing-r3-admission-20261108
+    paths:
+      - .github/workflows/native-p9-existing-r3-cuda-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p9-existing-r3-cuda-oneuse
+  cancel-in-progress: false
+jobs:
+  exact-source-full-and-cuda-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p9-gpu-existing-r3-admission-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 18
+    steps:
+      - name: Checkout exact candidate with no retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p9-gpu-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 200
+      - name: Verify source P9 ancestry, unchanged core and zero scientific first-use
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P9_G1_RUNNER_IDENTITY_SCOPE_BLOCKED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p9-gpu-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P9_G1_EXACT_CANDIDATE_SHA_MISMATCH'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P9_G1_DIRTY_SOURCE'}
+          & git -C $root merge-base --is-ancestor '083438e51212c1e41a213001263fdd0d002dd4cc' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P9_G1_PARENT_NOT_ANCESTOR'}
+          $blobs=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_p9_parallel_refinement_dev.py'='78a70f644c194e98c1e2a5c14785e5405054746f';
+            'scripts/g7_r5_oneshot.py'='afe8e7e020296417faccf6cb6432b821b6eb782f';
+            'scripts/native_p9_existing_cuda_dev.py'='218f4e22a1e0139b661e51a44e07095052ec8a80';
+            'tests/test_native_p9_existing_cuda_dev.py'='0ddfa4cc52926b84402b7e55d161404ca3d8f954';
+            'experiments/native_p9_existing_cuda_admission_frozen.json'='2b59fb6e372e4cef654e6f6da3eca924701268f9'
+          }
+          foreach($name in $blobs.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $blobs[$name]){throw "P9_G1_FROZEN_SOURCE_BLOB_DRIFT:$name"}
+          }
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p9_existing_cuda_admission_frozen.json') -Raw|ConvertFrom-Json
+          if($m.science.authorized -ne $false -or $m.science.first_use_consumed -ne $false -or @($m.science.world_seeds.PSObject.Properties).Count -ne 0 -or $m.conditions.max_torch_allocated_mib -ne 256 -or $m.conditions.no_package_install -ne $true){throw 'P9_G1_FROZEN_GPU_OR_SCIENCE_FENCE_BLOCKED'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not (Test-Path -LiteralPath $py -PathType Leaf)){throw 'P9_G1_QUALIFIED_CPU_ENV_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'P9_G1_CPU_ENV_DRIFT'}
+          Write-Output 'P9_G1_EXACT_SOURCE_NO_SCIENCE_OWNER_ENV=PASS'
+      - name: Mandatory full final Windows regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p9-gpu-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0';$env:OMP_NUM_THREADS='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p9_g1_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P9_G1_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p9_g1_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P9_G1_WINDOWS_RECEIPT_FAIL'}
+          Write-Output 'P9_G1_WINDOWS_FULL=PASS'
+      - name: Mandatory full final Ubuntu WSL regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P9_G1_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p9-gpu-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'OMP_NUM_THREADS=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p9_g1_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P9_G1_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p9-gpu-candidate\local_runs\native_p9_g1_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P9_G1_WSL_RECEIPT_FAIL'}
+          Write-Output 'P9_G1_WSL_FULL=PASS'
+      - name: Exact R3 source/runtime and exclusive GPU admission then bounded DEV GPU benchmark
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P9_G1_BENCH_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p9-gpu-candidate"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P9_DEV_ONLY=1' 'PYTHONDONTWRITEBYTECODE=1' 'OMP_NUM_THREADS=1' /usr/bin/python3 -I -B "$root/scripts/native_p9_existing_cuda_dev.py" --expected-sha $env:GITHUB_SHA --receipt "$root/local_runs/native_p9_g1_existing_cuda.json"
+          $exit=$LASTEXITCODE
+          if(-not (Test-Path -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p9-gpu-candidate\local_runs\native_p9_g1_existing_cuda.json'))){throw 'P9_G1_ADMISSION_RECEIPT_MISSING'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p9-gpu-candidate\local_runs\native_p9_g1_existing_cuda.json') -Raw|ConvertFrom-Json
+          if($exit -ne 0){throw "P9_G1_GPU_UNQUALIFIED:$($p.status)"}
+          if($p.status -cne 'PASS_P9_EXISTING_R3_CUDA_BENCHMARK_DEV_ONLY' -or $p.candidate_sha -cne $env:GITHUB_SHA -or $p.gpu_benchmark -cne 'COMPLETED_GPU_DEV' -or $p.scientific_first_use -cne 'NOT_RUN' -or @($p.science_seeds_consumed).Count -ne 0 -or @($p.gpu_result.records).Count -ne 3){throw 'P9_G1_GPU_RECEIPT_QUALIFICATION_FAIL'}
+          Write-Output 'P9_G1_ACTUAL_GPU_SOURCE_LOCKED_DEV=PASS'
+      - name: Preserve immutable full-regression, GPU admission and benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p9-existing-r3-cuda-oneuse
+          path: native-p9-gpu-candidate/local_runs/native_p9_g1_*.json
+          retention-days: 30
+          if-no-files-found: warn
