@@ -113,3 +113,24 @@ def test_implementation_has_no_installer_or_external_wind_import():
     assert 'import_module("gymnasium")' in src
     assert list(inspect.signature(s29._one_episode).parameters)==[
         "gym","seed","max_steps"]
+
+
+def test_r2_source_only_dependency_is_registered_and_no_installer():
+    r2=s29.frozen_r2()
+    assert r2["r1_run"]==42523092142
+    assert r2["parent_r1_sha"]=="b9428a5824874996c11094a56c0d852df0b9115b"
+    assert r2["provider"]=="cloudpipe/cloudpickle"
+    assert r2["exact_commit"]=="ff54d93221082d4ce22630ecdb8fbbccc60f3b62"
+    assert r2["git_blobs"]==s29.CLOUD_PINS
+    assert r2["cloudpickle_or_gymnasium_installer_allowed"] is False
+    assert r2["protected_scientific_first_use_authorized"] is False
+    assert r2["real_causal_wind_environment_allowed"] is False
+    assert r2["qualification"]["public_smoke_seeds_and_repeats"]==[42,43,2]
+
+
+def test_r2_missing_cloud_source_rejected_before_any_runtime_import(tmp_path):
+    r2=s29.frozen_r2()
+    with pytest.raises(s29.S29Blocked,match="GIT_FAILURE"):
+        s29.cloudpickle_source_identity(tmp_path,r2)
+    monkey_env = s29.frozen()
+    assert monkey_env["qualification"]["missing_dependency_means_runtime_blocked_not_auto_installed"] is True
