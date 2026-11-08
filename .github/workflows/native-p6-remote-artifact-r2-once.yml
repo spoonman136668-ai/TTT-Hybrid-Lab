@@ -1,0 +1,115 @@
+# P6 R2 only: fresh regression and recovery using already uploaded R1 synthetic artifact.
+# Not a second training first-use, backup upload, model promotion or scheduler.
+name: Native P6 R2 remote recovery source-locked one-use
+on:
+  push:
+    branches: [engineering/native-remote-artifact-recovery-p6-20261108]
+    paths: [.github/workflows/native-p6-remote-artifact-r2-once.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: hybrid-native-p6-r2-oneuse
+  cancel-in-progress: false
+jobs:
+  restore:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-remote-artifact-recovery-p6-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Fresh exact source checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p6-r2-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 190
+      - name: Fetch previously created immutable synthetic artifact by original run ID
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: native-p6-synthetic-remote-42475136686
+          run-id: 42475136686
+          github-token: ${{ github.token }}
+          path: native-p6-r2-candidate/local_runs/p6_download
+      - name: Source/parent/custody lock, no original-science first-use
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_P6R2_OWNER'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p6-r2-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_P6R2_EXACT_SHA'}
+          & git -C $root merge-base --is-ancestor '3ed4a9119900c3e356794973562c9fcbbeb727a9' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P6R2_SOURCE_ANCESTRY'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_P6R2_DIRTY'}
+          $expected=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_checkpoint_recovery.py'='01542adb60e64a393aed074dd99e82ffee3e666a';
+            'scripts/native_p6_artifact_recovery.py'='c5c1c2c06e43326ad85b13362d1b88b58834ee76';
+            'tests/test_native_p6_artifact_recovery.py'='68e53fd3dd118387371ed90f5988c324a89c3194';
+            'docs/REMOTE_ARTIFACT_RECOVERY.md'='72d2b8ec595cdff1c59d8a9bc8c5c9e36c005c65'
+          }
+          foreach($name in $expected.Keys){
+            $blob=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $expected[$name]){throw "BLOCKED_P6R2_SOURCE_BLOB:$name"}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          if($p.science.authorized -ne $false -or $p.science.data_consumed -ne $false -or @($p.science.seeds.PSObject.Properties).Count -ne 0){throw 'BLOCKED_P6R2_SCIENCE'}
+          if(Test-Path -LiteralPath (Join-Path $root 'local_runs\p6_upload')){throw 'BLOCKED_P6R2_PRODUCER_PRESENT'}
+          $meta=Get-Content -LiteralPath (Join-Path $root 'local_runs\p6_download\metadata.json') -Raw | ConvertFrom-Json
+          if($meta.source_sha -cne '3ed4a9119900c3e356794973562c9fcbbeb727a9' -or $meta.science_original -ne $false){throw 'BLOCKED_P6R2_PRIOR_ARTIFACT_IDENTITY'}
+          Write-Output 'NATIVE_P6R2_SOURCE_AND_REUSED_REMOTE_ARTIFACT=PASS'
+      - name: Windows final complete regression and exact persisted-state restore
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p6-r2-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\p6_r2_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P6R2_WIN_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\p6_r2_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_P6R2_WIN_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 189){throw 'BLOCKED_P6R2_WIN_TEST_COUNT'}
+          & $py -I -B (Join-Path $root 'scripts\native_p6_artifact_recovery.py') restore --directory (Join-Path $root 'local_runs\p6_download') --staging (Join-Path $root 'local_runs\p6_r2_win_staging') --source-sha '3ed4a9119900c3e356794973562c9fcbbeb727a9' --receipt (Join-Path $root 'local_runs\p6_r2_windows_restore.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P6R2_WIN_REMOTE_RESTORE'}
+          $c=Get-Content -LiteralPath (Join-Path $root 'local_runs\p6_r2_windows_restore.json') -Raw|ConvertFrom-Json
+          if($c.status -cne 'PASS_REMOTE_ARTIFACT_COLD_RESTORE_DEV' -or $c.independent_fixture_within_numeric_tolerance -ne $true -or $c.cold_state_equal -ne $true -or $c.objects_verified -ne 4 -or $c.training_activated -ne $false){throw 'BLOCKED_P6R2_WIN_RECEIPT'}
+          Write-Output 'NATIVE_P6R2_WINDOWS_FULL_AND_BIT_EXACT_REMOTE_RESTORE=PASS'
+      - name: WSL final complete regression and exact persisted-state restore
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_P6R2_WSL_OWNER'}
+          $root="$lp/native-p6-r2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/p6_r2_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P6R2_WSL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p6-r2-candidate\local_runs\p6_r2_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_P6R2_WSL_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 188){throw 'BLOCKED_P6R2_WSL_TEST_COUNT'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p6_artifact_recovery.py" restore --directory "$root/local_runs/p6_download" --staging "$root/local_runs/p6_r2_wsl_staging" --source-sha '3ed4a9119900c3e356794973562c9fcbbeb727a9' --receipt "$root/local_runs/p6_r2_linux_restore.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P6R2_WSL_REMOTE_RESTORE'}
+          $c=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p6-r2-candidate\local_runs\p6_r2_linux_restore.json') -Raw|ConvertFrom-Json
+          if($c.status -cne 'PASS_REMOTE_ARTIFACT_COLD_RESTORE_DEV' -or $c.independent_fixture_within_numeric_tolerance -ne $true -or $c.cold_state_equal -ne $true -or $c.objects_verified -ne 4 -or $c.training_activated -ne $false){throw 'BLOCKED_P6R2_WSL_RECEIPT'}
+          Write-Output 'NATIVE_P6R2_WSL_FULL_AND_BIT_EXACT_REMOTE_RESTORE=PASS'
+      - name: Preserve Windows and WSL source-bound test and restore receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p6-r2-source-locked-restore-receipts-${{ github.run_id }}
+          path: |
+            native-p6-r2-candidate/local_runs/p6_r2_windows.json
+            native-p6-r2-candidate/local_runs/p6_r2_linux.json
+            native-p6-r2-candidate/local_runs/p6_r2_windows_restore.json
+            native-p6-r2-candidate/local_runs/p6_r2_linux_restore.json
+          retention-days: 7
+          if-no-files-found: warn
