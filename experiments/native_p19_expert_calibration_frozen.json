@@ -1,0 +1,81 @@
+{
+  "schema": "ttt-hybrid.native-p19.expert-calibration-frozen.v1",
+  "registered": "2026-11-08",
+  "base_P18_sha": "675ef40f80c43814cc320d6b9950d37a9395c0f8",
+  "base_P18_PR": 89,
+  "original_P18_result": "FAIL_ACTION_COLLAPSE_0_OF_3_HISTORY_GAIN; IMPOSSIBLE_200_PLUS_10_CRITERION; NOT_RETUNED",
+  "question": "Can the exact 4D continuous native GRU/history-MLP architectures imitate a strong observation-only teacher on genuine upstream MIT CartPole factual demonstrations, and can a simpler learned conventional observation model do so reliably?",
+  "null": "Even after equal supervised demonstration budgets, learnt actors fail to approach a strong factual controller or generalize to unseen public development reset seeds. This assay cannot prove factual reward-only learning or superior causal-history use.",
+  "source": {
+    "S29_original_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "Farama_commit": "17eff00220d210beda933f78b0e52850022b0690",
+    "cloudpickle_commit": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "P18_script_blob": "0c5c0079614624d1264e477ea90b483cbe63d586",
+    "P18_protocol_blob": "fd4828f971acb7e052dc6ff7f78314267bef202b"
+  },
+  "design": {
+    "scope": "PUBLIC_DEV_ONLY_COMPETENCE_DIAGNOSTIC_NOT_SCIENTIFIC_FIRST_USE",
+    "sensor": "four factual continuous real CartPole observations with prior observed action/reward only; NO hidden physics or tokenization",
+    "train_reset_seeds": "73000..73047",
+    "validation_reset_seeds": "74000..74007",
+    "evaluation_reset_seeds": [
+      75011,
+      75012,
+      75013,
+      75014,
+      75015,
+      75016,
+      75017,
+      75018
+    ],
+    "max_actions_per_episode": 200,
+    "train_initializations": [
+      2741,
+      2753,
+      2767
+    ],
+    "teacher": "fixed P18 handcoded_state_control using only current public theta and angular velocity; supervisory labels ARE teacher-derived and are not reward-only",
+    "actors": [
+      "trained_history_GRU_489_params",
+      "trained_history_MLP_471_params",
+      "trained_linear_observation_10_params"
+    ],
+    "comparator_arms": [
+      "teacher_original_controller",
+      "seeded_random",
+      "untrained_history_GRU",
+      "history_reversed_trained_GRU"
+    ],
+    "same_demonstration_rows_and_labels": true,
+    "batch_size": 512,
+    "epochs": 32,
+    "lr": 0.008,
+    "weight_decay": 0,
+    "optimizer": "AdamW; supervised cross entropy",
+    "gradient_clip": 3,
+    "eval_policy": "greedy with NO teacher labels provided to actor, no optimizer steps",
+    "thresholds": {
+      "linear_conventional_avg_real_reward_min": 180,
+      "linear_heldout_teacher_accuracy_min": 0.98,
+      "GRU_vs_learned_linear": "descriptive_not_scientific_superiority",
+      "untrained_and_history_corrupted": "diagnostic_only",
+      "original_handcoded_controller": "observational upper reference; do not require impossible +10 above 200"
+    },
+    "integrity": "all per-action observed outcomes, demonstration sources, train val & eval seed lists, training and eval weights hashes, no original P18 retuning, original full platform regression required",
+    "max_process_seconds": 240
+  },
+  "science": {
+    "authorized": false,
+    "first_use_consumed": false,
+    "independent_unseen_source": false,
+    "frozen_real_scientific_baseline": false,
+    "matched_reward_information_to_P18": false,
+    "original_P18_failure_preserved": true,
+    "original_S26_S27_scope_unchanged": true
+  },
+  "deployment": {
+    "FORGE_live_ticket_enabled": false,
+    "model_accepted": false,
+    "merge_authorized_by_this_protocol": false
+  }
+}
