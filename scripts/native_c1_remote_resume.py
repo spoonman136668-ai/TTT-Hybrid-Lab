@@ -25,6 +25,7 @@ from native_training_checkpoint import (
     CheckpointRejected, load_checkpoint, save_checkpoint, validate_chain,
 )
 from scripts import native_p6_artifact_recovery as p6
+from native_transactional_resume import prepare_isolated_candidate
 
 PRODUCER_SHA = "3ed4a9119900c3e356794973562c9fcbbeb727a9"
 SCHEMA = "ttt-hybrid.c1-remote-training-continuity-dev.v1"
@@ -121,9 +122,12 @@ def continue_remote(downloaded: Path, scratch: Path, *,
     _require(proof["checkpoint_steps"] == 1
              and proof["checkpoint_consumed_examples"] == 1,
              "CHECKPOINT_NOT_TRAINED")
-    trained, optimizer = p6._model()
-    native, sampler = load_checkpoint(
-        stage, tip, model=trained, optimizer=optimizer, identity=identity)
+    prepared = prepare_isolated_candidate(
+        stage, tip_sha256=tip, identity=identity, make_fresh_pair=p6._model,
+        expected_position=1, minimum_steps=1, minimum_consumed_examples=1,
+        expected_parent_sha256=original["root_manifest_sha256"])
+    trained, optimizer = prepared.model, prepared.optimizer
+    native, sampler = prepared.native_state, prepared.sampler
     _require(sampler == {"position": 1}
              and bool(optimizer.state_dict()["state"]),
              "REMOTE_OPTIMIZER_OR_CURSOR_RESET")
@@ -163,9 +167,14 @@ def continue_remote(downloaded: Path, scratch: Path, *,
         stage, renewal, expected_tip_sha256=child, identity=identity,
         expected_backup_domain_claim="synthetic-remote-artifact",
         as_of_unix=now_unix + 3, trust_key=test_key)
-    cold, cold_opt = p6._model()
-    cold_native, cold_cursor = load_checkpoint(
-        stage, child, model=cold, optimizer=cold_opt, identity=identity)
+    verified_child = prepare_isolated_candidate(
+        stage, tip_sha256=child, identity=identity,
+        make_fresh_pair=p6._model, expected_position=2,
+        minimum_steps=2, minimum_consumed_examples=2,
+        expected_parent_sha256=tip,
+        protected_model=trained, protected_optimizer=optimizer)
+    cold, cold_opt = verified_child.model, verified_child.optimizer
+    cold_native, cold_cursor = verified_child.native_state, verified_child.sampler
     _require(_same(trained.state_dict(), cold.state_dict())
              and _same(optimizer.state_dict(), cold_opt.state_dict())
              and _same(native, cold_native)

@@ -1,0 +1,123 @@
+# C2: one-use native Hybrid CPU full regression and actual remote checkpoint continuation.
+name: Native C2 isolated candidate resume one-use
+on:
+  push:
+    branches: [engineering/native-c2-transactional-resume-20261108]
+    paths: [.github/workflows/native-c2-isolated-resume-once.yml]
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: hybrid-native-c2-isolated-resume-oneuse
+  cancel-in-progress: false
+jobs:
+  windows-and-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-c2-transactional-resume-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-c2-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 200
+      - name: Retrieve existing P6 public/synthetic checkpoint (no duplicate producer)
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: native-p6-synthetic-remote-42475136686
+          run-id: 42475136686
+          github-token: ${{ github.token }}
+          path: native-c2-candidate/local_runs/c2_original_download
+      - name: Lock source ancestry, C2 blobs and no-science owner
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_C2_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c2-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_C2_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_C2_DIRTY'}
+          & git -C $root merge-base --is-ancestor '1b43cf307300c8413e77e49c3ae168f3d567ad8c' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C2_C1_ANCESTRY'}
+          & git -C $root cat-file -e '3ed4a9119900c3e356794973562c9fcbbeb727a9^{commit}'
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C2_PRODUCER_HISTORY'}
+          $pins=@{
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_backup_custody.py'='0fba8fc2f4d0b9b6197f4c18c714edda286147eb';
+            'scripts/native_p6_artifact_recovery.py'='c5c1c2c06e43326ad85b13362d1b88b58834ee76';
+            'native_transactional_resume.py'='a2906a27794508ddd01bea6cde7278b1cec561f2';
+            'tests/test_native_transactional_resume.py'='6a2bfe6ad7d3284232c79024af198c593fb8c5f0';
+            'scripts/native_c1_remote_resume.py'='669329285d5f16ef33ca4dcf7e10efcdf2e86f7e';
+            'docs/TRANSACTIONAL_CANDIDATE_RESTORE_C2.md'='7dbcbf89a64f8b3dc10ea1647633f69fd1323a23';
+            'experiments/native_p1_control_admission_preflight.json'='9de1caedb56f1248264ac37db08ec66b8265fe16'
+          }
+          foreach($name in $pins.Keys){
+            $observed=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $observed -cne $pins[$name]){throw "BLOCKED_C2_BLOB:$name"}
+          }
+          $gate=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          if($gate.science.authorized -ne $false -or $gate.science.data_consumed -ne $false -or @($gate.science.seeds.PSObject.Properties).Count -ne 0 -or $gate.engineering.model_fit_real_world -ne $false){throw 'BLOCKED_C2_SCIENCE'}
+          $meta=Get-Content -LiteralPath (Join-Path $root 'local_runs\c2_original_download\metadata.json') -Raw|ConvertFrom-Json
+          if($meta.source_sha -cne '3ed4a9119900c3e356794973562c9fcbbeb727a9' -or $meta.science_original -ne $false){throw 'BLOCKED_C2_ARTIFACT_IDENTITY'}
+          if(Test-Path -LiteralPath (Join-Path $root 'local_runs\p6_upload')){throw 'BLOCKED_C2_PRODUCER_REUSE'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_C2_RUNTIME'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'BLOCKED_C2_RUNTIME_VERSION'}
+          Write-Output 'NATIVE_C2_SOURCE_ANCESTRY_NONSCIENCE=PASS'
+      - name: Windows full regression and remote C1 integrated continuation
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c2-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\c2_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C2_WINDOWS_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\c2_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C2_WINDOWS_RECEIPT'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 211){throw 'BLOCKED_C2_WINDOWS_MISSING_TESTS'}
+          & $py -I -B (Join-Path $root 'scripts\native_c1_remote_resume.py') --downloaded (Join-Path $root 'local_runs\c2_original_download') --scratch (Join-Path $root 'local_runs\c2_windows_stage') --receipt (Join-Path $root 'local_runs\c2_windows_advance.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C2_WINDOWS_CONTINUATION'}
+          $c=Get-Content -LiteralPath (Join-Path $root 'local_runs\c2_windows_advance.json') -Raw|ConvertFrom-Json
+          if($c.status -cne 'PASS_SYNTHETIC_REMOTE_RESUME_AND_ADVANCE' -or $c.child_steps -ne 2 -or $c.new_child_inventory_objects -ne 6 -or $c.cold_resume_child_bit_identical -ne $true -or $c.model_promoted -ne $false){throw 'BLOCKED_C2_WINDOWS_ADVANCE'}
+          Write-Output 'NATIVE_C2_WINDOWS_COMPLETE_ISOLATED_RESTORE=PASS'
+      - name: WSL full regression and remote C1 integrated continuation
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_C2_WSL_OWNER'}
+          $root="$lp/native-c2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/c2_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C2_WSL_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c2-candidate\local_runs\c2_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C2_WSL_RECEIPT'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 210){throw 'BLOCKED_C2_WSL_MISSING_TESTS'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 150s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_c1_remote_resume.py" --downloaded "$root/local_runs/c2_original_download" --scratch "$root/local_runs/c2_linux_stage" --receipt "$root/local_runs/c2_linux_advance.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C2_WSL_CONTINUATION'}
+          $c=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c2-candidate\local_runs\c2_linux_advance.json') -Raw|ConvertFrom-Json
+          if($c.status -cne 'PASS_SYNTHETIC_REMOTE_RESUME_AND_ADVANCE' -or $c.child_steps -ne 2 -or $c.new_child_inventory_objects -ne 6 -or $c.cold_resume_child_bit_identical -ne $true -or $c.model_promoted -ne $false){throw 'BLOCKED_C2_WSL_ADVANCE'}
+          Write-Output 'NATIVE_C2_WSL_COMPLETE_ISOLATED_RESTORE=PASS'
+      - name: Retain complete exact-source regression and remote continuation receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-c2-transactional-resume-engineering-once
+          path: |
+            native-c2-candidate/local_runs/c2_windows.json
+            native-c2-candidate/local_runs/c2_linux.json
+            native-c2-candidate/local_runs/c2_windows_advance.json
+            native-c2-candidate/local_runs/c2_linux_advance.json
+          retention-days: 7
+          if-no-files-found: warn
