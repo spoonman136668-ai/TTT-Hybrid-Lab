@@ -1,0 +1,214 @@
+# G7-S26 first development-only replay: new frozen quarter reserve vs untouched S25.
+# Existing project-owned Windows runner + established pinned R3 WSL venv.
+# NO installing packages, training/fit/heldout, scientific first-use, CUDA,
+# runner/controller/scheduler modifications, merge, promotion or deployment.
+name: G7-S26 quarter-reserve development comparison exact-source R3
+on:
+  push:
+    branches:
+      - research/g7-s26-quarter-reserve-20261107
+    paths:
+      - .github/workflows/g7-s26-dev-quarter-reserve-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-g7-s26-prereg-development-once
+  cancel-in-progress: false
+jobs:
+  qualified-development-replay:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 3 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 11
+    steps:
+      - name: Checkout exact candidate with no stored credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s26-dev-isolated
+          fetch-depth: 125
+          persist-credentials: false
+          clean: true
+          submodules: false
+          lfs: false
+
+      - name: Exact-source and frozen S26 qualification then bounded development replay
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s26-dev-isolated'
+          $out=Join-Path $root 'local_runs'
+          $receipt=[ordered]@{
+            schema='ttt-hybrid.g7-s26.source-bound-dev-qualification.v1'
+            candidate_sha=$env:GITHUB_SHA
+            s25_pinned_sha='108808f7b685107a76fae1ce5605b7ff9e2bac27'
+            status='BLOCKED_NOT_STARTED'
+            source='UNVERIFIED'
+            frozen_s26_protocol='UNVERIFIED'
+            pinned_python_manifest='UNVERIFIED'
+            reserve_unit_tests='NOT_RUN'
+            dev_comparator_contract_tests='NOT_RUN'
+            s25_baseline_unchanged='UNVERIFIED'
+            s26_development_comparison='NOT_RUN'
+            full_required_cross_platform_regression='BLOCKED_PREVIOUSLY_CONFIRMED_RUNTIME'
+            scientific_first_use='NOT_RUN'
+            scientific_fit='NOT_RUN'
+            heldout='NOT_RUN'
+            CUDA='NOT_USED'
+            package_installation='NONE'
+            accepted_ref='UNCHANGED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-quarter-reserve-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '3' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $receipt.status='BLOCKED_WRONG_PROJECT_OWNER_OR_RUNNER'
+              throw 'S26_RUNNER_SCOPE_DENIED'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $hcode=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dcode=$LASTEXITCODE
+            & git -C $root merge-base --is-ancestor '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD
+            $ancestor=$LASTEXITCODE
+            $files=@(& git -C $root diff --name-only '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD)
+            $fcode=$LASTEXITCODE
+            $expected=@(
+              'experiments/g7_s26_frozen_quarter_reserve.json',
+              'scripts/g7_s26_reserve_gate.py',
+              'scripts/g7_s26_dev_comparison.py',
+              'tests/test_g7_s26_reserve_gate.py',
+              'tests/test_g7_s26_comparison_contract.py',
+              '.github/workflows/g7-s26-dev-quarter-reserve-once.yml'
+            )
+            if ($hcode -ne 0 -or $dcode -ne 0 -or $ancestor -ne 0 -or
+                $fcode -ne 0 -or $head -cne $env:GITHUB_SHA -or $dirty -or
+                $files.Count -ne 6) {
+              $receipt.status='BLOCKED_EXACT_SOURCE_CUSTODY'
+              throw 'S26_SOURCE_CHANGED'
+            }
+            foreach ($path in $expected) {
+              if ($files -cnotcontains $path) {
+                $receipt.status='BLOCKED_UNEXPECTED_S25_OR_S26_SOURCE_DRIFT'
+                throw 'S26_CHANGED_FILE_SCOPE'
+              }
+            }
+            $sourceS20=(& git -C $root hash-object -- scripts/g7_s20_hidden_multicycle.py | Out-String).Trim()
+            $blobS25=(& git -C $root hash-object -- experiments/g7_s25_frozen_contradiction_ttt.json | Out-String).Trim()
+            $blobS26=(& git -C $root hash-object -- experiments/g7_s26_frozen_quarter_reserve.json | Out-String).Trim()
+            $sourcePins=(Get-FileHash -LiteralPath (Join-Path $root 'source_pins.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($sourceS20 -cne 'ac3f9ddd5b879e53e62030707fb6419adaf732ca' -or
+                $blobS25 -cne '31633b341403729b7ffbb7d73f3a04098ad44380' -or
+                $blobS26 -cne '34251b2cde6373ed484dbc21e4617c9165047e93' -or
+                $sourcePins -cne '44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768') {
+              $receipt.status='BLOCKED_FROZEN_PROTOCOL_OR_PHYSICS_SOURCE_DRIFT'
+              throw 'S26_FROZEN_BLOB_MISMATCH'
+            }
+            $receipt.source='PASS_EXACT_SHA_SIX_S26_ADDITIONS'
+            $receipt.frozen_s26_protocol='PASS_FROZEN_BEFORE_FIRST_DEV_REPLAY'
+            $receipt.s25_baseline_unchanged='PASS_PINNED_S25_SHA_AND_S20_PHYSICS'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $receipt.status='BLOCKED_UNQUALIFIED_WSL_PATH'
+              throw 'S26_NO_WSL_PATH'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $receipt.status='BLOCKED_NORMAL_USER_REQUIRED'
+              throw 'S26_NOT_UNPRIVILEGED'
+            }
+            $user=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or -not $user) {
+              $receipt.status='BLOCKED_WSL_IDENTITY'
+              throw 'S26_USER_MISSING'
+            }
+            $python='/home/'+$user+'/.local/share/ttt-hybrid/g7-r3-06a01c2c3a98/venv/bin/python'
+            $manifest=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 35s $python -I -B -c 'import sys;sys.path.insert(0,sys.argv[1]);import g7_r5_oneshot as c;print(c.manifest()[0])' "$linux/scripts")
+            if ($LASTEXITCODE -ne 0 -or ($manifest -join '').Trim() -cne 'b0f674fd52f9f514d408840d27b969ce2da19ea119d90a6ce8f59fde05c073df') {
+              $receipt.status='BLOCKED_R3_MANIFEST_OR_ENVIRONMENT_DRIFT'
+              throw 'S26_EXISTING_VENV_DRIFT'
+            }
+            $receipt.pinned_python_manifest='PASS_EXACT_EXISTING_R3_MANIFEST'
+            $suiteOne=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/tests/test_g7_s26_reserve_gate.py")
+            $suiteOneCode=$LASTEXITCODE
+            Write-Output ('S26_RESERVE_UNIT_TEST_EXIT=' + $suiteOneCode)
+            Write-Output ($suiteOne -join "`n")
+            if ($suiteOneCode -ne 0 -or (($suiteOne -join "`n") -notmatch 'Ran 12 tests') -or (($suiteOne -join "`n") -notmatch 'OK')) {
+              $receipt.status='BLOCKED_RESERVE_GATE_CONTRACT'
+              throw 'S26_GATE_TESTS_FAILED'
+            }
+            $receipt.reserve_unit_tests='PASS_12_DEV_ONLY_TESTS'
+            $suiteTwo=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/tests/test_g7_s26_comparison_contract.py")
+            $suiteTwoCode=$LASTEXITCODE
+            Write-Output ('S26_COMPARISON_UNIT_TEST_EXIT=' + $suiteTwoCode)
+            Write-Output ($suiteTwo -join "`n")
+            if ($suiteTwoCode -ne 0 -or (($suiteTwo -join "`n") -notmatch 'Ran 6 tests') -or (($suiteTwo -join "`n") -notmatch 'OK')) {
+              $receipt.status='BLOCKED_COMPARATOR_INFORMATION_CONTRACT'
+              throw 'S26_COMPARATOR_CONTRACT_TESTS_FAILED'
+            }
+            $receipt.dev_comparator_contract_tests='PASS_6_DEV_ONLY_TESTS'
+            $diagPath=$linux+'/local_runs/g7_s26_untrained_dev_comparison.json'
+            $diagOutput=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 345s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/scripts/g7_s26_dev_comparison.py" --expected-sha "$env:GITHUB_SHA" --receipt $diagPath)
+            $diagCode=$LASTEXITCODE
+            $dataFile=Join-Path $out 'g7_s26_untrained_dev_comparison.json'
+            if ($diagCode -ne 0 -or -not (Test-Path -LiteralPath $dataFile)) {
+              $receipt.status='BLOCKED_DEVELOPMENT_REPLAY'
+              throw 'S26_DEV_REPLAY_FAILED'
+            }
+            $proof=Get-Content -LiteralPath $dataFile -Raw | ConvertFrom-Json
+            if ($proof.source_sha -cne $env:GITHUB_SHA -or
+                $proof.s25_source_head -cne '108808f7b685107a76fae1ce5605b7ff9e2bac27' -or
+                $proof.status -cne 'PASS_DEVELOPMENT_ONLY_COMPARISON_NOT_SCIENCE' -or
+                $proof.row_count -ne 48 -or
+                $proof.rows.Count -ne 48 -or
+                $proof.frozen_s25_untouched -cne $true -or
+                $proof.all_observations_and_slow_checkpoints_match -cne $true -or
+                $proof.all_k8_actual_update_counts_match -cne $true -or
+                $proof.scientific_fit_validation_heldout_seed_consumption -cne 'NONE' -or
+                $proof.fully_trained_gru_or_kernel -cne 'NOT_RUN' -or
+                $proof.scientific_first_use -cne 'NOT_AUTHORIZED_NOT_RUN' -or
+                $proof.dev_peak_rss_bytes -gt 2147483648) {
+              $receipt.status='BLOCKED_REPLAY_EVIDENCE_INVALID'
+              throw 'S26_UNQUALIFIED_DEV_RECEIPT'
+            }
+            foreach ($mode in @('periodic','random','surprise','contradiction')) {
+              $m=$proof.s26_untrained_dev_quarter_reserve_summary.$mode
+              if ($m.s26_last_quarter_updates -ne 96 -or
+                  $m.s26_updates_pre20 + $m.s26_updates_post20 -ne 384) {
+                $receipt.status='BLOCKED_S26_NONORACLE_RESERVE_BUDGET'
+                throw 'S26_SCHEDULE_RESERVE_NOT_SATISFIED'
+              }
+            }
+            $receipt.s26_development_comparison='PASS_MATCHED_48_DEV_REPLAYS_NOT_SCIENCE'
+            $receipt.status='PASS_18_UNIT_AND_S26_DEV_SCHEDULE_ONLY'
+            $receipt.s25_untrained_contradiction_post20_updates=$proof.s26_untrained_dev_quarter_reserve_summary.contradiction.s25_updates_post20
+            $receipt.s26_untrained_contradiction_post20_updates=$proof.s26_untrained_dev_quarter_reserve_summary.contradiction.s26_updates_post20
+            $receipt.s26_untrained_contradiction_trigger_selected=$proof.s26_untrained_dev_quarter_reserve_summary.contradiction.s26_selected_trigger
+            $receipt.s26_untrained_contradiction_forced_updates=$proof.s26_untrained_dev_quarter_reserve_summary.contradiction.s26_forced_budget
+            Write-Output ('S26_DEV=' + $receipt.s26_development_comparison)
+            Write-Output ('S25_CONTRADICTION_POST20=' + $receipt.s25_untrained_contradiction_post20_updates)
+            Write-Output ('S26_CONTRADICTION_POST20=' + $receipt.s26_untrained_contradiction_post20_updates)
+            Write-Output ('S26_CONTRADICTION_TRIGGERED=' + $receipt.s26_untrained_contradiction_trigger_selected)
+            Write-Output ('S26_CONTRADICTION_FORCED=' + $receipt.s26_untrained_contradiction_forced_updates)
+            Write-Output 'S26_SCIENTIFIC_PASS=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $receipt | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath (Join-Path $out 'g7_s26_dev_qualification.json') -Encoding UTF8
+            Write-Output ('S26_DEV_GATE=' + $receipt.status)
+          }
+
+      - name: Retain S26 development comparison and qualification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s26-quarter-reserve-dev-${{ github.sha }}
+          path: |
+            g7-s26-dev-isolated/local_runs/g7_s26_dev_qualification.json
+            g7-s26-dev-isolated/local_runs/g7_s26_untrained_dev_comparison.json
+          if-no-files-found: warn
+          retention-days: 30

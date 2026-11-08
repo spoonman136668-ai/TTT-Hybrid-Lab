@@ -1,0 +1,165 @@
+# One-use S26 hand-crafted signal sensitivity audit on existing project-owned runner.
+# No training, actual world evaluation, science-seed use, package install, CUDA,
+# new runtime, controller changes, acceptance or merge.
+name: G7-S26 synthetic gate-sensitivity controls
+on:
+  push:
+    branches:
+      - research/g7-s26-quarter-reserve-20261107
+    paths:
+      - .github/workflows/g7-s26-signal-identifiability-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s26-synthetic-identifiability-once
+  cancel-in-progress: false
+jobs:
+  fixed-source-signal-audit:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact SHA without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s26-signal-isolated
+          fetch-depth: 140
+          clean: true
+          persist-credentials: false
+          lfs: false
+          submodules: false
+
+      - name: Verify frozen original S25 and S26 then execute fixed stdlib controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s26-signal-isolated'
+          $out=Join-Path $root 'local_runs'
+          $r=[ordered]@{
+            schema='ttt-hybrid.g7-s26.synthetic-signal-qualification.v1'
+            source_sha=$env:GITHUB_SHA
+            frozen_s25_head='108808f7b685107a76fae1ce5605b7ff9e2bac27'
+            status='BLOCKED_NOT_STARTED'
+            exact_source='UNVERIFIED'
+            synthetic_unit_tests='NOT_RUN'
+            synthetic_signal_audit='NOT_RUN'
+            untrained_mechanism_comparison='PREVIOUS_DEV_ONLY'
+            science_fit_validation_heldout='NOT_RUN'
+            model_training='NOT_RUN'
+            CUDA='NOT_USED'
+            packages_changed='FALSE'
+            full_windows_linux_regression='UNVERIFIED'
+            accepted_ref='UNCHANGED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-quarter-reserve-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_OWNER_OR_RUNNER'
+              throw 'S26_NOT_AUTHORIZED_RUNNER'
+            }
+            $actual=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $headCode=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyCode=$LASTEXITCODE
+            & git -C $root merge-base --is-ancestor '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD
+            $ancestorCode=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD)
+            $changedCode=$LASTEXITCODE
+            $expected=@(
+              'experiments/g7_s26_frozen_quarter_reserve.json',
+              'scripts/g7_s26_reserve_gate.py',
+              'scripts/g7_s26_dev_comparison.py',
+              'tests/test_g7_s26_reserve_gate.py',
+              'tests/test_g7_s26_comparison_contract.py',
+              '.github/workflows/g7-s26-dev-quarter-reserve-once.yml',
+              'scripts/g7_s26_signal_identifiability.py',
+              'tests/test_g7_s26_signal_identifiability.py',
+              '.github/workflows/g7-s26-signal-identifiability-once.yml'
+            )
+            if ($headCode -ne 0 -or $dirtyCode -ne 0 -or $ancestorCode -ne 0 -or
+                $changedCode -ne 0 -or $actual -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne 9) {
+              $r.status='BLOCKED_SHA_OR_DIFFERENT_SCOPE'
+              throw 'S26_SOURCE_DRIFT'
+            }
+            foreach ($file in $expected) {
+              if ($changed -cnotcontains $file) {
+                $r.status='BLOCKED_UNEXPECTED_FILE'
+                throw 'S26_DIFFERENT_FILES'
+              }
+            }
+            $s20=(& git -C $root hash-object -- scripts/g7_s20_hidden_multicycle.py | Out-String).Trim()
+            $s25=(& git -C $root hash-object -- experiments/g7_s25_frozen_contradiction_ttt.json | Out-String).Trim()
+            $s26=(& git -C $root hash-object -- experiments/g7_s26_frozen_quarter_reserve.json | Out-String).Trim()
+            if ($s20 -cne 'ac3f9ddd5b879e53e62030707fb6419adaf732ca' -or
+                $s25 -cne '31633b341403729b7ffbb7d73f3a04098ad44380' -or
+                $s26 -cne '34251b2cde6373ed484dbc21e4617c9165047e93') {
+              $r.status='BLOCKED_FROZEN_BLOB_DRIFT'
+              throw 'S26_PROTOCOL_CHANGED'
+            }
+            $r.exact_source='PASS_NINE_S26_FILES_S25_AND_S26_FROZEN'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            $normal=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($linux -notmatch '^/mnt/[a-z]/' -or $normal -cne '1000') {
+              $r.status='BLOCKED_UNQUALIFIED_WSL_NORMAL_USER'
+              throw 'S26_WSL_NORMAL_USER_REQUIRED'
+            }
+            # Never install anything. The gate and its controls are stdlib.
+            $res=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'CUDA_VISIBLE_DEVICES=-1' /usr/bin/python3 -I -B "$linux/tests/test_g7_s26_signal_identifiability.py")
+            $code=$LASTEXITCODE
+            Write-Output ($res -join "`n")
+            if ($code -ne 0 -or ($res -join "`n") -notmatch 'Ran 8 tests' -or
+                ($res -join "`n") -notmatch 'OK') {
+              $r.status='BLOCKED_SYNTHETIC_CONTROL_TESTS'
+              throw 'S26_SYNTHETIC_TESTS_FAILED'
+            }
+            $r.synthetic_unit_tests='PASS_8_STDLIB_SYNTHETIC_CONTROLS'
+            $resultPath=$linux+'/local_runs/g7_s26_signal_identifiability.json'
+            $res=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'CUDA_VISIBLE_DEVICES=-1' /usr/bin/python3 -I -B "$linux/scripts/g7_s26_signal_identifiability.py" --sha "$env:GITHUB_SHA" --output $resultPath)
+            $code=$LASTEXITCODE
+            Write-Output ($res -join "`n")
+            $path=Join-Path $out 'g7_s26_signal_identifiability.json'
+            if ($code -ne 0 -or -not (Test-Path -LiteralPath $path)) {
+              $r.status='BLOCKED_SYNTHETIC_REPLAY'
+              throw 'S26_SIGNAL_IDENTIFIABILITY_FAILED'
+            }
+            $p=Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
+            if ($p.candidate_sha -cne $env:GITHUB_SHA -or
+                $p.status -cne 'PASS_HANDCRAFTED_SIGNAL_CONTROLS_ONLY' -or
+                $p.cases.Count -ne 5 -or
+                $p.interpretation.strong_persistent_reversal_is_mechanically_detectable -ne $true -or
+                $p.interpretation.causal_shift_recognition_in_actual_development_worlds -cne 'NOT_DEMONSTRATED' -or
+                $p.models_trained -ne $false -or
+                $p.frozen_scientific_seeds_consumed -ne $false -or
+                $p.s25_s26_gate_implementations_modified -ne $false) {
+              $r.status='BLOCKED_INVALID_SYNTHETIC_RECEIPT'
+              throw 'S26_REPLAY_PROOF_FAILED'
+            }
+            $r.synthetic_signal_audit='PASS_POSITIVE_NEGATIVE_CONTROLS_NOT_SCIENCE'
+            $r.status='PASS_S26_SYNTHETIC_SENSITIVITY_ENGINEERING_ONLY'
+            Write-Output 'S26_SIGNAL_GATE=PASS_8_SYNTHETIC_TESTS'
+            Write-Output 'S26_SCIENCE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_s26_signal_qualification.json') -Encoding UTF8
+            Write-Output ('S26_SYNTHETIC_GATE=' + $r.status)
+          }
+
+      - name: Preserve exact-source synthetic positives and negatives
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s26-synthetic-signal-${{ github.sha }}
+          path: |
+            g7-s26-signal-isolated/local_runs/g7_s26_signal_qualification.json
+            g7-s26-signal-isolated/local_runs/g7_s26_signal_identifiability.json
+          if-no-files-found: warn
+          retention-days: 30
