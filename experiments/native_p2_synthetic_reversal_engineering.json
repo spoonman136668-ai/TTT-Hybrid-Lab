@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.native-p2.synthetic-reversal-engineering.v1",
+  "registered_date": "2026-11-08",
+  "status": "ENGINEERING_ONLY_FROZEN_BEFORE_ONE_USE_CI_RUN",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_p1_pr": 51,
+    "parent_p1_sha": "706658b5038c11642829868b0f292ac2fe4452e0",
+    "native_v1_sha": "7df69c701dd80799b0d1ae49cc0b7c51536051df",
+    "p0_event_gate_sha": "35501945e619298ce5a093f0b23f20a95f55c380",
+    "original_source_pins_git_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "original_native_model_git_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_p0_episode_git_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f"
+  },
+  "scope": {
+    "synthetic_algebraic_only": true,
+    "uses_p0_read_before_outcome": true,
+    "frozen_weights": true,
+    "model_fit_updates": 0,
+    "external_generator": false,
+    "recurrent_state_across_analytic_reset_trials": true,
+    "real_world_training": false,
+    "scientific_source": false,
+    "gpu": false,
+    "package_install": false,
+    "controller": false,
+    "research_loop_integration": false,
+    "merge": false,
+    "promotion": false
+  },
+  "science": {
+    "authorized": false,
+    "seed_allocations": {},
+    "data_consumed": false,
+    "s26_consumed_seedsets": [
+      7207,
+      7219,
+      7229,
+      7307,
+      7319,
+      7327
+    ],
+    "s27_prospective_seeds": "reserved, unconsumed, not authorized",
+    "heldout_transfer": "NOT_ACCESSED",
+    "first_use_requires": "new independent source and seed custody plus explicit project-scoped authority"
+  },
+  "synthetic_fixture": {
+    "model_initialization_seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7
+    ],
+    "seed_kind": "only PyTorch model initialization; selected after local DEV exploration, not pre-registered scientific samples",
+    "trials": 80,
+    "reversal_at": 40,
+    "reset_sensor": 0,
+    "factual_action_sequence": "alternate -1,+1",
+    "dt": 0.2,
+    "gain_before": 0.45,
+    "gain_after": -0.45,
+    "constant_offset": 0.04,
+    "post_early_window": [
+      40,
+      48
+    ],
+    "post_late_window": [
+      56,
+      80
+    ],
+    "fast_rate": 0.25,
+    "fast_history_limit": 4,
+    "arms": [
+      "factual_fast_memory",
+      "no_feedback_same_model",
+      "sign_inverted_feedback_negative"
+    ],
+    "controlled_constants": "same untrained PyTorch weights, observed inputs, timestamps, action schedule and factual outcomes",
+    "sign_inverted_negative": "intentionally corrupts synthetic feedback in separate direct-model control; NOT entered into factual-only episode",
+    "limitations": "not real physical trajectories, no novel world transfer, no baseline training, no resource-matched conventional control"
+  },
+  "acceptance": {
+    "type": "SYNTHETIC_API_REGRESSION_ONLY",
+    "all_eight_model_initializations_required": true,
+    "post_reversal_late_factual_mse_max_ratio_vs_no_feedback": 0.1,
+    "post_reversal_late_factual_mse_max_ratio_vs_wrong_feedback": 0.1,
+    "post_late_sign_accuracy_min": 0.95,
+    "post_late_sign_eligible_coverage_min": 0.95,
+    "transient_post_switch_loss_spike_expected": true,
+    "after_learning_cold_restore_exact": true,
+    "windows_full_regression": "REQUIRED_EXACT_FINAL_SHA",
+    "wsl_full_regression": "REQUIRED_EXACT_FINAL_SHA",
+    "original_negative_source_checks": "REQUIRED",
+    "science_status": "NOT_RUN"
+  }
+}
