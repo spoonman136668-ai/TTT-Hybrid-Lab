@@ -1,0 +1,81 @@
+{
+  "schema": "ttt-hybrid.c5.observed-history-readaptation-dev.v1",
+  "source_parent_sha": "3efda04fc609a6b722ff4f4c679c91652e297438",
+  "research_predecessors": {
+    "c4_pr": 70,
+    "hidden_context_pr": 60,
+    "learned_router_pr": 62
+  },
+  "source": "existing immutable P3 analytic consequence and C2 C4 40/80-step factual native training",
+  "science_first_use": false,
+  "seeds": [
+    46111,
+    46117,
+    46129
+  ],
+  "train": {
+    "total_updates": 80,
+    "checkpoint_at": 40,
+    "kind": "unchanged prior P3 real AdamW factual prequential trainer",
+    "saved_state": "model optimizer recurrent fast_weights history sampler rng"
+  },
+  "assay": {
+    "old_regime": "P3 analytic consequence t=0..39",
+    "recent_regime": "P3 analytic consequence t=40..79",
+    "tested_checkpoint": "saved step80 (frozen weights; no additional optimizer updates in this assay)",
+    "old_champion": "saved step40 (reference only)",
+    "prequential_evaluation": "same C4 read-only evaluation: 16 alternating factual actions per regime, zero sensor, elapsed 0.2, cloned checkpoint state per query",
+    "prefix_lengths": [
+      0,
+      2,
+      8
+    ],
+    "prefix_arms": [
+      "old_factual",
+      "recent_factual",
+      "no_feedback"
+    ],
+    "causal_order": "predict first on each current prefix action, then reveal only that action's realized factual consequence; no future outcome, counterfactual or latent label may enter predictor",
+    "prefix_actions": "alternating -1,+1 starting at first prefix action; identical actions and elapsed time across all arms",
+    "prefix_origin": "fresh copy of original step80 native state for every arm and length",
+    "no_feedback": "advance original recurrent/history on exactly the same actions using model.step, but never call learn_outcome or reveal any outcome to it; not compute matched",
+    "matched_factual_controls": "old_factual and recent_factual have identical original model, native state, action count, read/write operations; only observed outcomes differ",
+    "read_only_eval": "no outcomes or optimizer gradients during evaluation; read-only, same fixed probes after prefix",
+    "metrics": [
+      "preprefix_old_mse",
+      "afterprefix_old_mse",
+      "afterprefix_recent_mse",
+      "mean_prequential_prefix_mse",
+      "fast_memory_l2_delta",
+      "recurrent_history_bit_identity",
+      "model_optimizer_bit_identity",
+      "elapsed_seconds"
+    ],
+    "source_of_truth": "per-seed receipt with exact native checkpoint parent hashes and canonical SHA256 of raw squared error vectors"
+  },
+  "frozen_diagnostics": {
+    "old_recovery_mse_gain_at_8_at_least": 0.1,
+    "old_prefix_beats_recent_prefix_old_mse_at_8_by": 0.1,
+    "old_prefix_beats_no_feedback_old_mse_at_8_by": 0.1,
+    "old_8_prefix_within_old_champion_mse_absolute": 0.05,
+    "never_require_positive_hypothesis_for_engineering_pass": true,
+    "retain_null_negative": true
+  },
+  "budget": {
+    "max_wall_seconds_total": 120,
+    "max_gpu_seconds": 0,
+    "max_prefix_events_per_arm": 8,
+    "max_mem_bytes": 2147483648
+  },
+  "limits": [
+    "This is public repeated familiar algebraic DEV evidence, not heldout or novel transfer.",
+    "Old factual re-exposure with fast-memory writes is rapid readaptation, not proof of retrieval from inaccessible old memory.",
+    "Old/recent regimes are indistinguishable without observed outcomes; no latent labels go to the predictor.",
+    "The native model does not have trained context-indexed memory; results are mechanism diagnostics.",
+    "No complete fully trained conventional matched control or scientific first use.",
+    "No live owner, accepted pointer, backing store, FORGE or science-state changes."
+  ],
+  "read_only_owner": true,
+  "training_activated": false,
+  "promotion_allowed": false
+}
