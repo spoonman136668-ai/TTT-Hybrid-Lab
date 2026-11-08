@@ -1,0 +1,72 @@
+{
+  "schema": "ttt-hybrid.native-p25r1.json-factual-custody-repair-frozen.v1",
+  "registered": "2026-11-08",
+  "state": "FROZEN_BEFORE_REPAIR_SOURCE_AND_FRESH_RETRY",
+  "origin": {
+    "original_P25_pr": 98,
+    "original_P25_head_sha": "74e1fd846a00dce4b2e0dc48f182c91cc29cbf03",
+    "original_P25_owner_run": 42536561943,
+    "original_protocol_commit": "c750a638cfa95391058ae38d6a6d1f39f18ed7ef",
+    "original_metric_frozen_commit": "c9fd300a9f5351ac0d2f290564916feb22659143",
+    "failure": "Python TypeError: Object of type numpy.float32 is not JSON serializable at source_pairs JSON receipt digest.update; source collection before any model training or prospective evaluation",
+    "original_owner_windows_full_regression": "PASS",
+    "original_owner_ubuntu_WSL_full_regression": "PASS",
+    "original_scientific_first_use": "NOT_RUN",
+    "original_partial_training_dev_seed_retired": true
+  },
+  "fix_scope": {
+    "only": "Canonical Python float serialization for actual upstream observations, original seed and source provenance gates, fresh unused public development seed ranges and focused negative tests; preserve model/optimizer/hypothesis/thresholds and original code outcome.",
+    "no_change_to_original_pr": true,
+    "original_source_sha": "74e1fd846a00dce4b2e0dc48f182c91cc29cbf03",
+    "frozen_action_effect_metrics_identical": true,
+    "model_seeds": [
+      3671,
+      3691,
+      3701
+    ],
+    "training_epochs": 64,
+    "optimizer_lr": 0.008,
+    "batch": 256,
+    "prefix_lengths": [
+      0,
+      3,
+      6,
+      9
+    ]
+  },
+  "fresh_public_dev": {
+    "train": [
+      104000,
+      104255
+    ],
+    "validation": [
+      105000,
+      105063
+    ],
+    "evaluation": [
+      106000,
+      106095
+    ],
+    "conditions": [
+      "original",
+      "gravity_x0.75",
+      "gravity_x1.25"
+    ],
+    "source_original_P25_train_val_eval_ranges_never_reused": true,
+    "all_post_action_factual_sensor_types_serialized_python_float": true,
+    "no_protected_sealed_science_use": true
+  },
+  "qualification": {
+    "original_owner_runner": "TTT-HYBRID-GPU-WIN",
+    "mandatory_full_final_windows_and_Ubuntu_WSL_regression": true,
+    "original_source_negatives": true,
+    "only_one_new_source_locked_original_owner_run": true,
+    "no_new_packages_runner_or_controller": true,
+    "no_replay_of_original_one_use_run": true,
+    "archive_all_train_factual_source_outcomes": true,
+    "science_first_use_authorized": false,
+    "merge_promotion_FIDGE_FOGE_activation": false,
+    "keep_original_P25_failed_run": true,
+    "independent_P23_unchanged": true
+  }
+}
