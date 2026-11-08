@@ -1,0 +1,188 @@
+# G7-S25 portable native memory adapter: one-time engineering qualification.
+# NO source hookup, installs, training, science seeds, new runner, merge, or promotion.
+name: G7-S25 existing portable peak-memory helper native Windows and Linux proof
+on:
+  push:
+    branches:
+      - engineering/g7-s25-portable-memory-adapter-r1-20261107
+    paths:
+      - .github/workflows/g7-s25-portable-memory-standalone-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s25-native-memory-one-shot
+  cancel-in-progress: false
+jobs:
+  qualified-native-metric:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s25-portable-memory-adapter-r1-20261107' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Checkout pinned helper without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-memory-standalone
+          fetch-depth: 155
+          clean: true
+          persist-credentials: false
+          submodules: false
+          lfs: false
+
+      - name: Verify source and run native Windows and WSL stdlib checks
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-memory-standalone'
+          $out=Join-Path $root 'local_runs'
+          $receipt=[ordered]@{
+            schema='ttt-hybrid.g7-s25.portable-native-memory-standalone.v1'
+            sha=$env:GITHUB_SHA
+            base_source='108808f7b685107a76fae1ce5605b7ff9e2bac27'
+            status='BLOCKED_NOT_STARTED'
+            exact_source='UNVERIFIED'
+            windows_unit_tests='NOT_RUN'
+            linux_unit_tests='NOT_RUN'
+            windows_peak_metric='UNVERIFIED'
+            linux_peak_metric='UNVERIFIED'
+            memory_metrics_cross_platform_equivalent=$false
+            original_s20_s25_source_untouched='UNVERIFIED'
+            windows_original_full_regression='FAIL_RESOURCE_MODULE_UNAVAILABLE'
+            linux_original_full_regression='PASS_AT_ORIGINAL_SHA_IN_SEPARATE_RUN_42431183003'
+            scientific_first_use='NOT_RUN'
+            model_training='NOT_RUN'
+            source_hookup='NOT_DONE'
+            r3_gpu_runtime='UNTOUCHED'
+            installed_packages='UNCHANGED'
+            no_merge_or_promotion=$true
+          }
+          try {
+            if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+               $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-portable-memory-adapter-r1-20261107' -or
+               $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+               $env:GITHUB_EVENT_NAME -cne 'push' -or
+               $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+               $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+               $env:RUNNER_OS -cne 'Windows') {
+              $receipt.status='BLOCKED_UNAUTHORIZED_RUN_OR_RUNNER'
+              throw 'MEMORY_WRONG_OWNER_OR_RUNNER'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $headCode=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyCode=$LASTEXITCODE
+            & git -C $root merge-base --is-ancestor '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD
+            $ancestorCode=$LASTEXITCODE
+            $diff=@(& git -C $root diff --name-only '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD)
+            $diffCode=$LASTEXITCODE
+            $allowed=@(
+              'docs/G7_S25_PORTABLE_MEMORY_ENGINEERING_STAGING.md',
+              'scripts/g7_process_peak_memory.py',
+              'tests/test_g7_process_peak_memory.py',
+              '.github/workflows/g7-s25-portable-memory-standalone-once.yml'
+            )
+            if($headCode -ne 0 -or $dirtyCode -ne 0 -or
+               $ancestorCode -ne 0 -or $diffCode -ne 0 -or
+               $head -cne $env:GITHUB_SHA -or $dirty -or
+               $diff.Count -ne 4 -or
+               (($diff | Sort-Object -Unique).Count -ne 4)) {
+              $receipt.status='BLOCKED_EXACT_SOURCE_OR_DIFF'
+              throw 'MEMORY_EXACT_SHA_OR_SOURCE_DRIFT'
+            }
+            foreach($p in $allowed) {
+              if($diff -cnotcontains $p) {
+                $receipt.status='BLOCKED_UNEXPECTED_CHANGED_PATH'
+                throw 'MEMORY_NOT_ONLY_HELPER'
+              }
+            }
+            foreach($pin in @(
+              @('scripts/g7_process_peak_memory.py','9c1e51ff56041b714f8741f2c190105543505708'),
+              @('tests/test_g7_process_peak_memory.py','252ddb35356365ef429b491d773e4a80b2bed073'),
+              @('scripts/g7_s20_hidden_multicycle.py','ac3f9ddd5b879e53e62030707fb6419adaf732ca'),
+              @('scripts/g7_s25_cost_ledger.py','174e6d027cbc54831421697c32ac217499d91e7b'),
+              @('experiments/g7_s25_frozen_contradiction_ttt.json','31633b341403729b7ffbb7d73f3a04098ad44380')
+            )) {
+              $observed=(& git -C $root hash-object -- $pin[0] | Out-String).Trim()
+              if($LASTEXITCODE -ne 0 -or $observed -cne $pin[1]) {
+                $receipt.status='BLOCKED_SOURCE_BLOB_DRIFT'
+                throw 'MEMORY_BLOB_NOT_VERIFIED'
+              }
+            }
+            $receipt.exact_source='PASS_EXACT_FOUR_ADDITIONS_WITH_FROZEN_PHYSICS'
+            $receipt.original_s20_s25_source_untouched='PASS_ORIGINAL_GIT_BLOBS'
+            if(-not $env:RUNNER_WORKSPACE) {
+              $receipt.status='BLOCKED_WORKSPACE_UNKNOWN'
+              throw 'MEMORY_RUNNER_WORKSPACE_MISSING'
+            }
+            # Reuse already provisioned isolated CPU311; NO package changes.
+            $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+            if(-not(Test-Path -LiteralPath $py -PathType Leaf)) {
+              $receipt.status='BLOCKED_NO_EXISTING_NATIVE_PYTHON'
+              throw 'MEMORY_WINDOWS_PYTHON_ABSENT'
+            }
+            $winVer=(& $py -I -B -c 'import sys;print(tuple(sys.version_info[:3]))' | Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $winVer -cne '(3, 11, 14)') {
+              $receipt.status='BLOCKED_WRONG_WINDOWS_INTERPRETER'
+              throw 'MEMORY_WINDOWS_PINNED_PYTHON_DRIFT'
+            }
+            & $py -I -B (Join-Path $root 'tests\test_g7_process_peak_memory.py')
+            if($LASTEXITCODE -ne 0) {
+              $receipt.status='BLOCKED_NATIVE_WINDOWS_UNIT_CONTROLS'
+              throw 'MEMORY_NATIVE_WINDOWS_TESTS_FAILED'
+            }
+            $receipt.windows_unit_tests='PASS_5_STDLIB_CONTROLS'
+            $scriptDir=Join-Path $root 'scripts'
+            $read='import sys;sys.path.insert(0,sys.argv[1]);import g7_process_peak_memory as m;x=m.read_peak_memory();print(x.metric);print(x.peak_bytes);print(x.comparable_to_linux_ru_maxrss)'
+            $win=@(& $py -I -B -c $read $scriptDir)
+            if($LASTEXITCODE -ne 0 -or $win.Count -ne 3 -or
+               $win[0] -cne 'windows_psapi_peak_working_set_bytes' -or
+               [long]$win[1] -le 0 -or $win[2] -cne 'False') {
+              $receipt.status='BLOCKED_NATIVE_WINDOWS_MEMORY_IDENTITY'
+              throw 'MEMORY_WINDOWS_METRIC_UNVERIFIED'
+            }
+            $receipt.windows_peak_metric=$win[0]
+            $receipt.windows_peak_bytes=[long]$win[1]
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $linux -notmatch '^/mnt/[a-z]/') {
+              $receipt.status='BLOCKED_WSL_SOURCE_MOUNT'
+              throw 'MEMORY_WSL_PATH_UNVERIFIED'
+            }
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $uid -cne '1000') {
+              $receipt.status='BLOCKED_WSL_USER'
+              throw 'MEMORY_WSL_NOT_NORMAL_USER'
+            }
+            & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 35s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'CUDA_VISIBLE_DEVICES=-1' /usr/bin/python3 -I -B "$linux/tests/test_g7_process_peak_memory.py"
+            if($LASTEXITCODE -ne 0) {
+              $receipt.status='BLOCKED_LINUX_UNIT_CONTROLS'
+              throw 'MEMORY_LINUX_TESTS_FAILED'
+            }
+            $receipt.linux_unit_tests='PASS_5_STDLIB_CONTROLS'
+            $lin=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 35s /usr/bin/python3 -I -B -c $read "$linux/scripts")
+            if($LASTEXITCODE -ne 0 -or $lin.Count -ne 3 -or
+               $lin[0] -cne 'linux_ru_maxrss_bytes' -or
+               [long]$lin[1] -le 0 -or $lin[2] -cne 'True') {
+              $receipt.status='BLOCKED_LINUX_MEMORY_IDENTITY'
+              throw 'MEMORY_LINUX_METRIC_UNVERIFIED'
+            }
+            $receipt.linux_peak_metric=$lin[0]
+            $receipt.linux_peak_bytes=[long]$lin[1]
+            $receipt.status='PASS_10_STDLIB_CONTROLS_NATIVE_SEPARATE_UNITS'
+            Write-Output ('MEMORY_NATIVE_WINDOWS='+$receipt.windows_peak_metric+' '+$receipt.windows_peak_bytes)
+            Write-Output ('MEMORY_NATIVE_LINUX='+$receipt.linux_peak_metric+' '+$receipt.linux_peak_bytes)
+            Write-Output 'SCIENTIFIC_FIRST_USE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $receipt | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_s25_portable_memory_qualification.json') -Encoding UTF8
+            Write-Output ('G7_S25_PORTABLE_MEMORY='+$receipt.status)
+          }
+
+      - name: Retain native memory read-only engineering receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: g7-s25-portable-memory-${{ github.sha }}
+          path: |
+            g7-s25-memory-standalone/local_runs/g7_s25_portable_memory_qualification.json
+          if-no-files-found: warn
+          retention-days: 30
