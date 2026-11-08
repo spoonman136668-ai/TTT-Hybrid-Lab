@@ -1,0 +1,114 @@
+{
+  "schema": "ttt-hybrid.c10.action-law-transfer-dev.v1",
+  "parent_sha": "14fc30a0507439733f6bdeb17e439bfedaef21f2",
+  "original_p7_source_blob": "7db1fe42695f16bf2afe730f4348210156ac3c24",
+  "purpose": "Falsify extrapolation of actual trained P7/MLP memory selection and previously learned native archive states on shifted action-consequence laws; synthetic DEV only",
+  "original_science_first_use_authorized": false,
+  "training": {
+    "native_seeds": [
+      46111,
+      46117,
+      46129
+    ],
+    "router_seeds": [
+      303,
+      307,
+      311
+    ],
+    "original_p7_train_samples": 6000,
+    "original_p7_validation_samples": 1920,
+    "original_p7_adamw_updates": 600,
+    "original_p7_batch": 256,
+    "native_pretrain_events": 80,
+    "old_checkpoint_events": 40,
+    "training_source": "original unchanged P7 public factual synthetic_dev and P3 40-old/40-reversed",
+    "fully_converged_baselines_verified": false,
+    "matched_flops_verified": false
+  },
+  "transfer": {
+    "dev_stream_seeds": [
+      123041,
+      123059
+    ],
+    "events_per_trace": 96,
+    "latent_flip_probability": 0.06,
+    "observation_noise_sigma": 0.025,
+    "actions": [
+      -1,
+      -0.65,
+      -0.25,
+      0.25,
+      0.65,
+      1
+    ],
+    "actions_distribution": "uniform with NumPy Generator integer sample; same actions every arm",
+    "two_regimes": [
+      "old_positive_gain",
+      "recent_negative_gain"
+    ],
+    "equations": {
+      "linear_magnitude": "0.04 + regime_sign*0.45*action + noise",
+      "saturating": "0.04 + regime_sign*0.45*tanh(2*action)/tanh(2) + noise",
+      "deadzone": "0.04 + regime_sign*0.45*sign(action)*max(abs(action)-0.30,0)/0.70 + noise"
+    },
+    "conditions": [
+      "linear_magnitude",
+      "saturating",
+      "deadzone"
+    ],
+    "current_target_visibility": "none until every arm routes and predicts; then all history-based arms observe only that executed action consequence",
+    "input_sensor": 0,
+    "elapsed_time": 0.2,
+    "history": "last 8 completed factual action/outcome pairs, identical across trained P7 and trained MLP and ridge; trained policies default to old archive with <8 samples",
+    "ridge_control": {
+      "description": "conventional intercept plus action effect regression using same past eight factual pairs; no labels or latent regime",
+      "ridge_lambda": 0.05,
+      "min_samples": 2,
+      "min_effect_magnitude": 0.04,
+      "initial_choice": "old"
+    },
+    "arms": [
+      "trained_p7",
+      "trained_mlp",
+      "online_ridge",
+      "always_recent",
+      "oracle_evaluator_only",
+      "p7_zero_history"
+    ],
+    "native": "step80 trained model with cold-restored step40 vs step80 native fast memories; step80 recurrent/history held fixed; zero new optimizer or fast-memory writes",
+    "competence_gate": {
+      "oracle_mature_mse_max": 0.2
+    },
+    "maturity_min_events_since_latent_switch": 8,
+    "preregistered_diagnostics": {
+      "trained_p7_mature_context_accuracy_min": 0.75,
+      "trained_p7_better_than_mlp_mature_mse_by": 0.01,
+      "trained_p7_better_than_ridge_mature_mse_by": 0.01,
+      "trained_p7_better_than_always_recent_mature_mse_by": 0.05,
+      "trained_p7_better_than_zero_history_mature_mse_by": 0.05,
+      "oracle_mature_mse_at_most": 0.2
+    }
+  },
+  "budget": {
+    "max_wall_seconds": 190,
+    "gpu_seconds": 0,
+    "paid_api_calls": 0
+  },
+  "negative_controls": [
+    "future current observation not present in route call",
+    "no context label route API",
+    "same factual past and action for all nonoracle arms",
+    "zero historical information ablation",
+    "oracle evaluated separately as privileged ceiling",
+    "unchanged model/optimizer/native archive tensors",
+    "original S26 scientific source/seed denial"
+  ],
+  "caveats": [
+    "These are newly authored synthetic DEV constitutive laws, not independently born sealed scientific worlds.",
+    "The original native model was trained on discrete ±1 actions, so it may not produce useful predictions at unseen action magnitudes even with oracle memory; competence must be checked before crediting routing.",
+    "A different causal law cannot be inferred without enough previously observed real outcomes; this measures only familiar task-sign retrieval on a shifted action-to-consequence map.",
+    "LearnedRouter and conventional MLP train on original public P7 data with equal steps and minibatches but no matched total FLOPs or independently verified convergence.",
+    "Online ridge is an information-matched conventional adaptive controller, but not a matched-update trained baseline; do not claim superiority without fully trained conventional controls.",
+    "No new scientific first-use, real-world transfer, accepted model promotion, live owner trainer, scheduler, FORGE integration, new runner or independent research mutations."
+  ]
+}
