@@ -1,0 +1,149 @@
+{
+  "schema": "ttt-hybrid.native-p22.reward-only-masked-history-frozen.v1",
+  "preregistration_date": "2026-11-08",
+  "status": "FROZEN_PROTOCOL_ONLY_NO_IMPLEMENTATION_OR_FIRST_USE",
+  "exact_parent": {
+    "PR": 93,
+    "sha": "ceb54837a8066176a6b591fb3eb101c463c5d02e",
+    "source_script_blob": "cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4",
+    "source_manifest_blob": "e98f481009ed833b61ae0c04b1f8a6905f6a2953",
+    "source_runner_run": 42532414459
+  },
+  "separate_parallel_source": {
+    "P20_masked_teacher_supervised_PR": 92,
+    "sha": "ad69bcd06e973f0c05546c3e5782b770a0ce0e6e",
+    "P21_cold_retention_branch": "engineering/native-p21-process-death-cold-retention-dev-20261108",
+    "P21_sha": "46b2f3cac7532482aa12b353650601fb08997024",
+    "untouched": true
+  },
+  "prior_factual_result": {
+    "reward_only_P20_GRU_returns": [
+      91,
+      133.75,
+      200
+    ],
+    "preregistered_acquisition_seeds_passing": 1,
+    "total": 3,
+    "conventional_P19_supervised_returns": [
+      200,
+      200,
+      200
+    ],
+    "P20_teacher_supervised_masked_history_positive_three_of_three": true,
+    "finite_difference_strong_control_200_three_of_three": true,
+    "interpretation": "P20 correct reward credit important but reward-only acquisition unreliable; masked-history P20 relies on privileged teacher labels. Neither established native hybrid superiority."
+  },
+  "question": "Can the original token-free GRU learn useful chronological action/outcome history from its OWN factual source actions and rewards, with velocity sensors masked, and reproducibly outperform separately reward-trained same-parameter single-observation and two-observation GRUs?",
+  "null": "Full-history 489-parameter GRU fails reward-only acquisition on any initialization, fails paired same-budget gains over learned current-only/two-frame controls, or fails trained reward-credit negative discrimination. A performance tie with finite-difference control is not architectural superiority.",
+  "source": {
+    "source_owner": "S29",
+    "source_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_Gymnasium_commit": "17eff00220d210beda933f78b0e52850022b0690",
+    "BSD3_cloudpickle_commit": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "reuse_original_p18_admit_gymnasium": true,
+    "new_install": false,
+    "source_file_modified": false,
+    "scientific_first_use": false
+  },
+  "observations": {
+    "sensor_order": "public obs [cart_position,cart_velocity,pole_angle,pole_angular_velocity]",
+    "mask_columns": [
+      1,
+      3
+    ],
+    "mask_applied": "after every factual reset and step, before any policy trains or evaluates, for ALL masked arms and strong finite-difference control",
+    "factual_previous_action_reward": "last ACTUALLY executed action and last OBSERVED reward only; no future or expert action labels",
+    "history_length": 8,
+    "training_mode": "ON_POLICY_REWARD_ONLY",
+    "teacher_labels_for_reward_actors": false,
+    "unmasked_full_state_gru_is_diagnostic_only": true
+  },
+  "study": {
+    "primary_arms": [
+      "masked_full_history_reward_GRU",
+      "masked_current_only_reward_GRU",
+      "masked_two_frame_reward_GRU",
+      "masked_wrong_actor_credit_GRU"
+    ],
+    "acquisition_calibration_arm": "unmasked_full_history_reward_GRU",
+    "primary_gru_parameters": 489,
+    "current_only_control": "Same GRU input [8,6] with previous 7 rows zeroed in BOTH training and evaluation; separately trained; no evaluation-only distribution shift.",
+    "two_frame_control": "Same GRU input [8,6] with previous 6 rows zeroed in BOTH training and evaluation; separately trained; same parameter count and forward shape.",
+    "wrong_credit_control": "Same masked full-history 489-parameter GRU; preserve TRUE reward critic targets and rotate action GAE time32 and env1 only.",
+    "all_arms_same_ppo_algorithm": "Unmodified source-pinned P20 clipped PPO and GAE: AdamW .0015, gamma .99, lambda .95, entropy .015, critic .5, clip .2, grad_clip 1, 3 epochs, minibatch 256.",
+    "model_initializations": [
+      3359,
+      3371,
+      3383
+    ],
+    "train_seeds": "For each on-policy slot j, reset at 84000+1000*j+completed_episode_count; same seed rule but naturally divergent realized trajectories",
+    "rollouts": 96,
+    "parallel_envs": 8,
+    "steps_per_rollout": 64,
+    "train_actions_per_arm_seed": 49152,
+    "optimizer_updates_per_arm_seed": 576,
+    "total_arms": 5,
+    "total_real_training_decisions": 737280,
+    "total_optimizer_minibatches": 8640,
+    "training_determinism": "Source-pinned CPU torch single-thread, independent per-arm seeded sampling, no package install, no model inheritance, no P20 evaluation reseeding",
+    "eval_seeds": [
+      94011,
+      94017,
+      94023,
+      94029,
+      94035,
+      94041,
+      94047,
+      94053
+    ],
+    "eval_conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "fixed_nonlearned_comparators": [
+      "masked velocity-blind two-public-frame finite-difference controller",
+      "seeded_random"
+    ],
+    "forbidden": "No P20 dev train/eval seeds reused; no P20 trained weights, P19 expert labels, privileged velocity for masked arms, future outcomes, source step modifications, scientific first-use or sealed unseen environments"
+  },
+  "frozen_primary_rule": {
+    "all_initializations_required": true,
+    "source_original_masked_fullhistory_mean_return_at_least": 150,
+    "fullhistory_minus_independently_reward_trained_current_only_at_least": 15,
+    "fullhistory_minus_independently_reward_trained_two_frame_at_least": 10,
+    "fullhistory_minus_same_budget_wrong_credit_at_least": 40,
+    "short_pole_mean_at_least": 100,
+    "long_pole_mean_at_least": 100,
+    "full_state_unmasked_calibration_mean_at_least": 150,
+    "report_fullhistory_minus_strong_finite_difference_even_if_negative": true,
+    "do_not_claim_superiority_if_finite_difference_equal_or_better": true,
+    "do_not_reinterpret_single_seed_success_as_all_seed_pass": true,
+    "no_after_result_hyperparameter_or_threshold_changes": true
+  },
+  "required_evidence": {
+    "prospective_protocol_commit_before_implementation": true,
+    "paired_initial_world_observations_and_identical_mask_per_control": true,
+    "record_training_trajectories_policy_probabilities_action_entropy_actor_value_loss_gradient_norm_per_rollout": true,
+    "report_training_stochastic_return_and_frozen_argmax_evaluation_separately": true,
+    "verify_episode_boundary_history_reset_and_NO_gradient_over_evaluation": true,
+    "fixed_checkpoint_bytes_and_weight_hashes": true,
+    "report_true_step_and_reward_SHA256_custody": true,
+    "report_model_parameters_CPU_time_wall_time_memory_actions_updates_and_FLOPs_estimate": true,
+    "mandatory_full_Windows_and_Ubuntu_WSL_final_regression_plus_negative_controls": true,
+    "original_owner_only": "TTT-HYBRID-GPU-WIN",
+    "test_budget_stop": "On source violation, protected science admission failure, nonfinite train or failed regressions STOP before factual dev run; max experiment 600s; preserve null and partial receipts"
+  },
+  "acceptance": {
+    "engineering_pass": "Source and exact-SHA custody, full regressions, controls and receipt validity only",
+    "development_support": "Frozen rule all 3 initializations and strongest control comparisons reported",
+    "scientific_pass": false,
+    "sealed_unknown_world_first_use": false,
+    "protected_sources_consumed": false,
+    "FORGE_enrollment": false,
+    "runner_or_controller_change": false,
+    "merge_or_model_promotion": false,
+    "other_research_interrupted": false,
+    "no_promises_of_general_world_transfer": true
+  }
+}
