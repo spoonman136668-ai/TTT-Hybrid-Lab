@@ -1,0 +1,118 @@
+# R2: previous exact-candidate run #42490372074 passed full Windows/WSL
+# regression but standalone Python -I import failed. One new workflow file
+# qualifies a NEW SHA and checks the actual -I entrypoint; not an uncertain
+# first-use retry, no science data or seeds consumed.
+# Exact-candidate source qualification, Windows/WSL full regression and bounded
+# trainable P8 DEV. Single project-owned CPU run; no first-use or auto-promotion.
+name: Native P8 R2 isolated-import repair and full final qualification once
+on:
+  push:
+    branches:
+      - engineering/native-p8-fixed-vs-decay-stability-20261108
+    paths:
+      - .github/workflows/native-p8-stability-r2-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p8-stability-r2-oneuse
+  cancel-in-progress: false
+jobs:
+  native-stability-windows-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p8-fixed-vs-decay-stability-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p8-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 150
+      - name: Exact source locked original lineage and no-science admission
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P8_OWNER_ONEUSE_SCOPE_BLOCKED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p8-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P8_EXACT_SOURCE_SHA_DRIFT'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P8_DIRTY_SOURCE'}
+          & git -C $root merge-base --is-ancestor '7658be2cd4ff66afb3fb46519b516d8071641a36' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P8_PARENT_PR62_ANCESTRY_FAIL'}
+          $originals=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p7_learned_router_dev.py'='7db1fe42695f16bf2afe730f4348210156ac3c24';
+            'tests/test_native_p7_learned_router_dev.py'='0be05579ba1ec11bd95a86000be46ad9efac4dc7';
+            'experiments/native_p7_learned_router_dev_frozen.json'='1ca3b8fa6b9f425bb4aea35462084c7e1fb5530e';
+            'scripts/native_p8_schedule_dev.py'='2ab9018fe6d3bc68fe30af7f30a1cf189bc6433d';
+            'tests/test_native_p8_schedule_dev.py'='c81179853fee1e03d8a7f8c982529bbecc344412';
+            'experiments/native_p8_schedule_dev_frozen.json'='7c0b766fdd9b649d9d0def2180af6de8c63ddb6b'
+          }
+          foreach($name in $originals.Keys){
+            $found=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $found -cne $originals[$name]){throw "P8_FROZEN_ORIGINAL_BLOB_DRIFT:$name"}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p8_schedule_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($p.science.authorized -ne $false -or $p.science.first_use_consumed -ne $false -or @($p.science.seeds.PSObject.Properties).Count -ne 0 -or $p.design.steps_per_training_arm -ne 1200 -or $p.design.measured_model_count -ne 12 -or $p.design.training_examples -ne 6000 -or $p.design.development_validation_examples -ne 1920){throw 'P8_FROZEN_SCIENCE_FENCE_FAIL'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P8_EXISTING_CPU_ENV_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          $numpy=(& $py -I -B -c 'import numpy;print(numpy.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4' -or $numpy -cne '1.26.4'){throw 'P8_PINNED_CPU_RUNTIME_DRIFT'}
+          Write-Output 'P8_EXACT_SOURCE_ORIGINAL_BLOBS_AND_ZERO_SCIENCE=PASS'
+      - name: Full final Windows regression with original negative source test
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p8-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0';$env:OMP_NUM_THREADS='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p8_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P8_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p8_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P8_WINDOWS_FULL_RECEIPT_INVALID'}
+          Write-Output 'P8_WINDOWS_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Full final WSL Linux regression with original negative source test
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P8_WSL_OWNER_REQUIRED'}
+          $root="$lp/native-p8-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'OMP_NUM_THREADS=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p8_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P8_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p8-candidate\local_runs\native_p8_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P8_WSL_FULL_RECEIPT_INVALID'}
+          Write-Output 'P8_WSL_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Execute one bounded matched factual-gradients schedule comparison
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p8-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 160s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P8_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p8_schedule_dev.py" --receipt "$root/local_runs/native_p8_schedules.json"
+          if($LASTEXITCODE -ne 0){throw 'P8_ACTUAL_DEV_SCHEDULE_COMPARISON_FAIL'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p8-candidate\local_runs\native_p8_schedules.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_FIXED_SCHEDULE_COMPARISON_ENGINEERING_ONLY' -or $p.exact_source_sha -cne $env:GITHUB_SHA -or $p.scientific_first_use -cne 'NOT_RUN' -or @($p.scientific_world_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 12 -or $p.per_model_optimizer_updates -ne 1200 -or $p.all_model_optimizer_steps -ne 14400){throw 'P8_DEV_SCHEDULE_RECEIPT_SCOPE_BLOCKED'}
+          Write-Output 'P8_SCHEDULE_STABILITY_NEGATIVES_RETAINED=PASS_ENGINEERING_NOT_SCIENCE'
+      - name: Retain source-scoped full Windows/WSL and measured training receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p8-schedule-stability-r2-once
+          path: native-p8-candidate/local_runs/native_p8_*.json
+          retention-days: 30
+          if-no-files-found: warn
