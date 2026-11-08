@@ -229,7 +229,7 @@ def run(source:Path, cloud_root:Path|None=None)->dict:
     upstream=source_identity(source,v)
     cloud=cloudpickle_source_identity(cloud_root,r2)
     deps=dependencies_preexisting()
-    # In-memory paths only: pin both source projects, never pip install.
+    # In-memory paths only: pin both source projects, never use an installer.
     sys.path.insert(0,str(Path(cloud_root).resolve()))
     sys.path.insert(0,str(Path(source).resolve()))
     cp=import_module("cloudpickle")
