@@ -100,10 +100,10 @@ def _variants(champion, challenger):
     _require(torch.count_nonzero(recent["fast_weights"]).item() > 0,
              "RECENT_FAST_MEMORY_EMPTY")
     rolled = graft_fast(old, recent, rolled=True)
-    _require(torch.allclose(
-        torch.linalg.vector_norm(rolled["fast_weights"]),
-        torch.linalg.vector_norm(old["fast_weights"]), rtol=0, atol=0),
-        "SHAM_FAST_NORM_CHANGED")
+    _require(torch.equal(
+        torch.sort(rolled["fast_weights"].reshape(-1)).values,
+        torch.sort(old["fast_weights"].reshape(-1)).values),
+        "SHAM_FAST_MULTISUBSET_CHANGED")
     zero = _clone(recent)
     zero["fast_weights"].zero_()
     return {
