@@ -1,0 +1,41 @@
+{
+  "schema": "ttt-hybrid.native-p1.analytic-dev-fit-engineering.v1",
+  "frozen_utc": "2026-11-08",
+  "parent_pr": 51,
+  "parent_sha": "296264083cfc5643a9bea0803018b6611244c1c8",
+  "scope": "ENGINEERING_ANALYTIC_DEV_ONLY_NO_SCIENCE_FIRST_USE",
+  "science_authorized": false,
+  "science_seed_allocations": {},
+  "protected_science": [
+    "S26-V2 consumed 7207/7219/7229,7307/7319/7327",
+    "S27 reserved 92017..98017"
+  ],
+  "arms": [
+    "conventional_analog_gru",
+    "conventional_analog_ssm",
+    "native_state_no_online_feedback"
+  ],
+  "inputs": "2D real sensors; one real-valued action; positive elapsed time; constructed prior-like history; analytic public algebraic target",
+  "training": {
+    "dev_initialization": 46109,
+    "updates_per_arm": 1600,
+    "eval_every": 64,
+    "batch": 48,
+    "optimizer": "AdamW",
+    "lr": 0.009,
+    "weight_decay": 0.001,
+    "width": 12,
+    "real_world_data": false,
+    "science_generator": false
+  },
+  "numeric_gate": {
+    "max_relative_5_check_spread": 0.01,
+    "required_better_than_static": true,
+    "min_effect_sign_accuracy": 0.95,
+    "min_effect_coverage": 0.95,
+    "failure_status": "DEV_BASELINE_NOT_QUALIFIED"
+  },
+  "scientific_claims": "NONE; synthetic fixture same algebraic process, NOT independent unseen causal worlds; different model parameter/FLOPs costs; no online native fast feedback; no scientific evidence authentication",
+  "qualified_source": "REQUIRES_NEW_FINAL_SHA_WIN_WSL_REGRESSION_AND_RUN_RECEIPT",
+  "future_science_first_use": "SEPARATE EXPLICIT SOURCE_SEED_AND_OWNER_AUTHORITIES_REQUIRED"
+}

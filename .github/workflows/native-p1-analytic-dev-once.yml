@@ -1,0 +1,100 @@
+# One-use native P1 analytic DEV training AFTER full exact-SHA CPU qualification.
+# No science-world generator, science seeds, GPU, package installs, merge or controller.
+name: Native P1 analytic development fit once R2
+on:
+  push:
+    branches:
+      - engineering/native-p1-conventional-admission-20261108
+    paths:
+      - .github/workflows/native-p1-analytic-dev-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p1-analytic-dev-single-use
+  cancel-in-progress: false
+jobs:
+  windows-and-wsl-and-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p1-conventional-admission-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p1-dev-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 120
+      - name: Admit exact candidate and unchanged frozen original
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1') {throw 'BLOCKED_OWNER_ONCE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p1-dev-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA) {throw 'BLOCKED_CANDIDATE_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty) {throw 'BLOCKED_DIRTY_CHECKOUT'}
+          & git -C $root merge-base --is-ancestor '296264083cfc5643a9bea0803018b6611244c1c8' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P1_ANCESTOR'}
+          $pins=(& git -C $root hash-object -- source_pins.json|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $pins -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630'){throw 'BLOCKED_SOURCE_PINS'}
+          $protocol=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_analytic_dev_engineering.json') -Raw|ConvertFrom-Json
+          if($protocol.science_authorized -ne $false -or @($protocol.science_seed_allocations.PSObject.Properties).Count -ne 0 -or $protocol.training.updates_per_arm -ne 1600){throw 'BLOCKED_DEV_SCIENCE_CONTRACT'}
+          $win=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $win -PathType Leaf)){throw 'BLOCKED_EXISTING_WIN_CPU_ENV'}
+          $torch=(& $win -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu'){throw 'BLOCKED_TORCH_RUNTIME'}
+          Write-Output 'NATIVE_P1_ANALYTIC_EXACT_SHA_NO_SCIENCE=PASS'
+      - name: Full Windows regression and original-source negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p1-dev-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p1_dev_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WINDOWS_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p1_dev_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_WINDOWS_RECEIPT'}
+          Write-Output 'NATIVE_P1_DEV_WINDOWS_FULL=PASS_ENGINEERING'
+      - name: Full WSL regression and original-source negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_WSL_OWNER'}
+          $root="$lp/native-p1-dev-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p1_dev_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WSL_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p1-dev-candidate\local_runs\native_p1_dev_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_WSL_RECEIPT'}
+          Write-Output 'NATIVE_P1_DEV_WSL_FULL=PASS_ENGINEERING'
+      - name: One bounded analytic CPU fit, no scientific dataset
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p1-dev-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 120s /usr/bin/env 'NATIVE_P1_DEV_FORBID_SCIENCE=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p1_dev_fit.py" --receipt "$root/local_runs/native_p1_analytic_dev.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_ANALYTIC_DEV_EXECUTION'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p1-dev-candidate\local_runs\native_p1_analytic_dev.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'DEV_RUN_FINISHED_NOT_SCIENCE' -or $p.qualification -cne 'DEVELOPMENT_ONLY' -or @($p.science_seeds_consumed).Count -ne 0 -or @($p.arms).Count -ne 3){throw 'BLOCKED_ANALYTIC_DEV_RECEIPT'}
+          Write-Output 'NATIVE_P1_ANALYTIC_DEV_RECEIPT=COMPLETE_NOT_SCIENCE'
+      - name: Publish immutable exact-source receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p1-analytic-dev-once
+          path: native-p1-dev-candidate/local_runs/native_p1_*.json
+          retention-days: 30
+          if-no-files-found: warn
