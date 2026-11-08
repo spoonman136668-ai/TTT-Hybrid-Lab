@@ -1,0 +1,154 @@
+# G7-S26 baseline sign pre-admission; source-only fixture tests, NEVER training.
+# One-use existing project Windows runner + preinstalled WSL system Python.
+# No science first-use, install, fitting, data access, controller changes, merges.
+name: G7-S26 conventional direction readiness source-only pre-admission
+on:
+  push:
+    branches:
+      - research/g7-s26-quarter-reserve-20261107
+    paths:
+      - .github/workflows/g7-s26-baseline-sign-admission-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s26-baseline-sign-readiness-once
+  cancel-in-progress: false
+jobs:
+  exact-source-claim-schema:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 7
+    steps:
+      - name: Checkout exact S26 candidate without stored credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s26-sign-admission-isolated
+          fetch-depth: 160
+          clean: true
+          persist-credentials: false
+          lfs: false
+          submodules: false
+
+      - name: Verify frozen S25 and S26 and run offline receipt-schema negatives only
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s26-sign-admission-isolated'
+          $out=Join-Path $root 'local_runs'
+          $r=[ordered]@{
+            schema='ttt-hybrid.g7-s26.baseline-direction-schema-qualifier.v1'
+            candidate_sha=$env:GITHUB_SHA
+            s25_source_sha='108808f7b685107a76fae1ce5605b7ff9e2bac27'
+            status='BLOCKED_NOT_STARTED'
+            source='UNVERIFIED'
+            s26_frozen_blob='34251b2cde6373ed484dbc21e4617c9165047e93'
+            baseline_direction_negative_controls='NOT_RUN'
+            claimed_baseline_training='NOT_PERFORMED'
+            receipt_authenticity='NOT_VERIFIED'
+            scientific_first_use='NOT_RUN'
+            heldout='NOT_RUN'
+            gpu='NOT_USED'
+            environment_install='NOT_PERFORMED'
+            full_regression='UNVERIFIED'
+            merge='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-quarter-reserve-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_RUNNER_SCOPE_OR_NON_FIRST_USE'
+              throw 'S26_OWNER_SCOPE_FAIL'
+            }
+            $head=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $headCode=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyCode=$LASTEXITCODE
+            & git -C $root merge-base --is-ancestor '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD
+            $baseCode=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD)
+            $diffCode=$LASTEXITCODE
+            $expected=@(
+              '.github/workflows/g7-s26-dev-quarter-reserve-once.yml',
+              '.github/workflows/g7-s26-signal-identifiability-once.yml',
+              '.github/workflows/g7-s26-contrast-readiness-once.yml',
+              '.github/workflows/g7-s26-baseline-sign-admission-once.yml',
+              'experiments/g7_s26_frozen_quarter_reserve.json',
+              'scripts/g7_s26_dev_comparison.py',
+              'scripts/g7_s26_reserve_gate.py',
+              'scripts/g7_s26_signal_identifiability.py',
+              'scripts/g7_s26_contrast_competence.py',
+              'scripts/g7_s26_baseline_direction_admission.py',
+              'tests/test_g7_s26_comparison_contract.py',
+              'tests/test_g7_s26_reserve_gate.py',
+              'tests/test_g7_s26_signal_identifiability.py',
+              'tests/test_g7_s26_contrast_competence.py',
+              'tests/test_g7_s26_baseline_direction_admission.py'
+            )
+            if ($headCode -ne 0 -or $dirtyCode -ne 0 -or
+                $baseCode -ne 0 -or $diffCode -ne 0 -or
+                $head -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne 15 -or
+                (($changed | Sort-Object -Unique).Count -ne 15)) {
+              $r.status='BLOCKED_DIRTY_WRONG_SHA_OR_FILE_SCOPE'
+              throw 'S26_SOURCE_IDENTITY_MISMATCH'
+            }
+            foreach ($path in $expected) {
+              if ($changed -cnotcontains $path) {
+                $r.status='BLOCKED_UNEXPECTED_SOURCE_OR_TEST_CHANGE'
+                throw 'S26_FILE_SCOPE_MISMATCH'
+              }
+            }
+            $s20=(& git -C $root hash-object -- scripts/g7_s20_hidden_multicycle.py | Out-String).Trim()
+            $s25=(& git -C $root hash-object -- experiments/g7_s25_frozen_contradiction_ttt.json | Out-String).Trim()
+            $s26=(& git -C $root hash-object -- experiments/g7_s26_frozen_quarter_reserve.json | Out-String).Trim()
+            $sourcepins=(Get-FileHash -LiteralPath (Join-Path $root 'source_pins.json') -Algorithm SHA256).Hash.ToLowerInvariant()
+            if ($s20 -cne 'ac3f9ddd5b879e53e62030707fb6419adaf732ca' -or
+                $s25 -cne '31633b341403729b7ffbb7d73f3a04098ad44380' -or
+                $s26 -cne '34251b2cde6373ed484dbc21e4617c9165047e93' -or
+                $sourcepins -cne '44f3e76d2d06ee879fa3222dd3921c7a1f8e08be579b96e03b7545e388a7b768') {
+              $r.status='BLOCKED_FROZEN_PROTOCOL_OR_PHYSICS_DRIFT'
+              throw 'S26_SOURCE_BLOB_CHANGED'
+            }
+            $r.source='PASS_15_S26_ADDITIONS_FROZEN_S25_S26_AND_SOURCE_PINS'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($linux -notmatch '^/mnt/[a-z]/' -or $uid -cne '1000') {
+              $r.status='BLOCKED_WSL_NORMAL_USER_OR_PATH'
+              throw 'S26_NO_QUALIFIED_UNPRIVILEGED_WSL'
+            }
+            # No torch/pytest needed: pure stdlib negative controls and
+            # deliberately synthetic receipts only.
+            $res=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'CUDA_VISIBLE_DEVICES=-1' /usr/bin/python3 -I -B "$linux/tests/test_g7_s26_baseline_direction_admission.py")
+            $code=$LASTEXITCODE
+            Write-Output ($res -join "`n")
+            if ($code -ne 0 -or
+                ($res -join "`n") -notmatch 'Ran 12 tests' -or
+                ($res -join "`n") -notmatch 'OK') {
+              $r.status='BLOCKED_BASELINE_DIRECTION_NEGATIVE_CONTROLS'
+              throw 'S26_BASELINE_CONTRACT_FAILED'
+            }
+            $r.baseline_direction_negative_controls='PASS_12_SYNTHETIC_RECEIPT_CONTROLS_ONLY'
+            $r.status='PASS_SOURCE_ONLY_BASELINE_SIGN_PRE_ADMISSION_NOT_SCIENCE'
+            Write-Output 'S26_BASELINE_DIRECTION_PRE_ADMISSION=PASS_12_SOURCE_ONLY'
+            Write-Output 'S26_TRAINING_AND_SCIENCE=NOT_RUN'
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_s26_baseline_direction_qualification.json') -Encoding UTF8
+            Write-Output ('S26_DIRECTION_GATE=' + $r.status)
+          }
+
+      - name: Preserve exact-source offline baseline-readiness receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s26-baseline-direction-${{ github.sha }}
+          path: |
+            g7-s26-sign-admission-isolated/local_runs/g7_s26_baseline_direction_qualification.json
+          if-no-files-found: warn
+          retention-days: 30
