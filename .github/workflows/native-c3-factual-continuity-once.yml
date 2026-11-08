@@ -1,0 +1,122 @@
+# C3 one-use exact-source engineering comparison; 3 frozen P3 factual DEV seeds.
+# No GPU, private checkpoint upload, original science, deployment or new scheduler.
+name: Native C3 factual isolated training continuation once
+on:
+  push:
+    branches: [engineering/native-c3-factual-isolated-resume-20261108]
+    paths: [.github/workflows/native-c3-factual-continuity-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-c3-existing-project-runner-once
+  cancel-in-progress: false
+jobs:
+  windows-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-c3-factual-isolated-resume-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate without persistent credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-c3-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 190
+      - name: Lock C2 parent and P54 factual source blobs, prohibit science first use
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_C3_OWNER_ONEUSE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c3-candidate'
+          $sha=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $sha -cne $env:GITHUB_SHA){throw 'BLOCKED_C3_EXACT_SOURCE'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_C3_DIRTY'}
+          & git -C $root merge-base --is-ancestor 'de613a9f011177840e6ac3f9a49bf4b01ce42a98' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C3_C2_PARENT'}
+          $pins=@{
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_transactional_resume.py'='a2906a27794508ddd01bea6cde7278b1cec561f2';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'scripts/native_p2_synthetic_adaptation.py'='8f5bd76a38f715f29bd76fa60452b43da2152866';
+            'scripts/native_p3_continuity.py'='ae5a42140df501bc21bc3f050e75c70cb4771c89';
+            'tests/test_native_p2_synthetic_adaptation.py'='3a284f953499fef0b47a0da6354ed065b9c72860';
+            'tests/test_native_p3_continuity.py'='32d6a0e8a123df76f1e317dc8ab55cdcd2a75493';
+            'experiments/native_p2_synthetic_reversal_engineering.json'='5bd4594cee53682049b7d70c40369761c1798794';
+            'experiments/native_p3_continuity_engineering_frozen.json'='1c7ba4cb28182b026a0e82fbc33a232b4f7f0bac';
+            'scripts/native_c3_factual_isolated_resume.py'='4ac04846b01d0736117b425e1063e319b1b500d1';
+            'tests/test_native_c3_factual_isolated_resume.py'='9b7e00ac4f09bbcea5dde39b0eb00e1cc5e87ca4';
+            'docs/NATIVE_C3_FACTUAL_CANDIDATE_RESUME.md'='26cb8a8dd7d2042c7752a6ece6ce6de3da7091fa';
+            'experiments/native_p1_control_admission_preflight.json'='9de1caedb56f1248264ac37db08ec66b8265fe16'
+          }
+          foreach($name in $pins.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $pins[$name]){throw "BLOCKED_C3_SOURCE_BLOB:$name"}
+          }
+          $gate=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          $p3=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p3_continuity_engineering_frozen.json') -Raw|ConvertFrom-Json
+          if($gate.science.authorized -ne $false -or $gate.science.data_consumed -ne $false -or @($gate.science.seeds.PSObject.Properties).Count -ne 0 -or $gate.engineering.model_fit_real_world -ne $false -or $p3.science_first_use.authorized -ne $false -or $p3.training.analytic_dev_optimizer_steps -ne 80 -or $p3.training.cold_resume_after_step -ne 40){throw 'BLOCKED_C3_SCIENCE_SCOPE'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_C3_PYTHON_ENV'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'BLOCKED_C3_PINNED_ENV'}
+          Write-Output 'NATIVE_C3_UNCHANGED_P54_FACTUAL_SOURCE_AND_C2_ANCESTRY=PASS'
+      - name: Windows complete regression and three native factual 40-to-80 continuations
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c3-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          $env:NATIVE_P3_ENGINEERING_ONLY='1';$env:NATIVE_C3_ENGINEERING_ONLY='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\c3_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C3_WIN_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\c3_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C3_WIN_RECEIPT'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 224){throw 'BLOCKED_C3_WIN_TEST_COUNT'}
+          & $py -I -B (Join-Path $root 'scripts\native_c3_factual_isolated_resume.py') --receipt (Join-Path $root 'local_runs\c3_windows_factual.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C3_WIN_FACTUAL'}
+          $r=Get-Content -LiteralPath (Join-Path $root 'local_runs\c3_windows_factual.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_FACTUAL_TRAINING_ISOLATION_AND_EXACT_CONTINUITY_DEV' -or $r.record_count -ne 3 -or $r.science_first_use -cne 'NOT_RUN' -or $r.model_promoted -ne $false -or @($r.records).Count -ne 3){throw 'BLOCKED_C3_WIN_FACTUAL_RECEIPT'}
+          foreach($entry in $r.records){if($entry.checkpoint_at_steps -ne 40 -or $entry.final_steps -ne 80 -or $entry.final_consumed_examples -ne 80 -or $entry.protected_reference_unchanged -ne $true -or @($entry.checks.PSObject.Properties|Where-Object {$_.Value -ne $true}).Count -ne 0){throw 'BLOCKED_C3_WIN_NATIVE_PROGRESS'}}
+          Write-Output 'NATIVE_C3_WINDOWS_FULL_AND_REAL_FACTUAL_RESUME=PASS_ENGINEERING'
+      - name: WSL complete regression and three native factual 40-to-80 continuations
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_C3_WSL_OWNER'}
+          $root="$lp/native-c3-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C3_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/c3_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C3_WSL_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c3-candidate\local_runs\c3_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C3_WSL_RECEIPT'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 223){throw 'BLOCKED_C3_WSL_TEST_COUNT'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 150s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C3_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/native_c3_factual_isolated_resume.py" --receipt "$root/local_runs/c3_linux_factual.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C3_WSL_FACTUAL'}
+          $r=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c3-candidate\local_runs\c3_linux_factual.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_FACTUAL_TRAINING_ISOLATION_AND_EXACT_CONTINUITY_DEV' -or $r.record_count -ne 3 -or $r.science_first_use -cne 'NOT_RUN' -or $r.model_promoted -ne $false -or @($r.records).Count -ne 3){throw 'BLOCKED_C3_WSL_FACTUAL_RECEIPT'}
+          foreach($entry in $r.records){if($entry.checkpoint_at_steps -ne 40 -or $entry.final_steps -ne 80 -or $entry.final_consumed_examples -ne 80 -or $entry.protected_reference_unchanged -ne $true -or @($entry.checks.PSObject.Properties|Where-Object {$_.Value -ne $true}).Count -ne 0){throw 'BLOCKED_C3_WSL_NATIVE_PROGRESS'}}
+          Write-Output 'NATIVE_C3_WSL_FULL_AND_REAL_FACTUAL_RESUME=PASS_ENGINEERING'
+      - name: Retain exact source whole regression and factual continuation receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-c3-native-factual-continuity-eng-once
+          path: |
+            native-c3-candidate/local_runs/c3_windows.json
+            native-c3-candidate/local_runs/c3_linux.json
+            native-c3-candidate/local_runs/c3_windows_factual.json
+            native-c3-candidate/local_runs/c3_linux_factual.json
+          retention-days: 30
+          if-no-files-found: warn
