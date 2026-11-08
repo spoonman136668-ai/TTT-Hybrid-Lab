@@ -1,0 +1,97 @@
+{
+  "schema": "ttt-hybrid.native-p18.real-cartpole-frozen.v1",
+  "registered": "2026-11-08",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "P17_parent_pr": 88,
+    "P17_parent_sha": "70d75944534dbbf5e2af42a5cd7038ae7f07b871",
+    "S29_external_source_pr": 87,
+    "S29_external_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "S29_driver_git_blob": "5176d77ecd4d81c95b0ece6855c30f598eb0ae4d",
+    "S29_source_manifest_git_blob": "9ba9bc1c5ada3fd8e8d91e7208644f94fcf887dc",
+    "S29_cloud_manifest_git_blob": "ee92a4bb765c2016387ba6969dc94ffa0d64ec85",
+    "Farama_Gymnasium_tag": "v1.1.1",
+    "Farama_commit": "17eff00220d210beda933f78b0e52850022b0690",
+    "Farama_license": "MIT",
+    "cloudpickle_tag": "v3.1.1",
+    "cloudpickle_commit": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "cloudpickle_license": "BSD-3-Clause",
+    "CausalAILab_source_license_blocked": true
+  },
+  "question": "Do real CartPole action-consequence training episodes yield a reproducible stronger factual token-free history policy than a near-matched nonrecurrent history model and a strong observation-feedback conventional controller?",
+  "null": "Original real-world factual DEV reward-trained GRU does not beat equally updated history-MLP by >=10 steps, transparent state-feedback champion by >=10 steps, same-init untrained GRU by >=10, and history-corrupted negative by >=5 steps in each of three init seeds. No first-use science claim.",
+  "design": {
+    "scope": "AUTHORED_PUBLIC_DEVELOPMENT_TRAINING_ON_PINNED_EXTERNAL_MIT_GYM_NO_SCIENCE_FIRST_USE",
+    "environment": "Farama Gymnasium CartPole-v1 exact pinned source v1.1.1, no CausalGym wind",
+    "engine_observations_used": "ONLY four public floating observation coordinates from reset/step, two discrete real actions, factual real reward, termination/truncation; no environment.state/engine parameters/hidden wind",
+    "prior_completed_history_length": 8,
+    "actor_history_features": "4 current public observation plus PRIOR executed actual action coded ±1 and its completed observed reward; 6 floating values per time row; padded initial history",
+    "training_arms": [
+      "history_gru",
+      "history_mlp"
+    ],
+    "training_parameter_GRU": 489,
+    "training_parameter_MLP": 471,
+    "parameter_delta_fraction_max": 0.05,
+    "model_training": "REINFORCE discounted factual reward-to-go gamma .99 with trained value head smooth_l1 factor .5, entropy 0.01, AdamW LR .003, clip3, one actual gradient update per completed episode",
+    "training_episodes_per_model": 64,
+    "train_initializations": [
+      2741,
+      2753,
+      2767
+    ],
+    "training_env_reset_seeds": "51000..51063 independent public DEV, every trained arm same reset sequence; no protected science seeds",
+    "training_episode_max_actions": 200,
+    "development_eval_seeds": [
+      62013,
+      62029,
+      62041,
+      62053
+    ],
+    "eval_episode_max_actions": 200,
+    "evaluation_arms": [
+      "trained_gru",
+      "trained_mlp",
+      "untrained_gru",
+      "shuffled_gru_history",
+      "handcoded_state_control",
+      "seeded_random"
+    ],
+    "evaluation_greedy_actor": true,
+    "strong_conventional": "Obvious observation-based CartPole balancing stabilizer: action=sign(theta+0.5*theta_dot), no latent engine state; no oracle access, no matched training compute",
+    "negative_history": "reverse previous seven completed factual input rows but preserve current sensor row, trained GRU weights unchanged",
+    "negative_untrained": "same original initialized GRU weights before all actual optimizer updates",
+    "negative_random": "seeded random decisions, same actual reset observation",
+    "strength_frozen_thresholds": {
+      "GRU_minus_MLP_reward_steps_min": 10,
+      "GRU_minus_handcoded_reward_steps_min": 10,
+      "GRU_minus_untrained_reward_steps_min": 10,
+      "GRU_minus_shuffled_history_steps_min": 5,
+      "MLP_minus_random_reward_steps_min": 10,
+      "required_each_init_seed": true,
+      "engineering_PASS_separate_from_scientific_gain": true
+    },
+    "same_training_episode_budget": true,
+    "same_training_source_seed_prefix": true,
+    "same_real_observation_and_action_types": true,
+    "repeated_same_evaluation_world_seeds_across_initializations_not_independent_science": true,
+    "factual_action_outcome_trace_SHA256": true,
+    "in_process_fresh_state_only_reconstruction_proven_not_process_death_cold": true,
+    "required_mandatory_full_windows_and_wsl_regression": true,
+    "no_install_no_paid_API_no_new_runner": true,
+    "max_process_seconds": 220,
+    "no_sci_benchmark_promotion_or_merge": true,
+    "FORGE_research_loop_unchanged": true
+  },
+  "science": {
+    "authorized": false,
+    "first_use_consumed": false,
+    "reserved_seeds": {},
+    "independent_sealed_unseen_transfer": false,
+    "conventional_control_converged": false,
+    "matched_FLOPs_or_accepted_science": false,
+    "S26_original_negative_preserved": true,
+    "S27_sealed_first_use_untouched": true,
+    "S29_owner_original_smoke_preserved": true
+  }
+}
