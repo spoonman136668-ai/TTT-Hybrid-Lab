@@ -55,7 +55,7 @@ python="$scope/venv/bin/python"
 # Do not mix indexes: PyPI normal dependencies first, official CPU torch only.
 "$uv" pip install --python "$python" --only-binary ':all:' \
  --index-url https://pypi.org/simple \
- 'pytest==8.3.4' 'filelock>=3.13.1' 'typing-extensions>=4.8.0' \
+ 'pytest==8.3.4' 'numpy==1.26.4' 'filelock>=3.13.1' 'typing-extensions>=4.8.0' \
  'networkx' 'jinja2' 'fsspec' 'sympy==1.13.1'
 "$uv" pip install --python "$python" --only-binary ':all:' --no-deps \
  --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'

@@ -1,0 +1,60 @@
+# Isolated WSL Linux-only continuation of approved CPU311 environment.
+name: G7-S25 one-use WSL CPU311 only full regression
+on:
+  push:
+    branches:
+      - engineering/g7-s25-scoped-cpu311-wsl-only-20261107
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-g7-s25-linux-cpu311-one-shot
+  cancel-in-progress: false
+jobs:
+  wsl-only:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.ref == 'refs/heads/engineering/g7-s25-scoped-cpu311-wsl-only-20261107' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 28
+    steps:
+      - name: Exact WSL installer checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-runtime-prep
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Exact frozen S25 source checkout
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 108808f7b685107a76fae1ce5605b7ff9e2bac27
+          path: g7-s25-source
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Read-only exact WSL R3 and source preflight
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'UNAUTHORIZED_HYBRID_RUNNER'}
+          $wsl=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $wsl){throw 'WSL_PATH_MISSING'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 55s /usr/bin/bash "$wsl/g7-runtime-prep/scripts/g7_s25_prepare_cpu311_linux.sh" preflight "$wsl/g7-s25-source"
+          if($LASTEXITCODE -ne 0){throw 'WSL_R3_OR_SOURCE_PREFLIGHT_BLOCKED'}
+      - name: Install separate nonroot WSL CPU311 and qualify original full S25 suite
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $wsl=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $wsl){throw 'WSL_PATH_MISSING'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 1150s /usr/bin/bash "$wsl/g7-runtime-prep/scripts/g7_s25_prepare_cpu311_linux.sh" install "$wsl/g7-s25-source"
+          if($LASTEXITCODE -ne 0){throw 'WSL_CPU311_OR_FULL_REGRESSION_BLOCKED'}
+      - name: Preserve source-bound WSL qualification and negative receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: g7-s25-wsl-cpu311-${{ github.sha }}-${{ github.run_id }}
+          path: g7-s25-source/local_runs/*.json
+          retention-days: 30
+          if-no-files-found: warn
