@@ -1,0 +1,102 @@
+{
+  "schema": "ttt-hybrid.native-p11.temporal-credit-frozen.v1",
+  "registered": "2026-11-08",
+  "scope": "SYNTHETIC_DEVELOPMENT_ONLY_WITH_FROZEN_ADVERSE_OUTCOMES",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 74,
+    "parent_P10_sha": "cf79b157582717cba263437c5ccaabd0dda0a413",
+    "P10_script_blob": "b85150fb294269d9db88a2cbb194c1a6140cf081",
+    "P7_script_blob": "7db1fe42695f16bf2afe730f4348210156ac3c24",
+    "native_substrate_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Can a trained temporally structured model assign delayed action credit and choose better real interventions than a matched GRU on known development worlds after P10's delayed-actuator failure?",
+  "null": "No reproducible >=0.05 mean factual action-return improvement over same-data trained conventional GRU and random policies or action-greedy/no-history controls in the delayed mechanism, with unchanged ordinary-world performance.",
+  "design": {
+    "precommitted_hypothesis": "An explicit learned previous-action credit slot plus two-step action planning yields >=0.05 greater mean delayed factual return than a trained conventional GRU with the SAME two-step planning, under identical factual data and optimizer updates.",
+    "known_dev_synthetic_source": true,
+    "training_lag_types": [
+      0,
+      0.5,
+      1
+    ],
+    "training_latent_flip_probability": 0.07,
+    "training_world_seed": 54131,
+    "development_validation_seed": 54179,
+    "training_examples": 6000,
+    "validation_examples": 1920,
+    "factual_history_length": 8,
+    "no_lag_sign_or_regime_label_in_training_inputs": true,
+    "no_future_factual_outcome_in_prediction_history": true,
+    "trainable_temporal_architecture": "LearnedTemporalCredit 16->24->16->3 predicts intercept + gain0 * a_now + gain1 * a_prev, 859 params; causal slots are structural priors",
+    "conventional_baseline": "ConventionalCausalGRU 2->12 recurrent and 14->16->1 head, 833 params",
+    "model_initializations": [
+      353,
+      359,
+      367
+    ],
+    "optimizer": "AdamW + frozen cosine learning-rate schedule",
+    "optimization_steps_each": 1200,
+    "batch": 256,
+    "initial_learning_rate": 0.006,
+    "final_learning_rate": 0.0006,
+    "same_minibatch_indices_per_seed_both_models": true,
+    "parameter_budget_delta_fraction_max": 0.05,
+    "fully_trained_plateau_last_five_MSE_checkpoints_spread_max": 0.01,
+    "all_failures_preserved": true,
+    "development_action_worlds": [
+      "instant",
+      "lagged",
+      "confounded"
+    ],
+    "evaluation_world_seeds": [
+      88031,
+      88047,
+      88063,
+      88091
+    ],
+    "eval_use_original_P10_world_unchanged": true,
+    "initial_shared_factual_history_events": 8,
+    "scored_actions_per_policy_per_episode": 64,
+    "arms": [
+      "structured_lookahead",
+      "gru_lookahead",
+      "structured_greedy",
+      "gru_greedy",
+      "structured_scrambled",
+      "random_action",
+      "handcoded_last_pair",
+      "informed_oracle"
+    ],
+    "planning_horizon": "For each current candidate a, predict current y; append only hypothetical y for choosing best next action in internal planning; select current a, then observe and learn ONLY from its factual realized y. Same planner for structured and GRU.",
+    "control_information": "Identical completed factual history across model families initially; subsequent histories differ only as consequence of each policy's actual decisions; exogenous world noise shared. Oracle explicitly privileged.",
+    "thresholds": {
+      "structured_over_trained_GRU_mean_reward": 0.05,
+      "structured_over_random_mean_reward": 0.05,
+      "two_step_over_greedy_mean_reward": 0.05,
+      "structured_over_scrambled_history_mean_reward": 0.05,
+      "within_privileged_oracle_mean_reward": 0.1,
+      "support_requirement": "all 3 model initialization seeds, separately for each dynamics family"
+    },
+    "integrity_acceptance": "factual training weight updates, identical mini-batch source, no future outcome leakage, complete real 64-action online traces, exact equal action budgets, fail closed source fences, positive/negative results preserved; no hypothesis win is required for engineering PASS",
+    "max_wall_seconds": 110,
+    "no_model_promotion": true,
+    "no_training_interface_change": true,
+    "no_forge_activation": true,
+    "no_installation": true,
+    "no_paid_API": true,
+    "mandatory_full_dual_platform_regression": true
+  },
+  "science": {
+    "authorized": false,
+    "original_world_seeds": {},
+    "first_use_consumed": false,
+    "S26_negative_preserved": true,
+    "S27_sealed_seed_reserve_untouched": true,
+    "novel_source_birth": "NOT_ESTABLISHED",
+    "transfer": "NOT_SCIENCE",
+    "trained_control_qualified": "NOT_YET",
+    "compute_FLOP_match": "NOT_INDEPENDENTLY_VERIFIED"
+  }
+}
