@@ -9,6 +9,7 @@ import math
 import sys
 from pathlib import Path
 import unittest
+from unittest import mock
 import torch
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -16,6 +17,8 @@ sys.path.insert(0, str(ROOT / "scripts"))
 import g7_s25_numeric_ttt as numeric
 import g7_s25_paired_interventions as physics
 import g7_s25_cost_ledger as accounting
+import g7_s20_hidden_multicycle as original_s20
+from g7_process_peak_memory import PeakMemory, MemoryProbeBlocked
 
 
 class TestCostLedger(unittest.TestCase):
@@ -131,7 +134,19 @@ class TestCostLedger(unittest.TestCase):
 
     def test_resource_values_measured_but_not_claimed_full_model_flops(self):
         result = self.execute("periodic")
-        self.assertGreater(result["process_peak_rss_bytes"], 0)
+        self.assertIn(result["process_peak_memory_metric"],
+                      ("linux_ru_maxrss_bytes",
+                       "darwin_ru_maxrss_bytes",
+                       "windows_psapi_peak_working_set_bytes"))
+        self.assertFalse(result["peak_rss_is_isolated_per_arm"])
+        if sys.platform == "linux":
+            self.assertGreater(result["process_peak_rss_bytes"], 0)
+            self.assertTrue(result["process_peak_memory_comparable_to_linux_ru_maxrss"])
+            self.assertIsNone(result["process_peak_working_set_bytes"])
+        elif sys.platform == "win32":
+            self.assertIsNone(result["process_peak_rss_bytes"])
+            self.assertGreater(result["process_peak_working_set_bytes"], 0)
+            self.assertFalse(result["process_peak_memory_comparable_to_linux_ru_maxrss"])
         self.assertGreater(result["slow_checkpoint_bytes"], 0)
         self.assertTrue(math.isfinite(result["episode_process_cpu_seconds"]))
         self.assertTrue(math.isfinite(result["episode_step_wall_seconds"]))
@@ -140,6 +155,38 @@ class TestCostLedger(unittest.TestCase):
         self.assertIsNone(result["whole_process_training_and_validation_cpu_seconds"])
         self.assertFalse(result["trained_baselines_qualified"])
         self.assertFalse(result["whole_process_matched_compute_qualified"])
+
+    def test_windows_working_set_not_presented_as_linux_rss(self):
+        from unittest import mock
+        reading=PeakMemory(12345678, "windows_psapi_peak_working_set_bytes", False)
+        with mock.patch.object(accounting, "read_peak_memory", return_value=reading):
+            result=self.execute("periodic")
+        self.assertIsNone(result["process_peak_rss_bytes"])
+        self.assertEqual(result["process_peak_working_set_bytes"], 12345678)
+        self.assertEqual(result["process_peak_memory_metric"],
+                         "windows_psapi_peak_working_set_bytes")
+        self.assertFalse(result["process_peak_memory_comparable_to_linux_ru_maxrss"])
+        self.assertFalse(result["trained_baselines_qualified"])
+
+    def test_linux_frozen_memory_measurement_unchanged(self):
+        reading=PeakMemory(8192, "linux_ru_maxrss_bytes", True)
+        with mock.patch.object(accounting, "read_peak_memory", return_value=reading):
+            result=self.execute("periodic")
+        self.assertEqual(result["process_peak_rss_bytes"], 8192)
+        self.assertIsNone(result["process_peak_working_set_bytes"])
+        self.assertTrue(result["process_peak_memory_comparable_to_linux_ru_maxrss"])
+
+    def test_memory_probe_failure_cannot_produce_ledger_receipt(self):
+        with mock.patch.object(accounting, "read_peak_memory",
+                               side_effect=MemoryProbeBlocked("WINDOWS_PSAPI_QUERY_FAILED")):
+            with self.assertRaisesRegex(MemoryProbeBlocked, "WINDOWS_PSAPI_QUERY_FAILED"):
+                self.execute("periodic")
+
+    def test_original_s20_science_fails_before_opening_frozen_data_on_windows(self):
+        with mock.patch.object(original_s20.sys, "platform", "win32"):
+            with self.assertRaisesRegex(original_s20.Blocked,
+                                         "S20_FROZEN_RSS_REQUIRES_LINUX"):
+                original_s20.run(object())
 
     def test_reuse_and_invalid_sample_or_nonfinite_observation_rejected(self):
         world = physics.PairedS20World(3101, 2, "source_stable")

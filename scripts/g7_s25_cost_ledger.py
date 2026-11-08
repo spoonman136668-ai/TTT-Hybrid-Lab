@@ -10,7 +10,6 @@ from __future__ import annotations
 
 import hashlib
 import json
-import resource
 import time
 
 import torch
@@ -18,6 +17,7 @@ import torch
 from g7_s25_numeric_ttt import (
     ACTION_PAIR, EPISODE_STEPS, FAST_WIDTH, PrequentialTTTEpisode, WorldStep,
 )
+from g7_process_peak_memory import read_peak_memory
 
 MATCHED = frozenset(("periodic", "random", "surprise", "contradiction"))
 ARMS = MATCHED | {"full"}
@@ -140,6 +140,10 @@ class EpisodeWorkLedger:
         after_sha, size_after = _checkpoint_fingerprint(self.episode.model)
         if after_sha != self._initial_model_sha or size_after != self._model_checkpoint_bytes:
             raise ValueError("LEDGER_SLOW_MODEL_CHECKPOINT_DRIFT")
+        # Different OS metrics stay different. Linux retains the original
+        # ru_maxrss semantics. Windows reports native peak working-set bytes
+        # only, without inventing an equivalent Linux RSS measurement.
+        memory=read_peak_memory()
         self._closed = True
         return {
             "schema": "ttt-hybrid.g7-s25.observed-work-ledger.v1",
@@ -169,7 +173,15 @@ class EpisodeWorkLedger:
             "episode_process_cpu_seconds": round(self._cpu_ns / 1e9, 9),
             "episode_step_wall_seconds": round(self._wall_ns / 1e9, 9),
             "process_peak_rss_bytes": (
-                resource.getrusage(resource.RUSAGE_SELF).ru_maxrss * 1024),
+                memory.peak_bytes
+                if memory.comparable_to_linux_ru_maxrss else None),
+            "process_peak_working_set_bytes": (
+                memory.peak_bytes
+                if memory.metric == "windows_psapi_peak_working_set_bytes"
+                else None),
+            "process_peak_memory_metric": memory.metric,
+            "process_peak_memory_comparable_to_linux_ru_maxrss": (
+                memory.comparable_to_linux_ru_maxrss),
             "peak_rss_is_isolated_per_arm": False,
             "whole_process_training_and_validation_cpu_seconds": None,
             "trained_baselines_qualified": False,
