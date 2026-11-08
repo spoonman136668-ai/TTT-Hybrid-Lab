@@ -100,9 +100,13 @@ class S26V2EngineeringCustody(unittest.TestCase):
           "tests/test_g7_s26_v2_firstuse_contract.py",
           ".github/workflows/g7-s26-v2-fitval-firstuse-once.yml",
           "scripts/g7_s25_paired_interventions.py",
+          "experiments/g7_s27_fresh_baseline_diagnostic_frozen.json",
+          "scripts/g7_s27_target_baseline_diagnostics.py",
+          "tests/test_g7_s27_target_baseline_diagnostics.py",
+          ".github/workflows/g7-s27-prospective-diagnostic-once.yml",
         }
         self.assertEqual(paths,expected)
-        self.assertEqual(len(paths),27)
+        self.assertEqual(len(paths),31)
         self.assertEqual(git("status","--porcelain","--untracked-files=all"),"")
 
     def test_separate_dev_comparator_has_no_unix_resource_import(self):
