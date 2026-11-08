@@ -112,3 +112,58 @@ def test_candidate_save_does_not_advance_accepted_pointer(tmp_path):
     assert not (tmp_path / "latest").exists()
     assert not (tmp_path / "accepted").exists()
     assert root != tip
+
+
+def test_interrupted_training_equals_uninterrupted_with_optimizer_scheduler_and_dropout(tmp_path):
+    """Actual synthetic optimizer continuation, not merely weight reloading."""
+    def setup():
+        net = torch.nn.Sequential(torch.nn.Linear(2, 8), torch.nn.Dropout(.2),
+                                  torch.nn.Linear(8, 2))
+        opt = torch.optim.AdamW(net.parameters(), lr=.008)
+        sch = torch.optim.lr_scheduler.StepLR(opt, step_size=6, gamma=.7)
+        return net, opt, sch
+
+    def train(net, opt, sch, start, end):
+        x = torch.tensor([[.1, .3], [.6, -.2], [-.4, .9], [.8, .2]])
+        y = x * 1.7 - .3
+        for _ in range(start, end):
+            opt.zero_grad(set_to_none=True)
+            torch.nn.functional.mse_loss(net(x), y).backward()
+            opt.step()
+            sch.step()
+
+    torch.manual_seed(7342)
+    net, opt, sch = setup()
+    state = {"recurrent": torch.zeros(1, 3), "fast_weights": torch.zeros(1, 2, 3),
+             "history": torch.zeros(1, 0, 3)}
+    root = save_checkpoint(tmp_path, model=net, optimizer=opt, scheduler=sch,
+                           native_state=state, identity=identity(),
+                           sampler_state={"cursor": 0}, steps=0,
+                           consumed_examples=0, parent_manifest_sha256=None)
+    train(net, opt, sch, 0, 20)
+    full = deepcopy(net.state_dict())
+    full_optimizer = deepcopy(opt.state_dict())
+    full_scheduler = deepcopy(sch.state_dict())
+
+    net, opt, sch = setup()
+    _, sampler = load_checkpoint(tmp_path, root, model=net, optimizer=opt,
+                                 scheduler=sch, identity=identity())
+    assert sampler["cursor"] == 0
+    train(net, opt, sch, 0, 10)
+    checkpoint = save_checkpoint(tmp_path, model=net, optimizer=opt, scheduler=sch,
+                                 native_state=state, identity=identity(),
+                                 sampler_state={"cursor": 10}, steps=10,
+                                 consumed_examples=40, parent_manifest_sha256=root)
+    net, opt, sch = setup()
+    _, sampler = load_checkpoint(tmp_path, checkpoint, model=net,
+                                 optimizer=opt, scheduler=sch, identity=identity())
+    assert sampler["cursor"] == 10
+    train(net, opt, sch, 10, 20)
+    for k in full:
+        torch.testing.assert_close(net.state_dict()[k], full[k], rtol=0, atol=0)
+    assert opt.state_dict()["param_groups"] == full_optimizer["param_groups"]
+    for slot, vals in full_optimizer["state"].items():
+        for k, v in vals.items():
+            torch.testing.assert_close(opt.state_dict()["state"][slot][k], v,
+                                       rtol=0, atol=0)
+    assert sch.state_dict() == full_scheduler
