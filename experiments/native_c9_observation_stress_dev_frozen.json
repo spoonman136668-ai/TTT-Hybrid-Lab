@@ -1,0 +1,123 @@
+{
+  "schema": "ttt-hybrid.c9.frozen-dev-observation-stress.v1",
+  "parent_c8_sha": "dc9288552d91c1f56051b0d348ca8ca8e98e2bb4",
+  "p7_original_source_blob": "7db1fe42695f16bf2afe730f4348210156ac3c24",
+  "training": {
+    "p7_train_seeds": [
+      303,
+      307,
+      311
+    ],
+    "native_model_seeds": [
+      46111,
+      46117,
+      46129
+    ],
+    "p7_train_dev_seed": 51031,
+    "p7_validation_dev_seed": 51079,
+    "p7_real_adamw_updates": 600,
+    "p7_minibatch": 256,
+    "p7_train_examples": 6000,
+    "p7_validation_examples": 1920,
+    "model_arms": [
+      "LearnedRouter",
+      "ConventionalMLP"
+    ],
+    "sampler_rule": "original P7 source seed+9999; equal between trainable arms",
+    "saved_native_checkpoints": [
+      0,
+      40,
+      80
+    ],
+    "frozen_after_train": true
+  },
+  "stress": {
+    "description": "fixed known analytic factual signed-effect family; novel DEV action schedules and observation masks, not independent unfamiliar scientific worlds",
+    "stream_dev_seeds": [
+      71931,
+      71947
+    ],
+    "duration_events": 96,
+    "switch_probability": 0.06,
+    "initial_regime": "old or recent with equal seeded probability",
+    "factual_gain_by_regime": {
+      "old": 0.45,
+      "recent": -0.45
+    },
+    "factual_bias": 0.04,
+    "observational_gaussian_noise_sigma": 0.025,
+    "conditions": [
+      {
+        "id": "balanced",
+        "action_plus_probability": 0.5,
+        "observed_feedback_probability": 1
+      },
+      {
+        "id": "action_imbalanced",
+        "action_plus_probability": 0.9,
+        "observed_feedback_probability": 1
+      },
+      {
+        "id": "feedback_sparse",
+        "action_plus_probability": 0.5,
+        "observed_feedback_probability": 0.45
+      }
+    ],
+    "source_generator": "np.random.default_rng(seed plus deterministic condition and native-seed offsets), current event random draws independent of selector routing",
+    "actions": "-1,+1 stochastic based on frozen condition; same trace every arm",
+    "history": "8 most recently revealed completed (action, consequence) pairs; none from withheld feedback; no current outcome, regime label, position or future input",
+    "default_route": "old for trained P7, conventional MLP, P7 zero-history and P6 until identifiable history",
+    "trained_inference": "two factual predicted counterfactual action outputs per decision, no counterfactual outcomes; route by predicted slope sign, same for P7 and MLP",
+    "native_predictor": "one shared trained step80 native model with either own saved step80 memory or archived step40 fast memory plus current recurrent/history",
+    "arms": [
+      "p7_trained_router",
+      "trained_conventional_mlp",
+      "p6_handcoded",
+      "always_recent",
+      "oracle_evaluator_only",
+      "p7_zero_history"
+    ],
+    "prediction_order": "all six arms route and predict before sampling current noisy consequence; reveal only if Bernoulli mask true after all predictions",
+    "native_updates_during_evaluation": 0,
+    "trainable_router_gradient_updates_during_evaluation": 0,
+    "metrics": [
+      "full mean squared error",
+      "mature mean squared error after >=8 events since latent switch",
+      "mature route accuracy",
+      "immediate MSE after <8 events since latent switch",
+      "fraction feedback revealed",
+      "number context switches",
+      "trainable model training and evaluation wall-time",
+      "checkpoint hashes",
+      "raw per-event causal ledger"
+    ],
+    "hypotheses_diagnostic_only": {
+      "p7_mature_route_accuracy_at_least": 0.75,
+      "p7_mature_mse_better_than_always_recent_by_at_least": 0.05,
+      "p7_mature_mse_better_than_conventional_by_at_least": 0.01,
+      "p7_mature_mse_better_than_p6_by_at_least": 0.02,
+      "p7_mature_mse_better_than_zero_history_by_at_least": 0.05
+    }
+  },
+  "resource": {
+    "cpu_only": true,
+    "max_total_wall_seconds": 220,
+    "max_gpu_seconds": 0,
+    "paid_api_calls": 0
+  },
+  "qualification": {
+    "engineering_pass_independent_of_hypothesis_results": true,
+    "all_18_traces_required": true,
+    "full_final_regression_windows_and_wsl": true,
+    "original_cuda_negative_controls": true,
+    "hidden_scientific_first_use": false
+  },
+  "interpretation": [
+    "This is a stress-test within a known familiar public synthetic family, not an independent science world.",
+    "The same original P7 training generator is reused; train and validation model seeds remain original; no transfer claim.",
+    "Biased actions can deprive hand-coded P6 of opposite-sign evidence; sparse revelation reduces available causal feedback for all nonoracle arms.",
+    "Oracle evaluator gets latent context, explicitly not an informed baseline.",
+    "P7 and MLP get identical data, optimizer update counts, minibatch indices and two route prediction forwards; FLOPs not independently matched.",
+    "No live owner, official S26/S27 consumption, new scheduler/controller, FORGE integration, accepted model, or deployment."
+  ]
+}

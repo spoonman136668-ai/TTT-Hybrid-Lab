@@ -1,0 +1,121 @@
+# Native C9 source-frozen DEV-only robustness; no original science first-use.
+name: Native C9 factual feedback-missing archive robustness once
+on:
+  push:
+    branches: [engineering/native-c9-missing-feedback-robustness-20261108]
+    paths: [.github/workflows/native-c9-observation-stress-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-c9-owner-isolated-once
+  cancel-in-progress: false
+jobs:
+  windows-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-c9-missing-feedback-robustness-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout source exactly, with no retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-c9-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 220
+      - name: Lock unchanged C8 parent and all development sources and science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_C9_OWNER_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c9-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_C9_EXACT_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_C9_DIRTY_CHECKOUT'}
+          & git -C $root merge-base --is-ancestor 'dc9288552d91c1f56051b0d348ca8ca8e98e2bb4' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C9_C8_ANCESTRY'}
+          $pins=@{
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_transactional_resume.py'='a2906a27794508ddd01bea6cde7278b1cec561f2';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p3_continuity.py'='ae5a42140df501bc21bc3f050e75c70cb4771c89';
+            'scripts/native_c7_p6_factual_evidence.py'='a3804553b78fadf77b001b7feff3f41368d7f8fb';
+            'scripts/native_c7_history_archive_selection.py'='7c1956e1a08088dd1c63c17461f9ee3a4d04c95d';
+            'scripts/native_p7_learned_router_dev.py'='7db1fe42695f16bf2afe730f4348210156ac3c24';
+            'experiments/native_p7_learned_router_dev_frozen.json'='1ca3b8fa6b9f425bb4aea35462084c7e1fb5530e';
+            'scripts/native_c8_trained_archive_selection.py'='1200ce17930dc9a651c0cccab5bbb0ae30d352dc';
+            'scripts/native_c9_observation_robustness.py'='6f282eebb3f771d3355eb04835164a587473b099';
+            'tests/test_native_c9_observation_robustness.py'='6cbaae7ac08dfe89a7aca5e483e1612024d09b39';
+            'experiments/native_c9_observation_stress_dev_frozen.json'='9ce404e76d88927cd3cf9c14f51551e0cb18c5dc';
+            'docs/NATIVE_C9_OBSERVATION_STRESS.md'='4bbfbde396780561b7290678da9f6adfbbc59216';
+            'experiments/native_p1_control_admission_preflight.json'='9de1caedb56f1248264ac37db08ec66b8265fe16'
+          }
+          foreach($path in $pins.Keys){
+            $blob=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $pins[$path]){throw "BLOCKED_C9_BLOB:$path"}
+          }
+          $p1=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          $p7=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p7_learned_router_dev_frozen.json') -Raw|ConvertFrom-Json
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_c9_observation_stress_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($p1.science.authorized -ne $false -or $p1.science.data_consumed -ne $false -or @($p1.science.seeds.PSObject.Properties).Count -ne 0 -or $p7.science.authorized -ne $false -or $p7.science.consumed -ne $false -or $f.qualification.hidden_scientific_first_use -ne $false -or $f.training.p7_real_adamw_updates -ne 600 -or $f.stress.duration_events -ne 96 -or @($f.stress.conditions).Count -ne 3 -or $f.stress.native_updates_during_evaluation -ne 0 -or $f.stress.trainable_router_gradient_updates_during_evaluation -ne 0){throw 'BLOCKED_C9_FROZEN_OR_FIRST_USE'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_C9_PINNED_ENV'}
+          $vers=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $vers.Count -lt 3 -or $vers[0] -cne '2.5.1+cpu' -or $vers[1] -cne '8.3.4' -or -not $vers[2]){throw 'BLOCKED_C9_PINNED_TORCH_PYTEST_NUMPY'}
+          Write-Output 'NATIVE_C9_EXACT_SOURCE_AND_SCIENCE_FENCE=PASS'
+      - name: Full Windows regression and all 18 observation stress traces
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c9-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          $env:NATIVE_P3_ENGINEERING_ONLY='1';$env:NATIVE_C9_ENGINEERING_ONLY='1';$env:NATIVE_P7_DEV_ONLY='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\c9_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C9_WIN_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\c9_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C9_WIN_NEGATIVE_OR_SHA'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 247){throw 'BLOCKED_C9_WIN_TEST_COUNT'}
+          & $py -I -B (Join-Path $root 'scripts\native_c9_observation_robustness.py') --receipt (Join-Path $root 'local_runs\c9_windows_stress.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C9_WIN_STRESS'}
+          $z=Get-Content -LiteralPath (Join-Path $root 'local_runs\c9_windows_stress.json') -Raw|ConvertFrom-Json
+          if($z.status -cne 'PASS_TRAINED_MEMORY_ROUTING_DEV_STRESS_INTEGRITY' -or $z.native_seed_count -ne 3 -or $z.trace_count -ne 18 -or $z.scientific_first_use -cne 'NOT_RUN' -or $z.model_promoted -ne $false -or $z.active_training_activated -ne $false -or $z.flops_and_total_compute_matched -ne $false){throw 'BLOCKED_C9_WIN_RECEIPT'}
+          foreach($rec in $z.records){if(@($rec.traces).Count -ne 6 -or $rec.all_sources_models_and_native_memory_unchanged -ne $true -or $rec.full_trained_control_provenance.learned.training_updates -ne 600 -or $rec.full_trained_control_provenance.conventional.training_updates -ne 600){throw 'BLOCKED_C9_WIN_MODEL_INTEGRITY'}; foreach($t in $rec.traces){if($t.events -ne 96 -or @($t.ledger).Count -ne 96 -or @($t.measurements.PSObject.Properties).Count -ne 6 -or @($t.hypotheses.PSObject.Properties).Count -ne 5 -or $t.current_outcome_seen_by_router -ne $false -or $t.unrevealed_factual_outcomes_seen_by_router -ne $false -or $t.model_and_native_fast_writes -ne 0){throw 'BLOCKED_C9_WIN_LEAKAGE'}}}
+          Write-Output 'NATIVE_C9_WINDOWS_FULL_TRAINED_STRESS=PASS_ENGINEERING'
+      - name: Full Ubuntu WSL regression and all 18 observation stress traces
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_C9_WSL_OWNER'}
+          $root="$lp/native-c9-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C9_ENGINEERING_ONLY=1' 'NATIVE_P7_DEV_ONLY=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/c9_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C9_WSL_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c9-candidate\local_runs\c9_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C9_WSL_NEGATIVE_OR_SHA'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 246){throw 'BLOCKED_C9_WSL_TEST_COUNT'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 280s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C9_ENGINEERING_ONLY=1' 'NATIVE_P7_DEV_ONLY=1' $py -I -B "$root/scripts/native_c9_observation_robustness.py" --receipt "$root/local_runs/c9_linux_stress.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C9_WSL_STRESS'}
+          $z=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c9-candidate\local_runs\c9_linux_stress.json') -Raw|ConvertFrom-Json
+          if($z.status -cne 'PASS_TRAINED_MEMORY_ROUTING_DEV_STRESS_INTEGRITY' -or $z.native_seed_count -ne 3 -or $z.trace_count -ne 18 -or $z.scientific_first_use -cne 'NOT_RUN' -or $z.model_promoted -ne $false -or $z.active_training_activated -ne $false -or $z.flops_and_total_compute_matched -ne $false){throw 'BLOCKED_C9_WSL_RECEIPT'}
+          foreach($rec in $z.records){if(@($rec.traces).Count -ne 6 -or $rec.all_sources_models_and_native_memory_unchanged -ne $true -or $rec.full_trained_control_provenance.learned.training_updates -ne 600 -or $rec.full_trained_control_provenance.conventional.training_updates -ne 600){throw 'BLOCKED_C9_WSL_MODEL_INTEGRITY'}; foreach($t in $rec.traces){if($t.events -ne 96 -or @($t.ledger).Count -ne 96 -or @($t.measurements.PSObject.Properties).Count -ne 6 -or @($t.hypotheses.PSObject.Properties).Count -ne 5 -or $t.current_outcome_seen_by_router -ne $false -or $t.unrevealed_factual_outcomes_seen_by_router -ne $false -or $t.model_and_native_fast_writes -ne 0){throw 'BLOCKED_C9_WSL_LEAKAGE'}}}
+          Write-Output 'NATIVE_C9_WSL_FULL_TRAINED_STRESS=PASS_ENGINEERING'
+      - name: Preserve source-locked full regression and all raw factual-stress receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-c9-observation-stress-eng-once
+          path: |
+            native-c9-candidate/local_runs/c9_windows.json
+            native-c9-candidate/local_runs/c9_linux.json
+            native-c9-candidate/local_runs/c9_windows_stress.json
+            native-c9-candidate/local_runs/c9_linux_stress.json
+          retention-days: 30
+          if-no-files-found: warn
