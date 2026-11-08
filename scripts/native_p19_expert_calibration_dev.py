@@ -19,6 +19,8 @@ import time
 import torch
 from torch import nn
 from torch.nn import functional as F
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from scripts import native_p18_real_cartpole_factual_dev as p18
 
 ROOT = Path(__file__).resolve().parents[1]
