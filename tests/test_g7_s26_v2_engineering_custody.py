@@ -94,9 +94,15 @@ class S26V2EngineeringCustody(unittest.TestCase):
           "scripts/g7_s26_v2_baseline_observations.py",
           "tests/test_g7_s26_v2_baseline_observations.py",
           ".github/workflows/g7-s26-v2-baseline-input-once.yml",
+          "experiments/g7_s26_v2_fitval_firstuse_frozen.json",
+          "experiments/g7_s26_v2_fitval_exact_source_lock.json",
+          "scripts/g7_s26_v2_firstuse_controls.py",
+          "tests/test_g7_s26_v2_firstuse_contract.py",
+          ".github/workflows/g7-s26-v2-fitval-firstuse-once.yml",
+          "scripts/g7_s25_paired_interventions.py",
         }
         self.assertEqual(paths,expected)
-        self.assertEqual(len(paths),21)
+        self.assertEqual(len(paths),27)
         self.assertEqual(git("status","--porcelain","--untracked-files=all"),"")
 
     def test_separate_dev_comparator_has_no_unix_resource_import(self):
