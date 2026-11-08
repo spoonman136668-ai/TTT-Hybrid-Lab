@@ -65,7 +65,7 @@ def test_invalid_elapsed_and_scientific_execution_denied(monkeypatch):
         m.step(sensor,torch.ones(1,1),-torch.ones(1,1),m.initial(sensor),
                mode="parallel",active=True)
     monkeypatch.setenv("NATIVE_P9_DEV_ONLY","0")
-    with pytest.raises(RuntimeError,match="SCIENTIFIC_FIRST_USE_FORBIDDEN"):
+    with pytest.raises(RuntimeError,match="P9_SCIENCE_FIRST_USE_FORBIDDEN"):
         run()
 
 
