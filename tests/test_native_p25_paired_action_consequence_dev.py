@@ -69,7 +69,7 @@ class FakeGym:
         return FakeEnv()
 
 def test_factual_sister_interventions_both_really_execute_and_effect_measurable(monkeypatch):
-    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(101000,101002))
+    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(104000,104002))
     monkeypatch.setattr(p25,"PREFIX_LENGTHS",(0,3))
     samples,receipt=p25.source_pairs(FakeGym(),p25.TRAIN_SEEDS,"original","train")
     assert len(samples)==4
@@ -87,7 +87,7 @@ def test_factual_sister_interventions_both_really_execute_and_effect_measurable(
         p25.source_pairs(FakeGym(),range(999,1000),"original","train")
 
 def test_action_contrast_negative_and_true_sign_with_factual_data(monkeypatch):
-    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(101000,101002))
+    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(104000,104002))
     monkeypatch.setattr(p25,"PREFIX_LENGTHS",(0,3))
     samples,_=p25.source_pairs(FakeGym(),p25.TRAIN_SEEDS,"original","train")
     x,a,y=p25.arrays(samples)
@@ -99,7 +99,7 @@ def test_action_contrast_negative_and_true_sign_with_factual_data(monkeypatch):
     assert r["zero_action_effect_reference_mse"]>0
 
 def test_ridge_uses_factual_observations_and_trained_mlp_receipts(monkeypatch):
-    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(101000,101002))
+    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(104000,104002))
     monkeypatch.setattr(p25,"PREFIX_LENGTHS",(0,3))
     samples,_=p25.source_pairs(FakeGym(),p25.TRAIN_SEEDS,"original","train")
     ridge=p25.ridge_fit(samples)
@@ -121,3 +121,36 @@ def test_reject_unregistered_conditions_and_source_drift():
     e.gravity=900
     with pytest.raises(RuntimeError,match="GRAVITY_DRIFT"):
         p25.condition_env(e,"original")
+
+def test_native_numpy_float32_observation_serialization_repaired(monkeypatch):
+    import numpy as np
+    samples=np.asarray([np.float32(.018),np.float32(-.001)],dtype=np.float32)
+    assert p25.real_floats(samples)==[float(samples[0]),float(samples[1])]
+    import json
+    assert isinstance(json.dumps(p25.real_floats(samples)),str)
+    monkeypatch.setattr(p25,"TRAIN_SEEDS",range(104000,104002))
+    monkeypatch.setattr(p25,"PREFIX_LENGTHS",(0,3))
+    class NumPyGym:
+        def make(self,name,render_mode=None):
+            class NumPyEnv(FakeEnv):
+                def reset(self,seed=None):
+                    original,meta=super().reset(seed=seed)
+                    return np.array(original,dtype=np.float32),meta
+                def step(self,action):
+                    observation,reward,term,trunc,meta=super().step(action)
+                    return np.array(observation,dtype=np.float32),reward,term,trunc,meta
+            return NumPyEnv()
+    factual,receipt=p25.source_pairs(NumPyGym(),p25.TRAIN_SEEDS,"original","train")
+    assert len(factual)==4
+    assert receipt["valid_sister_pairs"]==4
+    assert len(receipt["factual_action_consequence_sha256"])==64
+    assert json.loads(json.dumps(receipt))["valid_sister_pairs"]==4
+
+def test_fresh_R1_dev_seed_family_and_original_p25_no_replay():
+    original=p25.frozen()
+    assert original["paired_intervention"]["train_seed_range"]==[101000,101255]
+    assert p25.TRAIN_SEEDS.start==104000
+    assert p25.VAL_SEEDS.start==105000
+    assert p25.EVAL_SEEDS.start==106000
+    assert set(p25.TRAIN_SEEDS).isdisjoint(range(101000,101256))
+    assert set(p25.EVAL_SEEDS).isdisjoint(range(103000,103096))
