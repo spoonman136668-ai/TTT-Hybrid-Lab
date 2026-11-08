@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.native-p4.interference-dev-frozen.v1",
+  "registration_date": "2026-11-08",
+  "status": "FROZEN_DEV_ONLY_BEFORE_EXACT_SOURCE_RUN",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_p3_pr": 54,
+    "parent_p3_sha": "82d68d947242d50d4993942ba2e9d5acf6343055",
+    "related_retention_registry_pr": 55,
+    "related_retention_registry_sha": "1d2bf2ec5505ca563b4a97a84918a26f49a09154",
+    "original_model_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_p0_gate_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f",
+    "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "engineering": {
+    "hypothesis_H1": "A single factual fast-memory bank keyed predominantly by action interferes across two recurring contexts with opposite action effects.",
+    "hypothesis_H0": "The native shared memory preserves A/B action relationships sufficiently without extra context banks; or the oracle upper-bound is not better.",
+    "mechanism": "two familiar algebraic contexts, not latent scientific worlds; 24 trial A,24 B,24 A,24 B. Same pretrained-untrained original model weights, prequential input, recurrent/history across three arms.",
+    "arms": [
+      "shared_factual_fast",
+      "oracle_context_bank",
+      "no_feedback"
+    ],
+    "model_initialization_seeds": [
+      361,
+      367,
+      373,
+      379,
+      383,
+      389,
+      397,
+      401
+    ],
+    "n_events": 96,
+    "action_schedule": "alternate -1,+1",
+    "ctx_sensor": {
+      "A": 0.35,
+      "B": -0.35
+    },
+    "ctx_action_effect": {
+      "A": 0.9,
+      "B": -0.9
+    },
+    "fast_memory_rate": 0.25,
+    "history_limit": 4,
+    "factual_outcome_available_only_after_prediction": true,
+    "oracle_bank_has_twice_capacity_and_true_context_identity": true,
+    "oracle_bank_is_diagnostic_upper_bound_not_matched_control": true,
+    "no_feedback_has_identical_recurrence_history": true,
+    "model_optimizer_updates": 0,
+    "real_world_data": false,
+    "science_generator": false,
+    "positive_hypothesis_1": "Oracle bank first-four-revisit MSE < 50% of shared factual single-memory MSE on both A and B.",
+    "positive_hypothesis_2": "Shared factual fast-memory late-revisit MSE below no-feedback for A and B.",
+    "score_windows": {
+      "A_original_late": [
+        16,
+        24
+      ],
+      "B_first_late": [
+        40,
+        48
+      ],
+      "A_recall_immediate": [
+        48,
+        52
+      ],
+      "A_recall_late": [
+        64,
+        72
+      ],
+      "B_recall_immediate": [
+        72,
+        76
+      ],
+      "B_recall_late": [
+        88,
+        96
+      ]
+    },
+    "acceptance": "Execution/integrity must be complete; hypotheses may fail. Preserve per-init negative and positive outcomes.",
+    "whole_process_wall_budget_seconds": 35,
+    "isolated_existing_runner": "TTT-HYBRID-GPU-WIN",
+    "cuda": false,
+    "install": false,
+    "controller": false,
+    "accepted_model_change": false,
+    "merge": false,
+    "deploy": false
+  },
+  "science_first_use": {
+    "authorized": false,
+    "seed_assignments": {},
+    "original_worlds_consumed": 0,
+    "retention_unfamiliar_transfer": "NOT_EVALUATED",
+    "S26_predecessor": "FAIL_CONVENTIONAL_BASELINE_COMPETENCE_OR_PLATEAU unchanged",
+    "S27_independent": "reserved seeds NOT consumed",
+    "qualification_needed": "separate fresh-source owner, genuine trained controls and sealed transfer"
+  }
+}

@@ -1,0 +1,107 @@
+# One-use P4 context interference DEV falsification; scientific source sealed.
+name: Native P4 context interference falsification dev once
+on:
+  push:
+    branches:
+      - engineering/native-p4-interference-falsification-dev-20261108
+    paths:
+      - .github/workflows/native-p4-interference-dev-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p4-context-interference-oneuse
+  cancel-in-progress: false
+jobs:
+  full-windows-wsl-and-interference:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p4-interference-falsification-dev-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p4-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 120
+      - name: Exact SHA original blob and no scientific use admission
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P4_OWNER_SCOPE_BLOCKED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p4-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P4_EXACT_SOURCE_DRIFT'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P4_DIRTY_SOURCE'}
+          & git -C $root merge-base --is-ancestor '82d68d947242d50d4993942ba2e9d5acf6343055' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P4_P3_ANCESTRY_BLOCKED'}
+          $pins=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'scripts/native_p3_continuity.py'='ae5a42140df501bc21bc3f050e75c70cb4771c89'
+          }
+          foreach($path in $pins.Keys){
+            $got=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $got -cne $pins[$path]){throw "P4_ORIGINAL_BLOB_DRIFT:$path"}
+          }
+          $frozen=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p4_interference_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($frozen.science_first_use.authorized -ne $false -or $frozen.science_first_use.original_worlds_consumed -ne 0 -or @($frozen.science_first_use.seed_assignments.PSObject.Properties).Count -ne 0){throw 'P4_SCIENCE_NOT_AUTHORIZED'}
+          $python=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $python)){throw 'P4_MISSING_EXISTING_CPU'}
+          $version=(& $python -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $version -cne '2.5.1+cpu'){throw 'P4_TORCH_DRIFT'}
+          Write-Output 'P4_FROZEN_ORIGINALS_AND_SCIENCE_FENCE=PASS'
+      - name: Final full Windows CPU regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p4-candidate'
+          $python=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONHASHSEED='0';$env:PYTHONDONTWRITEBYTECODE='1'
+          & $python -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p4_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P4_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p4_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P4_WINDOWS_RECEIPT_FAIL'}
+          Write-Output 'P4_WINDOWS_FULL_AND_SOURCE_NEGATIVE=PASS'
+      - name: Final full WSL CPU regression and original negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P4_WSL_OWNER_FAIL'}
+          $root="$lp/native-p4-candidate"
+          $python="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $python -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p4_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P4_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p4-candidate\local_runs\native_p4_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P4_WSL_RECEIPT_FAIL'}
+          Write-Output 'P4_WSL_FULL_AND_SOURCE_NEGATIVE=PASS'
+      - name: Execute bounded multi-context factual interference with negative outcomes preserved
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p4-candidate"
+          $python="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 95s /usr/bin/env 'NATIVE_P4_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $python -I -B "$root/scripts/native_p4_interference_dev.py" --receipt "$root/local_runs/native_p4_interference.json"
+          if($LASTEXITCODE -ne 0){throw 'P4_FALSIFIABILITY_EXECUTION_FAIL'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p4-candidate\local_runs\native_p4_interference.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_DEV_INTEGRITY_NOT_SCIENCE' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.world_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 8 -or $p.model_optimizer_updates -ne 0){throw 'P4_FALSIFIABILITY_RECEIPT_FAIL'}
+          Write-Output 'P4_DEV_INTERFERENCE_RESULT_RETAINED_NO_SCIENCE=PASS'
+      - name: Archive immutable exact-source and falsification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p4-interference-dev-once
+          path: native-p4-candidate/local_runs/native_p4_*.json
+          retention-days: 30
+          if-no-files-found: warn
