@@ -1,0 +1,71 @@
+{
+  "schema": "ttt-hybrid.native-p9.g2.randomized-cuda-frozen.v1",
+  "registered_on": "2026-11-08",
+  "scope": "ENGINEERING_SYNTHETIC_GPU_DEVELOPMENT_ONLY",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_g1_pr": 69,
+    "parent_g1_sha": "cda3885e15d3ecee91b6a55931849002543ffb15",
+    "original_p9_script_blob": "78a70f644c194e98c1e2a5c14785e5405054746f",
+    "original_g1_wrapper_blob": "218f4e22a1e0139b661e51a44e07095052ec8a80",
+    "original_g1_frozen_blob": "2b59fb6e372e4cef654e6f6da3eca924701268f9",
+    "G7_R3_sha": "06a01c2c3a980eeb806a7ecb7cca1979a431f80c",
+    "R3_package_manifest_sha256": "b0f674fd52f9f514d408840d27b969ce2da19ea119d90a6ce8f59fde05c073df"
+  },
+  "question": "Did P9 variance-based conditional refinement actually accelerate the same P9 inference stream on the existing GPU in a repeatable manner with ≤1% prediction quality cost?",
+  "null": "No consistent >=25% wall/GPU event reduction with ≤1% output MSE degradation across all three registered original P9 DEV seeds.",
+  "design": {
+    "source_p9_unchanged": true,
+    "benchmark_device": "existing CUDA 12.8 with torch 2.9.0+cu128 on isolated TTT GPU runner",
+    "arms": [
+      "parallel_dense",
+      "parallel_gate",
+      "parallel_random",
+      "sequential_dense"
+    ],
+    "paired_by": "each of 24 randomized arm-order rounds, identical model weights and 64-event trace",
+    "rounds": 24,
+    "warmups": 3,
+    "steps": 64,
+    "batch": 4,
+    "initializations": [
+      613,
+      617,
+      619
+    ],
+    "random_arm_order_seed_offset": 310000,
+    "bootstrap_random_seed_offset": 410000,
+    "bootstrap_resamples": 1000,
+    "CI": "2.5/97.5 percentile from 1000 deterministic bootstrap sample medians of paired per-round gated/dense ratios; no point omitted",
+    "speed_ratio_max": 0.75,
+    "untrained_MSE_ratio_max": 1.01,
+    "metric_primary": "host synchronized wall_ms; ratio of per-arm independent medians and 95% paired bootstrap upper-bound",
+    "metric_secondary": "CUDA stream events elapsed ms; ratio of medians and 95% paired bootstrap upper-bound",
+    "accept_speed_and_quality": "all three seed comparisons must individually have host and GPU event median ratio <=0.75, both paired bootstrap 95% upper ratio <=0.75, and variance-gate MSE <=1.01 dense MSE",
+    "gate_variance_threshold_unchanged": 0.1,
+    "equal_budget_random_required": true,
+    "state_continuity_required": true,
+    "avoid_outlier_pruning": true,
+    "record_every_arm_order_and_24_per_arm_samples": true,
+    "gpu_event_caveat": "measures stream interval between event records, includes Python kernel dispatch idle; does not isolate actual GPU occupancy/compute kernel cycles",
+    "peak_gpu_torch_allocated_MiB_max": 256,
+    "min_free_GPU_GiB": 8,
+    "max_initial_GPU_utilization_percent": 20,
+    "zero_other_compute_processes": true,
+    "max_benchmark_seconds": 115,
+    "max_child_seconds": 150,
+    "no_extra_gpu_workloads": true,
+    "engineering_PASS_independent_of_hypothesis": true,
+    "no_install": true,
+    "no_training": true,
+    "no_models_promoted": true,
+    "no_pipeline_integration": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "first_use_consumed": false,
+    "S26_negative_preserved": true,
+    "S27_sealed_reserve_preserved": true
+  }
+}
