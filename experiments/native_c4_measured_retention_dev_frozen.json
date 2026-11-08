@@ -1,0 +1,55 @@
+{
+  "schema": "ttt-hybrid.c4.measured-dev-retention-protocol.v1",
+  "purpose": "measured capacity/regression review of C3 40-step champion vs 80-step descendant, not scientific acceptance",
+  "source_parent_sha": "78644c0548b63d0d0b2fcc807ab4af8748670cf4",
+  "initializations": [
+    46111,
+    46117,
+    46129
+  ],
+  "facts": {
+    "train_steps": 80,
+    "champion_steps": 40,
+    "challenger_steps": 80,
+    "evaluation_actions_per_regime": 16,
+    "action_sequence": "alternating -1,+1",
+    "sensor": 0,
+    "dt": 0.2,
+    "labels": "existing P2 analytic factual gain +0.45 before 40 and -0.45 from 40",
+    "evaluation_data": "reused public analytic regime; in-sample capability probe, not heldout or independent worlds",
+    "evaluation": "read-only fresh state snapshot per query; no observation fed back; no weight update",
+    "compare": "same-source C2-recovered champion and child candidate; no new optimizer"
+  },
+  "capabilities": [
+    {
+      "id": "old_regime_mse",
+      "direction": "lower",
+      "floor": 4,
+      "retention_tolerance": 0.002,
+      "meaningful_gain": 0.02,
+      "minimum_samples": 16
+    },
+    {
+      "id": "postreversal_mse",
+      "direction": "lower",
+      "floor": 4,
+      "retention_tolerance": 0.002,
+      "meaningful_gain": 0.02,
+      "minimum_samples": 16
+    }
+  ],
+  "budget": {
+    "max_wall_seconds": 120,
+    "max_gpu_seconds": 0,
+    "max_resident_bytes": 2147483648
+  },
+  "decisions": {
+    "regression": "any capability worsening by >0.002 blocks",
+    "gain": "at least one improvement >=0.02 and no regressed capability",
+    "scientific_first_use": false,
+    "accepted_model_promotion": false,
+    "owner_backup_authenticated": false,
+    "preregistered_science": false
+  },
+  "immutable": true
+}
