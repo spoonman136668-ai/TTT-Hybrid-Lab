@@ -1,0 +1,112 @@
+# One-use project-owned P10 factual closed-loop DEV; no official science first-use.
+name: Native P10 closed-loop causal interventions vs trained MLP once
+on:
+  push:
+    branches:
+      - engineering/native-p10-closed-loop-intervention-dev-20261108
+    paths:
+      - .github/workflows/native-p10-closed-loop-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p10-closed-loop-oneuse
+  cancel-in-progress: false
+jobs:
+  native-p10-closed-loop:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p10-closed-loop-intervention-dev-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p10-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 170
+      - name: Admit original source and frozen development-only causal action protocol
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P10_OWNER_ONEUSE_REQUIRED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p10-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P10_EXACT_SHA_REQUIRED'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P10_CLEAN_CHECKOUT_REQUIRED'}
+          & git -C $root merge-base --is-ancestor 'a0d749d3ec28cbc15ff212a6fdd9752799cc8578' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P10_PARENT_PR63_ANCESTRY_REQUIRED'}
+          $pins=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p7_learned_router_dev.py'='7db1fe42695f16bf2afe730f4348210156ac3c24';
+            'scripts/native_p8_schedule_dev.py'='2ab9018fe6d3bc68fe30af7f30a1cf189bc6433d';
+            'scripts/native_p10_closed_loop_intervention_dev.py'='b85150fb294269d9db88a2cbb194c1a6140cf081';
+            'tests/test_native_p10_closed_loop_intervention_dev.py'='f178cdac52a886bc2230672a82abe912c7d1b96a';
+            'experiments/native_p10_closed_loop_dev_frozen.json'='52137fadc1512f641b978596c91770224920ef58'
+          }
+          foreach($p in $pins.Keys){
+            $v=(& git -C $root hash-object -- $p|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $v -cne $pins[$p]){throw "P10_ORIGINAL_BLOB_DRIFT:$p"}
+          }
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p10_closed_loop_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($m.science.authorized -ne $false -or $m.science.first_use_consumed -ne $false -or @($m.science.seeds.PSObject.Properties).Count -ne 0 -or @($m.design.model_initializations).Count -ne 3 -or @($m.design.eval_dev_rng_seeds).Count -ne 4 -or $m.design.original_worlds_synthetically_known -ne $true){throw 'P10_FROZEN_SCIENCE_OR_BUDGET_DENIED'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P10_EXISTING_CPU_ENV_MISSING'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          $numpy=(& $py -I -B -c 'import numpy;print(numpy.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4' -or $numpy -cne '1.26.4'){throw 'P10_PINNED_ENV_DRIFT'}
+          Write-Output 'P10_EXACT_SOURCE_SCIENCE_DENIAL=PASS'
+      - name: Full Windows regression and original source negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p10-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0';$env:OMP_NUM_THREADS='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p10_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P10_WIN_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p10_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P10_WIN_RECEIPT_DRIFT'}
+          Write-Output 'P10_WINDOWS_FULL_AND_NEGATIVE=PASS'
+      - name: Full Ubuntu WSL regression and original source negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P10_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p10-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'OMP_NUM_THREADS=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p10_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P10_LINUX_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p10-candidate\local_runs\native_p10_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P10_LINUX_RECEIPT_DRIFT'}
+          Write-Output 'P10_LINUX_FULL_AND_NEGATIVE=PASS'
+      - name: Run bounded real gradient-trained closed-loop intervention versus conventional controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p10-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 150s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P10_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p10_closed_loop_intervention_dev.py" --receipt "$root/local_runs/native_p10_interventions.json"
+          if($LASTEXITCODE -ne 0){throw 'P10_DEV_INTERVENTION_EXECUTION_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p10-candidate\local_runs\native_p10_interventions.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_CLOSED_LOOP_DEV_INTEGRITY_NOT_SCIENCE' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.science_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 3 -or $p.optimizer_steps_per_model -ne 1200 -or @($p.evaluation_families).Count -ne 3){throw 'P10_DEV_INTEGRITY_RECEIPT_INVALID'}
+          Write-Output 'P10_CLOSED_LOOP_FACTUAL_RETURN_NEGATIVES_RETAINED=PASS_ENGINEERING_ONLY'
+      - name: Preserve source-qualified dual-OS regression and complete intervention traces
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p10-closed-loop-once
+          path: native-p10-candidate/local_runs/native_p10_*.json
+          retention-days: 30
+          if-no-files-found: warn
