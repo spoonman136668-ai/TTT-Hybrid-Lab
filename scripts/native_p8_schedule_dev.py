@@ -14,7 +14,13 @@ import math
 import os
 from pathlib import Path
 import subprocess
+import sys
 import time
+
+# -I isolated entrypoints drop the working directory and script parent.
+# Admit only this script's checked-out repository root for the pinned local P7 module.
+ROOT=Path(__file__).resolve().parents[1]
+sys.path.insert(0,str(ROOT))
 
 import torch
 from torch.nn import functional as F
@@ -26,7 +32,6 @@ from scripts.native_p7_learned_router_dev import (
     SCRAMBLE_DEV_SEED, BATCH,
 )
 
-ROOT=Path(__file__).resolve().parents[1]
 SCHEMA="ttt-hybrid.native-p8.learning-rate-stability-dev.v1"
 ARMS=("LearnedRouter","ConventionalMLP")
 SCHEDULES=("fixed","cosine_decay")
