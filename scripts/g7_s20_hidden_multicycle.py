@@ -19,7 +19,6 @@ import io
 import json
 import math
 from pathlib import Path
-import resource
 import sys
 import time
 from statistics import mean
@@ -31,6 +30,7 @@ import g7_s18_causal_feature_replication as s18
 import torch
 from torch import nn
 from torch.nn import functional as F
+from g7_process_peak_memory import read_peak_memory
 
 class Blocked(Exception):
     pass
@@ -241,6 +241,10 @@ def verify_stable_controls(phases):
                         "UNTRAINED_OR_CALIBRATED_CONTROL_DRIFT_"+key)
 
 def run(args):
+    # The frozen S20 assay has a Linux ru_maxrss/2 GiB criterion. Windows
+    # working-set bytes cannot be substituted or claimed equivalent.
+    # S25 may still import the original physics functions on Windows.
+    require(sys.platform == "linux", "S20_FROZEN_RSS_REQUIRES_LINUX")
     pbytes=args.protocol.read_bytes()
     p=json.loads(pbytes)
     frozen(p)
@@ -387,7 +391,11 @@ def run(args):
             "PRELIMINARY_PARTIAL_OBSERVATION_MULTICYCLE_TRANSFER_NOT_SCIENTIFIC_PASS"
             if zero_shot_pass and memory_pass else
             "PARTIAL_OBSERVATION_OR_MULTICYCLE_LEARNING_FROZEN_NULL")
-    rss=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024
+    peak=read_peak_memory()
+    require(peak.metric == "linux_ru_maxrss_bytes"
+            and peak.comparable_to_linux_ru_maxrss,
+            "S20_FROZEN_RSS_METRIC_NOT_EQUIVALENT")
+    rss=peak.peak_bytes
     require(rss<=t["max_cpu_rss_bytes"],"FROZEN_RSS_CAP_EXCEEDED")
     require(not torch.cuda.is_initialized(),
             "UNAUTHORIZED_CUDA_USED")

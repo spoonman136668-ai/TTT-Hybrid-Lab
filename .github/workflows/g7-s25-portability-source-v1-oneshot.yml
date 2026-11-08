@@ -1,0 +1,168 @@
+# Once-only native Windows + WSL CPU regression of versioned S25 portability.
+# No scientific first-use, model training, CUDA, R3 writes or owner changes.
+name: G7-S25 versioned native Windows and WSL portability full regression
+on:
+  push:
+    branches:
+      - engineering/g7-s25-portability-source-v1-20261107
+    paths:
+      - .github/workflows/g7-s25-portability-source-v1-oneshot.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-s25-portability-source-v1-oneshot
+  cancel-in-progress: false
+jobs:
+  exact-head-cross-platform:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s25-portability-source-v1-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 24
+    steps:
+      - name: Check out exact versioned engineering candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s25-portability-v1
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Read-only custody, isolated native environments and R3 admission
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+             $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+             $env:RUNNER_OS -cne 'Windows' -or
+             $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+             $env:GITHUB_RUN_NUMBER -cne '1'){throw 'BLOCKED_OWNER_OR_ONE_USE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-portability-v1'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_SOURCE_HEAD'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_DIRTY_SOURCE'}
+          $protocol=(& git -C $root hash-object -- experiments/g7_s25_frozen_contradiction_ttt.json|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $protocol -cne '31633b341403729b7ffbb7d73f3a04098ad44380'){throw 'BLOCKED_FROZEN_S25_PROTOCOL'}
+          $science=(& git -C $root hash-object -- experiments/g7_s20_frozen_hidden_multicycle.json|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $science -cne '05a38c0161ed67fc5f839947baaf3d4153d64a18'){throw 'BLOCKED_FROZEN_S20_PROTOCOL'}
+          $pins=(& git -C $root hash-object -- source_pins.json|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $pins -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630'){throw 'BLOCKED_SOURCE_PINS'}
+          $original=(& git -C $root hash-object -- scripts/g7_s20_hidden_multicycle.py|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $original -ceq 'ac3f9ddd5b879e53e62030707fb6419adaf732ca'){throw 'BLOCKED_VERSIONED_SOURCE_NOT_SEPARATE'}
+          $winPy=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $uvRoot=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1'
+          $zip=Join-Path $uvRoot 'uv.zip'
+          if(-not(Test-Path -LiteralPath $winPy -PathType Leaf) -or
+             -not(Test-Path -LiteralPath $zip -PathType Leaf)){throw 'BLOCKED_WINDOWS_CPU311_ABSENT'}
+          $hash=(Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($hash -cne 'cdfb04512c9184939f16eea02644a7133b4e41233ead69122d49847d29a45538'){throw 'BLOCKED_UV_ARCHIVE_DRIFT'}
+          $winProbe=(& $winPy -I -B (Join-Path $root 'scripts\g7_s25_portable_runtime_probe.py') --mode cpu|Out-String).Trim()
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WINDOWS_RUNTIME_PROBE'}
+          $w=ConvertFrom-Json $winProbe
+          if($w.torch -cne '2.5.1+cpu' -or $w.pytest -cne '8.3.4' -or
+             $w.python[0] -ne 3 -or $w.python[1] -ne 11 -or $w.python[2] -ne 14 -or
+             ($w.numpy -and $w.numpy -cne '1.26.4')){throw 'BLOCKED_WINDOWS_RUNTIME_DRIFT'}
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          $userName=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($uid -cne '1000' -or -not $lp -or $LASTEXITCODE -ne 0){throw 'BLOCKED_WSL_USER'}
+          $probe="$lp/g7-s25-portability-v1/scripts/g7_s25_portable_runtime_probe.py"
+          $linuxPy="/home/$userName/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $r3Py="/home/$userName/.local/share/ttt-hybrid/g7-r3-06a01c2c3a98/venv/bin/python"
+          $linRaw=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout 45s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' $linuxPy -I -B $probe --mode cpu|Out-String).Trim()
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_LINUX_CPU311_PROBE'}
+          $linux=ConvertFrom-Json $linRaw
+          if($linux.numpy -cne '1.26.4'){throw 'BLOCKED_WSL_NUMPY_DRIFT'}
+          $r3Raw=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout 30s $r3Py -I -B $probe --mode r3|Out-String).Trim()
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_R3_PROVENANCE'}
+          $r3=ConvertFrom-Json $r3Raw
+          if($r3.r3_manifest_sha256 -cne 'b0f674fd52f9f514d408840d27b969ce2da19ea119d90a6ce8f59fde05c073df'){throw 'BLOCKED_R3_DRIFT'}
+          Write-Output 'PORTABILITY_PREFLIGHT=PASS_SOURCE_AND_CPU_ENVIRONMENTS_R3_READONLY'
+      - name: Install only missing pinned NumPy in isolated Windows CPU311 venv
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-portability-v1'
+          $scope=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1'
+          $python=Join-Path $scope 'venv\Scripts\python.exe'
+          $probe=Join-Path $root 'scripts\g7_s25_portable_runtime_probe.py'
+          $before=ConvertFrom-Json ((& $python -I -B $probe --mode cpu|Out-String).Trim())
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_CPU_PREFLIGHT_DRIFT'}
+          if(-not $before.numpy){
+            $bins=@(Get-ChildItem -LiteralPath (Join-Path $scope 'uv_release') -Recurse -Filter uv.exe -File)
+            if($bins.Count -ne 1){throw 'BLOCKED_UV_CARDINALITY'}
+            $uv=$bins[0].FullName
+            $version=(& $uv --version|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $version -cnotmatch '^uv 0\.9\.13(?:\s|$)'){throw 'BLOCKED_UV_VERSION'}
+            $env:UV_CACHE_DIR=Join-Path $scope 'cache'
+            $env:UV_NO_CONFIG='1';$env:UV_CONCURRENT_INSTALLS='1'
+            $env:CUDA_VISIBLE_DEVICES='-1'
+            & $uv pip install --python $python --only-binary ':all:' --no-deps --index-url 'https://pypi.org/simple' 'numpy==1.26.4'
+            if($LASTEXITCODE -ne 0){throw 'BLOCKED_NUMPY_INSTALL'}
+          }
+          $after=ConvertFrom-Json ((& $python -I -B $probe --mode cpu|Out-String).Trim())
+          if($LASTEXITCODE -ne 0 -or $after.numpy -cne '1.26.4' -or
+             $after.torch -cne '2.5.1+cpu' -or $after.pytest -cne '8.3.4'){throw 'BLOCKED_PINNED_RUNTIME_DRIFT'}
+          Write-Output 'WINDOWS_CPU311_PINNED_NUMPY=PASS'
+
+      - name: Full native Windows candidate regression and original-source negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-portability-v1'
+          $python=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $out=Join-Path $root 'local_runs\g7_s25_portability_windows.json'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $python -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt $out
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_NATIVE_WINDOWS_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath $out -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or
+             $q.revision -cne $env:GITHUB_SHA -or
+             $q.checkout_identity.pass -ne $true -or
+             $q.negative_control.pass -ne $true -or
+             $q.tests.exit_code -ne 0){throw 'BLOCKED_WINDOWS_RECEIPT'}
+          Write-Output 'WINDOWS_PORTABILITY_EXACT_CANDIDATE=PASS_ENG_ONLY'
+
+      - name: Full WSL Linux candidate regression and original-source negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $userName=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $lp){throw 'BLOCKED_WSL_PATH'}
+          $root="$lp/g7-s25-portability-v1"
+          $python="/home/$userName/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $out="$root/local_runs/g7_s25_portability_linux.json"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $python -I -B "$root/scripts/qualify_cpu.py" --receipt $out
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_LINUX_FULL_REGRESSION'}
+          $receipt=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-portability-v1\local_runs\g7_s25_portability_linux.json'
+          $q=Get-Content -LiteralPath $receipt -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or
+             $q.revision -cne $env:GITHUB_SHA -or
+             $q.checkout_identity.pass -ne $true -or
+             $q.negative_control.pass -ne $true -or
+             $q.tests.exit_code -ne 0){throw 'BLOCKED_LINUX_RECEIPT'}
+          Write-Output 'LINUX_PORTABILITY_EXACT_CANDIDATE=PASS_ENG_ONLY'
+
+      - name: Confirm R3 baseline package manifest unchanged
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $r3="/home/$who/.local/share/ttt-hybrid/g7-r3-06a01c2c3a98/venv/bin/python"
+          $probe="$lp/g7-s25-portability-v1/scripts/g7_s25_portable_runtime_probe.py"
+          $raw=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout 30s $r3 -I -B $probe --mode r3|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not($raw -match 'b0f674fd52f9f514d408840d27b969ce2da19ea119d90a6ce8f59fde05c073df')){throw 'BLOCKED_R3_POST_REGRESSION_DRIFT'}
+          Write-Output 'R3_PRE_POST_MANIFEST=PASS_UNCHANGED'
+
+      - name: Preserve exact SHA test and negative-control receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: g7-s25-portability-source-v1-${{ github.sha }}-${{ github.run_id }}
+          path: g7-s25-portability-v1/local_runs/*.json
+          retention-days: 30
+          if-no-files-found: warn
