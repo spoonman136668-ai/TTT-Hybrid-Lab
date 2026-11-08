@@ -23,3 +23,11 @@ Each phase is separately run-scoped to the preexisting `TTT-HYBRID-GPU-WIN` self
 ## Future live activation requirements
 
 Choose an owner-approved persistent encrypted destination with independently confirmed identity, failure domain, credentials/ACL and retention; freeze full state and source compatibility; test offline fresh-host cold restore and real loss of primary; test power-loss semantics; reconcile exact model and sampler context with P3 competence/retention before any model promotion. FORGE can receive independent read-only receipts only through its existing authorized research interface.
+
+## R1 cross-platform diagnostic and R2 correction (not scientific tuning)
+
+R1 exact SHA `3ed4a9119900c3e356794973562c9fcbbeb727a9` project-owned [run #42475136686](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs/42475136686) proved GitHub upload and run-scoped download, **Windows full regression 188 PASS** and exact cold restore PASS, **WSL full regression 187 PASS / 1 SKIP**, but **WSL semantic re-computation failed** with `P6_COLD_MODEL_NOT_EQUAL_INDEPENDENT_FIXTURE`. This is an engineering cross-OS float arithmetic mismatch, **not an observed corrupted checkpoint**; the original strict numeric equality conflated bitwise persisted-state restoration with cross-platform independently computed floating-point results.
+
+R2 separates claims: the loaded model, optimizer, and native memory must match the hash-verified serialized checkpoint **exactly** on each platform; the *independently recomputed* one-step AdamW fixture additionally must match within fixed `atol=1e-6, rtol=1e-5` for floating-point tensors, retaining integer/state identity exact. A development negative test proves this tolerance rejects an intentionally material numerical divergence. R2 does not weaken source custody, manifest integrity, or scientific first-use, and these engineering tolerances never apply to a preregistered science threshold.
+
+R2 must undergo fresh exact SHA **complete** Windows and WSL regressions and remote-artifact recovery, using the already published **synthetic-only** R1 GitHub artifact by explicit prior run ID; it does not create a second checkpoint or replay original science. The initial one-use workflow is consumed and remains historical evidence.
