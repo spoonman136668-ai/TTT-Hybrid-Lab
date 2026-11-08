@@ -1,0 +1,54 @@
+{
+  "schema": "ttt-hybrid.g7-s26-v2.exact-source-first-use-lock.v1",
+  "status": "FROZEN_BEFORE_ANY_FIT_OR_VALIDATION_FIRST_USE",
+  "dated": "2026-11-07",
+  "parent_engineering_sha": "255aa654bd3dfc6d5b36f137555e4d33dcf95cb1",
+  "original_research_s25_sha": "108808f7b685107a76fae1ce5605b7ff9e2bac27",
+  "original_research_s26_sha": "b8f4bc6628e15057b76dc1f085c6067b972cd5f9",
+  "source_blobs": {
+    "experiments/g7_s26_v2_fitval_firstuse_frozen.json": "d72b9bb41e5e7e5dd9229c7bc5053f5a42f9750d",
+    "scripts/g7_s25_paired_interventions.py": "ec5442ecacb44f594b142b8666ca64fa4abeeab3",
+    "scripts/g7_s26_v2_firstuse_controls.py": "0e6247fface25e94ba32cbb2a39b482ef272b50a",
+    "tests/test_g7_s26_v2_firstuse_contract.py": "7e72c2f5743d899169f1feeec329a5c807f2caca",
+    "scripts/g7_s26_v2_baseline_observations.py": "3c17f5698572ba3ef3656006c31fb407d9b84cf7",
+    "scripts/g7_s25_numeric_ttt.py": "7608b55f8abe5238ea37f16a2039e99c20fbb38f",
+    "scripts/g7_s20_hidden_multicycle.py": "bc3e9f255a4d1b967252ada8782ac9f8c000f7b7",
+    "source_pins.json": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "experiments/g7_s26_frozen_quarter_reserve.json": "34251b2cde6373ed484dbc21e4617c9165047e93",
+    "experiments/g7_s25_frozen_contradiction_ttt.json": "31633b341403729b7ffbb7d73f3a04098ad44380"
+  },
+  "permitted_seed_roles": {
+    "fit": [
+      7207,
+      7219,
+      7229
+    ],
+    "validation": [
+      7307,
+      7319,
+      7327
+    ]
+  },
+  "forbidden_seed_roles": [
+    "development_training",
+    "heldout_signflip",
+    "heldout_transfer",
+    "negative",
+    "bootstrap"
+  ],
+  "trainer_arms": [
+    "GRU_fully_trained",
+    "RBF_KRR"
+  ],
+  "file_writes_only": [
+    "local_runs/g7_s26_v2_fitval_firstuse_receipt.json",
+    "local_runs/g7_s26_v2_scientific_checkpoints/*.pt"
+  ],
+  "project_runner": "TTT-HYBRID-GPU-WIN with qualified Ubuntu-24.04 WSL CPU Python 3.11.14 torch 2.5.1+cpu",
+  "separate_scientific_authorization": true,
+  "no_future_scientific_firstuse_or_training_until_full_crossplatform_final_regression": true,
+  "no_merges_promotions_GPU_paid_APIs_new_runners_controller_changes": true,
+  "outcome_policy": "PASS conventionals only if all three GRU and all three KRR seeds meet precommitted training plateau, accuracy and cost; otherwise record NULL/FAIL and stop without tuning",
+  "original_s25_s26_firstuse_still_blocked": true,
+  "not_authorization_for_TTT_heldout_or_transfer": true
+}
