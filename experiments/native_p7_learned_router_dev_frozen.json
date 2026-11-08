@@ -1,0 +1,110 @@
+{
+  "schema": "ttt-hybrid.native-p7.learned-router-dev-frozen.v1",
+  "registered_utc": "2026-11-08",
+  "stage": "EXPLORATORY_DEV_FROZEN_BEFORE_ONE_USE_SOURCE_LOCKED_RUN",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 60,
+    "parent_pr60_sha": "1123a8aee15572f7f2602bce135a0f38c7b9909a",
+    "unchanged_original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "unchanged_native_continuous_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "unchanged_prequential_api_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f",
+    "unchanged_p6_handcoded_blob": "7f21b73d6255f2611512969e87446352c1dee90c"
+  },
+  "question": "Can a small history-conditioned continuous mixture router actually learn from factual prediction error without context labels, and is the gain more than a conventional similarly sized trained network or handcoded prior?",
+  "null": "Learned routing does not reduce disjoint DEV validation error versus initialization/history ablations or a near-param-matched fully trained conventional MLP.",
+  "design": {
+    "phase": "prototype mechanism only, not native fast-memory runtime integration",
+    "analog_history_events": 8,
+    "observed_history_contents": [
+      "factual_action",
+      "observed_sensor_delta"
+    ],
+    "factual_current_action": "available before consequence",
+    "prohibited_inputs": [
+      "current or future factual outcome",
+      "latent context label",
+      "phase number",
+      "training seed",
+      "oracle selector",
+      "counterfactual outcome"
+    ],
+    "target": "factual observed continuous sensor difference, MSE",
+    "two_expert_prior_gain_initialization": [
+      0.45,
+      -0.45
+    ],
+    "router": "trainable continuous 16->24->16->1 two-expert sigmoid gate, learned from factual prediction error alone",
+    "baseline": "trainable conventional MLP direct 17->24->16->1, trained on same examples/updates with near-equal parameters",
+    "exact_params_mixture": 828,
+    "exact_params_baseline": 849,
+    "model_initializations": [
+      303,
+      307,
+      311
+    ],
+    "training_dev_rng_seed": 51031,
+    "validation_dev_rng_seed": 51079,
+    "scrambled_history_negative_seed": 51997,
+    "source_is_original_science": false,
+    "episodes_train": 150,
+    "episodes_validation": 48,
+    "events_per_episode": 48,
+    "burnin_history": 8,
+    "examples_train": 6000,
+    "examples_validation": 1920,
+    "context_switch_probability": 0.1,
+    "context_gain_positive_range": [
+      0.35,
+      0.6
+    ],
+    "context_gain_negative_range": [
+      -0.6,
+      -0.35
+    ],
+    "episode_intercept_range": [
+      -0.08,
+      0.08
+    ],
+    "gaussian_factual_observation_noise_std": 0.025,
+    "same_sensor_and_action_marginals_all_contexts": true,
+    "full_batch_access": "only to training examples; validation for reporting not model selection",
+    "optimizer": "AdamW",
+    "learning_rate": 0.006,
+    "actual_gradient_steps_per_model": 600,
+    "minibatch": 256,
+    "gradient_clip_norm": 5,
+    "ablations": [
+      "untrained same-network initialization",
+      "scrambled factual histories",
+      "zero factual histories",
+      "P6-style hardcoded latest opposite action-pair signed effect",
+      "same-updates similar-param trained conventional MLP"
+    ],
+    "loss_windows": "record at updates 100,200,300,400,500,600, require ≤1% last-five spread only as diagnostic: do not retune or relabel",
+    "initial_exploration_disclosure": "Model architecture and learning-rate trialed in isolated development before freeze. This is not preregistered independent scientific evaluation.",
+    "prospective_performance_diagnostics": [
+      "trained router final validation MSE <0.8*untrained same network",
+      "trained router lower validation MSE than P6-style handcoded prior",
+      "trained router lower validation MSE than trained conventional MLP",
+      "trained router lower validation MSE than shuffled history",
+      "trained router lower validation MSE than no history",
+      "strict ≤1% last five validation checkpoints"
+    ],
+    "engineering_pass": "exact-source full Windows/WSL regression, actual gradient changes, matched examples/updates, <5% parameter difference, valid causal history/negative controls; NO pass requirement on outcome superiority",
+    "wall_budget_seconds": 65,
+    "no_gpu": true,
+    "no_paid_apis": true,
+    "no_new_owner_or_controller": true,
+    "no_merge_or_deploy": true,
+    "original_p6_and_s26_s27_immutable": true
+  },
+  "science": {
+    "authorized": false,
+    "world_seeds": {},
+    "consumed": false,
+    "scientifically_unfamiliar_worlds": false,
+    "independent_original_source_birth": "NOT_REGISTERED",
+    "future_study": "fully trained matched FLOPs/actions/compute controls, independently born sealed worlds, action-consequence transfer/interference/cold retention, separate first-use owner authorization"
+  }
+}
