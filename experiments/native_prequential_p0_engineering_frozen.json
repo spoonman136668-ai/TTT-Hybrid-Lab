@@ -1,0 +1,143 @@
+{
+  "schema": "ttt-hybrid.native-prequential-p0.engineering-frozen.v1",
+  "frozen_utc": "2026-11-08",
+  "status": "ENGINEERING_PRE_FIRST_USE_ONLY",
+  "source_lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "native_v1_pr": 49,
+    "native_v1_sha": "7df69c701dd80799b0d1ae49cc0b7c51536051df",
+    "north_star_pr": 47,
+    "north_star_sha": "74986eaf70d9aeabbcaaa8e4f9e483b73ecfba7b",
+    "original_source_pins_git_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "native_module_git_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "p0_gate_git_blob": "fe1016f19a8671d071f7f2230e9dcf0e96cf282f",
+    "p0_tests_git_blob": "09ffcb8c7897e0594531453f0fb9522ad981e8ea"
+  },
+  "scope": {
+    "synthetic_only": true,
+    "model_training": false,
+    "research_loop_integration": false,
+    "scientific_world_construction": false,
+    "gpu_execution": false,
+    "installer_or_package_download": false,
+    "scheduler_or_controller": false,
+    "deployment_or_promotion": false
+  },
+  "science_first_use": {
+    "authorized": false,
+    "world_data_consumed": false,
+    "seed_assignments": {},
+    "frozen_science_source_lock": null,
+    "runner_admission": null,
+    "stop_if_no_exclusive_science_ownership": true,
+    "protected_predecessor": {
+      "pr": 46,
+      "status": "FAIL_CONVENTIONAL_BASELINE_COMPETENCE_OR_PLATEAU",
+      "consumed_fit_seeds": [
+        7207,
+        7219,
+        7229
+      ],
+      "consumed_val_seeds": [
+        7307,
+        7319,
+        7327
+      ]
+    },
+    "independent_s27": {
+      "pr": 48,
+      "status": "ENGINEERING_ONLY_SCIENCE_NOT_RUN",
+      "seed_namespace": "RESERVED_NOT_AUTHORIZED_NO_REUSE"
+    },
+    "new_science_seed_roles": [
+      "fit",
+      "validation",
+      "heldout_transfer",
+      "interference",
+      "signflip_negative",
+      "bootstrap"
+    ],
+    "admission_requires": [
+      "new independent project-scoped first-use authority",
+      "frozen source and seed registry with external ownership check",
+      "model and comparator training budgets and convergence thresholds",
+      "exact source and runner custody",
+      "preserved sealed heldout and negative roles",
+      "full Windows/WSL final exact-SHA regression"
+    ]
+  },
+  "hypotheses": {
+    "H1": "Native continuous-state recurrent prediction with factual outcome-gated fast memory reduces prequential action-effect/sensor error on genuinely unfamiliar causal worlds against strongest fully-trained conventional control.",
+    "H0": "Native candidate has no causal generalization gain, gains vanish under shuffled-outcome or no-fast-memory controls, or complete process cost exceeds comparator."
+  },
+  "causal_interface": {
+    "predict_before_factual_outcome": true,
+    "one_pending_factual_event": true,
+    "single_use_prediction_identity": true,
+    "counterfactual_queries_share_prior_state": true,
+    "counterfactual_learning_forbidden": true,
+    "outcome_update_after_scoring_only": true,
+    "cross_episode_memory_requires_explicit_protocol": true,
+    "authenticity_limit": "Call-order only; cannot authenticate external physical event time or hidden labels."
+  },
+  "prospective_science_not_current_engineering": {
+    "primary": "Prequential action-conditioned heldout transfer sensor MSE vs best competent fully-trained conventional control selected on validation only",
+    "secondary": [
+      "paired signed action-effect MSE",
+      "sign accuracy and >=95pct coverage",
+      "interference retention",
+      "cold restore",
+      "unseen world transfer",
+      "whole-process elapsed CPU GPU memory and energy where reliable"
+    ],
+    "candidate_arms": [
+      "native_full",
+      "native_no_fast",
+      "native_no_history",
+      "native_shuffled_factual_outcome",
+      "static_last_sensor_no_action",
+      "trained_GRU",
+      "train_only_centered_KRR",
+      "train_only_residual_KRR",
+      "trained_state_space",
+      "trained_conventional_TTT_if_operationally_qualified"
+    ],
+    "prospective_thresholds_not_science_frozen": {
+      "relative_mse_reduction_min": 0.1,
+      "min_paired_world_bootstrap_95pct_lower_bound": 0,
+      "sign_accuracy_min": 0.95,
+      "sign_eligible_coverage_min": 0.95,
+      "max_relative_interference_retention_error_increase": 0.05,
+      "strict_gain_vs_no_fast_and_shuffled_negative": true,
+      "unqualified_control_result": "BASELINE_NOT_QUALIFIED_NOT_NATIVE_WIN",
+      "efficiency_requires_whole_process_cost_no_worse": true
+    },
+    "budget_fields_required_before_science": [
+      "new_seeds_and_splits",
+      "world_generator_version_sha",
+      "world_count",
+      "steps_per_world",
+      "train_episodes",
+      "validation_episodes",
+      "heldout_episodes",
+      "width_and_parameter_match",
+      "optimizer_lrs",
+      "steps_and_plateau",
+      "replay_cap",
+      "cpu_gpu_resources",
+      "action_budget",
+      "time_limit",
+      "memory_limit",
+      "science_stop_criteria"
+    ],
+    "any_tuning_after_sealed_results": "FORBIDDEN"
+  },
+  "current_gate_acceptance": {
+    "focused_synthetic_tests": "PASS_REQUIRED",
+    "full_windows_regression": "PASS_REQUIRED",
+    "full_wsl_regression": "PASS_REQUIRED",
+    "original_source_negative_control_both": "PASS_REQUIRED",
+    "exact_candidate_source": "VERIFY_AT_RUN",
+    "science": "NOT_RUN"
+  }
+}
