@@ -1,0 +1,141 @@
+{
+  "schema": "ttt-hybrid.native-p1.control-admission-preflight.v1",
+  "registered_utc": "2026-11-08",
+  "status": "FROZEN_ENGINEERING_ONLY_NOT_SCIENCE_FIRST_USE",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_p0_pr": 50,
+    "parent_p0_sha": "35501945e619298ce5a093f0b23f20a95f55c380",
+    "native_v1_pr": 49,
+    "native_v1_sha": "7df69c701dd80799b0d1ae49cc0b7c51536051df",
+    "unchanged_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+    "files_blobs": {
+      "scripts/native_p1_conventional_controls.py": "197e7ce4044bd5e8b533545985f93a90a1d0451c",
+      "scripts/native_p1_seed_admission.py": "a0f55a654b51ec75dfd154e057f733a47d8a057f",
+      "tests/test_native_p1_conventional_admission.py": "2e1efb452519fe16ce963e4fea4872679bc72a1c",
+      "native_continuous_state.py": "38ebbfb339026f3213a8c380e090480609288917",
+      "experiments/native_prequential_p0_engineering_frozen.json": "167a9cea7b3feae3bd20a9856c0e072a5e4c6b34"
+    }
+  },
+  "engineering": {
+    "synthetic_only": true,
+    "baseline_models": [
+      "conventional_analog_gru",
+      "conventional_analog_ssm"
+    ],
+    "baseline_input": "same floating causal history sensor/action/elapsed time; 32-step maximum history; prior measurements only",
+    "checkpoint": "model state and synthetic training curves remain engineering-only",
+    "project_owned_windows_linux_full_regression": "REQUIRED_NOT_YET_RUN",
+    "source_negative_control": "REQUIRED_NOT_YET_RUN",
+    "runner": "TTT-HYBRID-GPU-WIN_existing_cpu311_only",
+    "gpu": false,
+    "model_fit_real_world": false,
+    "science_seeds_consumed": false,
+    "controller_or_scheduler": false,
+    "installer": false,
+    "merge": false,
+    "deployment": false,
+    "code_integration_to_active_research": false
+  },
+  "science": {
+    "authorized": false,
+    "data_consumed": false,
+    "seeds": {},
+    "world_generator_sha": null,
+    "source_lock_sha": null,
+    "independent_owner_verified": false,
+    "minimum_world_roles": [
+      "fit",
+      "validation",
+      "heldout_transfer",
+      "interference",
+      "signflip_negative",
+      "bootstrap"
+    ],
+    "protected_scientific_lineages": [
+      {
+        "pr": 46,
+        "sha": "5c7c6f24d1555b6779fc541530e7425c114b5862",
+        "outcome": "FAIL_CONVENTIONAL_BASELINE_COMPETENCE_OR_PLATEAU",
+        "consumed_seeds": [
+          7207,
+          7219,
+          7229,
+          7307,
+          7319,
+          7327
+        ],
+        "sealed_seeds": [
+          7403,
+          7411,
+          7429,
+          7507,
+          7517,
+          7529,
+          7603,
+          7613,
+          7627,
+          7807
+        ]
+      },
+      {
+        "pr": 48,
+        "sha": "429540dc7296210b6ecd781e9f6b27dacc7d61f1",
+        "outcome": "ENGINEERING_ONLY_NOT_RUN",
+        "reserved_seeds": [
+          92017,
+          92029,
+          92041,
+          93017,
+          93029,
+          93041,
+          94017,
+          94029,
+          94041,
+          95017,
+          95029,
+          95041,
+          96017,
+          96029,
+          96041,
+          98017
+        ]
+      }
+    ],
+    "firstuse_requires": [
+      "externally witnessed new source/seed birth and ownership",
+      "no collisions or cross-world reuse",
+      "separate explicit first-use authority",
+      "frozen exact SHA source lock and final source tree",
+      "fully trained conventional controls with receipts",
+      "heldout sealed until model selection finished",
+      "matched actions/unique information and distinct compute-matched comparison",
+      "whole-process resource bounds",
+      "independent final scientific qualification"
+    ],
+    "baseline_qualification_policy": {
+      "notes": "New prospective thresholds; NOT retroactive repair of S26-V2 0.1% plateau FAIL; engineering gate checks receipt numbers only, not provenance authenticity.",
+      "required_numeric_controls": [
+        "training_completed",
+        "checkpoint_cold_restore",
+        "source_and_seed_custody_verified",
+        "all_controls_same_information",
+        "compute_budget_verified"
+      ],
+      "min_optimizer_updates": 640,
+      "max_optimizer_updates": 1600,
+      "validation_check_window": 5,
+      "max_relative_five_check_spread": 0.01,
+      "must_beat_static_validation_mse": true,
+      "min_effect_sign_accuracy": 0.95,
+      "min_effect_eligible_coverage": 0.95,
+      "selected_strongest_control": "validation-only before heldout access",
+      "if_any_missing": "BASELINE_NOT_QUALIFIED",
+      "no_model_advantage_claim_without_true_conventional_training": true
+    },
+    "native_prospective_hypothesis": "Native causal state plus factual fast-memory updates beats strongest independently trained conventional control on heldout transfer under equal causal information, with decisive no-fast, shuffled, and intervention negatives.",
+    "native_prospective_primary_min_error_improvement": 0.1,
+    "prequential_event_order_source": "PR50 NativeCausalEpisode; caller chronology alone cannot authenticate external observation time",
+    "science_qualification": "NOT_RUN"
+  }
+}
