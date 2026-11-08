@@ -12,6 +12,8 @@ This is simulator-clone access, NOT real-world causal identification.
 from __future__ import annotations
 
 from dataclasses import dataclass
+import json
+from pathlib import Path
 import torch
 
 import g7_s20_hidden_multicycle as s20
@@ -36,9 +38,34 @@ REGIMES = {
 class PairedS20World:
     """Private physical state; public data carry numeric history, paired observations and executed action."""
 
-    def __init__(self, seed: int, batch: int, regime: str):
-        if seed not in ENGINEERING_SEEDS:
-            raise ValueError("S25_ENGINEERING_SEEDS_ONLY")
+    def __init__(self, seed: int, batch: int, regime: str,
+                 *, registered_role: str | None = None):
+        if registered_role is None:
+            # Old S25 development behavior remains exactly fail-closed.
+            if type(seed) is not int or seed not in ENGINEERING_SEEDS:
+                raise ValueError("S25_ENGINEERING_SEEDS_ONLY")
+        else:
+            # This new version is ONLY for explicitly registered S26-V2
+            # conventional fit/validation first use. Original S25/S26 remain
+            # sealed, and no heldout/negative/transfer role can enter.
+            if registered_role not in ("fit", "validation") or type(seed) is not int:
+                raise ValueError("S26_V2_FIRSTUSE_ROLE_NOT_AUTHORIZED")
+            manifest=Path(__file__).resolve().parents[1]/(
+                "experiments/g7_s26_v2_fitval_firstuse_frozen.json")
+            try:
+                protocol=json.loads(manifest.read_text(encoding="utf-8"))
+            except (OSError, ValueError) as exc:
+                raise ValueError("S26_V2_FIRSTUSE_MANIFEST_MISSING") from exc
+            if (protocol.get("schema") !=
+                    "ttt-hybrid.g7-s26-v2.fit-validation-firstuse-frozen.v1"
+                    or protocol.get("authority", {}).get(
+                        "first_use_authorized_for_this_new_protocol") is not True
+                    or protocol.get("authority", {}).get(
+                        "heldout_transfer_negative_bootstrap_forbidden") is not True
+                    or protocol.get("role_seeds", {}).get("fit") != [7207,7219,7229]
+                    or protocol.get("role_seeds", {}).get("validation") != [7307,7319,7327]
+                    or seed not in protocol["role_seeds"][registered_role]):
+                raise ValueError("S26_V2_FIRSTUSE_SEED_OR_AUTHORITY_MISMATCH")
         if regime not in REGIMES:
             raise ValueError("S25_UNREGISTERED_WORLD_REGIME")
         if not isinstance(batch, int) or batch < 1:
