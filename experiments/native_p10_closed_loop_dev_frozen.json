@@ -1,0 +1,97 @@
+{
+  "schema": "ttt-hybrid.native-p10.intervention-dev-frozen.v1",
+  "registered": "2026-11-08",
+  "scope": "PREDECLARED_ENGINEERING_ONLY_CLOSED_LOOP_INTERVENTION_FALSIFICATION",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_p8_pr": 63,
+    "parent_p8_sha": "a0d749d3ec28cbc15ff212a6fdd9752799cc8578",
+    "native_original_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_P7_script_blob": "7db1fe42695f16bf2afe730f4348210156ac3c24",
+    "original_P8_script_blob": "2ab9018fe6d3bc68fe30af7f30a1cf189bc6433d",
+    "source_pins_original_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630"
+  },
+  "question": "Do neural factual-history gates improve cumulative return from genuine chosen interventions, including abrupt reversal and delayed actuation, versus a same-data and same-training-budget conventional neural predictor?",
+  "null": "Specialized P7 router is not consistently superior to trained conventional MLP and random actions in cumulative factual closed-loop outcomes, especially with changed causal delay structure.",
+  "design": {
+    "original_worlds_synthetically_known": true,
+    "trained_models": [
+      "P7 LearnedRouter signed-expert mixture 828 params",
+      "P7 ConventionalMLP 849 params"
+    ],
+    "base_training": "unchanged P7 public analytic training generator",
+    "train_dev_source_rng": 51031,
+    "validation_dev_source_rng": 51079,
+    "model_initializations": [
+      303,
+      307,
+      311
+    ],
+    "fit_examples": 6000,
+    "development_validation_examples": 1920,
+    "predeclared_optimization": "1200 AdamW updates with cosine 0.006 to 0.0006; same exact indices, 256 batch, 5.0 gradient clip",
+    "full_training_convergence_unverified": true,
+    "eval_structures": [
+      "instant factually action-conditioned gain with hidden A-B-A reversal",
+      "lagged causal effect of previous action, no instantaneous action effect",
+      "confounded immediate action effect with +0.20 previous-action nuisance"
+    ],
+    "eval_dev_rng_seeds": [
+      88031,
+      88047,
+      88063,
+      88091
+    ],
+    "no_official_world_seed_reuse": true,
+    "same_instantaneous_observed_sensor_for_all_worlds": true,
+    "observation_to_decision": "8 common completed factual -1/+1 warmup actions, then 64 closed-loop scored actions; never reveal latent sign, phase schedule, other action results or future consequence to learned models",
+    "world_slope_magnitude": [
+      0.38,
+      0.57
+    ],
+    "world_bias_range": [
+      -0.075,
+      0.075
+    ],
+    "Gaussian_factual_dev_noise_std": 0.02,
+    "hidden_phase_schedule": "A t=0..31, B t=32..55, A t=56..71; t not input to trained model",
+    "action_budget": "every policy receives exactly 64 action decisions ±1, identical opportunities, common exogenous noise per world/seed and the same initial factual history",
+    "arms": [
+      "learned_router",
+      "trained_mlp",
+      "handcoded_last_pair",
+      "random_actions",
+      "fixed_positive",
+      "alternating_actions",
+      "informed_oracle"
+    ],
+    "informed_oracle_use": "evaluation upper-bound diagnostic only; it sees true regime and in lagged family future sign, no model is given that information",
+    "directional_DEV_thresholds": [
+      "router per-seed average factual return per action >= MLP + 0.03 in EACH structural family",
+      "router per-seed average factual return per action >= random + 0.05 in EACH structural family",
+      "MLP per-seed average return >= random + 0.05 in EACH structural family",
+      "router and MLP each within 0.10 of informed upper bound in EACH structural family"
+    ],
+    "integrity_pass": "all episodes run with exact common prefix, identical nonzero action budgets, factual feedback only, models receive true AdamW updates on P7 fit only, per-episode complete receipts; no performance win required",
+    "cost_accounting": "actual optimizer steps, sample-index SHA, parameters and process wall-clock; FLOPs/fully trained competence not independently qualified",
+    "no_misleading_transfer_claim": true,
+    "max_process_wall_seconds": 85,
+    "no_scientific_world_creation": true,
+    "no_forge_change": true,
+    "no_promotion": true,
+    "no_merge": true,
+    "no_new_runner": true,
+    "no_paid_api": true,
+    "owner_runner": "existing TTT-HYBRID-GPU-WIN project isolated Windows WSL CPU qualification"
+  },
+  "science": {
+    "authorized": false,
+    "seeds": {},
+    "first_use_consumed": false,
+    "sealed_S26_negative_preserved": true,
+    "sealed_S27_reservations_preserved": true,
+    "original_scientific_source_birth": "NOT_ESTABLISHED",
+    "unfamiliar_transfer_scientific_claim": "NOT_AUTHORIZED",
+    "external_matched_baseline_competence": "UNVERIFIED"
+  }
+}
