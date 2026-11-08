@@ -1,0 +1,191 @@
+# P21 exact one-use original-owner PUBLIC DEV cold-process retention; not science.
+name: Native P21 process-death cold-model restoration once
+on:
+  push:
+    branches:
+      - engineering/native-p21-process-death-cold-retention-dev-20261108
+    paths:
+      - .github/workflows/native-p21-process-death-cold-retention-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p21-cold-retention-oneuse
+  cancel-in-progress: false
+jobs:
+  cold-retention-original-owner:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p21-process-death-cold-retention-dev-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 25
+    steps:
+      - name: Checkout exact P21 candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: p21-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 180
+      - name: Checkout immutable S29 source-only original science owner
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: 30c27ca4865e16b7574ee2b562879108db2b3796
+          path: p21-s29-owner
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout source-locked MIT Gymnasium
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: p21-mit-gym
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout source-locked BSD3 cloudpickle
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: cloudpipe/cloudpickle
+          ref: ff54d93221082d4ce22630ecdb8fbbccc60f3b62
+          path: p21-bsd3-cloudpickle
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Verify original-owner custody and immutable prospective P21 protocol/source
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P21_ORIGINAL_OWNER_RUN_DENIED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p21-candidate'
+          $s29=Join-Path $env:GITHUB_WORKSPACE 'p21-s29-owner'
+          $mit=Join-Path $env:GITHUB_WORKSPACE 'p21-mit-gym'
+          $bsd=Join-Path $env:GITHUB_WORKSPACE 'p21-bsd3-cloudpickle'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P21_EXACT_SOURCE_SHA_DRIFT'}
+          & git -C $root merge-base --is-ancestor 'ad69bcd06e973f0c05546c3e5782b770a0ce0e6e' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P21_UNVERIFIED_P20_PARENT'}
+          $expected=@{
+            'experiments/native_p21_cold_retention_frozen.json'='1e8ae86973367742cf313c18efd7b43ab2c7232d';
+            'scripts/native_p21_process_cold_retention_dev.py'='7813df2010751215f9e0c1d66fc1d1e48f9a9ee9';
+            'tests/test_native_p21_process_cold_retention_dev.py'='6632e3e4be1b37dad3ecbf4c8994099ec64f849f';
+            'experiments/native_p20_velocity_blind_history_frozen.json'='cdfe8341cc3d585f84c4df0ae9242e197b3d12f6';
+            'scripts/native_p20_velocity_blind_history_dev.py'='99ebe68151642a5c7a9f5efd95923e4450086155';
+            'tests/test_native_p20_velocity_blind_history_dev.py'='a9f900e9dd5928483677ce182cd9163d3365de3e';
+            'scripts/native_p19_expert_calibration_dev.py'='7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5d';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586'
+          }
+          foreach($file in $expected.Keys){
+            $blob=(& git -C $root hash-object -- $file|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $expected[$file]){throw "P21_BLOB_FROZEN_SOURCE_DRIFT:$file"}
+          }
+          if((& git -C $s29 rev-parse HEAD|Out-String).Trim() -cne '30c27ca4865e16b7574ee2b562879108db2b3796' -or (& git -C $mit rev-parse HEAD|Out-String).Trim() -cne '17eff00220d210beda933f78b0e52850022b0690' -or (& git -C $bsd rev-parse HEAD|Out-String).Trim() -cne 'ff54d93221082d4ce22630ecdb8fbbccc60f3b62'){throw 'P21_ORIGINAL_PINNED_EXTERNAL_SOURCE_DRIFT'}
+          foreach($d in @($root,$s29,$mit,$bsd)){
+            $dirty=(& git -C $d status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P21_CHECKOUT_NOT_CLEAN:$d"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p21_cold_retention_frozen.json') -Raw|ConvertFrom-Json
+          if($f.schema -cne 'ttt-hybrid.native-p21.process-death-cold-retention-frozen.v1' -or $f.parent.source_sha -cne 'ad69bcd06e973f0c05546c3e5782b770a0ce0e6e' -or $f.science.first_use_authorized -ne $false -or $f.science.sealed_original_science_source_consumed -ne $false -or @($f.eval.seeds).Count -ne 8 -or @($f.train.model_initializations).Count -ne 3){throw 'P21_FROZEN_PROTOCOL_INVALID'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P21_OWNER_CPU_INTERPRETER_MISSING'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P21_ORIGINAL_OWNER_CPU_DEPENDENCY_DRIFT'}
+          Write-Output 'P21_EXACT_SOURCE_PINNED_AND_SCIENCE_FIRST_USE_DENIED=PASS'
+      - name: Mandatory original full Windows regression and CUDA negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p21-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p21_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P21_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p21_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P21_WINDOWS_ORIGINAL_NEGATIVE_FAIL'}
+          Write-Output 'P21_WINDOWS_EXACT_SHA_FULL_REGRESSION=PASS'
+      - name: Mandatory original full Ubuntu WSL regression and CUDA negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P21_WSL_OWNER_IDENTITY_DRIFT'}
+          $root="$lp/p21-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p21_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P21_WSL_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p21-candidate\local_runs\native_p21_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P21_WSL_ORIGINAL_NEGATIVE_FAIL'}
+          Write-Output 'P21_WSL_EXACT_SHA_FULL_REGRESSION=PASS'
+      - name: Train NEW development cohort, save exact weights, end Python process
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $lp -or -not $who){throw 'P21_SOURCE_OWNER_UNAVAILABLE'}
+          $root="$lp/p21-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env 'NATIVE_P21_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p21_process_cold_retention_dev.py" --mode train --s29-root "$lp/p21-s29-owner" --source-root "$lp/p21-mit-gym" --cloudpickle-root "$lp/p21-bsd3-cloudpickle" --checkpoint-dir "$root/local_runs/p21-checkpoints" --train-receipt "$root/local_runs/native_p21_train.json" --receipt "$root/local_runs/native_p21_train.json"
+          if($LASTEXITCODE -ne 0){throw 'P21_NEW_COHORT_TRAIN_AND_SAVE_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p21-candidate\local_runs\native_p21_train.json') -Raw|ConvertFrom-Json
+          if($p.checkpoint_count -ne 6 -or @($p.checkpoints).Count -ne 6 -or $p.science_first_use -cne 'NOT_RUN' -or $p.P20_original_weights_copied_or_restored -ne $false){throw 'P21_TRAINING_SOURCE_OR_CHECKPOINT_CUSTODY_FAIL'}
+          Write-Output 'P21_TRAIN_PROCESS_EXITED_SAVED_SIX_TENSOR_STATE_CHECKPOINTS=PASS'
+      - name: Fresh Python process A loads six checkpoints, scores real actions without training
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p21-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env 'NATIVE_P21_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p21_process_cold_retention_dev.py" --mode evaluate --s29-root "$lp/p21-s29-owner" --source-root "$lp/p21-mit-gym" --cloudpickle-root "$lp/p21-bsd3-cloudpickle" --checkpoint-dir "$root/local_runs/p21-checkpoints" --train-receipt "$root/local_runs/native_p21_train.json" --receipt "$root/local_runs/native_p21_cold_A.json"
+          if($LASTEXITCODE -ne 0){throw 'P21_COLD_PROCESS_A_FAILED'}
+          Write-Output 'P21_FRESH_PROCESS_A=PASS'
+      - name: Independent fresh Python process B repeats exact cold real-source scoring
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p21-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env 'NATIVE_P21_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p21_process_cold_retention_dev.py" --mode evaluate --s29-root "$lp/p21-s29-owner" --source-root "$lp/p21-mit-gym" --cloudpickle-root "$lp/p21-bsd3-cloudpickle" --checkpoint-dir "$root/local_runs/p21-checkpoints" --train-receipt "$root/local_runs/native_p21_train.json" --receipt "$root/local_runs/native_p21_cold_B.json"
+          if($LASTEXITCODE -ne 0){throw 'P21_COLD_PROCESS_B_FAILED'}
+          Write-Output 'P21_FRESH_PROCESS_B=PASS'
+      - name: Qualify exact A B process-death equivalence and preserve all null outcomes
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p21-candidate\local_runs'
+          $a=Join-Path $root 'native_p21_cold_A.json'
+          $b=Join-Path $root 'native_p21_cold_B.json'
+          $h1=(Get-FileHash -LiteralPath $a -Algorithm SHA256).Hash
+          $h2=(Get-FileHash -LiteralPath $b -Algorithm SHA256).Hash
+          if($h1 -cne $h2){throw 'P21_PROCESS_DEATH_ACTION_OUTCOME_RECEIPT_DRIFT'}
+          $r=Get-Content -LiteralPath $a -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_CHECKPOINT_INTEGRITY_NOT_SCIENCE' -or $r.mode -cne 'INDEPENDENT_FRESH_PROCESS_COLD_INFERENCE_ONLY' -or $r.cold_loaded_models -ne 6 -or $r.all_cold_tensor_and_probe_hashes_exact -ne $true -or $r.corrupt_archive_wrong_source_wrong_seed_denied -ne $true -or $r.online_optimizer_updates -ne 0 -or $r.scientific_first_use -cne 'NOT_RUN' -or @($r.protected_science_seeds_consumed).Count -ne 0 -or @($r.per_seed).Count -ne 3){throw 'P21_COLD_RESTORE_OR_SCIENCE_DENIAL_FAIL'}
+          $metrics=@($r.per_seed|ForEach-Object{[pscustomobject]@{seed=$_.initialization;full=$_.mean_reward_public_development.full_history_gru;current=$_.mean_reward_public_development.current_only_gru;reversed=$_.mean_reward_public_development.history_reversed_gru;finite=$_.mean_reward_public_development.finite_difference_public_history}})
+          $proof=[ordered]@{schema='ttt-hybrid.native-p21.cold-process-proof.v1';source_sha=$env:GITHUB_SHA;cold_process_A_sha256=$h1.ToLower();cold_process_B_sha256=$h2.ToLower();byte_exact=$true;scientific_first_use='NOT_RUN';metrics=$metrics}
+          $proof|ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $root 'native_p21_cold_proof.json') -Encoding UTF8
+          Write-Output "P21_PROCESS_DEATH_REAL_ACTION_RETENTION=PASS A_B_SHA256=$h1 SCIENTIFIC_FIRST_USE=NOT_RUN"
+          $metrics|Format-Table|Out-String|Write-Output
+      - name: Archive frozen-source model tensors and independent cold evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p21-process-death-cold-retention-once
+          path: |
+            p21-candidate/local_runs/native_p21_*.json
+            p21-candidate/local_runs/p21-checkpoints/*.pt
+          retention-days: 30
+          if-no-files-found: warn
