@@ -1,6 +1,6 @@
 # One-use engineering-only qualification of the isolated native continuous-state path.
 # No model fitting, scientific seeds, GPU, installs, services, controller or promotion.
-name: Hybrid native continuous-state engineering qualification once
+name: Hybrid native continuous-state engineering qualification once R2
 on:
   push:
     branches:
@@ -14,7 +14,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   windows-and-wsl:
-    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-continuous-state-isolated-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-continuous-state-isolated-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1
     runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
     timeout-minutes: 20
     steps:
@@ -31,7 +31,7 @@ jobs:
         shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
         run: |
           $ErrorActionPreference='Stop'
-          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_PROJECT_RUNNER_OR_ONE_USE'}
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '2' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_PROJECT_RUNNER_OR_ONE_USE'}
           $root=Join-Path $env:GITHUB_WORKSPACE 'native-continuous-candidate'
           $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
           if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_EXACT_SOURCE'}
@@ -43,9 +43,11 @@ jobs:
           if($LASTEXITCODE -ne 0 -or $pins -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630'){throw 'BLOCKED_SOURCE_PINS_CHANGED'}
           $win=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
           if(-not(Test-Path -LiteralPath $win -PathType Leaf)){throw 'BLOCKED_EXISTING_CPU_ENV'}
-          $probe=Join-Path $root 'scripts\g7_s25_portable_runtime_probe.py'
-          $info=ConvertFrom-Json ((& $win -I -B $probe --mode cpu|Out-String).Trim())
-          if($LASTEXITCODE -ne 0 -or $info.torch -cne '2.5.1+cpu' -or $info.pytest -cne '8.3.4'){throw 'BLOCKED_RUNTIME_DRIFT'}
+          # This isolated branch deliberately has no S25-specific probe file.
+          $torchVersion=(& $win -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torchVersion -cne '2.5.1+cpu'){throw 'BLOCKED_TORCH_RUNTIME_DRIFT'}
+          $pytestVersion=(& $win -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $pytestVersion -cne '8.3.4'){throw 'BLOCKED_PYTEST_RUNTIME_DRIFT'}
           Write-Output 'EXACT_SHA_AND_EXISTING_CPU311_SOURCE=PASS'
       - name: Full native Windows regression and original negative control
         shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
