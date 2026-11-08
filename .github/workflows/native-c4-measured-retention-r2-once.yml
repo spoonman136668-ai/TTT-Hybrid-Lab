@@ -1,0 +1,120 @@
+# C4 source-locked DEV-only measured capability policy; no real science first-use or promotion.
+name: Native C4 R2 measured retention final once
+on:
+  push:
+    branches: [engineering/native-c4-measured-retention-policy-20261108]
+    paths: [.github/workflows/native-c4-measured-retention-r2-once.yml]
+permissions:
+  contents: read
+concurrency:
+  group: native-c4-r2-measured-regression-project-once
+  cancel-in-progress: false
+jobs:
+  windows-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-c4-measured-retention-policy-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout exact source without persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-c4-r2-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 190
+      - name: Lock C3 parent, original P3 source and frozen evaluation config
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_C4_OWNER_SCOPE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c4-r2-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_C4_SOURCE_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_C4_DIRTY'}
+          & git -C $root merge-base --is-ancestor '78644c0548b63d0d0b2fcc807ab4af8748670cf4' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C4_C3_ANCESTRY'}
+          $expected=@{
+            'native_training_checkpoint.py'='57728c0fc164cf5954449cec86f31b9c0e9d16e8';
+            'native_transactional_resume.py'='a2906a27794508ddd01bea6cde7278b1cec561f2';
+            'native_capability_registry.py'='b81f36caa615dcc3f679de3b401fc1c10237dfe9';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p3_continuity.py'='ae5a42140df501bc21bc3f050e75c70cb4771c89';
+            'scripts/native_p2_synthetic_adaptation.py'='8f5bd76a38f715f29bd76fa60452b43da2152866';
+            'scripts/native_c3_factual_isolated_resume.py'='4ac04846b01d0736117b425e1063e319b1b500d1';
+            'experiments/native_p3_continuity_engineering_frozen.json'='1c7ba4cb28182b026a0e82fbc33a232b4f7f0bac';
+            'scripts/native_c4_measured_retention.py'='d47af3c0ced9b28c73d03d5229ceb9b247cba214';
+            'tests/test_native_c4_measured_retention.py'='bc6926319d95750e7d240572044d45f666937e11';
+            'experiments/native_c4_measured_retention_dev_frozen.json'='979eddaa572c1cd180f87255d46c63e7cc8cbf6f';
+            'docs/NATIVE_C4_MEASURED_RETENTION.md'='336f58f54ae212ded07f8ff2b26c7b1cd4c8369b';
+            'experiments/native_p1_control_admission_preflight.json'='9de1caedb56f1248264ac37db08ec66b8265fe16'
+          }
+          foreach($path in $expected.Keys){
+            $blob=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $expected[$path]){throw "BLOCKED_C4_BLOB:$path"}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p1_control_admission_preflight.json') -Raw|ConvertFrom-Json
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_c4_measured_retention_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($p.science.authorized -ne $false -or $p.science.data_consumed -ne $false -or @($p.science.seeds.PSObject.Properties).Count -ne 0 -or $f.decisions.scientific_first_use -ne $false -or $f.decisions.accepted_model_promotion -ne $false -or $f.facts.train_steps -ne 80 -or $f.facts.champion_steps -ne 40 -or $f.capabilities.Count -ne 2){throw 'BLOCKED_C4_SCIENTIFIC_ADMISSION'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_C4_WIN_ENV'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'BLOCKED_C4_PINNED_RUNTIME'}
+          Write-Output 'NATIVE_C4_C3_PARENT_SOURCE_FROZEN_DEV_ONLY=PASS'
+      - name: Windows full regression and three-seed measured retention decision
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-c4-r2-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          $env:NATIVE_P3_ENGINEERING_ONLY='1';$env:NATIVE_C4_ENGINEERING_ONLY='1'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\c4_r2_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C4_WINDOWS_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\c4_r2_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C4_WINDOWS_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 227){throw 'BLOCKED_C4_WINDOWS_TEST_COUNT'}
+          & $py -I -B (Join-Path $root 'scripts\native_c4_measured_retention.py') --receipt (Join-Path $root 'local_runs\c4_r2_windows_measurements.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C4_WINDOWS_MEASUREMENT'}
+          $r=Get-Content -LiteralPath (Join-Path $root 'local_runs\c4_r2_windows_measurements.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_REAL_MEASUREMENTS_DEV_POLICY_ONLY' -or $r.record_count -ne 3 -or $r.scientific_first_use -cne 'NOT_RUN' -or $r.scientifically_accepted -ne $false -or $r.production_accepted_pointer_changed -ne $false){throw 'BLOCKED_C4_WINDOWS_RECEIPT'}
+          foreach($x in $r.records){if(@($x.measurements).Count -ne 2 -or $x.unchanged_control.status -cne 'BLOCKED' -or $x.review.promoted -ne $false -or $x.review.scientifically_accepted -ne $false -or $x.review.evidence_authenticated -ne $false){throw 'BLOCKED_C4_WINDOWS_REVIEW'}; foreach($m in $x.measurements){if($m.samples -ne 16){throw 'BLOCKED_C4_WINDOWS_EVIDENCE'}}}
+          Write-Output 'NATIVE_C4_WINDOWS_FULL_AND_MEASURED_POLICY=PASS_ENGINEERING'
+      - name: WSL full regression and three-seed measured retention decision
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_C4_WSL_OWNER'}
+          $root="$lp/native-c4-r2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C4_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/c4_r2_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C4_WSL_FULL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c4-r2-candidate\local_runs\c4_r2_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_C4_WSL_NEGATIVE'}
+          if($q.tests.stdout_tail -notmatch '(\d+) passed' -or [int]$Matches[1] -lt 226){throw 'BLOCKED_C4_WSL_TEST_COUNT'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 150s /usr/bin/env 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'NATIVE_P3_ENGINEERING_ONLY=1' 'NATIVE_C4_ENGINEERING_ONLY=1' $py -I -B "$root/scripts/native_c4_measured_retention.py" --receipt "$root/local_runs/c4_r2_linux_measurements.json"
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_C4_WSL_MEASUREMENT'}
+          $r=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-c4-r2-candidate\local_runs\c4_r2_linux_measurements.json') -Raw|ConvertFrom-Json
+          if($r.status -cne 'PASS_REAL_MEASUREMENTS_DEV_POLICY_ONLY' -or $r.record_count -ne 3 -or $r.scientific_first_use -cne 'NOT_RUN' -or $r.scientifically_accepted -ne $false -or $r.production_accepted_pointer_changed -ne $false){throw 'BLOCKED_C4_WSL_RECEIPT'}
+          foreach($x in $r.records){if(@($x.measurements).Count -ne 2 -or $x.unchanged_control.status -cne 'BLOCKED' -or $x.review.promoted -ne $false -or $x.review.scientifically_accepted -ne $false -or $x.review.evidence_authenticated -ne $false){throw 'BLOCKED_C4_WSL_REVIEW'}; foreach($m in $x.measurements){if($m.samples -ne 16){throw 'BLOCKED_C4_WSL_EVIDENCE'}}}
+          Write-Output 'NATIVE_C4_WSL_FULL_AND_MEASURED_POLICY=PASS_ENGINEERING'
+      - name: Preserve full source-locked regression and measured policy receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-c4-r2-measured-retention-eng-once
+          path: |
+            native-c4-r2-candidate/local_runs/c4_r2_windows.json
+            native-c4-r2-candidate/local_runs/c4_r2_linux.json
+            native-c4-r2-candidate/local_runs/c4_r2_windows_measurements.json
+            native-c4-r2-candidate/local_runs/c4_r2_linux_measurements.json
+          retention-days: 30
+          if-no-files-found: warn
