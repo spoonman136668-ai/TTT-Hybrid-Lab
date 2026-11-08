@@ -1,0 +1,29 @@
+# S29 — MIT-licensed standard CartPole API smoke, **not** CausalGym wind science
+
+## Reason for the narrowly scoped alternative
+
+S28 [PR #85](https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/85), exact-source `1041d1496c7c39182694a508778d1defab07e26c`, passed full Windows and Ubuntu engineering regressions and read-only Git audit of upstream CausalAILab/Causal-Gymnasium, but **actual wind SCM execution remains blocked** because upstream `LICENSE` is incomplete and has the literal diff hunk `@@ -154,49 +194,23 @@`; GitHub reports that repository license `NOASSERTION`. The package also eagerly imports many optional worlds and declares `gymnasium[all]`, so a blanket installation is an unacceptable response.
+
+S29 qualifies the **public standard four-observation/two-discrete-action CartPole API** with its **direct upstream maintainer [Farama-Foundation/Gymnasium](https://github.com/Farama-Foundation/Gymnasium)**. The specific frozen revision is Git tag `v1.1.1`, **exact commit `17eff00220d210beda933f78b0e52850022b0690`**. The 1,104-byte license file Git blob `ac10bf443756cdc02724943ac09021092ce9e737` contains a complete **MIT License** with the requisite author notices and no diff markers. `pyproject.toml` Git blob `f7af86ade9bb45181760cb9ec393d56436e3bc5f` confirms the package base dependencies only `numpy>=1.21`, `cloudpickle>=1.2`, `typing-extensions>=4.3`, `farama-notifications>=0.0.1` (the exact source guards the notifications import). The selected standard CartPole source Git blob is `9bd08a0153bc68f23776e83a975a6bbca6bb9a11`. **No CausalAILab rights are inferred from MIT rights for Gymnasium.**
+
+## Frozen engineering protocol before any environment interaction
+
+`experiments/s29_gymnasium_contract_smoke_frozen.json` pins S28 parent, exact Farama Git commit, license, package manifest and standard CartPole source blobs, the existing isolated runner CPU interpreter, **two public development smoke seeds 42 and 43**, two identical repetitions per seed, at most 32 executed actions per repetition, no rendering, fixed alternating actions 0/1, source read-only, no extra world science, no user API keys. The upstream source is checked out at exact commit only into disposable Actions workspace; no files from it are copied into the Hybrid source tree or uploaded to retained artifacts. The source license and package metadata must be checked before importing any runtime.
+
+`scripts/native_s29_mit_gymnasium_smoke.py` then does **only if all base runtime dependencies are already present**:
+1. Verify the exact clean checked-out Farama source SHA and four expected Git blobs, complete MIT license, declared basic source dependencies. **No pip installation, global changes, wheel downloads, optional extras or source transformations**.
+2. Insert the exact pinned source root into this isolated Python invocation's import path, import **only the official Farama `gymnasium` package** and assert its file path matches the checkout.
+3. Execute `gym.make("CartPole-v1", render_mode=None)`, `reset(seed=42/43)`, and up to 32 actual alternating `step(0/1)` actions before termination. Reuse the **already-qualified S28 `FactualWindTransitionLedger`** to record *only* observed four-state vectors, factual action, next four-state, actual reward, terminated and truncated; discard all `info`. No hidden physics, latent wind, graph or oracle enters the codec.
+4. Repeat each public-seed sequence exactly twice on the *same operating system* and compare raw transition records and SHA-256s for deterministic identity. This is a **smoke test of a real standard CartPole implementation**, not a science-data split, model training, causal wind mechanism or benchmark result.
+
+A missing pre-existing base library (e.g. `cloudpickle`) is an **actual runtime blocker**: the experiment fails closed and **does not download/install it automatically**. Do not silently broaden permissions or treat a metadata-only check as execution.
+
+`tests/test_native_s29_mit_gymnasium_smoke.py` tests the frozen provenance, public-step fixture behavior, source-locked actual observation contract, privileged-info leak negative, terminated-world no-further-step, unsupported/wrong source behavior and science-first-use denial. The real runtime is executed **only by the bounded explicit project-owned one-use qualification**, never by the full regression tests.
+
+## Engineering evidence is not scientific evidence
+
+The workflow is stacked on S28 in a separate draft PR and qualifies **complete final exact-SHA Windows and WSL CPU regression with original-source CUDA negative controls**, actual pinned MIT runtime smoke if and only if base dependencies are pre-existing, local repeatability, and full provenance receipts. The source is not patched, installed, cloned outside the checkout action or uploaded.
+
+**This does not run CausalAILab's wind environment.** Standard CartPole has no independent wind mechanism or hidden interventional source qualification. Its public engineering seeds are expressly **not S26/S27/S28 reserved or consumed original-world seeds**. No trained agent, persistence, cold retention, interference, strongly trained baseline, scientific-world first-use, scientific PASS, causal transfer, Hybrid intelligence gain, deployment, new owner/controller, GPU activation or model promotion. Existing protected science and P15 research are unchanged.
+
+If this contract smoke is qualified, the next *actually scientific* step is still a separately authorized, independently born unseen environmental manipulation / interference protocol, fully converged information/action/total compute-matched baseline first, and verifiable provenance. If Farama's source runs but CausalAILab rights remain missing, the project must **choose a legitimately licensed causal-wind benchmark or obtain owner clearance** rather than conflating the two.
