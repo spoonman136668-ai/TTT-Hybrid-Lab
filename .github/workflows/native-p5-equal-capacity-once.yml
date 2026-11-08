@@ -1,0 +1,111 @@
+# One-use exact-source dual-platform P5 equal-capacity interference DEV.
+# Existing project-owned CPU runner only; do not consume science seeds/worlds.
+name: Native P5 equal-capacity context memory comparison once
+on:
+  push:
+    branches:
+      - engineering/native-p5-equal-capacity-memory-20261108
+    paths:
+      - .github/workflows/native-p5-equal-capacity-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p5-equal-memory-oneuse
+  cancel-in-progress: false
+jobs:
+  full-cpu-and-equal-memory-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p5-equal-capacity-memory-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p5-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 120
+      - name: Admit exact candidate, original source and scientific fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_P5_OWNER_ONCE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p5-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_P5_SHA'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_P5_DIRTY_SOURCE'}
+          & git -C $root merge-base --is-ancestor 'b84b910833d80db7296fe07dda5607b61c9040f1' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_P5_PARENT'}
+          $pins=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_prequential_gate.py'='fe1016f19a8671d071f7f2230e9dcf0e96cf282f';
+            'scripts/native_p4_interference_dev.py'='8b76e020d6f193967b1413746ba8e00871dd770d';
+            'scripts/native_p5_equal_capacity_dev.py'='e3ad1c928be230add69f8fd694ac6549290e6730';
+            'tests/test_native_p5_equal_capacity_dev.py'='139da5a8c4d25ff2c0e9bb9693dd4025c7a8968a';
+            'experiments/native_p5_equal_capacity_dev_frozen.json'='e480de32fa86d9c9d4f7ceab335b4ff05c73f8b0'
+          }
+          foreach($path in $pins.Keys){
+            $blob=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $pins[$path]){throw "BLOCKED_P5_SOURCE_BLOB:$path"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p5_equal_capacity_dev_frozen.json') -Raw|ConvertFrom-Json
+          if($f.science.authorized -ne $false -or $f.science.first_use_consumed -ne $false -or @($f.science.world_seeds.PSObject.Properties).Count -ne 0 -or $f.arms.gated_total_fast_slots -ne 12){throw 'BLOCKED_P5_SCIENCE_OR_CAPACITY'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'BLOCKED_P5_CPU_ENV'}
+          $torch=(& $py -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          $pytest=(& $py -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torch -cne '2.5.1+cpu' -or $pytest -cne '8.3.4'){throw 'BLOCKED_P5_RUNTIME'}
+          Write-Output 'NATIVE_P5_PINS_SCIENCE_FENCE_AND_EQUAL_MEMORY=PASS'
+      - name: Final full Windows regression and original source negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p5-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p5_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P5_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p5_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P5_WINDOWS_RECEIPT_FAIL'}
+          Write-Output 'NATIVE_P5_WINDOWS_FULL=PASS_ENGINEERING'
+      - name: Final full WSL regression and original source negative
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P5_WSL_OWNER_FAIL'}
+          $root="$lp/native-p5-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p5_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P5_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p5-candidate\local_runs\native_p5_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P5_LINUX_RECEIPT_FAIL'}
+          Write-Output 'NATIVE_P5_WSL_FULL=PASS_ENGINEERING'
+      - name: Bounded equal-capacity A B A B interference DEV run
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p5-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 100s /usr/bin/env 'NATIVE_P5_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p5_equal_capacity_dev.py" --receipt "$root/local_runs/native_p5_equal_capacity.json"
+          if($LASTEXITCODE -ne 0){throw 'P5_EQUAL_MEMORY_PROBE_FAIL'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p5-candidate\local_runs\native_p5_equal_capacity.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_DEV_INTEGRITY_NOT_SCIENCE' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.scientific_seeds_consumed).Count -ne 0 -or @($p.records).Count -ne 8 -or $p.memory_budget_scalars_all_arms -ne 12 -or $p.model_optimizer_updates -ne 0){throw 'P5_EQUAL_MEMORY_RECEIPT_FAIL'}
+          Write-Output 'NATIVE_P5_EQUAL_CAPACITY_HYPOTHESIS_RECORDED_NOT_SCIENCE=PASS'
+      - name: Archive original-regression and falsification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p5-equal-capacity-once
+          path: native-p5-candidate/local_runs/native_p5_*.json
+          retention-days: 30
+          if-no-files-found: warn
