@@ -1,0 +1,88 @@
+# One-use engineering-only qualification of the isolated native continuous-state path.
+# No model fitting, scientific seeds, GPU, installs, services, controller or promotion.
+name: Hybrid native continuous-state engineering qualification once R2
+on:
+  push:
+    branches:
+      - engineering/native-continuous-state-isolated-20261108
+    paths:
+      - .github/workflows/native-continuous-state-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: hybrid-native-continuous-state-v1-single-use
+  cancel-in-progress: false
+jobs:
+  windows-and-wsl:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-continuous-state-isolated-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 2 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 20
+    steps:
+      - name: Checkout immutable candidate
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-continuous-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 120
+      - name: Prove source, existing environments and frozen original lineage
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '2' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'BLOCKED_PROJECT_RUNNER_OR_ONE_USE'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-continuous-candidate'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'BLOCKED_EXACT_SOURCE'}
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'BLOCKED_DIRTY_CHECKOUT'}
+          & git -C $root merge-base --is-ancestor '74986eaf70d9aeabbcaaa8e4f9e483b73ecfba7b' HEAD
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_TOKEN_FREE_DOC_BRANCH_NOT_ANCESTOR'}
+          $pins=(& git -C $root hash-object -- source_pins.json|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $pins -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630'){throw 'BLOCKED_SOURCE_PINS_CHANGED'}
+          $win=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $win -PathType Leaf)){throw 'BLOCKED_EXISTING_CPU_ENV'}
+          # This isolated branch deliberately has no S25-specific probe file.
+          $torchVersion=(& $win -I -B -c 'import torch;print(torch.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $torchVersion -cne '2.5.1+cpu'){throw 'BLOCKED_TORCH_RUNTIME_DRIFT'}
+          $pytestVersion=(& $win -I -B -c 'import pytest;print(pytest.__version__)'|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $pytestVersion -cne '8.3.4'){throw 'BLOCKED_PYTEST_RUNTIME_DRIFT'}
+          Write-Output 'EXACT_SHA_AND_EXISTING_CPU311_SOURCE=PASS'
+      - name: Full native Windows regression and original negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-continuous-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_continuous_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WINDOWS_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_continuous_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_WINDOWS_RECEIPT'}
+          Write-Output 'FULL_NATIVE_WINDOWS_AND_NEGATIVE_CONTROL=PASS_ENGINEERING'
+      - name: Full WSL Linux regression and original negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'BLOCKED_WSL_OWNER_OR_PATH'}
+          $root="$lp/native-continuous-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $receipt="$root/local_runs/native_continuous_linux.json"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'BLOCKED_WSL_FULL_REGRESSION'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-continuous-candidate\local_runs\native_continuous_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'BLOCKED_WSL_RECEIPT'}
+          Write-Output 'FULL_WSL_LINUX_AND_NEGATIVE_CONTROL=PASS_ENGINEERING'
+      - name: Save immutable source-scoped engineering receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-continuous-engineering-once
+          path: native-continuous-candidate/local_runs/native_continuous_*.json
+          retention-days: 30
+          if-no-files-found: warn
