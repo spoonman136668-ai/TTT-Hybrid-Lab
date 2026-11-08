@@ -11,7 +11,7 @@ import argparse
 import hashlib
 import json
 import os
-import resource
+from g7_process_peak_memory import read_peak_memory
 from pathlib import Path
 import subprocess
 import sys
@@ -224,10 +224,19 @@ def main() -> int:
     if result.returncode!=0:
         raise SystemExit("S26_DIAGNOSTIC_S25_BASE_NOT_ANCESTOR")
     value=run_development_comparison()
-    peak_rss_bytes=resource.getrusage(resource.RUSAGE_SELF).ru_maxrss*1024
-    require(peak_rss_bytes <= 2147483648,
-            "S26_DEVELOPMENT_2GIB_RSS_CAP_EXCEEDED")
-    value["dev_peak_rss_bytes"]=peak_rss_bytes
+    # Engineering only: OS-native memory peaks are NOT interchangeable.
+    # The original frozen S26 science source and Linux RSS cap stay untouched.
+    memory=read_peak_memory()
+    require(memory.peak_bytes <= 2147483648,
+            "S26_DEVELOPMENT_2GIB_OS_NATIVE_PEAK_CAP_EXCEEDED")
+    value["dev_peak_rss_bytes"]=(
+        memory.peak_bytes if memory.comparable_to_linux_ru_maxrss else None)
+    value["dev_peak_working_set_bytes"]=(
+        memory.peak_bytes
+        if memory.metric=="windows_psapi_peak_working_set_bytes" else None)
+    value["dev_peak_memory_metric"]=memory.metric
+    value["dev_peak_memory_comparable_to_linux_ru_maxrss"]=(
+        memory.comparable_to_linux_ru_maxrss)
     value["max_allowed_rss_bytes"]=2147483648
     value["source_sha"]=args.expected_sha
     args.receipt.parent.mkdir(parents=True,exist_ok=True)
