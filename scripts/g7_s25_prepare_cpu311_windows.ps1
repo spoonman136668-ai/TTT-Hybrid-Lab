@@ -8,7 +8,7 @@ $receipt=[ordered]@{schema='ttt-hybrid.cpu311.scoped-windows.v1';source_sha=$sha
 function AssertExit([string]$stage){if($LASTEXITCODE -ne 0){throw "BLOCKED_$stage"}}
 try{
  if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
- $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-scoped-cpu311-recovery-r3-20261107' -or
+ $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-scoped-cpu311-recovery-r4-20261107' -or
  $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
  $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:RUNNER_OS -cne 'Windows'){throw 'BLOCKED_AUTHORITY'}
  if(-not $env:RUNNER_WORKSPACE -or -not(Test-Path -LiteralPath $SourceRoot -PathType Container)){throw 'BLOCKED_WORKSPACE'}
@@ -25,12 +25,12 @@ try{
  $python=Join-Path $scope 'venv\Scripts\python.exe'
  if(-not(Test-Path -LiteralPath (Join-Path $scope 'pythons') -PathType Container) -or
     -not(Test-Path -LiteralPath $python -PathType Leaf)){throw 'BLOCKED_MISSING_PINNED_INTERPRETER'}
- $pyVersion=(& $python -I -B -c 'import sys;print(".".join(map(str,sys.version_info[:3])))' | Out-String).Trim()
+ $pyVersion=(& $python -I -B -c 'import sys;print(tuple(sys.version_info[:3]))' | Out-String).Trim()
  AssertExit 'PYTHON_RECOVERY_PROBE'
- if($pyVersion -cne '3.11.14'){throw 'BLOCKED_INTERPRETER_DRIFT'}
- $installed=(& $python -I -B -c 'import json,importlib.metadata as m;print(json.dumps(sorted((d.metadata.get("Name") or "").lower() for d in m.distributions())))' | Out-String).Trim()
+ if($pyVersion -cne '(3, 11, 14)'){throw 'BLOCKED_INTERPRETER_DRIFT'}
+ $installed=(& $python -I -B -c 'import importlib.metadata as m;print(len(list(m.distributions())))' | Out-String).Trim()
  AssertExit 'PREEXISTING_WHEELS_PROBE'
- if($installed -cne '[]'){throw 'BLOCKED_UNKNOWN_PARTIAL_PACKAGE_INSTALL'}
+ if($installed -cne '0'){throw 'BLOCKED_UNKNOWN_PARTIAL_PACKAGE_INSTALL'}
  $zip=Join-Path $scope 'uv.zip'
  if(-not(Test-Path -LiteralPath $zip -PathType Leaf)){throw 'BLOCKED_ARCHIVE_ABSENT'}
  if((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() -cne
@@ -62,9 +62,11 @@ try{
   AssertExit 'TORCH_CPU_INDEX_ONLY'
   & $uv pip check --python $python
   AssertExit 'DEPENDENCY_CONSISTENCY'
-  $probe='import json,sys,torch,pytest;print(json.dumps({"py":list(sys.version_info[:3]),"torch":str(torch.__version__),"pytest":str(pytest.__version__),"cuda":torch.version.cuda}))'
-  $v=ConvertFrom-Json ((& $python -I -B -c $probe|Out-String).Trim());AssertExit 'RUNTIME_PROBE'
-  if($v.py[0] -ne 3 -or $v.py[1] -ne 11 -or $v.py[2] -ne 14 -or $v.torch -cne '2.5.1+cpu' -or $v.pytest -cne '8.3.4' -or $null -ne $v.cuda){throw 'BLOCKED_RUNTIME_VERSIONS'}
+  # PowerShell 5.1 strips nested double quotes from native -c arguments.
+  # Use a quote-free Python probe to avoid changing package version semantics.
+  $v=@(& $python -I -B -c 'import sys,torch,pytest;print(tuple(sys.version_info[:3]));print(torch.__version__);print(pytest.__version__);print(torch.version.cuda)')
+  AssertExit 'RUNTIME_PROBE'
+  if($v.Count -ne 4 -or $v[0] -cne '(3, 11, 14)' -or $v[1] -cne '2.5.1+cpu' -or $v[2] -cne '8.3.4' -or $v[3] -cne 'None'){throw 'BLOCKED_RUNTIME_VERSIONS'}
   $env:EXPECTED_CANDIDATE_SHA=$sha
   $native=Join-Path $SourceRoot 'local_runs\s25_full_regression_windows.json'
   & $python -I -B (Join-Path $SourceRoot 'scripts\qualify_cpu.py') --receipt $native;AssertExit 'WINDOWS_REGRESSION'

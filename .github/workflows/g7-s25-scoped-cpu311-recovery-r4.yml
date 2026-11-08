@@ -1,0 +1,66 @@
+# Single-use authorized scoped CPU runtime; no GPU or scientific first-use.
+name: G7-S25 isolated CPU311 Windows probe recovery R4
+on:
+  push:
+    branches:
+      - engineering/g7-s25-scoped-cpu311-recovery-r4-20261107
+permissions:
+  contents: read
+concurrency:
+  group: ttt-hybrid-g7-s25-cpu311-recovery-r4
+  cancel-in-progress: false
+jobs:
+  isolated-cpu311:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-s25-scoped-cpu311-recovery-r4-20261107' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 35
+    steps:
+      - name: Exact installer source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-runtime-prep
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Exact S25 frozen research source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: 108808f7b685107a76fae1ce5605b7ff9e2bac27
+          path: g7-s25-source
+          persist-credentials: false
+          submodules: false
+          lfs: false
+      - name: Verify Windows and WSL identity source and free disk without installs
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $src=Join-Path $env:GITHUB_WORKSPACE 'g7-s25-source'
+          & (Join-Path $env:GITHUB_WORKSPACE 'g7-runtime-prep\scripts\g7_s25_prepare_cpu311_windows.ps1') -Mode preflight -SourceRoot $src -ReceiptPath (Join-Path $src 'local_runs\cpu311_install_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'WINDOWS_PREFLIGHT_BLOCKED'}
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $linux){throw 'WSL_WORKSPACE_BLOCKED'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 55s /usr/bin/bash "$linux/g7-runtime-prep/scripts/g7_s25_prepare_cpu311_linux.sh" preflight "$linux/g7-s25-source"
+          if($LASTEXITCODE -ne 0){throw 'WSL_PREFLIGHT_BLOCKED'}
+      - name: Install isolated Windows CPU311 and run full exact-S25 regression
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          & (Join-Path $env:GITHUB_WORKSPACE 'g7-runtime-prep\scripts\g7_s25_prepare_cpu311_windows.ps1') -Mode install -SourceRoot (Join-Path $env:GITHUB_WORKSPACE 'g7-s25-source') -ReceiptPath (Join-Path $env:GITHUB_WORKSPACE 'g7-s25-source\local_runs\cpu311_install_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'WINDOWS_CPU311_BLOCKED'}
+      - name: Install isolated WSL CPU311 and run full exact-S25 regression
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $linux){throw 'WSL_WORKSPACE_BLOCKED'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=20s 1100s /usr/bin/bash "$linux/g7-runtime-prep/scripts/g7_s25_prepare_cpu311_linux.sh" install "$linux/g7-s25-source"
+          if($LASTEXITCODE -ne 0){throw 'WSL_CPU311_BLOCKED'}
+      - name: Preserve bounded runtime and exact-source qualification receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: g7-s25-cpu311-install-${{ github.sha }}-${{ github.run_id }}
+          path: g7-s25-source/local_runs/*.json
+          if-no-files-found: warn
+          retention-days: 30
