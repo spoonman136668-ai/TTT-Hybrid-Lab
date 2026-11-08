@@ -8,7 +8,7 @@ $receipt=[ordered]@{schema='ttt-hybrid.cpu311.scoped-windows.v1';source_sha=$sha
 function AssertExit([string]$stage){if($LASTEXITCODE -ne 0){throw "BLOCKED_$stage"}}
 try{
  if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
- $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-scoped-cpu311-recovery-r2-20261107' -or
+ $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-scoped-cpu311-recovery-r3-20261107' -or
  $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
  $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:RUNNER_OS -cne 'Windows'){throw 'BLOCKED_AUTHORITY'}
  if(-not $env:RUNNER_WORKSPACE -or -not(Test-Path -LiteralPath $SourceRoot -PathType Container)){throw 'BLOCKED_WORKSPACE'}
@@ -20,8 +20,17 @@ try{
  if($pins -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630'){throw 'BLOCKED_PINS_DRIFT'}
  if((git -C $SourceRoot status --porcelain --untracked-files=no | Out-String).Trim().Length -gt 0){throw 'BLOCKED_DIRTY_TRACKED_SOURCE'}
  if(-not(Test-Path -LiteralPath $scope -PathType Container)){throw 'BLOCKED_VERIFIED_RECOVERY_SCOPE_ABSENT'}
- if((Test-Path -LiteralPath (Join-Path $scope 'pythons')) -or
-    (Test-Path -LiteralPath (Join-Path $scope 'venv'))){throw 'BLOCKED_PYTHON_OR_VENV_ALREADY_EXISTS'}
+ # Recovery from exact R2 "No solution found" resolution failure only:
+ # it never installed a wheel; the prepared interpreter must be empty.
+ $python=Join-Path $scope 'venv\Scripts\python.exe'
+ if(-not(Test-Path -LiteralPath (Join-Path $scope 'pythons') -PathType Container) -or
+    -not(Test-Path -LiteralPath $python -PathType Leaf)){throw 'BLOCKED_MISSING_PINNED_INTERPRETER'}
+ $pyVersion=(& $python -I -B -c 'import sys;print(".".join(map(str,sys.version_info[:3])))' | Out-String).Trim()
+ AssertExit 'PYTHON_RECOVERY_PROBE'
+ if($pyVersion -cne '3.11.14'){throw 'BLOCKED_INTERPRETER_DRIFT'}
+ $installed=(& $python -I -B -c 'import json,importlib.metadata as m;print(json.dumps(sorted((d.metadata.get("Name") or "").lower() for d in m.distributions())))' | Out-String).Trim()
+ AssertExit 'PREEXISTING_WHEELS_PROBE'
+ if($installed -cne '[]'){throw 'BLOCKED_UNKNOWN_PARTIAL_PACKAGE_INSTALL'}
  $zip=Join-Path $scope 'uv.zip'
  if(-not(Test-Path -LiteralPath $zip -PathType Leaf)){throw 'BLOCKED_ARCHIVE_ABSENT'}
  if((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() -cne
@@ -44,11 +53,15 @@ try{
   $env:UV_NO_CONFIG='1';$env:UV_PYTHON_PREFERENCE='only-managed';$env:UV_PYTHON_INSTALL_BIN='false'
   $env:UV_CONCURRENT_DOWNLOADS='2';$env:UV_CONCURRENT_INSTALLS='1';$env:UV_HTTP_RETRIES='1'
   $env:CUDA_VISIBLE_DEVICES='-1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
-  & $uv python install 3.11.14;AssertExit 'PYTHON_INSTALL'
-  $venv=Join-Path $scope 'venv';& $uv venv --python 3.11.14 $venv;AssertExit 'VENV_INSTALL'
-  $python=Join-Path $venv 'Scripts\python.exe'
-  & $uv pip install --python $python --only-binary ':all:' --index-url 'https://download.pytorch.org/whl/cpu' --extra-index-url 'https://pypi.org/simple' 'torch==2.5.1+cpu' 'pytest==8.3.4'
-  AssertExit 'DEPENDENCIES'
+  # No Python/venv recreation and no ambiguous cross-index resolution.
+  # PyPI supplies ordinary packages; PyTorch's official CPU-only index
+  # supplies torch exclusively. Require all dependency metadata to match.
+  & $uv pip install --python $python --only-binary ':all:' --index-url 'https://pypi.org/simple' 'pytest==8.3.4' 'filelock>=3.13.1' 'typing-extensions>=4.8.0' 'networkx' 'jinja2' 'fsspec' 'sympy==1.13.1'
+  AssertExit 'PYPI_RUNTIME_DEPENDENCIES'
+  & $uv pip install --python $python --only-binary ':all:' --no-deps --index-url 'https://download.pytorch.org/whl/cpu' 'torch==2.5.1+cpu'
+  AssertExit 'TORCH_CPU_INDEX_ONLY'
+  & $uv pip check --python $python
+  AssertExit 'DEPENDENCY_CONSISTENCY'
   $probe='import json,sys,torch,pytest;print(json.dumps({"py":list(sys.version_info[:3]),"torch":str(torch.__version__),"pytest":str(pytest.__version__),"cuda":torch.version.cuda}))'
   $v=ConvertFrom-Json ((& $python -I -B -c $probe|Out-String).Trim());AssertExit 'RUNTIME_PROBE'
   if($v.py[0] -ne 3 -or $v.py[1] -ne 11 -or $v.py[2] -ne 14 -or $v.torch -cne '2.5.1+cpu' -or $v.pytest -cne '8.3.4' -or $null -ne $v.cuda){throw 'BLOCKED_RUNTIME_VERSIONS'}

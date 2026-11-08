@@ -47,13 +47,19 @@ mkdir "$scope/uv_release";tar -xzf "$archive" -C "$scope/uv_release"
 uv="$(find "$scope/uv_release" -name uv -type f -print -quit)"
 [[ -n "$uv" ]]||exit 3
 chmod 700 "$uv"
-[[ "$("$uv" --version)" == "uv 0.9.13" ]]||exit 3
+uv_version="$("$uv" --version)"
+[[ "$uv_version" == "uv 0.9.13" || "$uv_version" == "uv 0.9.13 "* ]]||exit 3
 "$uv" python install 3.11.14
 "$uv" venv --python 3.11.14 "$scope/venv"
 python="$scope/venv/bin/python"
+# Do not mix indexes: PyPI normal dependencies first, official CPU torch only.
 "$uv" pip install --python "$python" --only-binary ':all:' \
- --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple \
- 'torch==2.5.1+cpu' 'pytest==8.3.4'
+ --index-url https://pypi.org/simple \
+ 'pytest==8.3.4' 'filelock>=3.13.1' 'typing-extensions>=4.8.0' \
+ 'networkx' 'jinja2' 'fsspec' 'sympy==1.13.1'
+"$uv" pip install --python "$python" --only-binary ':all:' --no-deps \
+ --index-url https://download.pytorch.org/whl/cpu 'torch==2.5.1+cpu'
+"$uv" pip check --python "$python"
 "$python" -I -B - <<'PY'
 import sys,torch,pytest
 assert sys.version_info[:3]==(3,11,14)
