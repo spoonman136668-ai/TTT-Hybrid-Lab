@@ -1,0 +1,194 @@
+# One-use S26 hand-crafted signal sensitivity audit on existing project-owned runner.
+# No training, actual world evaluation, science-seed use, package install, CUDA,
+# new runtime, controller changes, acceptance or merge.
+name: G7-S26 causal action-effect sign readiness development audit
+on:
+  push:
+    branches:
+      - research/g7-s26-quarter-reserve-20261107
+    paths:
+      - .github/workflows/g7-s26-contrast-readiness-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: ttt-g7-s26-contrast-readiness-once
+  cancel-in-progress: false
+jobs:
+  fixed-source-action-effect-audit:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/g7-s26-quarter-reserve-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Checkout exact SHA without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: g7-s26-contrast-isolated
+          fetch-depth: 150
+          clean: true
+          persist-credentials: false
+          lfs: false
+          submodules: false
+
+      - name: Verify frozen original S25 and S26 then execute fixed stdlib controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'g7-s26-contrast-isolated'
+          $out=Join-Path $root 'local_runs'
+          $r=[ordered]@{
+            schema='ttt-hybrid.g7-s26.synthetic-signal-qualification.v1'
+            source_sha=$env:GITHUB_SHA
+            frozen_s25_head='108808f7b685107a76fae1ce5605b7ff9e2bac27'
+            status='BLOCKED_NOT_STARTED'
+            exact_source='UNVERIFIED'
+            synthetic_unit_tests='NOT_RUN'
+            synthetic_signal_audit='NOT_RUN'
+            untrained_mechanism_comparison='PREVIOUS_DEV_ONLY'
+            science_fit_validation_heldout='NOT_RUN'
+            model_training='NOT_RUN'
+            CUDA='NOT_USED'
+            packages_changed='FALSE'
+            full_windows_linux_regression='UNVERIFIED'
+            accepted_ref='UNCHANGED'
+            deployment='NOT_AUTHORIZED'
+          }
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/research/g7-s26-quarter-reserve-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status='BLOCKED_OWNER_OR_RUNNER'
+              throw 'S26_NOT_AUTHORIZED_RUNNER'
+            }
+            $actual=(& git -C $root rev-parse HEAD | Out-String).Trim()
+            $headCode=$LASTEXITCODE
+            $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyCode=$LASTEXITCODE
+            & git -C $root merge-base --is-ancestor '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD
+            $ancestorCode=$LASTEXITCODE
+            $changed=@(& git -C $root diff --name-only '108808f7b685107a76fae1ce5605b7ff9e2bac27' HEAD)
+            $changedCode=$LASTEXITCODE
+            $expected=@(
+              'experiments/g7_s26_frozen_quarter_reserve.json',
+              'scripts/g7_s26_reserve_gate.py',
+              'scripts/g7_s26_dev_comparison.py',
+              'tests/test_g7_s26_reserve_gate.py',
+              'tests/test_g7_s26_comparison_contract.py',
+              '.github/workflows/g7-s26-dev-quarter-reserve-once.yml',
+              'scripts/g7_s26_signal_identifiability.py',
+              'tests/test_g7_s26_signal_identifiability.py',
+              '.github/workflows/g7-s26-signal-identifiability-once.yml',
+              'scripts/g7_s26_contrast_competence.py',
+              'tests/test_g7_s26_contrast_competence.py',
+              '.github/workflows/g7-s26-contrast-readiness-once.yml'
+            )
+            if ($headCode -ne 0 -or $dirtyCode -ne 0 -or $ancestorCode -ne 0 -or
+                $changedCode -ne 0 -or $actual -cne $env:GITHUB_SHA -or $dirty -or
+                $changed.Count -ne 12) {
+              $r.status='BLOCKED_SHA_OR_DIFFERENT_SCOPE'
+              throw 'S26_SOURCE_DRIFT'
+            }
+            foreach ($file in $expected) {
+              if ($changed -cnotcontains $file) {
+                $r.status='BLOCKED_UNEXPECTED_FILE'
+                throw 'S26_DIFFERENT_FILES'
+              }
+            }
+            $s20=(& git -C $root hash-object -- scripts/g7_s20_hidden_multicycle.py | Out-String).Trim()
+            $s25=(& git -C $root hash-object -- experiments/g7_s25_frozen_contradiction_ttt.json | Out-String).Trim()
+            $s26=(& git -C $root hash-object -- experiments/g7_s26_frozen_quarter_reserve.json | Out-String).Trim()
+            if ($s20 -cne 'ac3f9ddd5b879e53e62030707fb6419adaf732ca' -or
+                $s25 -cne '31633b341403729b7ffbb7d73f3a04098ad44380' -or
+                $s26 -cne '34251b2cde6373ed484dbc21e4617c9165047e93') {
+              $r.status='BLOCKED_FROZEN_BLOB_DRIFT'
+              throw 'S26_PROTOCOL_CHANGED'
+            }
+            $r.exact_source='PASS_TWELVE_S26_FILES_S25_AND_S26_FROZEN'
+            $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$root" | Out-String).Trim()
+            $normal=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+            if ($linux -notmatch '^/mnt/[a-z]/' -or $normal -cne '1000') {
+              $r.status='BLOCKED_UNQUALIFIED_WSL_NORMAL_USER'
+              throw 'S26_WSL_NORMAL_USER_REQUIRED'
+            }
+            # The existing pinned R3 venv is already qualified, do not
+            # install deps or substitute a different runtime.
+            $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or -not $who) {
+              $r.status='BLOCKED_NORMAL_USER_IDENTITY'
+              throw 'S26_R3_WSL_USER_MISSING'
+            }
+            $python='/home/'+$who+'/.local/share/ttt-hybrid/g7-r3-06a01c2c3a98/venv/bin/python'
+            $manifest=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 30s $python -I -B -c 'import sys;sys.path.insert(0,sys.argv[1]);import g7_r5_oneshot as c;print(c.manifest()[0])' "$linux/scripts")
+            if ($LASTEXITCODE -ne 0 -or ($manifest -join '').Trim() -cne 'b0f674fd52f9f514d408840d27b969ce2da19ea119d90a6ce8f59fde05c073df') {
+              $r.status='BLOCKED_PINNED_R3_MANIFEST_CHANGED'
+              throw 'S26_WRONG_PINNED_PYTHON'
+            }
+            $result=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 70s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/tests/test_g7_s26_contrast_competence.py")
+            $testCode=$LASTEXITCODE
+            Write-Output ($result -join "`n")
+            if ($testCode -ne 0 -or ($result -join "`n") -notmatch 'Ran 7 tests' -or
+                ($result -join "`n") -notmatch 'OK') {
+              $r.status='BLOCKED_ACTION_EFFECT_TESTS'
+              throw 'S26_CONTRAST_TESTS_FAILED'
+            }
+            $r.synthetic_unit_tests='PASS_7_ACTION_EFFECT_SIGN_NEGATIVE_CONTROLS'
+            $resultPath=$linux+'/local_runs/g7_s26_contrast_readout.json'
+            $result=@(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 100s /usr/bin/env 'PYTHONDONTWRITEBYTECODE=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'MKL_NUM_THREADS=1' $python -I -B "$linux/scripts/g7_s26_contrast_competence.py" --sha "$env:GITHUB_SHA" --output $resultPath)
+            $runCode=$LASTEXITCODE
+            Write-Output ($result -join "`n")
+            $path=Join-Path $out 'g7_s26_contrast_readout.json'
+            if ($runCode -ne 0 -or -not (Test-Path -LiteralPath $path)) {
+              $r.status='BLOCKED_DEV_READOUT_EXECUTION'
+              throw 'S26_CONTRAST_READOUT_FAILED'
+            }
+            $proof=Get-Content -LiteralPath $path -Raw | ConvertFrom-Json
+            if ($proof.source_sha -cne $env:GITHUB_SHA -or
+                $proof.status -cne 'PASS_DEVELOPMENT_UNTRAINED_READOUT_ONLY_NOT_SCIENCE' -or
+                $proof.rows.Count -ne 12 -or
+                $proof.pre20.pairs -ne 960 -or
+                $proof.post20.pairs -ne 576 -or
+                $proof.untrained_slow_checkpoint_sha256.Length -ne 64 -or
+                $proof.scientific_first_use -cne 'NOT_AUTHORIZED_NOT_RUN' -or
+                $proof.fit_validation_heldout -cne 'NOT_RUN' -or
+                $proof.model_training -cne 'NOT_RUN' -or
+                $proof.fast_weight_update -cne 'NOT_RUN' -or
+                $proof.scientific_baseline_competence -cne 'UNVERIFIED' -or
+                $proof.gpu -cne 'NOT_USED') {
+              $r.status='BLOCKED_DEV_CONTRAST_PROOF_MISMATCH'
+              throw 'S26_CONTRAST_RECEIPT_INVALID'
+            }
+            $r.synthetic_signal_audit='PASS_UNTRAINED_CAUSAL_SIGN_READOUT_ONLY'
+            $r.status='PASS_7_FOCUSED_CAUSAL_SIGN_READOUT_ENGINEERING_ONLY'
+            $r.pre20_effect_sign_correct=$proof.pre20.sign_correct
+            $r.pre20_sign_opposite=$proof.pre20.sign_opposite_eligible
+            $r.pre20_evaluable=$proof.pre20.both_significant
+            $r.post20_effect_sign_correct=$proof.post20.sign_correct
+            $r.post20_sign_opposite=$proof.post20.sign_opposite_eligible
+            $r.post20_evaluable=$proof.post20.both_significant
+            Write-Output ('S26_PRE20_SIGN_EVALUABLE=' + $r.pre20_evaluable)
+            Write-Output ('S26_PRE20_SIGN_CORRECT=' + $r.pre20_effect_sign_correct)
+            Write-Output ('S26_POST20_SIGN_EVALUABLE=' + $r.post20_evaluable)
+            Write-Output ('S26_POST20_SIGN_CORRECT=' + $r.post20_effect_sign_correct)
+            Write-Output 'S26_SCIENCE=NOT_RUN'
+
+          } finally {
+            New-Item -ItemType Directory -Path $out -Force | Out-Null
+            $r | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $out 'g7_s26_contrast_qualification.json') -Encoding UTF8
+            Write-Output ('S26_CAUSAL_EFFECT_GATE=' + $r.status)
+          }
+
+      - name: Preserve exact-source synthetic positives and negatives
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-s26-contrast-readiness-${{ github.sha }}
+          path: |
+            g7-s26-contrast-isolated/local_runs/g7_s26_contrast_qualification.json
+            g7-s26-contrast-isolated/local_runs/g7_s26_contrast_readout.json
+          if-no-files-found: warn
+          retention-days: 30
