@@ -1,0 +1,58 @@
+{
+  "schema": "ttt-hybrid.g7-s26.v2-engineering-overlay-custody.v1",
+  "state": "FROZEN_ENGINEERING_SOURCE_ADMISSION_BEFORE_COMPOSITE_FIRST_DIAGNOSTIC",
+  "registered_utc": "2026-11-07",
+  "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "branch": "engineering/g7-s26-on-v2-qualification-20261107",
+  "original_s25_head": "108808f7b685107a76fae1ce5605b7ff9e2bac27",
+  "original_s26_head": "b8f4bc6628e15057b76dc1f085c6067b972cd5f9",
+  "qualified_portable_v2_head": "55f2dd4cd2699e6910a727ab691f3e26ccc3222e",
+  "original_s20_physics_blob": "ac3f9ddd5b879e53e62030707fb6419adaf732ca",
+  "derivative_s20_physics_blob": "bc3e9f255a4d1b967252ada8782ac9f8c000f7b7",
+  "original_s25_frozen_protocol_blob": "31633b341403729b7ffbb7d73f3a04098ad44380",
+  "original_s26_frozen_protocol_blob": "34251b2cde6373ed484dbc21e4617c9165047e93",
+  "original_source_pins_blob": "1438b51f8548db6bfe7e04805ba8c156e4b5b630",
+  "original_s26_additive_blobs": {
+    ".github/workflows/g7-s26-baseline-sign-admission-once.yml": "e6b4c012d7de441cc75754dd40a2fc1ab9733bd6",
+    ".github/workflows/g7-s26-contrast-readiness-once.yml": "e0119f607295a8528ea8cf6acd71a15f901b3a59",
+    ".github/workflows/g7-s26-dev-quarter-reserve-once.yml": "7b9ac43a0d164b29a5859c03b10e971b76d1bade",
+    ".github/workflows/g7-s26-signal-identifiability-once.yml": "36f800b9227f178350057c326b64ebdce4347438",
+    "experiments/g7_s26_frozen_quarter_reserve.json": "34251b2cde6373ed484dbc21e4617c9165047e93",
+    "scripts/g7_s26_baseline_direction_admission.py": "6b1c4b1dc24ae5992385888dafa551260535080d",
+    "scripts/g7_s26_contrast_competence.py": "76619cf59169b66268998f48ff19ee4633da3658",
+    "scripts/g7_s26_dev_comparison.py": "469b98e9cbd6f2ea734a53192d4bfd3deb411f66",
+    "scripts/g7_s26_reserve_gate.py": "d94b02c8f6c4c07221d5141f003a322df9079351",
+    "scripts/g7_s26_signal_identifiability.py": "47feb320ec4caba1930a2d8ad4a17d62ecd33a18",
+    "tests/test_g7_s26_baseline_direction_admission.py": "cbbbd7af1b66d5d1c7aa7fd32cbc874813751fda",
+    "tests/test_g7_s26_comparison_contract.py": "1a66493126e0c0c348ad5c4acb888202b508338a",
+    "tests/test_g7_s26_contrast_competence.py": "c4b74f114f7ddbe6ff76076f7bf94f24eab6c921",
+    "tests/test_g7_s26_reserve_gate.py": "47df68c48a95ae0501983e7be4b487bc5e188e1b",
+    "tests/test_g7_s26_signal_identifiability.py": "5eb6049a42275a0e7fc768e65731323c221ea225"
+  },
+  "composite_source_delta": {
+    "file": "scripts/g7_s26_dev_comparison.py",
+    "original_blob": "469b98e9cbd6f2ea734a53192d4bfd3deb411f66",
+    "revised_blob": "28b5d079bea88dc01708e7ff388aea278ebf9022",
+    "only_authorized_change": "Replace Unix-only resource import and dev-only RSS report by OS-native peak measurement, retain unchanged slow predictions/gates/physics, return null RSS on Windows and distinct working-set provenance",
+    "no_scientific_threshold_change": true
+  },
+  "purpose": "Engineering source-portability qualification only. This is not a revised research scientific protocol, not a claim of S25/S26 scientific source admission and not a training authorization.",
+  "original_research_protocol_source_pins_must_keep_failing": true,
+  "scientific_first_use": "NOT_AUTHORIZED_NOT_RUN",
+  "training_or_fit": "NOT_AUTHORIZED_NOT_RUN",
+  "heldout_or_transfer_seed_use": "NOT_AUTHORIZED_NOT_RUN",
+  "development_seed_set_only": [
+    3101,
+    3109,
+    3119
+  ],
+  "accepted_ref_or_merge": "NOT_AUTHORIZED",
+  "qualified_v2_prior_run": 42433545417,
+  "required_checks": [
+    "Pinned exact composite commit tree and 15 S26 source-blob manifest checks",
+    "Frozen S25/S26 protocol + source_pins unchanged with mismatch to derivative S20 enforced",
+    "Project-owned native Windows and WSL CPU full regression on exact composite SHA",
+    "Paired dev-world no-source-update and negative controls at 3101/3109/3119 only",
+    "No package installs, no GPU, no science first-use, no controller/runner changes"
+  ]
+}
