@@ -221,7 +221,8 @@ def _krr(row:dict):
             row.get("calibration_validation_only") is True and
             row.get("history_steps")==32 and
             row.get("numeric_query_width")==3 and
-            row.get("train_query_samples")>=16,
+            integer(row.get("train_query_samples"),
+                    "S26_KERNEL_TRAIN_QUERY_COUNT_INVALID",16)>=16,
             "S26_KERNEL_CALIBRATION_OR_INPUT_INVALID")
 
 
