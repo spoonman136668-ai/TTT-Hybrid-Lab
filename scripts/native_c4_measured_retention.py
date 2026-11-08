@@ -78,8 +78,17 @@ def _peak_process_rss_bytes() -> int:
             ]
         data = Counters()
         data.cb = ctypes.sizeof(data)
-        ok = ctypes.windll.psapi.GetProcessMemoryInfo(
-            ctypes.windll.kernel32.GetCurrentProcess(), ctypes.byref(data), data.cb)
+        # Win32 APIs return pointer-width HANDLEs. The implicit ctypes
+        # c_int default truncates GetCurrentProcess() on 64-bit Windows and
+        # makes the otherwise-valid PSAPI query fail with an invalid handle.
+        kernel32 = ctypes.windll.kernel32
+        psapi = ctypes.windll.psapi
+        kernel32.GetCurrentProcess.restype = ctypes.c_void_p
+        psapi.GetProcessMemoryInfo.argtypes = (
+            ctypes.c_void_p, ctypes.POINTER(Counters), ctypes.c_ulong)
+        psapi.GetProcessMemoryInfo.restype = ctypes.c_int
+        ok = psapi.GetProcessMemoryInfo(
+            kernel32.GetCurrentProcess(), ctypes.byref(data), data.cb)
         if not ok:
             raise RuntimeError("C4_PEAK_WORKING_SET_UNAVAILABLE")
         return int(data.PeakWorkingSetSize)
