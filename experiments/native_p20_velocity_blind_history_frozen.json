@@ -1,0 +1,99 @@
+{
+  "schema": "ttt-hybrid.native-p20.velocity-blind-history-frozen.v1",
+  "registered": "2026-11-08",
+  "stack": {
+    "p19_PR": 91,
+    "p19_exact_sha": "d7e1535f615c7f9f0ca70b2ab9059fdf1f912726",
+    "p18_failed_PR": 89,
+    "p18_exact_sha": "675ef40f80c43814cc320d6b9950d37a9395c0f8",
+    "s29_read_only_sha": "30c27ca4865e16b7574ee2b562879108db2b3796"
+  },
+  "question": "When present continuous velocity observations are withheld at both training and evaluation, does a learned non-token history GRU use factual temporal information to outperform equally supervised and trained same-capacity current-only GRU on true external CartPole action consequences?",
+  "null": "P19 GRU perfect return is explainable by contemporaneous public velocity; a newly trained velocity-blind GRU does not exceed matched current-only history-disabled control by >=15 real reward steps and original velocity-blind history-reversed negative by >=10 on each initialization.",
+  "inputs": {
+    "source": "Original S29 read-only MIT Gymnasium CartPole-v1 pinned source, same real reset/step, no new simulator",
+    "all_model_visible": "4 public observations with indices 1 (cart velocity) and 3 (angular velocity) replaced by 0 at every timestep; previous completed real action and reward preserved; original full source observations never passed into learned model",
+    "teacher": "P18 fixed present-source theta + 0.5*true public angular velocity: human-designed labels recorded from factual expert trajectory; privileged relative to learner-visible zeroed velocity, but same labels delivered to all learned arms; NOT factual-reward-only training",
+    "finite_difference": "Hardcoded causal finite difference of two completed, allowed visible theta observations, nominal fixed 0.02-step spacing; may not inspect source physics engine or hidden state",
+    "masks": "Current-only GRU trained and evaluated with previous 7 history rows zeroed; full GRU receives last 8 completed rows. Both have exactly 489 parameters and same training optimizer/labels/budgets.",
+    "strict": "Mask velocities before all learner forward calls in both supervised training and real environment eval; no reintroduction through unmasked recent row, no model future action access."
+  },
+  "design": {
+    "train_seeds": "76000..76047",
+    "validation_seeds": "77000..77007",
+    "evaluation_seeds": [
+      78011,
+      78012,
+      78013,
+      78014,
+      78015,
+      78016,
+      78017,
+      78018
+    ],
+    "model_initializations": [
+      2741,
+      2753,
+      2767
+    ],
+    "max_steps_per_episode": 200,
+    "learned_arms": [
+      "full_history_gru_489",
+      "current_only_gru_489",
+      "full_history_mlp_471",
+      "current_only_linear_10"
+    ],
+    "eval_arms": [
+      "full_history_gru",
+      "current_only_gru",
+      "full_history_mlp",
+      "current_only_linear",
+      "history_reversed_gru",
+      "finite_difference_public_history",
+      "full_observation_expert",
+      "seeded_random"
+    ],
+    "teacher_rollout_training_development_worlds": 48,
+    "same_teacher_demo_trajectory_for_all_arms": true,
+    "supervised_epochs": 32,
+    "optimizer": "AdamW",
+    "batch_size": 512,
+    "learning_rate": 0.008,
+    "weight_decay": 0,
+    "clip_grad_norm": 3,
+    "meaningful_history_requirement_each_seed": {
+      "full_history_gru_mean_reward_min": 150,
+      "versus_trained_current_only_gru_mean_reward_gain_min": 15,
+      "versus_reversed_history_gru_mean_reward_gain_min": 10,
+      "task_discriminative_if_current_only_gru_mean_reward_below": 185
+    },
+    "controls": {
+      "best_finite_difference_compared_descriptively": true,
+      "learned_MLP_descriptive_strong_control": true,
+      "no_impossible_superiority_over_200_cap": true,
+      "reverse_history_only_during_evaluation": true,
+      "original_P19_supervised_control_proof_not_reward_only": true
+    },
+    "resource": {
+      "one_use_dev_only": true,
+      "no_new_runner": true,
+      "no_install": true,
+      "no_paid_api": true,
+      "max_process_seconds": 240,
+      "regression_windows_full": true,
+      "regression_ubuntu_full": true
+    }
+  },
+  "scientific_boundary": {
+    "first_use_authorized": false,
+    "sealed_scientific_data_consumed": false,
+    "original_S26_S27_unchanged": true,
+    "external_environment_public_DEV": true,
+    "not_unknown_world": true,
+    "not_reward_only_learning": true,
+    "fully_matched_FLOPs": false,
+    "results_observed_before_this_preregistration": false,
+    "no_merge_or_promotion_permission": true,
+    "FORGE_owner_activation": false
+  }
+}
