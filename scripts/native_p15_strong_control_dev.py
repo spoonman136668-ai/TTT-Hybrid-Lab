@@ -92,7 +92,11 @@ def evaluate(family:str,dev_seed:int,pair_index:int,models:dict)->dict:
     prefixes=[]
     for arm in ARMS:
         world=eval_world(family,dev_seed)
-        rng=common_probe_rng(dev_seed,pair_index)
+        # Separate forced-probe RNG from policy exploration: a random
+        # baseline must not change later forced actions by consuming draws.
+        probe_rng=common_probe_rng(dev_seed,pair_index)
+        policy_rng=random.Random(807719+dev_seed+pair_index*1337+
+                                 ARMS.index(arm)*109)
         history=[]
         previous=0
         for idx in range(OBS_PREFIX):
@@ -112,10 +116,13 @@ def evaluate(family:str,dev_seed:int,pair_index:int,models:dict)->dict:
         for step in range(DECISIONS):
             absolute=OBS_PREFIX+step
             completed_actions=[a for a,_ in history]
-            action=select_arm_action(arm,models,history,completed_actions,
-                                     step,rng,learner)
             if step%PROBE_INTERVAL==0:
+                action=probe_rng.choice((-1,1))
                 probes.append((step,action))
+            else:
+                action=select_arm_action(arm,models,history,
+                                         completed_actions,step,
+                                         policy_rng,learner)
             # Crucial: there is no observation until the action was chosen.
             outcome=factual_step(world,absolute,action,previous)
             if learner:
