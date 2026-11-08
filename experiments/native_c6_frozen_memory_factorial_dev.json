@@ -1,0 +1,60 @@
+{
+  "schema": "ttt-hybrid.c6.frozen-memory-factorial-dev.v1",
+  "parent_sha": "23d35015df39a91a4cb0e26e4e82d4c22f6fea67",
+  "source_train": "unaltered P3 factual AdamW native learner, 40 old + 40 reversed public analytic events",
+  "source_checkpoints": "immutable root/40/80 C2 validated cold restores",
+  "seeds": [
+    46111,
+    46117,
+    46129
+  ],
+  "science_first_use": false,
+  "model_training_updates": 80,
+  "experiments": {
+    "samples_per_regime": 16,
+    "regimes": [
+      "old_regime_mse",
+      "postreversal_mse"
+    ],
+    "read_only": true,
+    "fast_memory_writes_during_evaluation": 0,
+    "optimizer_updates_during_evaluation": 0,
+    "tensor_dtypes": "original float32",
+    "arms": [
+      "step40_model_step40_state",
+      "step80_model_step80_state",
+      "step80_model_old_fast_only",
+      "step80_model_old_full_native",
+      "step40_model_step80_state",
+      "step80_model_old_fast_rolled_sham",
+      "step80_model_zero_fast"
+    ],
+    "fast_swap": "restore only saved step40 native.fast_weights into frozen step80 full native state without replacing step80 recurrent/history",
+    "full_swap": "restore saved step40 recurrent/fast/history into frozen step80 model, no gradient or new factual outcome",
+    "sham": "roll old fast_weight width by exactly one scalar; preserve same shape, L2 norm and total stored scalars",
+    "model_swap": "step40 model with the frozen step80 saved native state",
+    "oracle_selection": "Evaluator chooses known saved state for probing. No legitimate learned or inferred context routing is present.",
+    "identical_inputs": "16 old and 16 new alternating actions, sensor zero, dt 0.2, same as C4 read-only test",
+    "evaluation": "each sample begins from the same immutable chosen native state, model step produces prediction only; observed outcome is for score calculation after prediction, not fed back"
+  },
+  "hypotheses_diagnostic_only": {
+    "fast_only_old_mse_gain_vs_step80_at_least": 0.1,
+    "full_old_native_old_mse_gain_vs_step80_at_least": 0.1,
+    "old_model_with_new_state_old_mse_gain_vs_step80_at_least": 0.1,
+    "fast_only_beats_rolled_sham_old_mse_by_at_least": 0.1,
+    "fast_only_old_mse_within_step40_by": 0.05
+  },
+  "budget": {
+    "max_total_wall_seconds": 120,
+    "original_science_worlds": 0,
+    "gpu_seconds": 0
+  },
+  "proof_limits": [
+    "An evaluator-selected archived state is an oracle probe and NOT learned context routing.",
+    "Old and new factual regimes have incompatible targets for identical instantaneous inputs.",
+    "Fast and native state from old checkpoint may be mismatched with learned current model parameters; negative outcomes are valuable.",
+    "No new facts are ingested and there is NO fast-weight or optimizer update in the evaluation arms.",
+    "Offline static snapshot reuse is not an accepted persistent memory hierarchy, physical backup or autonomous cognition.",
+    "Public reused DEV task, no held-out scientific success, conventional-control parity or unseen-world transfer."
+  ]
+}
