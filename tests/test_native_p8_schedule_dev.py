@@ -83,7 +83,7 @@ def test_actual_isolated_cli_entrypoint_loads_local_p7_without_pythonpath():
     root=Path(__file__).resolve().parents[1]
     source=root/"scripts/native_p8_schedule_dev.py"
     result=subprocess.run([sys.executable,"-I","-B",str(source),"--help"],
-                          cwd=root,env={"PYTHONDONTWRITEBYTECODE":"1"},
+                          cwd=root,
                           capture_output=True,text=True,timeout=20,check=False)
     assert result.returncode==0, result.stderr[-1000:]
     assert "--receipt" in result.stdout
