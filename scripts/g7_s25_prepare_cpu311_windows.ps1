@@ -8,7 +8,7 @@ $receipt=[ordered]@{schema='ttt-hybrid.cpu311.scoped-windows.v1';source_sha=$sha
 function AssertExit([string]$stage){if($LASTEXITCODE -ne 0){throw "BLOCKED_$stage"}}
 try{
  if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
- $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-scoped-cpu311-runtime-once-20261107' -or
+ $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_REF -cne 'refs/heads/engineering/g7-s25-scoped-cpu311-recovery-r2-20261107' -or
  $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
  $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:RUNNER_OS -cne 'Windows'){throw 'BLOCKED_AUTHORITY'}
  if(-not $env:RUNNER_WORKSPACE -or -not(Test-Path -LiteralPath $SourceRoot -PathType Container)){throw 'BLOCKED_WORKSPACE'}
@@ -19,18 +19,27 @@ try{
  $pins=(& git -C $SourceRoot hash-object -- source_pins.json | Out-String).Trim();AssertExit 'PINS'
  if($pins -cne '1438b51f8548db6bfe7e04805ba8c156e4b5b630'){throw 'BLOCKED_PINS_DRIFT'}
  if((git -C $SourceRoot status --porcelain --untracked-files=no | Out-String).Trim().Length -gt 0){throw 'BLOCKED_DIRTY_TRACKED_SOURCE'}
- if(Test-Path -LiteralPath $scope){throw 'BLOCKED_PREEXISTING_SCOPE_NO_REPLAY'}
+ if(-not(Test-Path -LiteralPath $scope -PathType Container)){throw 'BLOCKED_VERIFIED_RECOVERY_SCOPE_ABSENT'}
+ if((Test-Path -LiteralPath (Join-Path $scope 'pythons')) -or
+    (Test-Path -LiteralPath (Join-Path $scope 'venv'))){throw 'BLOCKED_PYTHON_OR_VENV_ALREADY_EXISTS'}
+ $zip=Join-Path $scope 'uv.zip'
+ if(-not(Test-Path -LiteralPath $zip -PathType Leaf)){throw 'BLOCKED_ARCHIVE_ABSENT'}
+ if((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() -cne
+    'cdfb04512c9184939f16eea02644a7133b4e41233ead69122d49847d29a45538'){
+  throw 'BLOCKED_ARCHIVE_HASH_DRIFT'
+ }
  if([IO.DriveInfo]::new([IO.Path]::GetPathRoot($scope)).AvailableFreeSpace -lt 6GB){throw 'BLOCKED_DISK_RESERVE'}
  if($Mode -eq 'preflight'){$state='PASS_WINDOWS_READONLY_PREFLIGHT';$code=0}
  else{
-  New-Item -ItemType Directory -Path $scope | Out-Null
-  $zip=Join-Path $scope 'uv.zip'
-  [Net.ServicePointManager]::SecurityProtocol=[Net.SecurityProtocolType]::Tls12
-  Invoke-WebRequest -UseBasicParsing -Uri 'https://github.com/astral-sh/uv/releases/download/0.9.13/uv-x86_64-pc-windows-msvc.zip' -OutFile $zip -TimeoutSec 180
-  if((Get-FileHash -LiteralPath $zip -Algorithm SHA256).Hash.ToLowerInvariant() -cne 'cdfb04512c9184939f16eea02644a7133b4e41233ead69122d49847d29a45538'){throw 'BLOCKED_UV_HASH'}
-  $out=Join-Path $scope 'uv_release';Expand-Archive -LiteralPath $zip -DestinationPath $out
-  $uv=Get-ChildItem -LiteralPath $out -Filter uv.exe -File -Recurse|Select-Object -First 1 -ExpandProperty FullName
-  if(-not $uv -or ((& $uv --version|Out-String).Trim() -cne 'uv 0.9.13')){throw 'BLOCKED_UV_BINARY'}
+  # Original exact-hash release was already downloaded and read-only verified
+  # in run 42430469728. No second download, extraction or uncertain replay.
+  $out=Join-Path $scope 'uv_release'
+  $found=@(Get-ChildItem -LiteralPath $out -Filter uv.exe -File -Recurse)
+  if($found.Count -ne 1){throw 'BLOCKED_BINARY_CARDINALITY'}
+  $uv=$found[0].FullName
+  $actualVersion=(& $uv --version|Out-String).Trim()
+  AssertExit 'UV_VERSION'
+  if($actualVersion -cnotmatch '^uv 0\.9\.13(?:\s|$)'){throw 'BLOCKED_UV_IDENTITY'}
   $env:UV_PYTHON_INSTALL_DIR=Join-Path $scope 'pythons';$env:UV_CACHE_DIR=Join-Path $scope 'cache'
   $env:UV_NO_CONFIG='1';$env:UV_PYTHON_PREFERENCE='only-managed';$env:UV_PYTHON_INSTALL_BIN='false'
   $env:UV_CONCURRENT_DOWNLOADS='2';$env:UV_CONCURRENT_INSTALLS='1';$env:UV_HTTP_RETRIES='1'
