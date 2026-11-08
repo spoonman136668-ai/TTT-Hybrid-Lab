@@ -1,0 +1,163 @@
+# Native P18: genuine chosen-action factual training in upstream MIT CartPole, DEV.
+# Original S29 owned source and independent science seeds are read-only and sealed.
+name: Native P18 source-pinned real CartPole learned-action DEV once
+on:
+  push:
+    branches:
+      - engineering/native-p18-external-cartpole-factual-learning-dev-20261108
+    paths:
+      - .github/workflows/native-p18-external-cartpole-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p18-external-cartpole-oneuse
+  cancel-in-progress: false
+jobs:
+  exact-source-real-factual-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p18-external-cartpole-factual-learning-dev-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 22
+    steps:
+      - name: Checkout exact P18 candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: native-p18-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 180
+      - name: Checkout verified original S29 independent owner source only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: 30c27ca4865e16b7574ee2b562879108db2b3796
+          path: native-p18-s29-owner
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout exact MIT Farama only, no installer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: native-p18-mit-gym
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout exact BSD3 cloudpickle only, no installer
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: cloudpipe/cloudpickle
+          ref: ff54d93221082d4ce22630ecdb8fbbccc60f3b62
+          path: native-p18-bsd3-cloudpickle
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Verify original P17 ancestry and independently owned S29 immutable source
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P18_OWNER_ONCE_SCOPE_FAIL'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p18-candidate'
+          $s29=Join-Path $env:GITHUB_WORKSPACE 'native-p18-s29-owner'
+          $mit=Join-Path $env:GITHUB_WORKSPACE 'native-p18-mit-gym'
+          $bsd=Join-Path $env:GITHUB_WORKSPACE 'native-p18-bsd3-cloudpickle'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P18_CANDIDATE_SHA_MISMATCH'}
+          $owner=(& git -C $s29 rev-parse HEAD|Out-String).Trim()
+          $gym=(& git -C $mit rev-parse HEAD|Out-String).Trim()
+          $cloud=(& git -C $bsd rev-parse HEAD|Out-String).Trim()
+          if($owner -cne '30c27ca4865e16b7574ee2b562879108db2b3796' -or $gym -cne '17eff00220d210beda933f78b0e52850022b0690' -or $cloud -cne 'ff54d93221082d4ce22630ecdb8fbbccc60f3b62'){throw 'P18_INDEPENDENT_SOURCE_SHA_DRIFT'}
+          foreach($d in @($root,$s29,$mit,$bsd)){
+            $dirty=(& git -C $d status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P18_SOURCE_DIRTY:$d"}
+          }
+          & git -C $root merge-base --is-ancestor '70d75944534dbbf5e2af42a5cd7038ae7f07b871' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P18_PARENT_P17_ANCESTRY_FAIL'}
+          $protected=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'native_continuous_state.py'='38ebbfb339026f3213a8c380e090480609288917';
+            'scripts/native_p11_temporal_credit_dev.py'='3217e3ba6e5fdf8d88dc354e254d910cdafd87eb';
+            'scripts/native_p16_champion_guard_dev.py'='9092097ca3de7d2640ea11ed8bdd077b4bbe3085';
+            'scripts/native_p17_stable_gru_competence_dev.py'='ed5fc2e7e6217c0a4adf4c4ce094bd4d1cde016c';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586';
+            'tests/test_native_p18_real_cartpole_factual_dev.py'='10f9444a90baba08b93c2dc32a43126240238b88';
+            'experiments/native_p18_real_cartpole_factual_frozen.json'='fd4828f971acb7e052dc6ff7f78314267bef202b'
+          }
+          foreach($name in $protected.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $protected[$name]){throw "P18_PROTECTED_GIT_BLOB_DRIFT:$name"}
+          }
+          $original=@{
+            'scripts/native_s29_mit_gymnasium_smoke.py'='5176d77ecd4d81c95b0ece6855c30f598eb0ae4d';
+            'experiments/s29_gymnasium_contract_smoke_frozen.json'='9ba9bc1c5ada3fd8e8d91e7208644f94fcf887dc';
+            'experiments/s29_gymnasium_cloudpickle_source_r2_frozen.json'='ee92a4bb765c2016387ba6969dc94ffa0d64ec85';
+            'scripts/native_s28_causal_wind_offline.py'='cba40ef802e0255e351772cdaa95bbb5f94cc1bd'
+          }
+          foreach($name in $original.Keys){
+            $actual=(& git -C $s29 hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $original[$name]){throw "P18_S29_OWNER_GIT_BLOB_DRIFT:$name"}
+          }
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p18_real_cartpole_factual_frozen.json') -Raw|ConvertFrom-Json
+          if($m.schema -cne 'ttt-hybrid.native-p18.real-cartpole-frozen.v1' -or $m.science.authorized -ne $false -or $m.science.first_use_consumed -ne $false -or @($m.science.reserved_seeds.PSObject.Properties).Count -ne 0 -or $m.design.training_episodes_per_model -ne 64 -or @($m.design.train_initializations).Count -ne 3 -or @($m.design.development_eval_seeds).Count -ne 4 -or $m.design.environment -notmatch 'CartPole-v1' -or $m.design.scope -cne 'AUTHORED_PUBLIC_DEVELOPMENT_TRAINING_ON_PINNED_EXTERNAL_MIT_GYM_NO_SCIENCE_FIRST_USE'){throw 'P18_ORIGINAL_SCIENCE_OR_DEV_SOURCE_ADMISSION'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P18_ORIGINAL_OWNER_INTERPRETER_MISSING'}
+          $vers=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $vers.Count -ne 3 -or $vers[0] -cne '2.5.1+cpu' -or $vers[1] -cne '8.3.4' -or $vers[2] -cne '1.26.4'){throw 'P18_CPU_ORIGINAL_ENV_DRIFT'}
+          Write-Output 'P18_SOURCE_LOCK_NO_SCIENCE_NO_NEW_INSTALL=PASS'
+      - name: Mandatory full Windows exact-SHA regression and original negatives
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p18-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p18_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P18_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p18_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P18_WINDOWS_ORIGINAL_NEGATIVE_OR_SOURCE_FAIL'}
+          Write-Output 'P18_WINDOWS_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: Mandatory full Ubuntu WSL exact-SHA regression and original negatives
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P18_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p18-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p18_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P18_WSL_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p18-candidate\local_runs\native_p18_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P18_WSL_ORIGINAL_NEGATIVE_OR_SOURCE_FAIL'}
+          Write-Output 'P18_WSL_FULL_AND_ORIGINAL_NEGATIVE=PASS'
+      - name: One bounded true upstream environment real factual training assay
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/native-p18-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 260s /usr/bin/env 'NATIVE_P18_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' $py -I -B "$root/scripts/native_p18_real_cartpole_factual_dev.py" --s29-root "$lp/native-p18-s29-owner" --source-root "$lp/native-p18-mit-gym" --cloudpickle-root "$lp/native-p18-bsd3-cloudpickle" --receipt "$root/local_runs/native_p18_real_cartpole_factual.json"
+          if($LASTEXITCODE -ne 0){throw 'P18_REAL_EXTERNAL_ACTION_LEARNING_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p18-candidate\local_runs\native_p18_real_cartpole_factual.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_REAL_EXTERNAL_FACTUAL_DEV_TRAINING_NOT_SCIENCE' -or $p.first_use_scientific -cne 'NOT_RUN' -or @($p.protected_scientific_world_seeds_consumed).Count -ne 0 -or $p.real_training_gradient_updates_total -ne 384 -or $p.param_budget_GRU -ne 489 -or $p.param_budget_MLP -ne 471 -or @($p.records).Count -ne 3 -or $p.factual_training_actions -lt 1000 -or $p.factual_eval_actions -lt 100){throw 'P18_SOURCE_QUALIFIED_ACTUAL_FACTUAL_RECEIPT_INVALID'}
+          Write-Output 'P18_SOURCE_PINNED_ACTUAL_FACTUAL_TRAINING_AND_STRONG_NEGATIVES=PASS_DEV'
+      - name: Archive real source and all factual outcomes, including nulls
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p18-external-cartpole-factual-once
+          path: native-p18-candidate/local_runs/native_p18_*.json
+          retention-days: 30
+          if-no-files-found: error
