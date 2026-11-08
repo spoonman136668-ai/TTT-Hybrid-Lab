@@ -1,0 +1,189 @@
+# P23 source-pinned original-owner full CPU AdamW/RNG continuation; DEV ONLY.
+name: Native P23 exact cold training resume and gravity transfer once
+on:
+  push:
+    branches:
+      - engineering/native-p23-exact-training-resume-gravity-dev-20261108
+    paths:
+      - .github/workflows/native-p23-exact-training-resume-gravity-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p23-exact-training-resume-gravity-oneuse
+  cancel-in-progress: false
+jobs:
+  owner-public-development:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p23-exact-training-resume-gravity-dev-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 28
+    steps:
+      - name: Checkout exact P23 owner candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: p23-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 190
+      - name: Checkout original isolated S29 owner source read-only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: 30c27ca4865e16b7574ee2b562879108db2b3796
+          path: p23-s29-owner
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout original pinned MIT upstream Gym source only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: p23-mit-gym
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout original pinned BSD3 cloudpickle source only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: cloudpipe/cloudpickle
+          ref: ff54d93221082d4ce22630ecdb8fbbccc60f3b62
+          path: p23-bsd3-cloudpickle
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Exact SHA, original P20/P21 ancestor and prospective P23 science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P23_ORIGINAL_OWNER_RUN_DENIED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p23-candidate'
+          $s29=Join-Path $env:GITHUB_WORKSPACE 'p23-s29-owner'
+          $mit=Join-Path $env:GITHUB_WORKSPACE 'p23-mit-gym'
+          $bsd=Join-Path $env:GITHUB_WORKSPACE 'p23-bsd3-cloudpickle'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P23_CANDIDATE_SHA_DRIFT'}
+          & git -C $root merge-base --is-ancestor 'c1587ad5012d66a1ee9d368e52d38a6c3e81573c' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P23_P21_QUALIFIED_PARENT_NOT_ANCESTOR'}
+          $expected=@{
+            'experiments/native_p23_exact_resume_gravity_frozen.json'='f52f75b95550c51ebeecbe9b87025967fed34e87';
+            'scripts/native_p23_exact_training_resume_gravity_dev.py'='88f95b754124de278b52e716f6f046e328ef1ee4';
+            'tests/test_native_p23_exact_training_resume_gravity_dev.py'='023ac252ba84c6e8abbc258e685c989ad616d086';
+            'experiments/native_p21_cold_retention_frozen.json'='1e8ae86973367742cf313c18efd7b43ab2c7232d';
+            'scripts/native_p21_process_cold_retention_dev.py'='7813df2010751215f9e0c1d66fc1d1e48f9a9ee9';
+            'tests/test_native_p21_process_cold_retention_dev.py'='6632e3e4be1b37dad3ecbf4c8994099ec64f849f';
+            'experiments/native_p20_velocity_blind_history_frozen.json'='cdfe8341cc3d585f84c4df0ae9242e197b3d12f6';
+            'scripts/native_p20_velocity_blind_history_dev.py'='99ebe68151642a5c7a9f5efd95923e4450086155';
+            'scripts/native_p19_expert_calibration_dev.py'='7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5d';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586'
+          }
+          foreach($name in $expected.Keys){
+            $blob=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $expected[$name]){throw "P23_PROTECTED_SOURCE_BLOB_DRIFT:$name"}
+          }
+          if((& git -C $s29 rev-parse HEAD|Out-String).Trim() -cne '30c27ca4865e16b7574ee2b562879108db2b3796' -or (& git -C $mit rev-parse HEAD|Out-String).Trim() -cne '17eff00220d210beda933f78b0e52850022b0690' -or (& git -C $bsd rev-parse HEAD|Out-String).Trim() -cne 'ff54d93221082d4ce22630ecdb8fbbccc60f3b62'){throw 'P23_ORIGINAL_SOURCE_LICENSE_DRIFT'}
+          foreach($d in @($root,$s29,$mit,$bsd)){
+            $dirty=(& git -C $d status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P23_DIRTY_SOURCE_NO_EXEC:$d"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p23_exact_resume_gravity_frozen.json') -Raw|ConvertFrom-Json
+          if($f.schema -cne 'ttt-hybrid.native-p23.exact-resume-gravity-frozen.v1' -or $f.source.parent_P21_SHA -cne 'c1587ad5012d66a1ee9d368e52d38a6c3e81573c' -or $f.custody.scientific_first_use_authorized -ne $false -or $f.custody.original_S26_S27_first_use -ne $false -or $f.training.total_epochs -ne 32 -or $f.training.interruption_after_epoch -ne 16 -or @($f.transfer.evaluation_world_seeds).Count -ne 8){throw 'P23_FROZEN_SOURCE_OR_SCIENCE_FIRST_USE_DRIFT'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P23_ORIGINAL_CPU_VENV_MISSING'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P23_ORIGINAL_CPU_SOURCE_DEPENDENCY_DRIFT'}
+          Write-Output 'P23_EXACT_SOURCE_AND_SCIENCE_FENCE=PASS'
+      - name: Mandatory full original Windows regression and negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p23-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p23_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P23_WINDOWS_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p23_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P23_WINDOWS_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P23_WINDOWS_FULL_ORIGINAL_NEGATIVES=PASS'
+      - name: Mandatory full original Ubuntu WSL regression and negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P23_WSL_OWNER_DRIFT'}
+          $root="$lp/p23-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p23_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P23_WSL_FULL_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p23-candidate\local_runs\native_p23_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P23_WSL_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P23_WSL_FULL_ORIGINAL_NEGATIVES=PASS'
+      - name: One uninterrupted 32-epoch reference training process, no model promotion
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p23-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P23_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p23_exact_training_resume_gravity_dev.py" --mode reference --s29-root "$lp/p23-s29-owner" --source-root "$lp/p23-mit-gym" --cloudpickle-root "$lp/p23-bsd3-cloudpickle" --output-dir "$root/local_runs/p23-reference" --output-manifest "$root/local_runs/native_p23_reference.json"
+          if($LASTEXITCODE -ne 0){throw 'P23_REFERENCE_TRAINING_FAILED'}
+          Write-Output 'P23_UNINTERRUPTED_REFERENCE=PASS'
+      - name: Independent first 16 epoch training process, save optimizer RNG and sampler
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p23-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P23_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p23_exact_training_resume_gravity_dev.py" --mode split --s29-root "$lp/p23-s29-owner" --source-root "$lp/p23-mit-gym" --cloudpickle-root "$lp/p23-bsd3-cloudpickle" --output-dir "$root/local_runs/p23-split" --output-manifest "$root/local_runs/native_p23_split.json"
+          if($LASTEXITCODE -ne 0){throw 'P23_HALF_TRAINING_CUSTODY_FAILED'}
+          Write-Output 'P23_INTERRUPTED_HALF_CHECKPOINT=PASS'
+      - name: Completely new Python process resumes exact step 16 to 32 with all CPU state
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p23-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P23_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p23_exact_training_resume_gravity_dev.py" --mode resume --s29-root "$lp/p23-s29-owner" --source-root "$lp/p23-mit-gym" --cloudpickle-root "$lp/p23-bsd3-cloudpickle" --output-dir "$root/local_runs/p23-resumed" --output-manifest "$root/local_runs/native_p23_resumed.json" --split-dir "$root/local_runs/p23-split" --split-manifest "$root/local_runs/native_p23_split.json"
+          if($LASTEXITCODE -ne 0){throw 'P23_REAL_FULL_OPTIMIZER_RNG_RESUME_FAILED'}
+          Write-Output 'P23_FULL_MODEL_OPTIMIZER_RNG_SAMPLER_RESTART=PASS'
+      - name: Fourth clean process compares exact state and actual-gravity source trajectories
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p23-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P23_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p23_exact_training_resume_gravity_dev.py" --mode evaluate --s29-root "$lp/p23-s29-owner" --source-root "$lp/p23-mit-gym" --cloudpickle-root "$lp/p23-bsd3-cloudpickle" --reference-dir "$root/local_runs/p23-reference" --reference-manifest "$root/local_runs/native_p23_reference.json" --resumed-dir "$root/local_runs/p23-resumed" --resumed-manifest "$root/local_runs/native_p23_resumed.json" --receipt "$root/local_runs/native_p23_cold_training_comparison.json"
+          if($LASTEXITCODE -ne 0){throw 'P23_SEMANTIC_STATE_OR_REAL_SOURCE_ACTION_DRIFT'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p23-candidate\local_runs\native_p23_cold_training_comparison.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_EXACT_COLD_TRAINING_CONTINUATION_NOT_SCIENCE' -or $p.exact_reference_resume_state_count -ne 6 -or $p.byte_identical_actual_source_action_outcomes_count -ne 144 -or $p.bit_exact_final_model_optimizer_rng_sampler_and_action_states -ne $true -or $p.scientific_first_use -cne 'NOT_RUN' -or $p.reward_only_learning_claim -ne $false -or $p.strongest_conventional_superiority_claim -ne $false -or @($p.per_seed).Count -ne 3){throw 'P23_QUALIFICATION_RECEIPT_INVALID'}
+          if(@($p.negative_controls.PSObject.Properties|Where-Object{-not $_.Value}).Count -ne 0){throw 'P23_NEGATIVE_CONTROL_SKIPPED'}
+          Write-Output "P23_BIT_EXACT_FULL_CPU_TRAINING_RESUME=PASS 6_MODELS 144_REAL_ACTION_TRACES GRAVITY_HISTORY_SUPPORT=$($p.prospective_history_support_in_three)/3 SCIENTIFIC_FIRST_USE=NOT_RUN"
+      - name: Archive exact-source reference split resume and actual transfer nulls
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p23-full-optimizer-cold-resume-gravity-once
+          path: |
+            p23-candidate/local_runs/native_p23_*.json
+            p23-candidate/local_runs/p23-reference/*.pt
+            p23-candidate/local_runs/p23-split/*.pt
+            p23-candidate/local_runs/p23-resumed/*.pt
+          retention-days: 30
+          if-no-files-found: warn
