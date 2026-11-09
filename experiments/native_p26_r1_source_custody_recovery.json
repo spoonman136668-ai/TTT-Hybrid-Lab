@@ -1,0 +1,33 @@
+{
+  "schema": "ttt-hybrid.native-p26.r1.source-custody-recovery.v1",
+  "registered": "2026-11-08",
+  "original": {
+    "P26_PR": 101,
+    "original_source_sha": "0dff12a5cbca6c438086a6bd5b5cae4da081ecee",
+    "original_one_use_run": 42539002951,
+    "failure_stage": "preflight source blob verification before Windows/WSL qualification",
+    "failure_marker": "P26_FROZEN_OR_PARENT_BLOB_DRIFT:scripts/native_p19_expert_calibration_dev.py",
+    "scientific_or_public_training_executed": false,
+    "protected_S26_S27_first_use": false,
+    "original_negative_evidence_preserved": true,
+    "original_frozen_protocol_sha": "860cdb04a26f4cb8c50793ec822fac73f7ee5200",
+    "original_frozen_protocol_blob": "4e8dfc7631590821baeff4d6da72bee2f55f5d9a",
+    "original_P26_implementation_blob": "c6ba33c7d7df1a0c12ebde9e20308e723346dd41",
+    "original_P26_tests_blob": "ad9ef44317721df7d25581e8bd3835c18d4cd162"
+  },
+  "recovery": {
+    "reason": "Original Windows working-tree git hash-object source lock reported a mismatch despite matching GitHub blob SHA. Distinguish committed Git object from working tree representation; root cause not established.",
+    "exact_change": "Use git rev-parse HEAD:path to verify original canonical source blob object and git cat-file -t blob, then independent git status --porcelain --untracked-files=all check on every checked-out source. Keep all expected original SHA locks.",
+    "original_source_and_seeds_unchanged": true,
+    "new_validation_seeds_required": false,
+    "original_PUBLIC_DEV_seed_consumed": false,
+    "one_use_new_workflow_unique_branch": true,
+    "same_windows_ubuntu_full_regression_and_original_CUDA_negative": true,
+    "same_original_external_owner_and_source": true,
+    "same_frozen_positive_negative_thresholds": true,
+    "no_new_controller_scheduler_or_runner": true,
+    "no_paid_api_or_install": true,
+    "no_science_first_use": true,
+    "no_merge_or_FORGE_activation": true
+  }
+}
