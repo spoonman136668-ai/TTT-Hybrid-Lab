@@ -1,0 +1,200 @@
+# P26 original-owner one-use public DEV conflicting-action skill-retention falsification.
+name: Native P30-R1 reward-only adapter exact arm registry recovery once
+on:
+  push:
+    branches:
+      - engineering/native-p30-r1-frozen-arm-order-repair-20261108
+    paths:
+      - .github/workflows/native-p30-r1-arm-set-recovery-once.yml
+permissions:
+  contents: read
+  actions: read
+concurrency:
+  group: native-p30-r1-arm-set-recovery-once
+  cancel-in-progress: false
+jobs:
+  original-owner-development:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p30-r1-frozen-arm-order-repair-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 28
+    steps:
+      - name: Checkout exact P28 candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: p30-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 220
+      - name: Checkout independent original S29 source owner read-only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: 30c27ca4865e16b7574ee2b562879108db2b3796
+          path: p30-s29-owner
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout original pinned MIT Gymnasium source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: p30-mit-gym
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout original pinned BSD3 cloudpickle source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: cloudpipe/cloudpickle
+          ref: ff54d93221082d4ce22630ecdb8fbbccc60f3b62
+          path: p30-bsd3-cloudpickle
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Verify original P30 failed source and new arm-set-only rescue with original protected science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P30_R1_OWNER_ONE_USE_REFUSED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p30-candidate'
+          $s29=Join-Path $env:GITHUB_WORKSPACE 'p30-s29-owner'
+          $mit=Join-Path $env:GITHUB_WORKSPACE 'p30-mit-gym'
+          $bsd=Join-Path $env:GITHUB_WORKSPACE 'p30-bsd3-cloudpickle'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P30_R1_EXACT_SOURCE_DRIFT'}
+          & git -C $root merge-base --is-ancestor '28d8c3dfe8385d36dfd4320d0948b5c51516c691' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P30_R1_P23_CUSTODY_PARENT_MISSING'}
+          $locks=@{
+            'experiments/native_p30_r1_frozen_arm_order_recovery.json'='b83901b525e0688aa62b20b7df404b91dd28e8b5';
+            'experiments/native_p30_reward_only_action_adapter_frozen.json'='e6d354b7c94eb886a00180460b5c2ccd62989f56';
+            'scripts/native_p30_reward_only_adapter_dev.py'='21b8503b59cb97407a8e2cb50be7b8eb3ae57391';
+            'tests/test_native_p30_reward_only_adapter_dev.py'='3ed26add6ea80a999e59a23319c819f392692618';
+            'scripts/native_p28_r1_cold_factual_eval_dev.py'='6713748d0338b6b8cee0cc218775a77a317324da';
+            'scripts/native_p28_context_task_order_dev.py'='34c6a05aee2b8b734ba23ccf7e987627d68c5609';
+            'scripts/native_p26_contradictory_action_retention_dev.py'='c6ba33c7d7df1a0c12ebde9e20308e723346dd41';
+            'scripts/native_p23_exact_training_resume_gravity_dev.py'='88f95b754124de278b52e716f6f046e328ef1ee4';
+            'scripts/native_p20_velocity_blind_history_dev.py'='99ebe68151642a5c7a9f5efd95923e4450086155';
+            'scripts/native_p19_expert_calibration_dev.py'='7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5d';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586';
+          }
+          foreach($path in $locks.Keys){
+            $actual=(& git -C $root rev-parse "HEAD:$path"|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $locks[$path]){throw "P30_R1_CANONICAL_TREE_BLOB_DRIFT:$path"}
+            $kind=(& git -C $root cat-file -t $actual|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $kind -cne 'blob'){throw "P30_R1_R2_NOT_A_GIT_BLOB:$path"}
+          }
+          if((& git -C $s29 rev-parse HEAD|Out-String).Trim() -cne '30c27ca4865e16b7574ee2b562879108db2b3796' -or (& git -C $mit rev-parse HEAD|Out-String).Trim() -cne '17eff00220d210beda933f78b0e52850022b0690' -or (& git -C $bsd rev-parse HEAD|Out-String).Trim() -cne 'ff54d93221082d4ce22630ecdb8fbbccc60f3b62'){throw 'P30_R1_UPSTREAM_ORIGINAL_OWNER_SOURCE_DRIFT'}
+          foreach($d in @($root,$s29,$mit,$bsd)){
+            $dirty=(& git -C $d status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P30_R1_DIRTY_ORIGINAL_CHECKOUT:$d"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p30_reward_only_action_adapter_frozen.json') -Raw|ConvertFrom-Json
+          if($f.schema -cne 'ttt-hybrid.native-p30.source-reward-only-mapping-adapter-frozen.v1' -or $f.parent.P28_R1_qualified_SHA -cne '57d89efde042c0a14f316e69a49a34f73e738340' -or $f.parent.original_training_artifact_id -ne 13641906162 -or $f.qualification.protected_scientific_first_use -ne $false -or $f.qualification.no_accepted_model_no_merge_no_FORGE_owner_activation -ne $true -or $f.training.epochs -ne 48 -or $f.training.source_pair_trials_per_task_per_model -ne 12 -or @($f.factual_source.eval_normal_seeds).Count -ne 8 -or @($f.factual_source.eval_reverse_seeds).Count -ne 8){throw 'P30_R1_FROZEN_ACTION_CAUSAL_SOURCE_OR_FIRST_USE_DRIFT'}
+          $fix=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p30_r1_frozen_arm_order_recovery.json') -Raw|ConvertFrom-Json
+          if($fix.schema -cne 'ttt-hybrid.native-p30.r1-frozen-arm-set-validator-recovery.v1' -or $fix.original.original_candidate_SHA -cne '28d8c3dfe8385d36dfd4320d0948b5c51516c691' -or $fix.original.real_original_public_source_episode_consumed -ne $false -or $fix.only_repair.same_all_frozen_seeds_and_thresholds -ne $true -or $fix.only_repair.no_scientific_first_use -ne $true){throw 'P30_R1_FROZEN_RECOVERY_OR_ORIGINAL_SOURCE_DRIFT'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P30_R1_ORIGINAL_CPU_INTERPRETER_NOT_FOUND'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P30_R1_ORIGINAL_ENVIRONMENT_DRIFT'}
+          Write-Output 'P30_R1_R2_EXACT_SOURCE_GIT_TREE_CLEAN_WORKTREE_SCIENCE_FENCE=PASS'
+      - name: Mandatory full original Windows regression with original CUDA negatives
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p30-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p30_r1_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P30_R1_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p30_r1_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P30_R1_WINDOWS_ORIGINAL_NEGATIVE_FAILED'}
+          Write-Output 'P30_R1_WINDOWS_EXACT_SHA_FULL_ORIGINAL_NEGATIVE=PASS'
+      - name: Mandatory full Ubuntu WSL regression with original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P30_R1_ORIGINAL_WSL_OWNER_DRIFT'}
+          $root="$lp/p30-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p30_r1_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P30_R1_UBUNTU_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p30-candidate\local_runs\native_p30_r1_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P30_R1_UBUNTU_ORIGINAL_NEGATIVE_FAILED'}
+          Write-Output 'P30_R1_UBUNTU_EXACT_SHA_FULL_ORIGINAL_NEGATIVE=PASS'
+      - name: Retrieve original P28 source-verified frozen old physical-control models only
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: native-p28-matched-context-order-and-cue-original-owner
+          run-id: 42541253699
+          github-token: ${{ github.token }}
+          path: p30-original-models
+      - name: Independently verify all original 15 frozen and train model SHA256 sources
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p30-original-models'
+          $manifest=Join-Path $root 'native_p28_training.json'
+          if(-not (Test-Path -LiteralPath $manifest -PathType Leaf)){throw 'P30_R1_ORIGINAL_TRAIN_MANIFEST_MISSING'}
+          $p=Get-Content -LiteralPath $manifest -Raw|ConvertFrom-Json
+          if($p.schema -cne 'ttt-hybrid.native-p28.context-versus-task-order-dev.v1' -or $p.candidate_sha -cne '36f3afaa76f13c59490979de5343e81a08052d95' -or $p.mode -cne 'train' -or $p.parent_sha -cne '3c94ab1d9a5dd82eac268d94880dc535cafc446f' -or @($p.entries).Count -ne 15 -or @($p.training).Count -ne 12 -or $p.science_first_use -cne 'NOT_RUN' -or @($p.protected_science_worlds_consumed).Count -ne 0){throw 'P30_R1_ORIGINAL_CHECKPOINT_SOURCE_IDENTITY_FAILED'}
+          $found=@{}
+          foreach($entry in $p.entries){
+            if($entry.file -notmatch '^p28_(?:joint_history_gru|blocked_history_gru|joint_history_mlp|joint_cue_blind_gru|old_anchor)_\d+\.pt$' -or $entry.archive_sha256 -notmatch '^[a-f0-9]{64}$' -or $found.ContainsKey($entry.file)){throw 'P30_R1_WRONG_MODEL_FILE_ADMITTED'}
+            $found[$entry.file]=$true
+            $file=Join-Path $root "p28-checkpoints/$($entry.file)"
+            if(-not(Test-Path -LiteralPath $file -PathType Leaf) -or (Get-FileHash -LiteralPath $file -Algorithm SHA256).Hash.ToLower() -cne $entry.archive_sha256){throw "P30_R1_MODEL_WEIGHT_ARCHIVE_IDENTITY_DRIFT:$($entry.file)"}
+          }
+          if(@(Get-ChildItem -LiteralPath (Join-Path $root 'p28-checkpoints') -File -Filter '*.pt').Count -ne 15){throw 'P30_R1_ORIGINAL_CHECKPOINT_COUNT_DRIFT'}
+          Write-Output 'P30_R1_ORIGINAL_P28_WEIGHTS_AND_OPTIMIZER=PASS 15/15 RETRAINING=NOT_PERFORMED'
+      - name: Fresh reward-only factual opposite-policy action experiments on the frozen physical-control GRUs
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $lp -or -not $who){throw 'P30_R1_OWNER_PUBLIC_DEV_SOURCE_UNAVAILABLE'}
+          $root="$lp/p30-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 260s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P30_R1_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p30_reward_only_adapter_dev.py" --mode train --s29-root "$lp/p30-s29-owner" --source-root "$lp/p30-mit-gym" --cloudpickle-root "$lp/p30-bsd3-cloudpickle" --original-checkpoints "$lp/p30-original-models/p28-checkpoints" --original-manifest "$lp/p30-original-models/native_p28_training.json" --adapter-dir "$root/local_runs/p30-adapters" --train-receipt "$root/local_runs/native_p30_r1_train.json" --receipt "$root/local_runs/native_p30_r1_train.json"
+          if($LASTEXITCODE -ne 0){throw 'P30_R1_TRUE_SOURCE_REWARD_TRAINING_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p30-candidate\local_runs\native_p30_r1_train.json') -Raw|ConvertFrom-Json
+          if($p.schema -cne 'ttt-hybrid.native-p30.reward-only-context-adapter-dev.v1' -or $p.mode -cne 'train' -or $p.candidate_sha -cne $env:GITHUB_SHA -or @($p.entries).Count -ne 9 -or @($p.summaries).Count -ne 3 -or $p.original_model_checkpoint_count -ne 15 -or $p.original_frozen_GRU_not_retrained -ne $true -or $p.source_true_pair_replay_not_inferred_counterfactual -ne $true -or $p.learned_adapter_source_is_true_rewards_not_teacher_labels -ne $true -or $p.science_first_use -cne 'NOT_RUN' -or $p.FORGE_owner_activation -ne $false){throw 'P30_R1_FROZEN_SOURCE_REWARD_RECEIPT_DRIFT'}
+          Write-Output 'P30_R1_144_SOURCE_REWARD_EPISODES=PASS 9_TINY_LEARNED_ADAPTERS=TRAINED 3_FROZEN_GRUS=UNCHANGED SCIENCE_FIRST_USE=NOT_RUN'
+      - name: Independent new process cold-loads adapters and models and evaluates true source old and reverse action returns
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p30-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 300s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P30_R1_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p30_reward_only_adapter_dev.py" --mode evaluate --s29-root "$lp/p30-s29-owner" --source-root "$lp/p30-mit-gym" --cloudpickle-root "$lp/p30-bsd3-cloudpickle" --original-checkpoints "$lp/p30-original-models/p28-checkpoints" --original-manifest "$lp/p30-original-models/native_p28_training.json" --adapter-dir "$root/local_runs/p30-adapters" --train-receipt "$root/local_runs/native_p30_r1_train.json" --receipt "$root/local_runs/native_p30_r1_evaluation.json"
+          if($LASTEXITCODE -ne 0){throw 'P30_R1_TRUE_REWARD_ONLY_ADAPTER_EVAL_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p30-candidate\local_runs\native_p30_r1_evaluation.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_ENGINEERING_SOURCE_EVAL_NOT_SCIENCE' -or $p.candidate_sha -cne $env:GITHUB_SHA -or @($p.per_seed).Count -ne 3 -or $p.original_frozen_source_GRU_reused_no_gradients -ne $true -or $p.actual_source_paired_reward_learning_only -ne $true -or $p.conventional_reward_table_same_real_episode_data -ne $true -or $p.science_first_use -cne 'NOT_RUN' -or @($p.protected_sci_data_used).Count -ne 0 -or $p.scientific_superiority -ne $false -or $p.FORGE_owner_activation -ne $false){throw 'P30_R1_NEW_FACTUAL_SCIENCE_BOUNDARY_FAIL'}
+          if(@($p.source_negative_controls.PSObject.Properties|Where-Object{-not $_.Value}).Count -ne 0){throw 'P30_R1_COLD_NEGATIVE_CONTROLS_MISSING'}
+          Write-Output "P30_R1_REAL_REWARD_ADAPTER_ENGINEERING=PASS LEARNED_DUAL=$($p.learned_dual_support_of_three)/3 REVERSE_GAIN=$($p.learned_reverse_gain_support_of_three)/3 WRONG_CREDIT_NEGATIVE=$($p.wrong_credit_negative_support_of_three)/3 XOR_ORACLE=$($p.oracle_both_support_of_three)/3 SCIENCE_FIRST_USE=NOT_RUN"
+          $p.per_seed|ForEach-Object{Write-Output "P30_R1_SEED=$($_.seed) NORMAL=$($_.tasks.normal.mean_actual_return|ConvertTo-Json -Compress) REVERSED=$($_.tasks.reversed.mean_actual_return|ConvertTo-Json -Compress)"}
+      - name: Preserve all original source receipts, newly trained adapter archives and positives and nulls
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p30-r1-factual-reward-adapter-once
+          path: |
+            p30-candidate/local_runs/native_p30_*.json
+            p30-candidate/local_runs/p30-adapters/*.pt
+          retention-days: 30
+          if-no-files-found: warn
