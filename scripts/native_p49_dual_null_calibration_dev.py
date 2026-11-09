@@ -181,6 +181,5 @@ def main():
         for r in result['reports']], 'frozen_all_cohort_positive':result['frozen_all_cohort_positive'],
         'wall_seconds':result['wall_seconds']},indent=2))
 
-
 if __name__ == '__main__':
     main()
