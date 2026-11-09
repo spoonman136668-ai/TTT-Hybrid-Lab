@@ -1,0 +1,56 @@
+{
+  "schema": "ttt-hybrid.native-p45i-r1-factual-freshness-engineering.v1",
+  "classification": "PRETEST_ENGINEERING_FREEZE_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 134,
+    "sha": "80cbf4c8d9db0af69e35dfb466e497ecc263968d",
+    "tree": "57f8dbe8d1776bb4061fb36027125097fcf19b02",
+    "p45i_module_blob": "409b70a1198f2a13e3e7090bdc8b49b397ed7b42",
+    "p43_original_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "p43r1_blob": "9799dec44ca198e44f84af029e15ef815b72d55b"
+  },
+  "verified_defect": "P45-I retains a previously positive factual ABA fast effect across a non-ABA actual causal reversal and still declares factual_ready true after the reversal observation; old effect 0.3, new actual effect -0.3.",
+  "hypothesis": "An optional factual freshness sidecar can prevent selecting actions from a stale fast ABA estimate while preserving the original P43 recurrent belief, factual ABA memory and cold checkpoints unchanged.",
+  "implementation_scope": {
+    "separate_sidecar": "native_p45i_freshness_gate.py",
+    "existing_source_edits": false,
+    "fast_estimator": "same P45-I actual A,-A,A contrast, no additional source data",
+    "freshness": "last successful completed ABA contrast observation step equals current factual observation step",
+    "stale_preview": "fallback to original P43-R1 rank-qualified recurrent prediction but factual_ready=false",
+    "stale_selection": "fail closed, no external action",
+    "fresh_selection": "original P45-I choice with no change to model parameters",
+    "same-state_speculation": "read-only; no factual state, freshness or learned weights change",
+    "cold_state": "original P43/P43-R1/P45-I tensors plus last successful ABA factual step",
+    "no_oracle_or_hidden_mode_input": true,
+    "no_tokenization": true,
+    "no_optimizer_or_retraining": true
+  },
+  "engineering_controls": {
+    "original_stale_readiness_reproduced": true,
+    "fresh_completed_ABA_allows_selection": true,
+    "one_non_ABA_factual_observation_blocks_selection": true,
+    "no_factual_data_does_not_authorize_action": true,
+    "three_completed_post_reversal_ABA_actions_reenable_selection": true,
+    "per_batch_isolation": true,
+    "tensor_only_cold_restore_exact": true,
+    "bad_freshness_state_fail_closed": true,
+    "actual_NaN_or_zero_action_atomic_rejection": true,
+    "preview_no_new_factual_writes": true,
+    "nonlinear_quadratic_drift_wrong_ABA_remains_explicit_negative": true,
+    "focused_tests_expected_min": 9
+  },
+  "limits": [
+    "A hidden mode reversal is unknowable before an informative factual observation; freshness is not mode-change detection",
+    "Even fresh A,-A,A estimates can be biased when mode switch straddles evidence or nuisance changes nonlinearly",
+    "Lower decision coverage is an intended fail-closed tradeoff, not demonstrated learning improvement",
+    "No superiority over zero-training ABA, P46 five-action contrast, fully trained conventional GRU/MLP, or strong ridge",
+    "P46 frozen science DEV FAIL 0/3; do not reuse its consumed source as independent science"
+  ],
+  "authority": {
+    "no_new_runners_workflows_schedulers_or_queues": true,
+    "no_FORGE_dispatch_or_controller_edits": true,
+    "no_owner_scientific_first_use": true,
+    "no_model_promotion_or_merge": true,
+    "full_exact_source_Windows_and_Ubuntu_regression_required_before_acceptance": true
+  }
+}
