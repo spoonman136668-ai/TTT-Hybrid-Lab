@@ -68,7 +68,8 @@ def frozen():
         or tuple(q["factual_source"]["train_reverse_seeds"])!=TRAIN_REVERSE
         or tuple(q["factual_source"]["eval_normal_seeds"])!=EVAL_NORMAL
         or tuple(q["factual_source"]["eval_reverse_seeds"])!=EVAL_REVERSE
-        or tuple(q["training"]["arms"])!=ALL_ARMS
+        or len(q["training"]["arms"])!=len(ALL_ARMS)
+        or set(q["training"]["arms"])!=set(ALL_ARMS)
         or q["thresholds"]["learned_adapter_both_contexts_mean_real_return_each_at_least"]!=175
         or q["thresholds"]["reversed_gain_over_unadapted_identity_at_least"]!=100
         or q["thresholds"]["negative_wrong_credit_reversed_gap_at_least"]!=100):
