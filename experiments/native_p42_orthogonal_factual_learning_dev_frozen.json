@@ -1,0 +1,112 @@
+{
+  "schema": "ttt-hybrid.native-p42-orthogonal-factual-causal-learning-dev-frozen.v1",
+  "phase": "FROZEN_BEFORE_NEW_DEV_IMPLEMENTATION_AND_AUTHORED_SOURCE_TEST",
+  "parent": {
+    "p40_pr": 124,
+    "p40_sha": "04694e34e6dde475e031288ea00729c7273d0e3b",
+    "p40_source_blob": "8406c97361adc2b3caa13e3ef42b53044c75d0b0",
+    "p41_null_pr": 125,
+    "p40_nuisance_fail_pr": 126
+  },
+  "hypothesis": "A strictly factual bounded online regression with an explicit nuisance intercept and trend can learn action effects under affine environmental drift instead of inventing causal modes from the background, without using hidden labels, alternative unexecuted outcomes or future signals.",
+  "model": {
+    "name": "OnlineOrthogonalCausalState",
+    "sensor_dim": 1,
+    "action_dim": 1,
+    "history_capacity": 8,
+    "features": [
+      "intercept",
+      "elapsed_time",
+      "executed_action"
+    ],
+    "fit": "float64 least_squares_all_retained_completed_facts_only",
+    "rank_requirement": 3,
+    "nonlearnable_architectural_basis": true,
+    "trainable_parameters_from_factual_outcomes": 3,
+    "no_gradient_training": true,
+    "read_only_intervention_preview": true,
+    "cold_tensor_state": true
+  },
+  "dev_source": {
+    "type": "deterministic_authored_no_external_source",
+    "time_steps": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "actual_actions": [
+      1,
+      -1,
+      1,
+      -1,
+      -1,
+      1,
+      1,
+      -1
+    ],
+    "modes": [
+      1
+    ],
+    "source_law": "observed_delta=b0+b1*elapsed_step+beta*executed_action",
+    "conditions": [
+      {
+        "name": "affine_drift",
+        "intercept": 0.15,
+        "trend": 0.4,
+        "effect": 0.3
+      },
+      {
+        "name": "no_action_effect_sham",
+        "intercept": 0.4,
+        "trend": 0.05,
+        "effect": 0
+      },
+      {
+        "name": "opposite_causal_effect",
+        "intercept": -0.25,
+        "trend": -0.2,
+        "effect": -0.3
+      }
+    ],
+    "negative": {
+      "name": "quadratic_drift",
+      "law": "observed_delta=b0+b1*t+q*t*t+beta*a",
+      "q": -1,
+      "expected": "affine_only_basis_not_guaranteed_correct"
+    },
+    "no_model_seed": true,
+    "no_external_holdout": true
+  },
+  "controls": [
+    "P40_original_fixed_prototype",
+    "two_actual_action_contrast",
+    "predeclared_ABA_affine_contrast",
+    "strong_fully_trained_history_GRU_and_MLP_REQUIRED_FOR_FUTURE_SCIENCE_NOT_RUN_HERE"
+  ],
+  "gates": {
+    "after_three_linearly_independent_factual_events_beta_abs_error_max": 0.00001,
+    "no_action_sham_beta_abs_error_max": 0.00001,
+    "opposite_mode_beta_abs_error_max": 0.00001,
+    "without_full_rank_no_fabricated_effect": true,
+    "factual_updates_only": true,
+    "preview_no_mutation": true,
+    "copy_immutable_before_update": true,
+    "nonlinear_negative_retained": true,
+    "original_p40_baseline_unchanged": true,
+    "full_original_final_windows_and_ubuntu_regression_required_before_acceptance": true
+  },
+  "authority": {
+    "engineering_DEV_only": true,
+    "independent_scientific_first_use": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "no_scheduler_or_scheduled_tasks": true,
+    "no_forge_dispatch_or_integration": true,
+    "no_existing_research_owner_runner_changes": true,
+    "no_model_promotion_or_merge": true,
+    "no_paid_api": true
+  }
+}
