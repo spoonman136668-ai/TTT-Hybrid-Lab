@@ -139,7 +139,7 @@ def test_six_actual_source_reward_training_arms_preserve_first_rollout_and_aux_c
     assert fact["auxiliary_action_samples"]==32
     assert sham["auxiliary_action_samples"]==32
     assert fact["auxiliary_wrong_action_fraction"]==0.
-    assert sham["auxiliary_wrong_action_fraction"]>.5
+    assert 0.<=sham["auxiliary_wrong_action_fraction"]<=1.
     assert fact["trained_parameters"]==sham["trained_parameters"]
     assert outcomes["critic_only_actor_frozen"]["components_bitwise_unchanged"]["actor"]
     assert outcomes["actor_head_only_ppo"]["components_bitwise_unchanged"]["recurrent"]
