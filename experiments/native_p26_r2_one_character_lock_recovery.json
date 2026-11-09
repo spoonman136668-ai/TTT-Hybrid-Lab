@@ -1,0 +1,33 @@
+{
+  "schema": "ttt-hybrid.native-p26.r2.exact-canonical-git-lock-typo-recovery.v1",
+  "registered": "2026-11-08",
+  "original_work": {
+    "P26_PR": 101,
+    "R1_PR": 102,
+    "original_P26_SHA": "0dff12a5cbca6c438086a6bd5b5cae4da081ecee",
+    "R1_SHA": "d86470cb45a86747867493e8f6ab3fe08d2a0be1",
+    "P26_run": 42539002951,
+    "R1_run": 42539216038,
+    "both_preflight_failed_no_training": true,
+    "no_public_DEV_data_consumed": true,
+    "no_protected_S26_S27_first_use": true,
+    "original_unchanged_frozen_protocol_commit": "860cdb04a26f4cb8c50793ec822fac73f7ee5200"
+  },
+  "root_cause": {
+    "preflight_locked_path": "scripts/native_p19_expert_calibration_dev.py",
+    "mistyped_39_char_lock": "7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5",
+    "actual_canonical_40_char_SHA": "7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5d",
+    "verification": "Read immutable source GitHub blob SHA on R1 parent, independently audited all ten source locks: nine match, one 39-vs-40 character mismatch"
+  },
+  "only_change": "Correct one missing d on 39-character source lock to canonical 40-character blob SHA in a new one-use workflow; original P18–P26 source/test/protocol blobs and all training/eval/public seeds unchanged",
+  "qualifications": [
+    "Original independent source ownership and exactly pinned upstream code",
+    "mandatory full Windows and Ubuntu WSL original regression",
+    "original negative controls",
+    "single fresh owner run number 1 on same isolated runner",
+    "no source replay or scientific first-use",
+    "archive all positive/null results"
+  ],
+  "status": "R2_NEW_ORIGINAL_OWNER_GATE_NOT_RUN_YET",
+  "merge_promotion_FORGE_activation": false
+}
