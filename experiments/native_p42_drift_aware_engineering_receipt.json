@@ -1,0 +1,55 @@
+{
+  "schema": "ttt-hybrid.native-p42-drift-aware-causal-evidence-engineering.v1",
+  "classification": "ISOLATED_LOCAL_NO_SOURCE_ENGINEERING_DEV_NOT_SCIENTIFIC_ACCEPTANCE",
+  "parent": {
+    "pr": 125,
+    "sha": "78df5fd1c4335bf5ba560d7a8bfbfd4db784b215",
+    "tree": "1faa992ca945be1cd75828c07ae97a4d739ef2d8",
+    "p40_nuisance_audit_pr": 126,
+    "p40_scientific_status": "NO_ADVANTAGE_VS_ZERO_TRAIN_LAST_EFFECT",
+    "p38r1_frozen_scientific_result": "DEV_FAIL_2_OF_3"
+  },
+  "mechanism": {
+    "source_file": "native_drift_aware_evidence.py",
+    "factual_inputs_only": ["current_continuous_sensor", "executed_scalar_action", "monotone_timestamp", "observed_next_sensor"],
+    "state": "bounded trailing window of completed action-outcome facts and fitted three-term continuous coefficients",
+    "model": "delta_sensor = nuisance_intercept + nuisance_linear_time_slope * relative_time + causal_action_effect * executed_action",
+    "inference": "float64 rank-checked least squares on factual window, cast back to float32/float64 source dtype",
+    "min_facts": 4,
+    "default_window": 6,
+    "max_window": 64,
+    "no_oracle_hidden_mode_or_future_outcomes": true,
+    "no_tokenizer": true,
+    "no_optimizer_or_pretrained_weights": true,
+    "read_only_preview_and_caller_goal": true,
+    "unidentifiable_window": "FAIL_CLOSED_WITHOUT_GUESSING",
+    "nonlinear_drift_assumption": "UNSUPPORTED_AND_EXPLICIT_NEGATIVE",
+    "unannounced_mode_reversal": "UNPREDICTABLE_UNTIL_NEW_FACTUAL_EVIDENCE"
+  },
+  "local_engineering": {
+    "test_file": "tests/test_native_drift_aware_evidence.py",
+    "focused_passed": 10,
+    "focused_total": 10,
+    "torch": "2.10.0+cpu",
+    "python": "3.13.5",
+    "original_repo_full_windows_wsl_regression": "NOT_RUN",
+    "native_gpu": "NOT_RUN",
+    "independent_source_science": "NOT_RUN",
+    "checks": ["affine_drift_causal_effect", "nuisance_only_no_false_action", "noisy_factual_history_vs_last_effect", "rank_fail_closed", "cold_restore_and_eviction", "quadratic_drift_negative", "invalid_action_sensor_state", "no_token_component", "hidden_reversal_after_new_facts", "batch_isolation_and_atomic_failure"]
+  },
+  "scientific_next": {
+    "status": "PROPOSAL_NOT_APPROVED_NOT_EXECUTED",
+    "hypothesis": "Under partially observed noisy dynamics, a history-dependent causal model provides independently reproducible action-selection and cold-retention improvement beyond strongest factual zero-training and fully trained conventional controls at matched information and total compute.",
+    "freeze_before_any_source_first_use": ["source_birth_and_owner", "full_source_split_hashes", "model_seeds_and_excluded_consumed_cohorts", "baselines_and_blind_no_retrain_protocol", "actual_action_trace", "minimum_transfer_gain_and_null_stopping_rule", "cold_restore_and_interference_metrics", "time_energy_memory_cost_receipts"],
+    "controls": ["last_factual_action_normalized_effect", "EMA", "opposing_actions_ABA_affine_drift_contrast", "fully_trained_history_MLP", "fully_trained_history_GRU", "P40_belief", "shuffled_action_credit", "disabled_history", "untrained_oracle_upper_bound_separately_identified"],
+    "must_include": ["hidden_mode_reversal", "independent_nuisance_drift", "quadratic_drift_negative", "noisy_causal_effect", "cold_memory", "unfamiliar_world_transfer", "cost_and_capacity_tradeoff"],
+    "no_claim_from_authored_fixture_or_code_existence": true
+  },
+  "authority": {
+    "no_new_runner_workflow_schedule_queue_or_controller": true,
+    "no_forge_research_owner_changes": true,
+    "no_external_source_first_use": true,
+    "no_merge_promotion_or_accepted_ref_mutation": true,
+    "independent_windows_and_ubuntu_regression_required_before_engineering_acceptance": true
+  }
+}
