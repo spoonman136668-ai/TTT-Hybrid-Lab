@@ -1,0 +1,83 @@
+{
+  "schema": "ttt-hybrid.native-p45-factual-aba-fast-adapter-dev-protocol.v1",
+  "phase": "ENGINEERING_FROZEN_BEFORE_AUTHORED_DEV_FIXTURE_EXECUTION_NOT_SCIENCE",
+  "source_parent": {
+    "pr": 131,
+    "sha": "8df261198f458c85ee49f21398b2df58da3804da",
+    "tree": "4c64310b30bc087e9ba9cab6edf39f5470cb8f4f",
+    "original_p43_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "identifiability_sidecar_blob": "9799dec44ca198e44f84af029e15ef815b72d55b",
+    "p44_pr": 132,
+    "p44_original_scientific_dev_result": "FAIL_0_OF_3"
+  },
+  "hypothesis": "A factual A,-A,A action-contrast acquired at staggered actual observation times supplies an affine-drift-orthogonal action-effect estimate that a learned gate may combine with the P43 recurrent prediction; speculative branches never update memory.",
+  "mechanism": {
+    "no_new_owner_or_controller": true,
+    "model": "Original P43 plus P43-R1 rank readiness, bounded latest-three completed observed actions/timestamps/outcomes, persistent factual contrast effect and trainable blend gate",
+    "aba_formula": "(linear_time_interpolation(actual_delta_A0, actual_delta_A2, middle_observation_time)-actual_delta_opposite)/(2*executed_A0)",
+    "intervention_condition": "same nonzero outer actions, exactly opposite middle action, strictly increasing factual observation times",
+    "state_updates": "only caller-authenticated actual action and outcome",
+    "no_future_outcome_or_hidden_context_id": true,
+    "read_only_candidate_preview": true,
+    "unidentifiable_abstain": true,
+    "all_analog_no_tokens": true,
+    "fast_effect_evidence_count": "cumulative successful factual ABA triplets",
+    "current_effect_memory": "latest valid contrast preserved through intervening non-ABA facts",
+    "blend": "learnable scalar sigmoid gate with zero contribution until factual contrast available"
+  },
+  "dev_fixture": {
+    "scope": "Explicit analytic development fixtures, not independently born source; no optimizer training or heldout science",
+    "affine_nuisance_time": "offset + slope*t",
+    "actual_actions": [
+      1,
+      -1,
+      1
+    ],
+    "actual_timestamps": [
+      1,
+      2,
+      3
+    ],
+    "causal_effects": [
+      0.3,
+      -0.3
+    ],
+    "strict_effect_absolute_error_max": 0.000001,
+    "irregular_timestamp_case": [
+      1,
+      2,
+      4
+    ],
+    "negative_quadratic_nuisance": "Known bias must be detected and retained, not tuned away",
+    "negative_constant_actions": "No ABA effect evidence; P43-R1 rank still abstains",
+    "negative_preview_no_factual_commit": true,
+    "negative_wrong_action_label": "No imaginary causal evidence from only candidate preview",
+    "negative_cold_restore": true,
+    "strong_conventional_ABA": "Must be recorded as a perfect tie on affine source; no superiority claim",
+    "accepted_local_engineering_tests_min": 7,
+    "accepted_max_new_trainable_parameters": 1,
+    "baseline_model_unchanged": true
+  },
+  "science_future": {
+    "status": "NOT_EXECUTED_NOT_OWNER_ADMITTED",
+    "constraints": [
+      "genuinely unseen independently sourced dynamics",
+      "fully converged conventional GRU and MLP",
+      "strong fitted P42 and ABA estimators",
+      "matched actual interventions/actions/information/compute",
+      "shuffled credit and false-history negatives",
+      "unannounced mode reversals",
+      "cold retention and unfamiliar-world transfer",
+      "frozen thresholds,seeds,splits,budgets before first use",
+      "whole-process wallclock and peak memory"
+    ]
+  },
+  "authority": {
+    "no_runner_dispatch": true,
+    "no_scheduled_task": true,
+    "no_original_science_first_use": true,
+    "no_forge_loop_change": true,
+    "no_merge_or_promotion": true,
+    "mandatory_exact_source_windows_and_ubuntu_final_regression": true
+  }
+}
