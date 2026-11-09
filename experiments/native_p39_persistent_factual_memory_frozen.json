@@ -1,0 +1,67 @@
+{
+  "schema": "ttt-hybrid.native-p39-persistent-factual-memory-dev-protocol.v1",
+  "status": "ENGINEERING_ONLY_FROZEN_BEFORE_ANY_NEW_SCIENTIFIC_SOURCE",
+  "parent": {
+    "pr": 121,
+    "source_sha": "65b1a7567d7e3e65b491a4b1aef7d5396000e2be",
+    "p38r1_result": "SCIENTIFIC_DEV_FAIL_2_OF_3_SHAM_MARGIN",
+    "p38r1_source_model_seeds_consumed": [
+      6101,
+      6113,
+      6127
+    ],
+    "p38r1_training_source_seed_consumed": 242000,
+    "p38r1_validation_source_seed_consumed": 242500,
+    "p38r1_heldout_source_seed_consumed": 243000,
+    "p38_a1_shortcut_audit_pr": 122,
+    "p38_a1_shortcut_audit_sha": "4e330c286c49cb75011f3ec8a5fd2c71f612140d",
+    "p38_visible_cue_rule": "a=sign(goal_direction*visible_cue) is optimal without learning on P38 source"
+  },
+  "hypothesis": "Factual action- and analog-context-keyed bounded residual memory improves cold retention and learned action-consequence prediction after unrelated intervening experiences, without granting false future-outcome knowledge.",
+  "candidate": {
+    "module": "native_factual_context_memory.py",
+    "memory": "read-before-write bounded actual-action keyed continuous sensor residual cache",
+    "capacity": 16,
+    "write_only_after_actual_outcome": true,
+    "no_speculative_state_write": true,
+    "no_tokenizer_or_vocab": true,
+    "learned_encoder": false,
+    "goal_is_caller_supplied": true,
+    "status_limit": "Engineering scaffolding; fixed episodic keys do not establish learned causal abstraction, long-horizon reasoning or transfer",
+    "known_limitation": "Identical current visible sensor/action histories from opposite unobserved modes can produce cancelling stored residuals; P39 fixed-key cache alone cannot infer latent mode."
+  },
+  "next_scientific_trial": {
+    "state": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "required_before_first_use": [
+      "independent_original_source_owner_admission",
+      "new_frozen_external_or_separately_originated_source_cohort_and_hashes",
+      "matched_information_actions_training_budget_and_sources",
+      "strong_fully_trained_MLP_and_GRU_controls",
+      "precommitted_seeds_splits_and_capacity",
+      "cold_retention_and_interference_ablation",
+      "false_history_shuffled_action_and_disabled_memory_negatives",
+      "whole_process_compute_walltime_and_memory",
+      "zero_heldout_updates_no_hindsight_tuning"
+    ],
+    "primary_metrics": [
+      "unseen_analog_action_consequence_error",
+      "action_choice_optimal_fraction_by_context_and_goal",
+      "cold_retention_after_interfering_factual_updates",
+      "unfamiliar_dynamics_transfer_after_factual_adaptation",
+      "training_plus_inference_latency_and_memory"
+    ],
+    "pass_rule": "Only a separately prospectively frozen source, thresholds, matched fully trained controls and independent source-owner qualification may establish scientific PASS. Do not retune P38-R1 post-result.",
+    "visible_cue_shortcut_rule_must_be_baseline": true,
+    "partial_observability": "At least two source dynamical modes must share the same current observable sensors and actions; only prior factual observations may reveal mode; prohibit fixed same-state cue or goal-sign shortcut.",
+    "interference_test": "Reversal and recurrence of hidden modes after distracting intervening actions; score both cold retention and current-mode identification.",
+    "baseline_requirement": "Zero-training policies, history-blind lookup, context-only fixed memory, fully trained MLP and GRU, matched-action-information sham and disabled-memory; count full compute and data."
+  },
+  "authority": {
+    "local_cpu_no_source_engineering_checks_only": true,
+    "no_existing_research_owner_runner_or_workflow_changes": true,
+    "no_forge_dispatch_or_integration": true,
+    "no_scheduler_or_scheduled_task": true,
+    "no_merged_or_promoted_model": true,
+    "full_final_windows_and_ubuntu_regression_before_acceptance": true
+  }
+}
