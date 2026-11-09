@@ -1,0 +1,311 @@
+# P35 one-use existing owner. Only original physical source action-consequence
+# reward-learning assay after exact source and BOTH full regressions pass.
+# No new controllers/schedulers, no third-party action downloads.
+name: Native P35-R2 source action consequence exact original owner once
+on:
+  push:
+    branches:
+      - engineering/native-p35-mountaincar-action-consequence-aux-dev-20261109
+    paths:
+      - .github/workflows/native-p35r2-factual-action-aux-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p35r2-factual-action-aux-oneuse
+  cancel-in-progress: false
+jobs:
+  native-exact-source-public-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p35-mountaincar-action-consequence-aux-dev-20261109' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 26
+    env:
+      GH_REPO_TOKEN: ${{ github.token }}
+    steps:
+      - name: Native exact-SHA Git transport, immutable source custody and original science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P33R1_ORIGINAL_OWNER_ONEUSE_DENIED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate'
+          if(Test-Path -LiteralPath $root){throw 'P33R1_ROOT_EXISTS_NO_OVERWRITE'}
+          if([string]::IsNullOrWhiteSpace($env:GH_REPO_TOKEN)){throw 'P33_READONLY_GIT_TOKEN_MISSING'}
+          $env:GIT_TERMINAL_PROMPT='0'
+          $env:GIT_LFS_SKIP_SMUDGE='1'
+          $env:GIT_CONFIG_COUNT='1'
+          $env:GIT_CONFIG_KEY_0='http.https://github.com/.extraheader'
+          $auth=[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("x-access-token:$env:GH_REPO_TOKEN"))
+          $env:GIT_CONFIG_VALUE_0="Authorization: Basic $auth"
+          try {
+            & git clone --quiet --no-tags --single-branch --depth 160 --branch engineering/native-p35-mountaincar-action-consequence-aux-dev-20261109 "https://github.com/$env:GITHUB_REPOSITORY.git" "$root"
+            if($LASTEXITCODE -ne 0){throw 'P33_NATIVE_READONLY_GIT_CLONE_FAILED'}
+          } finally {
+            Remove-Item Env:\GIT_CONFIG_COUNT -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_KEY_0 -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue
+            Remove-Variable auth -ErrorAction SilentlyContinue
+          }
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P33_EXACT_CANDIDATE_SHA_NOT_CHECKED_OUT'}
+          & git -C $root merge-base --is-ancestor '8fe7cb4b9e1e4e9b9188065671eed005911819f1' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_ORIGINAL_P30_QUALIFIED_SOURCE_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor 'ded38602dbc530f5457d92337cf8cc5c1611f865' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_PROSPECTIVE_RETENTION_PROTOCOL_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor 'ec4eb7861ba750b8ae3ac7802af3f093a894c4a8' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_PROSPECTIVE_DUPLICATE_BLOB_KEY_RECOVERY_MISSING'}
+          $recover=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p31r1_blob_pin_recovery_frozen.json') -Raw | ConvertFrom-Json
+          if($recover.schema -cne 'ttt-hybrid.native-p31r1.duplicate-historical-blob-key-recovery.v1' -or $recover.status -cne 'FROZEN_BEFORE_ONE_USE_OWNER_RECOVERY' -or $recover.origin.original_run -ne 42545658087 -or $recover.origin.original_source_clone_executed -ne $false -or $recover.origin.original_experiment_run -ne $false -or $recover.repair.protected_science_first_use_not_run -ne $true){throw 'P33_ORIGINAL_PRECHECK_FAILURE_OR_SOURCE_CUSTODY_DRIFT'}
+          & git -C $root merge-base --is-ancestor '3e2f2c422cc81a5c5a32421d142e3f4130441bbf' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_SCRIPT_RECOVERY_FREEZE_NOT_ANCESTOR'}
+          $entryRecovery=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p31r2_script_entrypoint_recovery_frozen.json') -Raw | ConvertFrom-Json
+          if($entryRecovery.schema -cne 'ttt-hybrid.native-p31r2.original-experiment-entrypoint-recovery-frozen.v1' -or $entryRecovery.status -cne 'FROZEN_BEFORE_RECOVERY_WORKFLOW_AND_SOURCE_USE' -or $entryRecovery.original_run.id -ne 42546004191 -or $entryRecovery.original_run.original_P31_training_started -ne $false -or $entryRecovery.original_run.protected_first_use_consumed -ne $false -or $entryRecovery.repair.no_scientific_first_use -ne $true){throw 'P33_ORIGINAL_P33_WORLD_UNCONSUMED_FENCE_FAIL'}
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p31_policy_retention_frozen.json') -Raw | ConvertFrom-Json
+          if($m.schema -cne 'ttt-hybrid.native-p31.reward-only-policy-retention-frozen.v1' -or $m.phase -cne 'PROSPECTIVE_FROZEN_BEFORE_CODE_OR_SOURCE_USE' -or $m.original.parent_exact_SHA -cne '8fe7cb4b9e1e4e9b9188065671eed005911819f1' -or $m.source.protected_science_first_use -ne $false -or @($m.training.model_initialization_seeds).Count -ne 3 -or $m.training.model_initialization_seeds[0] -ne 4507 -or @($m.training.trained_arms).Count -ne 3 -or $m.training.initial_policy_KL_beta -ne 1.0 -or $m.training.new_public_original_source_reset_base -ne 134000 -or @($m.evaluation.new_public_original_reset_seeds).Count -ne 8){throw 'P33_FROZEN_SCIENCE_PROTOCOL_OR_SOURCE_DRIFT'}
+          & git -C $root merge-base --is-ancestor 'af574a87a9c81e5dc1b5e703dacf315606494e0a' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_ORIGINAL_P31_R2_QUALIFIED_PARENT_SHA_DRIFT'}
+          & git -C $root merge-base --is-ancestor '83c00598ae5d3bf75bb667ac3a4594c205285e2e' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_ORIGINAL_FROZEN_COMPONENT_PROTOCOL_SHA_DRIFT'}
+          & git -C $root merge-base --is-ancestor 'b7256fcf43b77f6595432192242d1dafff6599a1' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P32R1_FROZEN_OWNER_PREFLIGHT_RECOVERY_NOT_ANCESTOR'}
+          $recovery32=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p32r1_historical_fence_recovery_frozen.json') -Raw | ConvertFrom-Json
+          if($recovery32.schema -cne 'ttt-hybrid.native-p32r1.p31-historical-source-fence-typo-recovery.v1' -or $recovery32.status -cne 'FROZEN_AFTER_ZERO_SOURCE_WORK_BEFORE_ANY_RECOVERY_EXECUTION' -or $recovery32.origin.original_oneuse_run -ne 42548326594 -or $recovery32.origin.P32_original_training_started -ne $false -or $recovery32.repair.no_protected_scientific_first_use -ne $true){throw 'P32R1_ZERO_SOURCE_ACTIONS_RECOVERY_FENCE_FAILED'}
+          & git -C $root merge-base --is-ancestor '5483afad6db4ae3716e70d5f8d5b534f65824589' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_FROZEN_ONE_TEST_COMPARISON_FIX_NOT_ANCESTOR'}
+          $rec32R2=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p32r2_preflight_comparison_recovery_frozen.json') -Raw|ConvertFrom-Json
+          if($rec32R2.schema -cne 'ttt-hybrid.native-p32r2.parenthesized-comparison-test-fix-frozen.v1' -or $rec32R2.status -cne 'FROZEN_BEFORE_TEST_FIX_NEW_ORIGINAL_OWNER_JOB' -or $rec32R2.origin.run_id -ne 42548477271 -or $rec32R2.origin.original_source_science_seeds_consumed -ne $false -or $rec32R2.repair.no_protected_scientific_first_use -ne $true){throw 'P33_NEW_SOURCE_UNCONSUMED_AND_TEST_FIX_FENCE_FAIL'}
+          $p32frozen=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p32_component_damage_frozen.json') -Raw|ConvertFrom-Json
+          if($p32frozen.schema -cne 'ttt-hybrid.native-p32.actor-vs-recurrent-source-reward-frozen.v1' -or $p32frozen.phase -cne 'FROZEN_BEFORE_IMPLEMENTATION_AND_PUBLIC_SOURCE_USE' -or $p32frozen.source.protected_scientific_first_use -ne $false -or $p32frozen.parent.sha -cne 'af574a87a9c81e5dc1b5e703dacf315606494e0a' -or @($p32frozen.training.model_seeds).Count -ne 3 -or $p32frozen.training.train_original_source_reset_base -ne 144000 -or @($p32frozen.training.arms).Count -ne 4 -or @($p32frozen.evaluation.original_heldout_reset_seeds).Count -ne 8){throw 'P33_FROZEN_ORIGINAL_COMPONENT_SCIENCE_FENCE_FAILED'}
+          & git -C $root merge-base --is-ancestor '7bc49166b83788efc7bfb9da82d39fc420630c46' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_ORIGINAL_QUALIFIED_P32_SOURCE_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor '9e3acd8d10ee5499d9ea77c09ed021839fc21e73' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33_FROZEN_NEW_SEED_HYPOTHESIS_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor '40d3a33503bb1cddfd7ab2b668682c860a489a61' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P33R1_FROZEN_HISTORICAL_P32_FIELD_RECOVERY_NOT_ANCESTOR'}
+          $recovery33=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p33r1_historical_p32_guard_recovery_frozen.json') -Raw | ConvertFrom-Json
+          if($recovery33.schema -cne 'ttt-hybrid.native-p33r1.inherited-p32-guard-field-recovery.v1' -or $recovery33.status -cne 'FROZEN_BEFORE_NEW_ONEUSE_JOB' -or $recovery33.original.run_id -ne 42583692080 -or $recovery33.original.real_P33_training_actions_started -ne $false -or $recovery33.repair.source_new_seed_first_use_not_consumed -ne $true -or $recovery33.repair.no_protected_scientific_first_use -ne $true){throw 'P33R1_FRESH_SOURCE_SCIENCE_UNCONSUMED_FENCE_FAILED'}
+          $p33frozen=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p33_fresh_seed_mlp_replication_frozen.json') -Raw | ConvertFrom-Json
+          if($p33frozen.schema -cne 'ttt-hybrid.native-p33.fresh-seed-conventional-neural-ppo-replication-frozen.v1' -or $p33frozen.phase -cne 'PREIMPLEMENTATION_FROZEN_ORIGINAL_PUBLIC_SOURCE_FIRST_USE_UNCONSUMED' -or $p33frozen.parent.sha -cne '7bc49166b83788efc7bfb9da82d39fc420630c46' -or $p33frozen.source.no_protected_science_first_use -ne $true -or @($p33frozen.training.new_model_seeds).Count -ne 3 -or $p33frozen.training.new_model_seeds[0] -ne 4903 -or $p33frozen.training.new_public_train_source_reset_base -ne 164000 -or $p33frozen.training.MLP_total_parameters -ne 591 -or $p33frozen.training.GRU_total_parameters -ne 597 -or @($p33frozen.evaluation.new_original_heldout_reset_seeds).Count -ne 8){throw 'P33_NEW_MODEL_SOURCE_OR_FROZEN_PROTO_DRIFT'}
+          & git -C $root merge-base --is-ancestor '448df2a5039427e232439de6136d35d4e2b5d795' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P34_FULL_SOURCE_QUALIFIED_P33_PARENT_SHA_DRIFT'}
+          & git -C $root merge-base --is-ancestor '3c56a5d35bd15a8be5f623255e3234b5f4e1fe19' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P34_MOUNTAINCAR_PROSPECTIVE_SCIENCE_PROTOCOL_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor '9ac5f00d43643b751f8a43fc01c51181ba2e59ea' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P34R1_FROZEN_PRIOR_TEST_REPAIR_NOT_ANCESTOR'}
+          $r34=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p34r1_parameter_test_recovery_frozen.json') -Raw|ConvertFrom-Json
+          if($r34.schema -cne 'ttt-hybrid.native-p34r1.numeric-parameter-assertion-recovery-frozen.v1' -or $r34.status -cne 'FROZEN_PRIOR_TO_TEST_ONLY_FIX_AND_NEW_OWNER_FIRST_USE' -or $r34.first_original_owner.run_id -ne 42587378193 -or $r34.first_original_owner.P34_new_source_seeds_consumed -ne $false -or $r34.first_original_owner.P34_original_science_train -cne 'NOT_RUN' -or $r34.repair.no_protected_science_first_use -ne $true){throw 'P34R1_NO_SCIENCE_SEEDS_CONSUMED_RECOVERY_FENCE_FAIL'}
+          $p34=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p34_mountaincar_reward_control_frozen.json') -Raw|ConvertFrom-Json
+          if($p34.schema -cne 'ttt-hybrid.native-p34.mountaincar-source-reward-three-action-frozen.v1' -or $p34.phase -cne 'PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_AND_ORIGINAL_SOURCE_ACTIONS' -or $p34.parent.sha -cne '448df2a5039427e232439de6136d35d4e2b5d795' -or $p34.source.protected_scientific_first_use -ne $false -or $p34.source.original_MountainCar_blob -cne '5e7e11518715197974e8df46a842f1bc66ccd88c' -or @($p34.training.model_seeds).Count -ne 3 -or $p34.training.train_original_physics_source_seed_base -ne 174000 -or @($p34.training.training_arms).Count -ne 4 -or @($p34.evaluation.model_evaluation_seeds).Count -ne 8){throw 'P34_FROZEN_ORIGINAL_MOUNTAINCAR_PROTOCOL_DRIFT'}
+          & git -C $root merge-base --is-ancestor '50a90718362fac77d8f39a4037a81f5abe97aa76' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P35_QUALIFIED_MOUNTAINCAR_P34R1_PARENT_SHA_DRIFT'}
+          & git -C $root merge-base --is-ancestor 'e57a325370e17bbff5ba62933cd52132799cd150' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P35_PROSPECTIVE_FACTUAL_ACTION_PROTOCOL_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor '9f7ce0d491ab0f1b04beb7e764508b3ee0f17f23' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P35R1_FROZEN_SMALL_SAMPLE_PRE_SOURCE_RECOVERY_NOT_ANCESTOR'}
+          $repair35=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p35r1_short_fixture_credit_admission_recovery_frozen.json') -Raw|ConvertFrom-Json
+          if($repair35.schema -cne 'ttt-hybrid.native-p35r1.small-sample-shuffled-credit-admission-recovery.v1' -or $repair35.status -cne 'FROZEN_BEFORE_PROSPECTIVE_NARROW_FIX_AND_NEW_ONEUSE' -or $repair35.original.run_id -ne 42589853582 -or $repair35.original.new_P35_scientific_seed_and_action_source_consumed -ne $false -or $repair35.repair.no_paid_API_or_protected_first_use -ne $true){throw 'P35R1_REAL_SOURCE_ORIGINAL_SEEDS_NOT_UNCONSUMED'}
+          & git -C $root merge-base --is-ancestor '4d9f29e6bdbc0101dec277664bdf119bba16d362' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P35R2_FROZEN_HISTORICAL_P35_RECOVERY_NOT_ANCESTOR'}
+          $fix35R2=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p35r2_metadata_readback_recovery_frozen.json') -Raw|ConvertFrom-Json
+          if($fix35R2.schema -cne 'ttt-hybrid.native-p35r2.original-recovery-field-name-correction-frozen.v1' -or $fix35R2.status -cne 'FROZEN_BEFORE_FINAL_ORIGINAL_OWNER_SINGLE_USE' -or $fix35R2.prior.run_id -ne 42590398082 -or $fix35R2.prior.P35_new_scientific_source_action_consumed -ne $false -or $fix35R2.repair.original_source_science_data_unconsumed -ne $true -or $fix35R2.repair.no_protected_scientific_first_use -ne $true){throw 'P35R2_ORIGINAL_SOURCE_SCIENCE_CUSTODY_FENCE_FAILED'}
+          $p35=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p35_mountaincar_factual_aux_frozen.json') -Raw|ConvertFrom-Json
+          if($p35.schema -cne 'ttt-hybrid.native-p35.original-mountaincar-factual-action-consequence-auxiliary-frozen.v1' -or $p35.phase -cne 'PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_AND_ANY_P35_SOURCE_ACTIONS' -or $p35.parent.sha -cne '50a90718362fac77d8f39a4037a81f5abe97aa76' -or $p35.source.protected_scientific_first_use -ne $false -or $p35.source.original_mountaincar_code_blob -cne '5e7e11518715197974e8df46a842f1bc66ccd88c' -or @($p35.training.new_model_initialization_seeds).Count -ne 3 -or @($p35.training.arms).Count -ne 6 -or $p35.training.train_source_seed_base -ne 184000 -or $p35.training.auxiliary_loss_coefficient -ne .15 -or @($p35.evaluation.new_original_source_reset_seeds).Count -ne 8){throw 'P35_FROZEN_ACTUAL_SOURCE_AUX_PROTOCOL_DRIFT'}
+          $protected=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586';
+            'scripts/native_p20_reward_only_ppo_dev.py'='cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4';
+            'scripts/native_p25_paired_action_consequence_dev.py'='6c07b1738c8c50f2ca9d8e13eb0ebee01424f45e';
+            'tests/test_native_p25_paired_action_consequence_dev.py'='97df4ad8c0543a1a7e60eb98d69dcff9c8c9b704';
+            'experiments/native_p25_paired_action_consequence_frozen.json'='05af59eb4b0d980a18c0621c94e8265b3fe9d52f';
+            'experiments/native_p25r1_json_custody_repair_frozen.json'='8a4bdfbc3af2f8b4ff9d2894d9933a734d5783f3';
+            'experiments/native_p27_state_dependent_effect_frozen.json'='0daeb55af2c80b7fcda4fd451f6ef0ff65a556e6';
+            'scripts/native_p27_state_dependent_effect_dev.py'='16a87a9a18be588991377a9bed1dccc298edfba7';
+            'tests/test_native_p27_state_dependent_effect_dev.py'='c28c1996836d8daea710d3150ce16e35cc0b4efe';
+            'experiments/native_p28_physical_history_identifiability_frozen.json'='986d4f89c219e95f653e6abd160b82eb4543fb02';
+            'scripts/native_p28_physical_history_identifiability_dev.py'='156185a18b3b8aee23991ee01fd67ea6679c3fe4';
+            'tests/test_native_p28_physical_history_identifiability_dev.py'='ab9eb99883fe92b5b482e38250d10fd39d59e0f6';
+            'experiments/native_p29_feature_access_frozen.json'='8662dc5315475e018dc3a53dfd02d1b230a45983';
+            'scripts/native_p29_feature_access_dev.py'='a5dacc8b3b7a6900f33d485f9b88a4289265d18c';
+            'tests/test_native_p29_feature_access_dev.py'='7058bdf8444bef3c2e9e2e71af8eb8e52f6d7ea0';
+            'experiments/native_p30_reward_motion_ppo_frozen.json'='fb17b091ec94dcae2e8164a552f3fd23646213fd';
+            'scripts/native_p30_reward_motion_ppo_dev.py'='6d864593732cda1413a6338bc2e42ad9c6a85629';
+            'tests/test_native_p30_reward_motion_ppo_dev.py'='885739b1f6f5c4ee19029bcb0c488dc6671e02fc';
+            'experiments/native_p30r1_workflow_recovery_frozen.json'='be8b8f0615658c98ac6d67750a8bd945acd5e96e';
+            'experiments/native_p31_policy_retention_frozen.json'='8d1d5f62e938f59151b3b4c847de8beb47bc37d3';
+            'scripts/native_p31_policy_retention_dev.py'='0b2ae9eebf2e36ae659fddd8cf88178f12b23c4e';
+            'tests/test_native_p31_policy_retention_dev.py'='77762d93fab492a87b2856366fd927cdb7fff3e4';
+            'experiments/native_p31r1_blob_pin_recovery_frozen.json'='2707bf34af954c94369abffb3e53f31b2dd66cd9';
+            'experiments/native_p31r2_script_entrypoint_recovery_frozen.json'='b02df02d7f1c2100c2d2f6a225c3b0a9581a06d0';
+            'experiments/native_p32_component_damage_frozen.json'='ccc539c700664dc87270273903f5aaecdfba56ed';
+            'scripts/native_p32_component_damage_dev.py'='793ac4153353754c0754c76655663af74cb9c0a5';
+            'tests/test_native_p32_component_damage_dev.py'='46fec2a2fb507266c593186d396be7e117c8e028';
+            'experiments/native_p32r1_historical_fence_recovery_frozen.json'='7f10da18ab7b1f741f7f134375c75960ff2a1bbd';
+            'experiments/native_p32r2_preflight_comparison_recovery_frozen.json'='fed3f5b038d92d3ba7d67e0cf41818d71829df45';
+            'experiments/native_p33_fresh_seed_mlp_replication_frozen.json'='f4b056a146c0dc933b41986b6f5ebfb47b55699c';
+            'scripts/native_p33_fresh_seed_mlp_ppo_dev.py'='2a2f9c26c5550cdddeb95346fb85df2012972349';
+            'tests/test_native_p33_fresh_seed_mlp_ppo_dev.py'='a5c986b21407c697f35a85fd94f21f338fae51a4';
+            'experiments/native_p34_mountaincar_reward_control_frozen.json'='513fc170e31015c9b68dc6d72ed02e34fccc3222';
+            'scripts/native_p34_mountaincar_reward_ppo_dev.py'='ce33dcb718bce23a26eced114840881eb75a3618';
+            'tests/test_native_p34_mountaincar_reward_ppo_dev.py'='9a7eece09e932134198fd71dcbb6a1cd89faa1ca';
+            'experiments/native_p34r1_parameter_test_recovery_frozen.json'='29c7611e020cc53d0fe499383e8a47b9f5d5db37';
+            'experiments/native_p35_mountaincar_factual_aux_frozen.json'='35af5888e612ec07b282988d38113326532d5e36';
+            'scripts/native_p35_mountaincar_factual_aux_ppo_dev.py'='cda264eb8b06327bf344e25d96c31f3a68e1f1c5';
+            'tests/test_native_p35_mountaincar_factual_aux_ppo_dev.py'='e92d7821c0823b906c1b41a0e18411e576ffd505';
+            'experiments/native_p35r1_short_fixture_credit_admission_recovery_frozen.json'='84b943dca2c351ebf29bc7ad99b7025e07d69f5b';
+            'experiments/native_p35r2_metadata_readback_recovery_frozen.json'='6193fb1d94af4c226b6ec74eae8342edf00ea651';
+            'experiments/native_p33r1_historical_p32_guard_recovery_frozen.json'='7f1eed61368647f1d78442b32559f568b0702e14';
+          }
+          foreach($name in $protected.Keys){
+            $blob=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $protected[$name]){throw "P33_SOURCE_BLOB_CHANGED:$name"}
+          }
+          $source=@{
+            'native-p25-s29-owner'='30c27ca4865e16b7574ee2b562879108db2b3796';
+            'native-p25-mit-gym'='17eff00220d210beda933f78b0e52850022b0690';
+            'native-p25-bsd3-cloudpickle'='ff54d93221082d4ce22630ecdb8fbbccc60f3b62'
+          }
+          foreach($name in $source.Keys){
+            $dir=Join-Path $env:GITHUB_WORKSPACE $name
+            if(-not(Test-Path -LiteralPath $dir -PathType Container)){throw "P33_ORIGINAL_READONLY_SOURCE_MISSING:$name"}
+            $sha=(& git -C $dir rev-parse HEAD|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $sha -cne $source[$name]){throw "P33_ORIGINAL_SOURCE_SHA_MISMATCH:$name"}
+            $dirty=(& git -C $dir status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P33_ORIGINAL_SOURCE_DIRTY:$name"}
+          }
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P33_CANDIDATE_DIRTY_BEFORE_TEST'}
+          $gymSourceDir=Join-Path $env:GITHUB_WORKSPACE 'native-p25-mit-gym'
+          $mountainBlob=(& git -C $gymSourceDir rev-parse 'HEAD:gymnasium/envs/classic_control/mountain_car.py' |Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $mountainBlob -cne '5e7e11518715197974e8df46a842f1bc66ccd88c'){throw 'P34_ORIGINAL_UPSTREAM_MOUNTAINCAR_SOURCE_BLOB_SHA_DRIFT'}
+          $registryBlob=(& git -C $gymSourceDir rev-parse 'HEAD:gymnasium/envs/__init__.py' |Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $registryBlob -cne '84f23c4d6ebeba0d6b66d9f19ea2c59c11ff7061'){throw 'P34_ORIGINAL_SOURCE_MOUNTAINCAR_REGISTRATION_CHANGED'}
+          if(-not(Test-Path -LiteralPath (Join-Path $root 'scripts/native_p34_mountaincar_reward_ppo_dev.py') -PathType Leaf)){throw 'P34_CORRECT_NONCARTPOLE_ENTRYPOINT_MISSING'}
+          if(-not(Test-Path -LiteralPath (Join-Path $root 'scripts/native_p35_mountaincar_factual_aux_ppo_dev.py') -PathType Leaf)){throw 'P35_SOURCE_ACTION_CONSEQUENCE_TRAINER_ABSENT'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P33_QUALIFIED_CPU_INTERPRETER_MISSING'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P33_QUALIFIED_CPU_TOOLCHAIN_DRIFT'}
+          Write-Output "P33_ORIGINAL_OWNER_SOURCE_AND_TRANSPORT=PASS SHA=$head PRIOR_P29_QUALIFIED_P26_UNCHANGED"
+      - name: Mandatory full Windows final candidate regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p35r2_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P33_WINDOWS_FULL_FINAL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p35r2_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P33_WINDOWS_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P33_WINDOWS_FULL_AND_ORIGINAL_NEGATIVES=PASS'
+      - name: Mandatory full Ubuntu WSL final candidate regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P33_ORIGINAL_UBUNTU_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p35r2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p35r2_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P33_UBUNTU_FULL_FINAL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate\local_runs\native_p35r2_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P33_UBUNTU_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P33_UBUNTU_FULL_AND_ORIGINAL_NEGATIVES=PASS'
+      - name: One original MountainCar reward PPO factual action prediction versus shuffled action control and cold replay
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $who -or -not $lp){throw 'P35_SOURCE_WSL_NOT_AVAILABLE'}
+          $root="$lp/native-p35r2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $source="$root/scripts/native_p35_mountaincar_factual_aux_ppo_dev.py"
+          $s29="$lp/native-p25-s29-owner"
+          $mit="$lp/native-p25-mit-gym"
+          $bsd="$lp/native-p25-bsd3-cloudpickle"
+          $receipt="$root/local_runs/native_p35r2_reward.json"
+          $weights="$root/local_runs/native_p35r2_weights"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 790s /usr/bin/env 'NATIVE_P20_DEV_ONLY=1' 'NATIVE_P35_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B $source --s29-root $s29 --source-root $mit --cloudpickle-root $bsd --receipt $receipt --checkpoint-dir $weights --mode train
+          if($LASTEXITCODE -ne 0){throw 'P35_FROZEN_REAL_ACTUAL_SOURCE_AUX_TRIAL_FAILED'}
+          $rp=Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate\local_runs\native_p35r2_reward.json'
+          $p=Get-Content -LiteralPath $rp -Raw|ConvertFrom-Json
+          if($p.engineering -cne 'PASS_PUBLIC_ORIGINAL_SOURCE_DEV' -or $p.protected_scientific_first_use -cne 'NOT_RUN' -or @($p.records).Count -ne 3 -or $p.real_source_training_actions -ne 884736 -or $p.real_source_optimizer_minibatches -ne 10368 -or $p.non_CartPole_action_consequence_task_executed -ne $true -or $p.no_scientific_architecture_or_FORGE_claim -ne $true){throw 'P35_REAL_ACTION_CONSEQUENCE_TRAIN_AND_SCIENCE_FENCE_FAIL'}
+          foreach($rec in @($p.records)){
+            $f=$rec.original_real_train_receipts.factual_action_aux_ppo
+            $sh=$rec.original_real_train_receipts.shuffled_action_aux_ppo
+            if($f.auxiliary_prediction_head_changed -ne $true -or $sh.auxiliary_prediction_head_changed -ne $true -or $f.auxiliary_wrong_action_fraction -ne 0 -or $sh.auxiliary_wrong_action_fraction -lt .5 -or $f.auxiliary_action_samples -ne $sh.auxiliary_action_samples -or $f.original_training_actual_source_actions -ne $sh.original_training_actual_source_actions -or $f.actual_source_optimizer_minibatches -ne $sh.actual_source_optimizer_minibatches -or $f.initial_core_actor_recurrent_critic_sha256 -cne $sh.initial_core_actor_recurrent_critic_sha256 -or $f.first_512_source_action_consequence_sha256 -cne $sh.first_512_source_action_consequence_sha256){throw 'P35_AUX_ORIGINAL_SOURCE_MATCHED_INFORMATION_NEGATIVE_CONTROL_FAIL'}
+          }
+          $modelFiles=@(Get-ChildItem -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate\local_runs\native_p35r2_weights') -File -Filter '*.pt')
+          if($modelFiles.Count -ne 18){throw 'P35_REAL_ACTION_CONSEQUENCE_CHECKPOINT_SET_INCOMPLETE'}
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 210s /usr/bin/env 'NATIVE_P20_DEV_ONLY=1' 'NATIVE_P35_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B $source --s29-root $s29 --source-root $mit --cloudpickle-root $bsd --receipt $receipt --checkpoint-dir $weights --mode cold
+          if($LASTEXITCODE -ne 0){throw 'P35_FRESH_PROCESS_ACTUAL_SOURCE_COLD_FAIL'}
+          $cold=Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate\local_runs\native_p35_mountaincar_cold_audit.json'
+          if(-not(Test-Path -LiteralPath $cold -PathType Leaf)){throw 'P35_ORIGINAL_SOURCE_COLD_AUDIT_NOT_CREATED'}
+          $audit=Get-Content -LiteralPath $cold -Raw|ConvertFrom-Json
+          if($audit.status -cne 'PASS_EXACT_ACTUAL_MOUNTAINCAR_ACTION_REWARD_TRACE_REPLAY' -or $audit.cold_original_source_episodes -ne 432 -or $audit.total_cold_models -ne 18 -or $audit.no_gradient_updates -ne $true -or $audit.protected_scientific_first_use -cne 'NOT_RUN'){throw 'P35_COLD_ACTUAL_SOURCE_ACTION_PARITY_FAIL'}
+          $digest=(Get-FileHash -Algorithm SHA256 -LiteralPath $rp).Hash.ToLowerInvariant()
+          $coldDigest=(Get-FileHash -Algorithm SHA256 -LiteralPath $cold).Hash.ToLowerInvariant()
+          $scores=@()
+          foreach($rec in @($p.records)){
+            $ar=@{}
+            foreach($name in @('full_recurrent_ppo','factual_action_aux_ppo','shuffled_action_aux_ppo','actor_head_only_ppo','conventional_history_mlp_ppo','critic_only_actor_frozen')){
+              $t=$rec.original_real_train_receipts.PSObject.Properties[$name].Value
+              $ar[$name]=@{
+                real_source_train_actions=$t.original_training_actual_source_actions
+                optimizer_minibatches=$t.actual_source_optimizer_minibatches
+                trainable_parameters=$t.trained_parameters
+                source_action_consequence_sha256=$t.full_source_train_trace_sha256
+                identical_first_real_source_actions_sha256=$t.first_512_source_action_consequence_sha256
+                real_stochastic_training_curve=$t.original_source_stochastic_training_curve
+                source_acceleration_aux_loss_mean=$t.auxiliary_prediction_loss_mean
+                auxiliary_wrong_action_fraction=$t.auxiliary_wrong_action_fraction
+                auxiliary_real_source_action_samples=$t.auxiliary_action_samples
+              }
+            }
+            $scores+=@{
+              seed=$rec.model_seed
+              original_and_force_shift_physical_results=$rec.original_source_condition_means
+              frozen_factual_vs_sham_scientific_thresholds=$rec.frozen_source_criteria_by_condition
+              actual_real_source_PPO_and_aux_training=$ar
+            }
+          }
+          Write-Output "P35_ACTUAL_SOURCE_REWARD_RECEIPT_SHA256=$digest COLD_RECEIPT_SHA256=$coldDigest"
+          $report=@{
+            engineering=$p.engineering
+            precommitted_source_science_target=$p.factual_aux_advantage_precommitted_2_of_3_science_target
+            seeds_passing=$p.factual_aux_seeds_passing_all_source_worlds
+            actual_real_source_training_actions=$p.real_source_training_actions
+            actual_PPO_optimizer_minibatches=$p.real_source_optimizer_minibatches
+            original_source_eval_actions=$p.real_source_evaluation_actions
+            fresh_process_real_source_cold_episodes=$audit.cold_original_source_episodes
+            fresh_process_real_source_cold_actions=$audit.cold_original_source_actions
+            original_training_and_eval_wall_seconds=$p.original_train_and_eval_wall_seconds
+            seeds=$scores
+          }
+          Write-Output ("P35_SOURCE_FACTUAL_VS_SHAM_AUX_OUTCOME_JSON="+($report|ConvertTo-Json -Compress -Depth 12))
+          Write-Output "P35_OWNER_EXACT_SOURCE_AND_COLD=PASS PROSPECTIVE_SOURCE_SCIENCE=$($p.factual_aux_advantage_precommitted_2_of_3_science_target)"
+      - name: Preserve local P35 source-policy receipts and hashes without downloadable GitHub actions
+        if: always()
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Continue'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p35r2-candidate'
+          if(Test-Path -LiteralPath (Join-Path $root 'local_runs')){
+            $dir=Join-Path $root 'local_runs'
+            $files=@(Get-ChildItem -LiteralPath $dir -File -Filter 'native_p35*.json')
+            $modelDir=Join-Path $dir 'native_p35r2_weights'
+            if(Test-Path -LiteralPath $modelDir){$files+=@(Get-ChildItem -LiteralPath $modelDir -File -Filter '*.pt')}
+            if($files.Count -gt 0){
+              $zip=Join-Path $dir 'native_p35r2_owner_receipts.zip'
+              if(-not(Test-Path -LiteralPath $zip)){
+                Compress-Archive -LiteralPath @($files|ForEach-Object{$_.FullName}) -DestinationPath $zip -CompressionLevel Optimal
+              }
+              if(Test-Path -LiteralPath $zip){
+                $hash=(Get-FileHash -Algorithm SHA256 -LiteralPath $zip).Hash.ToLowerInvariant()
+                $bytes=(Get-Item -LiteralPath $zip).Length
+                Write-Output "P35_LOCAL_RECEIPTS_ZIP=SHA256:$hash BYTES:$bytes FILES:$($files.Count) ROOT:$dir"
+              }
+            }else{Write-Output 'P35_ORIGINAL_RUN_ENTERED_NO_NATIVE_RECEIPTS'}
+          }else{Write-Output 'P35R1_NO_SOURCE_STEPS_EXECUTED_NO_RECEIPTS'}
