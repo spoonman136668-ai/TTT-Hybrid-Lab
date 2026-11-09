@@ -1,0 +1,33 @@
+{
+  "schema": "ttt-hybrid.native-p35r1.small-sample-shuffled-credit-admission-recovery.v1",
+  "status": "FROZEN_BEFORE_PROSPECTIVE_NARROW_FIX_AND_NEW_ONEUSE",
+  "original": {
+    "run_id": 42589853582,
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "exact_SHA": "ee2912da146fb2cc75f49b27a7dfb6539257eb7d",
+    "source_checkout": "PASS",
+    "Windows_full_regression": "336_PASS_1_FAIL",
+    "failed_test": "test_six_actual_source_reward_training_arms_preserve_first_rollout_and_aux_controls",
+    "error": "P35_SHUFFLED_AUX_ACTION_CREDIT_NOT_BROKEN on only 4 minibatches of 8 actions (32 samples) with sampling fluctuations",
+    "root_cause": "Hard threshold >=50% mismatched sampled actions applied to a 32-label tiny fixture is statistically inappropriate; correct scientific 147456-label owner trial retains exact threshold.",
+    "Ubuntu_full_regression": "NOT_RUN",
+    "new_original_P35_MountainCar_training_actions_started": false,
+    "new_original_P35_MountainCar_evaluation_actions_started": false,
+    "new_P35_scientific_seed_and_action_source_consumed": false,
+    "protected_first_use": false
+  },
+  "repair": {
+    "precise_source_change": "Apply >=50% sham action misattribution admission only when >=512 factual auxiliary optimizer samples have been processed; original full 147456-sample science trial retains exactly the unchanged >=50% criterion. No effect on real-study algorithm or thresholds.",
+    "precise_test_change": "Tiny 32-sample source-fake smoke test verifies matched counts, equal initial weights, identical first physical action traces, learned auxiliary state and 0<=measured sham mismatch<=1. A separate controlled 256-balanced-action test continues to verify >50% mismatched actions and deterministic random minibatch permutation.",
+    "P35_original_frozen_hypothesis_commit": "e57a325370e17bbff5ba62933cd52132799cd150",
+    "P35_script_original_blob": "4633061f0e6bb815ab35469dac26af57061fa14d",
+    "P35_test_original_blob": "fe0d62785629298e75032b59a579c3b2bcce6e06",
+    "no_new_original_science_source_data_consumed": true,
+    "original_seed_criteria_and_hyperparameters_unchanged": true,
+    "mandatory_full_Windows_and_WSL_again": true,
+    "new_single_original_owner_oneuse": true,
+    "no_scheduler_or_new_controller_runner": true,
+    "no_paid_API_or_protected_first_use": true,
+    "no_merge_promotion_FORGE_activation": true
+  }
+}
