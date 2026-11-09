@@ -1,0 +1,79 @@
+{
+  "schema": "ttt-hybrid.p45-inference-aba-fast-adapter-local-engineering-receipt.v1",
+  "date": "2026-11-09",
+  "scope": "ISOLATED_FOCUSED_ENGINEERING_DEV_NOT_SCIENTIFIC_FIRST_USE",
+  "kind": "Distinct runtime factual fast-memory adaptation, NOT P45 training-side contrast supervision or another P45 science rerun",
+  "parent": {
+    "p43r1_pr": 131,
+    "p43r1_head": "8df261198f458c85ee49f21398b2df58da3804da",
+    "p43_original_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "p43r1_sidecar_blob": "9799dec44ca198e44f84af029e15ef815b72d55b",
+    "parallel_p45_study_pr": 133,
+    "parallel_p45_science_dev": "FROZEN_FAIL_2_OF_3_AND_STRONG_ABA_0_OF_3"
+  },
+  "freeze": {
+    "first_commit": "39f630181fe655e028312b717d036333a4d853aa",
+    "manifest_blob": "d5a0603f5e43c36cef60e0c7ff5cce94736fa7ef",
+    "before_authored_local_fixtures": true
+  },
+  "implementation": {
+    "module": "native_p45_aba_fast_adapter.py",
+    "module_git_blob": "409b70a1198f2a13e3e7090bdc8b49b397ed7b42",
+    "test": "tests/test_native_p45_aba_fast_adapter.py",
+    "test_git_blob": "b83f3f47766e01d29ff399d871ec19d7f5184136",
+    "new_trainable_parameters": 1,
+    "old_native_model_unchanged": true,
+    "old_identifiability_sidecar_unchanged": true,
+    "fast_effect_estimator": "three completed A,-A,A actions; interpolate first and third actual outcomes to middle observation time; divide action contrast by two-times-real-action",
+    "hypothetical_preview_read_only": true,
+    "fast_effect_written_only_after_completed_factual_action": true,
+    "gate": "sigmoid learned scalar with zero intervention when no prior factual contrast; not actually trained during this DEV gate",
+    "state_cold_checkpoint": "tensor-only original P43 weights/hidden/time/count; P43-R1 Gram; recent factual event queue; fast effect; real contrast count"
+  },
+  "local": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused_tests_pass": 13,
+    "focused_tests_total": 13,
+    "wall_seconds": 1.7,
+    "exact_p43_parent_git_hash_match": true,
+    "exact_p43r1_parent_git_hash_match": true,
+    "module_sha256": "093f1375f62b2bccffd357e895bc61d2031bfe235542fc46d9da23beab2260e7",
+    "tests_sha256": "1a586260bd129ae3c1f43920226dd5f4b31066de0c7a0111639163927cb6795f",
+    "fixture": "explicit analytic local affine or quadratic nuisance; not independent real source or protected science",
+    "checks": [
+      "zero-parameter ABA effect tie",
+      "irregular timestamps",
+      "P43/P43R1 no-evidence fallback",
+      "preview purity and action order",
+      "factual update persistence",
+      "quadratic drift negative",
+      "factual-only writes",
+      "gradient to one learned gate",
+      "cold replay bit equality",
+      "NaN/zero action rejection",
+      "three-action mode reversal following new real evidence",
+      "two-row batch isolation",
+      "no token path"
+    ]
+  },
+  "scientific": {
+    "claim": "NO_INDEPENDENT_IMPROVEMENT_DEMONSTRATED",
+    "full_original_repo_windows_linux_regression": "UNVERIFIED",
+    "strong_competitor": "Plain zero-trained ABA has identical affine causal effect estimate; prior PR #133 trained contrast failed to beat ABA",
+    "gate_trainability": "Gradient exists, learning superiority not tested",
+    "quadratic_nuisance": "WRONG_ESTIMATE_NEGATIVE_PRESERVED",
+    "real_world_generalization": "NOT_RUN",
+    "full_cost_match": "NOT_RUN",
+    "fresh_science_first_use": "NOT_RUN",
+    "promotion": "NOT_AUTHORIZED"
+  },
+  "authority": {
+    "no_existing_owner_runner_or_scheduler_changes": true,
+    "no_forge_research_dispatch": true,
+    "no_scientific_first_use": true,
+    "no_merges": true,
+    "no_paid_api": true
+  }
+}
