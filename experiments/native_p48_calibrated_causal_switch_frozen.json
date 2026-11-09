@@ -1,0 +1,138 @@
+{
+  "schema": "ttt-hybrid.p48-preregistered-empirically-calibrated-causal-change-dev.v1",
+  "status": "FROZEN_BEFORE_FIRST_AUTHORED_P48_COHORT_AND_EXECUTION; NO INDEPENDENT SCIENTIFIC_SOURCE",
+  "parent": {
+    "pr": 137,
+    "sha": "4d61a660b057f73b3f907c59a37dafa49b4f38fb",
+    "tree": "dd0af0c6e2214e0940df95ab317d0021ab998c17",
+    "p47_original_module_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "p47_result": "DEV_FAIL_0_OF_3_HIGH_STABLE_FALSE_ALARM",
+    "p47_original_source_seeds_consumed": [
+      760111,
+      760117,
+      760123
+    ],
+    "p47_jump_manifest_actual_mismatch": "CLAIMED_0.4_TO_7_VS_ACTUAL_0.4_TO_0.7"
+  },
+  "question": "Can null-calibrated causal-switch evidence reduce P47 stable false alarms below ten percent without losing causal recall, stable-world effect accuracy or competing with strong conventional controls?",
+  "method": {
+    "baseline": "Byte-identical P47 original model search, BIC, nuisance, full/trailing5/weighted/last5/ABA controls; no tuning or modification",
+    "calibration": "Compute maximum causal-vs-best-stable/nuisance BIC margin on independent stable-only factual calibration worlds; fixed 0.99 empirical quantile as a minimum causal model evidence margin",
+    "candidate": "For each new world, retain original P47 nuisance/full choice unless strongest causal model's BIC improvement over best null model exceeds preregistered calibrated threshold. If so choose original P47 causal model and effect.",
+    "calibration_never_uses_eval_labels_or_results": true,
+    "no_neural_model_or_new_trainable_weights": true,
+    "no_counterfactual_or_future_physical_response_given_to_estimator": true,
+    "factual_action_schedule": "eight actually executed alternating +/-1 interventions as P47; fixed action source contract, not evidence of autonomous active learning",
+    "timing": "T=0/8..7/8, possible hidden causal/nuisance switch steps 3/4/5",
+    "candidate_parameter": "one empirically calibrated scalar evidence margin, not a novel intelligence substrate",
+    "baselines": [
+      "unaltered_P47_BIC",
+      "full_window_polynomial_regression",
+      "recency_weighted",
+      "trailing5",
+      "five_alternation_contrast",
+      "latest3_ABA"
+    ],
+    "model_competence": "Nonneural classical baselines; strong learned GRU/MLP not qualified here"
+  },
+  "source": {
+    "new_stable_calibration": {
+      "seed": 770001,
+      "episodes": 4096,
+      "condition": "stable only",
+      "frequency": [
+        0.35,
+        2
+      ]
+    },
+    "new_evaluation_cohorts": [
+      {
+        "seed": 770101,
+        "episodes": 1536,
+        "frequency": [
+          0.35,
+          0.9
+        ]
+      },
+      {
+        "seed": 770103,
+        "episodes": 1536,
+        "frequency": [
+          0.95,
+          1.35
+        ]
+      },
+      {
+        "seed": 770107,
+        "episodes": 1536,
+        "frequency": [
+          1.4,
+          2
+        ]
+      }
+    ],
+    "each_eval_cohort_conditions": {
+      "causal_effect_flip": 768,
+      "nuisance_intercept_jump": 384,
+      "stable_no_change": 384
+    },
+    "actual_nuisance_jump_amplitude_abs_uniform": [
+      0.4,
+      0.7
+    ],
+    "beta_abs_uniform": [
+      0.25,
+      0.45
+    ],
+    "drift_intercept_uniform": [
+      -0.2,
+      0.2
+    ],
+    "linear_uniform": [
+      -0.4,
+      0.4
+    ],
+    "quadratic_uniform": [
+      -0.1,
+      0.1
+    ],
+    "sinusoid_amp_uniform": [
+      0,
+      0.08
+    ],
+    "sinusoid_phase_uniform": [
+      -3.141592653589793,
+      3.141592653589793
+    ],
+    "physical_observation_noise_gaussian_sigma": 0.02,
+    "actual_actions": "initial sign random +/-1, exactly alternating thereafter, eight physically realized factual actions per world",
+    "no_protected_original_external_source": true,
+    "no_source_or_model_seeds_reused_from_P47": true
+  },
+  "fixed_gates_all_three_eval_cohorts": {
+    "stable_false_causal_alarm_max": 0.1,
+    "nuisance_jump_false_causal_alarm_max": 0.1,
+    "causal_switch_recall_min": 0.7,
+    "causal_effect_mae_max_relative_to_best_of_weighted_trailing5_last5": 0.85,
+    "stable_effect_mae_max_relative_to_full_window": 1.1,
+    "exact_cold_factual_tensors_replay": true,
+    "record_full_null_results_even_if_fail": true,
+    "no_rerun_or_adjust_source_seeds_threshold_quantile_after_result": true
+  },
+  "negatives": {
+    "no_action_variation_must_fail_original_source_validator": true,
+    "bad_shapes_or_nonfinite_outcomes_fail_closed": true,
+    "no_calibration_examples_from_evaluation": true,
+    "threshold_used_as_selected_not_reestimated_on_eval": true,
+    "out_of_family_nonlinear_or_adaptive_actions_not_claimed": true,
+    "basic_factual_history_recovers_unaltered_P47_results": true
+  },
+  "authority": {
+    "no_external_owner_source_first_use": true,
+    "no_new_runner_scheduler_controller_workflow_or_FUDGE": true,
+    "no_FORGE_integration": true,
+    "no_merge_or_promotion": true,
+    "no_paid_API": true,
+    "full_exact_sha_Windows_Ubuntu_regression_required_before_acceptance": true
+  }
+}
