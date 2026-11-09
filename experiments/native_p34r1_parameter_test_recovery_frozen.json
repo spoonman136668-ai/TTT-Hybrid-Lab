@@ -1,0 +1,33 @@
+{
+  "schema": "ttt-hybrid.native-p34r1.numeric-parameter-assertion-recovery-frozen.v1",
+  "status": "FROZEN_PRIOR_TO_TEST_ONLY_FIX_AND_NEW_OWNER_FIRST_USE",
+  "first_original_owner": {
+    "run_id": 42587378193,
+    "sha": "d6b89675ea9409840943ce56c61f348384c6410c",
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "source_and_external_MountainCar_hashes": "PASS",
+    "full_windows": "328_PASS_1_FAIL",
+    "failed_test": "tests/test_native_p34_mountaincar_reward_ppo_dev.py::test_all_4_real_reward_PPO_trained_component_custody_and_first_rollout",
+    "assertion": "assert 8 < (300 < 305)",
+    "cause": "Python parentheses made int < bool, rather than numeric chain 8 < 32 < 300 < 305",
+    "full_WSL": "NOT_RUN",
+    "P34_original_science_train": "NOT_RUN",
+    "P34_original_science_eval": "NOT_RUN",
+    "P34_cold_replay": "NOT_RUN",
+    "P34_new_source_seeds_consumed": false,
+    "protected_scientific_first_use": false
+  },
+  "repair": {
+    "only_change": "Correct test numeric comparison to named trainable parameter counts 8 < 32 < 300 < 305, leaving original source algorithm, controls and prospective thresholds untouched",
+    "scientific_frozen_commit": "3c56a5d35bd15a8be5f623255e3234b5f4e1fe19",
+    "original_P34_script_blob": "ce33dcb718bce23a26eced114840881eb75a3618",
+    "original_P34_test_blob": "960dfe7c91e1b7cc7c88a60be74bec2077e13264",
+    "original_MIT_MountainCar_source_blob": "5e7e11518715197974e8df46a842f1bc66ccd88c",
+    "mandatory_full_Windows_and_Ubuntu_WSL": true,
+    "one_new_oneuse_original_owner": true,
+    "no_original_science_seeds_replay": true,
+    "no_scheduler_controller_paid_API_or_new_runner": true,
+    "no_protected_science_first_use": true,
+    "no_merge_promotion_or_FORGE_activation": true
+  }
+}
