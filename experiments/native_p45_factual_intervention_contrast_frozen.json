@@ -1,0 +1,88 @@
+{
+  "schema": "ttt-hybrid.p45-factual-intervention-contrast-supervision-dev.v1",
+  "state": "FROZEN_BEFORE_SOURCE_AND_RESULTS",
+  "commit_parent": "7e94f0002ec73c01859f0b00ff58ea6f9665e98d",
+  "p43_original_module_git_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+  "p44_compare_module_git_blob": "aafc9b44e761431f4213985baf05a237fa14f4f6",
+  "hypothesis": "A physical, factual-only A,-A,A three-intervention contrast auxiliary target improves learned action credit on unfamiliar nuisance dynamics over the exact unmodified P43 recurrent model, a conventional matched recurrent model, a wrong-sign auxiliary and explicit no-training factual controls.",
+  "source": {
+    "source_type": "new authored synthetic DEV only, no external sealed science",
+    "seeds": {
+      "fit": 740001,
+      "validation": 740101,
+      "ood_dev": 740201
+    },
+    "n": {
+      "fit": 3072,
+      "validation": 384,
+      "ood_dev": 384
+    },
+    "hist_events": 8,
+    "hist_actions": "first 5 iid fair +/-1, last 3 A,-A,A with A independently fair +/-1",
+    "physical_time": "0,1/8,...,7/8; query at 1",
+    "hidden_effect": "sign fair; magnitude uniform .20..45; stable across entire training history",
+    "ood_switch": "first 96 of 384 heldout cases switch causal sign immediately before factual event index 4, no visible label",
+    "nuisance": "per-episode intercept uniform[-.1,.1], slope uniform[-.25,.25], curvature uniform[-.15,.15], amplitude uniform[-.15,.15], phase uniform[-pi,pi]; plus sine(2*pi*f*t+phase)",
+    "fit_frequency": [
+      0.45,
+      1
+    ],
+    "validation_frequency": [
+      0.45,
+      1
+    ],
+    "ood_frequency": [
+      1.25,
+      1.8
+    ],
+    "noise_sigma": 0.01,
+    "train_label": "one actually executed factual query action at t=1, no oracle counterfactual target",
+    "eval_label": "post-training both independently realized physical query action outcomes, no feedback on heldout",
+    "contrast_teacher": "a_5 * (((delta_5+delta_7)/2)-delta_6)/2 for actual equally spaced A,-A,A interventions; biased by non-affine nuisance and noise; no hidden beta or other-action oracle"
+  },
+  "arms": {
+    "factual_contrast": "EXACT original NativeTrainableCausalBelief (GRUCell,width16), factual query MSE + lambda*contrast_head_MSE with lambda=1.0",
+    "unmodified_P43": "same P43 model with factual query MSE only",
+    "wrong_sign_aux": "same P43 model/optimizer/computation but negative of factual contrast supervisor",
+    "conventional_GRU": "original P44 conventional GRUCell width16, no aux; P43 double-headed loss costs more; report wall/FLOP mismatch",
+    "classical_ridge": "P44 rank-checked degree-2 nuisance+action ridge on identical eight real events",
+    "zero_train_ABA": "latest three completed actual outcomes and actions, contrast only, no gradient updates"
+  },
+  "train": {
+    "seeds": [
+      9403,
+      9413,
+      9421
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.003,
+    "gradient_clip_norm": 1,
+    "batch_size": 128,
+    "updates_per_arm_per_seed": 1000,
+    "source_index_seed": 741001,
+    "validation_checkpoints_every": 200,
+    "all_arms_same_source_indices": true,
+    "all_p43_arms_identical_initialized_weights_per_seed": true,
+    "no_heldout_updates": true
+  },
+  "gate": {
+    "primary": "for every seed OOD two-action MSE at least 5pct lower than both unmodified P43 and conventional GRU",
+    "secondary": "for every seed inferred effect absolute error at least 5pct below unmodified P43 and zero-train ABA estimator",
+    "wrong_sign": "for every seed OOD effect MAE at least 20pct below wrong-sign aux",
+    "cold": "exact bitwise cold weights+state predictions on all seeds",
+    "baseline_qualification": "validation change final 200 updates within 1pct for all neural models, else plateau UNVERIFIED and no scientific positive",
+    "source_security": "no source leakage, same actions and observed outcomes for all models",
+    "status": "authored_DEV_only; even a win cannot be independently accepted science without original owner source first use and cross-platform full regression"
+  },
+  "authority": {
+    "no_new_workflow": true,
+    "no_dispatch": true,
+    "no_scheduler": true,
+    "no_paid_API": true,
+    "no_controller_changes": true,
+    "no_FORGE_modifications": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "preserve_P38_P43_P44_failures": true
+  }
+}
