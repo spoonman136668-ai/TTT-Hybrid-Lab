@@ -167,7 +167,7 @@ def training_pairs(gym,base_model,seed):
                 "cue":cue,"world":world,"episode_return_bit0":bit0["source_return"],
                 "episode_return_bit1":bit1["source_return"],
                 "two_truly_executed_real_source_episodes":[bit0,bit1]})
-    if len(pairs)!=48:
+    if len(pairs)!=24:
         raise RuntimeError("P30_UNEXPECTED_SOURCE_PAIR_COUNT")
     return pairs
 
@@ -192,7 +192,7 @@ def adapter_actor(seed,kind):
 
 
 def train_from_actual_rewards(pairs,seed,kind):
-    if len(pairs)!=48 or kind not in LEARNED:
+    if len(pairs)!=24 or kind not in LEARNED:
         raise RuntimeError("P30_SOURCE_TRAINING_PAIR_OR_ADAPTER_DRIFT")
     x=torch.tensor([[float(e["cue"])] for e in pairs],dtype=torch.float32)
     deltas=torch.tensor([float(e["episode_return_bit1"]-e["episode_return_bit0"]) for e in pairs],
@@ -226,11 +226,11 @@ def train_from_actual_rewards(pairs,seed,kind):
 
 
 def table_from_actual_rewards(pairs):
-    if len(pairs)!=48:raise RuntimeError("P30_TABLE_SOURCE_PAIR_DRIFT")
+    if len(pairs)!=24:raise RuntimeError("P30_TABLE_SOURCE_PAIR_DRIFT")
     table={}
     for cue in (1.,-1.):
         entries=[e for e in pairs if e["cue"]==cue]
-        if len(entries)!=24:raise RuntimeError("P30_NOT_EQUAL_REAL_SOURCE_EXPOSURE")
+        if len(entries)!=12:raise RuntimeError("P30_NOT_EQUAL_REAL_SOURCE_EXPOSURE")
         means=[sum(e[f"episode_return_bit{bit}"] for e in entries)/len(entries) for bit in (0,1)]
         if means[0]==means[1]:raise RuntimeError("P30_TABLE_ACTION_AMBIGUITY")
         table[str(int(cue))]={"mapping_bit":int(means[1]>means[0]),
