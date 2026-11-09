@@ -1,0 +1,81 @@
+{
+  "schema": "ttt-hybrid.p49.dual-null-calibrated-causal-and-nuisance-dev.v1",
+  "phase": "FROZEN_BEFORE_NEW_DEV_SOURCE_OR_LOCAL_TEST_EXECUTION",
+  "date": "2026-11-09",
+  "base": {
+    "pr": 138,
+    "sha": "3227cdd4fcbd4f6821d3bc369c18d326df70105d",
+    "p48_module_blob": "2509ad213e2ebf102d3d78aecd19cf6d67e9654a",
+    "p47_module_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "p48_negative": "overall frozen FAIL 1/3 stable accuracy"
+  },
+  "objective": "Test whether independent stable-null calibration of BOTH the causal switch and the nuisance jump, rather than only causal switches, prevents unnecessary nuisance model selection on stable worlds while retaining accurate post-switch causal effects and true exogenous-jump response.",
+  "method": {
+    "original_P48": "use original P48 fitted_hypotheses and unchanged BIC and exact factual models",
+    "candidate": "first choose causal switch only if best causal BIC beats best null by its 99th-percentile stable-only margin; otherwise choose nuisance model only if its BIC beats full no-change by an independently calibrated 99th-percentile stable-only nuisance margin; else preserve original full no-change effect",
+    "independent_threshold_source": "only stable-world physical histories, no evaluation labels or trials",
+    "calibration_percentile": 0.99,
+    "quantile_method": "higher",
+    "positive_strictly_greater": true,
+    "calibration_seed": 780001,
+    "calibration_episodes": 4096,
+    "evaluation": [
+      {
+        "seed": 780101,
+        "episodes": 1536,
+        "freq": [
+          0.35,
+          0.9
+        ]
+      },
+      {
+        "seed": 780103,
+        "episodes": 1536,
+        "freq": [
+          0.95,
+          1.35
+        ]
+      },
+      {
+        "seed": 780107,
+        "episodes": 1536,
+        "freq": [
+          1.4,
+          2
+        ]
+      }
+    ],
+    "group_counts_each": {
+      "causal_switch": 768,
+      "exogenous_step": 384,
+      "stable": 384
+    },
+    "source_law": "reuse exact original P48 authored synthetic physical source distribution with new only seeds; alternative action outcomes not observed, nuisance jumps absolute in [0.40,0.70] ; three frozen frequencies",
+    "no_training": true,
+    "no_hidden_effect_or_source_label_in_candidate": true,
+    "source_seeds_exclude_prior_760_and_770": true
+  },
+  "controls": {
+    "original_p47": "unchanged original BIC",
+    "original_p48": "causal-only null calibration using the SAME newly registered stable calibration and evaluation sources",
+    "conventional_full": "unchanged P47 8-action no-change quadratic nuisance+effect LS",
+    "conventional_recency": "unchanged P47 exponential recency-weighted regression",
+    "conventional_factual_3_5": "unchanged P47 last-3 and last-5 executed-action contrasts",
+    "nuisance_only_calibrated": "new explicit conventional candidate itself; do not claim novel architectural learning"
+  },
+  "endpoints": {
+    "frozen_primary": "Each of all 3 cohorts: causal recall >=70%, stable false causal alarms <=10%, nuisance false causal alarms <=10%, post-causal-switch action-effect MAE <=85% of min(trailing5,recency,last5), stable effect MAE <=110% of original full no-change conventional LS; cold replay exact",
+    "add_exogenous_effect_gate": "In each cohort nuisance-only effect MAE <=110% of original P48 same-source nuisance-only effect MAE, since calibration must not harm true nuisance response",
+    "progress_vs_original_p48": "Also report original P48 stable-effect MAE and candidate, and nuisance step selection counts, no postresult changes",
+    "independent_science_pass": "IMPOSSIBLE on authored DEV source alone; original owner-source first-use, fully converged neural controls, mixed nonalternating/endogenous actions and full dual-OS qualification needed"
+  },
+  "limits": {
+    "no_existing_science_seed_reuse_as_new": true,
+    "previous_P38_P47_P48_negative_findings_preserved": true,
+    "no_runner_or_scheduler_or_queue_or_controller_changes": true,
+    "no_FORGE_dispatch": true,
+    "no_paid_API": true,
+    "no_merge_or_promotion": true,
+    "full_windows_and_ubuntu_final_regression_required": true
+  }
+}
