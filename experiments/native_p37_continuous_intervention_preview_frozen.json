@@ -1,0 +1,61 @@
+{
+  "schema": "ttt-hybrid.native-p37.continuous-conditional-intervention-preview-frozen.v1",
+  "phase": "DEV_INTERFACE_FROZEN_BEFORE_IMPLEMENTATION_NO_PUBLIC_SOURCE_FIRST_USE",
+  "created": "2026-11-09",
+  "parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 119,
+    "sha": "0cfee680c1a778e32598824c605e32c17a92d08f",
+    "original_owner_run": 42595089888,
+    "original_source_engineering": "PASS",
+    "P36_original_public_DEV_mechanism": "PASS_3_OF_3_WITH_DESIGNER_SUPPLIED_ENERGY_OBJECTIVE",
+    "P36_generalization_or_RSI_science_pass": false,
+    "P36_source_seeds_consumed": true
+  },
+  "objective": "Provide the native token-free continuous-state Hybrid with a deterministic, causal, action-branch comparison interface, from one identical past memory state, without ever writing hypothetical branches into its factual memory. Goal-conditioned selection is supplied explicitly, not learned. No changes to underlying model weights or training schedules.",
+  "scope": {
+    "module": "native_intervention_choice.py",
+    "frozen_model_module": "native_continuous_state.py",
+    "frozen_model_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "frozen_native_checkpoint_module": "native_training_checkpoint.py",
+    "frozen_native_checkpoint_blob": "57728c0fc164cf5954449cec86f31b9c0e9d16e8",
+    "frozen_model_and_checkpoint_files_must_remain_byte_identical": true,
+    "new_methods": [
+      "preview_interventions",
+      "select_goal_action",
+      "commit_factual_outcome"
+    ],
+    "input_interface": "continuous sensors [B,S] and candidate interventions [B,K,A], scalar per-batch positive real dt [B,1], supplied continuous sensor goal [B,S], optional exact native ContinuousState",
+    "max_candidates": 16,
+    "tie_rule": "choose lowest candidate index when predicted squared target errors tie",
+    "branch_semantics": "Every candidate must be computed from the SAME immutable recurrent, fast-weight and historical state, with original native_model.step invoked in one batched tensor. Returned speculative model states discarded; no outcomes observed; zero memory learning. Return branch predictions [B,K,S] without changing input state.",
+    "goal_decision": "Per-candidate squared Euclidean distance between predicted continuous next sensor observation and explicitly SUPPLIED per-example continuous target. Minimize; do not claim the goal objective was learned.",
+    "real_factual_update": "Only after caller provides an actual observed next continuous sensor reading for ONE physically executed action, invoke existing model.step with original prior and then existing model.learn_outcome exactly once. No other branch writes. Caller is responsible for source authenticity; receipt must not label imagined outcomes factual.",
+    "torch_autograd": "No forced inference/no_grad; preserves differentiable branch estimates. Never update parameters during preview.",
+    "science_limits": "Engineering ONLY: no public source actions, no new training, no real-world control competence or general planning, autonomous reasoning, RSI, transfer, or improvement claims; must preserve P36 positives and stronger conventional controller."
+  },
+  "precommitted_tests": {
+    "same_state_batched_preview_matches_sequential_single_candidate_step_exact": true,
+    "state_and_model_parameters_bitwise_unchanged_after_speculative_preview": true,
+    "candidate_order_permutation_equivariance": true,
+    "action_and_goal_conditioned_selection_reversal": true,
+    "exact_determinism_and_cold_model_state_reload": true,
+    "real_observed_outcome_changes_only_committed_factual_fast_memory": true,
+    "missing_observed_outcome_and_malformed_shapes_fail_closed": true,
+    "no_hidden_state_future_obs_token_ids_or_lexical_input": true,
+    "existing_native_model_tests_and_checkpoint_tests_remain_unchanged": true,
+    "local_focused_tests_before_qualifications": true,
+    "full_final_windows_and_wsl_required_before_any_accepted_integration": true
+  },
+  "isolation": {
+    "FORGE_dispatch_training_other_lane_owned": true,
+    "no_workflow_or_runner_dispatch_in_this_PR": true,
+    "no_new_scheduled_tasks": true,
+    "no_new_controller_queue_or_consumer": true,
+    "no_paid_API": true,
+    "no_scientific_first_use": true,
+    "no_merges_or_production_promotions": true,
+    "no_model_training_or_checkpoint_mutation": true,
+    "other_research_owners_untouched": true
+  }
+}
