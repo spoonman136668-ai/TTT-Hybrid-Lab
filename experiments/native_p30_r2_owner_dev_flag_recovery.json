@@ -1,0 +1,40 @@
+{
+  "schema": "ttt-hybrid.native-p30.r2-original-owner-dev-flag-recovery.v1",
+  "registered": "2026-11-08",
+  "original": {
+    "P30_PR": 109,
+    "P30_original_one_use_run": 42544089635,
+    "source_SHA_original": "28d8c3dfe8385d36dfd4320d0948b5c51516c691",
+    "P30_R1_PR": 111,
+    "R1_source_SHA": "c2f6f2aab3a3a5c71c2c49f354e992fedc18cb9a",
+    "R1_owner_run": 42545009721,
+    "R1_completed": "Windows 305 passed; Ubuntu WSL 304 passed 1 skipped; 15/15 original trained source model archives exact, no original retraining",
+    "R1_failed_at": "FIRST Python original DEV-only factual reward training launch before any gym.admit_gymnasium/reset/step",
+    "exact_R1_failure": "RuntimeError P30_SCIENCE_FIRST_USE_NOT_AUTHORIZED: original training program requires NATIVE_P30_DEV_ONLY=1 but R1 workflow passed NATIVE_P30_R1_DEV_ONLY=1",
+    "no_training_source_episodes_in_R1": true,
+    "no_protected_S26_S27_first_use": true,
+    "original_P30_frozen_protocol_commit": "5eff385c9dbd61fab3a5f25966af3c855d4950d5",
+    "original_P30_frozen_blob": "e6d354b7c94eb886a00180460b5c2ccd62989f56",
+    "qualified_original_model_artifact_id": 13641906162,
+    "original_R1_code_blob": "21b8503b59cb97407a8e2cb50be7b8eb3ae57391",
+    "original_test_blob": "3ed26add6ea80a999e59a23319c819f392692618"
+  },
+  "repair": {
+    "change": "New distinct one-use owner workflow changes only the two Python invocation environment strings to NATIVE_P30_DEV_ONLY=1, matching original require_dev() and original scientific first-use admission. Do not relax or bypass require_dev.",
+    "new_public_development_seeds_required": false,
+    "original_P30_source_science_first_use_unconsumed": true,
+    "all_original_seed_hypothesis_arms_budget_unchanged": true,
+    "original_P30_python_source_no_changes": true,
+    "original_15_model_checkpoints_not_retrained": true,
+    "same_competing_conventional_and_negative_controls": true,
+    "full_Windows_and_Ubuntu_original_negative_regression_required": true,
+    "one_use_owner_runner": "TTT-HYBRID-GPU-WIN",
+    "no_old_workflow_replay": true,
+    "run_attempt_must_equal_1": true,
+    "new_host_or_runner": false,
+    "new_schedule_or_queue_consumer": false,
+    "paid_API_or_installer": false,
+    "protected_scientific_first_use": false,
+    "no_merge_promotion_or_FORGE_activation": true
+  }
+}
