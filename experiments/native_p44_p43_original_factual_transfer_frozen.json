@@ -1,0 +1,113 @@
+{
+  "schema": "ttt-hybrid.native-p44-p43-original-grucell-ood-comparison-dev.v1",
+  "registered_date": "2026-11-09",
+  "phase": "FROZEN_BEFORE_SOURCE_GENERATION_TRAINING_OR_RESULT",
+  "parent": {
+    "pr": 129,
+    "sha": "d299c47da72f106b3ae176cc344e432202e30c27",
+    "original_module": "native_trainable_causal_belief.py",
+    "module_git_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "baseline_p42_pr": 127,
+    "negative_p43c_pr": 130
+  },
+  "question": "Can the exact original P43 GRUCell with two factual-only causal heads beat a properly trained conventional GRU, MLP, wrong-action-credit version, and fitted strong conventional action-effect ridge on independently authored unfamiliar nuisance dynamics, with cold recall?",
+  "scope": {
+    "research_dev_only": true,
+    "new_sealed_scientific_first_use": false,
+    "original_s26_s27_p38_p43c_consumed_seeds_untouched": true,
+    "FORGE_loop_untouched": true,
+    "no_new_runner_or_scheduler": true,
+    "no_paid_api": true
+  },
+  "world": {
+    "episode_history": 8,
+    "dt_per_real_action": 0.125,
+    "delta": "base_intercept + slope*time + curvature*time*time + sinusoid_amplitude*sin(2*pi*frequency*time+phase)+ latent_effect(time)*executed_action + independent_gaussian_noise",
+    "initial_x": "uniform[-0.3,0.3]",
+    "latent_effect_magnitude": "uniform[0.20,0.45]",
+    "effect_sign": "equiprobable",
+    "base_intercept": "uniform[-0.10,0.10]",
+    "slope": "uniform[-0.25,0.25]",
+    "curvature": "uniform[-0.15,0.15]",
+    "sinusoid_amplitude": "uniform[-0.15,0.15]",
+    "phase": "uniform[-pi,pi]",
+    "noise_sigma": 0.01,
+    "history_actions": "independent +/-1 fair random",
+    "query_action": "one actual +/-1 action for training, both actions physically evaluated after training for scoring only",
+    "fit_frequency": [
+      0.45,
+      1
+    ],
+    "validation_frequency": [
+      0.45,
+      1
+    ],
+    "unfamiliar_frequency": [
+      1.25,
+      1.8
+    ],
+    "unfamiliar_mode_switch_fraction": 0.25,
+    "unfamiliar_mode_switch": "for first 25% OOD episodes flip sign of beta AFTER t=4, unseen in fitting; no indicator supplied to learners",
+    "cohorts": {
+      "fit": 2048,
+      "validation": 256,
+      "unfamiliar_dev": 512
+    },
+    "source_seeds": {
+      "fit": 730001,
+      "validation": 730101,
+      "unfamiliar_dev": 730201
+    }
+  },
+  "models": {
+    "original": "Exact NativeTrainableCausalBelief(sensor_dim=1,width=16,min_facts=2) from pinned PR129; BPTT through eight historical factual observe calls; query prediction only uses actual query action for training",
+    "conventional_gru": "Separate GRUCell with exactly the same four factual analog inputs, recurrent width 16, common query/current-sensor/dt features, single nonfactorized action-conditioned readout; within +/-10% parameter count",
+    "conventional_mlp": "Feedforward MLP with same eight factual inputs and current sensor/dt/query action, width 32/24 and scalar readout; report exact parameter count",
+    "wrong_credit": "Exact original P43 model but roll observed executed-action input positions by one within each factual history, retain all actual outcomes and same current query action; no random confound",
+    "classical": "per-world fitted conventional quadratic-time-plus-action ridge using identical eight history factual transitions; prespecified lambda=0.001; separately timed",
+    "last_effect": "last realized action normalized outcome, no learning",
+    "trainable_model_seeds": [
+      9203,
+      9217,
+      9221
+    ],
+    "training": {
+      "optimizer": "AdamW",
+      "lr": 0.003,
+      "batch": 128,
+      "optimizer_updates_each": 600,
+      "identical_factual_source_and_index_order_for_each_arm": true,
+      "draw_seed": 731001,
+      "detach_history": false,
+      "gradient_clip_norm": 1,
+      "monitor_validation_every": 100,
+      "competence_plateau": "last two validation checkpoint changes relative <=1%; if not, no claim baseline fully converged"
+    },
+    "no_eval_updates": true
+  },
+  "metrics": {
+    "primary": "MSE on both evaluator-only physically executed query actions on unfamiliar source; report separately for switched and unswitched modes",
+    "additional": [
+      "counterfactual effect coefficient MAE",
+      "optimal action choice both external goals +/-0.35",
+      "cold restored predictions bit exact",
+      "all training and inference wall costs",
+      "sample-index/source SHA256"
+    ],
+    "frozen_candidate_positive_gate": "original P43 OOD MSE <=0.95*min(fully trained conventional GRU,fully trained MLP, fitted polynomial ridge) AND >=0.03 absolute improvement in action optimal fraction on mode-switch cohort above best trainable conventional GRU, for every seed",
+    "wrong_credit_margin": "original P43 OOD MSE <=0.80*wrong-action-history-credit model MSE for each seed",
+    "source_strength": "wrong-credit sham should weaken effect learning; require no post-result tune or new seed replacement",
+    "full_scientific_PASS": "IMPOSSIBLE for this authored exploratory DEV fixture; separate project-owner source birth and cross-platform original qualification required"
+  },
+  "bounds": {
+    "initial_expected_CPU_wall_seconds": 180,
+    "training_actions_per_episode": 8,
+    "training_query_factual_actions_per_episode": 1,
+    "no_counterfactual_labels_used_for_training": true
+  },
+  "qualification": {
+    "local_exact_source_pin_required": true,
+    "negative_and_interface_tests_required": true,
+    "mandatory_original_exact_sha_windows_and_ubuntu_WSL_full_regression_before_acceptance": true
+  }
+}
