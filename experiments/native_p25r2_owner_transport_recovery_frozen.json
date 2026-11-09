@@ -1,0 +1,81 @@
+{
+  "schema": "ttt-hybrid.native-p25r2.owner-transport-recovery-frozen.v1",
+  "registered": "2026-11-08",
+  "state": "OWNER_TRANSPORT_RECOVERY_ONLY_NO_SCIENCE_CHANGE",
+  "original": {
+    "parent_PR": 99,
+    "parent_sha": "6b484d69e1646ae82bd1939f150ce8266cc22882",
+    "parent_run": 42537038694,
+    "parent_job": 128903530267,
+    "status": "FAIL_GITHUB_ACTIONS_SETUP_BEFORE_SOURCE_CHECKOUT_OR_TRAINING",
+    "failure": "codeload.github.com timeout downloading pinned actions/checkout and actions/upload-artifact; no original experiment steps entered",
+    "P25_origin_PR": 98,
+    "P25_origin_run": 42536561943,
+    "P25_origin_result": "ENGINEERING_FAIL_NUMPY_FLOAT32_JSON",
+    "P25_original_scientific_test_consumed": false
+  },
+  "authorization": {
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "existing_only": true,
+    "no_new_runner_or_controller": true,
+    "no_scheduled_tasks": true,
+    "no_infrastructure_config_write": true,
+    "no_host_install": true,
+    "no_paid_API": true,
+    "original_sealed_science_first_use": false
+  },
+  "transport": {
+    "candidate_source": "git clone exact current owner branch via ephemeral GitHub Actions job GITHUB_TOKEN, never codeload archive",
+    "provenance": "exact Git HEAD == github.sha and clean git worktree",
+    "external_original_owner": "reuse exact on-disk source checkouts only if pinned SHA and clean, fail closed if absent; no source modifications",
+    "source_roots": [
+      "native-p25-s29-owner",
+      "native-p25-mit-gym",
+      "native-p25-bsd3-cloudpickle"
+    ],
+    "expected_source_shas": [
+      "30c27ca4865e16b7574ee2b562879108db2b3796",
+      "17eff00220d210beda933f78b0e52850022b0690",
+      "ff54d93221082d4ce22630ecdb8fbbccc60f3b62"
+    ],
+    "token_isolated_to_one_git_clone_step": true,
+    "token_never_output": true,
+    "action_download_requirements": []
+  },
+  "experiment": {
+    "unmodified_script_blob": "6c07b1738c8c50f2ca9d8e13eb0ebee01424f45e",
+    "unmodified_tests_blob": "97df4ad8c0543a1a7e60eb98d69dcff9c8c9b704",
+    "R1_original_seed_manifest": "741a2a2aee34b404ceb5980ad320aca6fddf5bab",
+    "R1_public_dev_training_range": [
+      104000,
+      104255
+    ],
+    "R1_validation_range": [
+      105000,
+      105063
+    ],
+    "R1_eval_range": [
+      106000,
+      106095
+    ],
+    "new_R2_first_use": "same unconsumed R1 public DEV seeds because R1 workflow failed before all program steps; verify original no receipts and job status",
+    "P25_original_frozen_protocol": "c750a638cfa95391058ae38d6a6d1f39f18ed7ef",
+    "P25_original_metric_contract": "c9fd300a9f5351ac0d2f290564916feb22659143",
+    "hyperparameters_unchanged": true,
+    "predeclared_primary_criteria_unchanged": true
+  },
+  "qualification": {
+    "full_original_Windows_CPU_regression": true,
+    "full_original_Ubuntu_WSL_CPU_regression": true,
+    "negative_controls_required": true,
+    "source_git_blob_hashes_required": true,
+    "stop_before_source_use_on_any_regression_fail": true,
+    "CPU_toolchain_pinned": true,
+    "local_receipt_and_sha256": true,
+    "run_job_logs_include_full_preregistered_summary": true,
+    "protected_science_not_consumed": true,
+    "do_not_claim_science_if_fail": true,
+    "do_not_merge_or_promote": true,
+    "keep_prior_failed_R1_and_P25_run_receipts": true
+  }
+}
