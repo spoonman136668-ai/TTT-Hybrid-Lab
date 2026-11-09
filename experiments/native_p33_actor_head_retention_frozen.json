@@ -1,0 +1,120 @@
+{
+  "schema": "ttt-hybrid.native-p33.actor-head-retention-and-checkpoint-frozen.v1",
+  "phase": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_OR_PUBLIC_SOURCE_USE",
+  "parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "exact_source_sha": "7bc49166b83788efc7bfb9da82d39fc420630c46",
+    "pr": 114,
+    "original_owner_run": 42548762315,
+    "scientific_P32_broad_gate_passed": false,
+    "known_selected_seed_4507_excluded": true
+  },
+  "hypothesis": "On entirely fresh model initializations and actual physical action/reward data, frozen-GRU actor-head PPO reproducibly acquires reward competence and outperforms full recurrent PPO without destructive representation updates. Preserve an immutable cold-loadable actor policy weight candidate, without accepted model promotion.",
+  "source": {
+    "original_S29": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "original_Farama_MIT": "17eff00220d210beda933f78b0e52850022b0690",
+    "original_Cloudpickle_BSD3": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "unchanged_p20_script_git_blob": "cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4",
+    "unchanged_p30_script_git_blob": "6d864593732cda1413a6338bc2e42ad9c6a85629",
+    "unchanged_p32_script_git_blob": "793ac4153353754c0754c76655663af74cb9c0a5",
+    "protected_scientific_first_use": false,
+    "source_reward_only_no_expert": true,
+    "velocity_masked": true,
+    "no_hidden_world_params": true
+  },
+  "training": {
+    "model_initialization_seeds": [
+      4831,
+      4861,
+      4903
+    ],
+    "fresh_model_seed_disjointness": "Must be independently checked against original owner consumed and reserved source ledger before any new execution. Freeze is not proof of unused seeds.",
+    "original_source_train_reset_base": 160000,
+    "arms": [
+      "full_actor_recurrent_ppo",
+      "actor_head_only_ppo",
+      "critic_only_frozen_policy"
+    ],
+    "rollouts": 96,
+    "parallel_envs": 8,
+    "actions_per_rollout": 64,
+    "ppo_epochs": 3,
+    "minibatch_size": 256,
+    "source_actions_per_arm_seed": 49152,
+    "source_optimizer_minibatches_per_arm_seed": 576,
+    "planned_total_source_training_actions": 442368,
+    "planned_total_optimizer_minibatches": 5184,
+    "initial_state_same_within_seed": true,
+    "first_factual_512_actions_match_required": true,
+    "no_training_on_evaluation_seeds": true,
+    "actor_head_only_recurrent_weights_bitwise_frozen": true,
+    "critic_only_recurrent_actor_weights_bitwise_frozen": true
+  },
+  "evaluation": {
+    "original_reset_seeds": [
+      161011,
+      161019,
+      161029,
+      161037,
+      161049,
+      161059,
+      161071,
+      161089
+    ],
+    "physics_conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "episode_horizon": 200,
+    "arms": [
+      "initial_no_update",
+      "full_actor_recurrent_ppo",
+      "actor_head_only_ppo",
+      "critic_only_frozen_policy",
+      "finite_difference_public_two_frame",
+      "seeded_random"
+    ],
+    "all_actual_physical_source_actions": true,
+    "paired_resets": true,
+    "no_fit_on_heldout": true,
+    "record_actual_action_consequence_trace_hashes": true
+  },
+  "criteria": {
+    "all_three_fresh_initializations_required": true,
+    "actor_head_only_original_mean_reward_min": 150,
+    "actor_head_only_each_shifted_physics_reward_min": 100,
+    "actor_head_only_minus_full_PPO_min_each_condition": 25,
+    "critic_only_must_match_original_initial_reward_and_actions_exactly": true,
+    "no_hindsight_epoch_selection": true,
+    "conventional_two_frame_baseline_must_be_reported": true,
+    "scientific_architecture_superiority_requires_strong_matched_trained_conventional_and_independent_heldout": true,
+    "positive_development_not_production_authorization": true
+  },
+  "checkpoint": {
+    "save_only_actor_head_trained_full_model_weights": true,
+    "immutable_exclusive_files": true,
+    "cold_load_original_model_architecture": true,
+    "exact_checkpoint_and_model_sha256": true,
+    "bit_exact_cold_logits": true,
+    "per_seed_checkpoint_manifest": true,
+    "no_optimizer_state_or_AdamW_continuation_claim": true,
+    "no_accepted_or_latest_pointer": true,
+    "no_champion_replacement": true,
+    "protected_checkpoint_source_does_not_exist_until_owner_run": true
+  },
+  "qualification": {
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "full_final_Windows_and_Ubuntu_WSL_regression_before_new_source_use": true,
+    "original_owner_source_and_dependency_SHA_authentication": true,
+    "original_negative_controls": true,
+    "first_use_reserved_by_project_owner_before_start": true,
+    "one_use_only": true,
+    "max_training_and_evaluation_wall_seconds": 540,
+    "no_new_scheduled_task": true,
+    "no_new_controller_runner_or_paid_API": true,
+    "no_FORGE_owner_or_scientific_first_use_mutation": true,
+    "do_not_run_original_until_separate_native_owner_custody": true
+  },
+  "result_before_experiment": "NOT_EXECUTED"
+}
