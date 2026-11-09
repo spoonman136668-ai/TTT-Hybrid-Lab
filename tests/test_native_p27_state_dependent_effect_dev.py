@@ -81,7 +81,7 @@ def test_real_source_sister_action_branches_observed_both_and_no_hidden_length(m
     assert receipt["valid_pairs_total"]==18
     assert receipt["unexecuted_counterfactual_targets"]==0
     assert len(receipt["all_real_sister_world_events_sha256"])==64
-    assert receipt["original_real_environment_actions"]==2*(6+10)*9
+    assert receipt["original_real_environment_actions"]==(4+8)*2*9+16*18
     assert all(p[0].shape==(8,6) for p in cases)
     assert all(torch.count_nonzero(p[0][:,1])==0
                and torch.count_nonzero(p[0][:,3])==0 for p in cases)
