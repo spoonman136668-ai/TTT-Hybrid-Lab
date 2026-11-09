@@ -1,0 +1,190 @@
+{
+  "schema": "ttt-hybrid.native-p45-factual-ABA-supervision-dev-result.v1",
+  "classification": "DEVELOPMENT_ONLY_FROZEN_PERFORMANCE_GATE_FAIL",
+  "source_parent": {
+    "p44_pr": 132,
+    "p44_sha": "7e94f0002ec73c01859f0b00ff58ea6f9665e98d",
+    "p43_original_source_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "p44_runner_blob": "aafc9b44e761431f4213985baf05a237fa14f4f6"
+  },
+  "freeze": {
+    "commit": "dd00b0891bde1eee61a3302bc840f3ea35ad11f3",
+    "manifest_blob": "072c78ea84e240439885d8be9f0ce89bf17af4a4",
+    "frozen_before_source_generation": true
+  },
+  "implementation": {
+    "runner_blob": "363996307bd90b4effc2ba7acae81c241e6492da",
+    "focused_tests_blob": "bd288dd49cce224ce18f8d90f36ca9c9ca104be1",
+    "sha256_full_local_result": "451c5ae69fa99ffca78de03f6645a7a56c2a92e858a8fa361aa2f4936e979ddb",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2"
+  },
+  "source": {
+    "fit": 3072,
+    "validation": 384,
+    "ood_dev": 384,
+    "ood_hidden_mode_reversals": 96,
+    "past_factual_events_per_episode": 8,
+    "teacher": "last three completed real A,-A,A physical outcomes only",
+    "train_query_one_actual_action": true,
+    "heldout_evaluator_two_actual_actions": true,
+    "seeds": {
+      "fit": 740001,
+      "validation": 740101,
+      "ood_dev": 740201
+    },
+    "source_sha256": {
+      "fit": "8dd6100cde77f76a0cf265a5705a1e7eb2e0926c65dc7b73fde22249ba60fc99",
+      "validation": "9b219ee2ae2a2fecb9f24b545d0a706cbb9b378ddeefc26cbd072b9a829f204a",
+      "ood_dev": "fa62560b3adc5096d7c0f902be9d132ef53f215611cd2574694f8a2f6c495c39"
+    }
+  },
+  "budget": {
+    "neural_arms": [
+      "P43+factual_contrast",
+      "P43_no_aux",
+      "P43_wrong_sign_aux",
+      "conventional_GRU"
+    ],
+    "model_seeds": [
+      9403,
+      9413,
+      9421
+    ],
+    "updates_per_arm_per_seed": 1000,
+    "total_neural_optimizer_updates": 12000,
+    "batch_size": 128,
+    "learning_rate": 0.003,
+    "gradient_clip_norm": 1,
+    "aux_lambda": 1,
+    "model_params": {
+      "P43_each": 1394,
+      "GRU": 1393
+    },
+    "matched_sampling_index_sha256": "22c0750517918fb701b7267ac0b8b05936bdf97c7d85a10e229f2fbd3d7060ab",
+    "exact_same_model_seed_initialization_for_P43_arms": true,
+    "FLOP_and_wall_clock_match": "NOT_QUALIFIED: GRU plain factual loss less expensive than P43 contrast"
+  },
+  "comparators": {
+    "no_training_ABA_effect_mae": 0.016281837597489357,
+    "polynomial_ridge": {
+      "ood_mse": 0.06217317655682564,
+      "ood_effect_mae": 0.0790296271443367,
+      "goal_optimal": 0.8645833134651184,
+      "rank_full": 384,
+      "switched_n": 96,
+      "switched_mse": 0.18057088553905487,
+      "switched_effect_mae": 0.26673299074172974
+    }
+  },
+  "gate_legend": [
+    "OOD_MSE_at_least_5pct_better_than_noaux_and_GRU",
+    "OOD_effect_MAE_at_least_5pct_better_than_noaux_and_ABA",
+    "OOD_effect_MAE_at_least_20pct_better_than_wrong_sign",
+    "cold_state_exact",
+    "all_neural_validation_plateau_within_1pct"
+  ],
+  "per_seed": [
+    {
+      "seed": 9403,
+      "aux_mse": 0.012578296475112438,
+      "no_aux_mse": 0.012697353959083557,
+      "gru_mse": 0.013764210045337677,
+      "wrong_sign_mse": 0.12422915548086166,
+      "aux_effect_mae": 0.024175601080060005,
+      "no_aux_effect_mae": 0.02447391301393509,
+      "gru_effect_mae": 0.030129844322800636,
+      "wrong_sign_effect_mae": 0.32548436522483826,
+      "aux_train_s": 4.181091116,
+      "no_aux_train_s": 3.994696252,
+      "gru_train_s": 2.325778653,
+      "wrong_sign_train_s": 4.159473368,
+      "aux_validation_last_relative": 0.02919,
+      "gru_validation_last_relative": 0.21556,
+      "flags": {
+        "mse_margin": false,
+        "causal_effect_margin": false,
+        "wrong_sign_negative": true,
+        "cold_exact": true,
+        "training_plateau": false
+      }
+    },
+    {
+      "seed": 9413,
+      "aux_mse": 0.013299389742314816,
+      "no_aux_mse": 0.014612823724746704,
+      "gru_mse": 0.019098352640867233,
+      "wrong_sign_mse": 0.12424016743898392,
+      "aux_effect_mae": 0.0271501075476408,
+      "no_aux_effect_mae": 0.03473351523280144,
+      "gru_effect_mae": 0.03489183261990547,
+      "wrong_sign_effect_mae": 0.32622411847114563,
+      "aux_train_s": 4.167947972,
+      "no_aux_train_s": 4.029807807,
+      "gru_train_s": 2.411071648,
+      "wrong_sign_train_s": 3.963682226,
+      "aux_validation_last_relative": -0.02539,
+      "gru_validation_last_relative": 0.03167,
+      "flags": {
+        "mse_margin": true,
+        "causal_effect_margin": false,
+        "wrong_sign_negative": true,
+        "cold_exact": true,
+        "training_plateau": false
+      }
+    },
+    {
+      "seed": 9421,
+      "aux_mse": 0.012753655202686787,
+      "no_aux_mse": 0.01347748190164566,
+      "gru_mse": 0.01358765084296465,
+      "wrong_sign_mse": 0.12451418489217758,
+      "aux_effect_mae": 0.028998950496315956,
+      "no_aux_effect_mae": 0.031634893268346786,
+      "gru_effect_mae": 0.03078160434961319,
+      "wrong_sign_effect_mae": 0.3262574374675751,
+      "aux_train_s": 4.148583583,
+      "no_aux_train_s": 3.986373205,
+      "gru_train_s": 2.456744908,
+      "wrong_sign_train_s": 4.067586027,
+      "aux_validation_last_relative": 0.10737,
+      "gru_validation_last_relative": 0.18752,
+      "flags": {
+        "mse_margin": true,
+        "causal_effect_margin": false,
+        "wrong_sign_negative": true,
+        "cold_exact": true,
+        "training_plateau": false
+      }
+    }
+  ],
+  "conclusion": {
+    "positive_all_seeds": false,
+    "positive_MSE_margin_seeds": 2,
+    "positive_effect_vs_ABA_seeds": 0,
+    "negative_wrong_sign_margin_seeds": 3,
+    "cold_exact_seeds": 3,
+    "baseline_plateau_pass_seeds": 0,
+    "local_focused_tests": "PASS_10_OF_10_P44_PLUS_P45",
+    "total_local_train_and_eval_wall_seconds": 44.138449291999905,
+    "scientific_status": "DEV_FAIL_NOT_INDEPENDENT_SCIENTIFIC_FIRST_USE",
+    "interpretation": "The causal auxiliary helps more than wrong-sign supervision and has lower raw OOD MSE than a conventional GRU in each seed, but never beats zero-training ABA in causal-effect estimation, misses one frozen MSE margin, and lacks trained-convergence competency. Preserve this negative."
+  },
+  "qualification": {
+    "original_repo_full_Windows_regression": "NOT_RUN",
+    "original_repo_full_Ubuntu_WSL_regression": "NOT_RUN",
+    "hosted_CI": "NOT_ACCEPTED",
+    "original_source_owner_science_first_use": "NOT_RUN",
+    "FORGE_activation": "NOT_ATTEMPTED",
+    "merge_and_promotion": "NOT_ATTEMPTED"
+  },
+  "authority": {
+    "no_new_scheduler": true,
+    "no_owner_runner_dispatch": true,
+    "no_new_controller": true,
+    "no_paid_api": true,
+    "no_consumer_or_queue_modification": true,
+    "existing_scientific_negative_outcomes_unchanged": true
+  }
+}
