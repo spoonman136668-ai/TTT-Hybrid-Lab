@@ -1,0 +1,188 @@
+{
+  "schema": "ttt-hybrid.native-p34.mountaincar-source-reward-three-action-frozen.v1",
+  "phase": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_AND_ORIGINAL_SOURCE_ACTIONS",
+  "date": "2026-11-09",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "PR": 115,
+    "sha": "448df2a5039427e232439de6136d35d4e2b5d795",
+    "original_owner_run": 42583960230,
+    "parent_original_source_tests_windows": 322,
+    "parent_original_source_tests_WSL": 321,
+    "parent_WSL_skipped": 1,
+    "parent_science_P33_fresh_seed_replication": "FAIL_2_OF_3",
+    "parent_cold_288_source_episodes": "PASS",
+    "parent_owner_workflow": "FAIL_POST_SOURCE_FILENAME_ONLY",
+    "parent_original_source_data_consumed": true
+  },
+  "question": "Does reward-only actor-head training with bitwise-frozen recurrence retain an advantage over fully trained recurrent GRU and matched-information nonrecurrent MLP on a distinct three-action energy-accumulation physical control task, with withheld true velocity and changed source forces?",
+  "source": {
+    "upstream": "Farama-Foundation/Gymnasium",
+    "MIT_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "original_MountainCar_module": "gymnasium/envs/classic_control/mountain_car.py",
+    "original_MountainCar_blob": "5e7e11518715197974e8df46a842f1bc66ccd88c",
+    "original_registration_blob": "84f23c4d6ebeba0d6b66d9f19ea2c59c11ff7061",
+    "S29_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "Cloudpickle_BSD3_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "actual_source_env": "MountainCar-v0",
+    "true_action_count": 3,
+    "original_horizon": 200,
+    "original_reward_each_step": -1,
+    "original_goal_position": 0.5,
+    "default_force": 0.001,
+    "default_gravity": 0.0025,
+    "upstream_physics_unchanged_on_original": true,
+    "force_shift_only_on_isolated_eval_instances": true,
+    "original_P20_P30_P32_P33_sources_unchanged": true,
+    "continuous_position_observation_only": true,
+    "hide_original_true_velocity_from_every_policy": true,
+    "all_source_action_history_and_true_rewards_observed": true,
+    "no_hidden_force_input": true,
+    "no_expert_actions_or_distillation": true,
+    "no_counterfactual_rewards": true,
+    "protected_scientific_first_use": false
+  },
+  "architecture": {
+    "history_last_real_rows": 8,
+    "row_features": [
+      "source_position_divided_by_1.2",
+      "preceding_actual_action_minus_1",
+      "preceding_real_reward",
+      "factual_position_difference_between_last_two_source_observations"
+    ],
+    "row_zero_pad_on_episode_start": true,
+    "GRU_hidden_size": 7,
+    "GRU_input_features": 4,
+    "GRU_actor_action_logits": 3,
+    "GRU_critic_scalar": true,
+    "GRU_total_parameters": 305,
+    "MLP_full_flattened_history_features": 32,
+    "MLP_hidden_size": 8,
+    "MLP_total_parameters": 300,
+    "no_transformer_or_tokenization": true,
+    "same_information_across_GRU_and_MLP": true
+  },
+  "training": {
+    "model_seeds": [
+      5101,
+      5113,
+      5137
+    ],
+    "train_original_physics_source_seed_base": 174000,
+    "training_arms": [
+      "full_recurrent_ppo",
+      "actor_head_only_ppo",
+      "conventional_history_mlp_ppo",
+      "critic_only_actor_frozen"
+    ],
+    "new_source_episodes_each_train_model": true,
+    "rollouts": 96,
+    "parallel_envs": 8,
+    "source_actions_per_rollout_per_env": 64,
+    "total_actual_source_actions_each_train_arm_each_seed": 49152,
+    "updates_each_train_arm_each_seed": 576,
+    "epochs": 3,
+    "minibatch_size": 256,
+    "optimizer": "AdamW",
+    "learning_rate": 0.0015,
+    "ratio_clip": 0.2,
+    "entropy_weight": 0.015,
+    "critic_weight": 0.5,
+    "max_gradient_norm": 1,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "neural_entropy_sampling": "torch.distributions.Categorical(logits=actor_logits).sample",
+    "source_episodes_terminal_condition": "terminated OR truncated; wrapper enforced source max_episode_steps=200",
+    "same_all_GRU_initial_model_weights": true,
+    "same_GRU_initial_512_real_actions_and_observations": true,
+    "MLP_independently_initialized_but_same_information": true,
+    "MLP_all_parameters_actually_trained": true,
+    "actor_only_freezes_GRU_bitwise": true,
+    "critic_only_freezes_GRU_and_actor_bitwise": true,
+    "full_GRU_all_modules_updated": true,
+    "train_source_world_conditions": [
+      "original"
+    ],
+    "same_public_source_seed_stream_per_arm": true,
+    "no_posthoc_training_stopping_or_hyperparameter_selection": true,
+    "source_reward_only": true
+  },
+  "evaluation": {
+    "model_evaluation_seeds": [
+      175011,
+      175019,
+      175029,
+      175037,
+      175049,
+      175059,
+      175071,
+      175089
+    ],
+    "conditions": {
+      "original": {
+        "source_force_ratio": 1
+      },
+      "low_force_x0.75": {
+        "source_force_ratio": 0.75
+      },
+      "high_force_x1.25": {
+        "source_force_ratio": 1.25
+      }
+    },
+    "maximum_actions_per_episode": 200,
+    "actor_uses_greedy_action_for_heldout_score": true,
+    "eval_arms": [
+      "initial_no_update",
+      "full_recurrent_ppo",
+      "actor_head_only_ppo",
+      "conventional_history_mlp_ppo",
+      "critic_only_actor_frozen",
+      "two_frame_conventional_pendulum_momentum_rule",
+      "seeded_random"
+    ],
+    "conventional_rule": "If last two observed public positions show moving left, action 0; otherwise action 2; at start choose 2. No privileged true velocity or training.",
+    "real_source_trace_sha256": true,
+    "success_criterion": "actual source termination for goal_position>=0.5 before or at horizon 200 (never infer from negative reward alone)",
+    "per_world_mean_real_reward_sum": true,
+    "cold_independent_process_checkpoint_and_replay": true,
+    "cold_expected_trained_models": 12,
+    "cold_expected_fresh_process_episodes": 288,
+    "cold_sha256_checkpoint_verification": true,
+    "retain_actual_train_stochastic_episode_returns_and_eval_greedy_stats": true,
+    "public_source_eval_frozen_seed_stream_disjoint": true
+  },
+  "thresholds": {
+    "per_seed_original_goal_success_min_of_8": 6,
+    "per_seed_low_high_goal_success_min_of_8_each": 4,
+    "per_seed_actor_only_reward_margin_over_full_GRU_each_world": 20,
+    "per_seed_actor_only_noninferiority_to_trained_MLP_reward_points_each_world": 15,
+    "all_3_new_seeds_required": true,
+    "zero_goal_success_case": "explicit science FAIL even when all learned returns equal -200",
+    "cold_require_all_288_episodes_exact_actual_action_sequence_return_and_source_trace": true,
+    "critic_only_must_have_exact_actions_and_returns_as_untrained": true,
+    "fully_trained_MLP_not_untrained_comparator": true,
+    "conventional_rule_score_all_worlds_reported": true,
+    "do_not_claim_robustness_from_greedy_score_only": true,
+    "report_all_negative_results_and_source_action_costs": true,
+    "source_task_generalization_scope": "original MountainCar plus force multipliers only; not unknown dynamics family transfer, general intelligence, RSI or FORGE readiness",
+    "no_post_result_threshold_tuning": true
+  },
+  "qualification": {
+    "original_owner": "TTT-HYBRID-GPU-WIN",
+    "parent_exact_SHA_P33": "448df2a5039427e232439de6136d35d4e2b5d795",
+    "original_S29_MIT_BSD3_SHA_and_MountainCar_blob_check": true,
+    "mandatory_full_final_Windows_regression": true,
+    "mandatory_full_final_Ubuntu_WSL_regression": true,
+    "source_negative_controls": true,
+    "one_original_owner_oneuse_existing_runner": true,
+    "max_original_train_plus_cold_seconds": 750,
+    "local_SHA256_receipts": true,
+    "independent_WSL_cold_process": true,
+    "no_new_runner_scheduler_controller": true,
+    "no_paid_API": true,
+    "no_original_P33_science_seed_replay": true,
+    "no_other_research_lane_interference": true,
+    "no_merge_promotion_or_FORGE_activation": true,
+    "no_protected_science_first_use": true
+  }
+}
