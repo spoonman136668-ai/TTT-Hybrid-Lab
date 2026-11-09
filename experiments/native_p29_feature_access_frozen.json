@@ -1,0 +1,140 @@
+{
+  "schema": "ttt-hybrid.native-p29.past-only-feature-access-frozen.v1",
+  "created": "2026-11-08",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_SOURCE_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 105,
+    "exact_sha": "15ebf21b5e1799428635a0ea7182ccec604084dd",
+    "owner_run": 42541098858,
+    "P28_windows": "291_PASS",
+    "P28_ubuntu": "290_PASS_1_SKIP",
+    "P28_neural_identifiability": "FAIL_0_OF_3",
+    "P28_past_visible_ridge_MSE_by_length": {
+      "0.36": 0.00034272740595042706,
+      "0.62": 0.00011585387983359396
+    },
+    "P28_oracle_diagnostic_only": true,
+    "independent_P26_untouched": true
+  },
+  "hypothesis": "Past-only deterministic first/second positional differences permit same-capacity ordinary neural networks to learn true real-action state effects that raw history networks miss, even though both contain exactly the same upstream observations.",
+  "null": "If derived-feature MLP/GRU fail every-seed accuracy and sham controls, feature access is not shown to be the binding bottleneck. Frozen failures preserved, no retuning after viewing outcomes.",
+  "source": {
+    "S29_SHA": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_Farama_SHA": "17eff00220d210beda933f78b0e52850022b0690",
+    "BSD3_cloudpickle_SHA": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "P27_factual_sister_engine_unchanged": true,
+    "P28_MLP_and_conventional_baselines_unchanged": true,
+    "no_new_world_engine": true,
+    "no_hidden_physical_labels_for_effect_learners": true,
+    "protected_science_first_use_not_authorized": true
+  },
+  "data": {
+    "training_source_reset_seeds": [
+      124000,
+      124127
+    ],
+    "validation_reset_seeds": [
+      124500,
+      124531
+    ],
+    "heldout_reset_seeds": [
+      125000,
+      125095
+    ],
+    "train_engine_lengths": [
+      0.28,
+      0.4,
+      0.56,
+      0.72
+    ],
+    "validation_engine_lengths": [
+      0.28,
+      0.4,
+      0.56,
+      0.72
+    ],
+    "heldout_engine_lengths": [
+      0.33,
+      0.63
+    ],
+    "actual_source_prefix_lengths": [
+      4,
+      8,
+      12
+    ],
+    "actual_source_sister_intervention": "a0 and a1 on two really executed identical-prefix physical source engines, followed by same seven actually executed actions; all actual outcomes and terminations retained",
+    "train_validation_heldout_separated": true,
+    "prior_public_dev_seeds_disjoint": true,
+    "raw_observer_input": "past 8 rows × 6 continuous values: cart x, zeroed true cart velocity, pole angle, zeroed true angular velocity, previous actually executed action, previous observed reward. No future data; no true velocity.",
+    "feature_observer_input": "exact same original 8×6 history PLUS four deterministic past-only source position features per row: backward cart difference/dt, backward pole difference/dt, backward cart second difference/dt², backward pole second difference/dt²; i=0 first differences set 0, i<2 second differences set 0. DT=0.02 source-pinned. Both arms padded to identical 8×10 shape.",
+    "normalizer": "Per input channel training-source mean and std only; shared raw-channel scaling identical between raw/derived, derived channels normalized using train-only; no validation/test fit. Std floor 1e-4. All normalization and feature hashes archived.",
+    "sham": "Same derived neural architecture, seed/init, epochs/update budget and true action consequences; for EACH training epoch independently shuffle the four derived feature channels across train samples while preserving each sample's original raw 6 channels and true outcome. Evaluate on truthful derived features.",
+    "forbidden_control": "Global sign flip of engineered derivatives throughout train and evaluation is invertible, NOT a causal negative; never claim otherwise.",
+    "source_oracle": "Source length passed only to a separately identified privileged length-to-effect regression diagnostic; not into any eligible model or input normalizer."
+  },
+  "training": {
+    "model_seeds": [
+      4201,
+      4217,
+      4229
+    ],
+    "epochs": 64,
+    "AdamW_lr": 0.003,
+    "batch_size": 256,
+    "deterministic_torch_CPU": true,
+    "split_seed_independent": true,
+    "effect_model_arms": [
+      "raw_MLP",
+      "derived_MLP",
+      "shuffled_derived_MLP",
+      "raw_GRU",
+      "derived_GRU",
+      "shuffled_derived_GRU"
+    ],
+    "length_diagnostic_arms": [
+      "raw_length_MLP",
+      "derived_length_MLP"
+    ],
+    "MLP_architecture": "8×10 ->32 -> Tanh ->16 -> Tanh ->2 for effect, output 1 for separately trained length diagnostic",
+    "GRU_architecture": "continuous 10 features with GRU hidden size9, last output linear to observed effect 2",
+    "initialization": "Identical initial weights per seed for raw/derived/sham within same family, same randomized train minibatch indices and fixed train epoch; no best test epoch selected.",
+    "compare_eligible_conventional": "Original fixed-fit factual public-history ridge from P28 using only train source actual positions, past differences and actions; no extra source length/privileged inputs.",
+    "epochs_equal_updates": true,
+    "no_expert_policy_or_reward_only_claim": true
+  },
+  "predeclared": {
+    "metric": "factual 8-step source paired action-effect MSE on each completely unseen heldout length, lower is better; source physics varied by original engine parameters only",
+    "physical_condition_effect_variance_floor": 0.0001,
+    "all_three_seeds_required": true,
+    "each_heldout_derived_MLP_mse_relative_to_raw_max": 0.75,
+    "each_heldout_derived_MLP_mse_relative_to_sham_max": 0.8,
+    "each_heldout_derived_GRU_mse_relative_to_raw_max": 0.75,
+    "each_heldout_derived_GRU_mse_relative_to_sham_max": 0.8,
+    "each_heldout_derived_length_MLP_MAE_relative_to_raw_max": 0.8,
+    "each_heldout_length_MAE_relative_to_train_mean_max": 0.75,
+    "strongest_conventional_architectural_superiority": "requires each derived neural architecture MSE <=0.9* fully trained original visible-feature ridge on both heldout conditions ALL model seeds with matched whole-process costs; otherwise do not claim superiority",
+    "report_sham_and_negative_values": true,
+    "zero_heldout_optimization": true,
+    "whole_process_time_reported": true,
+    "no_post_result_tuning": true
+  },
+  "qualification": {
+    "original_runner": "TTT-HYBRID-GPU-WIN",
+    "no_other_owner_or_new_runner": true,
+    "no_paid_API": true,
+    "zero_external_GitHub_Action_downloads": true,
+    "exact_source_hash_verification": true,
+    "original_source_negatives": true,
+    "mandatory_full_final_Windows_regression": true,
+    "mandatory_full_final_Ubuntu_WSL_regression": true,
+    "experiment_wall_limit_seconds": 600,
+    "one_use_only": true,
+    "real_factual_action_events_sha256": true,
+    "local_original_owner_receipt_archive_sha256": true,
+    "remote_zip_upload_not_assumed": true,
+    "no_sealed_science_first_use": true,
+    "do_not_change_independent_P26": true,
+    "do_not_merge_promote_or_activate_FORGE": true
+  }
+}
