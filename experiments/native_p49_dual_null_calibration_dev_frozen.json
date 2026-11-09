@@ -1,0 +1,141 @@
+{
+  "schema": "ttt-hybrid.native-p49-dual-null-calibration-dev-frozen.v1",
+  "phase": "FROZEN_BEFORE_NEW_P49_SOURCE_OR_EXPERIMENT_EXECUTION",
+  "as_of": "2026-11-09",
+  "parent": {
+    "pr": 138,
+    "sha": "3227cdd4fcbd4f6821d3bc369c18d326df70105d",
+    "tree": "382a5fe92771538983f2fa27f324e7b53ff1fee9",
+    "p48_module_blob": "2509ad213e2ebf102d3d78aecd19cf6d67e9654a",
+    "p47_module_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "p48_frozen_result": "DEV_FAIL_1_OF_3_STABLE_MAE"
+  },
+  "hypothesis": "Calibrate both causal-vs-best-null evidence AND nuisance-change-vs-unchanged evidence on an independent stable-only calibration set to reduce stable-model overfitting without sacrificing causal recall, nuisance-shock handling or strong conventional estimation margin.",
+  "frozen_method": {
+    "calibration": "4096 stable-only authored fresh worlds; compute original P48 99th-percentile causal-vs-best-null BIC margin and a 99th-percentile maximum nuisance-change-vs-unchanged BIC margin, using numpy quantile(method='higher') with no eval observations or labels",
+    "selection": "Keep original P48 causal selection as-is using calibration-seeded causal threshold. For noncausal worlds, select the original best nuisance-change effect ONLY if its BIC improvement vs unchanged model exceeds max(0, precomputed nuisance threshold); otherwise use original P47 unchanged-world full-window effect. Do not tune or change P47 BIC or fitted hypotheses.",
+    "other_controls": "Unmodified P47 and P48, full-window conventional regression, nuisance-only best fit, recency-weighted, trailing-five, last-five contrast, ABA",
+    "strong_baseline": "Compare stable MAE to unmodified full-window; also require no >10% loss in nuisance effect MAE versus P48 to expose over-conservative nuisance rejection",
+    "training": "No optimizer, pretrained weights, neural training or hidden true-world labels passed to estimator",
+    "source_first_use": "Local authored synthetic DEV only, no original external/science source first-use",
+    "matched_information": "All arms receive exactly same eight completed alternating executed-action/observed-outcome events; hidden world kind/effect only used in final scoring",
+    "cold_restore": "bit-exact from source factual actions, outcomes and two frozen scalar thresholds"
+  },
+  "source": {
+    "fresh_calibration": {
+      "seed": 780001,
+      "n": 4096,
+      "kind": "stable only",
+      "frequency": [
+        0.35,
+        2
+      ]
+    },
+    "fresh_eval": [
+      {
+        "seed": 780101,
+        "n": 1536,
+        "frequency": [
+          0.35,
+          0.9
+        ]
+      },
+      {
+        "seed": 780103,
+        "n": 1536,
+        "frequency": [
+          0.95,
+          1.35
+        ]
+      },
+      {
+        "seed": 780107,
+        "n": 1536,
+        "frequency": [
+          1.4,
+          2
+        ]
+      }
+    ],
+    "each_eval": {
+      "causal_switch": 768,
+      "nuisance_shock": 384,
+      "stable": 384
+    },
+    "nuisance_intercept_uniform": [
+      -0.2,
+      0.2
+    ],
+    "linear_uniform": [
+      -0.4,
+      0.4
+    ],
+    "quadratic_uniform": [
+      -0.1,
+      0.1
+    ],
+    "sinusoid_amplitude_uniform": [
+      0,
+      0.08
+    ],
+    "sinusoid_phase_uniform": [
+      -3.141592653589793,
+      3.141592653589793
+    ],
+    "nuisance_abs_jump_uniform": [
+      0.4,
+      0.7
+    ],
+    "actual_effect_abs_uniform": [
+      0.25,
+      0.45
+    ],
+    "observation_noise_sd": 0.02,
+    "timestamps": "0/8 through 7/8",
+    "switch_indices": [
+      3,
+      4,
+      5
+    ],
+    "actions": "start sign random +/-1; alternate exactly eight completed actions",
+    "no_reuse_of_P47_seeds": [
+      760111,
+      760117,
+      760123
+    ],
+    "no_reuse_of_P48_seeds": [
+      770001,
+      770101,
+      770103,
+      770107
+    ]
+  },
+  "frozen_gates_each_eval_seed": {
+    "causal_recall_min": 0.7,
+    "stable_false_causal_alarm_max": 0.1,
+    "nuisance_false_causal_alarm_max": 0.1,
+    "causal_effect_mae_max_fraction_of_best_weighted_trailing5_last5": 0.85,
+    "stable_effect_mae_max_fraction_of_strong_full_window": 1.1,
+    "nuisance_effect_mae_max_fraction_of_P48": 1.1,
+    "cold_exact": true,
+    "all_three_eval_cohorts_must_pass": true,
+    "report_null_and_full_cost_even_if_fail": true
+  },
+  "stop_rules": "Do not adjust calibration quantile, seed, type, loss, source or acceptance criteria after first new evaluation; report original negative outcomes even if improved. Source is authored and therefore not independent scientific validation.",
+  "bounds": {
+    "no_owner_workflow_runner_scheduler_queue_controller_changes": true,
+    "no_FORGE_integration": true,
+    "no_merge_promotion": true,
+    "no_protected_first_use": true,
+    "no_paid_api": true,
+    "full_Windows_Ubuntu_regression_and_build_required": true
+  },
+  "scientific_controls_outstanding": [
+    "external qualified unfamiliar-world physics",
+    "nonalternating and endogenous actual actions",
+    "fully converged conventional GRU+MLP",
+    "strong causal BIC/ridge comparators",
+    "cold retention/interference",
+    "strict whole-process compute parity"
+  ]
+}
