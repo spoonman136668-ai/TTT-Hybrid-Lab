@@ -226,10 +226,10 @@ def frozen_development_outcome(records: list[dict]) -> dict:
 def run(s29_root: Path, source_root: Path, cloudpickle_root: Path,
         candidate_root: Path) -> dict:
     contract = freeze_contract()
-    source = qualify_local_source()
     candidate_root = Path(candidate_root)
     if candidate_root.exists() or candidate_root.is_symlink():
         raise RuntimeError("P33_CANDIDATE_ROOT_ALREADY_EXISTS_NO_REPLAY")
+    source = qualify_local_source()
     if any(candidate_root.resolve().is_relative_to(p.resolve())
            for p in (ROOT, Path(s29_root), Path(source_root),
                      Path(cloudpickle_root))):
