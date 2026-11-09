@@ -1,0 +1,145 @@
+{
+  "schema": "ttt-hybrid.native-p38.authored-state-conditional-intervention-choice-frozen.v1",
+  "state": "PROSPECTIVELY_FROZEN_BEFORE_NEW_AUTHORED_SOURCE_ACTIONS",
+  "date": "2026-11-09",
+  "parent": {
+    "sha": "edcd6936fd7893138f73b94e046d32af79f75ad1",
+    "pr": 120,
+    "owner_full_regression": "NOT_RUN_ON_P37",
+    "native_preview_local_focused": "8_PASS_ON_LOCAL_BEHAVIORAL_COPY",
+    "original_P37_module_git_blob": "488d31079fb480e56920086cd4c7e802dc40908b",
+    "existing_native_model_git_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "P36_positive_limited": "native source action rank fixed; energy objective was designer-provided"
+  },
+  "question": "Can the token-free NativeContinuousHybrid learn genuinely context-reversing action effects from factual action-to-next-continuous-state data, then choose source actions for opposite caller goals more accurately than a matched-capacity shuffled-action sham and a fixed policy, while approaching a fully trained conventional MLP and factual ridge baseline?",
+  "status_limits": "Authored synthetic mathematical world, not independent external physical science, not full Mamba2+Attention+TTT, not FORGE training, not general intelligence, not proof of self-generated goals.",
+  "authored_source": {
+    "name": "authored_cue_reversing_continuous_actuator_v1",
+    "sensor_dimensions": 2,
+    "action_dimensions": 1,
+    "public_sensor": "[position_x, continuous_actuator_polarity_cue]",
+    "physical_action_values": [
+      -1,
+      1
+    ],
+    "actual_source_transition": "x_next=x + 0.3*a*cue + 0.04*a*sin(3*x) + 0.02*sin(5*x); cue_next=cue",
+    "cue_regions": "balanced negative [-0.95,-0.55] and positive [0.55,0.95] in train, heldout cues [-0.99,-0.45] and [0.45,0.99]",
+    "positive_goal": "x+0.32",
+    "negative_goal": "x-0.32",
+    "source_step_real_only": "Only true authored source step() returns next position; policy and learner see only preaction sensor and factual chosen-action outcome, no oracle future counterfactuals at training",
+    "original_action_effect_reverses_with_cue": true,
+    "no_external_source_or_protected_scientific_first_use": true,
+    "source_matches_P26_P27": "Distinct: native token-free continuous-state model and dual opposing goals with matched factual source actions; no reused P26/P27 data or claims.",
+    "source_dataset_seed": 238000,
+    "validation_dataset_seed": 238500,
+    "heldout_source_seed": 239000,
+    "training_examples": 1024,
+    "validation_examples": 128,
+    "heldout_examples": 512,
+    "training_x_range": [
+      -0.8,
+      0.8
+    ],
+    "heldout_x_range": [
+      -1,
+      1
+    ],
+    "source_cold_canary_count": 64,
+    "test_both_factual_actions_for_each_heldout_source_state": true,
+    "heldout_goal_directions": [
+      -1,
+      1
+    ],
+    "heldout_total_goal_decisions": 1024,
+    "source_true_transition_calls_training": 1024,
+    "source_true_transition_calls_validation": 128,
+    "source_true_transition_calls_heldout": 1024
+  },
+  "learning": {
+    "model_seeds": [
+      6007,
+      6011,
+      6029
+    ],
+    "arms": [
+      "factual_native_hybrid",
+      "shuffled_action_native_hybrid",
+      "fully_trained_conventional_mlp",
+      "fully_trained_conventional_ridge"
+    ],
+    "native_model_constructor": {
+      "sensor_dim": 2,
+      "action_dim": 1,
+      "width": 12,
+      "history_limit": 3,
+      "fast_rate": 0.25
+    },
+    "native_state_policy": "one independently reset factual native continuous state per source transition; this first P38 study tests conditional dynamics learning, not multi-step persistence/TTT adaptation",
+    "native_module": "native_continuous_state.py",
+    "candidate_selection_module": "native_intervention_choice.py",
+    "mlp_architecture": "nn.Sequential(nn.Linear(3,24),nn.Tanh(),nn.Linear(24,24),nn.Tanh(),nn.Linear(24,2)); output is delta sensor; total params 746 versus native 734",
+    "native_model_params": 734,
+    "conventional_mlp_params": 746,
+    "real_training_input": "Only [x,cue,actual_executed_action] continuous float32; true next source [x_next,cue_next] observed after stepping source. dt=1",
+    "loss": "Mean squared error on factual next 2-dimensional continuous source observation; no expert action labels, no goal imitation, no prefilled physics coefficients",
+    "epochs": 32,
+    "batch_size": 128,
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "optimizer_steps_per_seed_per_neural_arm": 256,
+    "sampling_schedule": "same factual source examples, same deterministic training example index order across three neural arms and model seed; negative sham deterministically permutes action INPUT per minibatch per epoch, leaving source true target and sensor unchanged",
+    "sham_only_input_action_broken": true,
+    "sham_marginals_preserved": true,
+    "ridge_features": "[1, x, cue, a, a*cue, a*sin(3*x), sin(5*x)] and ridge penalty 0.0001. Train on same factual transitions; analytical fully fitted conventional baseline with different optimization cost reported separately.",
+    "checkpoints": "The final frozen epoch state only. Save all 3 model seeds x 3 trained neural arms; no best heldout model picking, no retry if objective fails.",
+    "native_memory_learning_during_eval": false,
+    "no_train_state_replay_unsafe": true
+  },
+  "evaluation": {
+    "replay_one_same_public_state_into_each_arm": true,
+    "goal_selector": "For each goal direction, use P37 select_goal_action with same two candidate actions, caller-supplied goal sensor [x + direction*0.32,cue]; conventional MLP and fitted ridge evaluate identical two candidates; choose smaller predicted squared goal distance; deterministic ties choose action -1",
+    "true_success": "Compare selected action against best actual outcomes of BOTH independently executed authored source actions on SAME heldout public state (source action-to-consequence correctness); measured true reward = negative absolute distance to target. No access to unexecuted actual outcomes by policy.",
+    "report_metrics": [
+      "real_goal_action_optimal_fraction_per_goal_and_cue",
+      "true_source_reward",
+      "source_transition_MSE",
+      "fixed_policy_optimal_fraction",
+      "factual_v_sham_reward_margin",
+      "conventional_mlp_and_factual_ridge_strength",
+      "cold_process_predictions_and_actions_equal",
+      "training_wall_and_inference_cost",
+      "parameter_count",
+      "actual_source_step_count"
+    ],
+    "no_heldout_fit_or_model_selection": true,
+    "cold_restore_across_new_Python_process": true,
+    "no_posthoc_source_target_changes": true
+  },
+  "science_dev_success": {
+    "every_native_seed_goal_action_optimal_fraction_at_least": 0.9,
+    "native_minus_sham_goal_action_optimal_fraction_at_least": 0.3,
+    "native_minus_best_fixed_action_optimal_fraction_at_least": 0.3,
+    "native_no_more_than_below_mlp_optimal_fraction": 0.05,
+    "native_no_more_than_below_ridge_optimal_fraction": 0.05,
+    "must_hold_for_both_positive_and_negative_targets": true,
+    "must_hold_for_both_negative_and_positive_cues": true,
+    "three_of_three_seeds": true,
+    "if_all_sham_models_also_perfect": "CANNOT_ATTRIBUTE_LEARNING_TO_CORRECT_ACTION_ASSOCIATION",
+    "if_native_fails_while_mlp_or_ridge_succeeds": "SCIENTIFIC_DEV_FAIL_NATIVE_LEARNED_POLICY",
+    "no_labelled_scientific_PASS_if_better_than_sham_but_below_strong_controls": true,
+    "report_failed_and_null_results_with_exact_source_provenance": true
+  },
+  "authority": {
+    "private_repo_source_only": true,
+    "public_authored_DEV_only": true,
+    "not_original_physical_science": true,
+    "no_new_runner_controller_scheduler_or_dispatch": true,
+    "no_Forge_or_other_Hybrid_research_owner_changes": true,
+    "no_paid_API": true,
+    "no_model_checkpoints_accepted_or_promoted": true,
+    "no_merge": true,
+    "preserve_P36_and_all_original_source_receipts": true,
+    "full_final_Windows_and_Ubuntu_regression_required_before_accepted_owner_integration": true,
+    "local_bounded_CPU_DEV_allowed": true
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "schema": "ttt-hybrid.native-p38r1.fresh-cohort-state-reversing-conditional-choice-frozen.v1",
+  "phase": "FROZEN_BEFORE_NEW_AUTHOR_SOURCE_TRAINING_OR_EVALUATION",
+  "parent": {
+    "pr": 121,
+    "original_protocol_commit": "38e2d806a8791045d031de96877621400f3fd319",
+    "corrected_source_blob": "16d4b1c691659365251d97d6a5635021b41d080e",
+    "old_model_seeds": [
+      6007,
+      6011,
+      6029
+    ],
+    "old_source_seeds": [
+      238000,
+      238500,
+      239000
+    ],
+    "old_local_result": "DIAGNOSTIC_ONLY_DUE_MINIBATCH_RNG_CONFOUND",
+    "old_original_source_first_use_consumed": true
+  },
+  "research": "Test real cue-reversing native continuous action choice, identical model initializations and training sample order versus wrong-action credit and fully trained conventional MLP/ridge, with all negative evidence preserved.",
+  "source": {
+    "transition": "x_next=x+0.3*a*cue+0.04*a*sin(3*x)+0.02*sin(5*x); cue_next=cue",
+    "actions": [
+      -1,
+      1
+    ],
+    "public_sensor": [
+      "position",
+      "cue"
+    ],
+    "no_future_action_effects_for_training": true,
+    "train_x": [
+      -0.8,
+      0.8
+    ],
+    "heldout_x": [
+      -1,
+      1
+    ],
+    "train_abs_cue": [
+      0.55,
+      0.95
+    ],
+    "heldout_abs_cue": [
+      0.45,
+      0.99
+    ],
+    "tokenless_original_native_blob": "38ebbfb339026f3213a8c380e090480609288917",
+    "original_preview_blob": "488d31079fb480e56920086cd4c7e802dc40908b"
+  },
+  "cohort": {
+    "fresh_model_seeds": [
+      6101,
+      6113,
+      6127
+    ],
+    "source_train_seed": 242000,
+    "source_validation_seed": 242500,
+    "source_heldout_seed": 243000,
+    "real_training_actions": 1024,
+    "real_validation_actions": 128,
+    "real_heldout_actions": 1024,
+    "heldout_states": 512,
+    "opposing_goals": [
+      -1,
+      1
+    ],
+    "heldout_decisions_per_seed": 1024
+  },
+  "comparison": {
+    "neural_arms": [
+      "factual_native_hybrid",
+      "shuffled_action_native_hybrid",
+      "fully_trained_conventional_mlp"
+    ],
+    "ridge_arm": "fully_trained_conventional_ridge",
+    "native_params": 734,
+    "MLP_params": 746,
+    "training_epochs": 32,
+    "batch_size": 128,
+    "learning_rate": 0.003,
+    "optimizer": "AdamW",
+    "actual_minibatches_per_neural_arm_per_seed": 256,
+    "identical_native_initial_weights": true,
+    "identical_minibatch_data_order_all_neural_arms": true,
+    "sham_action_input_randomized_only_with_independent_generator": true,
+    "sham_target_next_observation_not_changed": true,
+    "real_source_actions_and_inputs_matched": true,
+    "fully_trained_conventional_controls": true,
+    "original_ridge_features": "[1,x,cue,a,a*cue,a*sin(3*x),sin(5*x)]",
+    "ridge_penalty": 0.0001,
+    "no_early_stop_or_heldout_tuning": true
+  },
+  "eval": {
+    "both_real_action_consequences_independently_executed_only_for_scoring": true,
+    "policy_sees_only_own_sensor_and_requested_goal": true,
+    "both_positive_and_negative_cues": true,
+    "both_positive_and_negative_goals": true,
+    "cold_separate_python_process_and_SHA256": true,
+    "report_true_reward_and_optimal_action_fraction_and_real_transitions": true,
+    "zero_heldout_model_updates": true
+  },
+  "pass": {
+    "native_optimal_min_every_goal_every_cue": 0.9,
+    "improvement_over_sham_min": 0.3,
+    "improvement_over_best_fixed_min": 0.3,
+    "within_fully_trained_MLP": 0.05,
+    "within_fully_fitted_ridge": 0.05,
+    "all_three_model_seeds": true,
+    "both_goal_directions": true,
+    "no_postresult_threshold_changes": true,
+    "if_pass": "AUTHORED_DEV_MECHANISM_ONLY_NOT_INDEPENDENT_EXTERNAL_SCIENCE"
+  },
+  "authority": {
+    "local_CPU_DEV_only": true,
+    "no_real_external_source_first_use": true,
+    "no_dispatch_or_owner_runner_changes": true,
+    "no_scheduler_controller_or_consumer": true,
+    "no_paid_API": true,
+    "no_Forge_integration": true,
+    "no_merge_or_promotion": true,
+    "original_full_Windows_and_Ubuntu_regression_before_acceptance": true
+  }
+}
