@@ -1,0 +1,121 @@
+{
+  "schema": "ttt-hybrid.native-p26.contradictory-action-retention-frozen.v1",
+  "registered": "2026-11-08",
+  "source": {
+    "P23_exact_SHA": "2d6f452b64d47c873400b33aaa7737966f67d225",
+    "P23_PR": 97,
+    "P23_result": "Full optimizer/CPU RNG process-death continuation exact 6/6 and 144/144 action traces, gravity history gain 3/3; conventional two-frame 200",
+    "P23_training_resume_script_blob": "88f95b754124de278b52e716f6f046e328ef1ee4",
+    "P20_history_script_blob": "99ebe68151642a5c7a9f5efd95923e4450086155",
+    "P19_teacher_source_blob": "7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5",
+    "S29_immutable_owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_original_SHA": "17eff00220d210beda933f78b0e52850022b0690",
+    "BSD3_original_SHA": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "independent_reward_only_and_action_transition_PRs": [
+      95,
+      96,
+      98,
+      99
+    ],
+    "original_owner_isolated": true
+  },
+  "hypothesis": "Does factual rehearsal prevent a cold-restored 489-param non-token GRU from forgetting original control when the same real external source's physical left/right actuator semantics are inverted in a new context, without impeding new competence?",
+  "null": "Rehearsal fails to maintain both contradictory tasks, does not outretain new-only fine-tuning or incorrectly labeled rehearsal, or does not learn inverted control. Preserve as negative; source action inversions are authored, not independent unfamiliar science.",
+  "world": {
+    "MIT_original_cartpole_v1": true,
+    "source_env_engine_unchanged": true,
+    "normal_context": "model action 0/1 maps unchanged to physical environment action 0/1",
+    "reverse_context": "model action 0/1 maps to physical environment action 1/0; env.step executes the physical inversion; model selected and physical actions are separately recorded",
+    "task_cue": "Explicit continuous scalar +1 normal, -1 reversed, replacing masked CartPole sensor input feature index 1; velocity feature index 3 stays masked; no added parameters",
+    "causal_information": "All trained arms receive equal context cue and factual teacher action demonstrations. Teacher acts with full public theta and angular velocity, NOT reward-only",
+    "normal_train_seeds": "111000..111047",
+    "reverse_train_seeds": "112000..112047",
+    "normal_validation_seeds": "113000..113007",
+    "reverse_validation_seeds": "114000..114007",
+    "normal_evaluation_seeds": [
+      115011,
+      115012,
+      115013,
+      115014,
+      115015,
+      115016,
+      115017,
+      115018
+    ],
+    "reverse_evaluation_seeds": [
+      116011,
+      116012,
+      116013,
+      116014,
+      116015,
+      116016,
+      116017,
+      116018
+    ],
+    "evaluation_max_actions": 200,
+    "gravity": "original source only, inversion is application-level action mapping",
+    "same_real_source_trace_demonstrations_for_all_adaptation_arms": true,
+    "no_unrealized_counterfactual_model_data": true
+  },
+  "training": {
+    "model_initializations": [
+      2741,
+      2753,
+      2767
+    ],
+    "network": "original P18 489-parameter GRU, 8 factual continuous sensor/action/reward rows with task cue",
+    "optimizer": "AdamW",
+    "lr": 0.008,
+    "weight_decay": 0,
+    "clip_grad_norm": 3,
+    "batch_size": 512,
+    "base_epochs_normal_only": 32,
+    "adaptation_epochs": 32,
+    "arms": [
+      "base_immutable",
+      "new_only",
+      "true_rehearsal",
+      "wrong_old_labels_rehearsal"
+    ],
+    "adaptation_same_gradient_update_count": true,
+    "new_only_batch": "512 newly sampled reverse-task demonstration rows, same gradient update count",
+    "true_rehearsal_batch": "256 sampled reverse task + 256 genuine normal-task rows, matched gradient updates",
+    "wrong_old_labels_rehearsal_batch": "same new rows and identical old-row indices as true rehearsal but invert old labels",
+    "information_budget_caveat": "Rehearsal sees half as many new-task samples per batch as new-only; equal update count and batch size, not equal novel information. Sham control matches rehearsal data streams exactly except invalid old labels.",
+    "cold_training_checkpoint": "base model, AdamW moments/step, torch/Python/numpy RNG and sampler RNG, exact source and seed",
+    "original_P20_or_P23_weights_reused": false,
+    "one_use_new_cohort": true
+  },
+  "evaluation": {
+    "source": "real externally pinned MIT CartPole factual reset+step, selected and physical actions and observed rewards hashed",
+    "compare": [
+      "base_immutable",
+      "new_only",
+      "true_rehearsal",
+      "wrong_old_labels_rehearsal",
+      "cue_aware_two_frame_strong_conventional",
+      "full_public_sensor_teacher"
+    ],
+    "full_vs_cue_conventional": "two-frame theta slope plus explicit task mapping, no privileged public velocity; 200 cap",
+    "old_skill_threshold_per_seed": 150,
+    "new_skill_threshold_per_seed": 150,
+    "development_gain_rules": "At least 2/3 model initializations: base old >=175; rehearsal old >=150 and new>=150; rehearsal old >=new-only old+20 and >=wrong-label old+20. Preserve null outcomes.",
+    "negative_labels_must_differ_from_teacher": true,
+    "no_online_update_during_eval": true,
+    "preserve_old_and_new_null_outcomes": true
+  },
+  "qualification": {
+    "original_owner": "TTT-HYBRID-GPU-WIN",
+    "source_SHA_exact_gate": true,
+    "one_use_existing_runner": true,
+    "mandatory_full_windows_and_Ubuntu_WSL_regression_before_rehearsal": true,
+    "corrupt_checkpoint_wrong_source_wrong_task_cue_controls": true,
+    "no_installs": true,
+    "no_paid_api": true,
+    "science_first_use_authorized": false,
+    "protected_S26_S27_source_unconsumed": true,
+    "independent_native_science_untouched": true,
+    "no_model_promotion_or_merge": true,
+    "FORGE_owner_activation": false
+  }
+}
