@@ -1,0 +1,51 @@
+{
+  "schema": "ttt-hybrid.native-p43-trainable-causal-belief-engineering-receipt.v1",
+  "frozen_protocol_commit": "58615d9e5023121f29758c1db1494a50ef6f19ea",
+  "frozen_protocol_tree": "d99d269a63488a9fe8ef3b0dabd1140a2bc38209",
+  "candidate_parent": "58615d9e5023121f29758c1db1494a50ef6f19ea",
+  "source_cleanup_after_initial_test": {
+    "module": "Removed unused import math only",
+    "tests": "Removed unreachable conditional branch in exception test",
+    "no_behavior_change": true,
+    "fully_reran_focused_tests": true
+  },
+  "source_blobs": {
+    "module": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "tests": "6dfa66a25dac6a236f524aefa774201e30fa6945"
+  },
+  "environment": {
+    "platform": "Linux CPU",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2"
+  },
+  "engineering": {
+    "focused_passed": 8,
+    "focused_total": 8,
+    "focused_wall_seconds": 2.82,
+    "dev_train_smoke_steps": 80,
+    "parameter_count": 1394,
+    "dev_train_initial_MSE": 0.09924515336751938,
+    "dev_train_final_MSE": 0.000004108393568458268,
+    "dev_train_wall_seconds": 1.138,
+    "source_and_tests_exact_git_blobs": true,
+    "qualified_original_repo_windows_ubuntu_full_regression": false
+  },
+  "scope": {
+    "real_external_source_first_use": false,
+    "independent_scientific_trial": false,
+    "trained_strong_conventional_MLP_GRU_controls": false,
+    "new_scheduler_or_runner": false,
+    "new_forge_dispatch": false,
+    "model_promotion_or_merge": false
+  },
+  "limits": [
+    "Only one same-fixture authored DEV trainability smoke, not independent retention/transfer",
+    "GRUCell is a conventional recurrent backbone",
+    "No authentication of actual outcome by this module: external owner must witness real source actions",
+    "No claim of causal identification from observational correlations",
+    "No verified performance gain over P42, ABA, history GRU, fully trained MLP, EMA or sham controls",
+    "All earlier negative findings P38-R1/P40-A1/P41/P42 preserved"
+  ],
+  "next_qualification": "On candidate exact SHA run full Windows+Ubuntu/WSL original repository regression, interface negative controls and build, then independently authorize freeze of real scientific source/trained conventional controls before first use."
+}
