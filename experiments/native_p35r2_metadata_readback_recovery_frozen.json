@@ -1,0 +1,28 @@
+{
+  "schema": "ttt-hybrid.native-p35r2.original-recovery-field-name-correction-frozen.v1",
+  "status": "FROZEN_BEFORE_FINAL_ORIGINAL_OWNER_SINGLE_USE",
+  "prior": {
+    "run_id": 42590398082,
+    "original_oneuse_attempt": 1,
+    "sha": "a13bb5444a104c70fbc8e6b67f6f75a50e90e404",
+    "failure": "P35R1_REAL_SOURCE_ORIGINAL_SEEDS_NOT_UNCONSUMED",
+    "cause": "Read-only recovered manifest uses repair.no_paid_API_or_protected_first_use; P35-R1 preflight incorrectly demanded nonexistent repair.no_protected_first_use; no P35 original-world actions were executed.",
+    "source_admission": "FAILED_PREFLIGHT_METADATA_ONLY",
+    "Windows_regression": "NOT_RUN",
+    "WSL_regression": "NOT_RUN",
+    "P35_new_scientific_source_action_consumed": false
+  },
+  "repair": {
+    "only_change": "Use existing read-only recovery field repair.no_paid_API_or_protected_first_use in preflight source-fence; exact original P35 hypotheses, model code, tests, actions, reset seeds, protected original science and all PPO parameters remain unchanged.",
+    "original_P35_frozen_sha": "e57a325370e17bbff5ba62933cd52132799cd150",
+    "P35_source_blob": "cda264eb8b06327bf344e25d96c31f3a68e1f1c5",
+    "P35_test_blob": "e92d7821c0823b906c1b41a0e18411e576ffd505",
+    "original_MountainCar_blob": "5e7e11518715197974e8df46a842f1bc66ccd88c",
+    "dual_full_final_Windows_and_WSL": true,
+    "new_oneuse_existing_owner": true,
+    "original_source_science_data_unconsumed": true,
+    "no_paid_API_or_scheduler_controller_new_runner": true,
+    "no_protected_scientific_first_use": true,
+    "no_merge_promotion_FORGE_activation": true
+  }
+}
