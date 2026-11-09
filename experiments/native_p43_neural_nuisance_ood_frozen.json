@@ -1,0 +1,93 @@
+{
+  "schema": "ttt-hybrid.native-p43-factual-neural-nuisance-ood-dev-protocol.v1",
+  "registered_date": "2026-11-09",
+  "phase": "FROZEN_BEFORE_AUTHORED_DEV_SOURCE_AND_TRAINING_IMPLEMENTATION",
+  "source_parent": {
+    "p42_pr": 127,
+    "p42_sha": "6937582834304dda4fb5065fbe82112bb1f93a84",
+    "p42_original_module_blob": "219e7735d373f42e397df3a0bf89f7af7a9d4e8c",
+    "p42_strong_classical_control_required": true,
+    "p40a_negative_pr": 126
+  },
+  "question": "Can a factorized trainable history-conditioned action-effect learner generalize under an unseen smooth oscillatory nuisance frequency better than equally pretrained conventional MLP/GRU and source-independent per-episode fitted polynomial ridge with exactly the same observed action-outcome histories?",
+  "authored_source": {
+    "family": "scalar continuous factual delta=b0+b1*t+b2*t²+b3*sin(2*pi*freq*t+phase)+beta*executed_action+independent_noise",
+    "history_length": 8,
+    "history_time": "0/8 to 7/8",
+    "query_time": "8/8",
+    "true_beta_sampling": "equiprobable sign, absolute uniform 0.15..0.45",
+    "b0": "uniform -0.4..0.4",
+    "b1": "uniform -0.5..0.5",
+    "b2": "uniform -0.2..0.2",
+    "b3": "uniform -0.2..0.2",
+    "phase": "uniform -pi..pi",
+    "gaussian_noise_sigma": 0.01,
+    "fit_frequency_range": [
+      0.45,
+      0.95
+    ],
+    "validation_frequency_range": [
+      0.45,
+      0.95
+    ],
+    "ood_dev_frequency_range": [
+      1.15,
+      1.65
+    ],
+    "history_actual_action": "Bernoulli +-1 iid",
+    "query_actual_action": "Bernoulli +-1 iid; train on executed query only",
+    "scorer_counterfactual": "both alternatives evaluated ONLY after fitting, not visible to training models",
+    "episodes": {
+      "train": 4096,
+      "validation": 512,
+      "ood_dev": 512
+    },
+    "seeds": {
+      "fit": 710001,
+      "validation": 710101,
+      "ood_dev": 711001
+    },
+    "protected_scientific_first_use": "NONE; authored exploratory DEV only"
+  },
+  "models": {
+    "candidate": "FactorizedHistoryMLP flatten eight [time,real action,observed outcome] -> 32 GELU -> 24 GELU -> separate scalar drift and action-effect heads, output drift+beta_hat*query_action",
+    "conventional_mlp": "same history+query_action -> 32 GELU -> 24 GELU -> scalar prediction",
+    "conventional_gru": "GRU(3,18) on 8 factual steps + query scalar -> 24 GELU -> scalar prediction",
+    "wrong_credit": "exact candidate architecture, per-episode roll past executed action sequence by one while leaving factual observed outcomes and query actual actions intact",
+    "polynomial_ridge": "fit per-episode [1,time,time²,actual_action] against identical 8 past factual outcomes, predict both query actions; conventional no-neural training and separately timed",
+    "last_effect": "use latest actual normalized factual outcome/action, no drift correction; no fitting",
+    "capacity": "record counts, candidate and conventional within 20% relative parameter counts or mark mismatch; independent total FLOPs/cost UNVERIFIED",
+    "trained_model_seeds": [
+      9101,
+      9113,
+      9127
+    ],
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "batch_size": 128,
+    "updates_each": 400,
+    "training_index_seed": 720001,
+    "independent_wrong_credit_shuffle": "deterministic one-position roll within each history only; no RNG consumed",
+    "identical_optimizer_updates": true,
+    "same_source_cases": true,
+    "zero_heldout_learning": true
+  },
+  "metrics_and_thresholds": {
+    "primary_ood_mse": "candidate <=0.90 * min(fully-trained MLP,fully-trained GRU,polynomial_ridge), independently for all 3 model seeds",
+    "causal_effect_mae": "candidate < each separately trained MLP and GRU inferred from read-only +-query previews, all 3 seeds",
+    "wrong_credit_negative": "candidate OOD MSE <=0.80 * wrong_credit OOD MSE independently for all 3 model seeds",
+    "other": "report validation MSE, per-goal optimal actual action fraction, conditional effect MAE, train+inference wall-clock, exact factual source hashes and model seed, parity of training sample indices, complete nulls",
+    "trained_baseline_competence": "report last-five recorded validation MSE, plateau relative change <1%; otherwise COMPETENCE_UNVERIFIED, cannot claim science",
+    "science_pass": "NOT_POSSIBLE_IN_AUTHORED_DEV; separately owner-qualified untouched sources and full regression required",
+    "source_interventions": "No original external science first use, no protected seeds/checkpoints, no model promotion, no FORGE research activation."
+  },
+  "authority": {
+    "no_merges": true,
+    "no_new_runner_or_workflow": true,
+    "no_scheduler": true,
+    "no_paid_apis": true,
+    "no_forge_owner_or_controller_mutation": true,
+    "no_science_first_use": true,
+    "full_final_exact_sha_windows_ubuntu_regression_before_acceptance": true
+  }
+}
