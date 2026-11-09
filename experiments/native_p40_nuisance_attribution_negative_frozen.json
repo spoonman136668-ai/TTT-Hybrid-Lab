@@ -1,0 +1,64 @@
+{
+  "schema": "ttt-hybrid.native-p40-nuisance-attribution-negative-dev.v1",
+  "status": "PREREGISTERED_DETERMINISTIC_ENGINEERING_FALSIFICATION_NOT_SCIENCE",
+  "parent": {
+    "p40_pr": 124,
+    "p40_head": "04694e34e6dde475e031288ea00729c7273d0e3b",
+    "original_belief_blob": "8406c97361adc2b3caa13e3ef42b53044c75d0b0",
+    "p39_pr": 123,
+    "p38a1_audit_pr": 122
+  },
+  "question": "Does the original P40 hidden-mode factual effect bank falsely attribute independent background drift to the executed action and exhaust memory capacity even when the true causal mode never changes?",
+  "source_fixture": {
+    "type": "fully_explicit_analytic_development_only",
+    "transition": "x_next=x + 0.3*mode*actual_action + background_offset(t)",
+    "mode": 1,
+    "sensor": [0.0],
+    "actual_actions": [1, -1, 1],
+    "elapsed_time_each": 1.0,
+    "affine_drift": [0.0, 0.4, 0.8],
+    "constant_nuisance": 0.4,
+    "no_action_effect_sham": "x_next=x+0.4 for either real action",
+    "no_oracle_mode_or_background_given_to_P40": true,
+    "no_unexecuted_outcome_given_to_P40": true,
+    "protected_or_previously_consumed_science_seeds": "NONE",
+    "random_sampling": false
+  },
+  "comparisons": {
+    "p40": {
+      "module": "native_hidden_mode_belief.py",
+      "capacity": 2,
+      "novelty": 0.15,
+      "noise": 0.05,
+      "stay_probability": 0.8,
+      "learning_rate": 0.25,
+      "training_updates": 0,
+      "hyperparameter_retuning": false
+    },
+    "simple_factual_baselines": [
+      "constant-mode-action-effect-control",
+      "two-opposite-factual-outcome_contrast",
+      "equal-time-three-completed-action_ABA_affine-drift_contrast"
+    ],
+    "trained_MLP_and_GRU": "NOT_IN_SCOPE_FOR_THIS_ENGINEERING_NEGATIVE"
+  },
+  "prespecified_checks": {
+    "pure_action_no_nuisance_keeps_one_true_effect": true,
+    "constant_background_zero_causal_effect_can_be_misassigned_to_action": true,
+    "stable_true_mode_with_affine_background_can_exhaust_two_slot_capacity": true,
+    "three-factual-action_ABA_cancels_affine_drift": true,
+    "exact_cold_tensor_restore_does_not_restore_identifiability": true,
+    "quadratic_drift_breaks_ABA_and_must_be_preserved": true,
+    "status_on_success": "DEV_NEGATIVE_CONTROL_OBSERVED_NOT_SCIENTIFIC_SUPERIORITY"
+  },
+  "authority": {
+    "original_FORGE_and_Hybrid_owner_routes_untouched": true,
+    "source_only_no_external_science_first_use": true,
+    "no_training_or_checkpoint_promotion": true,
+    "no_runner_dispatch_or_scheduled_tasks": true,
+    "no_new_controller_or_queue": true,
+    "no_paid_API": true,
+    "no_merge_or_accepted_ref_edit": true,
+    "mandatory_exact_candidate_Windows_and_Ubuntu_full_regression_before_engineering_acceptance": true
+  }
+}
