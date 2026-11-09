@@ -1,0 +1,94 @@
+{
+  "schema": "ttt-hybrid.p46-five-factual-intervention-quadratic-nuisance-DEV.v1",
+  "status": "FROZEN_BEFORE_NEW_SOURCE_OR_EXPERIMENT_EXECUTION",
+  "parent": {
+    "p45_pr": 133,
+    "sha": "adb846571170458f278e8f531d3da6f603f1b5cc",
+    "source_blob": "363996307bd90b4effc2ba7acae81c241e6492da",
+    "prior_p45_frozen_failure": "2/3_MSE_0/3_EFFECT_vs_ABA",
+    "separate_p45_inference_adapter_pr": 134
+  },
+  "hypothesis": "When three-action ABA is biased by nonlinear nuisance drift, an auxiliary effect estimate from five completed alternating interventions (rank-checked quadratic nuisance residualization) can improve a trainable factual recurrent model over equally supervised conventional GRU, plain P43, wrong-sign credit, five-action no-learning contrast and degree-three factual ridge.",
+  "source": {
+    "type": "new openly authored DEV only; not independent protected science or physical-world qualification",
+    "seeds": {
+      "train": 750001,
+      "val": 750101,
+      "ood": 750201
+    },
+    "counts": {
+      "train": 3072,
+      "val": 384,
+      "ood": 384
+    },
+    "history_length": 8,
+    "factual_history_actions": "first 3 iid fair +/-1; last 5 A,-A,A,-A,A with A iid fair",
+    "exogenous": "b0 + b1*t + b2*t^2 + b3*t^3 + amp*sin(2*pi*f*t+phase); b0[-.1,.1],b1[-.25,.25],b2[-.35,.35],b3[-.4,.4],amp[-.3,.3],phase[-pi,pi]",
+    "fit_freq": [
+      0.25,
+      0.65
+    ],
+    "validation_freq": [
+      0.25,
+      0.65
+    ],
+    "ood_freq": [
+      1.2,
+      1.8
+    ],
+    "beta": "iid +/- sign, magnitude uniform [.2,.45]",
+    "initial_sensor": "uniform [-.3,.3]",
+    "observation_noise_sigma": 0.01,
+    "query_time": 1,
+    "history_time": "i/8 for i=0..7",
+    "hidden_switch": "first 96 of 384 OOD cases reverse beta sign before factual event index 4; no hidden mode label",
+    "query_training": "exactly one executed factual action/outcome; evaluator alone separately executes both actions for posttraining measurement",
+    "strict_teacher": "least-squares residual of actual delta_3..7 after projection off [1,t,t²] nuisance, yielding effect from completed facts only; not source beta, no unexecuted outcomes"
+  },
+  "arms": {
+    "P43_five": "exact original P43 GRUCell, factual query MSE + 1.0 * (predicted action coefficient - five-factual-effect contrast)^2",
+    "P43_three": "same P43, factual query MSE + 1.0 * old 3-factual ABA contrast",
+    "P43_none": "same P43, factual query MSE",
+    "P43_wrong_sign": "same P43, factual query MSE + 1.0 * wrong sign five-factual-effect contrast",
+    "conventional_GRU_five": "P44 nearly equal parameter GRUCell, same factual query MSE + 1.0 * five-factual-effect contrast",
+    "conventional_classical_5": "5-completed-factual action quadratic nuisance projection (no training)",
+    "conventional_classical_8": "8-completed-factual action polynomial ridge intercept+time+time²+time³+action, lambda .001",
+    "conventional_last": "last realized action-normalized delta no nuisance adjustment"
+  },
+  "budget": {
+    "model_seeds": [
+      9503,
+      9511,
+      9521
+    ],
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "grad_clip": 1,
+    "batch": 128,
+    "updates_per_arm_per_seed": 1200,
+    "shared_index_seed": 751001,
+    "all_models_same_factual_source_and_indices": true,
+    "P43_arms_identical_initial_weights": true,
+    "zero_ood_updates": true,
+    "report_wall_train_and_inference": true
+  },
+  "metrics": {
+    "primary": "heldout OOD two-physical-query action MSE by seed and by switched versus unswitched",
+    "secondary": "causal-effect coefficient MAE, goal-directed action optimal fraction, cold model+memory exact replay, negative placebo, compute budgets, source hashes",
+    "all_seeds_positive_gate": "P43_five OOD MSE <=0.95 * best(P43_three,P43_none,GRU_five,8-factual polynomial ridge) AND P43_five effect-MAE <=0.95*min(GRU_five,5-factual quadratic nuisance contrast,8-factual polynomial ridge) per each seed",
+    "wrong_sign": "P43_five OOD causal effect MAE <=0.8*P43_wrong_sign effect MAE every seed",
+    "negative_mode_switch": "report all switched and unswitched outcomes; never hide first ambiguous post-reversal evidence",
+    "baseline_competence": "all relevant neural validation last two checkpoints relative change <=1% for competent convergence; else scientific competence UNVERIFIED",
+    "negative_cubic": "five-factual quadratic contrast is biased under cubic+sin nonlinear nuisance; do not label it oracle",
+    "scientific_qualification": "NO independent scientific PASS possible from known synthetic authored development source; original-source-owner first-use and full dual-OS regression required"
+  },
+  "isolation": {
+    "no_existing_runner_or_scheduler_changes": true,
+    "no_new_controller_or_queue": true,
+    "no_FORGE_integration_or_dispatch": true,
+    "no_paid_api": true,
+    "no_scientific_first_use": true,
+    "no_merge_or_promotion": true,
+    "no_reuse_consumed_prior_seed_as_new": true
+  }
+}
