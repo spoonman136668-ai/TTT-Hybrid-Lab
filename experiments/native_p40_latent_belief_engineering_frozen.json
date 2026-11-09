@@ -1,0 +1,65 @@
+{
+  "schema": "ttt-hybrid.native-p40-latent-belief-engineering-protocol.v1",
+  "status": "SOURCE_FREE_ENGINEERING_ONLY_NO_INDEPENDENT_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "pr": 123,
+    "head": "bfaa796e7383c756480c23c29179c06a703fb8a1",
+    "p38r1_science": "FAIL_2_OF_3_SHAM_MARGIN",
+    "p38a1_shortcut_pr": 122
+  },
+  "mechanism": {
+    "module": "native_hidden_mode_belief.py",
+    "learns": "bounded online action-normalized continuous factual effect prototypes with posterior mode switching",
+    "oracle_mode_labels": false,
+    "no_tokenizer": true,
+    "caller_supplied_goals": true,
+    "persistent_state_tensors_only": true,
+    "model_assumption": "delta_sensor=dt*action_scalar*context_effect",
+    "mode_capacity": 2,
+    "mode_novelty": 0.15,
+    "noise": 0.05,
+    "stay_probability": 0.8,
+    "learning_rate": 0.25,
+    "unmodeled_third_mode": "FAIL_CLOSED"
+  },
+  "engineering_controls": [
+    "zero_observation_no_oracle",
+    "hypothetical_preview_no_writes",
+    "learn_from_true_outcomes_only",
+    "unobserved_mode_reversal_unidentifiable",
+    "factual_reversal_corrects_next_choice",
+    "previous_mode_retention",
+    "cold_tensor_restore",
+    "finite_type_shape_action_time_and_capacity_guards"
+  ],
+  "scientific_next": {
+    "status": "NOT_EXECUTED",
+    "necessary": "Independent original-owner preregistration and first-use custody",
+    "hypothesis": "Factual belief improves unseen mode identification, cold retention and post-reversal control versus most-recent-delta and fully trained history GRU/MLP under equal actions/data/compute.",
+    "baseline": [
+      "zero-training last-factual-effect",
+      "fully-trained history GRU",
+      "fully-trained history MLP",
+      "P39 fixed-key context memory",
+      "shuffled-action/outcome credit",
+      "disabled belief",
+      "oracle upper-bound separately labeled"
+    ],
+    "source": "new independent hidden dynamics, not P38 cue sign or consumed seeds",
+    "metrics": [
+      "action-optimal fraction per hidden mode and post-reversal lag",
+      "cold retention",
+      "unfamiliar dynamics transfer",
+      "total training+inference cost",
+      "factual transition count"
+    ],
+    "rules": "Freeze seeds/splits/budgets/thresholds and all strong baselines before source first use; no tuning on heldout."
+  },
+  "authority": {
+    "no_FORGE_or_owner_changes": true,
+    "no_runner_or_scheduler": true,
+    "no_science_dispatch": true,
+    "no_merge_or_promotion": true,
+    "full_final_Windows_WSL_regression_required": true
+  }
+}
