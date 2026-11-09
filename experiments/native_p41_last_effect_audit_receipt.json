@@ -1,0 +1,67 @@
+{
+  "schema": "ttt-hybrid.p41-last-effect-zero-train-control-dev.v1",
+  "classification": "LOCAL_SCRIPTED_ENGINEERING_NEGATIVE_NOT_PROSPECTIVE_SCIENCE",
+  "date": "2026-11-09",
+  "prior": {
+    "pr": 124,
+    "head": "04694e34e6dde475e031288ea00729c7273d0e3b",
+    "source_module_git_blob": "8406c97361adc2b3caa13e3ef42b53044c75d0b0",
+    "p38r1": "SCIENTIFIC_DEV_FAIL_2_OF_3",
+    "p38a1": "ZERO_TRAIN_VISIBLE_CUE_RULE_OPTIMAL"
+  },
+  "control": {
+    "P40": "FactualModeInference",
+    "last_effect": "zero-parameter last factual action-normalized effect",
+    "fixed": "always action -1",
+    "matched_actions_outcomes": true,
+    "hidden_mode_labels_to_policy": false,
+    "mode_sequence": "plus 4, minus 4, plus 4, minus 4",
+    "goal_sequence": "alternating positive/negative",
+    "performed_real_source_actions": 16,
+    "pre_action_scored_decisions": 15,
+    "source": "explicit authored deterministic DEV code fixture, not independent external/source first-use"
+  },
+  "result": {
+    "p40_correct": 12,
+    "last_effect_correct": 12,
+    "fixed_minus_correct": 8,
+    "n": 15,
+    "incorrect_steps": [
+      4,
+      8,
+      12
+    ],
+    "factual_advantage_over_last_effect_pp": 0,
+    "scientific_inference": "NO_ESTABLISHED_ADVANTAGE_FROM_P40_COMPLEXITY"
+  },
+  "engineering": {
+    "focused_tests": 8,
+    "focused_pass": 8,
+    "local_python": "3.13",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "whole_repo_original_windows_wsl": "UNVERIFIED",
+    "gpu": "NOT_RUN"
+  },
+  "next_gate": {
+    "question": "Does multi-observation belief outperform last observation in noisy, partially observed dynamics while retaining cold context across interference?",
+    "must_preregister": [
+      "new source seeds and hashes",
+      "strong fully trained GRU and MLP baselines",
+      "zero-train last-effect and EMA",
+      "matched causal information and action budgets",
+      "action-marginal negative controls",
+      "cold retention and unfamiliar transfer",
+      "compute/time/memory/stop criteria",
+      "independent owner qualification"
+    ],
+    "status": "NOT_EXECUTED"
+  },
+  "authority": {
+    "no_new_workflow_runner_scheduler": true,
+    "no_science_first_use": true,
+    "no_forge_dispatch": true,
+    "no_model_promotion": true,
+    "no_merge": true
+  }
+}
