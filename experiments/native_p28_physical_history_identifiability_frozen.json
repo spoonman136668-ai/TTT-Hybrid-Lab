@@ -1,0 +1,125 @@
+{
+  "schema": "ttt-hybrid.native-p28.physical-history-identifiability-frozen.v1",
+  "freeze_date": "2026-11-08",
+  "state": "FROZEN_BEFORE_NEW_SOURCE_USE_OR_IMPLEMENTATION",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 104,
+    "sha": "5a1eb9569aa7e44278a57d196f6c2a8c2c6f7c0d",
+    "owner_run": 42540021365,
+    "P27_engineering": "PASS",
+    "P27_dev_mechanism": "FAIL_0_OF_3",
+    "P27_context_overprediction": "294x-to-9122x-center-effect-variance",
+    "independent_P26_PR": 103
+  },
+  "question": "On actually executed paired CartPole physical interactions, is the unobserved source pole length and consequent action effect statistically identifiable from eight past-only public position/angle/action/reward rows, as opposed to a sufficient source-oracle length label or a history-misaligned negative?",
+  "hypotheses": [
+    "An authored physically real pole-length shift yields a measurable variation in the 8-step action-effect target across source conditions.",
+    "An upper-bound regression trained on true source-authored length predicts the shifted action effect better than an effect constant.",
+    "A separately trained model supplied ONLY factual past masked-velocity history infers the source length and improves heldout action-effect prediction beyond same-budget shuffled-history controls; a trained visible-input ridge is the strongest conventional reference."
+  ],
+  "source": {
+    "original_S29_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "FaramaMIT_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "CloudpickleBSD3_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "reused_source_pair_implementation_sha": "5a1eb9569aa7e44278a57d196f6c2a8c2c6f7c0d",
+    "real_sister_action_outcomes_only": true,
+    "no_unexecuted_counterfactual_labels": true,
+    "original_source_files_never_modified": true,
+    "no_protected_scientific_first_use": true
+  },
+  "public_source": {
+    "fresh_training_seed_range": [
+      122000,
+      122127
+    ],
+    "fresh_validation_seed_range": [
+      122500,
+      122531
+    ],
+    "fresh_heldout_seed_range": [
+      123000,
+      123095
+    ],
+    "train_lengths": [
+      0.3,
+      0.42,
+      0.55,
+      0.7
+    ],
+    "validation_lengths": [
+      0.3,
+      0.42,
+      0.55,
+      0.7
+    ],
+    "heldout_lengths": [
+      0.36,
+      0.62
+    ],
+    "prefix_lengths": [
+      4,
+      8,
+      12
+    ],
+    "real_action_horizon": 8,
+    "same_factual_consequences_as_P27": "two exact-reset source instances replay identical source steps and actually execute opposite action first then identical seven physical actions, excluding real terminations with reasons",
+    "input_rows": "eight past-only public cart position, zeroed velocity, public pole angle, zeroed angular velocity, prior executed action, prior observed reward; no true source length or future state to visible models",
+    "test_environment_label": "Only an explicitly separate privileged diagnostic upper-bound gets source length; never mix its score into eligible model score.",
+    "no_fit_on_validation_or_test": true,
+    "minimum_valid_fraction": 0.6,
+    "all_historical_seeds_disjoint": true
+  },
+  "controls": {
+    "source_length_oracle": "Train ridge on [1,length,length^2,1/length,1/length^2] to predict factual paired action effect; explicit privileged upper diagnostic, not eligible autonomous learner",
+    "visible_ridge": "Train ridge on original flat eight past-history rows plus past-only velocity and signed historical actuation finite-differences; fixed lambda 1e-5; no length label",
+    "trained_history_MLP": "Train supervised past-only 48->32->16->2 factual effect predictor, AdamW .003, 64 epochs batch 256; 3 independently initialized models",
+    "shuffled_history_MLP": "Same architecture, model initialization, optimizer, target, action pool and update count, but independently permute history-target associations within every training epoch; no information leakage",
+    "trained_history_length_MLP": "Separate same-budget history-only length-estimation probe trained with authored source length as regression label ONLY; evaluation uses past-only observations and reports length MAE, not admitted into effect-prediction comparisons",
+    "constant_effect": "Train mean of factual effect from all training source pairs, no privileged length",
+    "constant_length": "Train mean source-authored length for baseline length-estimation MAE"
+  },
+  "training": {
+    "initialization_seeds": [
+      4013,
+      4027,
+      4049
+    ],
+    "optimizer": "AdamW",
+    "epochs": 64,
+    "learning_rate": 0.003,
+    "batch_size": 256,
+    "deterministic_cpu": true,
+    "fixed_first_last_training_epoch": true,
+    "same_data_and_updates_between_effect_MLP_and_sham": true,
+    "strong_conventional_fit_once_from_training_only": true
+  },
+  "frozen_measures": {
+    "action_effect_mse": "Per heldout length mean over actual sister pairs and both public positional effect targets of (predicted action effect - true factual difference)^2",
+    "length_estimation_MAE": "Mean absolute error in estimating source-authored pole length solely from past observed public action-response history, measured on heldout source lengths",
+    "physical_effect_variance_floor": "Difference in means of actual effect vector between two heldout source lengths has squared per-coordinate magnitude >=1e-4; otherwise source not discriminating physical context and mechanism untestable",
+    "source_oracle_upper_probe": "Source-authored length regression >=25% lower MSE than train-fitted constant on BOTH unseen lengths; if fails, no basis to demand history identify its consequence",
+    "visible_history_identifiability_thresholds": "ALL THREE seeds on BOTH unseen lengths: history-length estimate MAE <=0.75 x train-mean length MAE; factual history-effect MLP MSE <=0.75 x train-constant-effect MSE and <=0.80 x randomized-history MLP MSE",
+    "conventional_ridge_report": "Always report fixed-fit visible ridge MSE and compare against effect MLP; any claim of architecture superiority requires MLP <=0.9x ridge per length and seed with whole-process cost parity",
+    "three_seed_reproducibility": true,
+    "no_post_result_threshold_or_seed_adjustment": true,
+    "report_each_failed_rule": true
+  },
+  "qualification": {
+    "existing_original_owner": "TTT-HYBRID-GPU-WIN",
+    "new_runner_or_scheduler": false,
+    "GitHub_actions_download_uses": false,
+    "source_exact_S29_MIT_BSD3_sha_required": true,
+    "protected_source_blob_guard": true,
+    "mandatory_full_final_Windows_regression": true,
+    "mandatory_full_final_Ubuntu_WSL_regression": true,
+    "original_negative_controls": true,
+    "max_public_experiment_wall_seconds": 600,
+    "source_factual_receipt_hashes": true,
+    "original_runner_local_archive_sha256": true,
+    "remote_artifact_upload_not_assumed": true,
+    "independent_P26_and_PRIOR_P27_untouched": true,
+    "science_first_use_not_run": true,
+    "no_merge_model_promotion_or_FORGE_activation": true
+  }
+}
