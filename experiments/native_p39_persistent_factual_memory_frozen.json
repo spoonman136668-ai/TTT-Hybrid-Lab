@@ -5,10 +5,17 @@
     "pr": 121,
     "source_sha": "65b1a7567d7e3e65b491a4b1aef7d5396000e2be",
     "p38r1_result": "SCIENTIFIC_DEV_FAIL_2_OF_3_SHAM_MARGIN",
-    "p38r1_source_model_seeds_consumed": [6101, 6113, 6127],
+    "p38r1_source_model_seeds_consumed": [
+      6101,
+      6113,
+      6127
+    ],
     "p38r1_training_source_seed_consumed": 242000,
     "p38r1_validation_source_seed_consumed": 242500,
-    "p38r1_heldout_source_seed_consumed": 243000
+    "p38r1_heldout_source_seed_consumed": 243000,
+    "p38_a1_shortcut_audit_pr": 122,
+    "p38_a1_shortcut_audit_sha": "4e330c286c49cb75011f3ec8a5fd2c71f612140d",
+    "p38_visible_cue_rule": "a=sign(goal_direction*visible_cue) is optimal without learning on P38 source"
   },
   "hypothesis": "Factual action- and analog-context-keyed bounded residual memory improves cold retention and learned action-consequence prediction after unrelated intervening experiences, without granting false future-outcome knowledge.",
   "candidate": {
@@ -20,7 +27,8 @@
     "no_tokenizer_or_vocab": true,
     "learned_encoder": false,
     "goal_is_caller_supplied": true,
-    "status_limit": "Engineering scaffolding; fixed episodic keys do not establish learned causal abstraction, long-horizon reasoning or transfer"
+    "status_limit": "Engineering scaffolding; fixed episodic keys do not establish learned causal abstraction, long-horizon reasoning or transfer",
+    "known_limitation": "Identical current visible sensor/action histories from opposite unobserved modes can produce cancelling stored residuals; P39 fixed-key cache alone cannot infer latent mode."
   },
   "next_scientific_trial": {
     "state": "NOT_AUTHORIZED_NOT_EXECUTED",
@@ -42,7 +50,11 @@
       "unfamiliar_dynamics_transfer_after_factual_adaptation",
       "training_plus_inference_latency_and_memory"
     ],
-    "pass_rule": "Only a separately prospectively frozen source, thresholds, matched fully trained controls and independent source-owner qualification may establish scientific PASS. Do not retune P38-R1 post-result."
+    "pass_rule": "Only a separately prospectively frozen source, thresholds, matched fully trained controls and independent source-owner qualification may establish scientific PASS. Do not retune P38-R1 post-result.",
+    "visible_cue_shortcut_rule_must_be_baseline": true,
+    "partial_observability": "At least two source dynamical modes must share the same current observable sensors and actions; only prior factual observations may reveal mode; prohibit fixed same-state cue or goal-sign shortcut.",
+    "interference_test": "Reversal and recurrence of hidden modes after distracting intervening actions; score both cold retention and current-mode identification.",
+    "baseline_requirement": "Zero-training policies, history-blind lookup, context-only fixed memory, fully trained MLP and GRU, matched-action-information sham and disabled-memory; count full compute and data."
   },
   "authority": {
     "local_cpu_no_source_engineering_checks_only": true,

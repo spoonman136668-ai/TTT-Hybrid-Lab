@@ -117,3 +117,18 @@ def test_component_does_not_depend_on_tokenized_cognition():
     tree=ast.parse(path.read_text())
     attr={node.attr for node in ast.walk(tree) if isinstance(node,ast.Attribute)}
     assert not attr.intersection({'Embedding','tokenizer','CrossEntropyLoss','vocabulary','token_ids'})
+
+
+def test_identical_observations_opposing_hidden_modes_expose_interference():
+    """No claim that nearest-context factual cache solves hidden-mode reversal."""
+    memory, sensor, actions, dt = case(slots=2)
+    state = memory.initial_state(sensor)
+    _, state = memory.commit_factual(sensor,actions[:,0],dt,
+                                      sensor+torch.tensor([[0.3,0.]]),state)
+    _, state = memory.commit_factual(sensor,actions[:,0],dt,
+                                      sensor+torch.tensor([[-0.3,0.]]),state)
+    predicted = memory.preview(sensor,actions,dt,state)
+    # Same current observation/action; opposite historical consequences
+    # cancel rather than identify an unobserved mode. Preserve as a negative.
+    torch.testing.assert_close(predicted[:,0],sensor,atol=1e-7,rtol=0)
+    assert state.observations.item()==2
