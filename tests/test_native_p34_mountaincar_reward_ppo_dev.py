@@ -139,10 +139,15 @@ def test_all_4_real_reward_PPO_trained_component_custody_and_first_rollout(monke
     assert not data["conventional_history_mlp_ppo"]["components_bitwise_unchanged"]["recurrent"]
     assert data["critic_only_actor_frozen"]["components_bitwise_unchanged"]["actor"]
     assert data["critic_only_actor_frozen"]["components_bitwise_unchanged"]["recurrent"]
-    assert data["critic_only_actor_frozen"]["trained_parameters"]<(
-        data["actor_head_only_ppo"]["trained_parameters"]<
-        data["conventional_history_mlp_ppo"]["trained_parameters"]<
-        data["full_recurrent_ppo"]["trained_parameters"])
+    trained={arm:receipt["trained_parameters"] for arm,receipt in data.items()}
+    assert (trained["critic_only_actor_frozen"]
+            < trained["actor_head_only_ppo"]
+            < trained["conventional_history_mlp_ppo"]
+            < trained["full_recurrent_ppo"])
+    assert (trained["critic_only_actor_frozen"],
+            trained["actor_head_only_ppo"],
+            trained["conventional_history_mlp_ppo"],
+            trained["full_recurrent_ppo"])==(8,32,300,305)
 
 def test_source_frozen_negative_and_physical_reward_success_metrics():
     e=FakeGym()
