@@ -1,0 +1,52 @@
+{
+  "schema": "ttt-hybrid.native-p30r1.workflow-syntax-recovery-frozen.v1",
+  "registered": "2026-11-08",
+  "status": "FROZEN_BEFORE_REPAIR_WORKFLOW",
+  "origin": {
+    "pr": "P30_STAGED_SAME_BRANCH",
+    "original_workflow_run": 42543911931,
+    "original_workflow_candidate_sha": "9b243ba2170540c0bb11a8af3c5121ca0a9736c9",
+    "original_status": "COMPLETED_FAILURE_ZERO_JOBS",
+    "cause": "Unquoted scalar 'One actual reward-only PPO comparison: raw, ...' in YAML step name; colon-space in unquoted scalar invalidates workflow syntax",
+    "original_source_or_experiment_steps_started": false,
+    "original_scientific_source_used": false
+  },
+  "unchanged": {
+    "P30_frozen_hypothesis_commit": "d6807c5df64594d78bf6b1540bd8dc96093563e6",
+    "original_script_blob": "6d864593732cda1413a6338bc2e42ad9c6a85629",
+    "original_tests_blob": "885739b1f6f5c4ee19029bcb0c488dc6671e02fc",
+    "original_protocol_blob": "fb17b091ec94dcae2e8164a552f3fd23646213fd",
+    "model_seeds": [
+      4507,
+      4517,
+      4523
+    ],
+    "original_training_reset_base": 130000,
+    "original_eval_seeds": [
+      138011,
+      138019,
+      138029,
+      138037,
+      138049,
+      138059,
+      138071,
+      138089
+    ],
+    "source_shas": [
+      "30c27ca4865e16b7574ee2b562879108db2b3796",
+      "17eff00220d210beda933f78b0e52850022b0690",
+      "ff54d93221082d4ce22630ecdb8fbbccc60f3b62"
+    ]
+  },
+  "recovery": {
+    "only_change": "Create a distinct workflow path with a YAML-legal step name (remove unquoted colon), run-number one fence, and original owner source verification includes this repair manifest",
+    "no_old_workflow_replay": true,
+    "same_existing_owner": "TTT-HYBRID-GPU-WIN",
+    "no_new_runner_or_controller_or_scheduled_tasks": true,
+    "no_paid_api": true,
+    "mandatory_full_final_windows_and_ubuntu_WSL_regression": true,
+    "no_experiment_on_regression_fail": true,
+    "protected_science_first_use_not_run": true,
+    "unmerged_no_model_promotion_no_FORGE_activation": true
+  }
+}
