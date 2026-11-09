@@ -1,0 +1,154 @@
+{
+  "schema": "ttt-hybrid.p49.dual-null-calibration-authored-dev-result.v1",
+  "classification": "FROZEN_DEV_FAIL__INDEPENDENT_SCIENCE_UNVERIFIED",
+  "parent": {
+    "p48_pr": 138,
+    "head": "3227cdd4fcbd4f6821d3bc369c18d326df70105d",
+    "source_p47_git_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "prior_result": "P48 1/3 full-frozen gate FAIL"
+  },
+  "custody": {
+    "freeze_commit": "6ad0d116fd1d1d21d8d4a282442a41b0648c64de",
+    "source_blob": "e37ff5422dbc7a104b6b622734f35e319e802bc8",
+    "test_blob": "3c2ef73e3ee67e7a2c2477fb2a22c15b9cd90b5c",
+    "source_sha256": "9b69f82a51951929cae4cca3c135657cac4d7aeef9280fd62e26daa9c896602d",
+    "focused_test_sha256": "79ed575b180c9c244fde0c4e685f2fbbd6f54d9a8326b37aa2a1d3a4597836ac",
+    "full_local_results_sha256": "a1a23668d800caf5e28c9a62f35c443df2edd8aaf7ecbe81b2f6a54b7af65250",
+    "source_frozen_before_first_DEV_use": true,
+    "consumed_P47_760_and_P48_770_sources_not_reused": true
+  },
+  "registered_cohorts": {
+    "calibration": {
+      "seed": 780001,
+      "n": 4096,
+      "stable_only": true
+    },
+    "evaluation": [
+      {
+        "seed": 780101,
+        "n": 1536,
+        "band": [
+          0.35,
+          0.9
+        ]
+      },
+      {
+        "seed": 780103,
+        "n": 1536,
+        "band": [
+          0.95,
+          1.35
+        ]
+      },
+      {
+        "seed": 780107,
+        "n": 1536,
+        "band": [
+          1.4,
+          2
+        ]
+      }
+    ],
+    "each": {
+      "causal": 768,
+      "exogenous": 384,
+      "stable": 384,
+      "factual_actions_each": 8
+    },
+    "total_dev_worlds": 8704
+  },
+  "calibrated_cutoffs": {
+    "causal": 17.908385472250835,
+    "nuisance": 25.566222596495976,
+    "quantile": 0.99,
+    "calibration_causal_margin_sha256": "08120b66e6ffaab6d3ad2d61fe4433e05f9f09945bbec360851c6da8a894c240",
+    "calibration_nuisance_margin_sha256": "59b209df9a624a2b61ea922d51722fa5aabdd1b6bd2d4a855e12e03cb1207953"
+  },
+  "per_cohort": [
+    {
+      "seed": 780101,
+      "source_trace_sha256": "6e634b1e940cf58751c51a8fd73ab924e61da6043ba26272f68866c7e69cec65",
+      "P48_style_stable_MAE": 0.007133560252805024,
+      "P49_stable_MAE": 0.006668027867388911,
+      "full_conventional_stable_MAE": 0.006573570979341601,
+      "P48_style_exogenous_MAE": 0.00604032036045779,
+      "P49_exogenous_MAE": 0.008513240760408323,
+      "stable_false_causal_alarm": 0.028645833333333332,
+      "causal_recall": 1,
+      "exogenous_factual_nuisance_model_selected": 343,
+      "stable_factual_nuisance_model_selected": 4,
+      "P47_primary_gates_pass": true,
+      "added_exogenous_noninferiority": false,
+      "cold_exact": true
+    },
+    {
+      "seed": 780103,
+      "source_trace_sha256": "7379c3eed8af0ef1266d38c61761aed6745a2577abebf2606674d2c4e7d8aee2",
+      "P48_style_stable_MAE": 0.007887483825646692,
+      "P49_stable_MAE": 0.0068614226809910125,
+      "full_conventional_stable_MAE": 0.0068103997786561074,
+      "P48_style_exogenous_MAE": 0.007606194997406152,
+      "P49_exogenous_MAE": 0.014233144035096873,
+      "stable_false_causal_alarm": 0.005208333333333333,
+      "causal_recall": 1,
+      "exogenous_factual_nuisance_model_selected": 252,
+      "stable_factual_nuisance_model_selected": 3,
+      "P47_primary_gates_pass": true,
+      "added_exogenous_noninferiority": false,
+      "cold_exact": true
+    },
+    {
+      "seed": 780107,
+      "source_trace_sha256": "baf5c889e352ad17390c19f8e79ac171116a790c300659944921e14cbd0261a6",
+      "P48_style_stable_MAE": 0.008692211356925687,
+      "P49_stable_MAE": 0.006479388973855127,
+      "full_conventional_stable_MAE": 0.006338164343147879,
+      "P48_style_exogenous_MAE": 0.007624667652668382,
+      "P49_exogenous_MAE": 0.01937365161111322,
+      "stable_false_causal_alarm": 0.013020833333333334,
+      "causal_recall": 1,
+      "exogenous_factual_nuisance_model_selected": 187,
+      "stable_factual_nuisance_model_selected": 0,
+      "P47_primary_gates_pass": true,
+      "added_exogenous_noninferiority": false,
+      "cold_exact": true
+    }
+  ],
+  "precommitted_gates": {
+    "p47_primary_recall_accuracy_false_alarm": "PASS_3_OF_3",
+    "added_P48_exogenous_MAE_noninferiority": "FAIL_0_OF_3",
+    "overall": "FAIL_0_OF_3",
+    "scientific_pass": "NOT_PROVEN"
+  },
+  "scientific_limits": {
+    "classical_conventional_model_only": true,
+    "no_trained_GRU_or_MLP": true,
+    "no_independent_authentic_physical_source": true,
+    "perfect_alternating_executed_actions": true,
+    "no_inference_on_endogenous_action_policy": true,
+    "no_scientific_first_use": true,
+    "no_after_result_threshold_recalibration": true,
+    "prior_negatives_preserved": true
+  },
+  "engineering": {
+    "platform": "Linux_CPU",
+    "python": "3.13",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "new_P49_focused": "PASS_5_OF_5",
+    "inherited_P47_plus_P49_focused": "PASS_11_OF_11",
+    "local_frozen_dev_run_seconds": 0.09089713900002039,
+    "source_git_blob_readback_match": true,
+    "full_original_repo_windows_and_ubuntu": "NOT_RUN",
+    "hosted_G4_G5_G7": "NOT_QUALIFIED"
+  },
+  "deployment": {
+    "draft_only": true,
+    "merge": false,
+    "promotion": false,
+    "FORGE_controller_or_research_dispatch": false,
+    "new_runner": false,
+    "scheduler": false,
+    "paid_API": false
+  }
+}
