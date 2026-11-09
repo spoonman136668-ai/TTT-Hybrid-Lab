@@ -1,0 +1,121 @@
+{
+  "schema": "ttt-hybrid.p48.frozen-calibrated-causal-change-dev-result.v1",
+  "date": "2026-11-09",
+  "classification": "AUTHORED_DEVELOPMENT_NEGATIVE_FULL_FROZEN_GATES_NOT_INDEPENDENT_SCIENCE",
+  "freeze": {
+    "parent_pr": 137,
+    "parent_sha": "4d61a660b057f73b3f907c59a37dafa49b4f38fb",
+    "parent_original_source_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "freeze_commit": "6cb74aa5f1147a52fb1175752ac5087a0af25116",
+    "freeze_tree": "c560ef112301e63b3bb75fe860c33cf893a05bab",
+    "manifest_blob": "8a9dbaccbddc372c031e70d6102498df9dd78d44",
+    "calibration_seed": 770001,
+    "validation_and_eval_source_seeds": [
+      770101,
+      770103,
+      770107
+    ],
+    "original_p47_consumed_seeds_not_reused": [
+      760111,
+      760117,
+      760123
+    ],
+    "accepted_all_cohort_gates_require_every_seed": true,
+    "threshold_calibration": "stable-world-only empirical 99th percentile, higher interpolation",
+    "original_P47_nuisance_jump_typo_corrected": "[0.40,0.70] rather than [0.4,7]"
+  },
+  "original_tested_source": {
+    "candidate_module": "scripts/native_p48_calibrated_causal_switch_dev.py",
+    "module_git_blob": "2509ad213e2ebf102d3d78aecd19cf6d67e9654a",
+    "module_sha256": "faae8e2a438c6ec06257c7363cc3d2b1d648e7e5acd1d10f2dcb61c197aba812",
+    "focused_test": "tests/test_native_p48_calibrated_causal_switch_dev.py",
+    "test_git_blob": "c74c92761f81604632d190177292066cc16050a2",
+    "test_sha256": "e40a8a8a8ef6e65a6fe560993d4ab644e0bba8c3088a0f99c32c9a333a42cd37",
+    "original_p47_local_source_blob_verified": true,
+    "no_modified_parent_code": true,
+    "no_live_source_or_source_owner_calls": true
+  },
+  "execution": {
+    "calibration_stable_worlds": 4096,
+    "evaluation_per_cohort": 1536,
+    "evaluation_each_cohort_causal": 768,
+    "evaluation_each_cohort_nuisance_only": 384,
+    "evaluation_each_cohort_stable": 384,
+    "actual_factual_interventions_per_world": 8,
+    "total_factual_interventions": 69632,
+    "calibration_fitted_threshold": 18.87114088572408,
+    "calibration_source_sha256": "83f032115f31766d7e919186068d0d2c6e0c71f8b60142d803f2ced12c05a19a",
+    "calibration_margin_sha256": "86ff2f263e97da7d52bdd9b9174ff847541761e1976763963619aed241b16877",
+    "raw_full_json_sha256": "92f4aa903bd0d96d0a80ad5f8a678325ca177e8cff1c88db8cdcce192c57af27",
+    "local_python": "3.13.5",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "local_focused_tests": "7/7 PASS, 0.35s",
+    "local_study_wall_seconds": 0.1464,
+    "cold_replay": "bit-exact all 3 cohorts"
+  },
+  "prospective_results": [
+    {
+      "seed": 770101,
+      "source_sha256": "4ff0ceb37bca12f9fa6d870932efb338e122487186fd4864429e7ed05792be85",
+      "original_stable_false_alarm": 0.3385416666666667,
+      "calibrated_stable_false_alarm": 0.018229166666666668,
+      "original_causal_recall": 1,
+      "calibrated_causal_recall": 1,
+      "calibrated_nuisance_false_alarm": 0,
+      "original_stable_effect_mae": 0.008693501432866511,
+      "calibrated_stable_effect_mae": 0.006506399680142882,
+      "full_window_stable_effect_mae": 0.005971271541150381,
+      "calibrated_causal_effect_mae": 0.008272421869284287,
+      "strict_all_metrics_pass": true
+    },
+    {
+      "seed": 770103,
+      "source_sha256": "11e9bd325e5837ef6a9365cfa81fe7f2499ece80151034897d96a2574e9916e5",
+      "original_stable_false_alarm": 0.22395833333333334,
+      "calibrated_stable_false_alarm": 0.005208333333333333,
+      "original_causal_recall": 1,
+      "calibrated_causal_recall": 1,
+      "calibrated_nuisance_false_alarm": 0,
+      "original_stable_effect_mae": 0.009586445325562878,
+      "calibrated_stable_effect_mae": 0.007454324375275066,
+      "full_window_stable_effect_mae": 0.006718944406211297,
+      "calibrated_causal_effect_mae": 0.009690948351764575,
+      "strict_all_metrics_pass": false,
+      "failed_gate": "stable-effect-MAE <= 1.10 * full-window"
+    },
+    {
+      "seed": 770107,
+      "source_sha256": "583796a0fd5816b392f6484b1cdd2b1a174f44c842dd1cdcab4152caef16fd0d",
+      "original_stable_false_alarm": 0.16145833333333334,
+      "calibrated_stable_false_alarm": 0,
+      "original_causal_recall": 1,
+      "calibrated_causal_recall": 0.9986979166666666,
+      "calibrated_nuisance_false_alarm": 0,
+      "original_stable_effect_mae": 0.010144410743039147,
+      "calibrated_stable_effect_mae": 0.008696259957821395,
+      "full_window_stable_effect_mae": 0.006259512766612625,
+      "calibrated_causal_effect_mae": 0.011370451542958406,
+      "strict_all_metrics_pass": false,
+      "failed_gate": "stable-effect-MAE <= 1.10 * full-window"
+    }
+  ],
+  "disposition": {
+    "focused_engineering": "PASS",
+    "frozen_all_three_development_scientific_gates": "FAIL_1_OF_3",
+    "stable_fpr_gate": "PASS_3_OF_3",
+    "causal_recall_gate": "PASS_3_OF_3",
+    "nuisance_fpr_gate": "PASS_3_OF_3",
+    "stable_effect_mae_vs_strong_full_window": "FAIL_2_OF_3",
+    "causal_effect_mae_vs_strong_controls": "PASS_3_OF_3",
+    "independently_sourced_science": "NOT_RUN",
+    "convergence_of_trained_GRU_MLP": "NOT_RUN",
+    "full_original_Windows_Ubuntu_regression": "UNVERIFIED",
+    "native_build_or_GPU": "NOT_RUN",
+    "prior_P47_frozen_negative": "PRESERVED_UNCHANGED",
+    "no_hindsight_threshold_or_seed_modification": true,
+    "no_scheduled_tasks_runners_owners_or_FORGE_modifications": true,
+    "no_merge_or_promotion": true
+  },
+  "interpretation": "Empirical stable-null calibration reduces false alarms on authored new development cohorts but does not close stable-effect-error margin across all cohorts. It is a conventional detection calibration, not a novel tokenless intelligence architecture or independent scientific acceptance. Do not tune or re-use consumed P48 evaluation as a fresh source."
+}
