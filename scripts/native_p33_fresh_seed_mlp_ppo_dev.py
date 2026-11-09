@@ -243,9 +243,11 @@ def train(gym,checkpoint_dir):
                 for arm in TRAIN_ARMS if arm!="conventional_mlp_full_ppo"}
             if len(gru_first)!=1:
                 raise RuntimeError("P33_GRU_FIRST_SOURCE_ROLLOUT_NOT_IDENTICAL")
-            if len({training[arm]["original_source_reset_stream_sha256"]
-                    for arm in TRAIN_ARMS})<1:
-                raise RuntimeError("P33_BAD_REAL_SOURCE_RESETS")
+            if not all(
+                len(training[arm]["original_source_reset_stream_sha256"])==64
+                and len(training[arm]["original_actual_action_consequence_sha256"])==64
+                for arm in TRAIN_ARMS):
+                raise RuntimeError("P33_BAD_REAL_SOURCE_RESET_OR_ACTION_TRACE")
             if any(training[arm]["initial_source_actor_weights_sha256"]!=init_sha
                    for arm in TRAIN_ARMS if arm!="conventional_mlp_full_ppo"):
                 raise RuntimeError("P33_GRU_SOURCE_INITIAL_SHA_MISMATCH")
