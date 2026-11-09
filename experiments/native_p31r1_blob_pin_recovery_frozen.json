@@ -1,0 +1,31 @@
+{
+  "schema": "ttt-hybrid.native-p31r1.duplicate-historical-blob-key-recovery.v1",
+  "status": "FROZEN_BEFORE_ONE_USE_OWNER_RECOVERY",
+  "date": "2026-11-08",
+  "origin": {
+    "original_run": 42545658087,
+    "original_candidate_sha": "dd5ccedc003ae664caae8205ddc9a99cfda765a0",
+    "original_run_first_attempt_failed_at": "Preflight PowerShell parser DuplicateKeyInHashLiteral",
+    "original_cause": "Workflow path replacement inadvertently changed historical P30 script key to scripts/native_p31_policy_retention_dev.py, colliding with new P31 protected script key.",
+    "original_steps_that_executed_unchanged_source": false,
+    "original_source_clone_executed": false,
+    "original_regressions_run": false,
+    "original_experiment_run": false,
+    "original_science_first_use_consumed": false,
+    "original_error_line": "Duplicate keys 'scripts/native_p31_policy_retention_dev.py' are not allowed in hash literals."
+  },
+  "repair": {
+    "only_effectful_workflow_change": "Restore original historical P30 protected path for original SHA 6d864593732cda1413a6338bc2e42ad9c6a85629; retain new P31 script path original blob SHA 0b2ae9eebf2e36ae659fddd8cf88178f12b23c4e under distinct P31 key. New one-use workflow path/isolated root; original immutable run not rerun.",
+    "source_protocol_sha": "ded38602dbc530f5457d92337cf8cc5c1611f865",
+    "existing_script_blob_SHA": "0b2ae9eebf2e36ae659fddd8cf88178f12b23c4e",
+    "existing_tests_blob_SHA": "77762d93fab492a87b2856366fd927cdb7fff3e4",
+    "existing_science_seeds_unchanged": true,
+    "new_source_or_experiment_seed_consumption": false,
+    "same_original_runner": "TTT-HYBRID-GPU-WIN",
+    "no_added_controller_or_task": true,
+    "no_paid_API": true,
+    "full_final_Windows_and_Ubuntu_WSL_regression_mandatory": true,
+    "protected_science_first_use_not_run": true,
+    "merge_promotion_FORGE_activation_not_authorized": true
+  }
+}
