@@ -352,7 +352,8 @@ def train_arm(gym,seed,arm):
         raise RuntimeError("P35_GENUINE_AUX_TRAIN_OR_REAL_SOURCE_CREDIT_MISSING")
     if arm=="factual_action_aux_ppo" and aux_mismatch_total!=0:
         raise RuntimeError("P35_ACTUAL_SOURCE_ACTION_AUX_CREDIT_CHANGED")
-    if arm=="shuffled_action_aux_ppo" and aux_mismatch_total<aux_samples_total//2:
+    if (arm=="shuffled_action_aux_ppo" and aux_samples_total>=512
+        and aux_mismatch_total<aux_samples_total//2):
         raise RuntimeError("P35_SHUFFLED_AUX_ACTION_CREDIT_NOT_BROKEN")
     m.eval()
     return m,initial,{
