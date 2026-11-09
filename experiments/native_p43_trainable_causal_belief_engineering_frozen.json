@@ -1,0 +1,62 @@
+{
+  "schema": "ttt-hybrid.native-p43-trainable-causal-belief-engineering.v1",
+  "phase": "ENGINEERING_PROTOCOL_FROZEN_BEFORE_GITHUB_CANDIDATE_NOT_SEALED_SCIENCE",
+  "parent": {
+    "p42_pr": 127,
+    "p42_head_sha": "6937582834304dda4fb5065fbe82112bb1f93a84",
+    "p42_tree_sha": "41c8f7dba1e023d8373cdd86fa9d365e4e151627",
+    "p42_factual_lsq_baseline": "PRESERVE",
+    "p40_nuisance_negative_pr": 126,
+    "p41_null_pr": 125,
+    "p38r1_scientific_status": "FAIL_2_OF_3",
+    "p38a1_visible_cue_shortcut": "ZERO_TRAIN_RULE_OPTIMAL"
+  },
+  "mechanism": {
+    "file": "native_trainable_causal_belief.py",
+    "cognitive_path": "direct continuous sensor/action/outcome to GRUCell factual state, then exogenous and action-effect heads",
+    "trainable": true,
+    "hidden_context_observed": false,
+    "world_model_truth_source": "ONLY_REALIZED_EXECUTED_ACTION_OUTCOME",
+    "counterfactual_oracle": false,
+    "preview_updates_hidden": false,
+    "goal_external": true,
+    "architecture_limitation": "GRUCell is conventional recurrence, so token-free is not novel architecture or conventional-baseline superiority",
+    "cold_weights_and_state": true
+  },
+  "local_engineering": {
+    "platform": "Linux CPU",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused_tests_total": 8,
+    "focused_tests_passed": 8,
+    "first_smoke_training": "80 Adam steps on same authored development fixture, not independent science",
+    "source_file_blob": "fc8499eaf25feb2d6639522e0fbfd1778b782dd5",
+    "test_file_blob": "3b271c7084e9572aa80ccf97c6d33d0f2f3ee309",
+    "source_file_sha256": "20577d7f7a7b288613876b90fa4508dc0667c191dfe5e671fd8fcbd4ff178985",
+    "test_file_sha256": "ba4de5503c8dceb5b718231dfb0f8d578aa80abcdc547f0b253c0f3a9d3efefb"
+  },
+  "science": {
+    "status": "NOT_EXECUTED",
+    "hypothesis": "Learnable hidden causal-state after factual interventions improves unfamiliar noisy latent-mode control and cold retention beyond strongest P42 and GRU/MLP controls under equal information/actions/compute",
+    "frozen_trial_not_yet_created": true,
+    "pre_first_use": [
+      "new source-born unseen splits/seeds and hash",
+      "owner authorization and exact checkpoint custody",
+      "fully trained history GRU and MLP, P42 LSQ, ABA, last-effect EMA, sham/disabled-memory",
+      "fixed capacity and FLOP/wall/VRAM budgets",
+      "same action and observation histories for all learner arms",
+      "cold retention, hidden-mode reversal, interference and unfamiliar-world transfer",
+      "negative quadratic drift and shuffled outcome controls",
+      "preset effect sizes, uncertainty and no post-result tuning"
+    ],
+    "caveat": "Tokenless source+interfaces, but using a conventional GRUCell gives no demonstrated breakthrough beyond controls"
+  },
+  "authority": {
+    "no_external_source_first_use": true,
+    "no_forge_dispatch": true,
+    "no_new_runner_or_scheduler": true,
+    "no_merge_or_model_promotion": true,
+    "full_original_windows_and_ubuntu_regression_before_acceptance": true
+  }
+}
