@@ -352,7 +352,7 @@ def effect_metrics(model,data,arm,constant_effect):
     centered_prediction=float(((effect-effect.mean(dim=0,keepdim=True))**2).mean())
     return {
         "factual_sister_pairs":len(data),
-        "two_step_source_only_no_oracle":True,
+        "eight_step_source_only_no_oracle":True,
         "action_effect_MSE":mse,
         "factual_heterogeneity_MSE_vs_train_constant":absolute_var,
         "effect_skill_vs_train_constant":1-mse/absolute_var,
