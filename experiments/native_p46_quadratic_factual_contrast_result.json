@@ -1,0 +1,186 @@
+{
+  "schema": "ttt-hybrid.p46.five-factual-intervention-nonlinear-drift-dev-receipt.v1",
+  "classification": "FROZEN_AUTHORED_DEV_FAIL_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "p45_pr": 133,
+    "p45_source_sha": "adb846571170458f278e8f531d3da6f603f1b5cc",
+    "p43_original_git_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "p44_compare_blob": "aafc9b44e761431f4213985baf05a237fa14f4f6",
+    "p45_train_blob": "363996307bd90b4effc2ba7acae81c241e6492da",
+    "p45_fast_adapter_pr": 134
+  },
+  "prospective": {
+    "frozen_commit": "2f5d76d9fd9a152fbbb20be9cef86023bf13c392",
+    "source_trial_started_after_freeze": true,
+    "development_seeds_only": {
+      "fit": 750001,
+      "validation": 750101,
+      "ood": 750201
+    },
+    "model_initializations": [
+      9503,
+      9511,
+      9521
+    ],
+    "no_previous_or_protected_science_seed_reuse": true
+  },
+  "source_data": {
+    "train_worlds": 3072,
+    "validation_worlds": 384,
+    "ood_worlds": 384,
+    "ood_hidden_mode_reversals": 96,
+    "history_completed_factual_actions": 8,
+    "history_last_five": "A,-A,A,-A,A",
+    "query_factual_training_actions_per_world": 1,
+    "query_evaluator_physical_actions_per_world": 2,
+    "nuisance": "cubic+sinusoidal unknown drifting background",
+    "ood_frequencies": "1.2..1.8 vs fit .25..65",
+    "trace_sha256": {
+      "train": "4f942b4b8535d8c5804aba7d0747e0141bcfe85a3c4fda0f0f2ed31d1f55a395",
+      "validation": "c83797d051c884178b65db4ccdaf2fd2a2dfd31ac6d8b1caf9bc1c59bb6d0d9a",
+      "ood": "18cb491b482fb527e752e75307f304e22e6386326ec25336703ebe118ace9f85"
+    }
+  },
+  "factual_teacher": {
+    "method": "fixed [1,-4,6,-4,1]/16 residualized real action-outcome fourth difference, sign adjusted by first actual A; no mode labels, no hypothetical outcome",
+    "quadratic_cancelled": true,
+    "cubic_cancelled_due_to_symmetric_action_schedule": true,
+    "quartic_or_sinusoidal_nuisance_not_cancelled": true,
+    "mode_switch_straddling_window_not_fully_identifiable": true,
+    "initial_matrix_solve_timeout": "ABORTED_UNQUALIFIED_NO_RESULT",
+    "exact_equivalent_constant_weight_reimplementation_before_completed_run": true,
+    "focused_requalification": "6/6 PASS",
+    "three_action_ABA_effect_mae": 0.030584076419472694,
+    "five_action_contrast_effect_mae": 0.01831282302737236,
+    "five_contrast_effect_mae_switch": 0.04025819152593613,
+    "five_contrast_effect_mae_non_switch": 0.010997699573636055
+  },
+  "training": {
+    "neural_arms": [
+      "P43_five",
+      "P43_three",
+      "P43_none",
+      "P43_wrong",
+      "GRU_five"
+    ],
+    "parameters": {
+      "P43": 1394,
+      "GRU": 1393
+    },
+    "model_seeds": [
+      9503,
+      9511,
+      9521
+    ],
+    "optimizer_updates_per_arm_per_seed": 1200,
+    "total_optimizer_updates": 18000,
+    "batch": 128,
+    "optimizer": "AdamW lr .003 with 1.0 gradient clip",
+    "equal_train_source_and_sampling": true,
+    "matched_training_index_sha256": "7e7b662969e6d6f9ce41ed778f914bab1c5497a471d0bfa57735d16e94a2c7a7",
+    "whole_process_compute_match": "FAIL: GRU less CPU wall than P43 per equal updates; report not science-matched",
+    "full_local_wall_seconds": 67.9925386760001
+  },
+  "strong_controls": {
+    "five_event_quadratic_action_ridge": {
+      "effect_mae": 0.027181999757885933,
+      "two_query_mse": 0.058716144412755966,
+      "rank_identifiable": 384,
+      "total": 384
+    },
+    "eight_event_cubic_action_ridge": {
+      "effect_mae": 0.0799761638045311,
+      "two_query_mse": 0.18306833505630493,
+      "rank_identifiable": 384,
+      "total": 384
+    },
+    "five_factual_direct_effect_mae": 0.01831282302737236,
+    "three_factual_direct_effect_mae": 0.030584076419472694
+  },
+  "frozen_result": {
+    "per_seed": [
+      {
+        "seed": 9503,
+        "p43_five_mse": 0.08222927898168564,
+        "p43_three_mse": 0.08271787315607071,
+        "p43_none_mse": 0.08962315320968628,
+        "gru_five_mse": 0.10660109668970108,
+        "p43_wrong_mse": 0.20579463243484497,
+        "p43_five_effect_mae": 0.02843206562101841,
+        "p43_three_effect_mae": 0.029914723709225655,
+        "gru_five_effect_mae": 0.03557237237691879,
+        "wrong_effect_mae": 0.33026939630508423,
+        "gates": {
+          "mse_5pct": false,
+          "causal_effect_5pct": false,
+          "wrong_sign_20pct": true,
+          "cold_exact": true,
+          "all_neural_plateau": false
+        }
+      },
+      {
+        "seed": 9511,
+        "p43_five_mse": 0.08915060013532639,
+        "p43_three_mse": 0.08963045477867126,
+        "p43_none_mse": 0.09694235771894455,
+        "gru_five_mse": 0.09496303647756577,
+        "p43_wrong_mse": 0.2023969292640686,
+        "p43_five_effect_mae": 0.028677785769104958,
+        "p43_three_effect_mae": 0.030355527997016907,
+        "gru_five_effect_mae": 0.02217819355428219,
+        "wrong_effect_mae": 0.3291739523410797,
+        "gates": {
+          "mse_5pct": false,
+          "causal_effect_5pct": false,
+          "wrong_sign_20pct": true,
+          "cold_exact": true,
+          "all_neural_plateau": false
+        }
+      },
+      {
+        "seed": 9521,
+        "p43_five_mse": 0.09896118193864822,
+        "p43_three_mse": 0.09903201460838318,
+        "p43_none_mse": 0.10232105106115341,
+        "gru_five_mse": 0.09571853280067444,
+        "p43_wrong_mse": 0.2050238996744156,
+        "p43_five_effect_mae": 0.029889164492487907,
+        "p43_three_effect_mae": 0.032207757234573364,
+        "gru_five_effect_mae": 0.02898300625383854,
+        "wrong_effect_mae": 0.3300335705280304,
+        "gates": {
+          "mse_5pct": false,
+          "causal_effect_5pct": false,
+          "wrong_sign_20pct": true,
+          "cold_exact": true,
+          "all_neural_plateau": false
+        }
+      }
+    ],
+    "all_three_seed_positive": false,
+    "mse_margin_pass_count": 0,
+    "effect_margin_pass_count": 0,
+    "wrong_sign_margin_pass_count": 3,
+    "cold_exact_pass_count": 3,
+    "all_arm_validation_plateau_pass_count": 0,
+    "interpretation": "P43_five improves raw MSE versus P43_none in all three seeds and versus P43_three slightly, but fails preregistered ≥5% stronger-control margin on every seed. Zero-trained five-factual effect MAE remains better than P43_five (0.0284–0.0299) and GRU_five on most seeds. Out-of-distribution mode switch worsens five-event contrast. No superior causal learning. Prior P38/P43/P44/P45 failures retained."
+  },
+  "execution_custody": {
+    "python": "3.13",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "local_full_result_sha256": "4f40c9fcb163824824847e15f1f516d6b38373e9e50ef5a152effd655f338d09",
+    "focused_tests": "PASS_6_OF_6",
+    "original_full_windows_and_ubuntu_regression": "NOT_RUN",
+    "hosted_CI": "NOT_QUALIFIED",
+    "independent_scientific_first_use": "NOT_RUN"
+  },
+  "authority": {
+    "original_P45_branch_unmodified": true,
+    "other_P45_adapter_branch_unmodified": true,
+    "FORGE_unmodified": true,
+    "no_workflows_or_runners_or_schedules": true,
+    "no_paid_apis": true,
+    "no_merge_or_model_promotion": true
+  }
+}
