@@ -1,0 +1,185 @@
+# P25-R2 public development only: native transport on same qualified owner.
+# Original P25 and P25-R1 one-use failures immutable; no sealed science first-use.
+# This exact-source fallback has NO external 'uses:' steps or action archive downloads.
+name: Native P25-R2 native exact-source owner assay once
+on:
+  push:
+    branches:
+      - engineering/native-p25r2-native-transport-recovery-20261108
+    paths:
+      - .github/workflows/native-p25r2-native-owner-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p25r2-exact-source-owner-oneuse
+  cancel-in-progress: false
+jobs:
+  native-exact-source-public-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p25r2-native-transport-recovery-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 26
+    env:
+      GH_REPO_TOKEN: ${{ github.token }}
+    steps:
+      - name: Native exact-SHA Git transport, immutable source custody and original science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P25R2_ORIGINAL_OWNER_ONEUSE_DENIED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p25r2-candidate'
+          if(Test-Path -LiteralPath $root){throw 'P25R2_ROOT_EXISTS_NO_OVERWRITE'}
+          if([string]::IsNullOrWhiteSpace($env:GH_REPO_TOKEN)){throw 'P25R2_READONLY_GIT_TOKEN_MISSING'}
+          $env:GIT_TERMINAL_PROMPT='0'
+          $env:GIT_LFS_SKIP_SMUDGE='1'
+          $env:GIT_CONFIG_COUNT='1'
+          $env:GIT_CONFIG_KEY_0='http.https://github.com/.extraheader'
+          $auth=[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("x-access-token:$env:GH_REPO_TOKEN"))
+          $env:GIT_CONFIG_VALUE_0="Authorization: Basic $auth"
+          try {
+            & git clone --quiet --no-tags --single-branch --depth 160 --branch engineering/native-p25r2-native-transport-recovery-20261108 "https://github.com/$env:GITHUB_REPOSITORY.git" "$root"
+            if($LASTEXITCODE -ne 0){throw 'P25R2_NATIVE_READONLY_GIT_CLONE_FAILED'}
+          } finally {
+            Remove-Item Env:\GIT_CONFIG_COUNT -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_KEY_0 -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue
+            Remove-Variable auth -ErrorAction SilentlyContinue
+          }
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P25R2_EXACT_CANDIDATE_SHA_NOT_CHECKED_OUT'}
+          & git -C $root merge-base --is-ancestor '6b484d69e1646ae82bd1939f150ce8266cc22882' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P25R2_PARENT_R1_FAILURE_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor 'a8125eeef08790920bd7c5e36fa89ca0042acb3f' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P25R2_FROZEN_TRANSPORT_SOURCE_NOT_ANCESTOR'}
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p25r2_owner_transport_recovery_frozen.json') -Raw | ConvertFrom-Json
+          if($m.schema -cne 'ttt-hybrid.native-p25r2.owner-transport-recovery-frozen.v1' -or $m.authorization.original_sealed_science_first_use -ne $false -or $m.original.parent_sha -cne '6b484d69e1646ae82bd1939f150ce8266cc22882' -or $m.experiment.new_R2_first_use -notmatch 'same unconsumed'){throw 'P25R2_TRANSPORT_SCIENCE_OR_SOURCE_FENCE_FAIL'}
+          $protected=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586';
+            'scripts/native_p20_reward_only_ppo_dev.py'='cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4';
+            'scripts/native_p25_paired_action_consequence_dev.py'='6c07b1738c8c50f2ca9d8e13eb0ebee01424f45e';
+            'tests/test_native_p25_paired_action_consequence_dev.py'='97df4ad8c0543a1a7e60eb98d69dcff9c8c9b704';
+            'experiments/native_p25_paired_action_consequence_frozen.json'='05af59eb4b0d980a18c0621c94e8265b3fe9d52f';
+            'experiments/native_p25r1_json_custody_repair_frozen.json'='8a4bdfbc3af2f8b4ff9d2894d9933a734d5783f3'
+          }
+          foreach($name in $protected.Keys){
+            $blob=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $protected[$name]){throw "P25R2_SOURCE_BLOB_CHANGED:$name"}
+          }
+          $source=@{
+            'native-p25-s29-owner'='30c27ca4865e16b7574ee2b562879108db2b3796';
+            'native-p25-mit-gym'='17eff00220d210beda933f78b0e52850022b0690';
+            'native-p25-bsd3-cloudpickle'='ff54d93221082d4ce22630ecdb8fbbccc60f3b62'
+          }
+          foreach($name in $source.Keys){
+            $dir=Join-Path $env:GITHUB_WORKSPACE $name
+            if(-not(Test-Path -LiteralPath $dir -PathType Container)){throw "P25R2_ORIGINAL_READONLY_SOURCE_MISSING:$name"}
+            $sha=(& git -C $dir rev-parse HEAD|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $sha -cne $source[$name]){throw "P25R2_ORIGINAL_SOURCE_SHA_MISMATCH:$name"}
+            $dirty=(& git -C $dir status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P25R2_ORIGINAL_SOURCE_DIRTY:$name"}
+          }
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P25R2_CANDIDATE_DIRTY_BEFORE_TEST'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P25R2_QUALIFIED_CPU_INTERPRETER_MISSING'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P25R2_QUALIFIED_CPU_TOOLCHAIN_DRIFT'}
+          Write-Output "P25R2_ORIGINAL_OWNER_SOURCE_AND_TRANSPORT=PASS SHA=$head PREVIOUS_SETUP_FAIL_NO_TRAINING"
+      - name: Mandatory full Windows final candidate regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p25r2-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p25r2_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P25R2_WINDOWS_FULL_FINAL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p25r2_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P25R2_WINDOWS_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P25R2_WINDOWS_FULL_AND_ORIGINAL_NEGATIVES=PASS'
+      - name: Mandatory full Ubuntu WSL final candidate regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P25R2_ORIGINAL_UBUNTU_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p25r2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p25r2_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P25R2_UBUNTU_FULL_FINAL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p25r2-candidate\local_runs\native_p25r2_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P25R2_UBUNTU_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P25R2_UBUNTU_FULL_AND_ORIGINAL_NEGATIVES=PASS'
+      - name: Exactly one bounded real source factual action-consequence DEV assay
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $who -or -not $lp){throw 'P25R2_SOURCE_WSL_NOT_AVAILABLE'}
+          $root="$lp/native-p25r2-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 710s /usr/bin/env 'NATIVE_P20_DEV_ONLY=1' 'NATIVE_P25_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p25_paired_action_consequence_dev.py" --s29-root "$lp/native-p25-s29-owner" --source-root "$lp/native-p25-mit-gym" --cloudpickle-root "$lp/native-p25-bsd3-cloudpickle" --receipt "$root/local_runs/native_p25r2_action_consequence.json"
+          if($LASTEXITCODE -ne 0){throw 'P25R2_GENUINE_FACTUAL_ACTION_ASSAY_FAILED'}
+          $rp=Join-Path $env:GITHUB_WORKSPACE 'native-p25r2-candidate\local_runs\native_p25r2_action_consequence.json'
+          $p=Get-Content -LiteralPath $rp -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_PUBLIC_DEV_ENGINEERING_ONLY' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.records).Count -ne 3 -or $p.strongest_conventional_architecture_superiority_proven -ne $false -or $p.source_custody.train.valid_sister_pairs -lt 500 -or $p.source_custody.eval_conditions.original.valid_sister_pairs -lt 192){throw 'P25R2_FACTUAL_SOURCE_AND_SCIENCE_FENCE_FAILED'}
+          $checksum=(Get-FileHash -Algorithm SHA256 -LiteralPath $rp).Hash.ToLowerInvariant()
+          $summary=@()
+          foreach($rec in @($p.records)){
+            $original=$rec.evaluation_scores.original
+            $short=$rec.evaluation_scores.'gravity_x0.75'
+            $long=$rec.evaluation_scores.'gravity_x1.25'
+            $summary+=@{
+              seed=$rec.seed
+              original_gru_mse=$original.action_conditioned_factual_GRU.action_effect_mse
+              original_gru_effect_R2=$original.action_conditioned_factual_GRU.effect_R2_against_zero
+              sham_gru_mse=$original.sham_independent_action_GRU.action_effect_mse
+              blind_gru_mse=$original.action_blind_same_capacity_GRU.action_effect_mse
+              trained_MLP_mse=$original.factual_action_MLP.action_effect_mse
+              trained_ridge_mse=$original.factual_finite_difference_ridge.action_effect_mse
+              gravity_075_gru_effect_R2=$short.action_conditioned_factual_GRU.effect_R2_against_zero
+              gravity_125_gru_effect_R2=$long.action_conditioned_factual_GRU.effect_R2_against_zero
+              frozen_gates=$rec.frozen_mechanism_rules
+              trained_conventional_superiority=$rec.GRU_better_than_strongest_control_by_10pct
+            }
+          }
+          Write-Output "P25R2_COMPLETE_REAL_SOURCE_RECEIPT_SHA256=$checksum"
+          $report=@{
+            status=$p.status
+            frozen_mechanism_support_all_seeds=$p.frozen_mechanism_support_all_seeds
+            scientific_first_use=$p.science_first_use
+            factual_train_pairs=$p.source_custody.train.valid_sister_pairs
+            source_original_eval_pairs=$p.source_custody.eval_conditions.original.valid_sister_pairs
+            gravity075_eval_pairs=$p.source_custody.eval_conditions.'gravity_x0.75'.valid_sister_pairs
+            gravity125_eval_pairs=$p.source_custody.eval_conditions.'gravity_x1.25'.valid_sister_pairs
+            source_original_train_sha256=$p.source_custody.train.factual_action_consequence_sha256
+            whole_process_wall_seconds=$p.wall_seconds
+            seeds=$summary
+          }
+          Write-Output ("P25R2_FINAL_FACTUAL_SUMMARY_JSON="+($report|ConvertTo-Json -Compress -Depth 9))
+          Write-Output "P25R2_EXACT_SOURCE_SCIENCE_DEV_QUALIFIED=PASS FROZEN_SCIENCE_RESULT=$($p.frozen_mechanism_support_all_seeds)"
+      - name: Preserve full local P25R2 factual receipts and SHA256 without external Actions dependency
+        if: always()
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Continue'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p25r2-candidate'
+          if(Test-Path -LiteralPath (Join-Path $root 'local_runs')){
+            $dir=Join-Path $root 'local_runs'
+            $files=@(Get-ChildItem -LiteralPath $dir -File -Filter 'native_p25r2_*.json')
+            if($files.Count -gt 0){
+              $zip=Join-Path $dir 'native_p25r2_owner_receipts.zip'
+              if(-not(Test-Path -LiteralPath $zip)){
+                Compress-Archive -LiteralPath @($files|ForEach-Object{$_.FullName}) -DestinationPath $zip -CompressionLevel Optimal
+              }
+              if(Test-Path -LiteralPath $zip){
+                $hash=(Get-FileHash -Algorithm SHA256 -LiteralPath $zip).Hash.ToLowerInvariant()
+                $bytes=(Get-Item -LiteralPath $zip).Length
+                Write-Output "P25R2_LOCAL_RECEIPTS_ZIP=SHA256:$hash BYTES:$bytes FILES:$($files.Count) ROOT:$dir"
+              }
+            }else{Write-Output 'P25R2_ORIGINAL_RUN_ENTERED_NO_NATIVE_RECEIPTS'}
+          }else{Write-Output 'P25R2_NO_SOURCE_STEPS_EXECUTED_NO_RECEIPTS'}
