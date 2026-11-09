@@ -1,0 +1,92 @@
+{
+  "architecture": {
+    "core": "unaltered reference HybridPilot: selective diagonal SSM -> causal attention -> read-before-write TTTLinearMemory -> threshold conditional depth",
+    "hypothesis": "same factual history independently read for each candidate, tagged no-outcome probe, model weights/state unchanged by preview",
+    "input": "continuous sensor, completed executed scalar action, factual next sensor, physical delta-time; no tokenizer",
+    "no_FORGE_integration": true,
+    "no_internal_source_authentication": true,
+    "no_live_actions": true,
+    "no_new_runner_controller_or_scheduled_task": true,
+    "persistent_memory": "bounded tensor-only ring of actual observed transitions, cold-restorable",
+    "rank_gate": "minimum three facts; rank [1,cumulative elapsed,executed action] necessary but not sufficient for causal inference"
+  },
+  "base": {
+    "model_py_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "ref": "main",
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "sha": "6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2"
+  },
+  "classification": "ISOLATED_LOCAL_CPU_ENGINEERING_NOT_SCIENTIFIC_ACCEPTANCE",
+  "limitations": [
+    "This is the compact CPU reference architecture, not official Mamba2, TTT-E2E or paper-exact MoD.",
+    "This is a composability and information-isolation candidate, not trained intelligence.",
+    "The TTT fast matrix is recomputed from retained facts on every candidate branch rather than persisted as optimized weights.",
+    "Rank cannot prove causality in endogenous/convolved or nonlinear nuisance settings.",
+    "Synthetic engineering outcomes do not justify model scientific promotion.",
+    "The original depth router writes utilization telemetry during forward, but no weights or factual tensor memory."
+  ],
+  "local_cpu": {
+    "benchmark": {
+      "candidates": 2,
+      "device": "cpu",
+      "facts": 4,
+      "max_ms": 2.368844,
+      "median_ms": 1.817265,
+      "min_ms": 1.71488,
+      "p95_ms": 2.228633,
+      "runs": 40,
+      "sensor_dim": 1,
+      "threads": 1,
+      "warmups": 5
+    },
+    "focused_tests_pass": 12,
+    "focused_tests_total": 12,
+    "parameter_count": 4610,
+    "pytest": "9.0.2",
+    "python": "3.13.5",
+    "test_wall_seconds": 1.12,
+    "torch": "2.10.0+cpu",
+    "verified_exact_main_model_blob": true
+  },
+  "negative_and_controls": [
+    "no factual actions -> abstain",
+    "constant actions -> abstain",
+    "actions perfectly collinear with elapsed time -> abstain",
+    "invalid/nonfinite factual outcome atomic refusal",
+    "rank adequate alternating actual actions -> preview and caller supplied goal selection",
+    "candidate order invariance",
+    "hypothetical actions never append durable observed outcomes or change weights",
+    "history ring bounded",
+    "cold tensor plus weight restore bit exact",
+    "batch row isolation",
+    "gradients reach all four original components",
+    "no tokenizer or lexical objective in imported path"
+  ],
+  "new_files": {
+    "native_factual_hybrid_stream.py": {
+      "git_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+      "sha256": "bb611dfe5d79cc3778ca46f908f2b6d2152210dd5aa6c9210fbe1c522fa12cfe"
+    },
+    "tests/test_native_factual_hybrid_stream.py": {
+      "git_blob": "aaef2e08d5ce528f3a66addeed6586d671027963",
+      "sha256": "a68fa6219b63f568fca653b3ec3aad74afd866a41f99a925dc69b975d0ae2031"
+    }
+  },
+  "qualification": {
+    "authentic_Mamba2_TTT_CUDA": "NOT_RUN",
+    "cost_comparison": "NOT_RUN",
+    "frozen_source_science": "NOT_REGISTERED",
+    "full_original_repo_windows_ubuntu_wsl_regression": "UNVERIFIED",
+    "independent_source_first_use": "NOT_RUN",
+    "merge_promotion_or_deployment": "NOT_DONE",
+    "scientific_gain": "UNVERIFIED",
+    "strong_neural_or_classical_baselines": "NOT_RUN"
+  },
+  "research_isolation": {
+    "FORGE_and_independent_model_tracks_untouched": true,
+    "p49_frozen_development_result": "FAIL_0_OF_3",
+    "p49_pr": 139,
+    "p49_unchanged": true
+  },
+  "schema": "ttt-hybrid.native-p50-factual-stream-engineering-receipt.v1"
+}
