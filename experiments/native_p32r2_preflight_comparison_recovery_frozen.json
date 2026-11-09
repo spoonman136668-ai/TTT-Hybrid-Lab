@@ -1,0 +1,31 @@
+{
+  "schema": "ttt-hybrid.native-p32r2.parenthesized-comparison-test-fix-frozen.v1",
+  "status": "FROZEN_BEFORE_TEST_FIX_NEW_ORIGINAL_OWNER_JOB",
+  "origin": {
+    "run_id": 42548477271,
+    "candidate_sha": "b4c0b0eb75dbb378d32d75303717598b6d68588b",
+    "original_owner": "TTT-HYBRID-GPU-WIN",
+    "source_SHA_and_readonly_custody": "PASS",
+    "full_Windows_regression": "315_PASS_1_FAIL",
+    "failed_test": "tests/test_native_p32_component_damage_dev.py::test_real_factual_source_actions_match_across_component_training_arms",
+    "error": "assert 10 < (577 < 597)",
+    "root_cause": "Test comparison parentheses created int < bool by Python precedence, even though expected trained parameter counts are 10 critic-only, 30 actor-only, 577 recurrent-only, 597 all.",
+    "full_Ubuntu_WSL_regression": "NOT_RUN",
+    "P32_original_physical_scientific_action_experiment": "NOT_RUN",
+    "original_source_science_seeds_consumed": false,
+    "protected_scientific_first_use": false
+  },
+  "repair": {
+    "only_change": "Replace erroneous parenthesized Python multi-comparison with four named effective parameter counts and unambiguous chained comparison; keep checks that actual weights changed/frozen exactly.",
+    "source_original_P32_protocol_sha": "83c00598ae5d3bf75bb667ac3a4594c205285e2e",
+    "original_P32_source_script_blob": "793ac4153353754c0754c76655663af74cb9c0a5",
+    "test_original_blob": "a4064d9d1dbfa4f2b64463d3c08ded2ad84d1c84",
+    "source_seeds_hypothesis_parameters_and_criteria_unchanged": true,
+    "original_full_final_Windows_and_Ubuntu_WSL_regressions_mandatory": true,
+    "one_original_owner_new_workflow_once": true,
+    "no_paid_API": true,
+    "no_scheduler_runner_controller": true,
+    "no_protected_scientific_first_use": true,
+    "no_merge_promotion_FORGE_activation": true
+  }
+}
