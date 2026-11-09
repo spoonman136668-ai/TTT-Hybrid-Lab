@@ -1,0 +1,66 @@
+{
+  "schema": "ttt-hybrid.native-p45i-r1-factual-freshness-engineering-receipt.v1",
+  "scope": "LOCAL_ENGINEERING_DEV_ONLY_NO_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "pr": 134,
+    "sha": "80cbf4c8d9db0af69e35dfb466e497ecc263968d",
+    "tree": "57f8dbe8d1776bb4061fb36027125097fcf19b02"
+  },
+  "pretest_freeze": {
+    "path": "experiments/native_p45i_r1_factual_freshness_frozen.json",
+    "blob": "3f09bd9faa3924668f076f63cc1af82cfb033d5d",
+    "created_locally_before_new_tests": true
+  },
+  "new_module": {
+    "path": "native_p45i_freshness_gate.py",
+    "git_blob": "a49f68a27c5a6cc3ec6ceefdd4b2f52b56fcedf1"
+  },
+  "new_tests": {
+    "path": "tests/test_native_p45i_freshness_gate.py",
+    "git_blob": "dea0e0db21dbf40cdb18f349180943dda6bce6ee"
+  },
+  "original_inherited_modules": {
+    "p43": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "p43r1": "9799dec44ca198e44f84af029e15ef815b72d55b",
+    "p45i": "409b70a1198f2a13e3e7090bdc8b49b397ed7b42",
+    "p45i_tests": "b83f3f47766e01d29ff399d871ec19d7f5184136"
+  },
+  "reproduction": {
+    "source": "analytic local completed factual A,-A,A then one physically observed opposite-effect action that does not form a new ABA triple",
+    "previous_effect": 0.3,
+    "changed_effect": -0.3,
+    "original_fast_memory_after_change": 0.3,
+    "original_factual_ready_after_change": true,
+    "new_factual_ready_after_change": false
+  },
+  "focused_tests": {
+    "python": "3.13",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "inherited": 13,
+    "new": 12,
+    "total_pass": 25,
+    "total": 25,
+    "elapsed_seconds": 1.8,
+    "initial_test_failure": "One newly authored tamper-negative test accidentally rewrote +1 to +1 rather than -1; corrected test fixture without changing implementation or gate; full 25/25 pass",
+    "original_repo_full_windows_ubuntu_regression": "NOT_EXECUTED",
+    "native_build": "NOT_EXECUTED"
+  },
+  "qualifications": {
+    "engineering_focused": "PASS",
+    "scientific": "NO_CLAIM",
+    "deployment": "NONE",
+    "higher_noise_or_nonlinear": "FRESHNESS_CAN_STILL_BE_WRONG",
+    "reversal_before_outcome": "UNIDENTIFIABLE",
+    "decision_coverage": "DECREASES_BY_DESIGN",
+    "trained_baseline": "NOT_RUN",
+    "protected_source_first_use": "NOT_RUN"
+  },
+  "authority": {
+    "no_runner_or_scheduled_task": true,
+    "no_source_owner_mutation": true,
+    "no_forge_integration": true,
+    "no_merge": true,
+    "no_promotion": true
+  }
+}
