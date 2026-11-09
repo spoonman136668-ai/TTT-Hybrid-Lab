@@ -1,0 +1,117 @@
+# Single-use CPU engineering qualification of P33 code and cold-weight guards.
+# Never executes P33 original public-source training or protected science.
+name: Native P33 source-locked Windows and WSL engineering regression once
+on:
+  push:
+    branches:
+      - research/native-p33-actor-head-immutable-weights-20261109
+    paths:
+      - .github/workflows/native-p33-eng-regression-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p33-eng-regression-once
+  cancel-in-progress: false
+jobs:
+  native-cpu-engineering:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/native-p33-actor-head-immutable-weights-20261109' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 24
+    env:
+      GH_REPO_TOKEN: ${{ github.token }}
+      CUDA_VISIBLE_DEVICES: '-1'
+      OMP_NUM_THREADS: '1'
+      PYTHONDONTWRITEBYTECODE: '1'
+      PYTHONHASHSEED: '0'
+    steps:
+      - name: Verify source custody before original full regression
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P33_ENG_OWNER_OR_ONEUSE_DENIED'}
+          if($env:NATIVE_P33_DEV_ONLY -or $env:NATIVE_P32_DEV_ONLY){throw 'P33_ENG_TRAINING_FLAG_UNEXPECTED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p33-engineering-only'
+          if(Test-Path -LiteralPath $root){throw 'P33_ENG_STAGING_ROOT_EXISTS'}
+          if([string]::IsNullOrWhiteSpace($env:GH_REPO_TOKEN)){throw 'P33_ENG_GITHUB_TOKEN_MISSING'}
+          $env:GIT_TERMINAL_PROMPT='0'
+          $env:GIT_LFS_SKIP_SMUDGE='1'
+          $env:GIT_CONFIG_COUNT='1'
+          $env:GIT_CONFIG_KEY_0='http.https://github.com/.extraheader'
+          $auth=[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("x-access-token:$env:GH_REPO_TOKEN"))
+          $env:GIT_CONFIG_VALUE_0="Authorization: Basic $auth"
+          try {
+            & git clone --quiet --no-tags --single-branch --depth 160 --branch research/native-p33-actor-head-immutable-weights-20261109 "https://github.com/$env:GITHUB_REPOSITORY.git" "$root"
+            if($LASTEXITCODE -ne 0){throw 'P33_ENG_CLONE_FAILED'}
+          } finally {
+            Remove-Item Env:\GIT_CONFIG_COUNT -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_KEY_0 -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue
+            Remove-Variable auth -ErrorAction SilentlyContinue
+          }
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P33_ENG_EXACT_GITHUB_SHA_MISMATCH'}
+          foreach($sha in @('7bc49166b83788efc7bfb9da82d39fc420630c46','7adb90ad9368a985b2f5a08376de115bc9d5cb6c')){
+            & git -C $root merge-base --is-ancestor $sha HEAD
+            if($LASTEXITCODE -ne 0){throw 'P33_ENG_FROZEN_SOURCE_ANCESTRY_DRIFT'}
+          }
+          $p=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p33_actor_head_retention_frozen.json') -Raw|ConvertFrom-Json
+          if($p.schema -cne 'ttt-hybrid.native-p33.actor-head-retention-and-checkpoint-frozen.v1' -or $p.phase -cne 'PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_OR_PUBLIC_SOURCE_USE' -or $p.source.protected_scientific_first_use -ne $false -or @($p.training.model_initialization_seeds).Count -ne 3 -or @($p.training.arms).Count -ne 3 -or $p.qualification.do_not_run_original_until_separate_native_owner_custody -ne $true){throw 'P33_ENG_FROZEN_PROTOCOL_INVALID'}
+          $locks=@{
+            'scripts/native_p20_reward_only_ppo_dev.py'='cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4';
+            'scripts/native_p30_reward_motion_ppo_dev.py'='6d864593732cda1413a6338bc2e42ad9c6a85629';
+            'scripts/native_p32_component_damage_dev.py'='793ac4153353754c0754c76655663af74cb9c0a5';
+            'experiments/native_p33_actor_head_retention_frozen.json'='f2f386d783e76513e13c5b2fb10e17b8dfb35356';
+            'scripts/native_p33_actor_head_retention_dev.py'='d0b88625f21779a7168c951b5ec3d566a1b1d4ef';
+            'tests/test_native_p33_actor_head_retention_dev.py'='80da4ba04390b5d44a6f44c508412616f25d6c2e';
+          }
+          foreach($name in $locks.Keys){
+            $actual=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $locks[$name]){throw "P33_ENG_PROTECTED_GIT_BLOB_DRIFT:$name"}
+          }
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P33_ENG_SOURCE_DIRTY'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P33_ENG_ORIGINAL_CPU_INTERPRETER_MISSING'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P33_ENG_SOURCE_TOOLCHAIN_DRIFT'}
+          Write-Output "P33_ENG_PRETEST_SOURCE_CUSTODY=PASS SHA=$head PROTECTED_FIRST_USE=NOT_RUN"
+      - name: Run mandatory complete Windows source regression
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p33-engineering-only'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p33_engineering_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P33_ENG_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p33_engineering_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P33_ENG_WINDOWS_NEGATIVES_FAILED'}
+          Write-Output 'P33_ENG_WINDOWS_FULL_ORIGINAL_NEGATIVES=PASS'
+      - name: Run mandatory complete Ubuntu WSL source regression
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P33_ENG_WSL_OWNER_IDENTITY_DRIFT'}
+          $root="$lp/native-p33-engineering-only"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p33_engineering_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P33_ENG_UBUNTU_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p33-engineering-only\local_runs\native_p33_engineering_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P33_ENG_UBUNTU_NEGATIVES_FAILED'}
+          Write-Output 'P33_ENG_UBUNTU_FULL_ORIGINAL_NEGATIVES=PASS'
+      - name: Preserve exact-source test-only status without experiment launch
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p33-engineering-only'
+          foreach($name in @('native_p33_engineering_windows.json','native_p33_engineering_linux.json')){
+            $p=Join-Path $root "local_runs\$name"
+            if(-not(Test-Path -LiteralPath $p -PathType Leaf)){throw 'P33_ENG_FULL_REGRESSION_RECEIPT_MISSING'}
+            $sha=(Get-FileHash -LiteralPath $p -Algorithm SHA256).Hash.ToLowerInvariant()
+            Write-Output "P33_ENG_FULL_REGRESSION_RECEIPT=$name SHA256=$sha"
+          }
+          if(Test-Path -LiteralPath (Join-Path $root 'local_runs\native_p33_original_source_reward.json')){throw 'P33_ENG_UNAUTHORIZED_ORIGINAL_SOURCE_EXECUTION'}
+          Write-Output "P33_ENG_ONLY=PASS SCIENCE_FIRST_USE=NOT_RUN SOURCE_TRAINING_ACTIONS=ZERO NO_NEW_RUNNER_OR_SCHEDULER"
