@@ -3,12 +3,12 @@ from pathlib import Path
 import hashlib
 import torch
 import pytest
-import native_p44_compare_dev as q
+from scripts import native_p44_compare_dev as q
 from native_trainable_causal_belief import NativeTrainableCausalBelief
 
 
 def test_p43_exact_source_blob_and_capacity_parity():
-    original=Path(__file__).with_name('native_trainable_causal_belief.py').read_bytes()
+    original=(Path(__file__).resolve().parents[1]/'native_trainable_causal_belief.py').read_bytes()
     blob=hashlib.sha1(b'blob '+str(len(original)).encode()+b'\0'+original).hexdigest()
     assert blob=='49e8d1e84ae2ba02956830b55c8c9480a37c509f'
     p=q.params(q.OriginalP43());g=q.params(q.GRUConventional());m=q.params(q.MLPConventional())
