@@ -1,0 +1,39 @@
+{
+  "schema": "ttt-hybrid.native-p30.r1-frozen-arm-set-validator-recovery.v1",
+  "registered": "2026-11-08",
+  "original": {
+    "original_PR": 109,
+    "original_candidate_SHA": "28d8c3dfe8385d36dfd4320d0948b5c51516c691",
+    "original_single_owner_run": 42544089635,
+    "original_job_conclusion": "FAIL",
+    "stage": "mandatory full Windows regression BEFORE real source trial",
+    "observed_tests": "304 passed 1 failed on original candidate SHA, sole failure test_preregister_source_seeds_science_denial_and_prior_negative in source frozen()",
+    "observed_error": "P30_FROZEN_SOURCE_OR_HYPOTHESIS_DRIFT",
+    "root_cause": "Exact same frozen 7 arm names present, protocol order [learned,tabular,sham,wrong,identity,oracle,finite-difference] differs from implementation ALL_ARMS [learned,sham,wrong,tabular,identity,oracle,finite-difference]; original validator compared ordered tuples although frozen protocol only registers arm membership.",
+    "original_frozen_protocol_commit": "5eff385c9dbd61fab3a5f25966af3c855d4950d5",
+    "original_frozen_protocol_blob": "e6d354b7c94eb886a00180460b5c2ccd62989f56",
+    "original_algorithm_blob": "1c62721402fdcdac1368818bad89e44595d6b887",
+    "original_test_blob": "3ed26add6ea80a999e59a23319c819f392692618",
+    "real_original_public_source_episode_consumed": false,
+    "original_training_did_not_begin": true,
+    "original_model_checkpoint_sha_not_changed": true,
+    "original_artifact_id": 13642927349,
+    "original_failed_run_not_replayed": true
+  },
+  "only_repair": {
+    "change": "For complete 7-arm registration, verify len(frozen_arms)==len(ALL_ARMS) AND set(frozen_arms)==set(ALL_ARMS), rather than tuple positional equality. Reject duplicates or missing names fail-closed.",
+    "same_all_frozen_seeds_and_thresholds": true,
+    "same_factual_action_experiment": true,
+    "same_s29_mit_bsd3_source": true,
+    "same_original_15_P28_checkpoints": true,
+    "same_48_episode_per_model_public_DEV_budget": true,
+    "new_public_seed_sets_necessary": false,
+    "no_automatic_rerun_of_original_workflow": true,
+    "new_single_use_workflow_and_original_owner": true,
+    "full_candidate_SHA_Windows_and_Ubuntu_WSL_regression_before_any_public_source": true,
+    "no_scientific_first_use": true,
+    "no_FORGE_activation": true,
+    "no_model_promotion": true,
+    "no_new_runner": true
+  }
+}
