@@ -146,10 +146,12 @@ def test_real_factual_source_actions_match_across_component_training_arms(monkey
         "components_bit_exact_unchanged_from_original"]["actor"] is False
     assert receipts["full_actor_recurrent_ppo"][
         "components_bit_exact_unchanged_from_original"]["recurrent"] is False
-    assert receipts["critic_only_frozen_policy"]["trained_parameters_effective"]<(
-        receipts["actor_head_only_ppo"]["trained_parameters_effective"]<
-        receipts["recurrent_only_ppo"]["trained_parameters_effective"]<
-        receipts["full_actor_recurrent_ppo"]["trained_parameters_effective"])
+    trainable={arm:rec["trained_parameters_effective"]
+               for arm,rec in receipts.items()}
+    assert (trainable["critic_only_frozen_policy"]
+            < trainable["actor_head_only_ppo"]
+            < trainable["recurrent_only_ppo"]
+            < trainable["full_actor_recurrent_ppo"])
     with p32.scoped_p30_seeds():
         critic,initial=models["critic_only_frozen_policy"]
         probe=[factual_history(),factual_history()[:-1]]
