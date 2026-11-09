@@ -1,0 +1,156 @@
+{
+  "schema": "ttt-hybrid.native-p35.original-mountaincar-factual-action-consequence-auxiliary-frozen.v1",
+  "phase": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_AND_ANY_P35_SOURCE_ACTIONS",
+  "date": "2026-11-09",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "PR": 117,
+    "sha": "50a90718362fac77d8f39a4037a81f5abe97aa76",
+    "original_owner_run": 42587873321,
+    "engineering": "PASS_329_WINDOWS_328_UBUNTU_1_SKIP",
+    "cold_original_source": "PASS_12_MODELS_288_EPISODES",
+    "frozen_reward_only_science": "FAIL_ZERO_OF_THREE_ON_ORIGINAL_MOUNTAINCAR",
+    "P34_original_science_seeds_consumed": true
+  },
+  "hypothesis": "Does a genuine observed next-position-acceleration prediction auxiliary objective, explicitly conditioned on the learner's actual source action, improve future goal-reaching policy acquisition under unchanged sparse real reward and PPO versus a matched sham action-attribution prediction auxiliary objective?",
+  "task": "Original authentic three-action Gymnasium MountainCar-v0: action-consequence signal requires full real position at t+1 observed AFTER actually executing source action at t. No expert controller actions, imagined transitions, oracle velocity, goal shaping or reward adjustment.",
+  "source": {
+    "original_mit_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "original_mountaincar_code_blob": "5e7e11518715197974e8df46a842f1bc66ccd88c",
+    "original_registration_blob": "84f23c4d6ebeba0d6b66d9f19ea2c59c11ff7061",
+    "original_S29_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "original_cloudpickle_BSD3_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "inherited_P34_original_script_blob": "ce33dcb718bce23a26eced114840881eb75a3618",
+    "original_source_mountaincar_step_unmodified": true,
+    "three_actions": true,
+    "velocity_hidden_from_all_policies": true,
+    "source_position_deltas_from_observed_history_only": true,
+    "original_source_action_reward_minus_one_unchanged": true,
+    "original_goal_position": 0.5,
+    "original_source_horizon": 200,
+    "protected_scientific_first_use": false
+  },
+  "training": {
+    "new_model_initialization_seeds": [
+      5209,
+      5227,
+      5237
+    ],
+    "train_source_seed_base": 184000,
+    "arms": [
+      "full_recurrent_ppo",
+      "factual_action_aux_ppo",
+      "shuffled_action_aux_ppo",
+      "actor_head_only_ppo",
+      "conventional_history_mlp_ppo",
+      "critic_only_actor_frozen"
+    ],
+    "rollouts_per_arm": 96,
+    "envs_per_arm": 8,
+    "source_actions_per_rollout_per_env": 64,
+    "source_actions_per_arm_seed": 49152,
+    "ppo_minibatches_per_arm_seed": 576,
+    "epochs": 3,
+    "minibatch_size": 256,
+    "PPO_learning_rate": 0.0015,
+    "PPO_clip": 0.2,
+    "entropy_weight": 0.015,
+    "value_weight": 0.5,
+    "grad_clip": 1,
+    "gamma": 0.99,
+    "GAE_lambda": 0.95,
+    "GRU_hidden_size": 7,
+    "GRU_actor_action_count": 3,
+    "GRU_observation_history": "8x4 observed past-only position, previous real action, previous real source reward, observed position difference; no true velocity",
+    "factual_aux_target": "Signed physical acceleration observable only after real source action: ((p[t+1]-p[t]) - (p[t]-p[t-1])) / 0.0035, clipped into [-5,5]. At first episode frame previous observed delta is zero. This is a REAL factual action outcome, not source-state velocity access.",
+    "aux_model": "The existing 7-hidden-unit GRU's final recurrent embedding, concatenated with one-hot actually executed discrete source action, followed by a learned Linear(10,1). Auxiliary loss is smooth_l1 on factual observed acceleration outcome. The auxiliary prediction head does not feed actor logits or change actual source rewards.",
+    "auxiliary_loss_coefficient": 0.15,
+    "auxiliary_target_clipping": 5,
+    "sham_action_control": "For sham auxiliary arm, source action labels in the auxiliary predictor are independently permuted across the 256 real source minibatch samples with a seeded per-minibatch random permutation; targets, states, actual PPO actions and rewards remain UNCHANGED. Must record mismatched attribution fraction and permutation SHA. Crucially no single global action relabeling that could be inverted.",
+    "source_action_attribution": "For factual auxiliary arm, condition prediction on the EXACT actual action sampled by its PPO policy at that physical source step; both arms receive identical original source action marginals and the same auxiliary target.",
+    "first_rollout_identical_across_all_GRU_arms": true,
+    "same_GRU_initial_policy_weights": true,
+    "aux_head_equal_initial_weights_between_factual_and_sham": true,
+    "torch_rng_state_preserved_when_aux_head_constructed": true,
+    "critic_only_acting_policy_must_match_untrained_source_exactly": true,
+    "all_arms_match_original_actual_source_action_and_ppo_optimizer_batch_budget": true,
+    "source_training_only_original_unchanged_force": true,
+    "must_report_original_source_stochastic_episode_returns_and_successes": true,
+    "no_data_dependent_hyperparameter_sweep": true,
+    "no_source_replay_on_failure_after_first_action": true
+  },
+  "evaluation": {
+    "new_original_source_reset_seeds": [
+      185011,
+      185019,
+      185029,
+      185037,
+      185049,
+      185059,
+      185071,
+      185089
+    ],
+    "conditions": {
+      "original": {
+        "force_ratio": 1
+      },
+      "low_force_x0.75": {
+        "force_ratio": 0.75
+      },
+      "high_force_x1.25": {
+        "force_ratio": 1.25
+      }
+    },
+    "original_episode_horizon": 200,
+    "eval_arms": [
+      "initial_no_update",
+      "full_recurrent_ppo",
+      "factual_action_aux_ppo",
+      "shuffled_action_aux_ppo",
+      "actor_head_only_ppo",
+      "conventional_history_mlp_ppo",
+      "critic_only_actor_frozen",
+      "two_frame_conventional_pendulum_momentum_rule",
+      "seeded_random"
+    ],
+    "all_actual_real_source_greedy_rewards_and_goal_counts": true,
+    "strong_nonlearned_two_frame_rule_baseline": true,
+    "fully_trained_neural_MLP_baseline": true,
+    "all_source_action_consequence_trace_sha256": true,
+    "source_splits_disjoint_from_P34_original_and_P35_training": true,
+    "separate_fresh_python_process_cold_reload_all_trained_models": 18,
+    "cold_eval_episodes": 432,
+    "source_cold_exact_action_reward_goal_and_SHA256_required": true
+  },
+  "frozen_scientific_thresholds": {
+    "per_seed_factual_aux_original_goal_success_min_of_8": 4,
+    "per_seed_factual_aux_low_and_high_success_min_of_8": 3,
+    "per_seed_factual_reward_advantage_over_shuffled_aux_each_world": 20,
+    "per_seed_factual_reward_advantage_over_full_PPO_original": 20,
+    "per_seed_factual_noninferior_to_trained_MLP_reward_points": 15,
+    "at_least_n_new_model_seeds_passing_all_worlds": 2,
+    "at_most_n_new_model_seeds": 3,
+    "all_negative_source_results_retained": true,
+    "if_factual_equals_sham_or_both_fail": "SCIENTIFIC_FAIL; auxiliary attribution not demonstrated",
+    "if_new_neural_arms_both_fail_goal": "SCIENTIFIC_FAIL regardless of prediction loss",
+    "two_frame_controller_performance_reported_separately": true,
+    "if_positive": "positive DEV mechanism under same source MountainCar family only, not independent general-learning scientific pass",
+    "no_post_result_adjustment_or_sweeps": true
+  },
+  "qualification": {
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "source_exact_source_SHA_and_original_MountainCar_code_blob_readback": true,
+    "full_final_Windows_regression_mandatory": true,
+    "full_final_Ubuntu_WSL_regression_mandatory": true,
+    "negative_controls": true,
+    "owner_original_existing_runner_single_oneuse": true,
+    "source_no_protected_science_first_use": true,
+    "no_new_runner_controller_scheduler": true,
+    "no_paid_APIs": true,
+    "no_other_research_interruption": true,
+    "no_merge_promotion_FORGE_activation": true,
+    "original_owner_SHA256_receipt_and_model_files": true,
+    "one_fresh_process_cold_replay": true,
+    "max_public_source_training_plus_evaluation_seconds": 750
+  }
+}
