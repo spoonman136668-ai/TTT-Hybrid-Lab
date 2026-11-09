@@ -1,0 +1,120 @@
+{
+  "schema": "ttt-hybrid.native-p36.cold-action-intervention-frozen.v1",
+  "phase": "FROZEN_BEFORE_NEW_SOURCE_FIRST_USE",
+  "date": "2026-11-09",
+  "parent": {
+    "sha": "6cbd0a9b390e793df3f24a09a9ccc66b5011ca5d",
+    "pr": 118,
+    "run": 42590737775,
+    "result": "P35_SCIENCE_FAIL_GOAL_0_OF_3",
+    "archive_sha256": "4e0caf6566fb9365b8d98ba57a21de80b113e5e669a76443c7079624808f0138"
+  },
+  "hypothesis": "Can trained factual-action auxiliary source models choose actual interventions with higher real MountainCar goal success than shuffled-action trained model and identical factual model with permuted action labels, without any retraining?",
+  "source": {
+    "MIT_SHA": "17eff00220d210beda933f78b0e52850022b0690",
+    "mountaincar_blob": "5e7e11518715197974e8df46a842f1bc66ccd88c",
+    "S29_SHA": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "BSD3_SHA": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "p35_script_blob": "cda264eb8b06327bf344e25d96c31f3a68e1f1c5",
+    "trained_model_seeds": [
+      5209,
+      5227,
+      5237
+    ],
+    "owner_root": "native-p35r2-candidate/local_runs",
+    "owner_receipt": "native_p35r2_reward.json",
+    "owner_weights": "native_p35r2_weights",
+    "never_modify_train_reload_or_replay_original_P35_training": true
+  },
+  "intervention": {
+    "arms": [
+      "factual_aux_energy_choice",
+      "shuffled_aux_energy_choice",
+      "permuted_factual_action_credit_energy_choice",
+      "factual_original_trained_actor_greedy",
+      "two_frame_public_momentum_rule",
+      "seeded_random"
+    ],
+    "weight_model_arms": [
+      "factual_action_aux_ppo",
+      "shuffled_action_aux_ppo"
+    ],
+    "selector": "At each real public step use 8x4 P35 history of observed position, past real action/reward, past observed delta. Predict signed acceleration with each action candidate 0/1/2 using original frozen GRU embedding + original P35 aux_predictor(head concat one-hot), scale output by 0.0035. Let v=last public observed delta; choose argmax of (v+predicted_acceleration*0.0035)^2. Exact ties toward action 2. Do NOT use hidden true velocity, force or physics oracle.",
+    "permuted_control": "Use same factual checkpoint but auxiliary one-hot action labels flipped 0<->2 for candidate scoring while actual physical action remains correct.",
+    "trained_sham_control": "Use P35 originally trained shuffled-action auxiliary checkpoint, same selector.",
+    "meaning": "one-step energy-motivated intervention choice, NOT full MPC, planning/general intelligence or autonomy",
+    "optimizer_updates": 0
+  },
+  "probe": {
+    "seeds": [
+      196011,
+      196019,
+      196029,
+      196037,
+      196049,
+      196059,
+      196071,
+      196089
+    ],
+    "worlds": [
+      "original",
+      "low_force_x0.75",
+      "high_force_x1.25"
+    ],
+    "per_reset_states": 8,
+    "method": "At each probe index 0..7, reset three real original source worlds to identical public reset seed, replay identical deterministic random prefix (Python Random(seed+1977), first index actions); execute each of the three physical actions once on separate reset/replay source instances; use public position changes only, no hidden-state copy or true velocity. Compare exact 3-action outcome-effect ranking with model's predicted ranking, action-consequence real SHA and source MSE. Probe and heldout never used for updates."
+  },
+  "heldout": {
+    "seeds": [
+      195011,
+      195019,
+      195029,
+      195037,
+      195049,
+      195059,
+      195071,
+      195089
+    ],
+    "worlds": [
+      "original",
+      "low_force_x0.75",
+      "high_force_x1.25"
+    ],
+    "max_actions": 200,
+    "all_3_model_seeds": true,
+    "all_6_arms": true,
+    "episodes": 432,
+    "real_reward_minus_one_unchanged": true,
+    "actual_goal_only_from_source_terminated": true,
+    "trace_sha256": true,
+    "cold_new_process_repeat_all_432_source_episodes": true
+  },
+  "thresholds": {
+    "factual_original_success_min_of_8": 6,
+    "factual_each_shift_success_min_of_8": 4,
+    "factual_original_reward_margin_over_sham_and_permuted": 20,
+    "factual_original_reward_within_conventional_rule_points": 20,
+    "factual_intervention_exact_rank_min": 0.85,
+    "factual_rank_advantage_over_sham_and_permuted_min": 0.25,
+    "model_seeds_required": 2,
+    "if_goal_failure": "SCIENTIFIC_FAIL",
+    "if_sham_equal": "ATTRIBUTION_NOT_DEMONSTRATED",
+    "no_postresult_tuning": true,
+    "report_all_null_results": true
+  },
+  "safety": {
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "original_source_sha_readback": true,
+    "original_owner_checkpoint_receipt_and_archive_sha256": true,
+    "mandatory_full_Windows_regression": true,
+    "mandatory_full_Ubuntu_WSL_regression": true,
+    "one_single_use_owner": true,
+    "new_trainer_forbidden": true,
+    "model_parameter_updates": 0,
+    "protected_science_first_use": false,
+    "new_runner_controller_scheduler": false,
+    "paid_API": false,
+    "merge_promotion_FORGE_activation": false,
+    "independent_research_untouched": true
+  }
+}
