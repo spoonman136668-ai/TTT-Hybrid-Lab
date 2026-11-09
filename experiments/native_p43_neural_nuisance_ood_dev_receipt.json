@@ -1,0 +1,175 @@
+{
+  "schema": "ttt-hybrid.p43.factual-neural-nuisance-ood-dev-receipt.v1",
+  "classification": "AUTHORED_DEV_FALSIFICATION_NOT_INDEPENDENT_SCIENCE",
+  "frozen_before_source": true,
+  "frozen_protocol_commit": "518df5464e410234352167812e67daf0c8b681ba",
+  "exact_tested_runner_blob": "c3ced61c21be36b6da411ad9a3863559e01a98b5",
+  "exact_tested_focused_test_blob": "f6580fad8a358e9f688df88b1c09711edbce3d49",
+  "local_full_json_sha256": "56a246df84b0b5ac02e3a82de6ee4a2ec605375ca6e8ae3c92aaab5b487d5639",
+  "local_summary_json_sha256": "63b240b5519ff1bf4c9e44668fca5293ab8555f940c0854ce150c3ea9d1ea8be",
+  "source_trace_sha256": {
+    "fit": "60a02c7c9dbd7916b85559529b45dba863103a9f4b4db18031050d3afb2ed286",
+    "validation": "3d4a5262531d9853264c6aaddfbfcc4bfa11792d80511e1e4735aaf975a1ecc9",
+    "ood_dev": "ffaad800187f3d277d45fc710ab4e37bf11bb9aa9186bb2241aa3b71009f4044"
+  },
+  "matched_training_index_sha256": "76809c061b9d2f8f664f87f390041c1b09b18ff78ab74ffa3d9a838251a4ac5c",
+  "data": {
+    "fit_episodes": 4096,
+    "validation_episodes": 512,
+    "unseen_frequency_ood_dev_episodes": 512,
+    "past_factual_actions_per_episode": 8,
+    "actual_query_actions_per_training_episode": 1,
+    "heldout_evaluator_actions_per_world": 2,
+    "fitting_freq": [
+      0.45,
+      0.95
+    ],
+    "ood_freq": [
+      1.15,
+      1.65
+    ],
+    "source_seeds": {
+      "fit": 710001,
+      "validation": 710101,
+      "ood_dev": 711001
+    },
+    "model_seeds": [
+      9101,
+      9113,
+      9127
+    ]
+  },
+  "training": {
+    "model_arms": [
+      "factorized",
+      "mlp",
+      "gru",
+      "wrong_credit"
+    ],
+    "updates_per_arm_per_seed": 400,
+    "total_neural_optimizer_updates": 4800,
+    "batch": 128,
+    "optimizer": "AdamW lr 0.002",
+    "params": {
+      "factorized": 1642,
+      "mlp": 1649,
+      "gru": 1747,
+      "wrong_credit": 1642
+    },
+    "source_train_val_equal_for_all_arms": true,
+    "training_sample_indices_equal_for_all_arms": true,
+    "wrong_credit_action_roll_within_history_only": true
+  },
+  "ood_metrics_by_seed": [
+    {
+      "seed": 9101,
+      "factorized": {
+        "mse": 0.028582341969013214,
+        "effect_mae": 0.06272946298122406,
+        "goal_optimal": 0.9091796875
+      },
+      "gru": {
+        "mse": 0.023499449715018272,
+        "effect_mae": 0.055526796728372574,
+        "goal_optimal": 0.9248046875
+      },
+      "mlp": {
+        "mse": 0.05954549089074135,
+        "effect_mae": 0.1333526372909546,
+        "goal_optimal": 0.8466796875
+      },
+      "wrong_credit": {
+        "mse": 0.030894428491592407,
+        "effect_mae": 0.06114828586578369,
+        "goal_optimal": 0.90625
+      }
+    },
+    {
+      "seed": 9113,
+      "factorized": {
+        "mse": 0.033930085599422455,
+        "effect_mae": 0.06583578139543533,
+        "goal_optimal": 0.90234375
+      },
+      "gru": {
+        "mse": 0.02250417321920395,
+        "effect_mae": 0.055184923112392426,
+        "goal_optimal": 0.9326171875
+      },
+      "mlp": {
+        "mse": 0.06216707080602646,
+        "effect_mae": 0.13457410037517548,
+        "goal_optimal": 0.8564453125
+      },
+      "wrong_credit": {
+        "mse": 0.0415804460644722,
+        "effect_mae": 0.07193770259618759,
+        "goal_optimal": 0.8857421875
+      }
+    },
+    {
+      "seed": 9127,
+      "factorized": {
+        "mse": 0.03166772797703743,
+        "effect_mae": 0.061883918941020966,
+        "goal_optimal": 0.896484375
+      },
+      "gru": {
+        "mse": 0.019652508199214935,
+        "effect_mae": 0.048264432698488235,
+        "goal_optimal": 0.9375
+      },
+      "mlp": {
+        "mse": 0.050110138952732086,
+        "effect_mae": 0.12159772217273712,
+        "goal_optimal": 0.857421875
+      },
+      "wrong_credit": {
+        "mse": 0.032922349870204926,
+        "effect_mae": 0.06184351444244385,
+        "goal_optimal": 0.8994140625
+      }
+    }
+  ],
+  "classical_polynomial_ridge_ood": {
+    "mse": 0.04093775525689125,
+    "effect_mae": 0.02965661883354187,
+    "goal_optimal": 0.8955078125,
+    "rank_identifiable": 507,
+    "total_episodes": 512,
+    "lambda": 0.001
+  },
+  "last_factual_effect_ood": {
+    "effect_mae": 0.2878483533859253
+  },
+  "prespecified_per_seed_gates": [
+    {
+      "seed": 9101,
+      "beat_strong_mse_by_10pct": false,
+      "beat_both_neural_effect_mae": false,
+      "wrong_credit_mse_margin_20pct": false
+    },
+    {
+      "seed": 9113,
+      "beat_strong_mse_by_10pct": false,
+      "beat_both_neural_effect_mae": false,
+      "wrong_credit_mse_margin_20pct": false
+    },
+    {
+      "seed": 9127,
+      "beat_strong_mse_by_10pct": false,
+      "beat_both_neural_effect_mae": false,
+      "wrong_credit_mse_margin_20pct": false
+    }
+  ],
+  "all_three_seed_gate": "FAIL_0_OF_3",
+  "control_competence": "UNVERIFIED: validation curves declined steeply in final 100 optimizer steps for most models; full trained convergence and compute/FLOP match are NOT proven",
+  "focused_no_source_tests": "PASS_4_OF_4_LOCAL",
+  "total_bounded_local_wall_seconds": 5.456120366000022,
+  "original_exact_repo_windows_ubuntu_full_regression": "NOT_RUN",
+  "hosted_g4_g5_g7": "NOT_QUALIFIED",
+  "scientific_owner_first_use": "NOT_RUN",
+  "forged_research_activation": "NOT_ATTEMPTED",
+  "merge": "NOT_REQUESTED",
+  "conclusion": "Candidate factorization is better than conventional MLP but worse than genuinely trained recurrent GRU on all 3 authored frequency-shift DEV seeds, does not beat wrong-credit by frozen margin, and has worse effect MAE than classical polynomial ridge. Freeze and retain as negative; do not retune same data."
+}
