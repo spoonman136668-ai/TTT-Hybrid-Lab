@@ -140,13 +140,15 @@ def policy_drift(initial,trained,histories,seed):
         after.append(p1.squeeze(0))
     left=torch.stack(before)
     right=torch.stack(after)
-    KL=float(F.kl_div(F.log_softmax(right,dim=-1),
-                      F.softmax(left,dim=-1),reduction="batchmean"))
+    same=torch.equal(left,right)
+    KL=(0.0 if same else max(0.,float(F.kl_div(
+          F.log_softmax(right,dim=-1),
+          F.softmax(left,dim=-1),reduction="batchmean"))))
     agreement=float((left.argmax(dim=1)==right.argmax(dim=1)).float().mean())
     return {"original_source_probe_histories":len(histories),
             "initial_to_trained_actor_policy_KL":KL,
             "greedy_action_agreement_with_initial":agreement,
-            "bit_exact_original_logits":torch.equal(left,right),
+            "bit_exact_original_logits":same,
             "no_probe_fit_or_training":True}
 
 def train_arm(gym,seed,arm):
