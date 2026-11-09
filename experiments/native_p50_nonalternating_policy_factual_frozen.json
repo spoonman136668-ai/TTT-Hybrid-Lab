@@ -1,0 +1,102 @@
+{
+  "schema": "ttt-hybrid.p50-policy-nonalternating-causal-identifiability-dev.v1",
+  "status": "PROSPECTIVE_DEV_FROZEN_BEFORE_DATA_GENERATION_AND_EVALUATION",
+  "parent": {
+    "pr": 139,
+    "sha": "9f7c0044b6dc08ebb648c88000ac8fd459e65598",
+    "canonical_P49": "FROZEN_DEV_FAIL_0_OF_3",
+    "original_p47_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "original_p48_blob": "2509ad213e2ebf102d3d78aecd19cf6d67e9654a",
+    "original_p49_blob": "349bda0f9224760abbf4fc5a46a0797abdb80840"
+  },
+  "hypothesis": "When interventions arise from a nonalternating observation-conditioned policy, an action-aware 3-way change-point model with rank abstention and stable-calibrated causal alarm can identify factual action effects without misattributing environmental disturbances and without sacrificing ordinary stable-world accuracy relative to stronger conventional controls.",
+  "source": {
+    "kind": "NEW_AUTHORED_SIMULATED_DEV_ONLY_NO_PROTECTED_OR_EXTERNAL_SOURCE_FIRST_USE",
+    "sensor": "cumulative observed scalar x; initial x uniform [-0.3,0.3]",
+    "factual_action": "[-1,+1] chosen by a mixed policy based only on previously observed physical x, never source hidden beta/nuisance/regime",
+    "policy_distribution": "25% deterministic constant action, 25% 0.2-exploration negative-state feedback, 25% sticky action with P(repeat)=0.8, 25% independent fair random actions",
+    "factual_dynamics": "delta = b0 + b1*t + b2*t² + amp*sin(2*pi*frequency*t + phase) + beta(t)*actual_action + exogenous_step(t) + independent Gaussian observation error",
+    "history_length": 8,
+    "times": "i/8 for i=0..7",
+    "parameters": "b0 uniform[-.2,.2], b1[-.4,.4], b2[-.1,.1], amp[0,.08], phase[-pi,pi], initial beta random sign magnitude uniform[.25,.45], noise sigma .02",
+    "change_points": [
+      3,
+      4,
+      5
+    ],
+    "conditions": "768 true causal sign reversals, 384 independent nuisance steps signed abs[.4,.7],384 unchanged per DEV evaluation cohort",
+    "calibration": {
+      "seed": 790001,
+      "n": 4096,
+      "only_stable": true,
+      "frequency": [
+        0.35,
+        2
+      ]
+    },
+    "evaluation": [
+      {
+        "seed": 790101,
+        "n": 1536,
+        "frequency": [
+          0.35,
+          0.9
+        ]
+      },
+      {
+        "seed": 790103,
+        "n": 1536,
+        "frequency": [
+          0.95,
+          1.35
+        ]
+      },
+      {
+        "seed": 790107,
+        "n": 1536,
+        "frequency": [
+          1.4,
+          2
+        ]
+      }
+    ],
+    "previous_P47_P48_P49_source_seeds": "NO_REUSE",
+    "no_unexecuted_outcomes_and_hidden_conditions_to_any_fitter": true
+  },
+  "methods": {
+    "identifiability": "Float64 rank check at relative tolerance 1e-10 and condition number <=1e6 for every candidate factual design; abstain if no-change causal coefficient nonidentifiable",
+    "fit_models": "Full [1,t,t²,a], causal switch [1,t,t²,a,a*step(k)], nuisance switch [1,t,t²,a,step(k)], k in {3,4,5}, per-world fixed 8 actual facts",
+    "model_selection": "BIC n log(max(SSE,1e-10)/n)+p log(n)+log(3) changed search penalty",
+    "calibration": "Stable-only 99th percentile ('higher') independently for causal versus best-null BIC and nuisance versus full BIC; rank insufficient worlds excluded from calibration and evaluation conditional metrics",
+    "candidate": "Causal if causal margin exceeds positive stable calibration cutoff; otherwise BIC-soft posterior blend of full and nuisance effect; nuisance BIC relative advantage transformed via logistic(advantage/2), with no hindsight hyperparameter adjustment",
+    "comparisons": [
+      "Same actual nonalternating histories: original alternating-only P47 detector rejection coverage",
+      "action-aware full-window conventional regression",
+      "action-aware 0.7-exponential-recency regression",
+      "action-aware last-five regression",
+      "action-aware last-three regression",
+      "action-aware P48-style causal alarm plus unconstrained nuisance selection",
+      "action-aware P49-style hard double cutoff",
+      "oracle true beta evaluator upper bound only"
+    ],
+    "without_p47_ref_edits": true
+  },
+  "metrics": {
+    "report_per_policy_and_regime": true,
+    "coverage": "identifiable full rank fraction each cohort >=.65; report per-policy exclusion and model-rank loss",
+    "alarm": "causal recall >=.70 and stable/exogenous false causal alarm <=.10 per cohort on identifiable worlds",
+    "accuracy": "stable MAE <=1.10*full conventional LS; exogenous MAE <=1.10*P48-style single-cutoff control; causal MAE <=.85*min(recency,trailing-five) per cohort",
+    "safety": "abstain and never pretend a causal effect when design lacks rank; exact cold replay from observed actions/outcomes",
+    "all_three_cohorts_and_all_metrics_required": true,
+    "scientific_PASS": "IMPOSSIBLE on synthetic authored DEV; independent external science requires separately frozen owner source and fully trained GRU/MLP with matched action opportunities and budgets"
+  },
+  "authority": {
+    "no_new_runner_scheduler_queue_controller_or_workflow": true,
+    "no_FORGE_owner_route_or_live_actuation": true,
+    "no_paid_api": true,
+    "no_scientific_first_use": true,
+    "no_merge_or_promotion": true,
+    "original_full_Windows_Ubuntu_final_regression_required": true,
+    "preserve_all_prior_nulls": true
+  }
+}
