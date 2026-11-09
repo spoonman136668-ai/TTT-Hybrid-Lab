@@ -1,0 +1,181 @@
+# P26 original-owner one-use public DEV conflicting-action skill-retention falsification.
+name: Native P26 source-real contradictory-actuator continual retention once
+on:
+  push:
+    branches:
+      - engineering/native-p26-contradictory-action-continual-retention-dev-20261108
+    paths:
+      - .github/workflows/native-p26-contradictory-action-retention-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p26-contradictory-action-retention-once
+  cancel-in-progress: false
+jobs:
+  original-owner-development:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p26-contradictory-action-continual-retention-dev-20261108' && github.actor == 'spoonman136668-ai' && github.event_name == 'push' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 28
+    steps:
+      - name: Checkout exact P26 candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          path: p26-candidate
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 220
+      - name: Checkout independent original S29 source owner read-only
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: 30c27ca4865e16b7574ee2b562879108db2b3796
+          path: p26-s29-owner
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout original pinned MIT Gymnasium source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: Farama-Foundation/Gymnasium
+          ref: 17eff00220d210beda933f78b0e52850022b0690
+          path: p26-mit-gym
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Checkout original pinned BSD3 cloudpickle source
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: cloudpipe/cloudpickle
+          ref: ff54d93221082d4ce22630ecdb8fbbccc60f3b62
+          path: p26-bsd3-cloudpickle
+          persist-credentials: false
+          clean: true
+          lfs: false
+          submodules: false
+          fetch-depth: 1
+      - name: Verify one-use original owner exact SHA, protected ancestors and prospective protocol
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P26_OWNER_ONE_USE_REFUSED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p26-candidate'
+          $s29=Join-Path $env:GITHUB_WORKSPACE 'p26-s29-owner'
+          $mit=Join-Path $env:GITHUB_WORKSPACE 'p26-mit-gym'
+          $bsd=Join-Path $env:GITHUB_WORKSPACE 'p26-bsd3-cloudpickle'
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P26_EXACT_SOURCE_DRIFT'}
+          & git -C $root merge-base --is-ancestor '2d6f452b64d47c873400b33aaa7737966f67d225' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P26_P23_CUSTODY_PARENT_MISSING'}
+          $locks=@{
+            'experiments/native_p26_contradictory_action_retention_frozen.json'='4e8dfc7631590821baeff4d6da72bee2f55f5d9a';
+            'scripts/native_p26_contradictory_action_retention_dev.py'='c6ba33c7d7df1a0c12ebde9e20308e723346dd41';
+            'tests/test_native_p26_contradictory_action_retention_dev.py'='ad9ef44317721df7d25581e8bd3835c18d4cd162';
+            'experiments/native_p23_exact_resume_gravity_frozen.json'='f52f75b95550c51ebeecbe9b87025967fed34e87';
+            'scripts/native_p23_exact_training_resume_gravity_dev.py'='88f95b754124de278b52e716f6f046e328ef1ee4';
+            'scripts/native_p21_process_cold_retention_dev.py'='7813df2010751215f9e0c1d66fc1d1e48f9a9ee9';
+            'scripts/native_p20_velocity_blind_history_dev.py'='99ebe68151642a5c7a9f5efd95923e4450086155';
+            'scripts/native_p19_expert_calibration_dev.py'='7fb65ed5bc59fc2ad7a8c8442624b3d21fb86c5';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586'
+          }
+          foreach($path in $locks.Keys){
+            $actual=(& git -C $root hash-object -- $path|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $locks[$path]){throw "P26_FROZEN_OR_PARENT_BLOB_DRIFT:$path"}
+          }
+          if((& git -C $s29 rev-parse HEAD|Out-String).Trim() -cne '30c27ca4865e16b7574ee2b562879108db2b3796' -or (& git -C $mit rev-parse HEAD|Out-String).Trim() -cne '17eff00220d210beda933f78b0e52850022b0690' -or (& git -C $bsd rev-parse HEAD|Out-String).Trim() -cne 'ff54d93221082d4ce22630ecdb8fbbccc60f3b62'){throw 'P26_UPSTREAM_ORIGINAL_OWNER_SOURCE_DRIFT'}
+          foreach($d in @($root,$s29,$mit,$bsd)){
+            $dirty=(& git -C $d status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P26_DIRTY_ORIGINAL_CHECKOUT:$d"}
+          }
+          $f=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p26_contradictory_action_retention_frozen.json') -Raw|ConvertFrom-Json
+          if($f.schema -cne 'ttt-hybrid.native-p26.contradictory-action-retention-frozen.v1' -or $f.source.P23_exact_SHA -cne '2d6f452b64d47c873400b33aaa7737966f67d225' -or $f.qualification.science_first_use_authorized -ne $false -or $f.qualification.protected_S26_S27_source_unconsumed -ne $true -or $f.training.base_epochs_normal_only -ne 32 -or $f.training.adaptation_epochs -ne 32 -or @($f.world.normal_evaluation_seeds).Count -ne 8 -or @($f.world.reverse_evaluation_seeds).Count -ne 8){throw 'P26_PROSPECTIVE_SOURCE_OR_SCIENCE_FENCE_DRIFT'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P26_ORIGINAL_CPU_INTERPRETER_NOT_FOUND'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P26_ORIGINAL_ENVIRONMENT_DRIFT'}
+          Write-Output 'P26_EXACT_SOURCE_AND_SCIENCE_BOUNDARY=PASS'
+      - name: Mandatory full original Windows regression with original CUDA negatives
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p26-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p26_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P26_WINDOWS_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p26_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P26_WINDOWS_ORIGINAL_NEGATIVE_FAILED'}
+          Write-Output 'P26_WINDOWS_EXACT_SHA_FULL_ORIGINAL_NEGATIVE=PASS'
+      - name: Mandatory full Ubuntu WSL regression with original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P26_ORIGINAL_WSL_OWNER_DRIFT'}
+          $root="$lp/p26-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p26_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P26_UBUNTU_FULL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p26-candidate\local_runs\native_p26_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P26_UBUNTU_ORIGINAL_NEGATIVE_FAILED'}
+          Write-Output 'P26_UBUNTU_EXACT_SHA_FULL_ORIGINAL_NEGATIVE=PASS'
+      - name: Train old task on true physical source actions and preserve original full-state checkpoints
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p26-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P26_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p26_contradictory_action_retention_dev.py" --mode base --s29-root "$lp/p26-s29-owner" --source-root "$lp/p26-mit-gym" --cloudpickle-root "$lp/p26-bsd3-cloudpickle" --output-dir "$root/local_runs/p26-base" --receipt "$root/local_runs/native_p26_base.json"
+          if($LASTEXITCODE -ne 0){throw 'P26_ORIGINAL_BASE_TRAINING_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p26-candidate\local_runs\native_p26_base.json') -Raw|ConvertFrom-Json
+          if($p.mode -cne 'base' -or @($p.entries).Count -ne 3 -or $p.science_first_use -cne 'NOT_RUN'){throw 'P26_BASE_MODEL_AND_SOURCE_CUSTODY_FAIL'}
+          Write-Output 'P26_REAL_SOURCE_OLD_TASK_BASELINE_CHECKPOINTS=PASS'
+      - name: Cold restore same base into three matched contradictory-action rehearsal curricula
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p26-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 240s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P26_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p26_contradictory_action_retention_dev.py" --mode adapt --s29-root "$lp/p26-s29-owner" --source-root "$lp/p26-mit-gym" --cloudpickle-root "$lp/p26-bsd3-cloudpickle" --base-dir "$root/local_runs/p26-base" --base-receipt "$root/local_runs/native_p26_base.json" --output-dir "$root/local_runs/p26-adapt" --receipt "$root/local_runs/native_p26_adapt.json"
+          if($LASTEXITCODE -ne 0){throw 'P26_SOURCE_GROUNDED_CONTINUAL_LEARNING_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p26-candidate\local_runs\native_p26_adapt.json') -Raw|ConvertFrom-Json
+          if($p.mode -cne 'adapt' -or @($p.entries).Count -ne 9 -or $p.science_first_use -cne 'NOT_RUN' -or $p.same_new_and_old_sample_stream_for_rehearsal_and_wrong_label -ne $true -or $p.equal_optimizer_update_count_not_equal_new_information -ne $true){throw 'P26_ADAPT_CUSTODY_OR_MATCHED_CONTROL_FAILED'}
+          Write-Output 'P26_FULL_COLD_OPTIMIZER_REHEARSAL_AND_SHAM_ADAPTATION=PASS'
+      - name: Independent clean Python process tests actual old and inverted new consequences and frozen null
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $root="$lp/p26-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 180s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'NATIVE_P26_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p26_contradictory_action_retention_dev.py" --mode evaluate --s29-root "$lp/p26-s29-owner" --source-root "$lp/p26-mit-gym" --cloudpickle-root "$lp/p26-bsd3-cloudpickle" --base-dir "$root/local_runs/p26-base" --base-receipt "$root/local_runs/native_p26_base.json" --adapt-dir "$root/local_runs/p26-adapt" --adapt-receipt "$root/local_runs/native_p26_adapt.json" --receipt "$root/local_runs/native_p26_continual_retention_evaluation.json"
+          if($LASTEXITCODE -ne 0){throw 'P26_REAL_SOURCE_CONFLICTING_SKILLS_EVALUATION_FAILED'}
+          $p=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'p26-candidate\local_runs\native_p26_continual_retention_evaluation.json') -Raw|ConvertFrom-Json
+          if($p.status -cne 'PASS_PUBLIC_DEV_ENGINEERING_NOT_SCIENCE' -or $p.science_first_use -cne 'NOT_RUN' -or @($p.sealed_original_science_seeds_consumed).Count -ne 0 -or @($p.per_seed).Count -ne 3 -or $p.teacher_supervised_not_reward_only -ne $true -or $p.source_actuator_intervention_real -ne $true -or $p.strongest_cue_aware_nonlearned_baseline_included -ne $true -or $p.scientific_superiority -ne $false -or $p.FORGE_owner_activation -ne $false){throw 'P26_RECEIPT_SCIENCE_BOUNDARY_OR_SOURCE_FAILURE'}
+          if(@($p.negative_controls.PSObject.Properties|Where-Object{-not $_.Value}).Count -ne 0){throw 'P26_SOURCE_NEGATIVE_CONTROLS_MISSING'}
+          Write-Output "P26_REAL_CONTINUAL_DEV_ENGINEERING=PASS FROZEN_RETENTION_SUPPORT=$($p.supporting_initializations_of_three)/3 SCIENCE_FIRST_USE=NOT_RUN"
+          $p.per_seed|ForEach-Object{Write-Output "P26_SEED=$($_.model_seed) OLD=$($_.old_skill.mean_real_episode_reward|ConvertTo-Json -Compress) REVERSED=$($_.new_conflicting_skill.mean_real_episode_reward|ConvertTo-Json -Compress)"}
+      - name: Preserve original-source checkpoint custody, true and sham results including all nulls
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: native-p26-real-contradictory-actuator-continual-retention-once
+          path: |
+            p26-candidate/local_runs/native_p26_*.json
+            p26-candidate/local_runs/p26-base/*.pt
+            p26-candidate/local_runs/p26-adapt/*.pt
+          retention-days: 30
+          if-no-files-found: warn
