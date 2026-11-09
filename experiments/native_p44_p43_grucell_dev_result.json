@@ -1,0 +1,217 @@
+{
+  "schema": "ttt-hybrid.native-p44-p43-exact-grucell-factual-transfer-dev-result.v1",
+  "phase": "AUTHORED_DEVELOPMENT_NEGATIVE_NOT_ACCEPTED_SCIENCE",
+  "custody": {
+    "p43_exact_original_sha": "d299c47da72f106b3ae176cc344e432202e30c27",
+    "p43_module_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "freeze_before_DEV_first_use_commit": "ddbcdfe22061f903745c98c15606cf1b1b4d38fd",
+    "freeze_blob": "cd49ce7217b387a10cab577a46829bddfc0ebb23",
+    "tested_runner_git_blob": "aafc9b44e761431f4213985baf05a237fa14f4f6",
+    "tested_tests_git_blob": "45563c67e1ac6c8bf6051ac7723798d0ad4387f2",
+    "full_local_json_sha256": "2c265a44e6d8b192004040c9a27a7c5c909adb65eebbcaaf26598cbecbb1103e"
+  },
+  "sources": {
+    "fit_sha256": "e43f58a7c63c3e5b77f4d8a16c9fe05cc1b35a7e6d66b9a5380e96f636951580",
+    "validation_sha256": "8bcdb9ce30ce2f558df002008cc064854f0af5cd636ae6757194fde1bdb5d091",
+    "unfamiliar_dev_sha256": "ad3c019a772f5585adccc056415ff198f68b8341c725f47738eb4ff66ad41d29",
+    "shared_training_index_sha256": "7ce7ea7fe7d67573faa3df67fb4cee03879f85b4991070fbb18e50131cf95a3c",
+    "counts": {
+      "fit": 2048,
+      "validation": 256,
+      "unfamiliar": 512,
+      "unfamiliar_causal_switch": 128
+    },
+    "source_type": "new deterministic authored DEV; no protected external scientific data",
+    "source_seeds": {
+      "fit": 730001,
+      "validation": 730101,
+      "unfamiliar_dev": 730201
+    }
+  },
+  "models": {
+    "native_p43": 1394,
+    "conventional_gru": 1393,
+    "conventional_mlp": 1281,
+    "wrong_credit_p43": 1394,
+    "training_updates_per_seed_per_neural_arm": 600,
+    "total_optimizer_updates": 7200,
+    "batch": 128,
+    "optimizer": "AdamW lr .003",
+    "information": "8 completed factual action-outcome events; actual factual query action only",
+    "heldout": "two evaluator-only independently executed action outcomes after training",
+    "full_FLOP_equivalence": "UNVERIFIED"
+  },
+  "controls": {
+    "fitted_degree2_ridge": {
+      "mse": 0.1181633248925209,
+      "effect_mae": 0.10006538778543472,
+      "goal_optimal": 0.8583984375,
+      "rank_full": 507,
+      "ood_n": 512,
+      "switch_mse": 0.4024999141693115,
+      "switch_goal_optimal": 0.57421875,
+      "unswitched_mse": 0.02338446117937565
+    },
+    "wrong_credit": "rotate only past action provenance by one within factual history; current actual query action unchanged; maintains outcome/sensor history and is not a fully information-matched null for all possible confounding"
+  },
+  "metrics_legend": [
+    "ood_mse",
+    "ood_effect_mae",
+    "ood_goal_optimal_fraction",
+    "switch_goal_optimal_fraction",
+    "last_validation_checkpoint_relative_improvement"
+  ],
+  "per_seed": [
+    {
+      "seed": 9203,
+      "values": {
+        "native_p43": [
+          0.09530505537986755,
+          0.119635,
+          0.828125,
+          0.41796875,
+          0.01919
+        ],
+        "gru": [
+          0.09683126211166382,
+          0.128414,
+          0.822266,
+          0.38671875,
+          0.19869
+        ],
+        "mlp": [
+          0.133965864777565,
+          0.170624,
+          0.785156,
+          0.24609375,
+          0.06301
+        ],
+        "wrong_credit": [
+          0.09734195470809937,
+          0.130595,
+          0.794922,
+          0.2734375,
+          0.10427
+        ]
+      },
+      "gates": [
+        false,
+        true,
+        false,
+        true
+      ]
+    },
+    {
+      "seed": 9217,
+      "values": {
+        "native_p43": [
+          0.09938863664865494,
+          0.125016,
+          0.811523,
+          0.34765625,
+          0.09303
+        ],
+        "gru": [
+          0.0859055444598198,
+          0.118053,
+          0.827148,
+          0.421875,
+          -0.00433
+        ],
+        "mlp": [
+          0.11952653527259827,
+          0.162418,
+          0.77832,
+          0.2265625,
+          0.10712
+        ],
+        "wrong_credit": [
+          0.09740307182073593,
+          0.128451,
+          0.798828,
+          0.2890625,
+          0.08789
+        ]
+      },
+      "gates": [
+        false,
+        false,
+        false,
+        true
+      ]
+    },
+    {
+      "seed": 9221,
+      "values": {
+        "native_p43": [
+          0.08873652666807175,
+          0.119473,
+          0.824219,
+          0.39453125,
+          0.02013
+        ],
+        "gru": [
+          0.1005263477563858,
+          0.134472,
+          0.814453,
+          0.36328125,
+          0.20385
+        ],
+        "mlp": [
+          0.12778571248054504,
+          0.160611,
+          0.793945,
+          0.2734375,
+          -0.01819
+        ],
+        "wrong_credit": [
+          0.09195972234010696,
+          0.12944,
+          0.782227,
+          0.234375,
+          0.10831
+        ]
+      },
+      "gates": [
+        true,
+        true,
+        false,
+        true
+      ]
+    }
+  ],
+  "gates_legend": [
+    "beat_strongest_baseline_5pct_ood_mse",
+    "beat_GRU_switch_action_goal_by_3pp",
+    "beat_wrong_credit_20pct_ood_mse",
+    "cold_bit_exact"
+  ],
+  "frozen_all_three_seed_positive_gate": false,
+  "learning_verdict": "SCIENTIFIC_DEV_FAIL; no reliable advantage versus original fully trained conventional GRU or wrong-credit control",
+  "competence": "MODEL_PLATEAU_UNVERIFIED: validation MSE changed by more than 1pct in the last 100 steps for most arms; no evidence of fully converged baselines; do not infer general superiority or universal failure",
+  "engineering": {
+    "exact_source_tested": true,
+    "focused_tests_passed": 5,
+    "focused_tests_total": 5,
+    "local_full_dev_run_completed": true,
+    "local_wall_seconds": 22.51795346,
+    "github_script_layout_tests_repaired_and_requalified": true,
+    "original_exact_SHA_windows_full_regression": "NOT_RUN",
+    "original_exact_SHA_ubuntu_wsl_full_regression": "NOT_RUN",
+    "hosted_ci": "NOT_QUALIFIED"
+  },
+  "science": {
+    "original_p38r1_fail_preserved": true,
+    "p43c_0_of_3_fail_preserved": true,
+    "new_protected_first_use": "NOT_RUN",
+    "unfamiliar_external_science": "NOT_RUN",
+    "model_promotion": "NOT_RUN",
+    "FORGE_integration": "NOT_ATTEMPTED"
+  },
+  "authority": {
+    "no_runner_or_scheduler_changes": true,
+    "no_new_controller_or_queue": true,
+    "no_merge": true,
+    "no_paid_api": true
+  }
+}
