@@ -1,0 +1,149 @@
+{
+  "schema": "ttt-hybrid.native-p32.actor-vs-recurrent-source-reward-frozen.v1",
+  "phase": "FROZEN_BEFORE_IMPLEMENTATION_AND_PUBLIC_SOURCE_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "sha": "af574a87a9c81e5dc1b5e703dacf315606494e0a",
+    "pr": 113,
+    "original_owner_run": 42546605153,
+    "dual_platform_full_regression_pass": true,
+    "P31_seed4507_selected_control_fresh_initial_reward": 195.375,
+    "P31_standard_PPO_final_reward": 98.25,
+    "P31_critic_only_reward": 195.375,
+    "P31_KL_anchor_reward": 104.625,
+    "P31_KL_retention_failed": true,
+    "P31_new_model_seed_general_acquisition_failed": true
+  },
+  "question": "Disambiguate whether actor-head changes, recurrent representations, or their interaction are sufficient for the observed real-reward loss of an initially competent continuous history policy under PPO.",
+  "hypotheses": {
+    "selected_initial_positive_control": "Previously selected seed 4507 is explicitly nonindependent; admit causal damage analysis only if new heldout initial return >=150, and full PPO loses >=25 reward points.",
+    "independent_new_controls": "New seeds 4741 and 4759 can establish whether decomposition generalizes; do not claim broad generalization on the historically selected 4507 alone.",
+    "component_sufficiency": "If an actor-only or recurrent-only arm loses >=25 original-source reward relative to same no-update initial policy on new heldouts, that component's trainable update is sufficient for damage under equal training budgets; if both lose, both are individually sufficient; if neither loses but full PPO does, interaction hypothesis supported. This is not identical on-policy trajectory isolation.",
+    "component_protective": "When full PPO demonstrably damages a competent initialization, frozen-recurring actor-only or frozen-actor recurrent-only should retain at least initial-20 while beating full PPO by >=25 in both fresh original and unseen physics variants; avoid claims if initial competence is low.",
+    "reward_skill_acquisition": "Any architecture improvement is separately held to original-source >=150 in all three seeds plus both unseen source pole conditions >=100 and >=25 above full PPO, while fully qualified two-frame conventional non-neural control remains reported."
+  },
+  "source": {
+    "original_S29": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "original_Farama_MIT": "17eff00220d210beda933f78b0e52850022b0690",
+    "original_Cloudpickle_BSD3": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "original_P20_PPO_source_unmodified": true,
+    "original_P30_past_only_motion_transforms_unmodified": true,
+    "original_P31_implementation_unmodified": true,
+    "source_true_velocity_obscured": true,
+    "hidden_world_params_never_provided": true,
+    "training_labels_actual_source_rewards_not_expert_actions": true,
+    "protected_scientific_first_use": false
+  },
+  "training": {
+    "model_seeds": [
+      4507,
+      4741,
+      4759
+    ],
+    "historically_selected_seed4507_not_independent": true,
+    "train_original_source_reset_base": 144000,
+    "rollouts": 96,
+    "parallel_real_source_envs": 8,
+    "original_source_actions_per_rollout": 64,
+    "original_P20_PPO_epochs": 3,
+    "optimizer_batch_size": 256,
+    "learning_rate": 0.0015,
+    "clip": 0.2,
+    "entropy": 0.015,
+    "value_coef": 0.5,
+    "max_grad_norm": 1,
+    "gamma": 0.99,
+    "gae_lambda": 0.95,
+    "source_actions_per_trained_arm_seed": 49152,
+    "optimizer_minibatches_per_trained_arm_seed": 576,
+    "arms": [
+      "full_actor_recurrent_ppo",
+      "actor_head_only_ppo",
+      "recurrent_only_ppo",
+      "critic_only_frozen_policy"
+    ],
+    "all_arms_initial_weights_bitwise_equal": true,
+    "original_source_reset_stream_rule_matched": true,
+    "actual_first_rollout_action_trace_identical": true,
+    "actor_head_only_ppo": "Freeze GRU recurrent parameters; train actor head and critic head. This isolates actor updates while critic remains trainable; full PPO loss and optimizer cadence unchanged.",
+    "recurrent_only_ppo": "Freeze actor-head weights; train recurrent GRU parameters and critic head. This isolates recurrent representation updates with fixed actor head; full PPO loss/cadence unchanged.",
+    "critic_only_frozen_policy": "Freeze all recurrent and actor weights, train only critic head on actual rewards; must reproduce no-update greedy actions and real-source rewards bit-for-bit.",
+    "full_actor_recurrent_ppo": "Original P20 reward-only clipped PPO actor+critic loss, train GRU plus both actor and critic heads. No anchored KL, no altered PPO objective.",
+    "no_update_reference": true,
+    "actor_gradient_and_recurrent_delta_SHA_receipts": true,
+    "no_epoch_selection_on_eval": true,
+    "not_equal_trainable_parameter_counts": "Trainable parameter counts differ by deliberate component isolation and must be reported; same real env action budgets and minibatch optimizer update counts, but compute comparability is not exact."
+  },
+  "evaluation": {
+    "original_heldout_reset_seeds": [
+      145011,
+      145019,
+      145029,
+      145037,
+      145049,
+      145059,
+      145071,
+      145089
+    ],
+    "conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "max_episode_horizon": 200,
+    "arms": [
+      "initial_no_update",
+      "full_actor_recurrent_ppo",
+      "actor_head_only_ppo",
+      "recurrent_only_ppo",
+      "critic_only_frozen_policy",
+      "finite_difference_public_two_frame",
+      "seeded_random"
+    ],
+    "real_public_source_reward_only": true,
+    "new_physical_probe_reset_seeds": [
+      146000,
+      146063
+    ],
+    "probe_max_steps": 16,
+    "probe_actual_source_trajectories_hash": true,
+    "probe_and_eval_seeds_not_training_seeds": true,
+    "must_measure_before_training": true,
+    "cold_exact_weight_and_logit_restoration": true,
+    "no_source_evaluation_gradient_updates": true
+  },
+  "frozen_rules": {
+    "admit_selected_positive_if_initial_original_reward_gte": 150,
+    "damage_if_initial_minus_full_ppo_original_reward_gte": 25,
+    "component_damage_if_initial_minus_component_original_reward_gte": 25,
+    "retention_if_component_original_reward_gte_initial_minus": 20,
+    "retention_must_beat_full_ppo_by_original_reward": 25,
+    "retention_must_beat_full_ppo_by_short_long_reward": 25,
+    "all_three_seed_broad_acquisition_requires_original_reward_gte": 150,
+    "all_three_seed_broad_acquisition_requires_each_heldout_physics_reward_gte": 100,
+    "all_three_seed_broad_acquisition_requires_plus_reward_over_full_ppo": 25,
+    "adverse_initial_actor_control_exact_logits_and_source_traces": true,
+    "compare_each_freeze_component_vs_initial_and_full_on_same_real_heldout_source_reset": true,
+    "report_all_negative_results_and_actual_cost": true,
+    "no_scientific_claim_for_selected_positive_as_three_independent_seeds": true,
+    "fully_trained_conventional_baseline_not_falsely_claimed": "Report original fully qualified 2-frame rule-based 200 source baseline; it is a nonlearned source feedback controller, not a trained neural competitor.",
+    "no_post_result_threshold_tuning": true
+  },
+  "qualification": {
+    "original_existing_owner": "TTT-HYBRID-GPU-WIN",
+    "exact_parent_and_frozen_sha_checks": true,
+    "read_only_clean_original_S29_MIT_BSD3": true,
+    "original_source_negative_controls": true,
+    "full_final_Windows_regression": true,
+    "full_final_Ubuntu_WSL_regression": true,
+    "max_public_source_process_seconds": 650,
+    "no_external_GitHub_actions_downloading": true,
+    "one_original_owner_single_use": true,
+    "no_new_runner_or_controller_or_scheduled_task": true,
+    "no_paid_API": true,
+    "preserve_independent_P30_P26_other_lane_and_other_research": true,
+    "original_owner_SHA256_local_receipts": true,
+    "protected_scientific_first_use_not_run": true,
+    "no_merge_or_model_promotion_or_FORGE_activation": true
+  }
+}
