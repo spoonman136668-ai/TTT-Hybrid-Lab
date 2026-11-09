@@ -1,0 +1,29 @@
+{
+  "schema": "ttt-hybrid.native-p33r1.inherited-p32-guard-field-recovery.v1",
+  "status": "FROZEN_BEFORE_NEW_ONEUSE_JOB",
+  "original": {
+    "run_id": 42583692080,
+    "sha": "71b767432c66c9a7ecd49eb65b52837986c9a839",
+    "original_owner": "TTT-HYBRID-GPU-WIN",
+    "failure": "P32R1_ZERO_SOURCE_ACTIONS_RECOVERY_FENCE_FAILED",
+    "cause": "Inherited historical P32-R1 metadata key was mistakenly renamed original_P33_training_started. The P32-R1 immutable manifest declares origin.P32_original_training_started=False.",
+    "checkout_performed": true,
+    "source_SHA_custody_preflight_finished": false,
+    "Windows_regression_started": false,
+    "WSL_regression_started": false,
+    "real_P33_training_actions_started": false,
+    "cold_replay_started": false,
+    "protected_science_first_use_started": false
+  },
+  "repair": {
+    "only_change": "Preserve exact historical field origin.P32_original_training_started in original P32-R1 read-only manifest guard; keep original P33 frozen protocol, scripts, tests and source splits unchanged; fresh owner single-use workflow with new root.",
+    "scientific_protocol_SHA": "9e3acd8d10ee5499d9ea77c09ed021839fc21e73",
+    "P33_script_blob": "2a2f9c26c5550cdddeb95346fb85df2012972349",
+    "P33_test_blob": "a5c986b21407c697f35a85fd94f21f338fae51a4",
+    "new_workflow_exact_original_source_and_dual_platform_regression_required": true,
+    "source_new_seed_first_use_not_consumed": true,
+    "no_new_runner_scheduler_controller_or_paid_API": true,
+    "no_protected_scientific_first_use": true,
+    "no_merge_promotion_or_FORGE_activation": true
+  }
+}

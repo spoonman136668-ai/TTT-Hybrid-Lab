@@ -1,0 +1,143 @@
+{
+  "schema": "ttt-hybrid.native-p33.fresh-seed-conventional-neural-ppo-replication-frozen.v1",
+  "phase": "PREIMPLEMENTATION_FROZEN_ORIGINAL_PUBLIC_SOURCE_FIRST_USE_UNCONSUMED",
+  "date": "2026-11-09",
+  "parent": {
+    "sha": "7bc49166b83788efc7bfb9da82d39fc420630c46",
+    "pr": 114,
+    "original_owner_run": 42548762315,
+    "Windows_pass": 316,
+    "WSL_pass": 315,
+    "WSL_skip": 1,
+    "science_note": "P32 frozen actor-only achieved 200 on all 3 seeds and original/short/long CartPole physics but historical selected seed 4507 must not be counted as fresh; P32 source combined all-arms aggregator false. Independent replication requires fresh model/source seeds and stronger fully trained conventional neural control."
+  },
+  "hypothesis": "On three entirely new initial recurrent policy weights and real reward-only PPO source training trajectories, does freezing the recurrent trunk while updating only actor/value heads reliably outperform full recurrent actor PPO on original and shifted physical worlds, while remaining competitive with a fully trained approximately parameter-matched nonrecurrent history MLP?",
+  "science_limit": "This is a fresh-seed replication WITHIN the same physical CartPole task family. NOT unfamiliar-world task transfer or general learning. A separate non-CartPole causal task remains required before architectural claims.",
+  "source": {
+    "S29_original_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "Farama_MIT_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "Cloudpickle_BSD3_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "unchanged_original_P20_reward_PPO": true,
+    "unchanged_P30_past_only_velocity_derivative": true,
+    "unchanged_P32_original_experiment": true,
+    "masked_actual_velocity": true,
+    "no_expert_actions_or_teacher": true,
+    "no_hidden_physical_parameters": true,
+    "no_future_observations": true,
+    "no_protected_science_first_use": true
+  },
+  "training": {
+    "new_model_seeds": [
+      4903,
+      4919,
+      4931
+    ],
+    "new_public_train_source_reset_base": 164000,
+    "arms": [
+      "full_actor_recurrent_ppo",
+      "actor_head_only_ppo",
+      "conventional_mlp_full_ppo",
+      "critic_only_frozen_policy"
+    ],
+    "GRU_input_history_rows": 8,
+    "GRU_per_row_real_features": 10,
+    "GRU_hidden_size": 9,
+    "GRU_total_parameters": 597,
+    "MLP_input_same_flattened_history_8x10": true,
+    "MLP_hidden_size": 7,
+    "MLP_total_parameters": 591,
+    "MLP_output_head": "2 discrete action logits and one value; tanh hidden, no recurrent state; full PPO backprop",
+    "PPO_model_training_source_factual_action_budget_per_arm_seed": 49152,
+    "PPO_model_update_minibatches_per_arm_seed": 576,
+    "NUM_ENVS": 8,
+    "ROLLOUTS": 96,
+    "STEPS_PER_ROLLOUT": 64,
+    "PPO_EPOCHS": 3,
+    "MINIBATCH": 256,
+    "learning_rate": 0.0015,
+    "clip": 0.2,
+    "entropy": 0.015,
+    "value_coef": 0.5,
+    "max_grad_norm": 1,
+    "GAE_gamma": 0.99,
+    "GAE_lambda": 0.95,
+    "same_GRU_initial_weights_across_gru_arms": true,
+    "same_initial_physical_reset_and_first_actual_source_action_trace_across_gru_arms": true,
+    "MLP_initial_weights_inherently_different_from_GRU": true,
+    "matched_MLP_source_actions_updates_and_public_observations": true,
+    "MLP_parameter_count_within_percent_of_GRU": 2,
+    "actor_head_only_recurrence_must_be_bitwise_frozen": true,
+    "critic_only_actor_and_recurrence_must_be_bitwise_frozen": true,
+    "source_reset_rule": "The original P32 deterministic real-source public physical seed schedule, unmodified actual CartPole train reward and per-env episode counters.",
+    "no_heldout_epoch_selection": true,
+    "no_scientific_retuning": true
+  },
+  "evaluation": {
+    "new_original_heldout_reset_seeds": [
+      165011,
+      165019,
+      165029,
+      165037,
+      165049,
+      165059,
+      165071,
+      165089
+    ],
+    "source_conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "source_action_horizon": 200,
+    "eval_arms": [
+      "initial_no_update",
+      "full_actor_recurrent_ppo",
+      "actor_head_only_ppo",
+      "conventional_mlp_full_ppo",
+      "critic_only_frozen_policy",
+      "finite_difference_public_two_frame",
+      "seeded_random"
+    ],
+    "new_factual_source_probe_seed_range": [
+      166000,
+      166063
+    ],
+    "max_probe_steps": 16,
+    "original_source_eval_actions_and_consequences_SHA256": true,
+    "cold_replay_verification": "Train one original owner process, serialize every trained GRU and full-history MLP state dict with source SHA and JSON manifest, evaluate once on frozen original public source holdouts; then start a totally new isolated Python process to reload every weight, evaluate all same holdout resets without optimizer, and require exact reward/action/consequence SHA equivalence and no model state change. This is cold inference, not training continuation.",
+    "frozen_public_world_source_only": true,
+    "source_training_and_eval_reset_streams_disjoint": true
+  },
+  "frozen_thresholds": {
+    "per_seed_actor_only_original_reward_min": 150,
+    "per_seed_actor_only_short_and_long_reward_min_each": 100,
+    "per_seed_actor_only_over_full_PPO_original_and_both_shifted_min_margin": 25,
+    "per_seed_actor_only_noninferior_to_fully_trained_MLP_original_and_both_shifted_within_points": 15,
+    "three_fresh_seeds_must_pass_all": true,
+    "cold_replay_requires_three_seeds_four_models_three_physics_eight_resets_exact_trace": true,
+    "critic_only_actor_logits_and_heldout_episodes_exactly_equal_untrained": true,
+    "conventional_two_frame_rule_controller_frozen_source_baseline_200_recorded": true,
+    "failure_of_MLP_training_must_not_be_misrepresented_as_architectural_superiority": true,
+    "if_actor_only_passes_all_thresholds": "Positive fresh-seed CartPole-family replication; SCIENTIFIC_PASS for unfamiliar task still NO.",
+    "all_negative_results_retained": true,
+    "all_controller_initializations_training_curves_and_real_action_budgets_recorded": true,
+    "no_posthoc_threshold_or_seed_changes": true
+  },
+  "qualification": {
+    "original_existing_owner": "TTT-HYBRID-GPU-WIN",
+    "one_original_owner_single_use_workflow": true,
+    "original_git_and_source_blob_SHA_and_cleanliness": true,
+    "original_S29_MIT_BSD3_SHA_readback": true,
+    "mandatory_full_final_Windows_regression": true,
+    "mandatory_full_final_Ubuntu_WSL_regression": true,
+    "negative_controls": true,
+    "original_cpu_toolchain_pinned": true,
+    "max_train_and_cold_source_seconds": 750,
+    "no_new_runner_or_controller_or_scheduled_tasks": true,
+    "no_paid_API": true,
+    "original_other_research_lanes_untouched": true,
+    "local_owner_SHA256_receipts": true,
+    "no_protected_scientific_first_use": true,
+    "no_merge_model_promotion_or_FORGE_activation": true
+  }
+}
