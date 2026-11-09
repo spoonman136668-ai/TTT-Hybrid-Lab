@@ -1,0 +1,139 @@
+{
+  "schema": "ttt-hybrid.native-p27.state-dependent-physical-effect-frozen.v1",
+  "date": "2026-11-08",
+  "state": "FROZEN_BEFORE_IMPLEMENTATION_OR_EXTERNAL_SOURCE_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "PR": 100,
+    "sha": "c6e26fd43c783403f6037cc1e960b80f66320c42",
+    "original_P25R2_owner_run": 42538627478,
+    "original_P25R2_first_pass_supported": true,
+    "original_P25R2_strong_ridge_lower_MSE": true,
+    "original_P25R2_head_limited": "GRU yhat = Linear([h,a]) implies action contrast 2*W_action independent of h; impossible history-conditioned effect",
+    "independent_P26_PR": 101,
+    "P26_original_owner_run": 42539002951,
+    "P26_source_verification_failure_unmodified": true
+  },
+  "hypothesis": "Given real matched action interventions from physical source conditions that differ in previously unseen pole lengths, an interaction-capable recurrent model can learn how action consequences vary with past observed continuous state and recent factual actions, and beat a train-fitted constant-action-effect and context-misaligned same-model controls on heldout real physical histories.",
+  "null": "If heldout factual action-effect heterogeneity is below predeclared floor, the source conditions do not test the mechanism; if it exists but recurrent interaction fails heldout improvements, mechanism unsupported. Never conflate failures with source/infrastructure errors.",
+  "source": {
+    "owner": "S29",
+    "owner_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_Farama_Gymnasium_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "cloudpickle_BSD3_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "source_engine": "CartPole-v1",
+    "original_source_mutations": false,
+    "original_environment_parameters_only": "per instance length and polemass_length=masspole*length before reset, physical source code unchanged",
+    "scientific_first_use": false,
+    "protected_S26_S27_consumed": false
+  },
+  "physical_protocol": {
+    "observer": "Last 8 factual rows of [public cart position, 0 masked cart velocity, public pole angle, 0 masked angular velocity, previous ACTUALLY EXECUTED action +/-1, previously OBSERVED reward]; source length never provided to the learner",
+    "train_lengths": [
+      0.35,
+      0.5,
+      0.65
+    ],
+    "validation_lengths": [
+      0.35,
+      0.5,
+      0.65
+    ],
+    "heldout_lengths": [
+      0.42,
+      0.58
+    ],
+    "independent_public_seeds": {
+      "training": [
+        120000,
+        120127
+      ],
+      "validation": [
+        120500,
+        120531
+      ],
+      "evaluation": [
+        121000,
+        121095
+      ]
+    },
+    "prefix_lengths": [
+      4,
+      8,
+      12
+    ],
+    "prefix_actions": "independent seeded balanced 0/1 pairs; replay same exact executed actions in both original source instances; no expert or hidden source labels",
+    "intervention": "Sister worlds identical real reset and prefix; actually execute opposite source actions 0 and 1 for one step; subsequently ACTUALLY EXECUTE seven predeclared identical actions [0,1,1,0,0,1,1] on both actual source instances, observing all consequences. No simulator-generated unexecuted counterfactuals.",
+    "effect_target": "Two-component [cart position delta, 10* pole angle delta] after same 8-step action horizon; effect = observed branch1 minus observed branch0; discard paired comparison with logged reason if either source branch terminates or truncates before completing horizon. Record and include both trajectory hashes. Never impute nonexecuted outcomes.",
+    "valid_pair_floor_per_split": 0.6,
+    "train_length_condition_heldout_denied": true,
+    "evaluation_seeds_never_fit_or_model_selected": true,
+    "total_real_source_steps_logged": true,
+    "source_only_continuous_history": true
+  },
+  "models": {
+    "seeds": [
+      3851,
+      3863,
+      3877
+    ],
+    "architecture": "Gated recurrent 6->9 history hidden; contextual effect head e(h) and state head m(h): yhat=m(h)+a*e(h) with action-coded -1/+1. No tokenizer/transformer.",
+    "train_epochs": 96,
+    "batch_size": 256,
+    "adamw_lr": 0.005,
+    "optimizer": "AdamW exact source CPU torch pinned",
+    "arms": [
+      "contextual_factual_GRU",
+      "additive_constant_effect_GRU",
+      "shuffled_history_context_GRU",
+      "trained_contextual_MLP",
+      "trained_interaction_ridge"
+    ],
+    "comparators": [
+      "train_fitted_constant_effect_oracle",
+      "source_truth_zero_effect_predictor"
+    ],
+    "sham_training": "same action labels and factual targets but permute full historical x independently from y within each training epoch, with model-seed-controlled random permutation; preserves marginal observation history and raw effect labels but destroys contextual association. Test true matched history.",
+    "additive": "same recurrent state predictor but action-effect head e(h) evaluated at zero hidden, so effect cannot vary with h. Keep module/optimizer shape; report effective active parameter count and identical update budget.",
+    "conventional_mlp": "History-flat MLP mean+action*effect head; trained for exactly equal epochs, examples, batches. Report parameters and compute.",
+    "conventional_ridge": "Factual train-fitted history + actual action + interaction with historical public position/angle finite differences and previous executed action. Ridge regularization fixed 1e-5, no heldout tuning.",
+    "matched_information_and_source_pairs": true,
+    "identical_train_val_eval_pairs_across_all_arms": true,
+    "same_gru_initial_weights_for_true_vs_sham_vs_additive": true,
+    "all_training_rng_streams_logged": true,
+    "model_weights_sha256_required": true
+  },
+  "predeclared_metrics": {
+    "effect_MSE": "Mean over all heldout actual source sister pairs and both target coordinates of (predicted_effect - factual_effect)^2.",
+    "constant_effect": "Mean factual action effect on TRAIN source pairs, then predict same effect on all heldout histories; no evaluation calibration.",
+    "effect_context_variance": "Mean heldout squared deviation of factual effect from train fitted constant effect. Require >= 0.0001 on EACH heldout length; otherwise do not claim state-dependent mechanism tested.",
+    "effect_skill_vs_constant": "1 - GRU_effect_MSE / train_fitted_constant_effect_MSE. This is not centered statistical R2.",
+    "all_three_seeds_required": true,
+    "per_heldout_length_min_effect_skill_vs_constant": 0.2,
+    "per_heldout_length_max_mse_ratio_vs_shuffled_context": 0.8,
+    "per_heldout_length_max_mse_ratio_vs_additive": 0.8,
+    "pooled_predicted_effect_variance_at_least_fraction_of_true": 0.15,
+    "pooled_predicted_effect_variance_at_most_fraction_of_true": 4,
+    "zero_gradient_over_evaluation": true,
+    "independent_test_same_start_observations": true,
+    "strongest_conventional_architecture_superiority_claim_requires": "Across all three seeds, MSE <=0.9*lowest(MSE trained MLP, trained ridge) on BOTH heldout lengths with matched whole-process compute; otherwise not demonstrated.",
+    "report_all_negative_outcomes_and_failure_modes": true,
+    "no_post_result_tuning": true
+  },
+  "qualification": {
+    "original_owner": "TTT-HYBRID-GPU-WIN",
+    "source_pins_and_original_negative_controls_required": true,
+    "final_full_Windows_regression_required": true,
+    "final_full_Ubuntu_WSL_regression_required": true,
+    "bounded_dev_wall_seconds": 600,
+    "zero_download_actions_if_transport_unavailable": true,
+    "no_new_runner_controller_or_paid_API": true,
+    "local_log_sha256_and_readback": true,
+    "archive_all_real_source_events": true,
+    "no_protected_science_first_use": true,
+    "unmerged_draft": true,
+    "model_promotion": false,
+    "FORGE_research_loop_integration": false,
+    "P26_continual_learning_branch_untouched": true
+  }
+}
