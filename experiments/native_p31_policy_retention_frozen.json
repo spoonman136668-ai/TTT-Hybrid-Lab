@@ -1,0 +1,148 @@
+{
+  "schema": "ttt-hybrid.native-p31.reward-only-policy-retention-frozen.v1",
+  "phase": "PROSPECTIVE_FROZEN_BEFORE_CODE_OR_SOURCE_USE",
+  "date": "2026-11-08",
+  "original": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_PR": 110,
+    "parent_exact_SHA": "8fe7cb4b9e1e4e9b9188065671eed005911819f1",
+    "original_owner_run": 42544081463,
+    "original_owner_full_Windows_tests_passed": 304,
+    "original_owner_WSL_tests_passed": 303,
+    "original_WSL_skips": 1,
+    "prior_P30_frozen_150_target_failed": true,
+    "prior_P30_untrained_seed4507_original_return": 188.25,
+    "prior_P30_trained_seed4507_original_return": 95.375,
+    "P30_original_reward_only_feature_gain_all_three_seeds": true,
+    "separate_independent_P30_inflight_run": 42544089635,
+    "independent_P26_retention_work_untouched": true
+  },
+  "question": "On genuinely fresh real-source evaluation resets, does PPO training destroy initially useful history-motion control, and does a prospectively fixed KL-to-initial-policy penalty prevent damage while improving reward-only acquisition? Distinguish actor damage from critic-only updates.",
+  "hypotheses": [
+    "If the historical favorable initialization seed4507 has fresh-seed source original return >=150, original P20 PPO training may lose >25 return on this fresh heldout source.",
+    "Adding a fixed β=1 penalty to KL(initial_policy || current_actor) on actual on-policy PPO minibatch states will preserve fresh-source initial competence better than standard PPO, with identical initial weights/training source seeds and budget.",
+    "A separate critic-only arm, with recurrent trunk/actor frozen, preserves exactly its initial greedy action map while updating value head; this is a nonlearning-policy reference, not an improved learner."
+  ],
+  "source": {
+    "original_S29_sha": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT_Farama_sha": "17eff00220d210beda933f78b0e52850022b0690",
+    "cloudpickle_BSD3_sha": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "source_code_unchanged": true,
+    "original_P20_PPO_hyperparameters_unchanged_except_declared_ablation": true,
+    "original_P30_past_only_feature_transform_unchanged": true,
+    "no_expert_actions": true,
+    "no_privileged_velocity_or_length": true,
+    "real_reward_only_actor_training": true,
+    "protected_science_first_use": false
+  },
+  "training": {
+    "model_initialization_seeds": [
+      4507,
+      4621,
+      4637
+    ],
+    "seed4507_selected_a_priori_from_P30_as_favorable": "known development-seed positive control; never treat as independent discovery",
+    "other_two_new_seeds": true,
+    "new_public_original_source_reset_base": 134000,
+    "actions_per_trained_arm_per_seed": 49152,
+    "rollouts": 96,
+    "parallel_real_source_envs": 8,
+    "steps_per_rollout": 64,
+    "ppo_epochs": 3,
+    "minibatch": 256,
+    "AdamW_lr": 0.0015,
+    "clip": 0.2,
+    "entropy_coefficient": 0.015,
+    "value_coef": 0.5,
+    "max_grad_norm": 1,
+    "GAE_gamma": 0.99,
+    "GAE_lambda": 0.95,
+    "trained_arms": [
+      "standard_motion_ppo",
+      "initial_KL_anchored_motion_ppo",
+      "critic_only_frozen_policy"
+    ],
+    "actor_and_recurrent_same_init": true,
+    "actual_train_reset_stream_identical_start_all_arms": true,
+    "initial_policy_KL_beta": 1,
+    "KL_formula": "KL(categorical initial actor || categorical current actor) mean over the SAME on-policy factual source states as PPO update. Detached frozen reference logits. Coefficient exactly 1.0; no gradient to reference. Add to standard P20 actor+critic+entropy clipped loss.",
+    "critic_only": "Freeze ALL recurrent and actor parameters; AdamW update critic head only using same real source returns/value loss, same 576 minibatch update counts, no actor loss gradients, no KL. Distinguish effective parameter counts and updates.",
+    "normalization": "same original P30 deterministic past-only motion features and source P19 six raw scale, no fitted normalization",
+    "initial_no_update_reference": true,
+    "training_curves_every_16_rollouts": true,
+    "gradient_norm_and_KL_drift_receipts": true,
+    "early_stopping_or_best_model_selection": false,
+    "whole_process_including_data_collection": true,
+    "no_train_source_replay_or_reuse_of_P30_reset_streams": true
+  },
+  "evaluation": {
+    "new_public_original_reset_seeds": [
+      140011,
+      140019,
+      140029,
+      140037,
+      140049,
+      140059,
+      140071,
+      140089
+    ],
+    "conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "max_real_episode_actions": 200,
+    "arms": [
+      "initial_no_update",
+      "standard_motion_ppo",
+      "initial_KL_anchored_motion_ppo",
+      "critic_only_frozen_policy",
+      "finite_difference_public_two_frame",
+      "seeded_random"
+    ],
+    "identical_real_source_reset_and_original_observations": true,
+    "dynamics_length_modified_only_per_instance": true,
+    "no_eval_gradient_updates": true,
+    "source_return_true_sum_of_rewards": true,
+    "source_actions_and_hashes_retained": true,
+    "predeclared_drift_probe_reset_seeds": [
+      141000,
+      141063
+    ],
+    "predeclared_drift_probe_actions": 16,
+    "drift_probe_no_training": true,
+    "all_initialization_source_evaluation_happens_before_training": true,
+    "never_peek_at_new_eval_to_select_hyperparameters": true
+  },
+  "frozen_metrics": {
+    "reward_metric": "real original source environment return out of 200, mean over 8 independent heldout resets per seed and condition",
+    "all_three_seeds_primary_optimization_support": "KL anchored must exceed standard by >=25 on original and average of both unseen source physics variants, each seed; anchored must reach >=150 original for all 3 seeds and >=100 on each heldout variant per seed; actor drift lower than standard.",
+    "historical_favorable_seed4507_retest_admission": "If initial_no_update fresh original-source score >=150, damage criterion compares same heldout source to standard PPO and accepts >=25 point decline as reproducible exploratory damage. Otherwise 'cannot adjudicate known initial competence' instead of claiming damage.",
+    "seed4507_retention_success": "If admitted, anchored final original return >=initial_no_update_return -20 and >=standard_motion_ppo_return+25; impossible to claim acquisition if anchored merely retains initial skill, record separately.",
+    "critic_policy_identity": "must have EXACT initial vs critic-only greedy action matches for all post-train fixed source probe histories, zero KL, equal true returns on each heldout original source episode; fail engineering if violated.",
+    "actor_KL_probe": "mean KL(initial||trained) over original fresh source publicly executed pre-registered probe histories, no hidden source labels",
+    "worst_case_negative_control": "Fully qualified original finite-difference 2-frame conventional rule-based 200/200 prior benchmark; must run and report, never call fully trained neural baseline.",
+    "source_reward_only_acquisition_no_regression_claim": "If anchored fails frozen 150 target or long/short transfer, report science fail even if improved over standard. Superiority over conventional requires equal or better scores in ALL 3 seeds and conditions.",
+    "scientific_reproducibility": "3 frozen seeds including one historically selected positive control; do not call independent 3-seed scientific PASS if only the previously identified seed meets retention.",
+    "do_not_tune_after_results": true,
+    "report_training_learning_curves_and_negative_outcomes": true
+  },
+  "qualification": {
+    "exact_original_parent_sha": "8fe7cb4b9e1e4e9b9188065671eed005911819f1",
+    "one_original_registered_runner": "TTT-HYBRID-GPU-WIN",
+    "owner_isolation": true,
+    "original_source_S29_MIT_BSD3_exact_sha_and_clean": true,
+    "full_final_Windows_regression": true,
+    "full_final_Ubuntu_WSL_regression": true,
+    "source_negative_controls": true,
+    "max_experiment_seconds": 600,
+    "no_third_party_actions_codeload": true,
+    "no_new_runner_or_controller_or_scheduler": true,
+    "no_paid_API": true,
+    "preserve_independent_P30_P26_owners": true,
+    "no_protected_scientific_first_use": true,
+    "no_merge_or_model_promotion": true,
+    "no_FORGE_activation": true,
+    "local_factual_receipts_sha256": true
+  }
+}

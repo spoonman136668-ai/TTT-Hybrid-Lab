@@ -1,0 +1,33 @@
+{
+  "schema": "ttt-hybrid.native-p31r2.original-experiment-entrypoint-recovery-frozen.v1",
+  "status": "FROZEN_BEFORE_RECOVERY_WORKFLOW_AND_SOURCE_USE",
+  "date": "2026-11-08",
+  "original_run": {
+    "id": 42546004191,
+    "sha": "41b6f7f082cfaeb332200b3c8f2820ac35624511",
+    "original_source_and_source_negative_checks": "PASS",
+    "full_Windows_regression": "310_PASS",
+    "full_Ubuntu_WSL_regression": "309_PASS_ONE_SKIP",
+    "engineered_failure": "Workflow executed scripts/native_p30_reward_motion_ppo_dev.py instead of scripts/native_p31_policy_retention_dev.py.",
+    "trace": "P30_PROTECTED_SCIENTIFIC_FIRST_USE_DENIED",
+    "failure_point": "P30 require_dev() executes before P30 source admission or training; 0 factual P31 source actions",
+    "original_P31_script_started": false,
+    "original_P31_training_started": false,
+    "original_P31_eval_started": false,
+    "protected_first_use_consumed": false
+  },
+  "repair": {
+    "only_effectful_change": "Change single WSL Python script invocation from $root/scripts/native_p30_reward_motion_ppo_dev.py to $root/scripts/native_p31_policy_retention_dev.py. Keep Git blob original P30 hash path and new P31 path distinct. Use unique source checkout root and unique one-time workflow.",
+    "no_change_to_P31_original_script_blob": "0b2ae9eebf2e36ae659fddd8cf88178f12b23c4e",
+    "no_change_to_P31_original_tests_blob": "77762d93fab492a87b2856366fd927cdb7fff3e4",
+    "prospective_original_P31_freeze_sha": "ded38602dbc530f5457d92337cf8cc5c1611f865",
+    "original_P31_seeds_and_thresholds_untouched": true,
+    "full_final_Windows_and_Ubuntu_WSL_mandatory_again": true,
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "no_new_runner_or_controller": true,
+    "no_scheduler": true,
+    "no_external_API_payment": true,
+    "no_scientific_first_use": true,
+    "no_model_promotion_or_merge_or_FORGE_activation": true
+  }
+}

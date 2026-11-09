@@ -1,0 +1,214 @@
+# P31 reward-only original-source PPO policy damage versus fixed KL-to-initial actor.
+# Original owner only, new seeds except predeclared 4507 historical positive control.
+# No independent lane or protected first-use changes; no external downloadable GitHub Actions.
+name: Native P31 source-locked policy retention and KL optimizer once
+on:
+  push:
+    branches:
+      - engineering/native-p31-frozen-policy-kl-retention-dev-20261108
+    paths:
+      - .github/workflows/native-p31-policy-retention-once.yml
+permissions:
+  contents: read
+concurrency:
+  group: native-p31-policy-retention-oneuse
+  cancel-in-progress: false
+jobs:
+  native-exact-source-public-dev:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/native-p31-frozen-policy-kl-retention-dev-20261108' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 26
+    env:
+      GH_REPO_TOKEN: ${{ github.token }}
+    steps:
+      - name: Native exact-SHA Git transport, immutable source custody and original science fence
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          if($env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or $env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1'){throw 'P31_ORIGINAL_OWNER_ONEUSE_DENIED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p31-candidate'
+          if(Test-Path -LiteralPath $root){throw 'P31_ROOT_EXISTS_NO_OVERWRITE'}
+          if([string]::IsNullOrWhiteSpace($env:GH_REPO_TOKEN)){throw 'P31_READONLY_GIT_TOKEN_MISSING'}
+          $env:GIT_TERMINAL_PROMPT='0'
+          $env:GIT_LFS_SKIP_SMUDGE='1'
+          $env:GIT_CONFIG_COUNT='1'
+          $env:GIT_CONFIG_KEY_0='http.https://github.com/.extraheader'
+          $auth=[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes("x-access-token:$env:GH_REPO_TOKEN"))
+          $env:GIT_CONFIG_VALUE_0="Authorization: Basic $auth"
+          try {
+            & git clone --quiet --no-tags --single-branch --depth 160 --branch engineering/native-p31-frozen-policy-kl-retention-dev-20261108 "https://github.com/$env:GITHUB_REPOSITORY.git" "$root"
+            if($LASTEXITCODE -ne 0){throw 'P31_NATIVE_READONLY_GIT_CLONE_FAILED'}
+          } finally {
+            Remove-Item Env:\GIT_CONFIG_COUNT -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_KEY_0 -ErrorAction SilentlyContinue
+            Remove-Item Env:\GIT_CONFIG_VALUE_0 -ErrorAction SilentlyContinue
+            Remove-Variable auth -ErrorAction SilentlyContinue
+          }
+          $head=(& git -C $root rev-parse HEAD|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA){throw 'P31_EXACT_CANDIDATE_SHA_NOT_CHECKED_OUT'}
+          & git -C $root merge-base --is-ancestor '8fe7cb4b9e1e4e9b9188065671eed005911819f1' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P31_ORIGINAL_P30_QUALIFIED_SOURCE_NOT_ANCESTOR'}
+          & git -C $root merge-base --is-ancestor 'ded38602dbc530f5457d92337cf8cc5c1611f865' HEAD
+          if($LASTEXITCODE -ne 0){throw 'P31_PROSPECTIVE_RETENTION_PROTOCOL_NOT_ANCESTOR'}
+          $m=Get-Content -LiteralPath (Join-Path $root 'experiments/native_p31_policy_retention_frozen.json') -Raw | ConvertFrom-Json
+          if($m.schema -cne 'ttt-hybrid.native-p31.reward-only-policy-retention-frozen.v1' -or $m.phase -cne 'PROSPECTIVE_FROZEN_BEFORE_CODE_OR_SOURCE_USE' -or $m.original.parent_exact_SHA -cne '8fe7cb4b9e1e4e9b9188065671eed005911819f1' -or $m.source.protected_science_first_use -ne $false -or @($m.training.model_initialization_seeds).Count -ne 3 -or $m.training.model_initialization_seeds[0] -ne 4507 -or @($m.training.trained_arms).Count -ne 3 -or $m.training.initial_policy_KL_beta -ne 1.0 -or $m.training.new_public_original_source_reset_base -ne 134000 -or @($m.evaluation.new_public_original_reset_seeds).Count -ne 8){throw 'P31_FROZEN_SCIENCE_PROTOCOL_OR_SOURCE_DRIFT'}
+          $protected=@{
+            'source_pins.json'='1438b51f8548db6bfe7e04805ba8c156e4b5b630';
+            'scripts/native_p18_real_cartpole_factual_dev.py'='0c5c0079614624d1264e477ea90b483cbe63d586';
+            'scripts/native_p20_reward_only_ppo_dev.py'='cd9507b3cd86bca0d1507b1e234dcaaf5919e8f4';
+            'scripts/native_p25_paired_action_consequence_dev.py'='6c07b1738c8c50f2ca9d8e13eb0ebee01424f45e';
+            'tests/test_native_p25_paired_action_consequence_dev.py'='97df4ad8c0543a1a7e60eb98d69dcff9c8c9b704';
+            'experiments/native_p25_paired_action_consequence_frozen.json'='05af59eb4b0d980a18c0621c94e8265b3fe9d52f';
+            'experiments/native_p25r1_json_custody_repair_frozen.json'='8a4bdfbc3af2f8b4ff9d2894d9933a734d5783f3';
+            'experiments/native_p27_state_dependent_effect_frozen.json'='0daeb55af2c80b7fcda4fd451f6ef0ff65a556e6';
+            'scripts/native_p27_state_dependent_effect_dev.py'='16a87a9a18be588991377a9bed1dccc298edfba7';
+            'tests/test_native_p27_state_dependent_effect_dev.py'='c28c1996836d8daea710d3150ce16e35cc0b4efe';
+            'experiments/native_p28_physical_history_identifiability_frozen.json'='986d4f89c219e95f653e6abd160b82eb4543fb02';
+            'scripts/native_p28_physical_history_identifiability_dev.py'='156185a18b3b8aee23991ee01fd67ea6679c3fe4';
+            'tests/test_native_p28_physical_history_identifiability_dev.py'='ab9eb99883fe92b5b482e38250d10fd39d59e0f6';
+            'experiments/native_p29_feature_access_frozen.json'='8662dc5315475e018dc3a53dfd02d1b230a45983';
+            'scripts/native_p29_feature_access_dev.py'='a5dacc8b3b7a6900f33d485f9b88a4289265d18c';
+            'tests/test_native_p29_feature_access_dev.py'='7058bdf8444bef3c2e9e2e71af8eb8e52f6d7ea0';
+            'experiments/native_p30_reward_motion_ppo_frozen.json'='fb17b091ec94dcae2e8164a552f3fd23646213fd';
+            'scripts/native_p31_policy_retention_dev.py'='6d864593732cda1413a6338bc2e42ad9c6a85629';
+            'tests/test_native_p30_reward_motion_ppo_dev.py'='885739b1f6f5c4ee19029bcb0c488dc6671e02fc';
+            'experiments/native_p30r1_workflow_recovery_frozen.json'='be8b8f0615658c98ac6d67750a8bd945acd5e96e';
+            'experiments/native_p31_policy_retention_frozen.json'='8d1d5f62e938f59151b3b4c847de8beb47bc37d3';
+            'scripts/native_p31_policy_retention_dev.py'='0b2ae9eebf2e36ae659fddd8cf88178f12b23c4e';
+            'tests/test_native_p31_policy_retention_dev.py'='77762d93fab492a87b2856366fd927cdb7fff3e4'
+          }
+          foreach($name in $protected.Keys){
+            $blob=(& git -C $root hash-object -- $name|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $blob -cne $protected[$name]){throw "P31_SOURCE_BLOB_CHANGED:$name"}
+          }
+          $source=@{
+            'native-p25-s29-owner'='30c27ca4865e16b7574ee2b562879108db2b3796';
+            'native-p25-mit-gym'='17eff00220d210beda933f78b0e52850022b0690';
+            'native-p25-bsd3-cloudpickle'='ff54d93221082d4ce22630ecdb8fbbccc60f3b62'
+          }
+          foreach($name in $source.Keys){
+            $dir=Join-Path $env:GITHUB_WORKSPACE $name
+            if(-not(Test-Path -LiteralPath $dir -PathType Container)){throw "P31_ORIGINAL_READONLY_SOURCE_MISSING:$name"}
+            $sha=(& git -C $dir rev-parse HEAD|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $sha -cne $source[$name]){throw "P31_ORIGINAL_SOURCE_SHA_MISMATCH:$name"}
+            $dirty=(& git -C $dir status --porcelain --untracked-files=all|Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $dirty){throw "P31_ORIGINAL_SOURCE_DIRTY:$name"}
+          }
+          $dirty=(& git -C $root status --porcelain --untracked-files=all|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P31_CANDIDATE_DIRTY_BEFORE_TEST'}
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'P31_QUALIFIED_CPU_INTERPRETER_MISSING'}
+          $versions=@(& $py -I -B -c 'import torch,pytest,numpy;print(torch.__version__);print(pytest.__version__);print(numpy.__version__)')
+          if($LASTEXITCODE -ne 0 -or $versions.Count -ne 3 -or $versions[0] -cne '2.5.1+cpu' -or $versions[1] -cne '8.3.4' -or $versions[2] -cne '1.26.4'){throw 'P31_QUALIFIED_CPU_TOOLCHAIN_DRIFT'}
+          Write-Output "P31_ORIGINAL_OWNER_SOURCE_AND_TRANSPORT=PASS SHA=$head PRIOR_P29_QUALIFIED_P26_UNCHANGED"
+      - name: Mandatory full Windows final candidate regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p31-candidate'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1';$env:OMP_NUM_THREADS='1';$env:PYTHONDONTWRITEBYTECODE='1';$env:PYTHONHASHSEED='0'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt (Join-Path $root 'local_runs\native_p31_windows.json')
+          if($LASTEXITCODE -ne 0){throw 'P31_WINDOWS_FULL_FINAL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $root 'local_runs\native_p31_windows.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P31_WINDOWS_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P31_WINDOWS_FULL_AND_ORIGINAL_NEGATIVES=PASS'
+      - name: Mandatory full Ubuntu WSL final candidate regression and original negative controls
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or -not $lp -or -not $who){throw 'P31_ORIGINAL_UBUNTU_WSL_OWNER_DRIFT'}
+          $root="$lp/native-p31-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 650s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/qualify_cpu.py" --receipt "$root/local_runs/native_p31_linux.json"
+          if($LASTEXITCODE -ne 0){throw 'P31_UBUNTU_FULL_FINAL_REGRESSION_FAILED'}
+          $q=Get-Content -LiteralPath (Join-Path $env:GITHUB_WORKSPACE 'native-p31-candidate\local_runs\native_p31_linux.json') -Raw|ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or $q.tests.exit_code -ne 0 -or $q.negative_control.pass -ne $true){throw 'P31_UBUNTU_NEGATIVE_OR_SHA_FAIL'}
+          Write-Output 'P31_UBUNTU_FULL_AND_ORIGINAL_NEGATIVES=PASS'
+      - name: One real reward PPO policy retention versus fixed initial KL and critic only control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $lp=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE"|Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un|Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or -not $who -or -not $lp){throw 'P31_SOURCE_WSL_NOT_AVAILABLE'}
+          $root="$lp/native-p31-candidate"
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 710s /usr/bin/env 'NATIVE_P20_DEV_ONLY=1' 'NATIVE_P31_DEV_ONLY=1' 'CUDA_VISIBLE_DEVICES=-1' 'OMP_NUM_THREADS=1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $py -I -B "$root/scripts/native_p30_reward_motion_ppo_dev.py" --s29-root "$lp/native-p25-s29-owner" --source-root "$lp/native-p25-mit-gym" --cloudpickle-root "$lp/native-p25-bsd3-cloudpickle" --receipt "$root/local_runs/native_p31_policy_retention.json"
+          if($LASTEXITCODE -ne 0){throw 'P31_GENUINE_FACTUAL_ACTION_ASSAY_FAILED'}
+          $rp=Join-Path $env:GITHUB_WORKSPACE 'native-p31-candidate\local_runs\native_p31_policy_retention.json'
+          $p=Get-Content -LiteralPath $rp -Raw|ConvertFrom-Json
+          if($p.engineering -cne 'PASS_ORIGINAL_PUBLIC_DEV_ONLY' -or $p.protected_scientific_first_use -cne 'NOT_RUN' -or @($p.records).Count -ne 3 -or $p.total_actual_original_train_actions -ne 442368 -or $p.total_source_optimizer_minibatches -ne 5184 -or $p.original_source_probe.original_source_executed_probe_actions -lt 500 -or $p.P30_qualifying_negative_kept -ne $true -or $p.no_accepted_model_or_FORGE_activation -ne $true){throw 'P31_REAL_PPO_RETENTION_SOURCE_OR_SCIENCE_FENCE_FAILED'}
+          $checksum=(Get-FileHash -Algorithm SHA256 -LiteralPath $rp).Hash.ToLowerInvariant()
+          $summary=@()
+          foreach($rec in @($p.records)){
+            $train=@{}
+            foreach($name in @('standard_motion_ppo','initial_KL_anchored_motion_ppo','critic_only_frozen_policy')){
+              $t=$rec.actual_train_receipts.PSObject.Properties[$name].Value
+              $train[$name]=@{
+                first_real_source_rollout_sha256=$t.first_512_real_source_actions_trace_sha256
+                real_training_actions=$t.real_original_train_source_actions
+                update_batches=$t.original_ppo_minibatch_updates
+                actual_train_trace_sha256=$t.original_actual_action_consequence_sha256
+                initial_weights_sha256=$t.initial_source_actor_weights_sha256
+                cold_model_weights_sha256=$t.trained_source_actor_critic_weights_sha256
+                anchored_source_KL_mean=$t.actual_minibatch_initial_policy_KL_mean
+                actor_trunk_frozen=$t.critic_only_actor_recurrent_frozen
+                full_training_reward_curve=$t.train_curve_actual_source_episodes
+              }
+            }
+            $summary+=@{
+              model_seed=$rec.model_seed
+              heldout_original_and_modified_source_returns=$rec.real_source_reward_means_by_condition
+              frozen_optimization_rules=$rec.frozen_general_optimization_rules
+              known_initial_control_selected=$rec.selected_historically_favorable_initialization
+              selected_seed_initial_still_qualified=$rec.fresh_original_initial_score_admitted_for_damage_test
+              selected_seed_PPO_damage=$rec.fresh_seed_4507_PPO_damage_25
+              selected_seed_anchored_retention=$rec.fresh_seed_4507_anchored_retention_20_and_gain_25
+              fixed_real_source_probe_KL=$rec.source_factual_drift_probe
+              initial_source_rollout_equivalence=$rec.equal_PPO_initial_source_trajectory_sha256
+              original_source_training_receipts=$train
+            }
+          }
+          Write-Output "P31_COMPLETE_REAL_SOURCE_RECEIPT_SHA256=$checksum"
+          $report=@{
+            status=$p.engineering
+            frozen_optimizer_acquisition=$p.frozen_optimizer_acquisition_all_seeds
+            selected_initial_source_competence_qualified=$p.selected_seed_4507_original_initial_admitted
+            selected_initial_source_PPO_damage=$p.selected_seed_4507_damaged_by_standard_PPO
+            selected_initial_source_fixed_KL_retention=$p.selected_seed_4507_retained_by_fixed_KL
+            protected_scientific_first_use=$p.protected_scientific_first_use
+            actual_total_train_source_actions=$p.total_actual_original_train_actions
+            actual_total_minibatch_updates=$p.total_source_optimizer_minibatches
+            actual_total_source_evaluation_actions=$p.total_original_eval_real_actions
+            original_fixed_source_probe=$p.original_source_probe
+            whole_original_process_seconds=$p.whole_original_process_seconds
+            seeds=$summary
+          }
+          Write-Output ("P31_FROZEN_REWARD_POLICY_RETENTION_SUMMARY_JSON="+($report|ConvertTo-Json -Compress -Depth 12))
+          Write-Output "P31_EXACT_OWNER_ENGINEERING=PASS OPTIMIZER_ACQUISITION=$($p.frozen_optimizer_acquisition_all_seeds) INITIAL_DAMAGE=$($p.selected_seed_4507_damaged_by_standard_PPO) ANCHORED_RETENTION=$($p.selected_seed_4507_retained_by_fixed_KL)"
+      - name: Preserve local P31 source-policy receipts and hashes without downloadable GitHub actions
+        if: always()
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Continue'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'native-p31-candidate'
+          if(Test-Path -LiteralPath (Join-Path $root 'local_runs')){
+            $dir=Join-Path $root 'local_runs'
+            $files=@(Get-ChildItem -LiteralPath $dir -File -Filter 'native_p31_*.json')
+            if($files.Count -gt 0){
+              $zip=Join-Path $dir 'native_p31_owner_receipts.zip'
+              if(-not(Test-Path -LiteralPath $zip)){
+                Compress-Archive -LiteralPath @($files|ForEach-Object{$_.FullName}) -DestinationPath $zip -CompressionLevel Optimal
+              }
+              if(Test-Path -LiteralPath $zip){
+                $hash=(Get-FileHash -Algorithm SHA256 -LiteralPath $zip).Hash.ToLowerInvariant()
+                $bytes=(Get-Item -LiteralPath $zip).Length
+                Write-Output "P31_LOCAL_RECEIPTS_ZIP=SHA256:$hash BYTES:$bytes FILES:$($files.Count) ROOT:$dir"
+              }
+            }else{Write-Output 'P31_ORIGINAL_RUN_ENTERED_NO_NATIVE_RECEIPTS'}
+          }else{Write-Output 'P31_NO_SOURCE_STEPS_EXECUTED_NO_RECEIPTS'}
