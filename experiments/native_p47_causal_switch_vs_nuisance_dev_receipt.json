@@ -1,0 +1,157 @@
+{
+  "schema": "ttt-hybrid.p47-causal-switch-vs-nuisance-dev-receipt.v1",
+  "source_parent": {
+    "pr": 135,
+    "head_sha": "97480a05fe7422d42aa630836216d177b1edd056",
+    "frozen_P46_result": "FAIL_0_OF_3"
+  },
+  "provenance": {
+    "frozen_protocol_commit": "e7c2d110ee2243670c2258045e4bde6404d5c644",
+    "protocol_blob": "8a6681fd4950d5b1e6aa62a62173e169169b1faa",
+    "script_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "test_blob": "8a6408106b7604cedc80f217a662de7104185c30",
+    "full_local_result_sha256": "5236c6265b756bc225cdd278d57e3c00f5e746b4dd1830c72d0b59946c7256de",
+    "source_seeds": [
+      760111,
+      760117,
+      760123
+    ],
+    "new_dev_sources_consumed": true
+  },
+  "trial": {
+    "worlds_per_seed": 1536,
+    "total_worlds": 4608,
+    "actual_factual_actions_per_world": 8,
+    "groups_per_seed": {
+      "causal_switch": 768,
+      "exogenous_jump": 384,
+      "no_switch": 384
+    },
+    "learned_neural_model": false,
+    "method": "classical BIC-selected factual LS causal-change / nuisance-change / no-change",
+    "heldout_science": "NO",
+    "same_history_all_baselines": true,
+    "full_result_file": "p47_result.json"
+  },
+  "results": [
+    {
+      "seed": 760111,
+      "source_sha256": "ea5e1470fa2a86677c951f8eeefc41c8b393bd3f6ab0eaa065f76ef9b39b747f",
+      "causal_MAE": {
+        "candidate": 0.008450374,
+        "last3": 0.00964562,
+        "last5": 0.09199456,
+        "recency": 0.0718556,
+        "full": 0.35559391
+      },
+      "stable_MAE": {
+        "candidate": 0.008989293,
+        "full": 0.00634154
+      },
+      "causal_recall": 1,
+      "exogenous_false_alarm": 0,
+      "stable_false_alarm": 0.3229166667,
+      "causal_switch_location_accuracy": 1,
+      "ablation_without_exogenous": {
+        "stable_false_alarm": 0.5052083333,
+        "exogenous_effect_mae": 0.032712
+      }
+    },
+    {
+      "seed": 760117,
+      "source_sha256": "a6bd914640d984d3e8cde0db4127e37410bc9924bf710e96c1faf7a75da418ef",
+      "causal_MAE": {
+        "candidate": 0.00992536,
+        "last3": 0.01107238,
+        "last5": 0.09220115,
+        "recency": 0.0721535,
+        "full": 0.35265864
+      },
+      "stable_MAE": {
+        "candidate": 0.00872536,
+        "full": 0.00704683
+      },
+      "causal_recall": 1,
+      "exogenous_false_alarm": 0,
+      "stable_false_alarm": 0.2057291667,
+      "causal_switch_location_accuracy": 1,
+      "ablation_without_exogenous": {
+        "stable_false_alarm": 0.3203125,
+        "exogenous_effect_mae": 0.032881
+      }
+    },
+    {
+      "seed": 760123,
+      "source_sha256": "6f0e58e8396338a640bb7fae2b4861724b3a918709d753afd02b86a1d75033aa",
+      "causal_MAE": {
+        "candidate": 0.01084222,
+        "last3": 0.01383837,
+        "last5": 0.09092304,
+        "recency": 0.07157381,
+        "full": 0.3530757
+      },
+      "stable_MAE": {
+        "candidate": 0.0100711,
+        "full": 0.00598626
+      },
+      "causal_recall": 1,
+      "exogenous_false_alarm": 0,
+      "stable_false_alarm": 0.1276041667,
+      "causal_switch_location_accuracy": 1,
+      "ablation_without_exogenous": {
+        "stable_false_alarm": 0.2760416667,
+        "exogenous_effect_mae": 0.031189
+      }
+    }
+  ],
+  "frozen_success": {
+    "causal_effect_accuracy_vs_strong_fixed_control": "PASS_3_OF_3",
+    "causal_detection_recall": "PASS_3_OF_3",
+    "exogenous_false_alarm_limit": "PASS_3_OF_3",
+    "stable_false_alarm_limit": "FAIL_0_OF_3",
+    "stable_MAE_limit": "FAIL_0_OF_3",
+    "all_frozen_gates": "FAIL_0_OF_3",
+    "bit_exact_cold_replay": "PASS_3_OF_3",
+    "overall": "DEV_FAIL"
+  },
+  "control_findings": {
+    "nuisance_shock_alternative_reduces_exogenous_MAE": "3/3 versus causal-only ablation",
+    "false_alarms_stable_persist": "3/3",
+    "last_three_contrast_vs_candidate": "candidate lower causal MAE in all 3; cannot claim last-three wins",
+    "source_has_oracle_truth_only_in_evaluator": true,
+    "no_future_information_consumed": true,
+    "unusual_detection_strength": "Artificial perfectly alternating interventions and large scripted sign reversals make detection easy; not real-world unfamiliar transfer"
+  },
+  "protocol_deviation": {
+    "frozen_exogenous_magnitude_text": "The frozen manifest says 'uniform .4..7' rather than unambiguous 'uniform .4..0.7'.",
+    "executable_source": "Uniform absolute jump [0.4,0.7].",
+    "status": "PRECOMMIT_SOURCE_DESCRIPTION_AMBIGUITY; cannot claim exact scientific preregistration or independent SCIENTIFIC_PASS; retain no-retuning negative."
+  },
+  "engineering": {
+    "python": "3.13",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "focused_new_tests": "PASS_6_OF_6",
+    "original_p44_p45_p46_plus_p47_no_source_overlay": "PASS_22_OF_22",
+    "same_source_blobs_reused_without_mutation": true,
+    "original_full_windows_ubuntu_regression": "NOT_RUN",
+    "hosted_g4_g5_g7": "UNVERIFIED_FOR_CURRENT_SHA",
+    "frozen_source_and_results_hashed": true
+  },
+  "science": {
+    "hypothesis": "FAIL",
+    "real_independent_source_first_use": "NOT_RUN",
+    "trained_neural_baselines": "NOT_RUN_THIS_P47_CAUSAL_IDENTIFIABILITY_DEV_ONLY",
+    "scientific_gain": "NOT_PROVEN",
+    "prior_scientific_failures": "P38-R1 P43-C P44 P45 P46 PRESERVED"
+  },
+  "deployment": {
+    "draft_only": true,
+    "no_merge": true,
+    "no_FORGE_dispatch": true,
+    "no_controller_or_queue_or_scheduler": true,
+    "no_new_runner_or_workflow": true,
+    "no_paid_api": true,
+    "no_model_promotion": true
+  }
+}

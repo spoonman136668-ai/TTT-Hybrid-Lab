@@ -1,0 +1,99 @@
+{
+  "schema": "ttt-hybrid.p47-causal-switch-vs-nuisance-dev-frozen.v1",
+  "state": "FROZEN_BEFORE_SOURCE_OR_ANALYSIS_FIRST_USE",
+  "parent": {
+    "pr": 135,
+    "sha": "97480a05fe7422d42aa630836216d177b1edd056",
+    "old_dev_results": "P46 0/3 hypothesis gain FAIL; preserve and never reseed as new science"
+  },
+  "hypothesis": "A classical change-point selector with explicit exogenous alternatives can recover the post-switch causal action effect better than recency, trailing 5/3 factual interventions, and a no-switch fit without mistaking exogenous shocks for causal switches.",
+  "source": {
+    "actual_completed_events": 8,
+    "times": "t=i/8, i=0..7",
+    "executed_actions": "alternating +/-1 with randomly chosen initial sign",
+    "model": "observed_delta=b0+b1*t+b2*t²+amp*sin(2*pi*f*t+phase)+effect_i*actual_action+step_i+Gaussian_noise",
+    "b0": "uniform[-.2,.2]",
+    "b1": "uniform[-.4,.4]",
+    "b2": "uniform[-.1,.1]",
+    "amp": "uniform[0,.08]",
+    "phase": "uniform[-pi,pi]",
+    "noise_sigma": 0.02,
+    "beta": "symmetric sign, magnitude uniform[.25,.45]",
+    "groups": {
+      "causal": "50%, beta sign flips at k=3/4/5",
+      "exogenous": "25%, nuisance step signed magnitude uniform .4..7 at k=3/4/5, beta unchanged",
+      "stable": "25%, no switch"
+    },
+    "cohorts": [
+      {
+        "seed": 760111,
+        "n": 1536,
+        "frequency": [
+          0.35,
+          0.9
+        ]
+      },
+      {
+        "seed": 760117,
+        "n": 1536,
+        "frequency": [
+          0.95,
+          1.35
+        ]
+      },
+      {
+        "seed": 760123,
+        "n": 1536,
+        "frequency": [
+          1.4,
+          2
+        ]
+      }
+    ],
+    "counts_per_cohort": {
+      "causal": 768,
+      "exogenous": 384,
+      "stable": 384
+    },
+    "no_hidden_mode_or_unexecuted_outcome_supplied": true
+  },
+  "methods": {
+    "candidate": "BIC selection among no-switch X=[1,t,t²,a], causal switch X=[1,t,t²,a,a*I(i>=k)], and nuisance shock X=[1,t,t²,a,I(i>=k)], all k=3/4/5, extra log(3) complexity penalty on change models",
+    "base": "8-fact full-window unregularized LS [1,t,t²,a]",
+    "weighted": "8-fact recency weighted LS same features, exp(-.7*(7-i))",
+    "trailing5": "5-fact trailing LS [1,t,t²,a]",
+    "last5": "5 factual alternating actions: A*(y3-4y4+6y5-4y6+y7)/16",
+    "last3": "3 factual alternating actions: A*(y5-2y6+y7)/4",
+    "causal_only": "ablation: no nuisance-shock alternatives",
+    "oracle": "beta only for evaluator, never passed to any estimator"
+  },
+  "criteria": {
+    "causal_MAE": "candidate <= .85 * min(trailing5, weighted, last5) each cohort",
+    "exogenous_false_causal_alarm": "<= .10 each cohort",
+    "stable_false_causal_alarm": "<= .10 each cohort",
+    "causal_recall": ">= .70 each cohort",
+    "stable_MAE": "candidate <= 1.10 * full-window LS each cohort",
+    "cold": "byte-identical replay from eight factual actions and outcomes",
+    "all_3_required": true
+  },
+  "numerical": {
+    "LS": "numpy.linalg.lstsq float64",
+    "BIC": "n*log(max(SSE,1e-10)/n)+p*log(n), add log(3) search penalty for changed model",
+    "splits": [
+      3,
+      4,
+      5
+    ],
+    "source_trace_sha256": true,
+    "no_hyperparam_retuning": true
+  },
+  "authority": {
+    "development_only": true,
+    "not_scientific_PASSED_even_if_dev_positive": true,
+    "external_source_first_use": false,
+    "no_original_p43_or_forGE_changes": true,
+    "no_new_runners_or_schedulers": true,
+    "no_merge": true,
+    "full_windows_ubuntu_final_regression_unverified": true
+  }
+}
