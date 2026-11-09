@@ -2,9 +2,10 @@
 
 Same actual original CartPole source, model initialization, temporal input,
 source reset streams, 96x8x64 factual actions and PPO optimizer budget.
-Original P20 and P30 sources never changed. One immutable frozen β=1.0
-initial-policy KL ablation; critic-only actor-frozen control and no-update
-reference. No expert decisions/true velocities/sealed-science first-use.
+Original P20/P30/P31 sources never changed. Four frozen trainability
+ablations isolate actor-head gradients, recurrent-state gradients, full PPO
+and actor/recurrent-frozen critic-only control on actual real source rewards.
+No expert decisions/true velocities/sealed-science first-use.
 """
 from __future__ import annotations
 import argparse
@@ -342,6 +343,12 @@ def train_arm(gym,seed,arm):
         raise RuntimeError("P32_FROZEN_COMPONENT_MUTATED")
     if unchanged["critic"]:
         raise RuntimeError("P32_REWARD_VALUE_HEAD_DID_NOT_UPDATE")
+    if (arm in ("full_actor_recurrent_ppo","actor_head_only_ppo")
+        and unchanged["actor"]):
+        raise RuntimeError("P32_REAL_SOURCE_ACTOR_HEAD_DID_NOT_UPDATE")
+    if (arm in ("full_actor_recurrent_ppo","recurrent_only_ppo")
+        and unchanged["recurrent"]):
+        raise RuntimeError("P32_REAL_SOURCE_RECURRENT_STATE_DID_NOT_UPDATE")
 
     return cold,reference,{
        "model_seed":seed,"arm":arm,
