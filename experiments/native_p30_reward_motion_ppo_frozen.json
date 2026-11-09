@@ -1,0 +1,118 @@
+{
+  "schema": "ttt-hybrid.native-p30.reward-only-motion-feature-ppo-frozen.v1",
+  "registered": "2026-11-08",
+  "status": "PRE_IMPLEMENTATION_FROZEN_FIRST_USE_DENIED",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 108,
+    "qualified_sha": "f86efac4b9fbfe377f28ae82b8dd93bd98a45e09",
+    "qualified_run": 42542627683,
+    "engineering": "PASS_298_WINDOWS_297_UBUNTU_1_SKIP",
+    "development": "FEATURE_ACCESS_PASS_3_OF_3",
+    "conventional_strong_ridge_superiority": "NOT_PROVEN",
+    "P22_P24_reward_only_null_results_preserved": true
+  },
+  "objective": "Do deterministic past-only motion features improve ACTUAL reward-only learned action selection on original source when matched with same-capacity raw and sham features and temporally miscredited reward controls? No expert action labels.",
+  "hypothesis": "With source-held-out real CartPole resets, reward-only PPO using explicit causal past motion features will improve real return over raw and feature-sham with matched 49152 actual train decisions per arm per initialization, while requiring transfer to unseen source pole conditions.",
+  "source": {
+    "original_S29": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "Farama_MIT": "17eff00220d210beda933f78b0e52850022b0690",
+    "cloudpickle_BSD3": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "original_P20_PPO_source_unmodified": true,
+    "only_factual_own_action_and_reward": true,
+    "no_expert_policy_imitation": true,
+    "no_protected_science_first_use": true,
+    "no_hidden_state_input": true,
+    "not_independent_world": true
+  },
+  "train": {
+    "new_model_seeds": [
+      4507,
+      4517,
+      4523
+    ],
+    "new_reset_base": 130000,
+    "update_style": "original P20: 96 rollouts x 8 actual envs x 64 source actions, PPO epochs 3, batch 256, original hyperparameters and true-action credit unchanged for positive models",
+    "factual_actions_per_arm_seed": 49152,
+    "update_batches_per_arm_seed": 576,
+    "initial_weights_equal_per_model_seed": true,
+    "sequential_no_P20_source_mutation_persists": true,
+    "all_arms": [
+      "masked_raw_reward_gru",
+      "derived_motion_reward_gru",
+      "placebo_action_hash_reward_gru",
+      "derived_wrong_credit_gru"
+    ],
+    "actor_model": "same GRU input10, hidden9, actor2, critic1 across all arms",
+    "motion_features": "Four deterministic, only previous observations: x velocity from backward x difference/0.02, theta velocity from backward angle difference/0.02, x acceleration from second backward diff/0.02^2, theta acceleration from second backward diff/0.02^2; first row derivative zero and first two rows acceleration zero, no padded cross-episode differencing",
+    "input_scale": "original P19 source raw six-channel scale [.5,.5,10,5,1,1] with true velocities masked, plus four separately fixed analytic scales [.5,1.0,.05,.05] applied to derived physical motion. Raw/control slots zero or placebo [-1,+1]. No fitted normalization, no separate data source.",
+    "placebo": "For each historical decision, four stable SHA256 pseudorandom numbers based ONLY on previously executed action/reward sequence, episode-history length, model seed and P30 domain separator; NO cart/pole positions and NO true motion; placebo bytes cannot reproduce finite difference; deterministic repeat on same history.",
+    "credit_negative": "Use exactly P20 corrupt_action_credit, but identical seed/weights and derived features; trajectories may diverge on-policy so no exact paired-gradient causal attribution."
+  },
+  "evaluation": {
+    "seeds": [
+      138011,
+      138019,
+      138029,
+      138037,
+      138049,
+      138059,
+      138071,
+      138089
+    ],
+    "conditions": [
+      "original",
+      "short_pole_x0.7",
+      "long_pole_x1.3"
+    ],
+    "source_max_episode_steps": 200,
+    "agents": [
+      "masked_raw_reward_gru",
+      "derived_motion_reward_gru",
+      "placebo_action_hash_reward_gru",
+      "derived_wrong_credit_gru",
+      "untrained_derived_gru",
+      "finite_difference_public_two_frame",
+      "seeded_random"
+    ],
+    "same_world_start_per_arm": true,
+    "no_train_or_eval_seed_overlap": true,
+    "real_return_from_executed_source_rewards": true,
+    "record_action_trace_sha256": true,
+    "no_eval_optimizer_updates": true,
+    "all_arms_same_info_source": true
+  },
+  "frozen_decision": {
+    "all_three_seeds_required": true,
+    "original_mean_reward_derived_min": 150,
+    "derived_gain_over_raw_min": 25,
+    "derived_gain_over_placebo_min": 25,
+    "derived_gain_over_wrong_credit_min": 40,
+    "derived_gain_over_untrained_min": 75,
+    "derived_both_unseen_physics_mean_reward_min": 100,
+    "conventional_rule_based_2frame_return_report": true,
+    "untrained_and_seeded_random_must_report": true,
+    "report_actual_source_training_episodes_and_reward_curves": true,
+    "architecture_superiority_claim_requires": "Derived PPO mean >= conventional full-observation teacher-free fixed two-frame baseline on all three physics conditions and seeds plus matched compute/resource qualification; otherwise no superiority",
+    "precommitted_eval_greedy_action": true,
+    "never_select_epoch_on_eval": true,
+    "negative_outcomes_immutable": true
+  },
+  "qualification": {
+    "original_runner": "TTT-HYBRID-GPU-WIN",
+    "source_exact_SHA_and_clean_checks": true,
+    "original_source_negative_controls": true,
+    "mandatory_full_final_Windows_regression": true,
+    "mandatory_full_final_Ubuntu_WSL_regression": true,
+    "one_time_public_development_source_run": true,
+    "experiment_wall_cap_seconds": 600,
+    "no_new_runner_controller_scheduler": true,
+    "no_external_actions_downloads": true,
+    "no_paid_API": true,
+    "preserve_P29_P28_P27_and_independent_P26": true,
+    "local_source_and_final_receipt_SHA256": true,
+    "no_protected_science_first_use": true,
+    "no_merge_or_model_promotion": true,
+    "no_FORGE_activation": true
+  }
+}
