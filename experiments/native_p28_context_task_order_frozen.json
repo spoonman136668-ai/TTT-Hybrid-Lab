@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.native-p28.matched-task-order-and-cue-frozen.v1",
+  "parent": {
+    "P26_SHA": "3c94ab1d9a5dd82eac268d94880dc535cafc446f",
+    "P26_PR": 103,
+    "P26_run": 42539418227,
+    "P26_frozen_dual_result": "FAIL 0/3",
+    "P26_script_blob": "c6ba33c7d7df1a0c12ebde9e20308e723346dd41",
+    "P26_frozen_blob": "4e8dfc7631590821baeff4d6da72bee2f55f5d9a",
+    "P23_script_blob": "88f95b754124de278b52e716f6f046e328ef1ee4",
+    "S29": "30c27ca4865e16b7574ee2b562879108db2b3796",
+    "MIT": "17eff00220d210beda933f78b0e52850022b0690",
+    "BSD3": "ff54d93221082d4ce22630ecdb8fbbccc60f3b62",
+    "independent_P27_PR": 104
+  },
+  "hypothesis": "Disentangle P26 contradictory-actuator failure: matched-information concurrent context training vs blocked task ordering for same 489-param GRU, vs equally supervised fully trained conventional history MLP and explicit known task-action mapping.",
+  "task_source": {
+    "original_real_MIT_CartPole": true,
+    "normal_model_action_is_physical": true,
+    "inverted_physical_is_one_minus_selected": true,
+    "public_cue_normal": 1,
+    "public_cue_inverted": -1,
+    "cue_replaces_masked_velocity_feature": 1,
+    "angular_velocity_feature_3_masked": true,
+    "expert_labels_privileged_full_public_sensor": true,
+    "reward_only_learning": false,
+    "train_normal": "131000..131047",
+    "train_reverse": "132000..132047",
+    "validation_normal": "133000..133007",
+    "validation_reverse": "134000..134007",
+    "evaluation_normal": [
+      135011,
+      135012,
+      135013,
+      135014,
+      135015,
+      135016,
+      135017,
+      135018
+    ],
+    "evaluation_reverse": [
+      136011,
+      136012,
+      136013,
+      136014,
+      136015,
+      136016,
+      136017,
+      136018
+    ],
+    "max_episode_steps": 200
+  },
+  "training": {
+    "initialization_seeds": [
+      2741,
+      2753,
+      2767
+    ],
+    "batch_size": 512,
+    "total_updates": 1216,
+    "per_task_labels_seen": 311296,
+    "lr": 0.008,
+    "weight_decay": 0,
+    "index_streams": "Two independent Torch generators seed+900001 normal and seed+900002 reverse; independently successive randperm until 311296 examples. All arms share exact streams and sample counts.",
+    "joint_gru": "489-param original, 1216 updates of 256 normal+256 reverse; explicit cue",
+    "blocked_gru": "same 489-param initialization, 608 old-only updates of 512, then 608 reversed-only updates of 512; exactly same old/new rows in different temporal order",
+    "joint_mlp": "471-param full history conventional MLP, same 1216 mixed minibatches",
+    "joint_cue_blind_gru": "identical GRU init/mixed indices/labels/updates, explicit context cue overwritten with +1 for both tasks",
+    "frozen_old_half_GRU_XOR": "Take frozen 608-old-only-update blocked GRU and predict physical direction for both tasks, then known 1-action cue mapping externally. No new optimizer steps.",
+    "conventional_controls": "strong two-observation past-only finite-difference with cue; full-public-state teacher",
+    "exact_full_weight_optimizer_torch_python_numpy_sampler_replay_receipts": true,
+    "training_both_arms_label_streams_equal": true,
+    "sample_budgets_equal": true,
+    "all_steps_source_grounded": true
+  },
+  "preregistered": {
+    "old_and_reverse_min_reward_each": 150,
+    "joint_GRU_dual_task_pass": "both >=150 for >=2 of 3 seeds",
+    "order_gain": "joint both >=150 and joint reversed >= blocked reversed+25 and joint old >= blocked old-20 in >=2/3 seeds",
+    "MLP_capacity_warning": "MLP both >=150 in >=2 seeds while joint GRU both>=150 in <=1 seed",
+    "cue_reversal_negative": "Inverted cue at evaluation degrades trained joint GRU reversed-world return >=25 in >=2 seeds",
+    "XOR_old_anchor": "Old-only frozen GRU plus known deterministic task action inversion achieves >=175 old and reverse in >=2 seeds",
+    "finite_difference_200_cap_never_exceeded_claim": false,
+    "all_nulls_preserved": true
+  },
+  "boundaries": {
+    "dev_only": true,
+    "one_use_original_runner": "TTT-HYBRID-GPU-WIN",
+    "mandatory_exact_SHA_full_Windows_and_Ubuntu_regression": true,
+    "original_upstream_source_pinned": true,
+    "scientific_first_use": false,
+    "protected_S26_S27_consumed": false,
+    "novel_external_world_claim": false,
+    "independent_P27_untouched": true,
+    "merge_or_promotion": false,
+    "FORGE_activation": false,
+    "new_scheduler_or_runner": false,
+    "paid_API_or_install": false
+  }
+}
