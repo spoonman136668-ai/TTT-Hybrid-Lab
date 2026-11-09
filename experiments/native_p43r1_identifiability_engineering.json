@@ -1,0 +1,55 @@
+{
+  "schema": "ttt-hybrid.p43r1-factual-identifiability-engineering.v1",
+  "status": "FOCUSED_DEV_ENGINEERING_ONLY_NO_NEW_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "pr": 129,
+    "head": "d299c47da72f106b3ae176cc344e432202e30c27",
+    "tree": "507375c52ff607d588420fed35c550f09a58fcca",
+    "original_model_blob": "49e8d1e84ae2ba02956830b55c8c9480a37c509f",
+    "related_p43c_pr": 130,
+    "related_p43c_dev_result": "SCIENTIFIC_DEV_FAIL_0_OF_3_DIFFERENT_MODEL"
+  },
+  "problem": "P43 original factual_ready is count>=min_facts, even when all actions are identical or action schedule is exactly confounded with elapsed time: neither supplies evidence to separate action effects from affine nuisance.",
+  "change": "Isolated nontrainable sidecar adds a factual [1, cumulative_elapsed, executed_action] 3x3 information Gram, requires full relative rank and at least three actual facts before P43 may select an action. Preserves original recurrent model source, parameters and training; previews read-only.",
+  "source_file": "native_p43_identifiability.py",
+  "test_file": "tests/test_native_p43_identifiability.py",
+  "module_git_blob": "9799dec44ca198e44f84af029e15ef815b72d55b",
+  "test_git_blob": "7204b32a2861435bc5d3ead700210c1d77977ab6",
+  "local_verification": {
+    "python": "3.11+",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused_tests_total": 6,
+    "focused_tests_passed": 6,
+    "initial_test_failure": "Test asserted count-drift error but PSD test ran first; validation order corrected without relaxing validation",
+    "final_local_run_seconds": 1.4,
+    "original_p43_file_git_blob_verified": true,
+    "original_full_windows_ubuntu_repo_regression": "UNVERIFIED",
+    "real_external_source": "NOT_USED"
+  },
+  "controls": [
+    "identical_actions_do_not_certify_action_effect",
+    "time_confounded_action_schedule_does_not_certify",
+    "rank_sufficient_interventions_allow_original_selector",
+    "preview_no_model_or_memory_writes",
+    "invalid_factual_outcome_atomic_rejection",
+    "per-batch_select_refusal_if_any_unidentified",
+    "torch_tensor_cold_restore_exact",
+    "malformed_certificate_rejected",
+    "no_lexical_tokens"
+  ],
+  "limitations": [
+    "Rank is necessary only under a locally affine nuisance; it does not prove causal identification under nonlinear drift, endogenous action selection or unobserved confounding",
+    "Does not fix P43-C independent failed comparator experiment or establish better-than-GRU/strong-ridge performance",
+    "Does not authenticate factual external outcomes",
+    "No new model training, scientific first-use, hidden test samples, or independent transfer evaluated"
+  ],
+  "authority": {
+    "no_p43_parent_edits": true,
+    "no_forge_integration": true,
+    "no_runner_or_scheduled_task": true,
+    "no_original_science_first_use": true,
+    "no_merge_or_promotion": true,
+    "requires_full_final_windows_linux_regression": true
+  }
+}
