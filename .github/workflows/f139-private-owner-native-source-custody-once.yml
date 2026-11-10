@@ -1,0 +1,77 @@
+name: FORGE integration private-owner native source custody (read only once)
+on:
+  push:
+    branches: ['operations/f139-private-owner-source-native-once-20261110']
+permissions:
+  contents: read
+jobs:
+  private-source-custody:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 5
+    steps:
+      - name: Read exact private source in disposable directory using existing project identity
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          import base64, json, os, pathlib, subprocess, tempfile
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          assert event['sender']['login']=='spoonman136668-ai'
+          source='6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          tree='1159dc3e20a9c457e17d74805edee942985efa07'
+          env=os.environ.copy()
+          env['GIT_TERMINAL_PROMPT']='0'
+          env['GIT_CONFIG_NOSYSTEM']='1'
+          env['GIT_CONFIG_GLOBAL']=os.devnull
+          for key in list(env):
+              if key.startswith(('GIT_CONFIG_KEY_','GIT_CONFIG_VALUE_')) or key=='GIT_CONFIG_COUNT':
+                  del env[key]
+          def git(folder,*args,credential=False):
+              child=env.copy()
+              child.pop('GH_TOKEN',None)
+              child.pop('GITHUB_TOKEN',None)
+              if credential:
+                  child['GIT_CONFIG_COUNT']='1'
+                  child['GIT_CONFIG_KEY_0']='http.https://github.com/.extraheader'
+                  child['GIT_CONFIG_VALUE_0']='AUTHORIZATION: basic '+base64.b64encode(
+                      ('x-access-token:'+os.environ['GH_TOKEN']).encode()).decode()
+              result=subprocess.run(['git','-C',str(folder),*args],env=child,
+                  stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False,timeout=90)
+              assert result.returncode==0, 'PRIVATE_SOURCE_CUSTODY_GIT_READ_FAILED'
+              return result.stdout.decode('utf-8','strict').strip()
+          with tempfile.TemporaryDirectory(prefix='f139-private-custody-',dir=os.environ['RUNNER_TEMP']) as temporary:
+              root=pathlib.Path(temporary)
+              folder=root/'source';folder.mkdir()
+              empty=root/'empty-template';empty.mkdir()
+              git(folder,'init','--template='+str(empty))
+              git(folder,'config','core.autocrlf','false')
+              git(folder,'config','core.hooksPath',str(empty))
+              git(folder,'remote','add','origin','https://github.com/spoonman136668-ai/TTT-Hybrid-Lab.git')
+              git(folder,'fetch','--no-tags','--depth=1','origin',source,credential=True)
+              git(folder,'checkout','--detach','FETCH_HEAD')
+              assert git(folder,'rev-parse','HEAD')==source
+              assert git(folder,'rev-parse','HEAD^{tree}')==tree
+              assert git(folder,'status','--porcelain','--untracked-files=all')==''
+              result=subprocess.run(['git','-C',str(folder),'config','--local','--get-regexp','http.*extraheader'],
+                  env=env,stdout=subprocess.PIPE,stderr=subprocess.PIPE,check=False,timeout=20)
+              assert result.returncode==1 and not result.stdout
+              report=dict(schema='forge.f139.hybrid-private-owner-source-custody.v1',
+                  source_sha=source,source_tree=tree,run_id=int(os.environ['GITHUB_RUN_ID']),
+                  existing_private_project_identity=True,native_read_checkout_pass=True,
+                  credential_persisted=False,source_uploaded=False,project_code_executed=False,
+                  research_checkout_changed=False,gpu_used=False,training_started=False,
+                  owner_mutations=0,forge_dispatches=0,model_calls=0,scientific_first_use=False,
+                  new_credentials=False,new_controller=False,signed_forge_worker_route_qualified=False)
+          print('F139_PRIVATE_OWNER_NATIVE_SOURCE_CUSTODY='+json.dumps(report,sort_keys=True,separators=(',',':')))
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'PRIVATE_OWNER_NATIVE_SOURCE_CUSTODY_FAILED'}
