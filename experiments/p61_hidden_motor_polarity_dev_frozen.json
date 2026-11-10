@@ -1,0 +1,93 @@
+{
+  "schema": "ttt-hybrid.p61-factual-hidden-motor-polarity-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_ANY_NEW_P61_SOURCE_OR_TRAINING",
+  "scope": "CUSTOM_AUTHORED_PARTIALLY_OBSERVED_PHYSICAL_ANALOG_DEV_NO_EXTERNAL_SCIENCE_FIRST_USE",
+  "parent": {
+    "pr": 159,
+    "sha": "e906945c010ce82f2e2dd3b0f19bbe35a3ccfc94",
+    "tree": "5772cb090e54bdf2e5855b8cb56f13a90547b77d",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p60_result": "FAIL_0_OF_3_HISTORY_NECESSITY"
+  },
+  "hypothesis": "Exact tokenless reference Hybrid learns hidden motor polarity from actually completed physical probes when current observation aliases modes, beating trained GRU, history MLP and zero-training recent-factual controls by at least 5pp, beating wrong action credit by 10pp and TTT-off by 5pp on each of 3 fresh model seeds.",
+  "source": {
+    "train_seed": 991101,
+    "validation_seed": 991103,
+    "unfamiliar_dev_seed": 991107,
+    "fit_n": 4096,
+    "val_n": 512,
+    "ood_n": 1024,
+    "actual_probes": 6,
+    "hidden_mode": "balanced +1/-1 actuator polarity, hidden from current sensor",
+    "mode_switch": "probability 0.50 in FIT/VAL, 0.75 in unfamiliar DEV; if switched, polarity flips once immediately BEFORE factual probe index3",
+    "actual_factual_response": "delta_observed=0.18*true_polarity_at_step*executed_probe_action + gaussian_noise",
+    "noise_sigma_fit_val": 0.24,
+    "noise_sigma_unfamiliar": 0.3,
+    "observed_current_sensor": "constant 0, no polarity cue",
+    "actual_probe_actions": "independent fair ±1 each physical probe",
+    "fit_query_action": "one independent fair factual executed final ±1; label is observed reward +1 if action==last hidden polarity else -1; NO counterfactual rewards generated for FIT",
+    "factual_event_features": "[executed_action,real_observed_delta,t_index/6,is_query=0,proposed_action=0]",
+    "speculative_query_features": "[0,0,1,is_query=1,proposed_candidate_action]",
+    "evaluation": "select max predicted reward for ±1, execute exactly selected action, observe only realized reward; never commit candidate outcome during preview",
+    "fresh_source": "none of 991xxx used on P40–P60; dev only"
+  },
+  "arms": {
+    "Hybrid": "original model.HybridPilot 5-in 1-out width8 heads2 SSM+attention+TTT+depth",
+    "GRU": "GRU input5 hidden17 plus scalar head",
+    "history_MLP": "flatten 7*5 through 22->18->1",
+    "memoryless_MLP": "single last query features through 20->20->1; no history",
+    "wrong_credit_Hybrid": "same initial Hybrid seed and data, cyclically roll history action identities while keeping observed outcomes fixed",
+    "TTT_off_ablation": "same trained Hybrid weights, factual inputs and query, invoke ttt_update=False during evaluation",
+    "analytical_last3": "sign of sum(actual_action*real_observed_delta) on last 3 completed probes",
+    "analytical_all6": "sign of sum(actual_action*real_observed_delta) over six completed probes (ignores possible switch)",
+    "random": "fair ±1"
+  },
+  "optimization": {
+    "model_seeds": [
+      992101,
+      992103,
+      992107
+    ],
+    "sampler_seed": 992199,
+    "updates_each_neural_arm": 480,
+    "neural_arms": 5,
+    "expected_total_updates": 7200,
+    "batch": 128,
+    "AdamW_lr": 0.003,
+    "clip_grad_norm": 1,
+    "val_every": 80,
+    "threads": 1,
+    "same_actual_factual_training_samples_and_batches": true
+  },
+  "frozen_all_seed_gates": {
+    "Hybrid_OOD_success_ge_75pct": true,
+    "Hybrid_OOD_success_ge_best_of_GRU_MLP_analytic_last3_analytic_all6_plus_5pp": true,
+    "Hybrid_OOD_success_ge_wrong_credit_plus_10pp": true,
+    "Hybrid_OOD_success_ge_TTT_off_plus_5pp": true,
+    "GRU_OOD_success_ge_memoryless_plus_15pp": true,
+    "all_neural_validation_accuracy_last80_change_le_1pp": true,
+    "cold_weights_bit_exact": true,
+    "all_3_seeds_must_pass": true
+  },
+  "diagnostics": [
+    "source SHA256 per split",
+    "source causal mode labels are hidden from neural features",
+    "actual logged final action/reward only in fit",
+    "sampler indices SHA256",
+    "accuracy/reward split by changed/not-changed world",
+    "number of actual executed probes/actions and CPU costs",
+    "factual credit corruption and TTT fast-state ablations",
+    "trained parameter counts",
+    "cold restore and hypothetical candidate-order purity"
+  ],
+  "stop": "No retuning of thresholds, seeds, source, arm architecture, training duration or measured cohort after evaluation. Preserve negative outcome.",
+  "bounds": {
+    "official_installed_Gymnasium": "NOT_APPLICABLE_CUSTOM_POMDP",
+    "not_real_physical_source": true,
+    "external_science_first_use": false,
+    "FORGE_unchanged": true,
+    "no_runner_scheduler_workflow_or_controller_changes": true,
+    "no_merge_or_promotion": true,
+    "full_Windows_Linux_acceptance_required": true
+  }
+}
