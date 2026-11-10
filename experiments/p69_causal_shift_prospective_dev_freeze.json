@@ -1,0 +1,216 @@
+{
+  "schema": "ttt-hybrid.p69-causal-shift-memory-prospective-dev-freeze.v1",
+  "stage": "FROZEN_BEFORE_P69_CAUSAL_SHIFT_SOURCE_IMPLEMENTATION_OR_GENERATION",
+  "classification": "AUTHOR_CONTROLLED_SYNTHETIC_DEV_ONLY_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 177,
+    "engineering_head_sha": "168553f15150d7827280511c3e3fff6afaeee7a3",
+    "original_native_model_unchanged": true,
+    "corrected_ring_blob": "bf12bd3525230ecf58ecc43837f67fdf23578f35",
+    "inherited_p68_pr": 176,
+    "inherited_p68_head_sha": "f079dfb1a181d8cbde78b0a07f7dba0a8ad33b5a",
+    "p68_ood": "CONSUMED_EXCLUDED_FROM_P69_FIT_VAL_CALIBRATION_MODEL_SELECTION_AND_REPORTING"
+  },
+  "question": "Does a content-sensitive learned factual memory-write mechanism better retain stable causal effects and update changed effects after hidden interventions than competent conventional equal-state methods?",
+  "hypothesis": {
+    "predicted": "Four-parameter learned residual-gated 16x16 TTT factual memory achieves at least 10% lower post-switch OOD development MSE than every eligible, nonprivileged 256-float adaptive-state competitor, repeated across three distinct model seeds and three distinct OOD synthetic source cohorts.",
+    "null": "No reproducible improvement over strongest competent conventional control after matching facts, executed actions, source family, state budget and whole-process resource accounting.",
+    "primary_failure": "A single failed registered eligibility gate or failed primary seed/cohort comparison is DEV_FAIL; do not substitute a weaker comparator or re-tune using consumed holdout."
+  },
+  "source": {
+    "domain": "Continuous 16D numeric action-to-observed-effect physical simulator; no tokenization, transformer, language next-token objective, oracle world labels or time/phase features exposed to learner.",
+    "new_seed_namespace": "P69 ONLY; not P65/P66/P67/P68 reused",
+    "seeds": {
+      "fit": 981101,
+      "val": 981103,
+      "ood_dev_cohorts": [
+        981107,
+        981109,
+        981111
+      ],
+      "nuisance_negative": 981113,
+      "training_index": 981299,
+      "bootstrap": 981401,
+      "model_initializations": [
+        981201,
+        981203,
+        981207
+      ],
+      "wrong_credit": [
+        981221,
+        981223,
+        981227
+      ],
+      "source_shortcut_classifier": 981301
+    },
+    "n_worlds": {
+      "fit": 512,
+      "val": 192,
+      "ood_dev_per_cohort": 192,
+      "nuisance_negative": 96
+    },
+    "dimensions": {
+      "actions": 16,
+      "observed_effects": 16,
+      "latent_action_roles": 8,
+      "causally_changed_roles_per_world": 4
+    },
+    "fixed_world_generation": [
+      "For each world draw a QR-orthogonal 16D action basis, select eight basis vectors as factual target action directions; independently sample each role's initial bounded 16D causal effect, without exposing basis identity or role labels.",
+      "Independently resample four of the eight target-role effect vectors at one hidden within-world change point; remaining four roles retain their original causal effect. Opposite executed action sign negates measured effect.",
+      "FIT/VAL use 96 uniformly interleaved historical factual interventions per world: 48 target-direction exposures (six per role) and 48 unique one-shot distractor actions. OOD uses 96: 32 target exposures (four per role) and 64 unique distractors.",
+      "Sample target-role intervention signs independently and balance +/- within role where possible; sample distractor directions independently and continuously, and generate their outcomes from independently sampled bounded effects.",
+      "Select hidden intervention change point uniformly from event indices 30..66 inclusive, independently of action identity, role, query and future outcomes; no fixed phase marker is visible.",
+      "For each world choose one final actually executed +/- target action AFTER the historical stream. Query sampled 50/50 from changed vs stable roles, and uniformly across the eligible roles. The actual observed final consequence is evaluation truth only and never used to write memory before scoring.",
+      "FIT/VAL factual effect noise sigma=0.03 and action jitter sigma=0.04; OOD effect noise sigma=0.06 and action jitter sigma=0.12, with independently generated world bases and maps; the OOD source has greater distraction and fewer repeated target exposures.",
+      "All methods consume exactly the same ordered realized (executed 16D action, observed 16D consequence) pairs within each world; no counterfactual outcomes, relevance labels, future query, change-point or phase information allowed in writes."
+    ],
+    "output_constraints": {
+      "deterministic_counter_based_world_seed": true,
+      "source_disjointness_manifest_before_evaluation": true,
+      "heldout_world_sha256_required": true,
+      "fit_val_and_ood_splits_immutable": true,
+      "no_trained_model_or_threshold_uses_ood": true,
+      "no_retroactive_use_of_p68_ood": true,
+      "no_new_dataset_is_generated_by_this_freeze_commit": true
+    },
+    "leakage_audit": {
+      "target_role_quartile_deviation_max": 0.05,
+      "heldout_index_only_balanced_accuracy_max": 0.55,
+      "hidden_regime_from_event_index_balanced_accuracy_max": 0.55,
+      "exact_seen_query_key_duplicate_rate_max": 0,
+      "no_future_query_observable_during_memory_updates": true,
+      "failure_stops_all_outcome_scoring": true
+    }
+  },
+  "arms": {
+    "candidate": {
+      "label": "learned_residual_TTT_gate",
+      "equation": "W <- W + 0.5*sigmoid(theta · [1,log(residual_mse+1e-6),log(prediction_energy+1e-6),cos(pred,observed_effect)]) * (observed_effect-Wa) a^T",
+      "theta_trainable_params": 4,
+      "fast_state_floats": 256,
+      "reads": "factual-only historical (a,y); final a only at scoring",
+      "initialization": "three distinct registered model seeds; no data-dependent init adjustment",
+      "fit": "frozen AdamW, lr=0.005, batch=32, 600 optimizer updates maximum; checkpoint every 50; best VALIDATION MSE; stop if nonfinite or cost budget exceeded"
+    },
+    "comparators": [
+      {
+        "id": "always_write_TTT",
+        "persistent_floats": 256,
+        "condition": "original fixed 16x16 fast factual matrix, gate=1, same executed actions/effects; no time/phase labels"
+      },
+      {
+        "id": "frequency_protected_cache",
+        "persistent_floats": 256,
+        "condition": "8x(16 key+16 effect), count embedded in key norm, cosine matching threshold .98; no hidden labels"
+      },
+      {
+        "id": "true_ring_cache",
+        "persistent_floats": 256,
+        "condition": "P69 exact blob bf12bd3525230ecf58ecc43837f67fdf23578f35; 8x(16 key+16 effect) with previous miss slot encoded by key norm-2, true round-robin eviction, hit does not advance"
+      },
+      {
+        "id": "validation_calibrated_surprise_gate",
+        "persistent_floats": 256,
+        "condition": "TTT fixed gate with fixed validation-only grid [.1,.3,.5,.7,.9] for residual threshold; freeze before OOD"
+      },
+      {
+        "id": "validation_calibrated_novelty_gate",
+        "persistent_floats": 256,
+        "condition": "TTT fixed gate with fixed validation-only grid [.1,.3,.5,.7,.9] for read-energy threshold; freeze before OOD"
+      },
+      {
+        "id": "competently_trained_GRU",
+        "persistent_floats": 256,
+        "condition": "GRU hidden width 256, trained with same factual source and actual query objective, independent from candidate training; no OOD selection; disclose fixed-parameter count and full-training compute"
+      },
+      {
+        "id": "competently_trained_continuous_SSM",
+        "persistent_floats": 256,
+        "condition": "independent recurrent state width 256 with continuous numeric inputs; if implementation unavailable or incompetent report NOT_ELIGIBLE, never claim 'strongest conventional' without specifying exclusion"
+      },
+      {
+        "id": "zero_state",
+        "persistent_floats": 0,
+        "condition": "uniform zero outcome reference for competence thresholds"
+      }
+    ],
+    "diagnostics_not_eligible": [
+      {
+        "id": "oracle_regime",
+        "reason": "hidden change labels inaccessible to real learner"
+      },
+      {
+        "id": "whole_history_knn",
+        "reason": "unbounded history exceeds 256-float state"
+      },
+      {
+        "id": "wrong_action_credit",
+        "reason": "negative control that substitutes independent action identity while preserving observed outcome, all else matched"
+      },
+      {
+        "id": "matched_rate_random_write",
+        "reason": "negative control matched to candidate FIT write acceptance rate, no validation/holdout leakage"
+      }
+    ]
+  },
+  "prerequisites": {
+    "baseline_validity": [
+      "Verify original P69 7/7 exact-blob tests plus fresh-source factual, independent seed, no-lookahead, ring-reference, bitwise cold restore and intervention-shift audit tests before any DEV OOD score.",
+      "GRU and SSM baseline recipes and compute limits pinned before FIT training; no re-tuning to OOD; baseline must beat VAL zero MSE by >=25% and show last-three checkpoint MSE spread <= 0.01 absolute to qualify.",
+      "At least one independently trained GRU or SSM baseline must be validation-competent, or strict combined DEV FAIL and no OOD scoring; missing SSM is a disclosed missing-competitor limitation even if GRU passes.",
+      "Candidate must beat VAL zero MSE by >=15% in all three seeds with finite loss and a best validation checkpoint; otherwise no OOD scoring.",
+      "All measures for equal state (adaptive float state), static weights, runtime action history, optimizer state, training/inference wall time, peak RAM and estimated FLOPs reported separately; a non-256 control cannot be included as an equal-state comparator."
+    ],
+    "training_controls": {
+      "same_factual_action_stream": true,
+      "same_train_val_and_ood_worlds_across_arms": true,
+      "fixed_max_updates": 600,
+      "validation_interval": 50,
+      "early_stop": "on four non-improving validation checkpoints after at least 200 updates, but only if stationary checkpoint spread <=0.01; otherwise 600 hard limit and nonconvergence flag",
+      "train_threads": 1,
+      "max_total_dev_cpu_wall_seconds": 900,
+      "max_peak_ram_gib": 3,
+      "no_paid_services": true,
+      "no_gpu_required_for_DEV": true,
+      "first_use_execution": "PROJECT_OWNER_SEPARATELY_AUTHORIZED_ONLY"
+    }
+  },
+  "outcome": {
+    "primary": "post-hidden-switch final factual executed action 16D mean squared effect error, stratified by changed vs stable causal role",
+    "secondary": [
+      "prequential factual effect error after each completed observation",
+      "unchanged-role cold retention after distractors",
+      "post-switch recovery delay in number of informative executed interventions",
+      "wrong-action-credit degradation",
+      "full-process total compute, peak memory and wall clock"
+    ],
+    "eligiblity_freeze": "all conventional-model eligibility and fixed baselines on FIT/VAL before any OOD cohort scoring",
+    "strongest_baseline": "lowest per-cohort MSE among all eligible nonprivileged baselines; do not exclude a strong competitor after inspecting OOD",
+    "strict_pass": [
+      "All three model initialization seeds separately improve >=10% over strongest eligible nonprivileged conventional comparator on each of three disjoint DEV OOD source cohorts (9/9 seed x cohort comparisons).",
+      "Paired 5000-replicate 95% bootstrap lower bound of relative improvement >0 per seed/cohort using worlds as resampling unit; positive bounds cannot replace failed point estimate.",
+      "On each cohort wrong-action-credit learned gate MSE >=1.20 times correctly credited candidate, and FIT-rate-matched random write MSE >=1.15 times candidate.",
+      "Cold state resumed at a midway point produces bitwise identical future state and prediction to continuous stream, including across true changes.",
+      "No OOD leakage, no time/index-only shortcut, no hidden-role annotation access and no memory-budget overrun.",
+      "Full training cost, resource use, static weights and persistent-state counts disclosed; if strongest baseline compute is not reasonably comparable, report performance-only DEV evidence rather than equal-compute superiority.",
+      "Any source, convergence, data custody, registered negative, memory parity or budget failure is STRICT DEV_FAIL; no selective subset PASS."
+    ],
+    "scientific_status": "NEVER_SCIENTIFIC_PASS_FROM_AUTHORED_SYNTHETIC_DATA_ALONE",
+    "science_extension": "Requires independent post-freeze real/externally qualified causal environment, witnessed source birth and consumption ledger, separately authorized first-use, fully trained control set, independent seeds/splits, exact-source full regression and objective science acceptance."
+  },
+  "infrastructure": {
+    "frozen_primary_branch": "research/p69-factual-ring-cache-equal-state-20261110",
+    "p68_history_read_only": true,
+    "original_main_untouched": true,
+    "workflows": "do not dispatch or rerun as an outcome of protocol freezing",
+    "runners": "do not allocate or change",
+    "schedulers": "no scheduled tasks",
+    "forge_owner": "unchanged",
+    "no_automatic_merge": true,
+    "no_deployment": true,
+    "no_live_actuation": true,
+    "no_paid_api": true
+  }
+}
