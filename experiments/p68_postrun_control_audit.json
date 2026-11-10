@@ -1,0 +1,64 @@
+{
+  "schema": "ttt-hybrid.p68-postrun-control-audit.v1",
+  "classification": "CONTROL_DISCREPANCY_PRESERVED_AFTER_CONSUMED_AUTHORED_DEV_RESULT",
+  "frozen_protocol_commit": "7ae6adda4671aae50f212445bd86e6bd43c8492b",
+  "source_git_blob": "7db52d3a150903b2feff661c9562017ee24c0dfe",
+  "test_git_blob": "ec39f93544d4f258bcb41e578a673c9deb8b8f28",
+  "receipt_git_blob": "f1ad90467cbdb76d7eeb3b6916c5897cb933fe8b",
+  "negative_git_blob": "c0ca7e58e935e15c419f9772f32cc6c9c312441c",
+  "primary_comparison": "PASS_IN_AUTHORED_DEV_3_OF_3",
+  "control_caveat": "Implementation labels the no-frequency control cyclic, but misses always replace the minimum-norm slot (generally index zero), not a true cyclic slot. This deviates from precommitted cyclic control. Do not treat strict all-controls qualification as PASS.",
+  "postoutcome_exploratory_true_cyclic": {
+    "method": "external diagnostic: on each previously-unseen factual key use slot=t mod 8, not a persisted 256-float-only slot pointer; no parameter tuning",
+    "validation_mse": 0.18744705617427826,
+    "consumed_ood_dev_mse": 0.31007301807403564,
+    "status": "POST_PRIMARY_DIAGNOSTIC_NOT_AN_INDEPENDENT_FROZEN_REPLICATION",
+    "whole_process_memory_budget_equal": "UNVERIFIED_DUE_TO_STREAM_POSITION"
+  },
+  "model_seed_comparisons": [
+    {
+      "seed": 980201,
+      "mean_ood_mse": 0.06900624930858612,
+      "baseline_mse": 0.15103933215141296,
+      "relative_reduction": 0.5431239775384522,
+      "bootstrap_95_lower_bound": 0.5018126368522644,
+      "incorrect_credit_mse": 0.4497203528881073,
+      "wrong_credit_20pct_worse": true,
+      "cold_restore": true
+    },
+    {
+      "seed": 980203,
+      "mean_ood_mse": 0.07352055609226227,
+      "baseline_mse": 0.15103933215141296,
+      "relative_reduction": 0.5132356913591234,
+      "bootstrap_95_lower_bound": 0.4722113013267517,
+      "incorrect_credit_mse": 0.44972464442253113,
+      "wrong_credit_20pct_worse": true,
+      "cold_restore": true
+    },
+    {
+      "seed": 980207,
+      "mean_ood_mse": 0.07110174000263214,
+      "baseline_mse": 0.15103933215141296,
+      "relative_reduction": 0.5292501695428942,
+      "bootstrap_95_lower_bound": 0.48802733421325684,
+      "incorrect_credit_mse": 0.44972196221351624,
+      "wrong_credit_20pct_worse": true,
+      "cold_restore": true
+    }
+  ],
+  "orthogonal_negative_max_abs_error": 3.5762786865234375e-7,
+  "memory_state_floats": 256,
+  "qualification": {
+    "focused_source_tests": "9_OF_9_LOCAL_CPU_PASS",
+    "strict_all_controls": "FAIL_IMPLEMENTATION_MISMATCH",
+    "full_windows_linux": "UNVERIFIED",
+    "gpu": "NOT_RUN",
+    "independent_scientific_pass": false,
+    "original_hybrid": "UNCHANGED",
+    "merge": "NONE",
+    "deployment": "NONE",
+    "forge": "UNCHANGED"
+  },
+  "next": "Keep all P68 outcomes as DEV evidence, no retroactive promotion; implement correct 256-float cyclic baseline prospectively under a fresh source and perform entire qualified comparison before any generalization claim."
+}

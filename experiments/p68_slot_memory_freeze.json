@@ -1,0 +1,95 @@
+{
+  "schema": "ttt-hybrid.p68-slot-associative-strong-control-freeze.v1",
+  "phase": "FROZEN_BEFORE_P68_SOURCE_DATA_OR_MODEL_EXECUTION",
+  "classification": "AUTHORED_DEV_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "sha": "5fe37fdb4b51e248159c66b2c3e426ca6d58c738",
+    "pr": 170,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "motivating_negative": {
+    "p67_pr": 175,
+    "p67_sha": "e27bc9d5133b243f9c3b696ead7208de854353b5",
+    "first_seed_gru_best_val_mse": 0.4257088899612427,
+    "zero_state_val_mse": 0.3997551500797272,
+    "baseline_competent": false,
+    "scored_ood": false
+  },
+  "hypothesis": "A conventional exact-content-addressed 256-float factual key/value cache will be a competent stronger control than an undertrained sequence GRU, and the original-equation 256-float learned fast-weight write gate may or may not outperform it on unseen actual simulated action consequences.",
+  "source": {
+    "seeds": {
+      "fit": 980111,
+      "val": 980113,
+      "ood_dev": 980117,
+      "orthogonal": 980119
+    },
+    "n_worlds": {
+      "fit": 512,
+      "val": 128,
+      "ood_dev": 128,
+      "orthogonal": 64
+    },
+    "shape": {
+      "dim": 16,
+      "target_unique_keys": 8,
+      "target_repeats_fit": 6,
+      "distractor_fit": 16,
+      "target_repeats_ood": 4,
+      "distractor_ood": 48
+    },
+    "stream": "per-world random orthogonal 16D causal action basis; independent continuous 16D effect map; 8 target keys repeated and 16/48 singletons, uniformly interleaved; fresh action and observed effect emitted for each executed simulated action; no role/time or future query in online input",
+    "actual_observations": "Factual action plus observed consequence only; one actual simulated final target action queried only after all prior updates",
+    "novelty": "P68 seeds independent of P65/P66/P67; no prior source reuse or sealed first-use claim",
+    "ood": "unfamiliar per-world mapping, 80 versus 64 events, four versus six target presentations, tripled distractors; new source seed and same readout procedure",
+    "negative": "orthogonal distractors cannot affect all-write target prediction; separately wrong-credit test"
+  },
+  "candidates": {
+    "learned_gate": "Unchanged P67 four-parameter sigmoid feature gate: bias, log residual MSE, log prediction energy and cosine alignment; P65 16x16 outer-product factual matrix with eta 0.5; train from fresh nonzero independent seeds",
+    "all_write": "Same factual outer-product update with gate=1; no learning; 256 fast state floats",
+    "frequency_cache": "Conventional associative memory with eight 16D action keys and eight 16D observed effect values = 256 floats; keys encode observed hit count in norm without separate counter, cosine lookup by key, similarity threshold 0.98, update values by online mean, otherwise insert into weakest free/replacement slot; never access role labels, future query or time-index feature; deterministic tie order",
+    "simple_cache": "Same 256-float slot store with no frequency weighting: on miss cyclic replace; same query rule",
+    "zero": "Zero predictor (per-target variance) against which competence is measured",
+    "oracle": "Role-aware oracle diagnostic ONLY, forbidden for main comparison"
+  },
+  "train": {
+    "seeds": [
+      980201,
+      980203,
+      980207
+    ],
+    "samples_seed": 980299,
+    "fit_batch_size": 32,
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "updates": 180,
+    "validation_every": 30,
+    "checkpoint": "select minimum validation MSE only, no OOD-tuning",
+    "cpu_budget_seconds": 480,
+    "capacity": "State exactly 256 floats for learned matrix and both slot memories; count encoded in key norm; compare measured process wall time and trainable parameter counts; no FLOP equality claim"
+  },
+  "gates": {
+    "source_and_leakage": "Role fractions over 4 position bins within 0.05 of global prevalence, and held-out index-only BALANCED accuracy <=0.55 on FIT, VAL, OOD-DEV; count memory-float budget exactly",
+    "independent_seed_initialization": "Three distinct gate theta SHA256 values",
+    "cache_competence": "Frequency cache validation MSE <=0.75 times zero-state validation MSE. If not, baseline incompetent and stop before OOD scoring.",
+    "learned_gate_competence": "All three candidate seeds must achieve validation MSE <=0.85 times zero-state; if not, report DEV_FAIL and stop OOD scoring.",
+    "primary": "Only if all VAL eligibility checks pass, evaluate sealed-to-this-DEV OOD once; per seed candidate OOD MSE <=0.9 times the strongest nonprivileged control (frequency, cyclic, all-write, zero) and positive 95% lower bound of 2000 paired bootstrap world resamples with seed 980401.",
+    "negative": "In each seed, wrong-action-credit prediction error >=1.2x correct learned gate when scored; exact midstream cold restored prediction matches continuous bitwise for fixed inputs.",
+    "stop": "On any source leakage, cache/baseline incompetence, nonfinite training, budget, incorrect credit, or custody error report FAIL and preserve all outcomes; no retuning to consumed OOD",
+    "science": "Development only; independent authenticated physical source, separately fully trained conventional models, whole-process cost and full regression mandatory for SCIENTIFIC_PASS. Synthetic success alone never qualifies."
+  },
+  "qualification": {
+    "tests": "Focused deterministic source, slot-budget, no future query inputs, cold restore and negative controls",
+    "full_regression": "Windows + Linux exact-final-SHA NOT RUN",
+    "gpu": "NOT RUN",
+    "forge": "UNCHANGED",
+    "deployment": "NONE",
+    "main": "UNCHANGED"
+  },
+  "status": {
+    "precommit": true,
+    "generated_source": false,
+    "trained": false,
+    "OOD_scored": false,
+    "sci_pass": false
+  }
+}
