@@ -1,0 +1,56 @@
+name: FORGE private worker existing isolation inventory (read only once)
+on:
+  push:
+    branches: ['operations/f139-private-worker-isolation-readonly-once-20261110']
+permissions:
+  contents: read
+jobs:
+  inventory:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 3
+    steps:
+      - name: Inventory existing local isolation without starting engines or project code
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          Set-StrictMode -Version Latest
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+             $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+             $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+             $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN') {throw 'ISOLATION_INVENTORY_CONTEXT_DRIFT'}
+          $event=Get-Content -LiteralPath $env:GITHUB_EVENT_PATH -Raw | ConvertFrom-Json
+          if($event.created -ne $true -or $event.deleted -ne $false -or $event.forced -ne $false -or
+             $event.before -cne ('0'*40) -or $event.after -cne $env:GITHUB_SHA){throw 'ISOLATION_CREATE_ONLY_REQUIRED'}
+          $commands=[ordered]@{}
+          foreach($name in @('docker.exe','podman.exe','wsl.exe','python.exe')) {
+            $commands[$name]=$null -ne (Get-Command $name -ErrorAction SilentlyContinue)
+          }
+          $distros=@()
+          $key='Registry::HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Lxss'
+          if(Test-Path -LiteralPath $key) {
+            foreach($node in @(Get-ChildItem -LiteralPath $key -ErrorAction SilentlyContinue)) {
+              $value=Get-ItemProperty -LiteralPath $node.PSPath -ErrorAction SilentlyContinue
+              $distros+=([ordered]@{name=[string]$value.DistributionName;version=$value.Version})
+            }
+          }
+          $os=Get-CimInstance Win32_OperatingSystem
+          $pipe=Test-Path -LiteralPath '\\.\pipe\docker_engine'
+          $report=[ordered]@{
+            schema='forge.f139.private-worker-existing-isolation-inventory.v1'
+            commands=$commands
+            registered_wsl_distros=$distros
+            local_docker_pipe_present=$pipe
+            free_memory_kib=[int64]$os.FreePhysicalMemory
+            total_memory_kib=[int64]$os.TotalVisibleMemorySize
+            wsl_launched=$false
+            container_launched=$false
+            project_code_executed=$false
+            gpu_used=$false
+            new_credentials=$false
+            installed_packages=0
+            owner_mutations=0
+            signed_worker_qualified=$false
+            scientific_first_use=$false
+          }
+          Write-Host ('F139_PRIVATE_WORKER_ISOLATION_INVENTORY='+($report | ConvertTo-Json -Depth 8 -Compress))
