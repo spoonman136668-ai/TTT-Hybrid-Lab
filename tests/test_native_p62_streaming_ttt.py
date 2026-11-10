@@ -120,3 +120,14 @@ def test_factual_training_remains_differentiable_with_no_preview_update():
     assert core.key.weight.grad is not None
     assert bool(torch.isfinite(core.key.weight.grad).all())
     assert float(core.key.weight.grad.abs().sum())>0
+
+
+def test_frozen_batch_and_width_limits_reject_before_allocation():
+    with pytest.raises(ValueError,match="P62_UNSUPPORTED_STREAM_WIDTH"):
+        StreamingTTT(TTTLinearMemory(129))
+    with pytest.raises(ValueError,match="P62_BAD_INITIAL_TEMPLATE"):
+        StreamingTTT(TTTLinearMemory(6)).initial_state(torch.zeros(257,6))
+    m=StreamingTTT(TTTLinearMemory(6))
+    s=m.initial_state(torch.zeros(1,6))
+    with pytest.raises(ValueError,match="P62_BAD_SEQUENCE_SHAPE"):
+        m.preview(torch.zeros(257,1,6),s)
