@@ -1,0 +1,64 @@
+name: FORGE private Linux existing isolation preflight (bounded CPU only)
+on:
+  push:
+    branches: ['operations/f139-private-linux-isolation-preflight-once-20261110']
+permissions:
+  contents: read
+jobs:
+  private-linux-preflight:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 3
+    steps:
+      - name: Inspect registered Ubuntu isolation and CPU packages without project execution
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          import json, os, subprocess
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          code = """
+          import importlib.metadata, json, os, pathlib, shutil, subprocess, sys
+          def read(path):
+              value=pathlib.Path(path)
+              return value.read_text().strip() if value.is_file() else None
+          packages={}
+          for name in ('torch','pytest'):
+              try: packages[name]=importlib.metadata.version(name)
+              except importlib.metadata.PackageNotFoundError: packages[name]=None
+          tools={name:shutil.which(name) is not None for name in ('bwrap','unshare','podman','docker','systemd-run')}
+          probe=dict(attempted=False,passed=False,returncode=None)
+          if tools['unshare']:
+              result=subprocess.run(['/usr/bin/unshare','--user','--map-root-user','--net','--mount','--pid','--fork','/usr/bin/true'],
+                  stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                  timeout=10,check=False)
+              probe=dict(attempted=True,passed=result.returncode==0,returncode=result.returncode,
+                  diagnostic=result.stderr.decode('utf-8','replace')[:500])
+          print('F139_PRIVATE_LINUX_ISOLATION_PREFLIGHT='+json.dumps(dict(
+              schema='forge.f139.private-linux-existing-isolation-preflight.v1',
+              python=sys.version.split()[0],uid=os.getuid(),tools=tools,packages=packages,
+              userns_clone=read('/proc/sys/kernel/unprivileged_userns_clone'),
+              apparmor_userns_restricted=read('/proc/sys/kernel/apparmor_restrict_unprivileged_userns'),
+              namespace_probe=probe,source_executed=False,gpu_used=False,model_calls=0,
+              installed_packages=0,new_credentials=False,owner_mutations=0,
+              scientific_first_use=False,signed_worker_qualified=False),sort_keys=True))
+          """
+          import textwrap
+          allow={'SYSTEMROOT','WINDIR','PATH','TEMP','TMP','USERPROFILE','LOCALAPPDATA','APPDATA'}
+          env={k:v for k,v in os.environ.items() if k.upper() in allow}
+          env['WSLENV']=''
+          result=subprocess.run(['wsl.exe','--distribution','Ubuntu-24.04','--exec',
+              '/usr/bin/python3','-I','-B','-c',textwrap.dedent(code)],env=env,
+              stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+              timeout=45,check=False)
+          assert result.returncode==0, 'REGISTERED_PRIVATE_LINUX_PREFLIGHT_FAILED'
+          print(result.stdout.decode('utf-8','strict').strip())
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'PRIVATE_LINUX_ISOLATION_PREFLIGHT_FAILED'}
