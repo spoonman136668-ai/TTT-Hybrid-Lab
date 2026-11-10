@@ -1,0 +1,146 @@
+{
+  "schema": "ttt-hybrid.p53-contradiction-gated-causal-memory-negative-receipt.v1",
+  "status": "FROZEN_DEV_FAIL_0_OF_3_NO_INDEPENDENT_SCIENCE",
+  "source": {
+    "parent_pr": 145,
+    "parent_sha": "fabb8518e2653b28b7f3022e97a6e6eb9b317da4",
+    "freeze_commit": "247c56a1f5b17b4b9e8bec65284da539eb3e1e5e",
+    "freeze_manifest_git_blob": "ff49feb566a961b7540984e4bca991e2dbdd8288",
+    "new_source_seeds": {
+      "fit": 871101,
+      "validation": 871103,
+      "unfamiliar_dev": 871107
+    },
+    "new_source_SHA256": {
+      "fit": "8a6db2661c22a9ee5e15ed913b771d482e9d54a188b984f9bd88732fe4a74696",
+      "validation": "5493e6abd6b9c2e6791e4182c07f68c967c8d271bd5386450d98b7fdff07d220",
+      "unfamiliar_dev": "30075a1d283da1b83ead3b94381c92ee36430a3729dee0490873bd74781781c1"
+    },
+    "train_history_factual_actions": 8,
+    "train_real_query_outcomes": 1,
+    "future_counterfactual_used_only_for_scoring": true,
+    "source_is_authored_development_only": true
+  },
+  "architecture": {
+    "original_P50_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_P50_factual_stream_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "original_P51_source_blob": "d7dbf31f5ee46167775eef7b0c273cb18ba0d606",
+    "original_P52_source_blob": "1840b31be57d26c8c3de9d5b8ae6fa74b4bc8b2d",
+    "new_source_git_blob": "21639a358c5006a54e6c0f3113a39da4b24fcdb7",
+    "new_source_sha256": "ca01f9728af8a210b2bf945bfe9067caf389f8f9e81c966779b09c3a39362ef5",
+    "new_tests_git_blob": "198371df06bced9d18e5646f51706f311981b3aa",
+    "new_tests_sha256": "18229ef36ecaac25540315cb26ce8ac1cb163a8c33613a4f2c7103d47f789ab3",
+    "three_extra_parameters": true,
+    "source_unchanged": true
+  },
+  "execution": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focus_tests_pass": 38,
+    "focus_tests_total": 38,
+    "wall_clock_dev_seconds": 27.233703612,
+    "sampler_indices_sha256": "e7009dd9316e6fbd59a710de3d3c99007e82ff58fe8adfd2ace2e0f0935abd8c",
+    "model_seeds": [
+      881101,
+      881103,
+      881107
+    ],
+    "optimizer_updates_per_arm": 300,
+    "total_optimizer_updates": 3600,
+    "params": {
+      "P53": 4630,
+      "P52": 4627,
+      "GRU": 4521,
+      "wrong_credit_P53": 4630
+    },
+    "full_result_json_sha256": "21a0d507ab85629555d3a0a944bc6d04650e4e9f5841978b150c3a54778788cd",
+    "result_full_available_in_conversation_evidence_zip": true,
+    "first_attempt_exit": "invoked script directly without package module resolution; failed before source execution; reran using python -m",
+    "test_precision_fix": "pre-training only: candidate-order check tolerance changed to 1e-6 absolute for ~5.96e-8 CPU floating-point difference, source/model/frozen gates unchanged"
+  },
+  "controls": {
+    "last_effect": {
+      "all_MSE": 0.06657837331295013,
+      "all_effect_MAE": 0.14214850962162018,
+      "switched_effect_MAE": 0.14267747104167938
+    },
+    "opposite_pair": {
+      "all_MSE": 0.023797035217285156,
+      "all_effect_MAE": 0.05630388855934143,
+      "switched_effect_MAE": 0.08205056190490723
+    },
+    "ridge": {
+      "all_MSE": 0.19143694639205933,
+      "all_effect_MAE": 0.12891846895217896,
+      "switched_effect_MAE": 0.32854390144348145
+    }
+  },
+  "results": [
+    {
+      "seed": 881101,
+      "p53_MSE": 0.02571456879377365,
+      "p52_MSE": 0.02785320021212101,
+      "wrong_credit_MSE": 0.04512106999754906,
+      "p53_effect_MAE": 0.05602094531059265,
+      "p53_switched_effect_MAE": 0.07717306911945343,
+      "passed": [
+        "wrong_credit_prediction_20pct",
+        "cold_exact"
+      ],
+      "all_gates": false
+    },
+    {
+      "seed": 881103,
+      "p53_MSE": 0.02198978327214718,
+      "p52_MSE": 0.023935073986649513,
+      "wrong_credit_MSE": 0.044176142662763596,
+      "p53_effect_MAE": 0.05445772409439087,
+      "p53_switched_effect_MAE": 0.07323218137025833,
+      "passed": [
+        "prediction_MSE_5pct_strongest",
+        "switched_effect_MAE_10pct_fast",
+        "wrong_credit_prediction_20pct",
+        "cold_exact"
+      ],
+      "all_gates": false
+    },
+    {
+      "seed": 881107,
+      "p53_MSE": 0.02626248262822628,
+      "p52_MSE": 0.02698911726474762,
+      "wrong_credit_MSE": 0.047329504042863846,
+      "p53_effect_MAE": 0.058288607746362686,
+      "p53_switched_effect_MAE": 0.07999732345342636,
+      "passed": [
+        "wrong_credit_prediction_20pct",
+        "cold_exact",
+        "all_neural_validation_plateau"
+      ],
+      "all_gates": false
+    }
+  ],
+  "frozen_gate_outcome": {
+    "all_seed_full_pass": "0/3",
+    "effect_MAE_strongest": "0/3",
+    "prediction_MSE_strongest": "1/3",
+    "switched_effect_strongest": "1/3",
+    "wrong_credit_margin": "3/3",
+    "cold_restore": "3/3",
+    "all_arm_plateau": "1/3",
+    "full_windows_linux_regression": "UNVERIFIED",
+    "authentic_cuda_build": "NOT_RUN",
+    "source_owner_external_science": "NOT_RUN",
+    "model_promotion": "NOT_AUTHORIZED"
+  },
+  "scientific_interpretation": "P53 modestly improves mean-square prediction vs P52 with matched training 3/3 but is not a convincing causal-learning advance: zero-trained latest-opposite-action classical estimator and missing plateau prevent superiority and stable result. No hidden mode oracle, no independent validation.",
+  "isolation": {
+    "parallel_p53_policy_pr": 146,
+    "overlap": "NO_P53_POLICY_SOURCE_EDITS",
+    "FORGE": "UNCHANGED",
+    "scheduled_tasks": "NONE",
+    "new_runner_or_controller": "NONE",
+    "new_workflows": "NONE",
+    "merged": "NO"
+  }
+}

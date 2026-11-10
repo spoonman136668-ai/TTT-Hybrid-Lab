@@ -1,0 +1,149 @@
+{
+  "schema": "ttt-hybrid.p53-factual-contradiction-gated-causal-memory-dev-frozen.v1",
+  "stage": "FROZEN_BEFORE_P53_SOURCE_GENERATION_OR_OPTIMIZER",
+  "authority": "DEV_CPU_ONLY_NO_EXTERNAL_OWNER_FIRST_USE",
+  "parent": {
+    "pr": 145,
+    "sha": "fabb8518e2653b28b7f3022e97a6e6eb9b317da4",
+    "tree": "5ddccd7ef9723c74c73130b28fdbec6c202ac09f",
+    "p52_frozen_result": "FAIL_ALL_3_SEEDS",
+    "source_path": "scripts/native_p52_action_factorized_learning_dev.py",
+    "model": "NativeFactualHybridStream unchanged, P50 original model.py unchanged"
+  },
+  "hypothesis": "A continuously learned contradiction gate mixing the latest actually executed opposite-action causal contrast with the native P50 factorized learned effect improves rapidly changing causal-world transfer versus original P52 and a fully trained GRU and honestly strong recent-factual-effect controls, without claiming hidden switch oracle or performance from pure source generation.",
+  "source": {
+    "seeds": {
+      "fit": 871101,
+      "validation": 871103,
+      "unfamiliar_dev": 871107
+    },
+    "n": {
+      "fit": 1536,
+      "validation": 256,
+      "unfamiliar_dev": 384
+    },
+    "source_birth": "fresh authored physical-action simulator distinct from P51/P52 seed and distribution",
+    "historical_facts": 8,
+    "dt": 0.125,
+    "executed_action": "independent fair +/-1, no forced alternating schedule, no future effects passed to model",
+    "switch_fraction": {
+      "fit": 0.35,
+      "validation": 0.35,
+      "unfamiliar_dev": 0.35
+    },
+    "switch_step": "uniform integer [3,5] for switched worlds; no announcement to model",
+    "nuisance": "quadratic polynomial + sinusoid; OOD changes frequency and amplitude",
+    "fit_sinusoid_freq": [
+      0.25,
+      0.7
+    ],
+    "unfamiliar_freq": [
+      0.9,
+      1.6
+    ],
+    "amp_fit": [
+      -0.09,
+      0.09
+    ],
+    "amp_ood": [
+      -0.18,
+      0.18
+    ],
+    "beta_abs_uniform": [
+      0.2,
+      0.45
+    ],
+    "initial_sensor_uniform": [
+      -0.3,
+      0.3
+    ],
+    "nuisance_intercept": [
+      -0.12,
+      0.12
+    ],
+    "linear": [
+      -0.25,
+      0.25
+    ],
+    "quadratic": [
+      -0.12,
+      0.12
+    ],
+    "sensor_noise_sd": 0.01,
+    "training_supervision": "one actually executed factual query action/outcome only",
+    "test_label": "both +/-1 alternative potential outcomes generated only for evaluation and never used by optimizer",
+    "hidden_truth": "never input to any model",
+    "strong_info": "all arms see precisely same 8 completed actual factual histories, 1 factual query action and its actual outcome",
+    "freshness": "all P47-P52 evaluation source seeds excluded from newly born source"
+  },
+  "mechanism": {
+    "base": "P52 exact factorized SSM/causal-attention/TTT/conditional-depth trunk unchanged",
+    "factual_contrast": "latest actually observed opposite-action pair, effect=(delta_last-delta_opposite)/(action_last-action_opposite); reject histories lacking an opposite action, no invented effect",
+    "gate": "sigmoid(w0 + w1*abs(learned_effect - observed_contrast) + w2*(elapsed_gap / 8)), three learned scalar parameters",
+    "combined_effect": "gate * observed_fast_effect + (1-gate) * native_P52_effect",
+    "output": "native_P52_nuisance + proposed_action * combined_effect",
+    "wrong_credit": "history action-field identity cyclically shifted ONLY for trained wrong-credit arm; factual outcomes unchanged, no hidden source truth",
+    "update": "fast evidence recomputed from completed past facts per query, never committed by hypothetical previews",
+    "parameter_cap": "P53 additional parameters exactly 3 beyond P52",
+    "cold_restore": "exact model weights and factual tensor memory after episode checkpoint",
+    "known_limitation": "nuisance drift biases nearest contrast; switch between chosen observations biases fast evidence; ordinary last-effect and nearest-opposite controls may dominate"
+  },
+  "arms": [
+    "P53_learned_gate",
+    "P52_factorized_same_source",
+    "GRU_same_source",
+    "P53_wrong_credit"
+  ],
+  "controls": [
+    "last_factual_effect",
+    "last_opposite_action_contrast_with_last_nuisance",
+    "local_degree2_polynomial_action_ridge"
+  ],
+  "train": {
+    "model_seeds": [
+      881101,
+      881103,
+      881107
+    ],
+    "index_seed": 881199,
+    "updates_per_arm": 300,
+    "optimizer": "AdamW",
+    "lr": 0.003,
+    "lr_min": 0.0001,
+    "schedule": "cosine",
+    "batch_size": 64,
+    "val_every": 50,
+    "total_neural_updates": 3600,
+    "all_arms_same_batches": true,
+    "max_cpu_threads": 1
+  },
+  "predeclared_all_three_seed_gates": {
+    "causal_effect_MAE_5pct_better_than_best_of_P52_GRU_last_effect_opposite_ridge": true,
+    "switched_effect_MAE_10pct_better_than_best_last_effect_and_opposite": true,
+    "both_action_OOD_prediction_MSE_5pct_better_than_best_P52_GRU_and_classicals": true,
+    "P53_wrong_credit_prediction_MSE_margin_20pct": true,
+    "cold_restore_bit_exact": true,
+    "source_integrity": true,
+    "all_arm_last50_validation_plateau_below_1pct": true,
+    "no_drop_on_unequal_action_information": true,
+    "all_seeds_required": true
+  },
+  "negative": [
+    "constant_actions_no_fast_contrast",
+    "wrong_action_labels_shuffled",
+    "post_switch_pre_evidence_does_not_claim_adaptation",
+    "no_hypothetical_commit",
+    "no token objectives",
+    "quadratic nuisance will bias contrast"
+  ],
+  "qualification": {
+    "scientific_external_first_use": "NOT_AUTHORIZED",
+    "full_final_windows_ubuntu_wsl_regression": "REQUIRED",
+    "original_GPU_build": "NOT_AUTHORIZED",
+    "no_forge_controller_or_loop_modification": true,
+    "no_schedule_or_runner_dispatch": true,
+    "no_paid_API": true,
+    "no_merge_or_promotion": true
+  },
+  "stop": "Do not adjust seeds, budgets, source, controls, frozen thresholds or choose better result after seeing evaluation. Preserve failure and no-seeming evidence if strong controls beat P53."
+}
