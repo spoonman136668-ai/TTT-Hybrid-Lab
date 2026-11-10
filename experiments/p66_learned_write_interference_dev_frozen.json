@@ -1,0 +1,122 @@
+{
+  "schema": "ttt-hybrid.p66-learned-relevance-write-mechanistic-dev-freeze.v1",
+  "state": "FROZEN_BEFORE_P66_AUTHORED_SOURCE_AND_TRAINING",
+  "parent": {
+    "pr": 170,
+    "sha": "5fe37fdb4b51e248159c66b2c3e426ca6d58c738",
+    "p65_original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "scope": "Unprivileged trainable write gate on original TTTLinearMemory online matrix equation; independent authored DEV only; not original full Hybrid, not externally authenticated physical source or scientific first use",
+  "hypothesis": "A learned content-sensitive write gate will retain stable action-consequence mappings through overlapping nuisance observations better than unfiltered reference writes, nonlearned surprise filtering, equal memory FIFO, and a separately fully trained GRU.",
+  "sources": {
+    "fit": {
+      "seed": 81011,
+      "episodes": 192,
+      "target_repeats": 4,
+      "distractors": 64
+    },
+    "validation": {
+      "seed": 81013,
+      "episodes": 48,
+      "target_repeats": 4,
+      "distractors": 64
+    },
+    "unfamiliar_dev": {
+      "seed": 81017,
+      "episodes": 64,
+      "target_repeats": 3,
+      "distractors": 80
+    },
+    "orthogonal_negative": {
+      "seed": 81019,
+      "episodes": 64,
+      "target_repeats": 3,
+      "distractors": 80
+    }
+  },
+  "generation": {
+    "dimension": 16,
+    "targets": 8,
+    "target_keys": "per-world orthonormal QR action vectors",
+    "target_values": "fixed per-action tanh Gaussian realized outcomes",
+    "distractors": "independent normalized action vectors and tanh Gaussian observed outcomes; overlapping or orthogonal to target subspace",
+    "order": "per-world seeded interleaving; no phase labels at model input",
+    "supervision": "query-target values only in training objective and evaluation scoring, never inside online write gate"
+  },
+  "mechanism": {
+    "state_floats": 256,
+    "eta": 0.5,
+    "online_update": "W <- W + 0.5*sigmoid(theta dot features)*(observed_value-W*actual_action) outer actual_action",
+    "features": [
+      "constant 1",
+      "log(mean squared prediction residual + 1e-6)",
+      "log(mean squared prior prediction + 1e-6)",
+      "cosine(prior prediction, observed_value)"
+    ],
+    "initial_theta": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "no_future_queries_in_write": true
+  },
+  "arms": [
+    "learned-gate fast matrix",
+    "original all-write fast matrix",
+    "validation-selected residual threshold filter",
+    "random admission rate matched to learned FIT gate",
+    "8-pair FIFO memory using same 256 state floats",
+    "fully trained GRU(32 input,24 hidden) recurrence with query readout",
+    "wrong-action-credit gate negative control",
+    "privileged oracle phase selector (diagnostic ceiling only)"
+  ],
+  "training": {
+    "model_seeds": [
+      82031,
+      82033,
+      82037
+    ],
+    "torch_threads": 1,
+    "optimizer": "Adam",
+    "lr": 0.015,
+    "updates": 120,
+    "batch": 32,
+    "sampler_seed": 82099,
+    "validation_every": 40,
+    "loss": "full-stream final target query MSE + 0.1 midpoint target query MSE",
+    "gru_input": "observed action and realized consequence only",
+    "optimizer_controls": "same training sample-index plan, Adam steps and learning rate for gate and GRU",
+    "surprise_thresholds": [
+      0.03,
+      0.06,
+      0.1,
+      0.16,
+      0.25,
+      0.4,
+      0.7
+    ],
+    "validation_only_selection": true
+  },
+  "metrics": [
+    "unfamiliar target MSE, per trained seed",
+    "all-control MSE and parameter count",
+    "wrong-credit MSE",
+    "write fraction",
+    "orthogonal nuisance preservation",
+    "bitwise cold state restoration",
+    "source and sample-index SHA256",
+    "per-arm wall clock including training and inference"
+  ],
+  "strict_dev_success": {
+    "all_seeds": true,
+    "gate_vs_best_unprivileged_control": "OOD gate MSE <=0.9*min(all_write,validated_surprise, FIFO, trained_GRU)",
+    "gate_vs_allwrite": "OOD gate MSE <=0.9*allwrite",
+    "wrong_credit": "wrong-credit gate OOD MSE >=1.2*intact gate MSE",
+    "cold_restore": "bitwise exact",
+    "orthogonal_control": "allwrite difference <= 1e-5 versus no-noise replay"
+  },
+  "limitations": "DEV synthetic actions and outcomes only; original trained Mamba2+attention+TTT+MoD not instantiated; not capacity/compute matched to GRU, no external first-use; cannot claim scientific pass, promotion, or integration even if DEV thresholds pass.",
+  "on_failure": "Report all nulls without post-result tuning; do not reuse OOD cohort for a revised hypothesis.",
+  "authority": "No merge, workflow, runner, owner, controller, scheduler, paid API, live action, protected source first-use, or FORGE modification"
+}
