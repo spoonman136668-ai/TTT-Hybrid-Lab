@@ -1,6 +1,6 @@
 {
   "schema": "ttt-hybrid.p60-pol.reward-only-hidden-velocity-DEV-negative.v1",
-  "classification": "FROZEN_AUTHOR_GENERATED_DEV_FAIL_0_OF_3_NOT_NATIVE_HYBRID_SCIENCE",
+  "classification": "FROZEN_DEV_FAIL_ARCHITECTURE_OR_SEARCH_SUPERIORITY",
   "scope": {
     "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
     "parent_pr": 158,
@@ -126,8 +126,9 @@
     "local_test_sha256": "83b15a06ab289dc4a2c853a6f6ad4eb76f4cc205852036df7092dfe7a0caedfd",
     "local_full_result_sha256": "a237350147f48af298f7aac2b05de8518de6689b5f874718b8f394173c9132ac",
     "local_focused_pytest": "7/7 PASS with PYTHONPATH=/mnt/data/p60_reward_only:/mnt/data/p59",
-    "exact_repository_executable_and_tests_committed": "NOT_YET; SOURCE_CUSTODY_UNQUALIFIED",
-    "local_evidence_zip_sha256": "2b63d34043a113ec13b888f1f936028310fe6ef559af7d499cae162662e75f94"
+    "exact_repository_executable_and_tests_committed": "PASS; source Git blob 366c0fa7e50e2c4109c0eaf7f4f3d40052c14bd8 and tests Git blob 87e6aa786c233837e6648abb98bb3faf312592be",
+    "local_evidence_zip_sha256": "2b63d34043a113ec13b888f1f936028310fe6ef559af7d499cae162662e75f94",
+    "GitHub_exact_source_readback": "PASS"
   },
   "science": {
     "frozen_dev_negative_preserved": true,
@@ -143,7 +144,9 @@
     "local_focused": "PASS_7_OF_7",
     "exact_sha_source_repo_regression": "NOT_RUN",
     "Windows_Ubuntu_full_regression": "NOT_RUN",
-    "original_G4_G5_G7_CI": "NOT_QUALIFIED_FOR_CANDIDATE"
+    "original_G4_G5_G7_CI": "NOT_QUALIFIED_FOR_CANDIDATE",
+    "focused_executable_and_test_git_blob": "PASS",
+    "full_exact_candidate_Windows_and_Ubuntu": "NOT_RUN"
   },
   "deployment": {
     "new_controller": false,
@@ -153,5 +156,147 @@
     "merge": false,
     "live_actuation": false
   },
-  "disposition": "DRAFT EVIDENCE ONLY until executable and tests are committed byte-identical and qualified; do not claim engineering completion or architecture/scientific success."
+  "disposition": "Exact original frozen source and tests committed, focused source-backed local controls PASS; hosted CI and mandatory exact-source full Windows/Ubuntu regression UNVERIFIED; frozen scientific DEV FAIL 0/3; draft only, not independent model science.",
+  "frozen_overall": "FAIL_0_OF_3",
+  "scientific_first_use": "NOT_RUN",
+  "tested_source_sha256": "69eb9a446eb85e566e82a017265e6c440ac93cb9074c0a4a548a0b7551dc8960",
+  "tested_source_git_blob": "366c0fa7e50e2c4109c0eaf7f4f3d40052c14bd8",
+  "tested_test_sha256": "83b15a06ab289dc4a2c853a6f6ad4eb76f4cc205852036df7092dfe7a0caedfd",
+  "seeds": [
+    {
+      "seed": 9741,
+      "oodA": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "oodB": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "frozen_gates": {
+        "oodA": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        },
+        "oodB": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        }
+      }
+    },
+    {
+      "seed": 9763,
+      "oodA": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "oodB": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "frozen_gates": {
+        "oodA": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        },
+        "oodB": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        }
+      }
+    },
+    {
+      "seed": 9781,
+      "oodA": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "oodB": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "frozen_gates": {
+        "oodA": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        },
+        "oodB": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        }
+      }
+    }
+  ]
 }
