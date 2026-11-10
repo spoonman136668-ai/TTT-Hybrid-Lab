@@ -1,0 +1,113 @@
+{
+  "schema": "ttt-hybrid.p68-noisy-views-budgeted-causal-memory-frozen.v1",
+  "status": "FROZEN_BEFORE_P68_IMPLEMENTATION_SOURCE_CREATION_OR_EXPERIMENT",
+  "parent": {
+    "pr": 175,
+    "sha": "37342b90eec953e0c28b6ff9a7dc1cf71e12348d",
+    "original_p67_dev_result": "DEV_FAIL_0_OF_3",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "problem": "P67 classical frequency/novelty rule used complete past-key history, violating claimed 256-float total state; repeated context query exact match made source easily soluble. Test memory parity with genuinely nonidentical views, simulated executed scalar action and measured vector consequence.",
+  "source": {
+    "only_authored_synthetic_development": true,
+    "unique_new_seeds": {
+      "fit": 968101,
+      "val": 968103,
+      "ood": 968107
+    },
+    "world_counts": {
+      "fit": 256,
+      "val": 96,
+      "ood": 128
+    },
+    "latent_world_role_count": 8,
+    "ambient_dim": 16,
+    "per_role_target_executed_interventions": 4,
+    "unique_irrelevant_factual_interventions": {
+      "fit": 32,
+      "val": 32,
+      "ood": 64
+    },
+    "order": "fresh uniform per-world interleave all 32 target events with novel distractors, no index/phase/role input",
+    "cause": "each true role/prototype has one independently drawn tanh Gaussian 16-vector consequence per +1; each observed executed +/-1 action produces signed effect plus noise; unique distractor keys likewise",
+    "key": "independent additive Gaussian view noise around per-world QR orthonormal prototype then normalize, never repeated exactly",
+    "key_view_std": {
+      "fit": 0.04,
+      "val": 0.04,
+      "ood": 0.12
+    },
+    "outcome_noise_std": {
+      "fit": 0.03,
+      "val": 0.03,
+      "ood": 0.06
+    },
+    "query": "new independently jittered view of uniformly randomly chosen target, plus a single actually executed +/-1 action and observed consequence. Query revealed only after entire factual history, never to write policies.",
+    "OOD_shift": "different basis rotation, triple key jitter, double outcome noise, +32 novel distractors",
+    "index_role_leak_control": "per-window quartile role deviation <.06 and heldout index-only balanced accuracy <=.56; otherwise no full study",
+    "no_query_lookahead": true,
+    "do_not_reuse_consumed_P67_sources": true
+  },
+  "frozen_model_controls": {
+    "learned": "exact original TTT fast 16x16 outer-product residual equation eta=.5 and 4 scalar theta on [1,log(residual_mse),log(previous_output_mean_square),cos(previous_output, actually observed action-normalized consequence)]; sigmoid gate, no time, query, source role; 256 persistent floats",
+    "wrong_credit": "same learned gate and setup, independent random +/-1 action identity substituted on historical facts, physical observed outcomes unmodified; query action and measured consequence identical",
+    "all_write": "original TTT matrix 256 floats always writes all completed facts",
+    "fixed_surprise": "original matrix 256 floats write only when residual below FIT+VAL calibrated threshold, no other memory",
+    "fixed_novelty": "original matrix 256 floats, write when ||previous read|| exceeds FIT+VAL calibrated threshold; no past-key archive",
+    "proto8": "classical 8 slots ×(16 observed-key floats +16 physical-effect floats)=256 persistent floats, key norm embeds capped visit count; similarity threshold chosen on VALIDATION only from [.60,.70,.80,.88]; online update matched slot and capped count or evict minimum count with lowest index tie. No out-of-band state/age/prototype identities. Same actual source as all others",
+    "gru": "conventional GRU 64 recurrent floats (less than 256 memory state) with 33-d [key,executed_action,actual_observed_outcome] event input, 16d effect head conditioned on query context and executed query action; train on same FIT factual query outcome, 300 AdamW steps; must report unconverged if not competent",
+    "random": "matrix Bernoulli gate with acceptance rate from learned FIT source only, per-model-seed PRNG; not equal compute but equal state",
+    "oracle": "uses hidden relevance/target role to skip distractors, ONLY privileged upper bound not fair control",
+    "whole_history_knn": "reference diagnostic over >256 floats, NEVER admissible capacity matched baseline"
+  },
+  "training": {
+    "model_seeds": [
+      968201,
+      968203,
+      968207
+    ],
+    "index_seed": 968299,
+    "adamw_lr": 0.005,
+    "batch": 32,
+    "updates_per_trainable_arm": 300,
+    "train_arms": [
+      "learned",
+      "wrong_credit",
+      "gru"
+    ],
+    "total_optimizer_steps": 2700,
+    "validation_every_steps": 50,
+    "competence_threshold": "GRU validation MSE <=0.85*zero-state validation MSE and final two checkpoints absolute MSE difference <=0.01; otherwise combined FAIL",
+    "max_cpu_seconds": 300
+  },
+  "scoring": {
+    "primary": "mean heldout actually executed query outcome 16D MSE on 128 never-trained synthetic OOD development worlds",
+    "strong_control": "best lowest OOD MSE from original all-write, validation-calibrated fixed 256-float gates, 8-slot classical 256-float prototype, trained GRU (if competent)",
+    "strict_gates_every_seed": [
+      "learned <=0.90*best_strong_control",
+      "learned <=0.80*wrong_credit",
+      "learned <=0.85*matched_rate_random_write",
+      "competent GRU",
+      "source no role/phase index leak",
+      "same total persistent state 256 floats for all admitted memory controls; GRU recurrent 64 floats",
+      "no arbitrary past-event index list for memory controls",
+      "candidate read-only query and exact tensor-only cold state reproduction"
+    ],
+    "report": [
+      "per-seed MSE, source SHA256, sample-index hash, train losses, parameter counts",
+      "runtime/final FLOP-parity status, no whole-system speed claim",
+      "exact source Git blobs, CUDA/Windows/WSL full regression UNVERIFIED if not run"
+    ],
+    "no_post_OOD_selection": true
+  },
+  "authority": {
+    "no_scientific_first_use": true,
+    "no_merge": true,
+    "no_forge_or_owner_action": true,
+    "no_scheduler_runner_workflow": true,
+    "no_paid_api": true,
+    "no_gpu": true,
+    "no_deployment": true,
+    "no_source_promote": true
+  },
+  "meaning": "Even if all development gates pass, this only supports further independent real-world causal source qualification; not scientific intelligence/architecture superiority."
+}
