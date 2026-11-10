@@ -1,0 +1,302 @@
+{
+  "schema": "ttt-hybrid.p60-pol.reward-only-hidden-velocity-DEV-negative.v1",
+  "classification": "FROZEN_DEV_FAIL_ARCHITECTURE_OR_SEARCH_SUPERIORITY",
+  "scope": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 158,
+    "parent_sha": "af32bb43e4fc1a4271150ce27f7b6d101450c825",
+    "parallel_architecture_pr": 159,
+    "FORGE": "UNTOUCHED"
+  },
+  "prospective_freeze": {
+    "commit_sha": "448ccb704ef1f227dff38264c17426a0ab908a6d",
+    "tree": "2ebbcaeac9a3517be936ff78ce64a41c5bd673fc",
+    "protocol_path": "experiments/p60_pol_reward_only_hidden_velocity_frozen.json",
+    "protocol_git_blob": "d5aa2ddd2537d8fe462eeba0f826a839513f472c",
+    "registered_sources_first_used_after_freeze": true,
+    "earlier_nonfrozen_pilot_seeds": "988000..988007 EXCLUDED FROM THIS EXPERIMENT"
+  },
+  "data": {
+    "train_seeds": "989000..989007",
+    "validation_seeds": "989100..989131",
+    "oodA_seeds": "989200..989263",
+    "oodB_seeds": "989400..989463",
+    "model_seeds": [
+      9741,
+      9763,
+      9781
+    ],
+    "horizon": 256,
+    "physical_reference": "P54 published-equation MountainCar transcription, NOT installed Gymnasium",
+    "physical_original_git_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "p58_exact_96_episode_momentum_trace": "1686baec1451b442b818a37f35843f75a3f0c8c42ae4a677c3b4f13d07652853",
+    "P58_trace_verified": true
+  },
+  "method": {
+    "learner": "three-parameter conventional cross-entropy reward-only parameter search with current actual position and last completed actual position change; physical velocity hidden",
+    "updates": "6 generations x 20 candidates; 8 real training episodes per candidate = 960 per arm per seed",
+    "strong_controls": [
+      "equal-budget random parameter search",
+      "simple zero-training position delta sign",
+      "full-state handcoded momentum",
+      "wrong-reward-credit CEM",
+      "no-history CEM",
+      "history-zero ablation",
+      "random physical motor actions"
+    ],
+    "neural_Hybrid_or_trained_GRU_or_MLP": "NOT_RUN",
+    "reward_input": "actual executed physical returns only; never expert labels or counterfactual outcomes",
+    "all_sources_factual": true
+  },
+  "evaluation": [
+    {
+      "seed": 9741,
+      "oodA": {
+        "history_goal": 64,
+        "history_return": 92.6890625,
+        "random_search_goal": 64,
+        "random_search_return": 93.0125,
+        "finite_delta_goal": 64,
+        "wrong_credit_goal": 0,
+        "memoryless_goal": 0
+      },
+      "oodB": {
+        "history_goal": 64,
+        "history_return": 91.965625,
+        "random_search_goal": 64,
+        "random_search_return": 92.0171875,
+        "finite_delta_goal": 64,
+        "wrong_credit_goal": 0,
+        "memoryless_goal": 0
+      }
+    },
+    {
+      "seed": 9763,
+      "oodA": {
+        "history_goal": 64,
+        "history_return": 92.3671875,
+        "random_search_goal": 64,
+        "random_search_return": 92.7125,
+        "finite_delta_goal": 64,
+        "wrong_credit_goal": 64,
+        "memoryless_goal": 0
+      },
+      "oodB": {
+        "history_goal": 64,
+        "history_return": 91.809375,
+        "random_search_goal": 64,
+        "random_search_return": 91.81875,
+        "finite_delta_goal": 64,
+        "wrong_credit_goal": 64,
+        "memoryless_goal": 0
+      }
+    },
+    {
+      "seed": 9781,
+      "oodA": {
+        "history_goal": 64,
+        "history_return": 92.6859375,
+        "random_search_goal": 64,
+        "random_search_return": 92.3546875,
+        "finite_delta_goal": 64,
+        "wrong_credit_goal": 28,
+        "memoryless_goal": 0
+      },
+      "oodB": {
+        "history_goal": 64,
+        "history_return": 92.0171875,
+        "random_search_goal": 64,
+        "random_search_return": 91.7015625,
+        "finite_delta_goal": 64,
+        "wrong_credit_goal": 10,
+        "memoryless_goal": 0
+      }
+    }
+  ],
+  "frozen_verdict": {
+    "all_three_seeds": "FAIL_0_OF_3",
+    "reason": "History-aware learned search and equally budgeted random search both 384/384 goals; no frozen 5-percentage-point goal advantage; no consistent >=5 net reward superiority. Simple zero-training position-change sign also equals full-state momentum in every OOD cohort. Wrong-credit negative control does not reliably fail.",
+    "cold_parameter_restore_exact": "PASS_ALL",
+    "fitness_budget_matched_episodes": "PASS",
+    "source_trace_pinned": "PASS"
+  },
+  "custody": {
+    "local_script_sha256": "69eb9a446eb85e566e82a017265e6c440ac93cb9074c0a4a548a0b7551dc8960",
+    "local_script_git_blob": "366c0fa7e50e2c4109c0eaf7f4f3d40052c14bd8",
+    "local_test_sha256": "83b15a06ab289dc4a2c853a6f6ad4eb76f4cc205852036df7092dfe7a0caedfd",
+    "local_full_result_sha256": "a237350147f48af298f7aac2b05de8518de6689b5f874718b8f394173c9132ac",
+    "local_focused_pytest": "7/7 PASS with PYTHONPATH=/mnt/data/p60_reward_only:/mnt/data/p59",
+    "exact_repository_executable_and_tests_committed": "PASS; source Git blob 366c0fa7e50e2c4109c0eaf7f4f3d40052c14bd8 and tests Git blob 87e6aa786c233837e6648abb98bb3faf312592be",
+    "local_evidence_zip_sha256": "2b63d34043a113ec13b888f1f936028310fe6ef559af7d499cae162662e75f94",
+    "GitHub_exact_source_readback": "PASS"
+  },
+  "science": {
+    "frozen_dev_negative_preserved": true,
+    "physical_world": "published equation simulator only",
+    "official_Gymnasium_runtime": "UNVERIFIED",
+    "learned_native_Hybrid": "NOT_TESTED",
+    "fully_trained_conventional_GRU_MLP": "NOT_TESTED",
+    "matched_whole_training_FLOPS": "UNVERIFIED",
+    "independent_first_use": "NOT_RUN",
+    "SCIENTIFIC_PASS": false
+  },
+  "engineering": {
+    "local_focused": "PASS_7_OF_7",
+    "exact_sha_source_repo_regression": "NOT_RUN",
+    "Windows_Ubuntu_full_regression": "NOT_RUN",
+    "original_G4_G5_G7_CI": "NOT_QUALIFIED_FOR_CANDIDATE",
+    "focused_executable_and_test_git_blob": "PASS",
+    "full_exact_candidate_Windows_and_Ubuntu": "NOT_RUN"
+  },
+  "deployment": {
+    "new_controller": false,
+    "new_runner": false,
+    "new_schedule": false,
+    "FORGE_integration": false,
+    "merge": false,
+    "live_actuation": false
+  },
+  "disposition": "Exact original frozen source and tests committed, focused source-backed local controls PASS; hosted CI and mandatory exact-source full Windows/Ubuntu regression UNVERIFIED; frozen scientific DEV FAIL 0/3; draft only, not independent model science.",
+  "frozen_overall": "FAIL_0_OF_3",
+  "scientific_first_use": "NOT_RUN",
+  "tested_source_sha256": "69eb9a446eb85e566e82a017265e6c440ac93cb9074c0a4a548a0b7551dc8960",
+  "tested_source_git_blob": "366c0fa7e50e2c4109c0eaf7f4f3d40052c14bd8",
+  "tested_test_sha256": "83b15a06ab289dc4a2c853a6f6ad4eb76f4cc205852036df7092dfe7a0caedfd",
+  "seeds": [
+    {
+      "seed": 9741,
+      "oodA": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "oodB": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "frozen_gates": {
+        "oodA": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        },
+        "oodB": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        }
+      }
+    },
+    {
+      "seed": 9763,
+      "oodA": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "oodB": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "frozen_gates": {
+        "oodA": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        },
+        "oodB": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        }
+      }
+    },
+    {
+      "seed": 9781,
+      "oodA": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "oodB": {
+        "history_cem": {
+          "success_count": 64
+        },
+        "history_random": {
+          "success_count": 64
+        },
+        "memoryless_cem": {
+          "success_count": 0
+        },
+        "history_zero": {
+          "success_count": 0
+        },
+        "position_delta_sign": {
+          "success_count": 64
+        }
+      },
+      "frozen_gates": {
+        "oodA": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        },
+        "oodB": {
+          "strict_beats_equal_budget_random_search_5pp": false
+        }
+      }
+    }
+  ]
+}

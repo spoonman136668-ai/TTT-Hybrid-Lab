@@ -1,0 +1,110 @@
+{
+  "schema": "ttt-hybrid.p60-pol.reward-only-hidden-velocity-motor-search-frozen.v1",
+  "status": "FROZEN_BEFORE_FIRST_REGISTERED_TRAINING_OR_EVALUATION_SOURCE",
+  "parent": {
+    "pr": 158,
+    "sha": "af32bb43e4fc1a4271150ce27f7b6d101450c825",
+    "tree": "3a630ec01ba730da290dc7072de8ad02df768281",
+    "physics_module_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "P59_supervised_dev": "PASS_3_OF_3_but_expert_imitation_only",
+    "P60_ARCH_parallel_pr": 159,
+    "P60_ARCH_negative": "factual history and TTT not necessary in fully-observed imitation"
+  },
+  "scope": "Independent policy-search study, NOT another native Hybrid architecture or neural-model training result; do not conflate with P60 ARCH. Reward-only means optimizer sees only completed physical net returns and actual actions, never expert actions or future source outcomes.",
+  "prefreeze_pilot": {
+    "source_seed_range": "988000..988007",
+    "method": "180 random parameter proposals in each of history and memoryless classes; observe whether some controllers can solve authored published-equation simulator; NOT frozen-source science and NEVER use these resets in new fit/validation/OOD",
+    "pilot_result": "history 79/180 params had at least one successful physical episode; memoryless 0/180",
+    "timing": "occurred before prospective freeze; disclosed, cannot claim fully preregistered method conception"
+  },
+  "source": {
+    "train_seeds": [
+      989000,
+      989007
+    ],
+    "val_seeds": [
+      989100,
+      989131
+    ],
+    "oodA_seeds": [
+      989200,
+      989263
+    ],
+    "oodB_seeds": [
+      989400,
+      989463
+    ],
+    "train_and_oodA_reset": [
+      -0.6,
+      -0.4
+    ],
+    "oodB_reset": [
+      -0.75,
+      -0.25
+    ],
+    "horizon": 256,
+    "physical_stepping": "original published_reset/published_step from exact P54 pinned published-equation transcription (NOT installed official Gymnasium)",
+    "reward": "physical terminal +100 on goal, minus 0.1*actually executed motor^2 per step",
+    "partial_observation": "motor policy only sees current physical POSITION; history policy additionally receives the last observed POSITION CHANGE after at least one executed motor action; physical velocity is hidden from all learned policies",
+    "global_source_rule": "no P58 985xxx or P59 986xxx or earlier pilot 988xxx evaluation source seeds reused"
+  },
+  "proposal_classes": {
+    "history": "theta in R^3 acts sign(theta0 * [100*last position change] + theta1*[4*(position+.5)] + theta2), with last position change zero before first executed action",
+    "memoryless": "theta in R^3 acts sign(theta0*[4*(position+.5)] + theta1*[4*(position+.5)]^3 + theta2), identical 3 tunable parameters without observed history",
+    "random_search_history": "same history model family; sample all candidates independently from original fixed Gaussian proposal without CEM adaptation, select best from equal physical training episodes",
+    "CEM_wrong_credit": "same history CEM proposals but permute *episode mean returns across candidates* before updating search distribution; final selection tracks these corrupted scores, never present as positive evidence",
+    "reference_finite_difference": "hand-designed conventional sign(last observed position change), first step negative; same hidden-velocity observation budget as candidate, strong control",
+    "reference_momentum": "original P58 conventional momentum controller uses true velocity, hence PRIVILEGED full-state comparator, not a fair learner",
+    "random_actions": "actual signed independent random motor choices with rng seeded by (990000+physical_seed) separate policy control, no hidden future"
+  },
+  "training": {
+    "optimizer": "bounded diagonal cross-entropy method (CEM) on physical episodic returns, never gradients/teacher labels",
+    "seeds": [
+      9741,
+      9763,
+      9781
+    ],
+    "generations": 6,
+    "candidates_per_generation": 20,
+    "elite_count": 5,
+    "train_resets_each_candidate": 8,
+    "total_training_episodes_each_fitted_arm_seed": 960,
+    "policy_family_init": "theta ~ Normal(mu=[0,0,0],sigma=[1,1,.25]); CEM new means = elite mean, sigmas = max(0.05, elite std) with 0.5 smoothing; random baseline samples original Gaussian all 120 candidates",
+    "objective": "maximize mean reward over eight completed actual physical trajectories per sampled theta",
+    "selected_policy": "best physically observed mean return across all evaluated candidates under each method; no post-result parameter tuning",
+    "rng": "identical model seed per arm and iteration; each candidate each generation evaluated on identical eight reset seeds; comparison is equal episode opportunity but not guaranteed equal source steps due termination",
+    "cost": "count exact executed physical steps and returns; report whole process wall; no neural training or matched FLOPs claim"
+  },
+  "frozen_gates": {
+    "per_seed_oodA_and_oodB": [
+      "history-CEM actual goal success >=.90",
+      "history-CEM goal success >= learned memoryless CEM +.50",
+      "history-CEM goal success >= random-actions success +.50",
+      "history-CEM goal success >= finite-difference baseline success -.05",
+      "history-CEM average physical net return >= finite-difference baseline mean reward -10"
+    ],
+    "strict_method_superiority_each_seed": [
+      "history-CEM goal success >= equal-budget history random search +.05 on BOTH OOD cohorts",
+      "history-CEM physical net reward >= equal-budget random search +5 on BOTH OOD cohorts",
+      "history-CEM goal success >= reward-shuffled CEM +.25 on BOTH OOD cohorts"
+    ],
+    "negative_controls": [
+      "same actual observed starting state and max 256 motor opportunities for all arms; early terminal natural episodes allowed and actual steps reported",
+      "no model uses true velocity; reference original momentum explicitly labeled privileged",
+      "zero history ablation on fitted history theta: force last delta to zero; goal success drops by at least .50 each seed",
+      "bit-exact final frozen model parameter JSON cold restoration and action decision",
+      "per-episode reward accounting exact =100*terminal-.1*actual energy"
+    ],
+    "all_3_seeds_required": true,
+    "science": "Even a positive reward-only CEM in a 3-param velocity-sign policy family does not establish native Hybrid/TTT action-consequence reasoning, learned general model, scientific PASS, model-free neural learning, unfamiliar dynamics or autonomous RSI. The architecture still requires matched GRU/MLP/Hybrid trained from reward-only actions on independently qualified external physics."
+  },
+  "authority": {
+    "no_schedule_runner_controller_queue_workflow": true,
+    "no_FORGE_dispatch_or_model_admission": true,
+    "no_paid_API": true,
+    "no_external_scientific_first_use": true,
+    "no_merge_or_promotion": true,
+    "preserve_P58_P59_P60_ARCH_controls": true,
+    "mandatory_full_candidate_Windows_and_Ubuntu_WSL_regression_before_any_acceptance": true
+  }
+}
