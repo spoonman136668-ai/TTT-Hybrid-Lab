@@ -98,12 +98,15 @@ def role_position_balanced(roles):
 
 
 def index_only_balanced_accuracy(roles):
-    # An index-only deterministic Bayes classifier evaluated on the observed split.
-    # No index features are supplied to any write gate.
-    per_pos = roles.float().mean(0)
-    prediction = per_pos >= 0.5
-    tpr = (prediction[None, :] & roles).sum().float() / roles.sum().clamp_min(1)
-    tnr = ((~prediction)[None, :] & (~roles)).sum().float() / (~roles).sum().clamp_min(1)
+    # Out-of-sample index-only classifier trained on one set of worlds,
+    # evaluated only on disjoint held-out worlds. Gate never sees index or role.
+    if roles.shape[0] < 4:
+        raise ValueError('P67_INDEX_CONTROL_TOO_FEW_WORLDS')
+    half = roles.shape[0] // 2
+    train_roles, held_out = roles[:half], roles[half:]
+    prediction = train_roles.float().mean(0) >= 0.5
+    tpr = (prediction[None, :] & held_out).sum().float() / held_out.sum().clamp_min(1)
+    tnr = ((~prediction)[None, :] & (~held_out)).sum().float() / (~held_out).sum().clamp_min(1)
     return float((tpr + tnr) / 2)
 
 
@@ -259,7 +262,32 @@ def train(model, kind, fit, val, batches, *, max_updates=MAX_UPDATES):
     return {'steps': step + 1, 'early_stopped': stagnant >= PATIENCE and step + 1 >= MIN_UPDATES,
             'best_validation_mse': best, 'validation_trace': history,
             'duration_seconds': time.perf_counter() - start,
+            'approx_training_flops': approx_train_flops(kind, step + 1),
             'parameters': sum(p.numel() for p in model.parameters())}
+
+
+def orthogonal_control(negative):
+    # Remove only factual nuisance events, preserving factual target order.
+    roles = negative['role_audit']
+    target_count = int(roles[0].sum())
+    order = (~roles).long().argsort(dim=1, stable=True)
+    def target_only(t):
+        return t.gather(1, order[:, :, None].expand_as(t))[:, :target_count]
+    with torch.no_grad():
+        reference = WriteGate(970201)
+        original, _ = reference(factual(negative), mode='all')
+        clean, _ = reference({'action': target_only(negative['action']),
+                              'effect': target_only(negative['effect'])}, mode='all')
+        pred_a = predict(original, negative['query_action'])
+        pred_b = predict(clean, negative['query_action'])
+        return float((pred_a - pred_b).abs().max())
+
+
+def approx_train_flops(kind, steps, n_events=64, batch_size=BATCH):
+    # Transparent broad operation estimate, not measured accelerator/FLOP parity.
+    if kind == 'gru':
+        return int(steps * batch_size * n_events * 3 * 2 * 3 * (32 * 256 + 256 * 256))
+    return int(steps * batch_size * n_events * 3 * (2 * D * D + 32 * D + 80))
 
 
 def static_controls(world):
@@ -307,8 +335,10 @@ def study():
     start = time.perf_counter()
     data = {k: make_world(k) for k in SEEDS}
     audits = {k: static_controls(v) for k, v in data.items()}
-    if not all(a['no_phase_shortcut'] for a in audits.values()):
-        return {'status': 'DEV_FAIL_SOURCE_SHORTCUT', 'audits': audits, 'scientific_pass': False}
+    ortho = orthogonal_control(data['negative'])
+    if not all(a['no_phase_shortcut'] for a in audits.values()) or ortho > 1e-5:
+        return {'status': 'DEV_FAIL_SOURCE_CONTROLS', 'audits': audits,
+                'orthogonal_difference': ortho, 'scientific_pass': False}
     sampler = torch.Generator().manual_seed(970299)
     batches = torch.randint(COUNTS['fit'], (MAX_UPDATES, BATCH), generator=sampler)
     shared_sampler_sha256 = digest_tensor(batches)
@@ -346,6 +376,9 @@ def study():
         gate_inits.append(digest_tensor(gate.theta))
         arms = {'gate': (gate, 'gate'), 'wrong': (wrong, 'wrong'), 'gru': (gru, 'gru')}
         trained = {name: train(model, kind, data['fit'], data['val'], batches) for name, (model, kind) in arms.items()}
+        if time.perf_counter() - start > 1800:
+            return {'status': 'DEV_FAIL_CPU_BUDGET', 'completed_rows': out,
+                    'budget_seconds': 1800, 'scientific_pass': False}
         candidate_errors, rate = eval_gate(gate, data['ood_dev'])
         wrong_errors, _ = eval_gate(wrong, data['ood_dev'], wrong_key=data['ood_dev']['wrong_credit_key'])
         fit_rate = eval_gate(gate, sampled(data['fit'], torch.arange(64)))[1]
@@ -373,12 +406,15 @@ def study():
                     'bootstrap_lower_relative_gain': bootstrap_lower_relative(candidate_errors, best_control_errors),
                     'strict_dev_pass': passed})
     # No claim of scientific advancement absent independent source-owner admission.
-    return {'schema': 'ttt-hybrid.p67-counterbalanced-dev-result.v1', 'status': 'DEV_PASS' if all(x['strict_dev_pass'] for x in out) else 'DEV_FAIL',
+    all_pass = len(set(gate_inits)) == 3 and all(x['strict_dev_pass'] for x in out)
+    return {'schema': 'ttt-hybrid.p67-counterbalanced-dev-result.v1', 'status': 'DEV_PASS' if all_pass else 'DEV_FAIL',
             'model_seeds': MODEL_SEEDS, 'distinct_initializations': len(set(gate_inits)) == 3,
-            'source_audits': audits, 'sampler_sha256': shared_sampler_sha256, 'classical_controls': controls,
+            'source_audits': audits, 'orthogonal_difference': ortho,
+            'sampler_sha256': shared_sampler_sha256, 'classical_controls': controls,
             'rows': out, 'elapsed_seconds': time.perf_counter() - start, 'python': platform.python_version(),
             'torch': torch.__version__, 'whole_process_compute_matched': False,
-            'flops_exact': 'UNMEASURED', 'native_gpu': 'NOT_RUN', 'full_cross_platform': 'NOT_RUN',
+            'flops_exact': 'UNMEASURED', 'flops_approximation': 'per-arm conservative operation-count estimate only',
+            'peak_memory_bytes': 'UNMEASURED', 'native_gpu': 'NOT_RUN', 'full_cross_platform': 'NOT_RUN',
             'scientific_pass': False, 'forge': 'UNCHANGED'}
 
 
