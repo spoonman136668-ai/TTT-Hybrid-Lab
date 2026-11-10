@@ -1,0 +1,162 @@
+{
+  "schema": "ttt-hybrid.p56.factual-noise-family-selection-dev-receipt.v1",
+  "classification": "FROZEN_DEV_FAIL_NOT_INDEPENDENT_SCIENCE",
+  "overall_frozen_gate": "FAIL",
+  "scientific_first_use": "NOT_RUN",
+  "parent": {
+    "pr": 151,
+    "sha": "bc56fc9317b5b341f6554a8ea444b7703d687592",
+    "original_P54_blob": "c4239b125e3d5928807738aac117be89f202d7a1",
+    "original_P55_blob": "fe211b950c34377768047f5f78e38007b1de0e18"
+  },
+  "preregistered_protocol": {
+    "first_commit": "f4d875a3eed7c672d6990c6297e28f2f232feac7",
+    "file": "experiments/native_p56_family_selection_frozen.json",
+    "before_first_source_generation": true,
+    "source_seeds_and_thresholds_unchanged": true
+  },
+  "custody": {
+    "exact_local_tested_module_blob": "851ddf45fbd6e9330786bcc0be34c92b898b29cb",
+    "exact_local_tested_tests_blob": "85cc7a8f1189c957dbced916337d0b84f49a2fd7",
+    "module_SHA256": "20ac94c7d7c668e722ee37fb3782c830cf588f63b846458f51c8d9ed945c64c1",
+    "tests_SHA256": "9e3c1ccb85a9c28842781422a2c2509800281ab2e7aaeafe54b88931689b5e7f",
+    "full_local_result_SHA256": "6f5418259afffb23895eb9376417916d09357b938dca1c076ae346ad998f7b52"
+  },
+  "source_shas": {
+    "860001": "762942eaa0e56972a41b960d52e7721f9e73676abd75357411550f03ecca525f",
+    "860003": "6f0491b9f6a33995a59c58e1972852a4d6f41877052aa181655bc4b6a2d9da22",
+    "860101": "71258580bcaf3c8e498caf621142af14b4197202eb73fa290fd56cbabe5d9d8d",
+    "860103": "7a45e527054bd99f5af0a436fb58a99524aab9992711c2d406c51b51d878401d",
+    "860201": "b13dbd754d71c5be730d5015004782bd370d0ebe827f55fa37764721dcb1e55e",
+    "860203": "3605f53d403fc8a816e29228d11f3ab25c5e48a584fe3306e173a3448e484160",
+    "860301": "d65710131dafbf3f9d979e266044b3966dff53a00e386de47a49e9166fd3d043"
+  },
+  "method": {
+    "model_family_candidates": [
+      "Gaussian",
+      "Laplace"
+    ],
+    "fitted_physical_worlds_each": 16384,
+    "independent_factual_training_selection_worlds_each": 4096,
+    "actual_OOD_episodes_each": 8192,
+    "sham_worlds": 4096,
+    "selection_uses_only_logged_real_actions_and_rewards": true,
+    "source_hidden_theta_unavailable_to_fitter": true,
+    "unexecuted_probe_results_masked": true,
+    "compared_models_all_use_same_fitted_moments": true,
+    "known_family_oracle_privileged": true,
+    "training_seed_first_use_as_DEV_only": true
+  },
+  "cohorts": [
+    {
+      "ood": "860003",
+      "fit": 860001,
+      "fit_sha256": "762942eaa0e56972a41b960d52e7721f9e73676abd75357411550f03ecca525f",
+      "fit_log_sha256": "f931bbfbfa8ba4b7c5e04e7595ed70efefdd03fc9dacd46c2f94a3b85b4ca489",
+      "ood_sha256": "6f0491b9f6a33995a59c58e1972852a4d6f41877052aa181655bc4b6a2d9da22",
+      "noise": {
+        "cue": "G",
+        "probe": "G",
+        "reward": "G"
+      },
+      "selected": 0.5461268497006131,
+      "fixed_gaussian": 0.5461268497006131,
+      "fixed_laplace": 0.5413155433764132,
+      "never": 0.47472006153566326,
+      "oracle": 0.5458939564719003,
+      "wrong_credit": -0.026744782214336738,
+      "selected_probes": 2474,
+      "fit_logged_probes": 8176,
+      "selection_logged_probes": 2043,
+      "ci95": [
+        0.058910109662801344,
+        0.0846255679798503
+      ],
+      "gates": "ALL_PASS"
+    },
+    {
+      "ood": "860103",
+      "fit": 860101,
+      "fit_sha256": "71258580bcaf3c8e498caf621142af14b4197202eb73fa290fd56cbabe5d9d8d",
+      "fit_log_sha256": "6cca2af60bf84d5d0bacf03615dc8851077d821634cd40bb7fa6a723bf9b3680",
+      "ood_sha256": "7a45e527054bd99f5af0a436fb58a99524aab9992711c2d406c51b51d878401d",
+      "noise": {
+        "cue": "L",
+        "probe": "L",
+        "reward": "L"
+      },
+      "selected": 0.6294413770072294,
+      "fixed_gaussian": 0.6224726941914338,
+      "fixed_laplace": 0.6294413770072294,
+      "never": 0.5728035316246047,
+      "oracle": 0.629144539461127,
+      "wrong_credit": -0.008303612017211304,
+      "selected_probes": 2185,
+      "fit_logged_probes": 8124,
+      "selection_logged_probes": 2018,
+      "ci95": [
+        0.04477219132094774,
+        0.06864407983156014
+      ],
+      "gates": "ALL_PASS"
+    },
+    {
+      "ood": "860203",
+      "fit": 860201,
+      "fit_sha256": "b13dbd754d71c5be730d5015004782bd370d0ebe827f55fa37764721dcb1e55e",
+      "fit_log_sha256": "9183596c538d3b9a8243f20e7e945b910d71d1ed5f945e86a3d87d493364f5ef",
+      "ood_sha256": "3605f53d403fc8a816e29228d11f3ab25c5e48a584fe3306e173a3448e484160",
+      "noise": {
+        "cue": "G",
+        "probe": "L",
+        "reward": "G"
+      },
+      "selected": 0.6070764532603121,
+      "fixed_gaussian": 0.6104376469957984,
+      "fixed_laplace": 0.6017817422203748,
+      "never": 0.5172853838460938,
+      "oracle": 0.6080239622308241,
+      "wrong_credit": 0.011181868221093794,
+      "selected_probes": 2716,
+      "fit_logged_probes": 8260,
+      "selection_logged_probes": 2058,
+      "ci95": [
+        0.07510277935800502,
+        0.10432110189265699
+      ],
+      "gates": "FAIL_stronger_fixed_noninferiority_and_mixed_outperformance"
+    }
+  ],
+  "gates": {
+    "correct_model_family": "PASS_3_OF_3",
+    "candidate_gain_over_never": "PASS_3_OF_3",
+    "paired_1000_resample_bootstrap_vs_never": "PASS_3_OF_3",
+    "cold_restore": "PASS_3_OF_3",
+    "uninformative_probe_sham": "PASS",
+    "competent_mixed_stronger_baseline": "FAIL",
+    "strict_all_three": "FAIL"
+  },
+  "sham": {
+    "source_sha256": "d65710131dafbf3f9d979e266044b3966dff53a00e386de47a49e9166fd3d043",
+    "actual_executed_probes": 0
+  },
+  "finding": "Learned the true cue/probe/reward observation family from disjoint logged factual evidence on 3/3 author-generated cohorts, but correct inference did not yield superior net reward when cue Gaussian and probe Laplace. Mixed selected 0.607076 vs fixed Gaussian 0.610438 (margin -0.003361). Predeclared noninferiority threshold -0.001 and positive mixed margin +0.003 both failed. Do not retune on consumed 860xxx or conflate architecture with conventional model selection.",
+  "qualification": {
+    "new_focused_pytest": "7/7 PASS",
+    "inherited_and_new_local_pytest": "25/25 PASS",
+    "full_original_Windows_regression": "NOT_RUN",
+    "full_original_Ubuntu_WSL_regression": "NOT_RUN",
+    "hosted_G4_G5_G7": "NOT_QUALIFIED",
+    "independent_real_physics_first_use": "NOT_RUN",
+    "trained_competent_GRU_MLP": "NOT_RUN",
+    "total_end_to_end_compute_parity": "NOT_VERIFIED"
+  },
+  "deployment": {
+    "draft_only": true,
+    "no_merge": true,
+    "no_FORGE_dispatch": true,
+    "no_scheduler_or_new_runner_or_controller": true,
+    "no_paid_API": true,
+    "no_model_promotion": true
+  }
+}

@@ -1,0 +1,163 @@
+{
+  "schema": "ttt-hybrid.p56.factual-noise-family-selection-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_FIRST_P56_GENERATION_OR_EVALUATION",
+  "parent": {
+    "PR": 151,
+    "head_sha": "bc56fc9317b5b341f6554a8ea444b7703d687592",
+    "P55_module_git_blob": "fe211b950c34377768047f5f78e38007b1de0e18",
+    "P54_module_git_blob": "c4239b125e3d5928807738aac117be89f202d7a1",
+    "P55_frozen_dev": "FAIL_0_OF_2_strong_Gaussian_margin"
+  },
+  "hypothesis": "Using only separate FIT actual executed probe/ final-action reward logs, a classical latent-mixture heldout-likelihood selector can infer whether cue and diagnostic noise follow Gaussian or Laplace families, then earn useful net diagnostic value on unfamiliar worlds and outperform fixed-family baselines in a mixed-family world.",
+  "source": {
+    "type": "fresh author-generated synthetic DEV only; never use source hidden state in learning",
+    "fit_episodes_each": 20480,
+    "heldout_family_selection_cases": 4096,
+    "physical_world": "latent effect theta fair +/-1; observed cue theta*visible_cue_gain+visible_cue_sigma*noise_c; optional paid diagnostic theta*visible_probe_gain+visible_probe_sigma*noise_p; executed reward theta*executed_final_action+visible_reward_sigma*noise_r-visible_cost*executed_probe; only executed diagnostics measured; never unchosen consequences",
+    "fit_context": {
+      "cue_gain": [
+        0.1,
+        1.2
+      ],
+      "probe_gain": [
+        0.1,
+        1.2
+      ],
+      "cue_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_sigma": [
+        0.55,
+        0.95
+      ],
+      "cost": [
+        0.05,
+        0.4
+      ],
+      "reward_sigma": [
+        0.5,
+        1.1
+      ]
+    },
+    "OOD_context": {
+      "cue_gain": [
+        0,
+        1.6
+      ],
+      "probe_gain": [
+        0,
+        1.8
+      ],
+      "cue_sigma": [
+        0.95,
+        1.35
+      ],
+      "probe_sigma": [
+        0.95,
+        1.35
+      ],
+      "cost": [
+        0.01,
+        0.7
+      ],
+      "reward_sigma": [
+        1.1,
+        1.8
+      ]
+    },
+    "seeds": {
+      "gaussian": {
+        "fit": 860001,
+        "OOD": 860003,
+        "noise": {
+          "cue": "Gaussian",
+          "probe": "Gaussian",
+          "reward": "Gaussian"
+        }
+      },
+      "laplace": {
+        "fit": 860101,
+        "OOD": 860103,
+        "noise": {
+          "cue": "Laplace",
+          "probe": "Laplace",
+          "reward": "Laplace"
+        }
+      },
+      "mixed": {
+        "fit": 860201,
+        "OOD": 860203,
+        "noise": {
+          "cue": "Gaussian",
+          "probe": "Laplace",
+          "reward": "Gaussian"
+        }
+      },
+      "sham": {
+        "seed": 860301,
+        "episodes": 4096,
+        "noise": {
+          "cue": "Gaussian",
+          "probe": "Laplace",
+          "reward": "Gaussian"
+        },
+        "probe_gain": 0
+      }
+    },
+    "OOD_episodes_each": 8192,
+    "logged_fit": "actually executed Bernoulli(.5) paid probe and independent fair signed final action, log only cue/visible parameters/probe flag/executed diagnostic measurement or zero if skipped/executed action/observed net reward; same fitting log for all methods",
+    "no_860xxx_prior_consumption": true
+  },
+  "model": {
+    "fit": "Use unchanged P54.fit_moments on FIRST 16,384 physically logged episodes, learn prior, cue/probe signal gain and noise variances; reward proxy z=(observed net reward+actual paid cost)/executed final action remains NOISY. Reward proxy noise variance estimated as max(0.05, Var(z)-1).",
+    "selection": "On LAST disjoint 4,096 FIT episodes, compare Gaussian vs Laplace marginal log-likelihood for reward-derived noisy z under latent sign +/-1, then conditional mixture log-likelihood of cue and executed probe measurement with z integrated over both latent theta alternatives; select independently reward, cue and probe family. No actual hidden theta label, no OOD outcome, no test-time adjustment.",
+    "candidate": "Use estimated cue family likelihood for prior log odds and selected diagnostic family for exact Gaussian or Laplace physical value of information; pay only if expected gain > visible cost, update only from actually executed measurement; final signed action and net noisy physical reward.",
+    "comparators": "Exact same fitted P54 parameters with fixed Gaussian/Gaussian, fixed Laplace/Laplace (P55), the fitted never-probe with selected cue model, fitted always-probe, model-aware correct per-channel oracle (privileged), and shuffled factual reward-credit negative.",
+    "cold": "roundtrip selected model JSON sufficient statistics and deterministic observations, require bit-identical executed actions and reward in evaluation",
+    "strong_controls": "report fixed-family, same fitting log, paired per-world reward delta, probe counts, model log-likelihood margins, incorrect/no-info sham outcomes"
+  },
+  "metrics": {
+    "locked_family_predictions": {
+      "gaussian": {
+        "reward": "Gaussian",
+        "cue": "Gaussian",
+        "probe": "Gaussian"
+      },
+      "laplace": {
+        "reward": "Laplace",
+        "cue": "Laplace",
+        "probe": "Laplace"
+      },
+      "mixed": {
+        "reward": "Gaussian",
+        "cue": "Gaussian",
+        "probe": "Laplace"
+      }
+    },
+    "each_OOD_require": [
+      "selected-family reward >= stronger fixed-family reward -0.001",
+      "selected-family reward >= fitted never-probe reward +0.02",
+      "actual probe fraction between .05 and .95",
+      "model-aware distribution oracle minus selected reward <=.03",
+      "paired bootstrap 95% lower bound selected vs never >0, 1000 resamples fixed seed = 860901+OOD_seed",
+      "cold actual decisions exact"
+    ],
+    "mixed_additional": "selected learned-family net reward >= max(fixed Gaussian, fixed Laplace)+0.003 on the mixed heldout, not merely selecting the correct family",
+    "negative": [
+      "on sham with zero diagnostic gain, zero actual probes",
+      "wrong-shuffled-reward-credit model fails positive reward/probe gain by >=.025 on all OOD"
+    ],
+    "all_three_cohorts_and_mixed_required": true,
+    "no_post_outcome_hyperparameter_tuning": true,
+    "no_claim_of_independent_scientific_PASS": "Authored synthetic and Gaussian/Laplace family choices supplied in advance, not external unknown physics; full Windows and Ubuntu regression plus fully trained neural controls still needed."
+  },
+  "authority": {
+    "no_scheduler_runner_queue_controller_or_workflow_changes": true,
+    "no_FORGE_changes_or_dispatch": true,
+    "no_paid_APIs": true,
+    "no_source_first_use_external": true,
+    "no_merge_or_promotion": true,
+    "preserve_P13_to_P55_failed_frozen_results": true
+  }
+}
