@@ -1,0 +1,47 @@
+{
+  "schema": "ttt-hybrid.p62-persistent-ttt-factual-stream-dev-frozen.v1",
+  "classification": "ENGINEERING_SOURCE_FREE_DEV_ONLY_NOT_PROTECTED_SCIENTIFIC_FIRST_USE",
+  "frozen_before_implementation": true,
+  "scope": "Independent opt-in streaming TTT component only; preserve original HybridPilot, CKB/FORGE and original science owners.",
+  "parent": {
+    "pr": 160,
+    "sha": "0cabb458dc6881761423368a43fc4e4343cd6dc2",
+    "model_py_original_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "A bounded explicit external fast-weight state can produce chunk-by-chunk exact read-before-write continuity with the original TTTLinearMemory over the same sequence; reset-per-call loses past fast state. Candidate-only previews never write.",
+  "limits": {
+    "default_max_confirmed_events": 128,
+    "max_batch": 256,
+    "max_width": 128,
+    "torch_float32_float64": true,
+    "confirmed_mask": "all bool true required; caller confirmation is NOT independently source-authenticated",
+    "cold_storage": "weights+tensor state only, no arbitrary pickle",
+    "no_hidden_motor_or_oracle_state": true,
+    "no_future_observation_in_preview": true,
+    "no_autonomous_memory_claim": true
+  },
+  "tests": {
+    "original_model_blob": "bit exact original Git blob",
+    "segmented_equivalence": "torch.allclose(original full-sequence TTT output, concat(stream chunks + query), atol=1e-6, rtol=1e-6) across deterministic two batch sizes and seeds",
+    "reset_negative": "cold chunk2 loses fast state and produces measurably distinct prediction, no false equivalent claim",
+    "preview_purity": "candidate order inversion same-state predictions unchanged, repeated preview identical, count and weights unchanged",
+    "atomic_invalid": "malformed shape, false confirmed mask, nonfinite, wrong dtype/device, count overflow rejected without mutation",
+    "cold_replay": "weights_only tensor checkpoint and reconstructed core produces torch.equal output and state",
+    "differentiability": "training opt-in source learning remains differentiable on observed facts with grad",
+    "param_overhead": "no new trainable params, core weights shared",
+    "source": "hand-authored CPU tensor examples only; no protected new science or heldout draws",
+    "source_qualification": "original full Windows/WSL final regression required before acceptance"
+  },
+  "stop": {
+    "no_tuning_after_results": true,
+    "no_merges": true,
+    "no_scheduled_tasks": true,
+    "no_new_runner": true,
+    "no_workflows": true,
+    "no_forge_activation": true,
+    "no_external_training": true,
+    "no_model_promotion": true,
+    "no_paid_apis": true
+  },
+  "science": "STREAMING_RESTORE_ENGINEERING_PASS_NE_NATIVE_INTELLIGENCE_OR_CAUSAL_TRANSFER; independent actions/outcomes and strongest baseline benefit not qualified"
+}
