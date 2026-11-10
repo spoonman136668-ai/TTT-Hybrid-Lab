@@ -1,0 +1,81 @@
+{
+  "schema": "ttt-hybrid.p62-persistent-ttt-streaming-engineering-receipt.v1",
+  "classification": "EXACT_ORIGINAL_MODEL_SOURCE_BOUND_LOCAL_ENGINEERING_PASS_NOT_SCIENTIFIC_OR_DEPLOYMENT",
+  "parent": {
+    "pr": 160,
+    "sha": "0cabb458dc6881761423368a43fc4e4343cd6dc2",
+    "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_hybrid_p61_science": "DEV_FAIL_0_OF_3_UNCHANGED"
+  },
+  "protocol_frozen_first_commit": "9cd222aee8912e7dc1bb2c92f3a7bbe99d5c3767",
+  "final_exact_locally_executed_source_git_blob": "776e63a0ff9474a860e87088718acb36637a7bec",
+  "final_exact_locally_executed_tests_git_blob": "b9a18ac5df3b2ff26edd7f57f08cbf8a0e57918b",
+  "source_sha256": "cce54ef177fdb6213ed1af4447d1bd50c3ecbb4e5e71402ac9b229a80c017e21",
+  "test_sha256": "b7151c512d1f3425fda7f8d9baa82ddc437a2cfede526ede9bcef8140718d4b6",
+  "local_probe_sha256": "d13c8bc048796ca45591f285509798ea3faebb66ffff4d7eaee1d9b894f4a66c",
+  "run_environment": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "platform": "container Linux x86_64 CPU",
+    "original_exact_model_source_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "local_focused_tests": {
+    "passed": 8,
+    "total": 8,
+    "wall_seconds": 1.02,
+    "original_tested_files_byte_identical_to_github": true
+  },
+  "manual_probe_on_untrained_original_ttt_weight_seed": [
+    {
+      "seed": 61,
+      "batch": 2,
+      "seven_factual_events": true,
+      "max_full_vs_streamed_difference": 5.960464477539063e-8,
+      "max_query_preview_vs_full_difference": 2.9802322387695312e-8,
+      "max_reset_difference": 0.03927499055862427
+    },
+    {
+      "seed": 83,
+      "batch": 3,
+      "seven_factual_events": true,
+      "max_full_vs_streamed_difference": 5.960464477539063e-8,
+      "max_query_preview_vs_full_difference": 5.960464477539063e-8,
+      "max_reset_difference": 0.1340595781803131
+    }
+  ],
+  "manual_probe_elapsed_seconds": 0.012104436999834434,
+  "verified_properties": [
+    "Source verified against original exact model.py Git blob; original file unchanged",
+    "Explicit tensor [B,width,width] fast-state carried across three separate confirmed calls",
+    "Fully confirmed mask required; no partial invalid commit and fixed max_count 128 default with fail-closed overflow",
+    "Frozen 1<=batch<=256 and 1<=width<=128 validation",
+    "Read-before-write computation matches original full-sequence original core within <=1e-6 tolerance",
+    "Preview candidates independent/order invariant within tolerance and cannot update fast-state count or module parameters",
+    "Tensor + weights_only cold restore gives torch.equal identical prediction",
+    "Input gradient flows back through original TTT core; zero new trainable parameters",
+    "Reset-between-calls is measurably different from state carry"
+  ],
+  "limitations": [
+    "Caller-provided confirmed mask does NOT attest real physical observation; external owner authenticates facts before ingestion",
+    "Only TTT component streams; original SSM/attention/depth and full HybridPilot do NOT yet stream across calls",
+    "No trained model, no independently heldout physical actions, no matched strong conventional GRU/MLP/Bayes science comparison, no cold episodic retention transfer, no beneficial gain established",
+    "Original final-tree mandatory full Windows and Ubuntu/WSL regression/native build not run",
+    "GitHub-hosted qualification may fail due to runner assignment/billing independently of source; verify separately"
+  ],
+  "qualification": {
+    "engineering_local_focused": "PASS",
+    "scientific_benefit": "UNVERIFIED",
+    "full_cross_platform_regression": "UNVERIFIED",
+    "source_first_use": "NOT_RUN",
+    "deployment": "NONE"
+  },
+  "scope": {
+    "no_existing_model_file_edits": true,
+    "no_owner_scheduler_runner_workflow_or_forge_changes": true,
+    "no_new_paid_api": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_real_hardware": true
+  }
+}
