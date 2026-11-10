@@ -153,8 +153,8 @@ def test_invalid_factual_outcome_and_wrong_action_atomic_rejection():
     with pytest.raises(ValueError,match='P50_INVALID_FACTUAL_NEXT'):
         model.observe(sensor,torch.ones_like(sensor),dt,
                       torch.tensor([[.1],[float('nan')]]),state)
-    with pytest.raises(ValueError,match='P50_ZERO_ACTION_UNIDENTIFIABLE'):
-        model.observe(sensor,torch.zeros_like(sensor),dt,sensor,state)
+    with pytest.raises(ValueError,match='P50_INVALID_EXECUTED_ACTION'):
+        model.observe(sensor,torch.full_like(sensor,float('nan')),dt,sensor,state)
     with pytest.raises(ValueError,match='P50_NONPOSITIVE_ELAPSED_TIME'):
         model.observe(sensor,torch.ones_like(sensor),torch.zeros_like(dt),sensor,state)
     assert all(torch.equal(a,b) for a,b in zip(before,snapshot(state)))

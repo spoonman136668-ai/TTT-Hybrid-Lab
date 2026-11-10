@@ -54,8 +54,8 @@ def published_step(sensor: np.ndarray, action: float) -> PhysicalStep:
     """Independent one-step transcription of the fixed upstream mechanics.
 
     The environment's official time-limit 999 applies at a wrapper level.
-    The P54 *bridge* admits only executed nonzero motor commands in [-1,+1],
-    but this published physics reference supports the original full action range.
+    The P54 bridge now admits executed neutral motor commands alongside all other
+    finite bounded physical actions; factual zeros are not imaginary outcomes.
     """
     state = np.asarray(sensor)
     if state.shape != (2,) or not np.issubdtype(state.dtype, np.number):
