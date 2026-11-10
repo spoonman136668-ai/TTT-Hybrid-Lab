@@ -1,0 +1,107 @@
+{
+  "schema": "ttt-hybrid.p69-trained-competitor-recipe.v1",
+  "phase": "FROZEN_BEFORE_TRAINABLE_COMPETITOR_IMPLEMENTATION_AND_ANY_P69_TRAINING",
+  "contract": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 177,
+    "base_head": "35cc6b2a2d60d31a4743f6e51d281c25baa9a902",
+    "protocol_blob": "0ac933ed1af921fecf0746f7f78109e9564bff82",
+    "factual_source_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b"
+  },
+  "development_scope": "Source-frozen FIT/VAL model and engineering tests only. NO P69 OOD generation, training, scoring, scientific first-use, deployment or FORGE action.",
+  "data": {
+    "train_split": "fit",
+    "validation_split": "val",
+    "n_fit": 512,
+    "n_val": 192,
+    "events_per_world": 96,
+    "dims": 16,
+    "optimizer_sample_seed": 981299,
+    "batch_size": 32,
+    "eval_every_updates": 50,
+    "maximum_optimizer_updates": 600,
+    "model_seeds": [
+      981201,
+      981203,
+      981207
+    ],
+    "no_ood_access": true,
+    "factual_input_only": [
+      "action",
+      "effect"
+    ],
+    "evaluation_query_only": [
+      "query_action",
+      "observed_query_effect"
+    ],
+    "no_oracle_features": true
+  },
+  "models": {
+    "learned_write_gate": {
+      "source_equation": "original frozen P69 residual TTT",
+      "state": 256,
+      "parameters": 4,
+      "eta": 0.5,
+      "theta_init": "(torch.rand(4,generator=torch.Generator().manual_seed(seed))-0.5)*0.1",
+      "optimizer": "AdamW",
+      "lr": 0.005,
+      "weight_decay": 0.01,
+      "grad_clip_norm": 1
+    },
+    "gru": {
+      "input_dim": 33,
+      "hidden_dim": 256,
+      "num_layers": 1,
+      "bidirectional": false,
+      "bias": true,
+      "encoded_input": "cat([executed_normalized_action16,observed_effect16,constant_observed_indicator1])",
+      "head": "linear(256+16->16)",
+      "state": 256,
+      "optimizer": "AdamW",
+      "lr": 0.001,
+      "weight_decay": 0.01,
+      "grad_clip_norm": 1,
+      "initialization": "torch.random.fork_rng CPU + torch.manual_seed(model_seed) before module creation"
+    },
+    "continuous_ssm": {
+      "input_dim": 33,
+      "hidden_dim": 256,
+      "diagonal_state_transition": "state = sigmoid(logit_decay)*state + (1-sigmoid(logit_decay))*tanh(input_linear(event))",
+      "head": "linear(256+16->16)",
+      "initial_logit_decay": 2,
+      "state": 256,
+      "optimizer": "AdamW",
+      "lr": 0.001,
+      "weight_decay": 0.01,
+      "grad_clip_norm": 1,
+      "initialization": "same seed-scoped torch module initialization as GRU"
+    }
+  },
+  "eligibility": {
+    "zero_validation_mse_reference": "mean squared final factual outcome from zero predictor over all VAL worlds",
+    "conventional": "best validation MSE <=0.75*zero, and last three checkpoints spread <=0.01",
+    "learned_gate": "best validation MSE <=0.85*zero across all three model seeds",
+    "early_stop": "after at least 200 updates and 4 consecutive nonimproving validation checkpoints, only if last-3 spread <=0.01",
+    "saved_weights": "best validation checkpoint only; never use OOD for selection",
+    "if_no_competent_trained_baseline": "STRICT_DEV_FAIL and no OOD scoring",
+    "if_model_untrained": "UNVERIFIED, do not label competent"
+  },
+  "limits": {
+    "cpu_threads": 1,
+    "max_total_dev_cpu_wall_s": 3600,
+    "max_peak_ram_gib": 3,
+    "no_gpu_requirement_for_dev": true,
+    "original_g4_g5_g7_full_regression_required": true
+  },
+  "safety": {
+    "no_scheduled_tasks": true,
+    "no_runners_allocated": true,
+    "no_workflow_dispatch": true,
+    "no_merge": true,
+    "no_forge_controller": true,
+    "no_accepted_ref": true,
+    "no_scientific_first_use": true,
+    "no_paid_api": true
+  },
+  "source_restriction": "Do not access P68 heldout cohort or P69 ood_0/1/2, including aggregate statistics, before protocol-owned first-use gate; engineering tests may use synthetic tiny in-memory toy tensors only."
+}
