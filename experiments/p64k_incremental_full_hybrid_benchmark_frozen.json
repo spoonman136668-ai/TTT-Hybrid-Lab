@@ -1,0 +1,89 @@
+{
+  "schema": "ttt-hybrid.p64k-exact-original-incremental-cache-comparison-frozen.v1",
+  "status": "FROZEN_BEFORE_NEW_P64K_PERFORMANCE_REPLICATION_COHORT",
+  "classification": "LOCAL_ENGINEERING_ONLY_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 166,
+    "sha": "ce49ca5d4c09aa6b743541be72b9ae9c577dd384",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_ttt_stream_blob": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "prefix_recompute_source_blob": "56f4d566db9375e4b27e7d9eabcaf67498c25d94"
+  },
+  "prior_development": {
+    "separately_frozen_original_full_incremental_source_development_branch": "engineering/p64s-original-full-hybrid-factual-stream-dev-20261110",
+    "separate_dev_frozen_before_implementation_commit": "3267d1cefc8cf81805e3270ea5abd77dce9416ab",
+    "exact_locally_tested_incremental_source_blob": "440aa8717e1aef15d7547be669dfa8d0f4da666a",
+    "exact_locally_tested_tests_blob": "eb1a5c2c574c33071c6c6a79f08e9dd87360a8ff",
+    "exploratory_benchmark_ALREADY_SEEN": {
+      "model_seed": 641,
+      "input_seed": 644,
+      "facts": [
+        9,
+        16,
+        32,
+        48
+      ],
+      "speedup_x": [
+        1.34,
+        1.52,
+        1.98,
+        2.72
+      ],
+      "rule": "not a preregistered independent speed cohort and cannot establish blind scientific discovery"
+    }
+  },
+  "question": "Can exact original prefix SSM/attention/TTT/depth computation be preserved by explicit incremental SSM h + attention KV + TTT W, avoiding prior-confirmed-prefix recomputation and maintaining atomic no-future-preview semantics, with measurable end-to-end CPU advantage against original P64-S reference?",
+  "candidate": "Copy prior source-verified P64-S incremental adapter as DISTINCT native_p64k_incremental_hybrid_stream.py; independent class, no edits to prior P64-S/reference or original owners",
+  "new_frozen_benchmark": {
+    "model_seed": 711,
+    "data_seed": 713,
+    "second_check_seed": 719,
+    "batch": 2,
+    "width": 8,
+    "input_dim": 5,
+    "output_dim": 2,
+    "heads": 2,
+    "confirmed_event_lengths": [
+      12,
+      24,
+      40,
+      60
+    ],
+    "candidate_actions": 2,
+    "execution": "one caller-confirmed event at a time; one end-of-window two-action preview, repeated 8 times, first two used only for warmup; torch CPU single thread, inference no gradients",
+    "same_original_model_weights_and_exact_input_for_both_arms": true,
+    "timer": "time.perf_counter, end-to-end from empty initial factual state excluding model initialization, including every confirmed update plus final preview",
+    "percentile": "median of final six repetitions; run both arms same procedure",
+    "paired_output_tolerance": 0.000001,
+    "success_thresholds": {
+      "n40_incremental_speedup_ge": 1.5,
+      "n60_incremental_speedup_ge": 2,
+      "all_output_parity_le": 0.000001,
+      "no_source_or_model_edit": true
+    },
+    "no_speed_claim_other_hardware": true
+  },
+  "new_test_requirements": {
+    "original_source_custody": true,
+    "existing_p62_parent_tests_untouched": true,
+    "existing_p64s_parent_tests_untouched": true,
+    "incremental_7_focused_tests": true,
+    "original_pair_parity": true,
+    "cold_exact": true,
+    "pure_candidate_order": true,
+    "all_confirmed_atomic": true,
+    "all_components_gradient": true
+  },
+  "scope": {
+    "no_original_edit": true,
+    "no_scheduled_task": true,
+    "no_runner": true,
+    "no_new_workflow": true,
+    "no_controller_or_forge": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_protected_science_first_use": true,
+    "no_paid_api": true
+  },
+  "science": "NONE; correctness and CPU efficiency only, no learned advantage or sample efficiency claim"
+}
