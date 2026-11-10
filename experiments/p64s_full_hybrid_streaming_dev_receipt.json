@@ -1,0 +1,76 @@
+{
+  "conclusions": {
+    "FORGE": "UNCHANGED",
+    "cold_replay_bit_exact": true,
+    "external_first_use": "NOT_AUTHORIZED_NOT_RUN",
+    "factual_source_credible": "CALLER_CONFIRMATION_ONLY_NOT_INDEPENDENTLY_ATTESTED",
+    "full_original_repo_linux_windows_regression": "NOT_RUN",
+    "fully_streaming_complexity_claim": false,
+    "hypothetical_pure": true,
+    "learned_science_superiority": "NOT_EVALUATED",
+    "merge": "NOT_PERFORMED",
+    "model_weights_unchanged": true,
+    "no_new_parameters": true,
+    "original_full_hybrid_component_parity": true,
+    "speedup_claim": false
+  },
+  "focused_tests": "9/9 PASS on exact local source",
+  "freeze_commit": "944720f5baedc04194f1fcc06c58001187d93de4",
+  "new_source": {
+    "bytes": 6639,
+    "git_blob": "56f4d566db9375e4b27e7d9eabcaf67498c25d94",
+    "sha256": "f3ebf3fbdac69268d4f392f3d69ae493b7017494bb3c7ad8811878f2d60ba1e5"
+  },
+  "new_tests": {
+    "bytes": 7769,
+    "git_blob": "a85ca35604b6643fe5a7e7f00027ccb92f4eacb6",
+    "sha256": "75e0d9c9fe46e13b1f3489e391241928418aa2d6a874039e019c319d4da5a56a"
+  },
+  "original_p62s_streaming": {
+    "bytes": 5602,
+    "git_blob": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "sha256": "cce54ef177fdb6213ed1af4447d1bd50c3ecbb4e5e71402ac9b229a80c017e21"
+  },
+  "parent_pr": 165,
+  "parent_sha": "f9fbe08932ba00863e6c01d1c2112c8c64df98d0",
+  "phase": "SOURCE_FREE_MANUAL_ENGINEERING_DEV_ONLY",
+  "runtime": {
+    "numpy": "2.3.5",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "torch_threads": 1
+  },
+  "schema": "ttt-hybrid.p64s-full-hybrid-factual-stream-engineering-receipt.v1",
+  "seed_comparison": [
+    {
+      "batch": 2,
+      "candidates": 3,
+      "factual_events": 6,
+      "full_stream_preview_three_candidates_ms_p50": 1.0200174999965839,
+      "full_stream_preview_three_candidates_ms_p95": 1.64541179998423,
+      "max_fast_weights_abs": 0.602046549320221,
+      "max_full_fact_delta": 1.1920928955078125e-07,
+      "max_full_preview_delta": 1.1920928955078125e-07,
+      "reference_full_forward_one_candidate_ms_p50": 1.0386249999783104,
+      "seed": 64
+    },
+    {
+      "batch": 3,
+      "candidates": 3,
+      "factual_events": 6,
+      "full_stream_preview_three_candidates_ms_p50": 1.0702329999787707,
+      "full_stream_preview_three_candidates_ms_p95": 2.3997270500018426,
+      "max_fast_weights_abs": 0.4804726541042328,
+      "max_full_fact_delta": 1.1920928955078125e-07,
+      "max_full_preview_delta": 5.960464477539063e-08,
+      "reference_full_forward_one_candidate_ms_p50": 1.2086425000177314,
+      "seed": 86
+    }
+  ],
+  "source_original_model": {
+    "bytes": 6279,
+    "git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "sha256": "6055a98775aabe165f099cdbf31a711bb5bd6570091d327eb53c1f36e68add94"
+  }
+}
