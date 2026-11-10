@@ -162,16 +162,28 @@ def digest_world(world):
     return h.hexdigest()
 
 
-def _index_balanced_accuracy(labels):
-    """Train on first half of worlds, predict second from event index only."""
+def _index_balanced_accuracy(labels, eligibility=None):
+    """Train event-index-only classifier on half the worlds, evaluate held-out BA.
+
+    For changed-role identity, condition on target events: an always-negative
+    predictor exploiting distractor prevalence must not score as a control.
+    """
     labels = labels.to(torch.bool)
     if labels.ndim != 2 or labels.shape[0] < 8:
         raise ValueError("P69_AUDIT_SHAPE")
-    train, held = labels[:len(labels)//2], labels[len(labels)//2:]
-    # Class imbalance cannot create a fake classifier win: use BA.
-    pred=(train.float().mean(0) > .5)[None].expand_as(held)
-    tpr=((pred & held).sum().float()/held.sum().clamp_min(1)).item()
-    tnr=(((~pred)&(~held)).sum().float()/(~held).sum().clamp_min(1)).item()
+    eligible = torch.ones_like(labels) if eligibility is None else eligibility.to(torch.bool)
+    if eligible.shape != labels.shape:
+        raise ValueError("P69_AUDIT_SHAPE")
+    cut=len(labels)//2
+    training_pos=(labels[:cut] & eligible[:cut]).sum(0)
+    training_total=eligible[:cut].sum(0)
+    prediction=((training_pos*2>=training_total) & (training_total>0))[None].expand_as(labels[cut:])
+    held=labels[cut:]
+    valid=eligible[cut:]
+    pos=held & valid
+    neg=(~held) & valid
+    tpr=((prediction & pos).sum().float()/pos.sum().clamp_min(1)).item()
+    tnr=(((~prediction)&neg).sum().float()/neg.sum().clamp_min(1)).item()
     return (tpr+tnr)/2
 
 
@@ -185,7 +197,7 @@ def source_integrity(batch):
     deviation=float((frac-target.float().mean()).abs().max())
     index_ba=_index_balanced_accuracy(target)
     changed=batch["role_changed_audit"] & target
-    role_change_ba=_index_balanced_accuracy(changed)
+    role_change_ba=_index_balanced_accuracy(changed, target)
     query_label=batch["query_changed_audit"].bool()
     query_bias=abs(query_label.float().mean().item()-.5)
     same=(batch["action"] == batch["query_action"][:,None,:]).all(-1).any(-1)
