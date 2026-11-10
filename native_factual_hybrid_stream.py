@@ -107,8 +107,7 @@ class NativeFactualHybridStream(nn.Module):
             count=min(int(state.observations[row]),c)
             for i in range(count):
                 j=(int(state.cursor[row])-count+i)%c
-                if (not bool((state.elapsed_steps[row,j,0]>0))
-                    or not bool((state.actions[row,j,0].abs()>1e-8))):
+                if not bool((state.elapsed_steps[row,j,0]>0)):
                     raise ValueError('P50_STATE_INVALID_FACTUAL_EVENT')
 
     def _time(self,sensor,dt):
@@ -125,8 +124,9 @@ class NativeFactualHybridStream(nn.Module):
         else:
             self._analog(actions,(sensor.shape[0],1),'EXECUTED_ACTION')
         self._model(actions)
-        if not bool((actions.abs()>1e-8).all()):
-            raise ValueError('P50_ZERO_ACTION_UNIDENTIFIABLE')
+        # A completed neutral motor command is valid physical evidence.
+        # Empty ring slots are distinguished by factual count and elapsed dt;
+        # zero-only or confounded histories remain unidentifiable by rank.
 
     def _chronology(self,state,row):
         n=min(int(state.observations[row]),self.capacity)

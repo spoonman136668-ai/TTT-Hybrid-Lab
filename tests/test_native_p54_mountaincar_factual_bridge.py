@@ -141,8 +141,7 @@ def test_batch_isolation_from_other_physical_trajectory():
 def test_invalid_actions_nonfinite_source_and_state_custody_are_atomic():
     bridge,state=fixture()
     original=physical_snapshot(state)
-    for bad,pattern in [(torch.zeros((2,1)),'P50_ZERO_ACTION_UNIDENTIFIABLE'),
-                        (torch.full((2,1),1.01),'P54_ACTION_OUTSIDE_PHYSICAL_BOUNDS'),
+    for bad,pattern in [(torch.full((2,1),1.01),'P54_ACTION_OUTSIDE_PHYSICAL_BOUNDS'),
                         (torch.tensor([[1.],[float('nan')]]),'P50_INVALID_EXECUTED_ACTION')]:
         with pytest.raises(ValueError,match=pattern):bridge.actual_step(state,bad)
     with pytest.raises(ValueError,match='P54_SESSION_FACTUAL_CUSTODY_DRIFT'):
@@ -174,11 +173,15 @@ def test_tensor_only_cold_restore_bit_equal_physical_and_model_preview():
     assert all(torch.equal(a,b) for a,b in zip(physical_snapshot(state),physical_snapshot(cold)))
 
 
-def test_native_p50_no_neutral_action_admission_is_explicit_limitation():
+def test_native_p50_neutral_action_is_valid_real_physical_fact():
     bridge,state=fixture()
     assert published_step(state.physical[0].numpy(),0.).reward==0
-    with pytest.raises(ValueError,match='P50_ZERO_ACTION_UNIDENTIFIABLE'):
-        bridge.actual_step(state,torch.zeros((2,1)))
+    observed=bridge.actual_step(state,torch.zeros((2,1)))
+    assert observed.steps.tolist()==[1,1]
+    assert observed.memory.observations.tolist()==[1,1]
+    assert observed.memory.actions[:,0,0].tolist()==[0.,0.]
+    assert observed.rewards.tolist()==[0.,0.]
+    assert not bridge.preview(observed,torch.zeros((2,1,1))).identified.any()
 
 
 def test_official_gymnasium_runtime_when_present_and_exact_source_only():
