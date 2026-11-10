@@ -1,0 +1,132 @@
+{
+  "schema": "ttt-hybrid.p56-published-mountaincar-factual-learning-dev-freeze.v1",
+  "phase": "FROZEN_PRIOR_TO_ANY_NEW_P56_COHORT_GENERATION_OR_MODEL_TRAINING",
+  "classification": "AUTHORED_DEV_ON_TRANSCRIBED_EXTERNAL_PUBLISHED_SIMULATOR_EQUATIONS_NOT_AUTHENTIC_INSTALLED_GYMNASIUM_OR_INDEPENDENT_PHYSICAL_SCIENCE",
+  "parent": {
+    "pr": 150,
+    "sha": "e4e391a2a0ee6d972c851f6342f5a6e2007e3d36",
+    "tree": "07d9e57ce9cb32a59013c11cd045f0213fe0192c",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_native_factual_blob": "731ac511090f1c3ca83c2bf784591e604cfc1a87",
+    "original_physics_bridge_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039"
+  },
+  "external": {
+    "upstream": "Farama-Foundation/Gymnasium",
+    "commit": "e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "path": "gymnasium/envs/classic_control/continuous_mountain_car.py",
+    "blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "official_installed_runtime": "UNAVAILABLE_OFFICIAL_PARITY_UNVERIFIED"
+  },
+  "question": "Can exact original untrained P55 factual SSM-attention-TTT-depth reference model, when trained only on actually completed published-dynamics motor action consequences, predict unfamiliar initial-state transitions better than matched-training GRU/MLP and cheap last-factual-delta controls? Exact analytical physics yields 0 error and remains the dominant known-model reference.",
+  "source": {
+    "seeds": {
+      "fit": 966101,
+      "val": 966103,
+      "ood": 966107
+    },
+    "episodes": {
+      "fit": 768,
+      "val": 192,
+      "ood": 256
+    },
+    "history_length": 8,
+    "physical_action_choices": [
+      -1,
+      0,
+      1
+    ],
+    "fit_reset_position": [
+      -0.6,
+      -0.4
+    ],
+    "fit_initial_velocity": [
+      0,
+      0
+    ],
+    "validation_reset_position": [
+      -0.6,
+      -0.4
+    ],
+    "validation_initial_velocity": [
+      0,
+      0
+    ],
+    "unfamiliar_initial_position_mixture": [
+      [
+        -1.15,
+        -0.95
+      ],
+      [
+        0.1,
+        0.3
+      ]
+    ],
+    "unfamiliar_initial_velocity_uniform": [
+      -0.04,
+      0.04
+    ],
+    "dynamics": "pinned published_step EXACT reference equations with no model input hidden future; original official Gymnasium runtime not run",
+    "label": "one truly executed query action and observed next state for FIT, no counterfactual query labels in fit training",
+    "heldout": "three potential query action transitions (-1,0,+1) computed only within source evaluator; never passed as model input or used for optimizer",
+    "source_actions": "independent uniform choice from -1,0,+1 for each actual history event; completed actual outcomes only",
+    "source_termination": "episodes started and observed below goal, no terminal reached in 8 history steps; skip if terminal",
+    "factual_dt": 1,
+    "new_seeds_not_reused": "P54/P55 seeds consumed; P56 new 966xxx seeds"
+  },
+  "models": {
+    "p55": "unaltered original reference HybridPilot 7 input channels, 2 output channels, width16 heads2 all SSM attention TTT depth enabled",
+    "gru": "GRU with event 7 inputs, hidden 32, 2-channel head",
+    "mlp": "flatten 9x7 (8 completed factual + one no-outcome query) -> 64 -> 32 -> 2 channel",
+    "wrong_credit": "same P55 weights initialization and architecture as original, cyclically shift historical executed action fields only; actual observed outcomes unchanged",
+    "last_delta": "latest completed physical state delta independent of candidate action",
+    "known_physics": "published exact deterministic mechanics, reported with zero prediction error by definition, not a learned competitor",
+    "parameter_counts": "report; matched sample/update does not establish matched compute"
+  },
+  "optimization": {
+    "seeds": [
+      976101,
+      976103,
+      976107
+    ],
+    "sampler_seed": 976199,
+    "steps_per_arm": 200,
+    "arms": 4,
+    "batch_size": 64,
+    "optimizer": "AdamW",
+    "lr": 0.002,
+    "validation_every": 40,
+    "clipped_gradient_norm": 1,
+    "torch_threads": 1,
+    "total_neural_optimizer_steps": 2400
+  },
+  "frozen_gates_all_seeds": {
+    "p55_ood_mse_le_95pct_best_gru_mlp_last_delta": true,
+    "p55_ood_motor_action_effect_mae_le_95pct_best_gru_mlp": true,
+    "p55_ood_mse_le_80pct_wrong_credit": true,
+    "cold_weights_and_factual_tensor_restore_exact": true,
+    "all_neural_val_last40_plateau_below_1pct": true,
+    "deterministic_same_source_replay": true,
+    "all_seeds_must_pass": true
+  },
+  "metrics": [
+    "total_3_action_OOD_next_state_MSE",
+    "three-motor action effect estimate absolute error",
+    "separate 0-action prediction MSE",
+    "valid physical step fraction",
+    "validation learning curves",
+    "per-arm full training wallseconds and params",
+    "root source and consumed cohort hash",
+    "cold replay"
+  ],
+  "bounds": {
+    "do_not_optimize_hyperparams_after_evaluation": true,
+    "do_not_promote_models_forbeating_untrained_demo": true,
+    "do_not_call_this_official_gymnasium_runtime_parity": true,
+    "no_external_scientific_first_use": true,
+    "no_runner_dispatch_schedule_workflow_or_controller_change": true,
+    "no_forge_integration": true,
+    "no_merge": true,
+    "no_paid_apis": true,
+    "full_final_windows_linux_regression_and_original_source_parity_required_for_acceptance": true
+  }
+}
