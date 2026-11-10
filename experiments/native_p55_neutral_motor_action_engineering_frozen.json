@@ -1,0 +1,42 @@
+{
+  "schema": "ttt-hybrid.p55-neutral-physical-action-support-engineering-freeze.v1",
+  "scope": "CPU_ENGINEERING_COMPATIBILITY_NO_SCIENTIFIC_SOURCE_FIRST_USE",
+  "parent": {
+    "pr": 148,
+    "commit": "604f009ede7b64ac87108f031b187f233e2088cd",
+    "tree": "15a52604600f8a014d939e7ef047bf747b2564bf",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "factual_module_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "physics_bridge_blob": "c23b36375f1a6931d4340a340a0ad6c817695258"
+  },
+  "observed_gap": "Original P50 rejects physical action 0.0, even though pinned Gymnasium MountainCarContinuous-v0 permits neutral motor control. P54 bridge propagates rejection. This prevents full continuous-action admission and neutral-action baseline comparison.",
+  "frozen_change": "Permit executed scalar zero-valued actions, including zero candidate previews, as valid finite physical input; continue rejecting NaN, bad dtype, invalid shape, out-of-bounds physical action. Preserve completed factual record of actual zero, separate from empty/invalid/unobserved ring slot identified by count and dt. Keep rank-three causal identifiability gate unchanged, so constant zero histories or action-time-confounded histories fail closed. Full P50 model architecture and learned weights untouched.",
+  "required_tests": [
+    "existing 23 P50/P54 tests adapted to new legitimate neutral action semantics",
+    "actual physical neutral zero reward and next-state parity to published reference",
+    "neutral-only completed history never authorizes selection",
+    "mixed neutral and independent real actions can satisfy rank",
+    "hypothetical zero previews never write physical or factual memory",
+    "cold checkpoint with neutral actions bit identical",
+    "batch mixed zero/nonzero actions isolated",
+    "NaN,bounds and terminal source remain fail closed",
+    "source Git identity preserved",
+    "original official Gymnasium runtime parity still SKIPPED unless exact pinned installed"
+  ],
+  "limits": {
+    "official_runtime_available": false,
+    "network_git_access": "DNS unavailable in isolated local runtime",
+    "no_new_external_science": false,
+    "full_Windows_and_Ubuntu_regression": "REQUIRED_NOT_YET_VERIFIED",
+    "nonlinear_causal_learning": "NOT_TESTED",
+    "same_source_equations_zero_training": "NO_SCIENTIFIC_PERFORMANCE_CLAIM"
+  },
+  "authority": {
+    "no_new_scheduled_task": true,
+    "no_new_runner_or_queue": true,
+    "no_FORGE_integration": true,
+    "no_owner_controller_change": true,
+    "no_external_source_first_use": true,
+    "no_merge_or_promotion": true
+  }
+}
