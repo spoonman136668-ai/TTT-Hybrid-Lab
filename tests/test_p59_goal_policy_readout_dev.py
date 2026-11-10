@@ -89,7 +89,7 @@ def test_all_models_execute_legal_actual_actions_and_reward_accounting():
         assert x['worlds']==len(seeds)
         assert 0<=x['successes']<=len(seeds)
         assert 3<=x['total_actual_steps']<=3*256
-        assert x['mean_return']==pytest.approh(100*x['success']-.1*x['mean_steps'],abs=1e-8)
+        assert x['mean_return']==pytest.approx(100*x['success']-.1*x['mean_steps'],abs=1e-8)
         assert len(x['trace_sha256'])==64
 
 
