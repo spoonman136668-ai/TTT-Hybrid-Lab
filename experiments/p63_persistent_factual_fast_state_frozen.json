@@ -1,0 +1,113 @@
+{
+  "schema": "ttt-hybrid.p63-persistent-factual-fast-weights-dev-frozen.v1",
+  "state": "FROZEN_BEFORE_AUTHORED_P63_SOURCE_GEN_AND_TRAIN",
+  "parent": {
+    "pr": 163,
+    "sha": "67b0a80ded55d4293c7fea7755d33b8112f20f70",
+    "tree": "c5c22ea37736ab96d954f4249b39a4d17a8661b0",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "question": "Can a learned online fast-weight state retain factual action consequence information across episodes, providing unfamiliar-world prediction gain against trained recurrent and conventional online baselines without replaying all past history?",
+  "claim_boundaries": "Illustrative 2-weight online-gradient fast state; not official TTT-E2E, native Mamba2, nor scientific proof of novel intelligence.",
+  "dataset": {
+    "type": "fresh authored scalar partially observed persistent motor gain DEV",
+    "seeds": {
+      "fit": 995201,
+      "val": 995203,
+      "ood": 995207
+    },
+    "worlds": {
+      "fit": 512,
+      "val": 128,
+      "ood": 128
+    },
+    "steps_per_world": 32,
+    "hidden_sign_initial": "balanced +/-1",
+    "switches": {
+      "fit": [
+        {
+          "at": 16,
+          "prob": 0.7
+        }
+      ],
+      "val": [
+        {
+          "at": 16,
+          "prob": 0.7
+        }
+      ],
+      "ood": [
+        {
+          "at": 8,
+          "prob": 0.8
+        },
+        {
+          "at": 24,
+          "prob": 0.8
+        }
+      ]
+    },
+    "hidden_background": "world offset uniform [-0.15,0.15] plus per-step Gaussian nuisance process 0.02, cumulatively evolving per world",
+    "response": "actual_delta = nuisance_background + 0.20*hidden_polarity*executed_action + independent Gaussian sensor noise",
+    "noise": {
+      "fit": 0.1,
+      "val": 0.1,
+      "ood": 0.16
+    },
+    "action": "one actually executed random motor +/-1 per step, independent of latent sign",
+    "input": "only previously observed actual action and actual scalar response, no mode/background/latent source parameters",
+    "training_loss": "predict next actually executed action's response from past factual state; perform fast update only after actual response is revealed",
+    "no_counterfactual_training": true,
+    "no_hidden_sign_labels_to_models": true,
+    "metric": "OOD mean next-factual-action squared error from steps 4..31; post-episode cold restoration; effect-sign accuracy evaluator-only secondary"
+  },
+  "arms": [
+    "learned fast-state (trainable sigmoid rates and online normalized error)",
+    "fully-trained GRU6 conventional same factual stream",
+    "fixed constant-rate fast state (0.2)",
+    "strong sliding-window ridge on last 8 executed factual pairs",
+    "no-state last factual delta",
+    "wrong-credit fast state (independently redrawn action labels for updates)"
+  ],
+  "model_fast_state": {
+    "weight_shape": "[batch,2] intercept and factual-action effect",
+    "init": "zeros per world",
+    "read": "W0+W1*actual candidate action before observing actual outcome",
+    "write": "normalized online SGD rank-one update on actual (action,realized response) only",
+    "trainable": "two sigmoid-bounded scalar rates (learning rate; stable decay) optimized by outer Adam through factual sequences",
+    "state_restore": "weights and count only plus learned meta parameters; no replay"
+  },
+  "training": {
+    "model_seeds": [
+      996101,
+      996103,
+      996107
+    ],
+    "outer_steps": 240,
+    "batch": 96,
+    "Adam_lr": 0.015,
+    "sampler_seed": 996199,
+    "same_actual_examples_for_trainable_fast_and_GRU": true,
+    "preselect_validation_every": 40,
+    "torch_threads": 1,
+    "parameter_counts_report": true,
+    "compute_match": "NOT_CLAIMED"
+  },
+  "strong_conditions": {
+    "fast_MSE_le_90pct_of_best_GRU_or_sliding_ridge_every_seed": true,
+    "fast_MSE_le_90pct_of_fixed_rate_every_seed": true,
+    "wrong_credit_MSE_at_least_120pct_of_fast": true,
+    "cold_resume_bit_exact": true,
+    "source_splits_not_reused": true,
+    "validation_last40_MSE_change_under_5_percent": true
+  },
+  "failure_policy": "Report negative without changing consumed data or gates. Do not conflate fast-state synthetic advantage with autonomous intelligence. External/authentic first-use forbidden.",
+  "isolation": {
+    "no_FORGE_changes": true,
+    "no_runner_scheduler_controller": true,
+    "no_existing_model_changes": true,
+    "no_PR_merge": true,
+    "no_external_scientific_first_use": true,
+    "full_final_Windows_Linux_regression_pending": true
+  }
+}
