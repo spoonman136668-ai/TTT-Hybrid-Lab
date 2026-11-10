@@ -74,3 +74,15 @@ def test_short_training_paths_engineering_only():
         assert result['steps'] == 2
         assert not result['early_stopped']
         assert result['parameters'] > 0
+
+def test_orthogonal_nuisance_does_not_corrupt_target():
+    sample = p67.make_world('negative', 16)
+    assert p67.orthogonal_control(sample) <= 1e-5
+
+
+def test_index_only_classifier_held_out():
+    roles = torch.zeros(8, 64, dtype=torch.bool)
+    roles[:, :32] = True
+    assert p67.index_only_balanced_accuracy(roles) == 1.0
+    roles[4:, :] = ~roles[4:, :]
+    assert p67.index_only_balanced_accuracy(roles) == 0.0
