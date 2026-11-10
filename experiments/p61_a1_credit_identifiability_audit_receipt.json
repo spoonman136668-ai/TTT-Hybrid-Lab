@@ -1,0 +1,154 @@
+{
+  "schema": "ttt-hybrid.p61-a1-retrospective-credit-identifiability-receipt.v1",
+  "classification": "EXACT_CONSUMED_HISTORICAL_SOURCE_REPLAY_NOT_INDEPENDENT_SCIENCE",
+  "original_parent": {
+    "pr": 160,
+    "sha": "0cabb458dc6881761423368a43fc4e4343cd6dc2",
+    "original_source_git_blob": "e8895f3a5386626f4b12c068c0c17b2bf84cc9ca",
+    "frozen_protocol_git_blob": "4841d0aae71d055db4b9b7b575da66ebb3496f34",
+    "original_p61_outcome": "FAIL_0_OF_3"
+  },
+  "audit_freeze_commit": "7e5c4b6b2bdddefe64853d3634d9d1a6b2afb357",
+  "local_executable_git_blob": "79392ddb4bc2710f6a1722120e942d6d7914b314",
+  "local_tests_git_blob": "0be17356502eb92b612003ca84310f9f3621852a",
+  "full_executed_local_result_sha256": "9d9c1673dd6420df661b62fc9a36bfce45515b97d6668eaf597f5607be967492",
+  "source_exact_hash_verified": {
+    "fit": "85ddaf146e170dee79a00358479ca0df2971c3ee927c8d9a65d21688e40d7c49",
+    "val": "831beae2d2e2e92e6f9d6a9196620608d931b8a46ab0dd148290a88dbb72df1e",
+    "unfamiliar_dev": "a151ee31fae9814a2c7e5bba8c199a1f065bf5f237365f5b46bae429c857763b"
+  },
+  "original_p61_model_results": {
+    "hybrid_seeds": [
+      0.8291015625,
+      0.8291015625,
+      0.82421875
+    ],
+    "gru_seeds": [
+      0.8349609375,
+      0.8447265625,
+      0.83203125
+    ]
+  },
+  "method": "P61 FIT/val/OOD streams reconstructed and each exact original SHA256 reproduced before any evaluation; linear ridge is solved once on FIT from factual [six actual probe executed actions, real observed consequences, actual selected query action and realized reward]; OOD never fitted or used for tuning; separate no-action-identities arm erases all six executed probe action identities and fits the same factual FIT labels against the remaining continuous consequences. This is irreversibly lossy versus original cyclic action roll, whose inverse is fixed and learnable. Source-family prior posterior is labelled oracle, not a fair model.",
+  "source_detail": {
+    "fit": 4096,
+    "val": 512,
+    "ood_consumed": 1024,
+    "physical_probe_count_per_episode": 6,
+    "real_query_action_factual_reward_only": true,
+    "latent_training_labels_directly_supplied": false,
+    "algebraic_reward_label_identifies_hidden_sign_after_action": true,
+    "original_ood_switch_fraction": 0.75
+  },
+  "results_on_original_consumed_ood": [
+    {
+      "control": "historical_recent_three",
+      "correct": 874,
+      "n": 1024,
+      "accuracy": 0.853515625,
+      "delta_pp_vs_recent": 0,
+      "paired_bootstrap_95ci_pp": [
+        0,
+        0
+      ]
+    },
+    {
+      "control": "all_six",
+      "correct": 617,
+      "n": 1024,
+      "accuracy": 0.6025390625,
+      "delta_pp_vs_recent": -25.09765625,
+      "paired_bootstrap_95ci_pp": [
+        -28.125,
+        -22.0703125
+      ]
+    },
+    {
+      "control": "factual_fit_only_linear_ridge",
+      "correct": 876,
+      "n": 1024,
+      "accuracy": 0.85546875,
+      "delta_pp_vs_recent": 0.1953125,
+      "paired_bootstrap_95ci_pp": [
+        -0.1953125,
+        0.5859375
+      ]
+    },
+    {
+      "control": "noninvertible_erased_action_id_fit_only_ridge",
+      "correct": 500,
+      "n": 1024,
+      "accuracy": 0.48828125,
+      "delta_pp_vs_recent": -36.5234375,
+      "paired_bootstrap_95ci_pp": [
+        -40.234375,
+        -33.0078125
+      ]
+    },
+    {
+      "control": "fit_source_prior_author_model",
+      "correct": 874,
+      "n": 1024,
+      "accuracy": 0.853515625,
+      "delta_pp_vs_recent": 0,
+      "paired_bootstrap_95ci_pp": [
+        0,
+        0
+      ]
+    },
+    {
+      "control": "ood_source_prior_oracle_UNFAIR",
+      "correct": 897,
+      "n": 1024,
+      "accuracy": 0.8759765625,
+      "delta_pp_vs_recent": 2.24609375,
+      "paired_bootstrap_95ci_pp": [
+        0.68359375,
+        3.80859375
+      ]
+    },
+    {
+      "control": "constant_plus",
+      "correct": 533,
+      "n": 1024,
+      "accuracy": 0.5205078125,
+      "delta_pp_vs_recent": -33.30078125,
+      "paired_bootstrap_95ci_pp": [
+        -37.01171875,
+        -29.58984375
+      ]
+    }
+  ],
+  "factual_ridge_val_accuracy": 0.90234375,
+  "erased_identity_ridge_val_accuracy": 0.49609375,
+  "paired_ci_method": {
+    "bootstrap_replicates": 10000,
+    "seed": 993399,
+    "paired_world_indices": true,
+    "percentiles": [
+      2.5,
+      97.5
+    ]
+  },
+  "frozen_checks": {
+    "all_original_source_hashes_exact": "PASS",
+    "no_new_source_first_use": "PASS",
+    "irreversible_action_identity_redaction_44_to_56pct": "PASS",
+    "source_priors_not_learned_or_claimed": "PASS",
+    "historical_original_p61_scientific_gain": "FAIL_UNCHANGED"
+  },
+  "local_engineering": {
+    "python": "3.13.5",
+    "numpy": "2.3.5",
+    "torch": "2.10.0+cpu",
+    "tests_passed": 5,
+    "tests_total": 5,
+    "local_test_source_adapter": "local adapter of original P61 source reproducing all three exact published SHA256s; actual parent repo full import/regression NOT tested",
+    "exact_git_blobs_readback": "CHECK_AFTER_UPLOAD",
+    "full_windows_and_ubuntu_wsl_regression": "NOT_RUN",
+    "native_build": "NOT_RUN"
+  },
+  "scientific": "UNVERIFIED; already-consumed P61 source, not new blinded physical world, original P61 hybrid is still inferior to recent-three rule, no native architecture improvement established",
+  "deployment": "NONE; no new runner/workflow/schedule, FORGE owner, controller, source promotion, merge or external source first use",
+  "recommendation": "Retain genuine noninvertible redaction as minimum causal-credit negative in future frozen scientific trials; do not compare Hybrid to action-erased models as if they were information-matched; use sufficiently converged GRU and stronger recent-fact/Bayes/ridge controls with equal full information and matched compute on independently qualified fresh world."
+}
