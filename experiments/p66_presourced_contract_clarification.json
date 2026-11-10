@@ -1,0 +1,23 @@
+{
+  "schema": "ttt-hybrid.p66-factual-learned-write-pre-source-clarification.v1",
+  "created_before_any_new_P66_source_or_experiment": true,
+  "previous_frozen_sha": "69cbd767b639fbb7194967c353e392fa4a071ef7",
+  "clarifications": {
+    "training_arms": [
+      "candidate",
+      "wrong_credit",
+      "GRU"
+    ],
+    "updates_each": 400,
+    "seeds": [
+      966201,
+      966203,
+      966207
+    ],
+    "total_optimizer_steps": 3600,
+    "why": "The prior frozen manifest accidentally wrote bounded_total_updates 2400 (two arms) despite listing three trainable arms. Three arms × three seeds × 400 steps = 3600. This arithmetic correction is before any new source or data use.",
+    "simulation_variation": "Original first manifest remains authoritative: 32 target actual interventions followed by 32 distractor facts. This fixed phase can be exploited by a simple clock gate. Therefore even a candidate win will not establish adaptive causal write relevance; compare against the existing explicitly PRIVILEGED phase oracle and report it as a source-shortcut diagnostic.",
+    "supervised_target": "Actual executed query action's observed 16-component physical consequence ONLY. No unrealized query outcomes enter fit or model state.",
+    "scientific": "No scientific PASS possible on authored DEV regardless of threshold outcomes."
+  }
+}

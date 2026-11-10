@@ -1,0 +1,104 @@
+{
+  "schema": "ttt-hybrid.p66-factual-learned-relevance-write-dev-frozen.v1",
+  "phase": "FROZEN_BEFORE_NEW_P66_SOURCE_IMPLEMENTATION_OR_DATA_FIRST_USE",
+  "base": {
+    "pr": 170,
+    "head": "5fe37fdb4b51e248159c66b2c3e426ca6d58c738",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_p65_mechanistic_negative": "DEV_FAIL_0_OF_3",
+    "unconsumed_p65_seeds": [
+      8001,
+      8003,
+      8007
+    ]
+  },
+  "classification": "AUTHORED_DEVELOPMENT_ONLY_NO_INDEPENDENT_SOURCE_FIRST_USE",
+  "question": "Can a small trained factual outcome-dependent write-admission gate prevent interference of actually executed action-consequence associations in the original TTT 16x16 fast matrix, and exceed the strongest conventional GRU, classical rehearsal, surprise, random/adaptive write and source-null controls on an unseen distractor distribution?",
+  "task": {
+    "world": "Eight independent QR-orthonormal 16-d continuous sensor contexts, each has fixed latent tanh-Gaussian 16-d vector physical action-effect; four presentations of 8 factual executed ±1 target actions then 32 distractor contexts each with a unique novel action-effect (each actually executed ±1), plus exactly ONE actual factual query action/outcome per world for training; no latent effects or imagined alternative outcomes fed to any learner.",
+    "target_events": 32,
+    "distractor_events": 32,
+    "context_dim": 16,
+    "fast_matrix_floats": 256,
+    "query_context": "uniform one of eight targets revealed only when final query is decided; no future target identity available to gate at write time",
+    "observable_per_event": "[continuous context_key, executed_action ±1, actually observed outcome delta vector]",
+    "normalization": "value_to_memory = executed_action * observed_sensor_delta; model reconstructs result = action_query * memory(context_key)",
+    "target_causes": "tanh Gaussian 16-vector",
+    "distractor_causes": "independent tanh Gaussian 16-vector",
+    "physical_measurement_noise_std": 0.03,
+    "freeze_facts": {
+      "fit": {
+        "seed": 966101,
+        "worlds": 1024,
+        "distractor_overlap": "random normalized 16-vector"
+      },
+      "val": {
+        "seed": 966103,
+        "worlds": 256,
+        "distractor_overlap": "random normalized 16-vector"
+      },
+      "ood": {
+        "seed": 966107,
+        "worlds": 256,
+        "distractor_overlap": "random normalized 16-vector with 2.0x expected target-subspace component; normalize after projection"
+      }
+    },
+    "query_real_action": "random ±1 independent of the unseen physical effect; only actually selected query outcome is used to train, no future query known during writes",
+    "source_validation": "SHA256 pinned on first execution. All arms identical original FIT action/outcome opportunities and heldout evaluation queries. OOD consumed exactly once per frozen model seed after FIT/val training."
+  },
+  "models": {
+    "candidate": "Original TTT fast update with trainable sigmoid gate of [1, ||current fast read||, 1-cosine(prediction, observed causal effect), count_normalized]. Uses read-before-write and only prior fast state + completed factual outcome; 4 scalar parameters, clamp sigmoid avoiding arbitrary future information; train end-to-end on actually executed query outcome only.",
+    "original_always_write": "Original P65 equation with eta=0.5, all same facts, no training",
+    "fixed_surprise_write": "same capacity/eta, gate=1 only when ||actual outcome effect - fast read|| > train-split median threshold, threshold fixed using FIT-only factual residuals, no OOD tuning",
+    "fixed_novelty_rehearsal": "gate=1 iff ||fast_read|| > FIT-derived threshold or within first 32 factual events; explicit 32-event prefix heuristic is privileged phase knowledge and labelled oracle if present",
+    "random_write": "same 16x16 matrix, Bernoulli gating at FIT-derived acceptance rate with separate frozen seed; not seeded by OOD outcomes",
+    "classical_equal_budget": "8 most recent factual key/value pairs at 256 scalar floats, nearest key cosine readout; no target phase knowledge",
+    "classical_fixed_read_write": "bounded 256 scalar fast matrix, fixed learned FIT-only scalar gate calibration on factual residuals and read norms, non-neural conventional control",
+    "GRU": "fully train 16+1+16 raw factual vector sequence plus final context and executed query action, hidden dimension 16 then 16-d output; same training query labels and index plan, seed, 400 AdamW updates. Report parameter count, training time and validation plateau; parameter/FLOP parity not established",
+    "wrong_credit": "candidate trained with independently redrawn unrelated executed action identities while preserving actual outcomes (non-invertible); factual query action and outcome unchanged",
+    "oracle_skip": "phase-known exact prefix/distractor skip, privileged upper bound not deployable or fair competitor"
+  },
+  "optimization": {
+    "model_initialization_seeds": [
+      966201,
+      966203,
+      966207
+    ],
+    "source_index_seed": 966299,
+    "training_updates_each": [
+      400
+    ],
+    "batch": 64,
+    "optimizer": "AdamW lr 0.003",
+    "match_training_examples": true,
+    "matched_actual_actions": true,
+    "validation_checks_every": 80,
+    "validation_plateau_last80_absolute_change_mse": "<=0.005",
+    "bounded_total_updates": 2400
+  },
+  "primary_metric": "Unfamiliar OOD query outcome MSE on one actually executed query per world, same physical outcomes and seed across all arms; report final target-effect MAE and early/late factual memory decay on source-free negative.",
+  "frozen_gate": {
+    "candidate_beats_strongest_conventional_mse": "candidate <=0.90 * min(trained_GRU,classical_equal_budget,classical_fixed_read_write,always_write,surprise_write) for EACH of 3 seeds",
+    "candidate_beats_wrong_credit": "candidate <=0.80*wrong_credit each seed",
+    "candidate_vs_random": "candidate <=0.85*random_write each seed",
+    "no_oracle_leak": "no query identity available before writes; phase oracle excluded from strong admissible baseline",
+    "fully_trained_comparator_plateau": "GRU validation MSE last80 delta <=0.005 each seed",
+    "all_3_seeds_pass": true
+  },
+  "negative": {
+    "real_action_credit_erased": "same data redrawn independent action identities, no latent target labels",
+    "noisy_future_source": "never used during gate fit",
+    "orthogonal_distractors": "source-free extra negative, verify no interference",
+    "cold": "torch weights_only tensor persistence and exact replay"
+  },
+  "stop": "Preserve all unqualified, zero, negative; no retune on viewed validation heldout; single fresh authored DEV OOD cohort; frozen threshold remains even when no candidate improvement; do not call any authored DEV SCIENTIFIC_PASS.",
+  "bounds": {
+    "no_new_schedule_or_runner_or_workflow": true,
+    "no_owner_control": true,
+    "no_forge_owner_or_controller_touch": true,
+    "no_paid_api": true,
+    "no_protected_scientific_first_use": true,
+    "no_merge_or_promotion": true,
+    "original_exact_SHA_Windows_Ubuntu_G4_final_regression_required": true
+  }
+}
