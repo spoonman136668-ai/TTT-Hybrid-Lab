@@ -1,0 +1,77 @@
+{
+  "schema": "ttt-hybrid.p58-long-horizon-physical-intervention-task-dev.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_FIRST_P58_EPISODE",
+  "scope": "ENGINEERING_TASK_DISCRIMINATION_ON_PUBLISHED_EQUATIONS_NOT_INDEPENDENT_REAL_WORLD_SCIENCE",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 154,
+    "parent_commit": "37c4d6753f9a5e8c50d233375d271eaff2383ad6",
+    "parent_tree": "8f365c815c54c9c8a729549fcd7aff387a434fa2",
+    "local_physics_module": "native_p54_mountaincar_factual_bridge.py",
+    "local_physics_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "external_reference": "Farama-Foundation/Gymnasium",
+    "external_commit": "e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "external_step_blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "p57_method_parity": "ENGINEERING_PASS",
+    "installed_official_runtime_and_wrappers": "NOT_AVAILABLE_UNVERIFIED"
+  },
+  "research_question": "Does the identical, source-pinned physical environment support a delayed 256-step causal action/reward distinction that a one-step last-delta predictor cannot settle? Distinct tested controllers will be compared only as source-free development diagnostics.",
+  "episodes": 96,
+  "episode_reset_seeds": {
+    "first": 985100,
+    "last": 985195,
+    "step": 1
+  },
+  "physics_action_horizon": 256,
+  "physical_source": "published_reset(seed); published_step(actual state, selected action) only",
+  "policy_source_seed": "990000 + episode_reset_seed",
+  "policies": {
+    "neutral": {
+      "rule": "force=0.0"
+    },
+    "random3": {
+      "rule": "independent numpy default_rng(990000+reset_seed).choice([-1.,0.,1.]) each actual step"
+    },
+    "always_right": {
+      "rule": "force=+1.0 every actual step"
+    },
+    "momentum_bangbang": {
+      "rule": "force=-1.0 when actual velocity < 0.00005; force=+1.0 otherwise; zero start chooses -1.0"
+    }
+  },
+  "metrics": [
+    "source trace SHA256 and action counts per controller",
+    "success fraction by 256 source steps",
+    "mean un-discounted cumulative reward",
+    "mean executed physical steps and energy",
+    "median successful hitting time with number successful, no fictional time for failures",
+    "mean final position and real position+velocity",
+    "goal and termination flags",
+    "mean absolute one-step action effect over nonclipped source states"
+  ],
+  "frozen_task_discrimination_gates": {
+    "momentum_goal_rate_min": 0.75,
+    "neutral_goal_rate_max": 0.01,
+    "momentum_goal_rate_above_random_by_min": 0.5,
+    "source_reward_replay_exact": true,
+    "all_actions_and_terminations_finite": true,
+    "source_pinned_hash_match": true
+  },
+  "limitations": {
+    "no_neural_model_training": true,
+    "no_same_action_budgets_claim": "Controllers terminate naturally; report actual step and action costs",
+    "analytical_physics_oracle_known": true,
+    "not_a_scientific_gain": true,
+    "no_unfamiliar_physics_or_cross_domain_transfer": true,
+    "no_installed_official_gymnasium_runtime": true,
+    "does_not_replace_converged_neural_baseline": true
+  },
+  "authority": {
+    "no_scheduled_tasks": true,
+    "no_new_runner": true,
+    "no_FORGE_controller_or_research_queue": true,
+    "no_scientific_external_first_use": true,
+    "no_merge_or_promotion": true,
+    "no_paid_API": true
+  }
+}
