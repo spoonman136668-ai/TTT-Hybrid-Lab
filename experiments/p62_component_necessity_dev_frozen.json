@@ -1,0 +1,136 @@
+{
+  "schema": "ttt-hybrid.p62-separately-trained-component-ablation-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_AUTHORED_NEW_P62_SOURCE_GENERATION_OR_TRAINING",
+  "parent": {
+    "pr": 160,
+    "sha": "0cabb458dc6881761423368a43fc4e4343cd6dc2",
+    "tree": "aa8383536ebaaacc3f88978fb73ed4d54d754f5e",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "An original native Hybrid with SSM+attention+TTT+conditional depth trained from factual probe and actual motor reward gains >=3 percentage points over each strong trained/conventional control and >=2pp versus separately trained no-TTT on unfamiliar environment, with >=10pp margin over noninvertibly action-discredited training on all 3 seeds. Post-training TTT disabling does NOT count as learning-component necessity.",
+  "source": {
+    "type": "fresh authored synthetic continuous hidden-polarity action consequence, no external or protected source",
+    "split_seeds": {
+      "fit": 993201,
+      "val": 993203,
+      "unfamiliar_dev": 993207
+    },
+    "size": {
+      "fit": 4096,
+      "val": 512,
+      "unfamiliar_dev": 1024
+    },
+    "actual_probes_per_episode": 6,
+    "actual_factual_reward_query_per_episode": 1,
+    "initial_hidden_polarity": "fair ±1",
+    "mode_flip_before_probe_index3": {
+      "fit": 0.5,
+      "val": 0.5,
+      "unfamiliar_dev": 0.75
+    },
+    "executed_probe_actions": "independent uniform ±1",
+    "observed_probe_change": "0.18*hidden_polarity_at_t*executed_action + episode_constant_nuisance + episode_linear_nuisance*(t-2.5)/3 + independent Gaussian noise",
+    "episode_constant_nuisance_uniform": {
+      "fit": [
+        -0.3,
+        0.3
+      ],
+      "val": [
+        -0.3,
+        0.3
+      ],
+      "unfamiliar_dev": [
+        -0.45,
+        0.45
+      ]
+    },
+    "episode_linear_nuisance_uniform": {
+      "fit": [
+        -0.12,
+        0.12
+      ],
+      "val": [
+        -0.12,
+        0.12
+      ],
+      "unfamiliar_dev": [
+        -0.18,
+        0.18
+      ]
+    },
+    "gaussian_noise_sd": {
+      "fit": 0.24,
+      "val": 0.24,
+      "unfamiliar_dev": 0.3
+    },
+    "hidden_current_sensor": "always 0, no mode cue",
+    "model_observation": "[executed_probe_action, factual_change, factual_time_index/6, is_query=0, proposed_action=0]; read-only speculative final query [0,0,1,1,candidate_action]",
+    "factual_training_query": "single randomly physically executed ±1 final action, reward +1 if equals hidden final polarity else -1; train only on this reward",
+    "evaluation": "two hypothetical action reward previews, physically execute argmax chosen final action, score its realized reward; never train from unexecuted action reward",
+    "wrong_credit": "independently redraw fresh ±1 fake action identities per episode/timestep with RNG seeds fit=993221,val=993223,unfamiliar_dev=993227, fixed for a sample index, leaving observed changes and final actual query/reward unaltered. This destroys true action-outcome correspondence; not a reversible roll.",
+    "sources_not_reused_from_P61": true
+  },
+  "arms": [
+    "original_full_Hybrid",
+    "separately_trained_no_TTT",
+    "separately_trained_no_SSM",
+    "separately_trained_no_attention",
+    "separately_trained_no_depth",
+    "separately_trained_GRU",
+    "separately_trained_history_MLP",
+    "separately_trained_wrong_credit_full_Hybrid",
+    "zero_training_last_three_factual_effect",
+    "zero_training_all_six",
+    "fitted_affine_nuisance_action_OLS"
+  ],
+  "training": {
+    "model_seeds": [
+      994101,
+      994103,
+      994107
+    ],
+    "minibatch_seed": 994199,
+    "updates_per_trainable_arm": 480,
+    "trainable_arms": 8,
+    "total_updates": 11520,
+    "batch": 128,
+    "AdamW_lr": 0.003,
+    "clip_grad_norm": 1,
+    "val_every": 80,
+    "torch_threads": 1,
+    "same_source_indices_and_actual_factual_reward_by_step": true,
+    "no_hyperparameter_sweep_on_heldout": true,
+    "param_count_and_time_record": true
+  },
+  "frozen_all_seed_gates": {
+    "full_Hybrid_OOD_success_min": 0.75,
+    "full_Hybrid_margin_over_strongest_GRU_MLP_zero_train_OLS_pp": 3,
+    "full_Hybrid_margin_over_separately_trained_no_TTT_pp": 2,
+    "full_Hybrid_margin_over_destroyed_credit_Hybrid_pp": 10,
+    "all_trained_validation_plateau_last80_accuracy_delta_max_pp": 1,
+    "all_trained_cold_restore_bit_exact": true,
+    "all_three_model_seeds_required": true
+  },
+  "diagnostics": [
+    "four separately trained component ablations",
+    "include post-hoc TTT-off only as distribution-shift diagnostic",
+    "per-arm validation curves and final step",
+    "source+sampler SHA256 and full numerical result",
+    "factual action/reward counts",
+    "parameter counts, CPU fit and inference wall-clock",
+    "cold checkpoint exactness",
+    "physical source and trained control qualification separation",
+    "identifiability coverage of fitted affine OLS"
+  ],
+  "limitations": "Authored development only; hidden prior/physics selected by author; no protected scientific first-use, independent physical world, fully matched model FLOPs, proof of persistent fast state, or model promotion. If baseline wins report FAIL without retuning consumed OOD.",
+  "authority": {
+    "engineering_DEV_only": true,
+    "source_first_use": "NOT_AUTHORIZED_NOT_EXECUTED",
+    "original_model_unchanged": true,
+    "FORGE_unchanged": true,
+    "no_runner_scheduler_workflow_or_controller_changes": true,
+    "no_merge_or_promotion": true,
+    "no_paid_API": true,
+    "final_exact_source_Windows_Linux_regression_required": true
+  }
+}
