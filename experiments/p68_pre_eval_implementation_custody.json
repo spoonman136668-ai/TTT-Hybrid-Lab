@@ -1,0 +1,22 @@
+{
+  "schema": "ttt-hybrid.p68-implementation-source-custody-v1",
+  "status": "RECORDED_AFTER_LOCAL_FOCUSED_TEST_BEFORE_P68_HELDOUT_SOURCE_FIRST_EVAL",
+  "parent_protocol": "66890be04e680f3b4976d2479025c16ad154baa4",
+  "calibration_protocol": "e2f0c154965e88f5e5fbf795080a31abfc5993f4",
+  "implementation": {
+    "path": "experiments/p68_bounded_noisy_causal_memory_dev.py",
+    "git_blob": "f2f959f1168465cb0487d619ce56b7d4756af093",
+    "sha256": "9c6995a979719609c8496f35c88b0b404ceb396842087df1fec86e0b398d1230",
+    "local_lines": 319
+  },
+  "test": {
+    "path": "tests/test_p68_bounded_noisy_causal_memory_dev.py",
+    "git_blob": "fd567f0d322e4cb2b38072f670ee87743c61ce93",
+    "sha256": "e9b02fd48a9f3ce70917dd42a7dbb528129c46efe39204f786b93ae8088a13d0",
+    "local_lines": 81
+  },
+  "focused_local": "PASS_6_OF_6",
+  "execution_environment": "Linux CPU PyTorch 2.10.0+cpu, Python 3.13.5, pytest 9.0.2",
+  "next": "Execute frozen P68 authored synthetic development OOD once. No post-result code or threshold edits; preserve negative outcomes. Source artifact must be byte-identical to SHA before qualifying science.",
+  "auth": "No owner/controller/runner/workflow/task schedule, no paid APIs, no promotion, no merge or first-use protected original data"
+}
