@@ -1,0 +1,151 @@
+{
+  "schema": "ttt-hybrid.p64k-r3-exact-source-local-qualification.v1",
+  "classification": "LOCAL_FOCUSED_ENGINEERING_ONLY_NOT_CROSS_PLATFORM_OR_SCIENCE",
+  "source_parent": {
+    "pr": 171,
+    "sha": "1f62c0a4b821d1a8312731970e529c45eb5dfe1d",
+    "parent_pr": 169,
+    "source_model_sha": "89c3ef5819ac594ad687c67c579a559754109d4c",
+    "reference_model_sha": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "regression_before_test_adjustment": {
+    "exact_PR171_source_and_inherited_test": true,
+    "failed": 1,
+    "passed": 42,
+    "failed_test": "test_real_factual_gradient_through_all_four_blocks",
+    "reason": "Inherited test changes core.depth.router.bias in place after constructing StreamingHybridPilot. The R2/R3 revision guard correctly refuses a stale adapter. The test expected the old unguarded behavior."
+  },
+  "minimal_correction": {
+    "path": "tests/test_native_p64k_incremental_hybrid_stream.py",
+    "previous_blob": "b5f2123f7e123178c3af44f5aa21a8f5677a19fc",
+    "new_blob": "b65cf5f7e255770f388440bc0c91cddc1bca074d",
+    "scope": "Three extra setup lines: after setting router bias, instantiate a fresh StreamingHybridPilot and its empty state. No source code or guards modified."
+  },
+  "local_qualification": {
+    "environment": {
+      "python": "3.13.5",
+      "torch": "2.10.0+cpu",
+      "pytest": "9.0.2",
+      "cpu": "Linux x86_64 single-process",
+      "native_pinned_CI_python_torch": "NOT_MATCHED"
+    },
+    "test_total": 43,
+    "passed": 43,
+    "failed": 0,
+    "elapsed_seconds": 2.07,
+    "tests": [
+      {
+        "path": "tests/test_native_p62_streaming_ttt.py",
+        "blob": "b9a18ac5df3b2ff26edd7f57f08cbf8a0e57918b"
+      },
+      {
+        "path": "tests/test_native_p64s_full_hybrid_stream.py",
+        "blob": "a85ca35604b6643fe5a7e7f00027ccb92f4eacb6"
+      },
+      {
+        "path": "tests/test_native_p64k_incremental_hybrid_stream.py",
+        "blob": "b65cf5f7e255770f388440bc0c91cddc1bca074d"
+      },
+      {
+        "path": "tests/test_native_p64kr1_zero_fact_readiness.py",
+        "blob": "ab3d8791d8348a409e80813d81840a57e340a729"
+      },
+      {
+        "path": "tests/test_native_p64kr2_model_revision_guard.py",
+        "blob": "000dbd74da71c305c146a8e6d25a1a9c9c03dfc2"
+      },
+      {
+        "path": "tests/test_native_p64kr3_cross_generation_provenance.py",
+        "blob": "d27d020f2e14ca91687dc01986c98b93d9a41695"
+      }
+    ],
+    "inherited_model_and_adapter_blobs": {
+      "model_py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+      "native_p62": "776e63a0ff9474a860e87088718acb36637a7bec",
+      "native_p64s": "56f4d566db9375e4b27e7d9eabcaf67498c25d94",
+      "native_p64k_r3": "89c3ef5819ac594ad687c67c579a559754109d4c"
+    }
+  },
+  "same_consumed_dev_cpu_benchmark_replay": {
+    "source_seed_reuse": true,
+    "model_weight_seed": 711,
+    "data_seeds": [
+      713,
+      719
+    ],
+    "lengths": [
+      12,
+      24,
+      40,
+      60
+    ],
+    "repeats": 8,
+    "warmups": 2,
+    "original_benchmark_script_metadata": "original inherited script labels old source SHA 440aa8717e1aef15d7547be669dfa8d0f4da666a; actual source in this run verified as Git blob 89c3ef5819ac594ad687c67c579a559754109d4c",
+    "raw_local_results_sha256": "9c12c0134839733543689a2ee0f867b64959f3a9ffc46a582524b0b0265b0ce3",
+    "rows": [
+      {
+        "seed": 713,
+        "n": 12,
+        "speedup": 1.191,
+        "max_numeric_diff": 2.384185791015625e-7
+      },
+      {
+        "seed": 713,
+        "n": 24,
+        "speedup": 1.479,
+        "max_numeric_diff": 2.384185791015625e-7
+      },
+      {
+        "seed": 713,
+        "n": 40,
+        "speedup": 1.977,
+        "max_numeric_diff": 2.384185791015625e-7
+      },
+      {
+        "seed": 713,
+        "n": 60,
+        "speedup": 2.567,
+        "max_numeric_diff": 2.384185791015625e-7
+      },
+      {
+        "seed": 719,
+        "n": 12,
+        "speedup": 1.103,
+        "max_numeric_diff": 1.1920928955078125e-7
+      },
+      {
+        "seed": 719,
+        "n": 24,
+        "speedup": 1.572,
+        "max_numeric_diff": 1.1920928955078125e-7
+      },
+      {
+        "seed": 719,
+        "n": 40,
+        "speedup": 1.999,
+        "max_numeric_diff": 2.682209014892578e-7
+      },
+      {
+        "seed": 719,
+        "n": 60,
+        "speedup": 2.498,
+        "max_numeric_diff": 2.384185791015625e-7
+      }
+    ],
+    "historical_registered_speed_40_1p5x_and_60_2x": "PASS_REPLAYED_DEV_NOT_INDEPENDENT",
+    "performance_caveat": "Original benchmark timer starts after adapter initialization. Model fingerprint setup median ~0.185 ms and p95 ~0.233 ms for this tiny CPU model; no GPU or whole-training speed claim."
+  },
+  "safety_science_and_deployment": {
+    "model_weight_provenance": "Same-model SHA256 tags block cross-adapter stale state; not authenticated completed observations or MAC",
+    "no_original_model_edits": true,
+    "original_G4_G5_G7_runner_failure": "HOSTED_PRE_RUN_ZERO_STEPS_NOT_SOURCE_TEST_PASS",
+    "full_original_exact_SHA_Windows_ubuntu_WSL_regression": "NOT_RUN",
+    "full_repo_build": "NOT_RUN",
+    "native_GPU": "NOT_RUN",
+    "independent_scientific_first_use": "NOT_RUN",
+    "matched_trained_GRU_MLP_classical_science": "NOT_RUN",
+    "merge": "NOT_ATTEMPTED",
+    "FORGE_owner_runner_scheduler_workflow_queue": "UNCHANGED"
+  }
+}
