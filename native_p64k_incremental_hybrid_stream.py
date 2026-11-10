@@ -44,6 +44,18 @@ class StreamingHybridPilot:
             raise ValueError('P64S_BAD_MODEL_DIMENSIONS')
         self.max_confirmed_events=max_confirmed_events
         self.ttt=StreamingTTT(core.ttt,max_confirmed_events)
+        # A retained SSM / K-V / TTT cache is valid ONLY for this exact
+        # model revision. Do not silently reuse it after an optimizer step.
+        self._parameter_revisions = self._revisions()
+        self._ttt_eta = float(core.ttt.eta)
+
+    def _revisions(self):
+        return tuple((id(p), p._version) for p in self.core.parameters())
+
+    def _require_same_model_revision(self):
+        if (self._revisions() != self._parameter_revisions
+                or float(self.core.ttt.eta) != self._ttt_eta):
+            raise ValueError('P64K_MODEL_CHANGED_REBUILD_FACTUAL_CACHE')
 
     def initial_state(self, template: torch.Tensor) -> HybridFactualState:
         self._validate_template(template)
@@ -59,6 +71,7 @@ class StreamingHybridPilot:
             raise ValueError('P64S_DEVICE_DTYPE_MISMATCH')
         if not bool(torch.isfinite(x).all()):
             raise ValueError('P64S_NONFINITE_INPUT')
+        self._require_same_model_revision()
 
     def _validate_state(self,state: HybridFactualState,template:torch.Tensor):
         if not isinstance(state,HybridFactualState) or not isinstance(state.ttt,TTTFactualState):
