@@ -1,0 +1,207 @@
+{
+  "schema": "ttt-hybrid.p54.noisy-reward-equal-factual-log-dev-receipt.v1",
+  "classification": "FROZEN_AUTHORED_DEV_POSITIVE__SCIENTIFIC_PASS_UNVERIFIED",
+  "chain": {
+    "parent_PR": 146,
+    "parent_sha": "3847533bcbf15ad883c89795bbcbe2b2dfd1f952",
+    "original_P53_git_blob": "e514261e0923c6db9274e5bf4fc91d15106376ef",
+    "original_P53_status": "positive conventional authored DEV, not independent science",
+    "frozen_before_first_new_source_commit": "4a09d8f27f2600720aa3d4ee79646743cb56d9f3"
+  },
+  "exact_source": {
+    "runner": "scripts/native_p54_noisy_factual_reward_dev.py",
+    "runner_blob": "c4239b125e3d5928807738aac117be89f202d7a1",
+    "runner_sha256": "bc9f147c6e374da9a56b6c9cb7aaa0cde298e43577c249d60919e7cc7509f3f1",
+    "tests": "tests/test_native_p54_noisy_factual_reward_dev.py",
+    "test_blob": "20cd232d213cc407b65c931e62631135eda034a9",
+    "test_sha256": "361596b1f9204cae7d44fc9e1246762c72c176e8ca318d198271e13891889637",
+    "full_original_local_result_sha256": "3341f21d6fa90243c54b17d53fc79468d83fa3a70c8612350e4856ea05f3c7f0"
+  },
+  "sources": {
+    "FIT": {
+      "seed": 840001,
+      "n": 49152,
+      "hash": "1a94e605bdd23877b13e8e563b027cc2fe970beb0a133bd6954e3307a15114eb"
+    },
+    "VALID": {
+      "seed": 840101,
+      "n": 2048,
+      "hash": "b3eb1d26c74e56d23b933cb86f87b5b980b5f2cfa3a0102960d2b9cb7b9671d0"
+    },
+    "OOD_A": {
+      "seed": 840201,
+      "n": 8192,
+      "hash": "40c898637273978a6cbed8ea3dba4f99c6ce09cd1fa28a48c8a3c960ffa678a1"
+    },
+    "OOD_B": {
+      "seed": 840301,
+      "n": 8192,
+      "hash": "6302fa3dbee7d7f14324c359f699a5058f183d299d0449cc3f29b786544390f3"
+    },
+    "SHAM": {
+      "seed": 840401,
+      "n": 4096,
+      "hash": "7ecdf74cc915cec7fa062f9ce5aab0a305a149f2d395112680407d9b0e379913"
+    }
+  },
+  "physical_episode": "latent sign +/-1; actual initial cue; optional executed paid noisy probe; actual signed final action reward = latent*executed_action + independent Gaussian reward noise - actual_probe*visible_cost; FIT reward noise sigma .5..1.1, OOD noise sigma 1.1..2.0; hidden truth never passed to fit_moments",
+  "factual_training": {
+    "registered_worlds": 49152,
+    "logged_actual_paid_probes": 24436,
+    "actual_log_probe_fraction": 0.4971516927083333,
+    "identical_factual_log_source_for_all_model_families": true,
+    "regressor_optimizer_steps_each": 600,
+    "regressor_batch": 128,
+    "regressor_minibatch_total_draws": 76800,
+    "regressor_distinct_logged_worlds_sampled": 38724,
+    "neural_model_seeds": [
+      8411,
+      8423,
+      8431
+    ],
+    "shared_neural_minibatch_indices_seed": 840701,
+    "MLP_parameters": 560,
+    "GRU_parameters": 562,
+    "postaction_noisy_return_proxy_variance": 1.6731659821448115,
+    "exact_sign_fraction": 0.00010172526041666667,
+    "original_P53_exact_binary_reward_fitter_refused": true,
+    "realized_train_information_exposure_parity": "NO: moment estimator fitted once over 49,152 logs; neural minibatches touched 38,724 distinct logs, with reuse. All learner families had access to the same pool but did NOT consume identical unique events/compute."
+  },
+  "learned_moments": {
+    "prior_positive": 0.5012767037607849,
+    "cue_gain_scale": 1.0051807188728592,
+    "cue_noise_variance": 0.9912883558302035,
+    "probe_gain_scale": 1.0095606421875403,
+    "probe_noise_variance": 0.9868954720579473
+  },
+  "ood": {
+    "840201": {
+      "learned_reward": 0.5236898045242135,
+      "learned_probes": 2336,
+      "learned_probe_fraction": 0.28515625,
+      "never_reward": 0.4583946959293037,
+      "bayes_known_law_reward": 0.5223587552828697,
+      "wrong_credit_reward": 0.2970177428043037,
+      "paired_gain": 0.06529510859490983,
+      "paired_bootstrap_95": [
+        0.050875368524282295,
+        0.07791517393036429
+      ],
+      "bootstrap_seed": 1681102,
+      "weak_cue_low_cost_probe_rate": 0.9965986394557823,
+      "weak_cue_high_cost_probe_rate": 0.6404715127701375,
+      "all_primary_gates": true
+    },
+    "840301": {
+      "learned_reward": 0.6395540808364686,
+      "learned_probes": 2125,
+      "learned_probe_fraction": 0.2593994140625,
+      "never_reward": 0.586015200796659,
+      "bayes_known_law_reward": 0.6394115282644535,
+      "wrong_credit_reward": 0.41536090392165903,
+      "paired_gain": 0.053538880039809555,
+      "paired_bootstrap_95": [
+        0.04093962008723793,
+        0.06571894428412292
+      ],
+      "bootstrap_seed": 1681202,
+      "weak_cue_low_cost_probe_rate": 0.9885057471264368,
+      "weak_cue_high_cost_probe_rate": 0.509212730318258,
+      "all_primary_gates": true
+    }
+  },
+  "sham": {
+    "seed": 840401,
+    "true_probe_gain": 0,
+    "learned_executed_probe_count": 0,
+    "known_model_reference_probe_count": 0,
+    "learned_and_never_net_reward": 0.4890196315069746,
+    "pass": true
+  },
+  "neural_ood_under_same_learned_probe_decisions": [
+    {
+      "seed": 8411,
+      "MLP": {
+        "OOD_A_net_reward": 0.5078206638992135,
+        "OOD_B_net_reward": 0.6251497839614686,
+        "validation_final_relative_change": 0.007164036204633167,
+        "cold_exact": true
+      },
+      "GRU": {
+        "OOD_A_net_reward": 0.5065999607742135,
+        "OOD_B_net_reward": 0.6251497839614686,
+        "validation_final_relative_change": 0.004004836642422015,
+        "cold_exact": true
+      }
+    },
+    {
+      "seed": 8423,
+      "MLP": {
+        "OOD_A_net_reward": 0.5080648045242135,
+        "OOD_B_net_reward": 0.6285677527114686,
+        "validation_final_relative_change": 0.006978792247140151,
+        "cold_exact": true
+      },
+      "GRU": {
+        "OOD_A_net_reward": 0.5041585545242135,
+        "OOD_B_net_reward": 0.6244173620864686,
+        "validation_final_relative_change": 0.004181979958628792,
+        "cold_exact": true
+      }
+    },
+    {
+      "seed": 8431,
+      "MLP": {
+        "OOD_A_net_reward": 0.5092855076492135,
+        "OOD_B_net_reward": 0.6305208777114686,
+        "validation_final_relative_change": 0.009510782918637032,
+        "cold_exact": true
+      },
+      "GRU": {
+        "OOD_A_net_reward": 0.5073323826492135,
+        "OOD_B_net_reward": 0.6278353308364686,
+        "validation_final_relative_change": 0.004133577831804493,
+        "cold_exact": true
+      }
+    }
+  ],
+  "frozen_gates": {
+    "both_ood_reward_plus_0point02_over_fitted_never": "PASS_2_OF_2",
+    "both_ood_within_0point025_known_Bayes": "PASS_2_OF_2",
+    "both_ood_5_to_95pct_probes": "PASS_2_OF_2",
+    "both_ood_positive_paired_bootstrap_lower_95": "PASS_2_OF_2",
+    "both_ood_cost_sensitive_15points": "PASS_2_OF_2",
+    "both_ood_better_wrong_reward_credit_by_0point025": "PASS_2_OF_2",
+    "sham_never_probe": "PASS",
+    "prior_P53_exact_sign_reconstruction_refused": "PASS",
+    "fitted_and_neural_cold_restore": "PASS",
+    "strict_all_development_gates": "PASS"
+  },
+  "scientific_limits": {
+    "model_family_assumed": "two-state symmetric Gaussian, method of moments, known visible noise strengths and costs",
+    "latent_theta_exactly_known_from_one_noisy_reward": false,
+    "structured_reward_law_still_assumed": true,
+    "neural_baselines_not_end_to_end_probe_selection": true,
+    "entire_train_episode_exposure_and_FLOPs_not_equal": true,
+    "real_world_unfamiliar_physics": "NOT_TESTED",
+    "cold_retention_after_interference": "NOT_TESTED",
+    "independent_scientific_first_use": "NOT_RUN",
+    "SCIENTIFIC_PASS": "NOT_PROVEN"
+  },
+  "engineering": {
+    "local_full_dev_run_wall_seconds": 6.793354411000109,
+    "focused_new_pytest": "PASS_6_OF_6",
+    "focused_new_plus_inherited_P53_pytest": "PASS_12_OF_12",
+    "source_and_test_git_blob_readback": "PASS",
+    "original_full_final_Windows_regression": "NOT_RUN",
+    "original_full_final_Ubuntu_WSL_regression": "NOT_RUN",
+    "hosted_G4_G5_G7": "UNVERIFIED_AT_COMMIT_TIME"
+  },
+  "deployment": {
+    "draft_unmerged": true,
+    "no_FORGE_dispatch": true,
+    "no_runner_workflow_controller_queue_scheduler_changes": true,
+    "no_paid_API": true,
+    "no_model_promotion": true
+  }
+}
