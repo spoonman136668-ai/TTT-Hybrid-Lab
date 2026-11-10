@@ -1,0 +1,146 @@
+{
+  "schema": "ttt-hybrid.p67-clockless-interleaved-factual-dev-negative-receipt.v1",
+  "classification": "AUTHOR_SIMULATED_DEV_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 173,
+    "sha": "cac0d7562bcf09c98522f6dbab77bc205c4fd0e1",
+    "P66_result": "DEV_FAIL_0_OF_3_UNCHANGED",
+    "reference_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "prospective_frozen_commit": "a5e8ad5541b816a6692862256c105d5c1103437b",
+  "exact_source": {
+    "script": "experiments/p67_clockless_interleaved_dev.py",
+    "git_blob": "6646ee810e224c122a11a6cb58d11d2a01baeb16",
+    "sha256": "1053f15ed35efcba83f687c27aca213a3b9cade020013351e792ec2c2ac64771",
+    "tests": "tests/test_p67_clockless_interleaved_dev.py",
+    "test_git_blob": "15ca7fcda9e2899c081185d7b32eaab628034dbc",
+    "test_sha256": "c4bbfd06ec9eaa70c76ed9dd1f7a5b4efeb5e22a3ff3073e9bd8c5b3565ba254",
+    "inherited_P66_dependency_git_blob": "c26a100d139f5e8409156fbebaba81b4fbef4f1c",
+    "all_exact_locally_executed_remote_blob_readback": true
+  },
+  "source": {
+    "fit_worlds": 768,
+    "val_worlds": 192,
+    "OOD_DEV_worlds": 256,
+    "events_per_world": 64,
+    "targets": 8,
+    "target_visits": 4,
+    "unique_distractors": 32,
+    "actions": "random actual executed ±1",
+    "consequence": "16D factual sensor change",
+    "no_future_query_in_gate": true,
+    "hidden_labels_not_in_learners": true,
+    "random_interleaving_independent_per_world": true,
+    "seeds": {
+      "fit": 967101,
+      "val": 967103,
+      "ood": 967107
+    },
+    "sha256": {
+      "fit": "38040f4f1df8f8ebf92652b843e676889130dc21a51ca1161e4d7155d82b91a2",
+      "val": "ef92db29109f47b35f854fbfdf7ed7ab23745181197c19adb37f927d2ddc79fa",
+      "ood": "9965956dc418c72b840a55b2e46184a17721e45c2e2c7febae606146c2dfd0b8"
+    }
+  },
+  "training": {
+    "seeds": [
+      967201,
+      967203,
+      967207
+    ],
+    "sampler_sha256": "d3c12d1595a1646bc890825f970b7c3e1256fd81254be9b3e16d27af5a559435",
+    "trainable_arms": [
+      "clockless_3_weight",
+      "wrong_credit_3_weight",
+      "GRU_hidden32_params10608"
+    ],
+    "steps_per_arm": 600,
+    "total_updates": 5400,
+    "batch": 32,
+    "elapsed_cpu_seconds": 104.517632557,
+    "torch": "2.10.0+cpu",
+    "focused_local_pytest": "6_PASS_0_FAIL",
+    "matched_FLOPs_or_memory": false
+  },
+  "unfamiliar_OOD_results": [
+    {
+      "seed": 967201,
+      "gate": 0.07011641561985016,
+      "GRU": 0.5556823015213013,
+      "wrong_credit": 0.4107798933982849,
+      "random_equal_write_rate": 0.18959107995033264,
+      "gate_last_val": [
+        0.05099289491772652,
+        0.04623526334762573
+      ],
+      "GRU_last_val": [
+        0.5277293920516968,
+        0.5662584309577942
+      ],
+      "GRU_plateau": false
+    },
+    {
+      "seed": 967203,
+      "gate": 0.07138749957084656,
+      "GRU": 0.5752498507499695,
+      "wrong_credit": 0.41067853569984436,
+      "random_equal_write_rate": 0.18176989257335663,
+      "gate_last_val": [
+        0.05205532908439636,
+        0.04700563848018646
+      ],
+      "GRU_last_val": [
+        0.5139376521110535,
+        0.5509195327758789
+      ],
+      "GRU_plateau": false
+    },
+    {
+      "seed": 967207,
+      "gate": 0.0682966485619545,
+      "GRU": 0.558265209197998,
+      "wrong_credit": 0.41090425848960876,
+      "random_equal_write_rate": 0.18923154473304749,
+      "gate_last_val": [
+        0.0496540330350399,
+        0.045150429010391235
+      ],
+      "GRU_last_val": [
+        0.5132794380187988,
+        0.5444425940513611
+      ],
+      "GRU_plateau": false
+    }
+  ],
+  "fixed_controls_same_one_OOD_cohort": {
+    "always_write_TTT": 0.15266664326190948,
+    "surprise_threshold": 0.2922729551792145,
+    "read_norm_threshold": 0.39244702458381653,
+    "capacity_256_float_FIFO": 0.4156501293182373,
+    "zero_memory": 0.39244702458381653,
+    "overbudget_full_history_exact_key": 0.0011336709139868617
+  },
+  "registered_outcomes": {
+    "gate_margin_vs_best_eligible_control": "PASS_3_OF_3",
+    "wrong_credit_margin": "PASS_3_OF_3",
+    "rate_matched_random_margin": "PASS_3_OF_3",
+    "GRU_validation_plateau": "FAIL_0_OF_3",
+    "strict_joint": "FAIL_0_OF_3"
+  },
+  "provenance": {
+    "full_raw_result_sha256": "3905309c45aed48cd40f430d5820d90e545a7e3098fbc9cb4e6d5fc0c441c58e",
+    "full_raw_json_bytes": 8641,
+    "raw_result_kept_in_downloadable_evidence_zip": true
+  },
+  "boundaries": [
+    "GRU is unconverged and 32 hidden floats vs 256 fast state; cannot claim matched strongest conventional controls",
+    "Exact-key nearest-neighbor over-budget storage exceeds 2,048 floats but beats candidate by >60x; task admits trivial exact-repeat shortcut",
+    "Unfamiliar DEV shift is one authored world source shared across three model seeds; no independent external scientific first-use",
+    "No original full HybridPilot trained, no GPU, full Windows/Linux/WSL regression, authentic physical source or deployment",
+    "P66 consumed OOD and original frozen FAIL unchanged; P67 results not tuned after heldout viewing"
+  ],
+  "engineering": "EXACT_SOURCE_LOCAL_FOCUSED_PASS_6_OF_6_FULL_CROSS_PLATFORM_UNVERIFIED",
+  "science": "AUTHORED_DEV_STRICT_FAIL_0_OF_3",
+  "deployment": "DRAFT_NO_MERGE_NO_FORGE_CONTROLLER_SCHEDULE_RUNNER_OR_PROMOTION",
+  "next": "Use new independently witnessed worlds not solvable by exact-key repetition, verified memory and compute-matched converged conventional controls, causal delayed interventions and original owner-qualified first-use."
+}
