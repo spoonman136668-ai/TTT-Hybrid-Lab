@@ -1,0 +1,118 @@
+{
+  "classification": "LOCAL_EXACT_BLOB_FOCUSED_CPU_PASS_NOT_FULL_REGRESSION_OR_SCIENCE",
+  "distinct_gate_init_hashes": [
+    "95d182588d83340c62b216714be6826ab67f22bcce7deb89af94785151745b86",
+    "a16efdefc01a20460824d181920de1aa127d0569cbc71ad8ee58e1099c746582",
+    "3e04a1564d6990ab7e16ffe834ef9b0430d7ae5f3ec1a7da1dcb06e3541c67d2"
+  ],
+  "early_stop_budget": {
+    "batch_size": 64,
+    "min_steps": 500,
+    "patience_checkpoints": 6,
+    "updates_max": 2000
+  },
+  "environment": {
+    "cpu_threads": 1,
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu"
+  },
+  "files": {
+    "source": {
+      "blob_sha1": "2029c0d359af4bdf861d74563c82cf8b5a584b98",
+      "path": "experiments/p67_counterbalanced_memory_dev.py",
+      "sha256": "dc1518627c452561c9bcff761722beffd34d167b2d0f1d80b9d9e8d5a86c252c"
+    },
+    "test": {
+      "blob_sha1": "52fa247d77aea9f6287b13deba7ad31f876a9048",
+      "path": "tests/test_p67_counterbalanced_memory_dev.py",
+      "sha256": "f781a9b405cf9f9ce444aad8407177c23a5b6d26309249d20206fd238eaebcdc"
+    }
+  },
+  "focus": {
+    "pytest_failed": 0,
+    "pytest_passed": 8,
+    "pytest_reported_seconds": 1.97,
+    "pytest_warnings": 1,
+    "smoke_mode": "ENGINEERING_SMOKE_NOT_FROZEN_STUDY",
+    "smoke_scientific_pass": false
+  },
+  "notes": [
+    "P67 synthetic OOD stream was generated for preregistered position/role leakage audits only; no OOD loss used for model selection.",
+    "The frozen full 3-seed study has a 1800-second budget, is not yet qualified by baseline convergence or matched whole-process compute.",
+    "One PyTorch warning in test casts grad-tracked tensor in assertion; no test failure."
+  ],
+  "orthogonal_negative_max_abs_delta": 2.384185791015625e-07,
+  "parent_pr": 175,
+  "schema": "ttt-hybrid.p67-stage1-engineering-receipt.v1",
+  "scope": {
+    "FORGE": "UNCHANGED",
+    "accepted_ref": "UNCHANGED",
+    "full_exact_head_windows_ubuntu": "NOT_RUN",
+    "gpu": "NOT_RUN",
+    "merge": "NONE",
+    "ood_primary_mse": "NOT_SCORED",
+    "pinned_original_g4": "NOT_RUN",
+    "scheduled_task": "NONE",
+    "scienti\ufb01c_pass": "NOT_ESTABLISHED",
+    "training_full_3_seed": "NOT_RUN"
+  },
+  "source_audits": {
+    "fit": {
+      "index_only_balanced_accuracy": 0.4990234375,
+      "max_bin_imbalance": 0.00421142578125,
+      "no_phase_shortcut": true,
+      "relevant_fraction_quartiles": [
+        0.4996337890625,
+        0.49578857421875,
+        0.503173828125,
+        0.50140380859375
+      ],
+      "source_sha256": "ddcca02fa58df931f533c164fe3d6e8a6ac0cfd08e0a2a3b20e72ad4fa9aaec2"
+    },
+    "negative": {
+      "index_only_balanced_accuracy": 0.49755859375,
+      "max_bin_imbalance": 0.015625,
+      "no_phase_shortcut": true,
+      "relevant_fraction_quartiles": [
+        0.515625,
+        0.4853515625,
+        0.49658203125,
+        0.50244140625
+      ],
+      "source_sha256": "920fd14b9fc8d0398ec917fcb979bfcc8ec01b5499631955b6ffb555fa775f52"
+    },
+    "ood_dev": {
+      "index_only_balanced_accuracy": 0.5,
+      "max_bin_imbalance": 0.003092437982559204,
+      "no_phase_shortcut": true,
+      "relevant_fraction_quartiles": [
+        0.3343099057674408,
+        0.33154296875,
+        0.33642578125,
+        0.3310546875
+      ],
+      "source_sha256": "c43eac77a0de65152718002b95f26f24658187f22c0c78db203fe711126f2585"
+    },
+    "val": {
+      "index_only_balanced_accuracy": 0.505126953125,
+      "max_bin_imbalance": 0.005859375,
+      "no_phase_shortcut": true,
+      "relevant_fraction_quartiles": [
+        0.49658203125,
+        0.502685546875,
+        0.494873046875,
+        0.505859375
+      ],
+      "source_sha256": "c4b85a21811adfccc14835246e130ff34fe27a6f6b293496ac7bd973e5a414bf"
+    }
+  },
+  "tested_source_commit": "54d20a7f10bae568282552d4db5333aa9f6f71b6",
+  "training_budget_engineering_microcheck": {
+    "gate_seconds": 0.431,
+    "gru_seconds": 1.694,
+    "not_science": true,
+    "updates_per_arm": 20,
+    "wrong_seconds": 0.428
+  }
+}
