@@ -6,6 +6,7 @@ No original model parameter is modified. Hypothetical candidates only read state
 """
 from __future__ import annotations
 from dataclasses import dataclass
+import hashlib
 import torch
 from torch.nn import functional as F
 from model import HybridPilot
@@ -18,6 +19,7 @@ class HybridFactualState:
     attention_k: torch.Tensor       # [B, heads, confirmed_events, head_dim]
     attention_v: torch.Tensor       # [B, heads, confirmed_events, head_dim]
     ttt: TTTFactualState            # fast weights and confirmed count
+    model_fingerprint: str | None = None  # exact weight identity, cold-restorable
 
 
 class StreamingHybridPilot:
@@ -48,6 +50,24 @@ class StreamingHybridPilot:
         # model revision. Do not silently reuse it after an optimizer step.
         self._parameter_revisions = self._revisions()
         self._ttt_eta = float(core.ttt.eta)
+        self._model_fingerprint = self._compute_model_fingerprint()
+
+    def _compute_model_fingerprint(self):
+        """Stable exact-weight provenance; computed once per adapter lifetime.
+
+        Distinct from authenticity: the caller must still attest true facts.
+        """
+        h=hashlib.sha256()
+        for name,tensor in sorted(self.core.state_dict().items()):
+            h.update(name.encode())
+            h.update(b'\x00')
+            h.update(str(tuple(tensor.shape)).encode())
+            h.update(b'\x00')
+            h.update(str(tensor.dtype).encode())
+            h.update(b'\x00')
+            h.update(tensor.detach().contiguous().cpu().numpy().tobytes())
+        h.update(repr(float(self.core.ttt.eta)).encode())
+        return h.hexdigest()
 
     def _revisions(self):
         return tuple((id(p), p._version) for p in self.core.parameters())
@@ -62,7 +82,7 @@ class StreamingHybridPilot:
         b=template.shape[0]
         blank=template.new_zeros((b,self.width))
         empty=template.new_zeros((b,self.heads,0,self.head_dim))
-        return HybridFactualState(blank,empty,empty.clone(),self.ttt.initial_state(blank))
+        return HybridFactualState(blank,empty,empty.clone(),self.ttt.initial_state(blank),self._model_fingerprint)
 
     def _validate_template(self, x: torch.Tensor):
         if not isinstance(x,torch.Tensor) or x.ndim!=2 or not 1<=x.shape[0]<=256 or x.shape[1]!=self.input_dim:
@@ -76,6 +96,8 @@ class StreamingHybridPilot:
     def _validate_state(self,state: HybridFactualState,template:torch.Tensor):
         if not isinstance(state,HybridFactualState) or not isinstance(state.ttt,TTTFactualState):
             raise ValueError('P64S_BAD_COLD_STATE')
+        if state.model_fingerprint != self._model_fingerprint:
+            raise ValueError('P64K_STALE_OR_UNTAGGED_FACTUAL_STATE')
         b=template.shape[0]
         if not isinstance(state.ttt.confirmed_count,torch.Tensor) or state.ttt.confirmed_count.shape!=(b,) or state.ttt.confirmed_count.dtype!=torch.long or state.ttt.confirmed_count.device!=template.device:
             raise ValueError('P64S_BAD_CONFIRMED_COUNT')
@@ -142,7 +164,7 @@ class StreamingHybridPilot:
         z=self._depth_without_telemetry_mutation(z)
         out=core.head(z)[:,0,:]
         # Do not stage or return unobserved candidate prefixes as committed state.
-        next_state=HybridFactualState(hidden,all_k,all_v,fast) if commit else state
+        next_state=HybridFactualState(hidden,all_k,all_v,fast,self._model_fingerprint) if commit else state
         return out,next_state
 
     def ingest_confirmed(self,events:torch.Tensor,state:HybridFactualState,confirmed:torch.Tensor):
