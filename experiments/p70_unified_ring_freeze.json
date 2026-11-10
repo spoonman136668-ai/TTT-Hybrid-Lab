@@ -1,0 +1,111 @@
+{
+  "schema": "ttt-hybrid.p70-unified-pr177-ring-preregister.v1",
+  "status": "FROZEN_PRE_SOURCE_GENERATION",
+  "classification": "ONE_AUTHORED_SYNTHETIC_DEVELOPMENT_COHORT_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 177,
+    "sha": "168553f15150d7827280511c3e3fff6afaeee7a3",
+    "base_pr": 176,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "comparator_module": "experiments/p69_ring_cache.py",
+    "comparator_blob": "bf12bd3525230ecf58ecc43837f67fdf23578f35",
+    "comparison_mechanism_blob": "7db52d3a150903b2feff661c9562017ee24c0dfe"
+  },
+  "background": {
+    "p68_pr": 176,
+    "p68_primary": "DEV_PRIMARY_PASS_3_OF_3_STRICT_CONTROL_FAIL",
+    "p69_other_dev_sha": "10c49710903ec91e3e05b8f11579fbea0febdde6",
+    "other_result": "DEV_PASS_ON_SEPARATE_COMPARATOR_IMPLEMENTATION_ONLY",
+    "p69_177": "ENGINEERING_7_OF_7_LOCAL_PASS_NOT_SCIENCE"
+  },
+  "hypothesis": "The four-trainable-parameter factual memory-admission gate will beat the strongest valid 256-float conventional baseline, when the exact PR177 ring control is substituted without modifying the original P68 implementation or reusing any previously scored OOD stream.",
+  "source": {
+    "family": "A fresh synthetic development cohort with per-world independent 16-dimensional orthogonal keys, continuous 16-dimensional action consequences and randomly interleaved repeated target events with singleton distractors. This is not a physically authenticated or distinct scientific source family.",
+    "seeds": {
+      "fit": 1000111,
+      "val": 1000113,
+      "ood_dev": 1000117,
+      "negative": 1000119
+    },
+    "worlds": {
+      "fit": 512,
+      "val": 128,
+      "ood_dev": 128,
+      "negative": 64
+    },
+    "fit_val": {
+      "target_keys": 8,
+      "repetitions_per_target": 6,
+      "distractor_events": 16,
+      "factual_events": 64
+    },
+    "ood_dev": {
+      "target_keys": 8,
+      "repetitions_per_target": 4,
+      "distractor_events": 48,
+      "factual_events": 80
+    },
+    "generation": "Start from a new per-split torch.Generator; draw orthogonal basis, 8 keys, independent tanh effects, normalized uniformly random distractor keys/effects, shuffle all factual events per world, draw one executed simulated final query after sequence; query/effect/relevance never sent to historical write interface. OOD effect amplitude factor 1.2, other splits 1.0",
+    "reused_sources": "NONE; P65, P66, P67, P68, other P69 OOD and sources are consumed and MUST NOT be regenerated for tuning or novel evaluation",
+    "negative": "orthogonal-to-target-subspace distractors at seed 1000119 with unchanged target stream comparator; require target predictions insensitive to orthogonal distractor."
+  },
+  "arms": {
+    "learned": "Use exact unchanged P68 WriteGate and train functions, seed theta separately and select best checkpoints on VALIDATION only; all runs share the same sample-index schedule but have distinct initializations.",
+    "ring": "Use `stream` and `predict` from exact PR177 experiments/p69_ring_cache.py imported by path; no alternative cyclic-cache implementation, no copy-pasted logic or independent pointer.",
+    "frequency": "P68 exact 256-float frequency-protected 8-slot cache",
+    "all_write": "P68 exact 256-float outer-product matrix gate=1",
+    "zero": "No memory; zeros as predictions",
+    "wrong_credit": "Separately train three 4-param gates on independent historical invalid action-credit keys, same FIT/VAL and batch schedule; compare OOD once"
+  },
+  "training": {
+    "model_seeds": [
+      1000201,
+      1000203,
+      1000207
+    ],
+    "wrong_model_seeds": [
+      1001001,
+      1001003,
+      1001007
+    ],
+    "sampler_seed": 1000299,
+    "optimizer": "torch AdamW",
+    "lr": 0.01,
+    "updates_per_arm": 180,
+    "batch_size": 32,
+    "validation_every": 30,
+    "checkpoint_selection": "lowest validation MSE only, no OOD selection",
+    "max_CPU_wall_seconds": 480,
+    "torch_threads": 1
+  },
+  "controls": {
+    "stop_before_ood_if": "Any malformed factual stream, source-index shortcut, nonfinite outputs, comparator memory budget >256, missing or extra ring state, cache cold restore failure, invalid baseline validation, unqualified learned gate seed, nonindependent gate initialization or missing source custody",
+    "source_leakage": "For FIT,VAL and OOD-DEV: quartile max prevalence departure<=0.05; held-out index-only balanced accuracy<=0.55; historical write accepts exactly action and observed effect.",
+    "memory": "For each world exactly 256 float32 persistent state scalars for ring keys/effects, frequency keys/effects and learned matrix; ring carries no time/pointer except marker encoded in key.",
+    "negative": "Ring >8 misses truly round-robin, hit does not advance cursor; all ring carried state is revalidated; chunked/cold-restored state and readout bitwise equal full run; wrong-credit MSE>=1.2x correct in every seed; orthogonal target output max change<=1e-5.",
+    "competence": "Before OOD scoring, frequency, PR177 ring and all-write MSE on full validation worlds each <=0.75*zero MSE; all 3 learned gate best-validation MSE <=0.85*zero. On any failure, preserve FAIL and NO OOD MSE.",
+    "primary": "One OOD-DEV outcome scoring after all preregistered VAL checks: each gate OOD MSE <=0.9*strongest eligible conventional comparator (ring, frequency, all-write, zero) on identical worlds, and paired 2000-bootstrap resamples with seed 1000401 95% lower relative improvement bound>0. All three independent gate initializations must pass.",
+    "process_cost": "Report exact CPU runtime and per-arm fit timings; track float state and trainable parameters; full whole-process FLOP equality and peak memory not established.",
+    "strict": "Only DEV_PASS_ALL_CONTROLS if all tests, source audits, baseline competency, three gate successes, all negative controls and source custody PASS; else DEV_FAIL, preserve all outcomes."
+  },
+  "authority": {
+    "permitted": "Isolated synthetic DEV experiment and additive tests/receipts only, separate branch and draft PR stacked on PR177; no model/science first-use, no merges or promotions.",
+    "no_science_first_use": true,
+    "no_runner_change": true,
+    "no_scheduled_tasks": true,
+    "no_workflow_dispatch": true,
+    "no_paid_APIs": true,
+    "no_forge_integration": true,
+    "no_original_model_change": true,
+    "no_main_ref_change": true
+  },
+  "qualification": {
+    "focused_local": "NOT_RUN",
+    "source_blob_readback": "PENDING",
+    "full_final_SHA_Windows_and_Linux": "NOT_RUN",
+    "original_G4_G5_G7": "NOT_RUN",
+    "GPU": "NOT_RUN",
+    "scientific_PASS": "NOT_ELIGIBLE",
+    "deployment": "NONE"
+  }
+}
