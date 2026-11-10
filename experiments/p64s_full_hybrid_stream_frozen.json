@@ -1,0 +1,95 @@
+{
+  "schema": "ttt-hybrid.p64s-original-full-hybrid-true-streaming-dev.v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_AND_AUTHORED_TENSORS",
+  "classification": "NO_SOURCE_ENGINEERING_ONLY_NOT_SCIENTIFIC_OR_ACCEPTANCE",
+  "parent": {
+    "pr": 165,
+    "exact_sha": "f9fbe08932ba00863e6c01d1c2112c8c64df98d0",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_ttt_streaming_blob": "776e63a0ff9474a860e87088718acb36637a7bec"
+  },
+  "question": "Does a bounded external state preserve the EXACT original full HybridPilot reference SSM recurrence, causal attention KV prefix, TTT fast weights and read-only per-step depth semantics across independently confirmed calls, so the resulting factual stream equals whole-prefix original forward WITHOUT replaying previous inputs?",
+  "constraints": {
+    "reference": "Original all-four HybridPilot + original parameters, no new learned parameter",
+    "state": "SSM hidden [B,W], attention K/V [B,H,<=128,D], TTT square matrix [B,W,W], count int64",
+    "read_before_write": true,
+    "original_model_py_unmodified": true,
+    "original_ttt_adapter_unmodified": true,
+    "causal_query_same_state_no_future_outcome": true,
+    "all_true_caller_confirmed_mask_required": true,
+    "source_authentication": "CALLER RESPONSIBILITY NOT PROVEN",
+    "dtype": [
+      "float32",
+      "float64"
+    ],
+    "max_batch": 256,
+    "max_input_dim": 128,
+    "max_width": 128,
+    "max_facts": 128,
+    "max_preview_candidates": 16,
+    "cold": "tensor_only_weights_only torch.save cold resume; no prestate replays",
+    "telemetry": "reference depth router last_utilization shall not be changed on preview OR ingest"
+  },
+  "registered_dev_tests": {
+    "weight_seeds": [
+      641,
+      643,
+      647
+    ],
+    "batches": [
+      1,
+      2,
+      3
+    ],
+    "cfg": {
+      "input_dim": 5,
+      "output_dim": 2,
+      "width": 8,
+      "heads": 2,
+      "ssm": true,
+      "attention": true,
+      "ttt": true,
+      "depth": true
+    },
+    "events": 9,
+    "chunking": [
+      2,
+      3,
+      4
+    ],
+    "candidate_count": 2,
+    "forward_parity_atol": 0.000001,
+    "forward_parity_rtol": 0.000001,
+    "cold_bit_exact": true,
+    "preview_candidate_permutation_exact": true,
+    "preview_pure": true,
+    "invalid_atomic": true,
+    "source_blob_custody": true,
+    "parameter_object_identity": true,
+    "gradient_from_real_confirmed_facts": true,
+    "normalizer_randomness": "torch.manual_seed by explicit seeds; all source authored random tensors"
+  },
+  "not_claimed": [
+    "trained causal improvement",
+    "general intelligence",
+    "authentic physical source",
+    "fully trained controls",
+    "persistent learning science",
+    "source-first-use",
+    "native fused Mamba2",
+    "official TTT-E2E",
+    "exact MoD",
+    "full platform acceptance",
+    "FORGE activation"
+  ],
+  "authority": {
+    "no_new_runner": true,
+    "no_workflow": true,
+    "no_schedule": true,
+    "no_controller": true,
+    "no_merge": true,
+    "no_model_promotion": true,
+    "no_paid_api": true,
+    "no_external_scientific_first_use": true
+  }
+}
