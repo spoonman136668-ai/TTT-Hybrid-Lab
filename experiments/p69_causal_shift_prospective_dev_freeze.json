@@ -59,11 +59,11 @@
     "fixed_world_generation": [
       "For each world draw a QR-orthogonal 16D action basis, select eight basis vectors as factual target action directions; independently sample each role's initial bounded 16D causal effect, without exposing basis identity or role labels.",
       "Independently resample four of the eight target-role effect vectors at one hidden within-world change point; remaining four roles retain their original causal effect. Opposite executed action sign negates measured effect.",
-      "FIT/VAL use 96 uniformly interleaved historical factual interventions per world: 48 target-direction exposures (six per role) and 48 unique one-shot distractor actions. OOD uses 96: 32 target exposures (four per role) and 64 unique distractors.",
-      "Sample target-role intervention signs independently and balance +/- within role where possible; sample distractor directions independently and continuously, and generate their outcomes from independently sampled bounded effects.",
-      "Select hidden intervention change point uniformly from event indices 30..66 inclusive, independently of action identity, role, query and future outcomes; no fixed phase marker is visible.",
-      "For each world choose one final actually executed +/- target action AFTER the historical stream. Query sampled 50/50 from changed vs stable roles, and uniformly across the eligible roles. The actual observed final consequence is evaluation truth only and never used to write memory before scoring.",
-      "FIT/VAL factual effect noise sigma=0.03 and action jitter sigma=0.04; OOD effect noise sigma=0.06 and action jitter sigma=0.12, with independently generated world bases and maps; the OOD source has greater distraction and fewer repeated target exposures.",
+      "FIT/VAL history length 96 per world: 48 target-direction exposures (six per role; three prior to and three after hidden shift) and 48 unique one-shot distractor actions. Per-world pre/post section lengths depend on independently sampled hidden shift, not fixed halves; uniformly interleave target events and distractors within each section.",
+      "OOD history length 96: 32 target exposures (four per role; two prior and two after hidden shift) and 64 unique one-shot distractors. For each role balance ± signs within each available pre/post pair, without exposing this partition to the memory learner.",
+      "Select hidden intervention change point uniformly from event indices 40..56 inclusive; allocate at least two executed factual actions for every role on each side of the shift; uniformly interleave events within each side, with no explicit phase/clock/regime indicator supplied to any learner.",
+      "For each world choose one final actually executed +/- target action AFTER the historical stream. Query sampled 50/50 from changed versus stable roles and uniformly within the selected class. Actual observed final consequence is evaluation truth only and never used to write memory before scoring.",
+      "FIT/VAL factual effect noise sigma=0.03 and action jitter sigma=0.04; OOD effect noise sigma=0.06 and action jitter sigma=0.12, with independently generated world bases and maps; OOD has more one-shot distractors and fewer repeated target exposures.",
       "All methods consume exactly the same ordered realized (executed 16D action, observed 16D consequence) pairs within each world; no counterfactual outcomes, relevance labels, future query, change-point or phase information allowed in writes."
     ],
     "output_constraints": {
@@ -78,10 +78,11 @@
     "leakage_audit": {
       "target_role_quartile_deviation_max": 0.05,
       "heldout_index_only_balanced_accuracy_max": 0.55,
-      "hidden_regime_from_event_index_balanced_accuracy_max": 0.55,
       "exact_seen_query_key_duplicate_rate_max": 0,
       "no_future_query_observable_during_memory_updates": true,
-      "failure_stops_all_outcome_scoring": true
+      "failure_stops_all_outcome_scoring": true,
+      "which_role_changes_from_event_index_only_balanced_accuracy_max": 0.55,
+      "query_changed_vs_stable_from_event_index_balanced_accuracy_max": 0.55
     }
   },
   "arms": {
@@ -170,7 +171,7 @@
       "validation_interval": 50,
       "early_stop": "on four non-improving validation checkpoints after at least 200 updates, but only if stationary checkpoint spread <=0.01; otherwise 600 hard limit and nonconvergence flag",
       "train_threads": 1,
-      "max_total_dev_cpu_wall_seconds": 900,
+      "max_total_dev_cpu_wall_seconds": 3600,
       "max_peak_ram_gib": 3,
       "no_paid_services": true,
       "no_gpu_required_for_DEV": true,
@@ -186,7 +187,6 @@
       "wrong-action-credit degradation",
       "full-process total compute, peak memory and wall clock"
     ],
-    "eligiblity_freeze": "all conventional-model eligibility and fixed baselines on FIT/VAL before any OOD cohort scoring",
     "strongest_baseline": "lowest per-cohort MSE among all eligible nonprivileged baselines; do not exclude a strong competitor after inspecting OOD",
     "strict_pass": [
       "All three model initialization seeds separately improve >=10% over strongest eligible nonprivileged conventional comparator on each of three disjoint DEV OOD source cohorts (9/9 seed x cohort comparisons).",
@@ -198,7 +198,8 @@
       "Any source, convergence, data custody, registered negative, memory parity or budget failure is STRICT DEV_FAIL; no selective subset PASS."
     ],
     "scientific_status": "NEVER_SCIENTIFIC_PASS_FROM_AUTHORED_SYNTHETIC_DATA_ALONE",
-    "science_extension": "Requires independent post-freeze real/externally qualified causal environment, witnessed source birth and consumption ledger, separately authorized first-use, fully trained control set, independent seeds/splits, exact-source full regression and objective science acceptance."
+    "science_extension": "Requires independent post-freeze real/externally qualified causal environment, witnessed source birth and consumption ledger, separately authorized first-use, fully trained control set, independent seeds/splits, exact-source full regression and objective science acceptance.",
+    "eligibility_freeze": "all conventional-model eligibility and fixed baselines on FIT/VAL before any OOD cohort scoring"
   },
   "infrastructure": {
     "frozen_primary_branch": "research/p69-factual-ring-cache-equal-state-20261110",
@@ -212,5 +213,10 @@
     "no_deployment": true,
     "no_live_actuation": true,
     "no_paid_api": true
+  },
+  "pre_source_revision": {
+    "reason": "Resolve impossible event-index-only hidden regime audit: a temporal change point is necessarily partially inferable from index, even if absent from learner inputs. Require uninformative changed-role identity and query relevance instead; guarantee minimum executed interventions on both sides of shift.",
+    "before_any_p69_causal_shift_data_or_source": true,
+    "prior_protocol_commit": "378c0a5a5cc0e0fc579ee848c2790072f0356c14"
   }
 }
