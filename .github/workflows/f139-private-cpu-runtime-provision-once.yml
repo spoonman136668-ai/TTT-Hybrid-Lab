@@ -1,0 +1,134 @@
+name: FORGE private pinned CPU runtime provisioning (one shot, no candidate execution)
+on:
+  push:
+    branches: ['operations/f139-private-cpu-runtime-provision-once-20261110']
+permissions:
+  contents: read
+jobs:
+  pinned-private-runtime:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 25
+    steps:
+      - name: Provision exact pinned runtime into a new private directory
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $memory=Get-CimInstance Win32_OperatingSystem
+          if([int64]$memory.FreePhysicalMemory -lt 8388608){throw 'PRIVATE_CPU_HOST_MEMORY_HEADROOM_REQUIRED'}
+          @'
+          import json, os, subprocess, textwrap
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          assert event['sender']['login']=='spoonman136668-ai'
+          run_id=os.environ['GITHUB_RUN_ID']
+          assert run_id.isdigit() and int(run_id)>0
+          code=r"""
+          import hashlib, importlib.util, json, os, pathlib, urllib.request
+          source='63ffa8fac9c212a17ed237dd4fa5e65621825a2b'
+          expected='923a324c54ec6ff079105cf369f142a26725df162065e065690b1e60a8e785f0'
+          mode='provision'
+          root=pathlib.Path('/var/tmp/forge-private-cpu-runtime-rRUNID')
+          helper=pathlib.Path('/var/tmp/f139-private-cpu-runtime-helper-rRUNID.py')
+          if mode=='provision':
+              assert not root.exists() and not helper.exists() and not helper.is_symlink()
+              url='https://raw.githubusercontent.com/spoonman136668-ai/FORGE/'+source+'/f139/private_cpu_runtime.py'
+              with urllib.request.urlopen(url,timeout=30) as response:
+                  assert response.url==url
+                  data=response.read(100000)
+              assert hashlib.sha256(data).hexdigest()==expected
+              with helper.open('xb') as output:output.write(data)
+              helper.chmod(0o600)
+          else:
+              assert helper.is_file() and not helper.is_symlink()
+              assert hashlib.sha256(helper.read_bytes()).hexdigest()==expected
+          spec=importlib.util.spec_from_file_location('qualified_private_cpu_runtime',helper)
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          if mode=='provision':
+              report=module.provision(root,source)
+          else:
+              os.nice(19)
+              if hasattr(os,'sched_setaffinity'):os.sched_setaffinity(0,{min(os.sched_getaffinity(0))})
+              report=module.verify_receipt(root)
+          assert report['source_sha']==source and report['runtime_provisioned'] is True
+          assert report['worker_execution_authorized'] is False and report['signed_worker_qualified'] is False
+          assert report['scientific_first_use'] is False
+          print('F139_PRIVATE_CPU_RUNTIME_'+mode.upper()+'='+json.dumps(report,sort_keys=True,separators=(',',':')))
+          """.replace('RUNID',run_id)
+          allow={'SYSTEMROOT','WINDIR','PATH','TEMP','TMP','USERPROFILE','LOCALAPPDATA','APPDATA'}
+          env={k:v for k,v in os.environ.items() if k.upper() in allow};env['WSLENV']=''
+          result=subprocess.run(['wsl.exe','--distribution','Ubuntu-24.04','--exec','/usr/bin/python3','-I','-B','-c',textwrap.dedent(code)],
+              env=env,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=900,check=False)
+          if result.returncode:
+              print(result.stderr.decode('utf-8','replace')[-2000:])
+          assert result.returncode==0,'PRIVATE_CPU_RUNTIME_PROVISION_FAILED'
+          print(result.stdout.decode('utf-8','strict').strip())
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'PRIVATE_CPU_RUNTIME_PROVISION_FAILED'}
+      - name: Independently cold-verify every runtime and wheel custody hash
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $memory=Get-CimInstance Win32_OperatingSystem
+          if([int64]$memory.FreePhysicalMemory -lt 8388608){throw 'PRIVATE_CPU_HOST_MEMORY_HEADROOM_REQUIRED'}
+          @'
+          import json, os, subprocess, textwrap
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          assert event['sender']['login']=='spoonman136668-ai'
+          run_id=os.environ['GITHUB_RUN_ID']
+          assert run_id.isdigit() and int(run_id)>0
+          code=r"""
+          import hashlib, importlib.util, json, os, pathlib, urllib.request
+          source='63ffa8fac9c212a17ed237dd4fa5e65621825a2b'
+          expected='923a324c54ec6ff079105cf369f142a26725df162065e065690b1e60a8e785f0'
+          mode='verify'
+          root=pathlib.Path('/var/tmp/forge-private-cpu-runtime-rRUNID')
+          helper=pathlib.Path('/var/tmp/f139-private-cpu-runtime-helper-rRUNID.py')
+          if mode=='provision':
+              assert not root.exists() and not helper.exists() and not helper.is_symlink()
+              url='https://raw.githubusercontent.com/spoonman136668-ai/FORGE/'+source+'/f139/private_cpu_runtime.py'
+              with urllib.request.urlopen(url,timeout=30) as response:
+                  assert response.url==url
+                  data=response.read(100000)
+              assert hashlib.sha256(data).hexdigest()==expected
+              with helper.open('xb') as output:output.write(data)
+              helper.chmod(0o600)
+          else:
+              assert helper.is_file() and not helper.is_symlink()
+              assert hashlib.sha256(helper.read_bytes()).hexdigest()==expected
+          spec=importlib.util.spec_from_file_location('qualified_private_cpu_runtime',helper)
+          module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module)
+          if mode=='provision':
+              report=module.provision(root,source)
+          else:
+              os.nice(19)
+              if hasattr(os,'sched_setaffinity'):os.sched_setaffinity(0,{min(os.sched_getaffinity(0))})
+              report=module.verify_receipt(root)
+          assert report['source_sha']==source and report['runtime_provisioned'] is True
+          assert report['worker_execution_authorized'] is False and report['signed_worker_qualified'] is False
+          assert report['scientific_first_use'] is False
+          print('F139_PRIVATE_CPU_RUNTIME_'+mode.upper()+'='+json.dumps(report,sort_keys=True,separators=(',',':')))
+          """.replace('RUNID',run_id)
+          allow={'SYSTEMROOT','WINDIR','PATH','TEMP','TMP','USERPROFILE','LOCALAPPDATA','APPDATA'}
+          env={k:v for k,v in os.environ.items() if k.upper() in allow};env['WSLENV']=''
+          result=subprocess.run(['wsl.exe','--distribution','Ubuntu-24.04','--exec','/usr/bin/python3','-I','-B','-c',textwrap.dedent(code)],
+              env=env,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=900,check=False)
+          if result.returncode:
+              print(result.stderr.decode('utf-8','replace')[-2000:])
+          assert result.returncode==0,'PRIVATE_CPU_RUNTIME_VERIFY_FAILED'
+          print(result.stdout.decode('utf-8','strict').strip())
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'PRIVATE_CPU_RUNTIME_VERIFY_FAILED'}
