@@ -1,0 +1,154 @@
+{
+  "schema": "ttt-hybrid.p52-action-factorized-factual-learning-dev-negative-receipt.v1",
+  "classification": "FROZEN_AUTHORED_DEV_FAIL_0_OF_3_NOT_INDEPENDENT_SCIENCE",
+  "freeze": {
+    "commit": "8455aa4e65983d8e36a99637aaa42d8a1d600425",
+    "manifest_blob": "6f84f06403ec662daf595d2f1519eb6df5b16444",
+    "pre_source": true,
+    "p51_parent_sha": "57bb854ca2342f5d20b94c963bb62445c5401d84"
+  },
+  "source_files": {
+    "model": "model.py @ 5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P50": "native_factual_hybrid_stream.py @ f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "P51": "scripts/native_p51_factual_hybrid_learning_dev.py @ d7dbf31f5ee46167775eef7b0c273cb18ba0d606",
+    "P52": "scripts/native_p52_action_factorized_learning_dev.py @ 1840b31be57d26c8c3de9d5b8ae6fa74b4bc8b2d",
+    "tests": "tests/test_native_p52_action_factorized_learning_dev.py @ 3a029e50482d5d8e9047321bbeb4d23a725441b6"
+  },
+  "synthetic_source": {
+    "fit_seed": 851101,
+    "validation_seed": 851103,
+    "unfamiliar_seed": 851107,
+    "fit_examples": 2048,
+    "validation_examples": 256,
+    "unfamiliar_examples": 512,
+    "unannounced_switches": 128,
+    "source_SHA256": {
+      "fit": "7f19e83886c1a9591345891976a01b48056c2db7e37a33d36fc06b9154b19cd2",
+      "validation": "6ee14b33e201a1ec1840a107cbbe9af7b7dfb9055926f2baed44b2e689fc3dc6",
+      "unfamiliar": "3ea77a1218f048e62847911fe507f3209bc8ec7f3c754e71d7f6dd8f6f954618"
+    },
+    "sampling_SHA256": "cded3c0f3d9ef794f37e90276d22276bae55c45f8454d98f84c2888738cc26ff",
+    "new_source_first_use": "AUTHORED_DEV_ONLY"
+  },
+  "training": {
+    "seeds": [
+      861101,
+      861103,
+      861107
+    ],
+    "arms": [
+      "original_P50",
+      "factorized_P50",
+      "GRU",
+      "MLP",
+      "wrong_credit_factorized"
+    ],
+    "parameters": [
+      4610,
+      4627,
+      4521,
+      4621,
+      4627
+    ],
+    "steps_per_arm": 800,
+    "examples_per_step": 64,
+    "optimizer": "AdamW 0.003 + cosine eta_min 0.0001",
+    "total_updates": 12000,
+    "sum_training_seconds": 71.05933136900012,
+    "platform": "Python 3.13.5; PyTorch 2.10.0+cpu; one CPU thread",
+    "matched_FLOPs_and_final_convergence": "NOT_PROVEN"
+  },
+  "baselines": {
+    "ridge_OOD_mse": 0.13593152165412903,
+    "ridge_OOD_effect_MAE": 0.10683219879865646,
+    "last_OOD_mse": 0.07081000506877899,
+    "last_OOD_effect_MAE": 0.14468912780284882,
+    "last_switched_effect_MAE": 0.1395537257194519
+  },
+  "cohorts": [
+    {
+      "seed": 861101,
+      "MSE": [
+        0.050935,
+        0.045227,
+        0.085106,
+        0.096539,
+        0.079407
+      ],
+      "factorized_effect_MAE": 0.085414,
+      "factorized_switched_effect_MAE": 0.261483,
+      "passed": [
+        "OOD_prediction_5pct",
+        "wrong_credit_20pct",
+        "cold_exact",
+        "action_antisymmetry"
+      ],
+      "failed": [
+        "effect_5pct",
+        "switched_effect_10pct_vs_last",
+        "all_neural_validation_plateau"
+      ]
+    },
+    {
+      "seed": 861103,
+      "MSE": [
+        0.050595,
+        0.064594,
+        0.078628,
+        0.080983,
+        0.075371
+      ],
+      "factorized_effect_MAE": 0.097575,
+      "factorized_switched_effect_MAE": 0.313412,
+      "passed": [
+        "cold_exact",
+        "action_antisymmetry"
+      ],
+      "failed": [
+        "OOD_prediction_5pct",
+        "effect_5pct",
+        "wrong_credit_20pct",
+        "switched_effect_10pct_vs_last",
+        "all_neural_validation_plateau"
+      ]
+    },
+    {
+      "seed": 861107,
+      "MSE": [
+        0.062766,
+        0.059838,
+        0.084865,
+        0.087186,
+        0.065662
+      ],
+      "factorized_effect_MAE": 0.102877,
+      "factorized_switched_effect_MAE": 0.324509,
+      "passed": [
+        "cold_exact",
+        "action_antisymmetry"
+      ],
+      "failed": [
+        "OOD_prediction_5pct",
+        "effect_5pct",
+        "wrong_credit_20pct",
+        "switched_effect_10pct_vs_last",
+        "all_neural_validation_plateau"
+      ]
+    }
+  ],
+  "custody": {
+    "full_local_results_SHA256": "f74cda899d3c477e8fe1aa65168aea4b103eed05d6eac22b5c8cfef132f40f8d",
+    "tested_P52_source_SHA256": "04bc66cb69311430fa6615cb3ed12b7b26359f25cad45ad1bcc6e5c9f6475234",
+    "tested_P52_tests_SHA256": "1b356f5677dd2ce2a36d49fd86278240d355ccd19be995a439e400f672cebe2a",
+    "focused_tests": "29/29 PASS",
+    "cold_restore": "3/3 PASS",
+    "action_symmetry": "3/3 PASS",
+    "execution": "Monolithic run interrupted by container time limit; recovered same frozen source/seed/optimizer steps via deterministic bounded per-arm receipts; not independent scientific first-use",
+    "full_original_Windows_Linux_regression": "UNVERIFIED",
+    "authentic_GPU": "NOT_RUN",
+    "owner_scientific_first_use": "NOT_RUN",
+    "merge_or_promotion": "NONE",
+    "FORGE_or_scheduler_changes": "NONE"
+  },
+  "interpretation": "Explicit action factorization has inconsistent raw prediction benefit and no strong-control causal-effect or reversal improvement across three seeds. Retain negative; do not tune consumed development cohorts."
+}
