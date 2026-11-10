@@ -1,0 +1,190 @@
+{
+  "schema": "ttt-hybrid.p54.noisy-reward-equal-factual-log-dev-frozen.v1",
+  "state": "FROZEN_BEFORE_SOURCE_GENERATION_OR_FITTING",
+  "parent": {
+    "pr": 146,
+    "head": "3847533bcbf15ad883c89795bbcbe2b2dfd1f952",
+    "script_blob": "e514261e0923c6db9274e5bf4fc91d15106376ef",
+    "previous_P53_frozen_positive": "CONVENTIONAL_AUTHORED_DEV_ONLY"
+  },
+  "scientific_question": "Does useful intervention value remain learnable from factual experience when executed final rewards are noisy (and cannot identify hidden theta in a single episode), under identical realized random probe logs for all learner families?",
+  "source": {
+    "train": {
+      "seed": 840001,
+      "n": 49152,
+      "cue_gain": [
+        0.1,
+        1.2
+      ],
+      "probe_gain": [
+        0.1,
+        1.2
+      ],
+      "cue_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_sigma": [
+        0.55,
+        0.95
+      ],
+      "cost": [
+        0.05,
+        0.4
+      ],
+      "reward_noise_sigma": [
+        0.5,
+        1.1
+      ]
+    },
+    "validation": {
+      "seed": 840101,
+      "n": 2048,
+      "same_ranges_as_train": true
+    },
+    "ood_a": {
+      "seed": 840201,
+      "n": 8192,
+      "cue_gain": [
+        0,
+        1.5
+      ],
+      "probe_gain": [
+        0,
+        1.6
+      ],
+      "cue_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_sigma": [
+        0.95,
+        1.25
+      ],
+      "cost": [
+        0.05,
+        0.65
+      ],
+      "reward_noise_sigma": [
+        1.1,
+        1.6
+      ]
+    },
+    "ood_b": {
+      "seed": 840301,
+      "n": 8192,
+      "cue_gain": [
+        0,
+        2
+      ],
+      "probe_gain": [
+        0,
+        2
+      ],
+      "cue_sigma": [
+        1.1,
+        1.4
+      ],
+      "probe_sigma": [
+        1.1,
+        1.4
+      ],
+      "cost": [
+        0.01,
+        0.75
+      ],
+      "reward_noise_sigma": [
+        1.4,
+        2
+      ]
+    },
+    "sham": {
+      "seed": 840401,
+      "n": 4096,
+      "probe_gain": "exactly 0 (uninformative instrument)",
+      "cue_gain": [
+        0,
+        1.5
+      ],
+      "cue_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_sigma": [
+        0.95,
+        1.25
+      ],
+      "cost": [
+        0.05,
+        0.65
+      ],
+      "reward_noise_sigma": [
+        1.1,
+        1.6
+      ]
+    },
+    "latent_theta": "Bernoulli fair sign +/-1, never part of fit API or model input",
+    "cue_physics": "cue=theta*visible cue_gain + visible cue_sigma*independent Normal(0,1)",
+    "probe_physics": "only executed probe yields theta*visible probe_gain + visible probe_sigma*independent Normal(0,1)",
+    "final_reward": "actual_observed_net_reward = theta * actually_chosen_final_action + independent reward_sigma*Normal(0,1) - actual_probe*visible_cost",
+    "logging": "one actual probe Bernoulli(0.5), one final signed action Bernoulli fair, same log records across all fits, unexecuted diagnostic exactly masked 0, no alternative reward",
+    "all_generated_sources_fresh": "840xxx previously unused, no retuning on 830xxx consumed sources",
+    "evaluation": "paired common stochastic world tapes, no train/validation/ood mixture"
+  },
+  "trained_methods": {
+    "moment_candidate": "method-of-moments cross covariance between real reward-derived noisy z=(reward+cost*actual_probe)/actual_final_action and normalized cue/probe; learn gain scale, residual variance, empirical prior; Gaussian value-of-information with fitted params, select physical probe only when expected decision gain > visible cost",
+    "moment_shuffled_negative": "deterministically permute observed net reward among FIT episodes before fitting (preserve all cue/action/probe/noise/measurement distributions, break episode reward-credit) and report any diagnostics and gain; fit must use valid original logging schema",
+    "neural_MLP": "factual supervised noisy return proxy z on same logged cues and actually executed probe measurements; 6->hidden->cue estimate and 8->hidden->post estimate; evaluated under identical moment-selected physical probe actions, not trained as an independent probe decision policy",
+    "neural_GRU": "factual supervised noisy return proxy z on same log; 6 input cue then second-stage actual diagnostic tuple through GRUCell; equal source and parameter count within 10%, evaluated under same moment-selected probe actions",
+    "analytic_Bayes": "known true Gaussian cue/probe law and current visible gain/sigma/cost, privileged strong ceiling; final reward noise cancels in expected action decision but remains in realized payoff",
+    "learned_never": "same learned factual-moment model but no physical probes",
+    "learned_always": "same learned model with all physical probes and full costs",
+    "P53_exact_reward_label_method": "negative: original exact theta reconstruction fit must reject noisy rewards as invalid, not silently treat them as signs"
+  },
+  "training": {
+    "neural_seeds": [
+      8411,
+      8423,
+      8431
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.002,
+    "steps_per_arm_per_seed": 600,
+    "batch": 128,
+    "same_exact_log_indices_each_arm": true,
+    "shared_fit_probe_count": true,
+    "neural_loss": "MSE of both pre-probe and post-probe predicted theta proxy z from ACTUALLY OBSERVED noisy final rewards; z never available before final actual action",
+    "validation_every": 100,
+    "convergence": "last two neural val MSE checkpoints relative change <=2% or mark competence UNVERIFIED",
+    "model_fitting": "moment candidate uses full 49,152 logged factual samples, MLP/GRU 600*128 minibatch draws with replacement from same log, report sampling exposure difference",
+    "whole_process_cost": "report training wall and inference wall, not claim equal FLOPs or greater sample efficiency",
+    "source_seeds_frozen_no_hindsight": true
+  },
+  "criteria": {
+    "primary_ood_a_and_b_all_required": [
+      "moment candidate realized mean net reward >= learned-never +.02",
+      "moment candidate within .025 realized mean net reward of model-aware Bayesian reference",
+      "0.05 <= moment candidate actually executed probe fraction <=0.95",
+      "paired bootstrap lower 95% CI on candidate minus learned-never reward >0, 1000 resamples fixed seed 840901+cohort seed",
+      "low-cost vs high-cost probing frequency among weak cue and strong diagnostic gains >=0.15 with both group sizes>=30"
+    ],
+    "sham_controls": [
+      "zero physical probes on uninformative diagnostic exactly, under positive cost",
+      "reward-derived noisy proxy not identically +/-1",
+      "original P53 exact-reward-label fitter refuses the noisy observed-reward log",
+      "moment_shuffled_credit materially weaker than candidate by at least 0.025 net reward in each OOD"
+    ],
+    "neural_controls": "report per-seed MLP and GRU exploitation reward under identical actually executed candidate diagnostic actions; neither is end-to-end independent probing controller; do NOT claim native architecture superiority",
+    "cold": "fitted moment JSON roundtrip produces byte-identical deterministic actions and realized rewards; neural torch state restore exact for pre/post predictions",
+    "science": "authored synthetic dev positive cannot satisfy SCIENTIFIC_PASS; external, disjoint physical source/fully trained controls/cold-retention/total-compute needed"
+  },
+  "authority": {
+    "no_new_scheduler_runner_controller_queue_workflow": true,
+    "no_FORGE_dispatch_integration": true,
+    "no_merge_model_promotion": true,
+    "no_paid_API": true,
+    "no_external_science_first_use": true,
+    "preserve_all_prior_positives_and_negatives": true,
+    "full_original_Windows_and_Ubuntu_WSL_qualification_required": true
+  }
+}
