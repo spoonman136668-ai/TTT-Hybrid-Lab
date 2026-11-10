@@ -121,6 +121,9 @@ def test_real_factual_gradient_through_all_four_blocks():
     core,stream,events,candidates,state=setup(641,1)
     with torch.no_grad():
         core.depth.router.bias.fill_(2.)
+    # An adapter must be bound to the final parameter revision.
+    stream=StreamingHybridPilot(core,max_confirmed_events=12)
+    state=stream.initial_state(events[:,0,:])
     yes=torch.ones((1,9),dtype=torch.bool)
     _,new_state=stream.ingest_confirmed(events,state,yes)
     predicted=stream.preview(candidates,new_state)
