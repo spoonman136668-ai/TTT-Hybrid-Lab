@@ -1,0 +1,37 @@
+{
+  "schema": "ttt-hybrid.p64k-r1-no-facts-preview-fail-closed.v1",
+  "status": "FROZEN_AFTER_REPRODUCTION_BEFORE_REPAIR",
+  "type": "BOUNDED_SOURCE_REPAIR_PLUS_NEGATIVE_REGRESSION_NOT_NEW_SCIENCE",
+  "parent": {
+    "pr": 167,
+    "sha": "9a481b03395f02bbc126aace3fcc59cf101bfe48",
+    "original_incremental_source_blob": "440aa8717e1aef15d7547be669dfa8d0f4da666a",
+    "original_core_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_p64s_parent_blob": "56f4d566db9375e4b27e7d9eabcaf67498c25d94",
+    "original_p62_blob": "776e63a0ff9474a860e87088718acb36637a7bec"
+  },
+  "pre_freeze_discovery": {
+    "fixture": "Original HybridPilot(5,2,width8,heads2), batch2, two finite candidate inputs, zero confirmed history",
+    "reference": "P64-S parent FullHybridFactualStream.preview raises ValueError P64S_NO_CONFIRMED_HISTORY",
+    "candidate": "P64-K StreamingHybridPilot.preview returns two ordinary predictions despite zero factual events",
+    "scope": "behavioral contract regression (readiness) only; not source-authentication exploit or evidence of model quality"
+  },
+  "repair": "Before any hypothetical computation, check confirmed_count >0 for every batch member. Reject otherwise with ValueError P64S_NO_CONFIRMED_HISTORY. Preserve preview purity, original model/source compatibility and all other behavior. Do not change real ingest or original weights.",
+  "registered_controls": [
+    "New zero-history candidate preview negative; original P64-S zero-history rejects",
+    "After one fully confirmed event, candidates may preview and match original full-Hybrid output",
+    "Atomic read-only preview, same factual source, parameter weight identity",
+    "Existing P64-K 7 tests and inherited P62-S 8 tests PASS unchanged",
+    "Original P64-S suite on exact parent source where locally available; otherwise mark UNVERIFIED",
+    "Benchmarks originally source-bound to PR #167 only; if edited source changes timings do not reuse as newly qualified"
+  ],
+  "environment_and_qualification": {
+    "linux_cpu_local_focused": true,
+    "full_Windows_Ubuntu_WSL_final_SHA": "REQUIRED_BEFORE_ACCEPTANCE_NOT_AVAILABLE",
+    "CI_g4_g5_g7_on_parent": "pre-run fail, steps=0 runner_id=0",
+    "no_runner_workflow_or_scheduler": true,
+    "no_merge": true,
+    "no_forge_controller_change": true
+  },
+  "scientific": "No original first use, new source evaluation, model promotion or intelligence claim."
+}
