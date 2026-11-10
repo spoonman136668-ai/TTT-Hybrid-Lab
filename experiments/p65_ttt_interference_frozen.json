@@ -1,0 +1,48 @@
+{
+  "schema": "ttt-hybrid.p65-causal-fast-memory-interference-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_P65_DATA_EXECUTION",
+  "classification": "AUTHOR_CONSTRUCTED_MECHANISTIC_DEV_NOT_INDEPENDENT_SCIENCE",
+  "base_main": "6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2",
+  "source_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+  "question": "Does reference TTT's always-write fast matrix retain 8 relevant mappings after 64 irrelevant facts under equal 256-float state capacity?",
+  "design": {
+    "seeds": [
+      8001,
+      8003,
+      8007
+    ],
+    "episodes_per_seed": 64,
+    "dimension": 16,
+    "original_eta": 0.5,
+    "target_keys": 8,
+    "target_presentations": 4,
+    "distractor_count": 64,
+    "worlds": [
+      "overlap",
+      "orthogonal negative control"
+    ],
+    "targets": "eight QR orthonormal keys, bounded tanh Gaussian value vectors, fixed per episode",
+    "distractors": "64 normalized random directions either full space or strictly orthogonal to target subspace; bounded random independent values",
+    "control_arms": [
+      "original all-event original TTT linear outer-product update",
+      "same TTT with phase-aware oracle skip of distractor writes; not learned",
+      "eight indexed key-value pairs same D^2 floats",
+      "last-eight FIFO same D^2 floats",
+      "zero memory"
+    ],
+    "metrics": [
+      "before and after target MSE",
+      "normalized MSE",
+      "cosine",
+      "cold replay bitwise",
+      "negative control"
+    ],
+    "strict_candidate_success": "for each overlap seed, original post MSE <= 1.1 * oracle-skipped TTT post MSE AND <=0.9 * equal-budget indexed classic cache post MSE",
+    "orthogonal_negative": "post-pre TTT target MSE abs<=1e-5",
+    "idealized_favorable_TTT": "reference formula on exact normalized keys=queries; does not instantiate or train original neural projection or full SSM/attention/depth",
+    "training": "NONE",
+    "protected_science_first_use": "NONE",
+    "authority": "NO_MERGE_RUNNER_WORKFLOW_CONTROLLER_SCHEDULE_OR_PROMOTION"
+  },
+  "result_policy": "Preserve all failures, avoid architecture learning or independent science claims; future separately frozen full trained baseline and real source required."
+}
