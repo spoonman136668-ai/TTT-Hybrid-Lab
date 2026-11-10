@@ -1,0 +1,111 @@
+{
+  "schema": "ttt-hybrid.p58-frozen-long-horizon-action-value-dev-receipt.v1",
+  "classification": "AUTHORED_DEVELOPMENT_TASK_QUALIFICATION_ONLY_NO_NEURAL_SCIENCE_PASS",
+  "source": {
+    "parent_pr": 154,
+    "parent_sha": "37c4d6753f9a5e8c50d233375d271eaff2383ad6",
+    "original_physics_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "upstream_commit": "e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "upstream_step_git_blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "Gymnasium_installed_runtime": "UNAVAILABLE",
+    "physics_kind": "PINNED_PUBLISHED_EQUATION_TRANSCRIPTION_NOT_OFFICIAL_RUNTIME"
+  },
+  "freeze": {
+    "commit": "05b16d3320d88e6c56e4cfeb56718ab1f285ddbc",
+    "tree": "a0e304292804c20d31e175e1ac8ad24913838f91",
+    "blob": "2f9088b652c8e499e2dccea7711f9eff64eacec6",
+    "before_first_new_source": true
+  },
+  "code": {
+    "path": "experiments/p58_long_horizon_action_value_dev.py",
+    "blob": "cd05194001396d45083431a1a497d18c4c487647",
+    "sha256": "3eaf47ca060262bff41b176b24e7543deeec32bb7ffadd27eb337bff817c4345"
+  },
+  "tests": {
+    "path": "tests/test_p58_long_horizon_action_value_dev.py",
+    "blob": "7d906ed3486604c0e1885b13847840e7932619f7",
+    "sha256": "eb37f82c527a4b3849575c2498208a2a20959afd3ae514b389205d0067a6a57f"
+  },
+  "docs": {
+    "path": "docs/P58_LONG_HORIZON_DEV_RESULT.md",
+    "blob": "6c72e85bcc1c76095757ac4ef51e11522f1de32d"
+  },
+  "frozen_source": {
+    "first_reset_seed": 985100,
+    "last_reset_seed": 985195,
+    "episodes_each": 96,
+    "max_actual_steps_each": 256,
+    "policies": [
+      "momentum_bangbang",
+      "neutral",
+      "random3",
+      "always_right"
+    ],
+    "independent_random_seed_rule": "990000 + physical reset seed",
+    "no_hidden_future_for_actions": true
+  },
+  "results": {
+    "momentum_bangbang": {
+      "success": 96,
+      "mean_return": 92.07083333333334,
+      "mean_steps": 79.29166666666667,
+      "trace_sha256": "1686baec1451b442b818a37f35843f75a3f0c8c42ae4a677c3b4f13d07652853"
+    },
+    "neutral": {
+      "success": 0,
+      "mean_return": 0,
+      "mean_steps": 256,
+      "trace_sha256": "970861b788d58963437a93f2a987df5e4425e0e30eb3cc420e8bc0e442fdfaf2"
+    },
+    "random3": {
+      "success": 0,
+      "mean_return": -17.00104166666667,
+      "mean_steps": 256,
+      "trace_sha256": "97ea893923267b581418a3b6409efcc6f93b56542b67e300de3878e923f29e53"
+    },
+    "always_right": {
+      "success": 0,
+      "mean_return": -25.599999999999998,
+      "mean_steps": 256,
+      "trace_sha256": "513a78398fb350e80bc7f272133d954b93c8afa048591de8fb40bceed0db4dd5"
+    }
+  },
+  "mean_abs_one_step_action_effect_per_motor_unit": 0.0014999999742334087,
+  "gates": {
+    "momentum_goal_rate_min_75pct": true,
+    "neutral_goal_rate_max_1pct": true,
+    "momentum_minus_random_min_50ppt": true,
+    "source_git_blob_match": true,
+    "finite_outcomes": true,
+    "exact_actual_reward_accounting": true,
+    "all_preregistered_gates": true
+  },
+  "execution": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "inherited_and_new_focused_tests": "44_PASS_1_SKIPPED",
+    "local_elapsed_seconds": 0.8301258310002595,
+    "full_raw_result_sha256": "9b82de74c53ab928ec5f1914535a3fdc672b667a28ad09f5bd35f4accd5fc47a",
+    "initial_raw_result_before_preregistered_audit_sha256": "7350f607aae20abf8e6336e0cd6f46b1e90f4389e185b6acd9556918b682618f",
+    "amendment": "After initial development run, implemented the predeclared reward-audit and descriptive one-step-effect/final-velocity reporting without altering seeds, physics, policies, thresholds or predeclared pass/fail; all original source traces and outcomes identical."
+  },
+  "limitations": [
+    "One-step predicted state is almost insensitive to motor actions compared with delayed goal achievement; this is task quality diagnostic only",
+    "Handcoded momentum is strong reference not learned intelligence",
+    "All policies use physical source transitions; no authentic installed Gymnasium imports or wrappers",
+    "Source is known published simulator, not independent physical world",
+    "No training, long-term retention, interference, matched neural baselines or autonomous transfer measured",
+    "Different numbers of source steps due natural goal termination; report budgets before fairness claims"
+  ],
+  "authority": {
+    "full_exact_sha_windows_linux_regression": "UNVERIFIED",
+    "original_owner_acceptance": "NOT_RUN",
+    "FORGE_owner_changed": false,
+    "new_runner_or_scheduled_task": false,
+    "new_workflow": false,
+    "model_promotion": false,
+    "merge": false
+  }
+}
