@@ -1,0 +1,146 @@
+{
+  "schema": "ttt-hybrid.p56.published-mountaincar-factual-learning-dev-receipt.v1",
+  "phase": "FROZEN_DEV_NEGATIVE_0_OF_3",
+  "classification": "AUTHORED_DEVELOPMENT_ON_PINNED_PUBLISHED_EQUATIONS_NOT_OFFICIAL_GYMNASIUM_RUNTIME_OR_SCIENTIFIC_FIRST_USE",
+  "base": {
+    "pr": 150,
+    "head": "e4e391a2a0ee6d972c851f6342f5a6e2007e3d36",
+    "freeze_commit": "d881a3e8cfc3cd8ce95de2fc1707598e4aab577b",
+    "freeze_protocol_blob": "1bbda85409ca992bb7b8f848fa552c50fdd384e0"
+  },
+  "exact_pinned_sources": {
+    "model_py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p55_native": "731ac511090f1c3ca83c2bf784591e604cfc1a87",
+    "p54_physics": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "official_gymnasium_reference": "Farama-Foundation/Gymnasium@e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "upstream_py_blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f"
+  },
+  "new_source": {
+    "path": "scripts/native_p56_mountaincar_factual_learning_dev.py",
+    "blob": "a8977d3846998720e36ff07709e69c763fc2907a",
+    "sha256": "6500a97e2c427a30729a80d0bafa23ef3d2d3cac5e7705cdb0a5d16fbb2c885b"
+  },
+  "new_tests": {
+    "path": "tests/test_native_p56_mountaincar_factual_learning_dev.py",
+    "blob": "f7f4ebc1f7cf9e2292679278c5613666df5b5fac",
+    "sha256": "ad65da6c672e779fbe817d3db9e1b8064cedd05593d5c93512293b4004dd9e43"
+  },
+  "source": {
+    "fit_seed": 966101,
+    "fit_examples": 768,
+    "val_seed": 966103,
+    "val_examples": 192,
+    "ood_seed": 966107,
+    "ood_examples": 256,
+    "history_real_actions": 8,
+    "action_choices": [
+      -1,
+      0,
+      1
+    ],
+    "fit_sha256": "2a28da8798845249a28255f0b1c7e90a4795d34703c68bd2e29ae0db9231b049",
+    "val_sha256": "af5627d4c11c3dbf0ae30eedab480e634bcdd3f3317b0041263f54436be6dd6c",
+    "ood_sha256": "4ed5962512b6b668eeaca60894eb2373f4c59863d996aed7a80c1932673a56e1",
+    "ood_terminal_rejections": 6,
+    "registered_before_generation": true,
+    "only_completed_actual_actions_in_train": true,
+    "paired_potential_outcomes_evaluator_only": true
+  },
+  "train": {
+    "init_seeds": [
+      976101,
+      976103,
+      976107
+    ],
+    "sampler_seed": 976199,
+    "sampler_index_sha256": "ae097d8bc2ee509185efa86531bb9ab7f8f7fa3806f82323124e53e28060cdbe",
+    "four_arms": [
+      "P55_original_reference",
+      "GRU",
+      "MLP",
+      "P55_wrong_historical_action_credit"
+    ],
+    "steps_per_arm": 200,
+    "total_steps": 2400,
+    "batch": 64,
+    "params": {
+      "P55": 4659,
+      "GRU": 4002,
+      "MLP": 6242,
+      "wrong_credit_P55": 4659
+    },
+    "elapsed_wall_s": 13.208547443000043,
+    "full_result_sha256": "59a65bce89e0e00ee6e647e5ce4594f022aa923bc18eecccb2664b19f418e43d"
+  },
+  "baselines": {
+    "zero_training_last_delta_MSE": 0.000007902835932327434,
+    "zero_training_last_delta_effect_MAE": 0.0015137456357479095,
+    "known_equations_analytical_MSE": 0,
+    "analytical_MSE_is_by_construction_not_independent": true
+  },
+  "seed_results": [
+    {
+      "seed": 976101,
+      "P55_MSE": 0.0009913641260936856,
+      "GRU_MSE": 0.00041987773147411644,
+      "MLP_MSE": 0.00027798835071735084,
+      "wrong_credit_P55_MSE": 0.0010627341689541936,
+      "P55_effect_MAE": 0.008762452751398087,
+      "full_gate": false
+    },
+    {
+      "seed": 976103,
+      "P55_MSE": 0.0025198853109031916,
+      "GRU_MSE": 0.00013211792975198478,
+      "MLP_MSE": 0.0002421462704660371,
+      "wrong_credit_P55_MSE": 0.0024457802064716816,
+      "P55_effect_MAE": 0.004155772738158703,
+      "full_gate": false
+    },
+    {
+      "seed": 976107,
+      "P55_MSE": 0.0016040619229897857,
+      "GRU_MSE": 0.00029469860601238906,
+      "MLP_MSE": 0.0003298819938208908,
+      "wrong_credit_P55_MSE": 0.0016978668281808496,
+      "P55_effect_MAE": 0.006591808516532183,
+      "full_gate": false
+    }
+  ],
+  "strict_gates": {
+    "strongest_nonoracle_MSE_5percent": "FAIL_0_OF_3",
+    "strongest_neural_effect_MAE_5percent": "FAIL_0_OF_3",
+    "correct_credit_vs_sham_20percent": "FAIL_0_OF_3",
+    "cold_trained_weights_and_factual_history_exact": "PASS_3_OF_3",
+    "all_arm_validation_plateau_last40_1percent": "FAIL_0_OF_3",
+    "combined": "FAIL_0_OF_3"
+  },
+  "engineering": {
+    "local_focused_regression": "41_PASS_1_SKIPPED",
+    "local_python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "no_model_code_changed": true,
+    "source_and_test_blob_integrity": "VERIFIED_LOCAL_BEFORE_GIT_COMMIT",
+    "harness_precursors": [
+      "initial source syntax error fixed before generating any P56 cohort",
+      "manual cold fixture generated only 2 histories and assumed 3; fixed n=min(3,n) without model/source/budget/metric changes"
+    ],
+    "full_exact_sha_Windows_Ubuntu_regression": "NOT_RUN",
+    "authentic_upstream_Gymnasium_runtime": "UNAVAILABLE_PARITY_UNVERIFIED"
+  },
+  "scientific": {
+    "status": "FAIL_0_OF_3_AUTHORED_DEV",
+    "fully_converged_neural_controls": false,
+    "whole_process_cost_matched": false,
+    "external_physical_science_first_use": false,
+    "source_owner_acceptance": false,
+    "promotion": false
+  },
+  "deployment": {
+    "draft_only": true,
+    "no_merge": true,
+    "no_runner_or_scheduled_task": true,
+    "no_FORGE_controller_or_loop_change": true,
+    "no_paid_api": true
+  }
+}
