@@ -1,0 +1,139 @@
+{
+  "schema": "ttt-hybrid.p52-outcome-contingent-intervention-value-authored-dev.v1",
+  "state": "FROZEN_BEFORE_GENERATING_SOURCE_OR_MODEL_TRAINING",
+  "parent": {
+    "pr": 142,
+    "sha": "01c05508c7ef2898f009b990edba25d23f8be673",
+    "previous_P51_POL_result": "0/3 strong advantage; D-opt and orthogonal exact same action decisions",
+    "parallel_architecture_pr": 143,
+    "previous_active_P13_pr": 79,
+    "previous_P14_gradient_learned_probe_pr": 81
+  },
+  "question": "Can a token-free two-stage factual-reward trained policy learn when a costly diagnostic action is worth executing, improving net eventual decision reward on unfamiliar signal and cost ranges beyond equally trained conventional recurrent control, wrong-reward-credit training, always/never probe and an explicit model-aware Bayesian benchmark?",
+  "source": {
+    "source_kind": "new developer-authored stochastic physical analogue; NOT independent scientific source first-use",
+    "fit_seed": 820101,
+    "validation_seed": 820103,
+    "ood_dev_seed": 820107,
+    "training_episodes_per_step": 128,
+    "training_steps": 700,
+    "validation_episodes": 1024,
+    "unfamiliar_ood_episodes": 2048,
+    "latent_effect": "theta equiprobable +1/-1; hidden from both policies",
+    "observable_initial": [
+      "physical cue",
+      "cue_gain",
+      "cue_sigma",
+      "probe_gain",
+      "probe_sigma",
+      "probe_cost"
+    ],
+    "cue_physical_law": "cue = theta*cue_gain + Normal(0,cue_sigma), generated before any action",
+    "probe_physical_law": "only if executing paid diagnostic +1: measurement=theta*probe_gain + Normal(0,probe_sigma); never provide measurement when not probed",
+    "final_physical_action": "choose signed +/-1; actual observed exploitation reward = theta*chosen_signed_action; total net reward subtracts paid diagnostic cost if executed",
+    "fit_parameters": {
+      "cue_gain": [
+        0.1,
+        1.2
+      ],
+      "probe_gain": [
+        0.1,
+        1.2
+      ],
+      "cue_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_cost": [
+        0.05,
+        0.4
+      ]
+    },
+    "validation_parameters": "same fit ranges, disjoint seed",
+    "unfamiliar_ood_parameters": {
+      "cue_gain": [
+        0,
+        1.5
+      ],
+      "probe_gain": [
+        0,
+        1.6
+      ],
+      "cue_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_cost": [
+        0.05,
+        0.65
+      ]
+    },
+    "shared_source_fairness": "same theta/cue/context and precommitted independent probe-noise tape for all policy arms; each arm chooses its own actual probe and exploit actions; never train on unexecuted alternative consequences",
+    "sources_consume_only_new_820xxx": true
+  },
+  "methods": {
+    "candidate": "Trainable 2-head factorized MLP, probe yes/no head on six factual initial observations; second head on those six plus actual probe indicator and actual probe measurement. Both heads learn from only real physical net return via on-policy REINFORCE. No privileged theta or Bayesian logodds engineered features.",
+    "trained_conventional": "GRUCell recurrent policy sees same six factual initial observations and second 6-dimensional factual observation (cue, actual probe flag, paid probe measurement, probe_gain, probe_sigma, cost); two output heads; parameter-count match within 10%",
+    "wrong_credit": "Exact candidate architecture initialized identically per model seed, but REINFORCE physical net reward is rolled one batch position for gradient credit (real actions/rewards remain intact).",
+    "conventional_Bayesian": "strong model-aware analytical baseline uses specified public noise law and observed signal parameters for posterior; calculates exact normal-distribution value of probe via known generative model; not an unprivileged learned baseline, report as Bayes model-aware ceiling",
+    "always_probe": "every world physically probes, then uses model-aware factual posterior exploitation decision",
+    "never_probe": "never probes, exploits from model-aware factual cue posterior",
+    "simple_confidence": "probe if abs(cue)/cue_sigma <0.5 and cost<0.25, exploit from model-aware factual posterior",
+    "random": "random probe and random exploit with precommitted RNG; report same source actions/costs"
+  },
+  "training": {
+    "model_seeds": [
+      8211,
+      8223,
+      8231
+    ],
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "gradient_clip": 1,
+    "updates_per_model_seed_arm": 700,
+    "batch_size": 128,
+    "arms": [
+      "candidate",
+      "conventional_gru",
+      "wrong_credit"
+    ],
+    "update_target": "REINFORCE score gradients for sampled probe and actual exploit actions * (physically observed net return minus common detached running baseline); wrong-credit rolls the return over episode batch before computing policy gradient",
+    "all_neural_same_world_source_per_update": true,
+    "one_or_two_actual_actions_per_episode": true,
+    "no_counterfactual_final_reward_feedback": true,
+    "source_heldout_no_gradient_update": true,
+    "validation_checkpoints_every": 100,
+    "baseline_convergence": "last two val net reward checkpoints differ <=.02; otherwise trained convergence UNVERIFIED",
+    "cold_restore": "fresh identical architecture + loaded weights returns exactly same deterministic preview logits and decisions"
+  },
+  "thresholds": {
+    "per_seed_ood_net_reward": "candidate >= conventional_gru +.02 AND candidate >= max(always_probe,never_probe,simple_confidence)+.02, every one of 3 model seeds",
+    "bayes_proximity": "Bayesian aware ceiling minus candidate OOD reward <=.05 in every seed; cannot claim exceed analytic oracle",
+    "wrong_credit_margin": "candidate OOD net reward >= wrong_credit+.05 every seed",
+    "cost_sensitivity": "among weak cues with strong probe gain, low-cost (<.20) probe fraction exceeds high-cost (>=.40) probe fraction by >=.20 every seed",
+    "no_opportunity_leakage": "model never receives probe measurement when it did not physically probe; physically observed reward only after signed exploit",
+    "retained_pretraining": "validation fixed policy performance without changes during separate OOD evaluation; no per-episode test updates",
+    "strong_training": "all neural last-two validation net rewards within .02, else CONVERGENCE_UNVERIFIED",
+    "every_seed_required": true,
+    "positive_scientific_pass": "IMPOSSIBLE_FROM_AUTHOR_GENERATED_DEV; needs new independently owner-qualified source, genuine physical unfamiliar dynamics, cost/compute parity, stronger model-aware controls and full platform regression"
+  },
+  "limitations": {
+    "model_aware_Bayes_privileged_world_law": true,
+    "latent_binary_effect_and_gaussian_probe": "explicit predeclared toy simplification",
+    "model_params_same_within_10pct_required": true,
+    "full_FLOP_total_training_cost": "report wall times, exact parity not assumed",
+    "no_external_sources_no_paid_API": true,
+    "no_scheduler_or_new_runner_or_controller_or_FORGE_dispatch": true,
+    "no_merges_or_promotion": true,
+    "original_final_windows_and_ubuntu_WSL_regression_required": true,
+    "preserve_P13_P14_and_P38_to_P51_negative_outcomes": true
+  }
+}

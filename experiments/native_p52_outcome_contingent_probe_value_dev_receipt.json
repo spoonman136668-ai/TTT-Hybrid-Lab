@@ -1,0 +1,197 @@
+{
+  "schema": "ttt-hybrid.p52.costly-factual-intervention-value-dev-negative-receipt.v1",
+  "status": "SCIENTIFIC_DEV_FAIL_0_OF_3_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "p51_pol_pr": 142,
+    "sha": "01c05508c7ef2898f009b990edba25d23f8be673",
+    "previous_P13_active_probing": "D-optimal did not beat random in prior known lag DEV",
+    "parallel_p51_arch_pr": 143
+  },
+  "freeze": {
+    "commit": "02a8c1838529364d362ca852cdf008372edc54ba",
+    "committed_before_first_P52_source_generation": true,
+    "protocol_path": "experiments/native_p52_outcome_contingent_probe_value_frozen.json"
+  },
+  "custody": {
+    "script_path": "scripts/native_p52_probe_value_dev.py",
+    "exact_tested_script_git_blob": "0f6e1ab12132b062fa9d447d0f2014d045520eb8",
+    "tests_path": "tests/test_native_p52_probe_value_dev.py",
+    "exact_tested_tests_git_blob": "4d06f336f05797b211f68d3dfa3cb82874534934",
+    "full_local_result_sha256": "b58bbc6b7bf7f722575ff6bfa957cfe54594bc592b851c4fa3bd188891dc2c9e",
+    "source_sha256": {
+      "fit_820101": "93306831376565daed8ad1836d1e0d3bc0270625d76a9005bf47e6a1854995dc",
+      "validation_820103": "970609fada88c9316f2ff7afe1c153892bc445d532336dfe4be3d0f7430fbec5",
+      "unfamiliar_ood_820107": "bd06e7f0912e67eb0b66f8e046f2b2005d4940e7a8a88e7bcec9af342be27361"
+    },
+    "local_focused_tests": "PASS_5_OF_5",
+    "new_authored_sources_now_consumed_as_dev": true,
+    "deviations_from_frozen_protocol": "None detected in source, seeds, budget, model classes, thresholds or outcomes."
+  },
+  "environment": {
+    "python": "3.13",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "pytest": "9.0.2",
+    "hardware": "local CPU single PyTorch thread"
+  },
+  "experimental_design": {
+    "world": "One binary latent physical effect +/-1; visible cue/noise strength and optional paid diagnostic; one later physically executed binary choice with factual reward and optional probe cost.",
+    "privacy_of_latents": "theta and unselected diagnostic outcome never enter model input; probe signal delivered only following physically selected probe.",
+    "train_episodes_per_arm": 89600,
+    "validation_worlds": 1024,
+    "unfamiliar_ood_worlds": 2048,
+    "source_seeds": {
+      "FIT": 820101,
+      "VAL": 820103,
+      "OOD": 820107
+    },
+    "network_seeds": [
+      8211,
+      8223,
+      8231
+    ],
+    "neural_arms": [
+      "factorized 902-param two-head MLP",
+      "954-param conventional GRUCell",
+      "902-param wrong-return-credit MLP"
+    ],
+    "optimizer": "AdamW lr .002, REINFORCE using actual executed net reward; 1.0 gradient clipping and detached running baseline",
+    "updates_per_neural_seed_arm": 700,
+    "total_optimizer_updates": 6300,
+    "train_batch_size": 128,
+    "share_fit_worlds_each_update": true,
+    "shared_probe_noise_tape": true,
+    "conventional_references": [
+      "known-generative-model analytical Bayesian value of information",
+      "always probe",
+      "never probe",
+      "simple confidence gate",
+      "random probe+random exploit"
+    ],
+    "known_model_reference_advantage": "Bayesian reference knows the exact simulator's Gaussian noise law but not hidden actual theta, unlike the neural models which must learn from factual rewards; report as model-aware upper bound, not fair learned arm.",
+    "whole_process_FLOP_parity": "UNVERIFIED; neural model parameter counts differ 5.8%, measured wall excludes robust system-level timing",
+    "original_external_first_use": "NOT_RUN"
+  },
+  "heldout_references": {
+    "bayesian": {
+      "mean_net_reward": 0.4991053404919512,
+      "probe_fraction": 0.267578125
+    },
+    "never": {
+      "mean_net_reward": 0.4609375,
+      "probe_fraction": 0
+    },
+    "always": {
+      "mean_net_reward": 0.3158405384128855,
+      "probe_fraction": 1
+    },
+    "simple_confidence": {
+      "mean_net_reward": 0.4606207338802051,
+      "probe_fraction": 0.09521484375
+    },
+    "seeded_random": {
+      "mean_net_reward": -0.15754032135009766,
+      "probe_fraction": 0.49560546875
+    }
+  },
+  "trained_heldout": [
+    {
+      "seed": 8211,
+      "candidate": {
+        "mean_net_reward": 0.4619140625,
+        "probe_fraction": 0,
+        "train_wall_s": 1.2282541849999689,
+        "validation_final_two_diff": 0.00390625,
+        "cold_exact": true
+      },
+      "GRU": {
+        "mean_net_reward": 0.4638671875,
+        "probe_fraction": 0,
+        "train_wall_s": 1.5491055190000225,
+        "validation_final_two_diff": 0.001953125,
+        "cold_exact": true
+      },
+      "wrong_credit": {
+        "mean_net_reward": 0.13348209857940674,
+        "probe_fraction": 0.0146484375,
+        "validation_final_two_diff": 0.39075735956430435,
+        "cold_exact": true
+      }
+    },
+    {
+      "seed": 8223,
+      "candidate": {
+        "mean_net_reward": 0.46875,
+        "probe_fraction": 0,
+        "train_wall_s": 1.2508514430001014,
+        "validation_final_two_diff": 0.001953125,
+        "cold_exact": true
+      },
+      "GRU": {
+        "mean_net_reward": 0.4560546875,
+        "probe_fraction": 0,
+        "train_wall_s": 1.498183059999974,
+        "validation_final_two_diff": 0.001953125,
+        "cold_exact": true
+      },
+      "wrong_credit": {
+        "mean_net_reward": -0.056522224098443985,
+        "probe_fraction": 0.26123046875,
+        "validation_final_two_diff": 0.2978530600667,
+        "cold_exact": true
+      }
+    },
+    {
+      "seed": 8231,
+      "candidate": {
+        "mean_net_reward": 0.4619140625,
+        "probe_fraction": 0,
+        "train_wall_s": 1.3901281989997187,
+        "validation_final_two_diff": 0.0078125,
+        "cold_exact": true
+      },
+      "GRU": {
+        "mean_net_reward": 0.453125,
+        "probe_fraction": 0,
+        "train_wall_s": 1.5365714179997667,
+        "validation_final_two_diff": 0.005859375,
+        "cold_exact": true
+      },
+      "wrong_credit": {
+        "mean_net_reward": -0.3219973146915436,
+        "probe_fraction": 0.95556640625,
+        "validation_final_two_diff": 0.008648201823234558,
+        "cold_exact": true
+      }
+    }
+  ],
+  "frozen_gates": {
+    "better_by_0point02_than_GRU_and_all_simple_reference_policies": "FAIL_0_OF_3",
+    "within_0point05_of_analytical_model_aware_Bayes": "PASS_3_OF_3__BUT_DOES_NOT_MEAN_LEARNED_VALUE",
+    "better_by_0point05_than_wrong_credit": "PASS_3_OF_3",
+    "conditional_cost_sensitivity_low_vs_high_probe_rate_0point20": "FAIL_0_OF_3",
+    "all_arms_cold_exact": "PASS_3_OF_3",
+    "all_arms_validation_convergence_0point02": "FAIL_2_OF_3",
+    "overall": "FAIL_0_OF_3"
+  },
+  "scientific_finding": "Both trained candidate and conventional GRU learned to exploit an initial factual cue but never chose to pay for diagnostic evidence on OOD (0/2048 probes each). The analytically model-aware benchmark chose useful probes on 26.76% of OOD worlds, earning 0.4991 vs never 0.4609. Thus this development gate falsifies learned outcome-contingent intervention value at the frozen 700-update budget; does not prove impossibility at larger budgets or unfamiliar real dynamics.",
+  "engineering": {
+    "focused_pytest": "PASS_5_OF_5",
+    "exact_git_blob_custody": "PASS",
+    "local_dev_full_run_seconds": 12.388502861000234,
+    "original_repo_full_final_Windows_regression": "NOT_RUN",
+    "original_repo_full_final_Ubuntu_WSL_regression": "NOT_RUN",
+    "G4_G5_G7_hosted": "NOT_QUALIFIED_FOR_CANDIDATE",
+    "original_native_GPU": "NOT_RUN"
+  },
+  "deployment": {
+    "draft_only": true,
+    "no_merge": true,
+    "no_FORGE_or_owner_lane_edit": true,
+    "no_new_runner_scheduler_queue_controller": true,
+    "no_paid_API": true,
+    "no_live_physical_actuation": true,
+    "no_science_promotion": true
+  }
+}
