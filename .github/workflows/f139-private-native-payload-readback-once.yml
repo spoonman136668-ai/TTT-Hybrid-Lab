@@ -1,0 +1,128 @@
+name: FORGE private native payload real provider custody (one-shot, NO execution)
+on:
+  push:
+    branches: ['operations/f139-private-payload-readback-once-20261110']
+permissions:
+  contents: read
+jobs:
+  private-payload-provider-readback:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == false && github.event.deleted == false && github.event.forced == false && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+      - name: Read private Git provider source and verify signed-intent data shape (NOT owner signature or code)
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          import hashlib, json, os, pathlib, subprocess, sys, tempfile, shutil, urllib.request
+          from pathlib import Path
+          REPO='spoonman136668-ai/TTT-Hybrid-Lab'
+          FORGE='2fbc3cb6887c3b98f5f941e09a34b1a1faad44d9'
+          SOURCE='6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          TREE='1159dc3e20a9c457e17d74805edee942985efa07'
+          OWNER='e1fda6d8fea151071b82bdcc28567094817122d2'
+          PAYLOAD='fe1db4d10b2414b66109c3a544e4a704b5cc6f103c164d9126992c419f779fe8'
+          BLOB='8a7e0a841c605454109d704b4c0bfc7e7694ae19'
+          PATH='f139/private-native/'+PAYLOAD+'.json'
+          GITBLOBS={'private_hybrid_reference.py':'9d7aaa46ff741ce3529ddf48406d931c0fac5847',
+                    'nci04_native_contract.py':'bfe650b8bb498d194949281c93687c779ba601f1'}
+          assert os.environ['GITHUB_REPOSITORY']==REPO
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push'
+          assert os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH'],encoding='utf-8') as f:event=json.load(f)
+          assert event['repository']['full_name']==REPO and event['repository']['private'] is True
+          assert event['created'] is False and event['deleted'] is False and event['forced'] is False
+          assert event['after']==os.environ['GITHUB_SHA']
+          work=Path(os.environ['GITHUB_WORKSPACE']).resolve(strict=True)
+          def git(*argv,raw=False):
+              cmd=subprocess.run(['git','-C',str(work),*argv],stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                                 stdin=subprocess.DEVNULL,timeout=20,check=False)
+              assert cmd.returncode==0, 'GIT_PROVIDER_IDENTITY_FAILURE'
+              return cmd.stdout if raw else cmd.stdout.decode('ascii').strip()
+          head=git('rev-parse','HEAD');headtree=git('rev-parse','HEAD^{tree}')
+          assert head==os.environ['GITHUB_SHA']
+          assert git('rev-parse',SOURCE+'^{tree}')==TREE
+          assert git('rev-list','--count',SOURCE+'..'+head)=='2'
+          assert git('status','--porcelain','--untracked-files=all')==''
+          assert git('merge-base','--is-ancestor',SOURCE,head)==''
+          ls=git('ls-tree','-r','HEAD','--',PATH)
+          assert ls.startswith('100644 blob ') and ls.endswith('\t'+PATH)
+          tree_blob=ls.split()[2]
+          assert tree_blob==BLOB
+          payload=git('cat-file','blob',tree_blob,raw=True)
+          assert hashlib.sha256(payload).hexdigest()==PAYLOAD
+          assert hashlib.sha1(b'blob '+str(len(payload)).encode('ascii')+b'\0'+payload).hexdigest()==BLOB
+          stage=Path(tempfile.mkdtemp(prefix='f139-private-readback-',dir=os.environ['RUNNER_TEMP']))
+          try:
+              package=stage/'f139';package.mkdir();(package/'__init__.py').write_bytes(b'')
+              for name,gitblob in GITBLOBS.items():
+                  url='https://raw.githubusercontent.com/spoonman136668-ai/FORGE/'+FORGE+'/f139/'+name
+                  with urllib.request.urlopen(url,timeout=20) as response:
+                      assert response.geturl()==url
+                      value=response.read(120000)
+                  assert hashlib.sha1(b'blob '+str(len(value)).encode('ascii')+b'\0'+value).hexdigest()==gitblob
+                  (package/name).write_bytes(value)
+              sys.path.insert(0,str(stage))
+              from f139.private_hybrid_reference import canonical,verify_private_payload,public_identity,PrivateReferenceDenied
+              reference={
+                  'schema':'forge.f139.private-hybrid-payload-reference.v1',
+                  'lane':'TTT-Hybrid','repository':REPO,
+                  'controller_source_sha':OWNER,'private_target_commit':SOURCE,
+                  'private_target_tree':TREE,'private_payload_commit':head,
+                  'private_payload_tree':headtree,'source_path':'scripts/native_f139_custody_probe.py',
+                  'before_sha256':'e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855',
+                  'after_sha256':'a0366d1253f638323c7adae7cc6d0fbf1e72e8e356e597ef70197e6fd42bc666',
+                  'private_payload_path':PATH,'private_payload_blob_sha':BLOB,
+                  'private_payload_sha256':PAYLOAD,
+                  'owner_signed_intent_sha256':PAYLOAD,
+                  'owner_authorization_sha256':'0'*64,
+                  'scientific_first_use':False,'paid_api_calls':0,'accepted_ref_mutations':0}
+              ref_raw=canonical(reference)
+              observed={'repository':REPO,'commit_sha':head,'tree_sha':headtree,
+                        'path':PATH,'git_blob_sha':tree_blob}
+              md={'full_name':REPO,'private':True}
+              kw=dict(owner_source_sha=OWNER,private_commit=SOURCE,private_tree=TREE,
+                      authenticated_repository_metadata=md,provider_file=observed)
+              good=verify_private_payload(ref_raw,payload,**kw)
+              assert good['private_blob_integrity_verified'] is True
+              for negative in ('owner_signature_verified','signed_worker_qualified','candidate_code_executed',
+                               'private_code_emitted','scientific_first_use'):
+                  assert good[negative] is False
+              exposed=public_identity(ref_raw,owner_source_sha=OWNER,private_commit=SOURCE,
+                         private_tree=TREE,authenticated_repository_metadata=md)
+              assert exposed['worker_authorized'] is False and exposed['signed_worker_qualified'] is False
+              assert 'after_base64' not in exposed and 'private_payload_path' not in exposed
+              def reject(ref,raw,details):
+                  try: verify_private_payload(ref,raw,**details)
+                  except PrivateReferenceDenied: return
+                  raise AssertionError('FORGED_PROVIDER_OR_PAYLOAD_ACCEPTED')
+              reject(ref_raw,payload+b' ',kw)
+              reject(ref_raw,payload,{**kw,'provider_file':{**observed,'commit_sha':SOURCE}})
+              reject(ref_raw,payload,{**kw,'provider_file':{**observed,'tree_sha':TREE}})
+              reject(ref_raw,payload,{**kw,'provider_file':{**observed,'git_blob_sha':'0'*40}})
+              reject(ref_raw,payload,{**kw,'private_commit':'0'*40})
+              reject(canonical({**reference,'private_payload_commit':SOURCE}),payload,kw)
+              reject(canonical({**reference,'private_payload_tree':TREE}),payload,kw)
+              print('F139_PRIVATE_PROJECT_PROVIDER_CUSTODY='+json.dumps({
+                 'schema':'forge.f139.private-project-payload-actual-git-readback.v1',
+                 'repository':REPO,'private_repository_verified':True,
+                 'private_storage_commit':head,'private_storage_tree':headtree,
+                 'source_target_commit':SOURCE,'source_target_tree':TREE,
+                 'source_ancestor_verified':True,'private_blob_sha256':PAYLOAD,
+                 'private_blob_git_sha':BLOB,'exact_public_verifier_sha':FORGE,
+                 'actual_private_blob_verified':True,'negative_controls':7,
+                 'owner_signature_verified':False,'worker_candidate_executed':False,
+                 'owner_mutations':0,'gpu_used':False,'scientific_first_use':False,
+                 'private_payload_issued_to_forge':False,'signed_worker_qualified':False
+              },sort_keys=True,separators=(',',':')))
+          finally: shutil.rmtree(stage)
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'F139_PRIVATE_PROJECT_PROVIDER_CUSTODY_FAILED'}
