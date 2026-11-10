@@ -1,0 +1,313 @@
+{
+  "schema": "ttt-hybrid.p53.factual-reward-learned-VOI-DEV-receipt.v1",
+  "classification": "FROZEN_AUTHORED_DEV_POSITIVE_CONVENTIONAL_MODEL_NOT_SCIENTIFIC_PASS",
+  "parent": {
+    "p52_pr": 144,
+    "head_sha": "3e5cb8fe0e3c2fd6d130223f9e2598f44bed60b0",
+    "original_source_git_blob": "0f6e1ab12132b062fa9d447d0f2014d045520eb8",
+    "p52_frozen_dev_result": "FAIL_0_OF_3"
+  },
+  "protocol_freeze_commit": "bfc7f41dfa27eef2e85626a4b22e549e8d120be7",
+  "full_local_result_sha256": "6feac02bc3836cfd63772ac173079ceca8ecabf7a1e93b981f2a3b320d8b86c0",
+  "script_sha256": "07a979085b380375be557aae1307b0579175ba3b280f6c3179efa873ecd8896c",
+  "test_sha256": "35c9152da16c27497cff72cf3d3367840df89c4c4972f05c578664fbfa0e5efe",
+  "source_hashes": {
+    "830101": "da7fc882f4f660bedad276c02e59e8db29d406f5f53498af25cef00071718ab9",
+    "830103": "54352c1423a3fbf07b862a9a36829d950ac25b5db1277f80171263032a39bbcf",
+    "830107": "87245b03b022de8857c159a9c8aaff49721e19c87458b2b4f7585a19430e85d8",
+    "830109": "5161498e050bc1e935f9f01578b00f101c79b449ffb7651da6944754ae6663b9"
+  },
+  "logged_fit_hash": "f6fab627f36a22afa8fb0c57082aeb91ff2b51cc54776d4fd02c0216db82f5cc",
+  "data_sizes": {
+    "830101": 89600,
+    "830103": 1024,
+    "830107": 2048,
+    "830109": 2048
+  },
+  "learned_parameters": {
+    "prior_positive": 0.4990290178571429,
+    "cue_scale": 0.9980249957205392,
+    "cue_variance": 1.0064936380419873,
+    "probe_scale": 0.9969326542261758,
+    "probe_variance": 0.9976471511291483,
+    "physical_training_facts": 89600,
+    "executed_training_probes": 45074,
+    "physical_probe_cost_total": 10125.197615038604,
+    "reward_sign_max_residual": 5.960464477539063e-8
+  },
+  "three_partition_likelihoods": [
+    {
+      "cue_scale": 0.997162166849634,
+      "cue_variance": 1.0148389063197272,
+      "probe_scale": 0.9992953710146222,
+      "probe_variance": 0.9905126492091366,
+      "executed_training_probes": 15064
+    },
+    {
+      "cue_scale": 0.9945995925222899,
+      "cue_variance": 0.9933177026159999,
+      "probe_scale": 1.002406294277693,
+      "probe_variance": 0.9908135539863917,
+      "executed_training_probes": 14988
+    },
+    {
+      "cue_scale": 1.0023175134332813,
+      "cue_variance": 1.011293380970559,
+      "probe_scale": 0.9891435428980214,
+      "probe_variance": 1.0115231518094536,
+      "executed_training_probes": 15022
+    }
+  ],
+  "ood": {
+    "830107": {
+      "learned": {
+        "net_reward": 0.525898598083586,
+        "probe_rate": 0.2802734375,
+        "actual_executed_probes": 574,
+        "low_group_n": 65,
+        "high_group_n": 117,
+        "low_probe_fraction": 1,
+        "high_probe_fraction": 0.6581196581196581,
+        "decisions_sha256": "d9fb5d0d220eb732f23ca0e39e30e9f6cd3ee905888ef8273c11aa81c32ea6ed"
+      },
+      "learned_never": {
+        "net_reward": 0.46875,
+        "probe_rate": 0,
+        "actual_executed_probes": 0
+      },
+      "learned_always": {
+        "net_reward": 0.33478463263054437,
+        "probe_rate": 1,
+        "actual_executed_probes": 2048
+      },
+      "model_aware_bayes": {
+        "net_reward": 0.5288738206545531,
+        "probe_rate": 0.27978515625
+      },
+      "simple_model_aware": {
+        "net_reward": 0.49587640365461993,
+        "probe_rate": 0.09033203125
+      },
+      "paired_bootstrap": {
+        "bootstrap_resamples": 2000,
+        "bootstrap_seed": 1661008,
+        "difference": 0.057148598083585966,
+        "lower_95": 0.02917171298777248,
+        "upper_95": 0.08525459409065658
+      },
+      "gate": {
+        "learned_beat_fitted_never_point02": true,
+        "learned_within_point02_of_bayes": true,
+        "nontrivial_probes": true,
+        "cost_sensitive": true,
+        "paired_CI_lower_positive": true
+      }
+    },
+    "830109": {
+      "learned": {
+        "net_reward": 0.6019220349862735,
+        "probe_rate": 0.255859375,
+        "actual_executed_probes": 524,
+        "low_group_n": 67,
+        "high_group_n": 164,
+        "low_probe_fraction": 1,
+        "high_probe_fraction": 0.5365853658536586,
+        "decisions_sha256": "eb9479de157d47f1ae4fb257753ec36edeef112c41c2ab188d88a6d8311f2ca9"
+      },
+      "learned_never": {
+        "net_reward": 0.52734375,
+        "probe_rate": 0,
+        "actual_executed_probes": 0
+      },
+      "learned_always": {
+        "net_reward": 0.3637736614678033,
+        "probe_rate": 1,
+        "actual_executed_probes": 2048
+      },
+      "model_aware_bayes": {
+        "net_reward": 0.601362209450599,
+        "probe_rate": 0.25390625
+      },
+      "simple_model_aware": {
+        "net_reward": 0.5490946728873496,
+        "probe_rate": 0.07177734375
+      },
+      "paired_bootstrap": {
+        "bootstrap_resamples": 2000,
+        "bootstrap_seed": 1661010,
+        "difference": 0.0745782849862735,
+        "lower_95": 0.04922867911670892,
+        "upper_95": 0.09918451250792941
+      },
+      "gate": {
+        "learned_beat_fitted_never_point02": true,
+        "learned_within_point02_of_bayes": true,
+        "nontrivial_probes": true,
+        "cost_sensitive": true,
+        "paired_CI_lower_positive": true
+      }
+    }
+  },
+  "original_P52_RL_on_new_source": [
+    {
+      "seed": 8311,
+      "arms": {
+        "factorized": {
+          "params": 902,
+          "train_seconds": 1.3838403460003974,
+          "validation_last_two": [
+            0.59375,
+            0.5859375
+          ],
+          "cold_exact": true,
+          "eval": {
+            "830107": {
+              "net_reward": 0.4697265625,
+              "probe_rate": 0
+            },
+            "830109": {
+              "net_reward": 0.5263671875,
+              "probe_rate": 0
+            }
+          }
+        },
+        "gru": {
+          "params": 954,
+          "train_seconds": 1.6602566970004773,
+          "validation_last_two": [
+            0.591796875,
+            0.59375
+          ],
+          "cold_exact": true,
+          "eval": {
+            "830107": {
+              "net_reward": 0.4619140625,
+              "probe_rate": 0
+            },
+            "830109": {
+              "net_reward": 0.5185546875,
+              "probe_rate": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "seed": 8323,
+      "arms": {
+        "factorized": {
+          "params": 902,
+          "train_seconds": 1.373311143999672,
+          "validation_last_two": [
+            0.591796875,
+            0.58984375
+          ],
+          "cold_exact": true,
+          "eval": {
+            "830107": {
+              "net_reward": 0.478515625,
+              "probe_rate": 0
+            },
+            "830109": {
+              "net_reward": 0.5341796875,
+              "probe_rate": 0
+            }
+          }
+        },
+        "gru": {
+          "params": 954,
+          "train_seconds": 1.671049528000367,
+          "validation_last_two": [
+            0.59375,
+            0.595703125
+          ],
+          "cold_exact": true,
+          "eval": {
+            "830107": {
+              "net_reward": 0.4580078125,
+              "probe_rate": 0
+            },
+            "830109": {
+              "net_reward": 0.521484375,
+              "probe_rate": 0
+            }
+          }
+        }
+      }
+    },
+    {
+      "seed": 8331,
+      "arms": {
+        "factorized": {
+          "params": 902,
+          "train_seconds": 1.461771430999761,
+          "validation_last_two": [
+            0.595703125,
+            0.59375
+          ],
+          "cold_exact": true,
+          "eval": {
+            "830107": {
+              "net_reward": 0.482421875,
+              "probe_rate": 0
+            },
+            "830109": {
+              "net_reward": 0.5341796875,
+              "probe_rate": 0
+            }
+          }
+        },
+        "gru": {
+          "params": 954,
+          "train_seconds": 2.133356360000107,
+          "validation_last_two": [
+            0.599609375,
+            0.591796875
+          ],
+          "cold_exact": true,
+          "eval": {
+            "830107": {
+              "net_reward": 0.4609375,
+              "probe_rate": 0
+            },
+            "830109": {
+              "net_reward": 0.5322265625,
+              "probe_rate": 0
+            }
+          }
+        }
+      }
+    }
+  ],
+  "frozen_positive": true,
+  "frozen_positive_per_OOD": {
+    "830107": true,
+    "830109": true
+  },
+  "development_takeaway": "A conventional fitted Gaussian likelihood model trained on physically executed probes and after-action signed rewards learns when a costly probe is worth performing in the same small toy where original factorized and conventional GRU on-policy policy-gradient learners choose zero probes. This does not establish a novel architecture.",
+  "limits": {
+    "reward_reveals_theta_after_episode": "(observed net reward+physical probe cost*actual probe)/(actual final action)=latent sign in this toy",
+    "Gaussian_likelihood_family_assumed": true,
+    "training_logs_random_probe_fraction": 0.5030580357142858,
+    "source_realized_training_information_parity": false,
+    "trained_recurrent_700_updates_per_seed": true,
+    "source_generated_by_experiment_author": true,
+    "independent_external_scientific_first_use": false,
+    "real_physics": false,
+    "scientific_PASS": false,
+    "matched_whole_process_FLOPs": false
+  },
+  "engineering": {
+    "local_focused_tests": "6/6 PASS",
+    "local_full_dev_run_seconds": 10.562956622000456,
+    "source_git_blob": "e514261e0923c6db9274e5bf4fc91d15106376ef",
+    "tests_git_blob": "f3f3e167902a455cc585b50c1e5c19b5152e7d0b",
+    "exact_original_p52_git_blob": "0f6e1ab12132b062fa9d447d0f2014d045520eb8",
+    "original_full_Windows_Ubuntu_WSL_regression": "NOT_RUN",
+    "hosted_CI": "NOT_QUALIFIED_FOR_FINAL_SHA"
+  },
+  "independent_scientific_first_use": "NOT_RUN",
+  "scope": "Draft unmerged separate P53 sidecar; no FORGE controller, schedule, queue, runner, paid API or accepted branch edits.",
+  "source_consumption": "New 830xxx cohorts consumed as authored DEV; replay would not be new independent science.",
+  "deployment": "NOT_ATTEMPTED"
+}

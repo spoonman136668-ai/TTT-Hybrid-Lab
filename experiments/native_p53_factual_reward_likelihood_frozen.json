@@ -1,0 +1,163 @@
+{
+  "schema": "ttt-hybrid.p53-factual-reward-derived-likelihood-VOI-dev-frozen.v1",
+  "date": "2026-11-09",
+  "status": "FROZEN_BEFORE_SOURCE_GENERATION_OR_TRAINING",
+  "parent": {
+    "p52_pr": 144,
+    "sha": "3e5cb8fe0e3c2fd6d130223f9e2598f44bed60b0",
+    "exact_p52_source_blob": "0f6e1ab12132b062fa9d447d0f2014d045520eb8",
+    "p52_science": "frozen DEV FAIL 0/3, trained REINFORCE policies never probe"
+  },
+  "hypothesis": "P52 failure is not absence of learnable factual information: a conventional Gaussian measurement model estimated only from actual randomly executed probe outcomes and final executed-action net rewards will learn positive net value of diagnostic information on unused, unfamiliar development worlds, while original policy-gradient controllers can still collapse.",
+  "source": {
+    "new_unused_seeds": {
+      "fit": 830101,
+      "validation": 830103,
+      "ood1": 830107,
+      "ood2": 830109
+    },
+    "sizes": {
+      "fit": 89600,
+      "validation": 1024,
+      "ood1": 2048,
+      "ood2": 2048
+    },
+    "law": "Original P52 binary latent theta +/-1, cue=theta*cue_gain+cue_sigma*eps_c, optional diagnostic=theta*probe_gain+probe_sigma*eps_p, executed final action +/-1, actual reward=theta*action-cost*probe",
+    "fit_validation_parameter_ranges": {
+      "cue_gain": [
+        0.1,
+        1.2
+      ],
+      "probe_gain": [
+        0.1,
+        1.2
+      ],
+      "cue_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_cost": [
+        0.05,
+        0.4
+      ]
+    },
+    "ood1_ranges": {
+      "cue_gain": [
+        0,
+        1.5
+      ],
+      "probe_gain": [
+        0,
+        1.6
+      ],
+      "cue_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_cost": [
+        0.05,
+        0.65
+      ]
+    },
+    "ood2_ranges": {
+      "cue_gain": [
+        0,
+        2
+      ],
+      "probe_gain": [
+        0,
+        2
+      ],
+      "cue_sigma": [
+        1.1,
+        1.4
+      ],
+      "probe_sigma": [
+        1.1,
+        1.4
+      ],
+      "probe_cost": [
+        0.01,
+        0.75
+      ]
+    },
+    "fit_logging_policy": "fair 50% executed probes, independent fair executed final signed actions; *only* measured diagnostic if executed; physically observed net reward after final action; source latent sign and unexecuted measurement excluded from fitted-model interface",
+    "same_fit_worlds": "Original P52 on-policy learner sees the same fitting physical contexts and potential diagnostic opportunities but may execute different probes. It is NOT an equal count of realized exploratory probes; report counts and do not claim sample-efficiency superiority.",
+    "source_first_use": "new authored DEV only, not independent externally admitted science"
+  },
+  "candidate": {
+    "model": "conventional fitted symmetric Gaussian cue and probe likelihoods; infer hidden sign from the algebraic identity (actual net reward+executed diagnostic cost)/executed final action; OLS estimate signal-gain scale and residual variance in physically observed normalized cues and the subset of actually probed normalized diagnostics; estimate theta prior frequency from recovered signed rewards",
+    "decision": "compute learned Bayesian posterior from cue and empirical Gaussian params, predict expected reward improvement from physical diagnostic using normal CDF and visible cost; execute probe only if expected improvement exceeds cost; final action selected from posterior incorporating only actual executed probe measurement",
+    "prohibited": [
+      "no true theta access in fitting function",
+      "no direct unexecuted measurement in fitting function",
+      "no generative parameter reference from source in fit",
+      "no true model scale or noise fixed at 1 in model fit",
+      "no training on evaluation world",
+      "no source seed retuning after test"
+    ]
+  },
+  "controls": {
+    "analytic_bayes": "known-model-aware P52 Gaussian Bayes, privileged reference ceiling",
+    "never": "conventional learned cue-only posterior using SAME fitted cue likelihood and no probes",
+    "always": "conventional learned posterior with every physical probe, pay all costs",
+    "simple": "original P52 fixed confidence rule with model-aware posterior",
+    "original_REINFORCE_MLP": "original exact P52 FactorizedPolicy, 902 parameters, 700 AdamW updates on new fit source",
+    "original_REINFORCE_GRU": "original P52 ConventionalGRUPolicy, 954 parameters, 700 AdamW updates on new fit source",
+    "wrong_return_credit": "original P52 wrong-credit reference optional 700 updates same fit seed; if expensive report not run"
+  },
+  "train": {
+    "P52_policy_seeds": [
+      8311,
+      8323,
+      8331
+    ],
+    "P52_steps": 700,
+    "batch": 128,
+    "lr": 0.002,
+    "calibration_episode_first_use_only_fit": true,
+    "three_disjoint_fit_partition_models": "train empirical likelihood separately on FIT slices [0:29866],[29866:59733],[59733:89600] as uncertainty diagnosis and full FIT as primary",
+    "quantization": "float64 numpy OLS with source only observed actual events",
+    "same_actions_opportunities": true,
+    "whole_training_compute_per_model_report": true
+  },
+  "metrics": {
+    "primary": {
+      "min_net_gain_vs_factual_never": "empirical learned VOI net reward >= learned-never +0.02 on both OOD1 and OOD2",
+      "to_known_model_reference": "empirical learned VOI OOD net reward >= analytic Bayes -.02 on both OOD1 and OOD2",
+      "actual_probe_fraction": "at least .05 and at most .95 on OOD1, OOD2",
+      "weak_cue_cost_sensitivity": "low cost probe rate >= high cost probe rate +.15 within low-cue & strong-probe-gain groups if both groups size>=25"
+    },
+    "secondary": [
+      "paired reward delta and approximate 95% bootstrap CI vs learned never (seed 830901, fixed 2000 resamples)",
+      "fitted Gaussian signal scale and residual variance; train probe count",
+      "trained REINFORCE MLP/GRU original heldout reward and actual probe rate each seed",
+      "no-probe masking",
+      "cold reconstruction from fitted sufficient statistics exact",
+      "fit and inference wall seconds and probe count"
+    ],
+    "all_primary_metrics_both_OOD_required": true,
+    "original_full_cross_platform_regression_required": true,
+    "scientific_positive": "IMPOSSIBLE because source is authored toy and model uses analytically assumed Gaussian noise family, not neural architecture superiority or authentic independent physics"
+  },
+  "audit": {
+    "label_reconstruction": "fully observed reward in this simulator algebraically reveals signed theta AFTER the final action; this makes conventional supervised fitting possible but is a narrow assumption not realistic general reward-learning",
+    "no_oracle_leakage": "training reward must be from an executed physical action; never read source theta from the fit data"
+  },
+  "authority": {
+    "no_merges": true,
+    "no_FORGE_or_owner_research_dispatch": true,
+    "no_schedules_runner_queue_controller": true,
+    "no_paid_api": true,
+    "no_external_scientific_first_use": true,
+    "preserve_P52_and_prior_frozen_failures": true
+  }
+}
