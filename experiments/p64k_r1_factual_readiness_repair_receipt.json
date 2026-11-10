@@ -1,0 +1,131 @@
+{
+  "schema": "ttt-hybrid.p64k-r1-zero-history-ready-guard-repair-receipt.v1",
+  "classification": "FOCUSED_LOCAL_ENGINEERING_REPAIR_NOT_CROSS_PLATFORM_ACCEPTANCE_OR_SCIENCE",
+  "parent": {
+    "pr": 167,
+    "sha": "9a481b03395f02bbc126aace3fcc59cf101bfe48",
+    "tree": "84cc35f48d29c28b11df684433cd06045c539a72",
+    "original_incremental_source_git_blob": "440aa8717e1aef15d7547be669dfa8d0f4da666a"
+  },
+  "prospective_after_discovery_contract": {
+    "commit": "957270d94379654825f13a7491e8c2096db29912",
+    "original_fixture_disclosed": true,
+    "first_regression_reproduction": "P64-S parent refuses preview on 0 real facts; P64-K incorrectly produced two predictions"
+  },
+  "repair": {
+    "scope": "one new conditional + ValueError; no parameter or source model changes",
+    "path": "native_p64k_incremental_hybrid_stream.py",
+    "old_git_blob": "440aa8717e1aef15d7547be669dfa8d0f4da666a",
+    "new_exact_locally_executed_git_blob": "52e24c7c4727289df97b9c97d1244dd7c2dea716",
+    "new_sha256": "318c0a7b8e02a255dcc48e65e57c3d1e10942be0095dd58aae8c8a53b5cf5a50",
+    "behavior": "Read-only hypothetical preview forbidden unless every batch member has at least one actually caller-confirmed fact; otherwise P64S_NO_CONFIRMED_HISTORY."
+  },
+  "regression_test": {
+    "file": "tests/test_native_p64k_r1_zero_history_guard.py",
+    "git_blob": "53f7d988d56dcdef0d2e17666384ce77d1a14986",
+    "sha256": "83797d4475cedb21cf1a54bccebe8b705b55f24bedcc7358e121eccdcfaa667c",
+    "added": 3,
+    "total_focus_executed": 18,
+    "total_focus_pass": 18,
+    "existing_p62s_tests": 8,
+    "existing_p64k_tests": 7,
+    "exact_parent_p64s_test_suite_rerun": "NOT_RUN_ON_THIS_PATCHED_TREE",
+    "local_cpu": "Python 3.13.5, Torch 2.10.0+cpu, Pytest 9.0.2; 1.35 s",
+    "checks": [
+      "Parent and incremental both reject no fact",
+      "One genuine fact admits candidate-only pure preview with original model parity",
+      "Exact original model, P62 and P64-S source unchanged; corrupted mixed count rejected"
+    ]
+  },
+  "original_unchanged_blobs": {
+    "model_py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p62s": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "p64s": "56f4d566db9375e4b27e7d9eabcaf67498c25d94"
+  },
+  "post_repair_performance_regression": {
+    "original_benchmark_source": "experiments/p64k_incremental_full_hybrid_benchmark_dev.py",
+    "source_seeds_reused": [
+      713,
+      719
+    ],
+    "weight_seed_reused": 711,
+    "not_independent_performance_first_use": true,
+    "benchmark_script_source_metadata_still_refers_to_pre_repair_git_blob": true,
+    "measured_actual_script_was_patched_runtime": true,
+    "local_json_sha256": "e13b68970baac51547436dad0f50e972f49fc70b8cd39c1b0ce7401d99df2367",
+    "rows": [
+      {
+        "seed": 713,
+        "length": 12,
+        "speedup": 1.409,
+        "max_abs_diff": 2.38419e-7
+      },
+      {
+        "seed": 713,
+        "length": 24,
+        "speedup": 1.758,
+        "max_abs_diff": 2.38419e-7
+      },
+      {
+        "seed": 713,
+        "length": 40,
+        "speedup": 2.168,
+        "max_abs_diff": 2.38419e-7
+      },
+      {
+        "seed": 713,
+        "length": 60,
+        "speedup": 2.657,
+        "max_abs_diff": 2.38419e-7
+      },
+      {
+        "seed": 719,
+        "length": 12,
+        "speedup": 1.365,
+        "max_abs_diff": 1.19209e-7
+      },
+      {
+        "seed": 719,
+        "length": 24,
+        "speedup": 1.748,
+        "max_abs_diff": 1.19209e-7
+      },
+      {
+        "seed": 719,
+        "length": 40,
+        "speedup": 2.249,
+        "max_abs_diff": 2.68221e-7
+      },
+      {
+        "seed": 719,
+        "length": 60,
+        "speedup": 3.083,
+        "max_abs_diff": 2.38419e-7
+      }
+    ],
+    "existing_frozen_40_60_speed_and_numerical_parity_gate": "PASS_ON_REPLAYED_DEV_SEEDS",
+    "actual_full_training_wall_cost": "UNVERIFIED"
+  },
+  "hosted_CI_observed_on_original_PR167": {
+    "g4_run": 42827822796,
+    "g5_run": 42827822897,
+    "g7_run": 42827822786,
+    "status": "FAIL_INFRASTRUCTURE_PRE_RUN",
+    "jobs_runner_id": 0,
+    "jobs_steps": 0,
+    "not_a_test_failure_or_pass": true
+  },
+  "qualification": {
+    "full_original_repo_exact_final_SHA_windows": "UNVERIFIED",
+    "full_original_repo_exact_final_SHA_ubuntu_wsl": "UNVERIFIED",
+    "authentic_GPU": "NOT_RUN",
+    "parent_exact_suite": "NOT_RUN",
+    "local_reconstructed_subset": "PASS_18_OF_18",
+    "scientific_gain": "NOT_TESTED",
+    "scientific_first_use": "NOT_RUN",
+    "FORGE": "UNCHANGED",
+    "deployment": "NONE",
+    "merge": "NOT_REQUESTED",
+    "new_runner_or_workflow_or_scheduled_task": "NONE"
+  }
+}
