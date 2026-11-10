@@ -1,0 +1,51 @@
+{
+  "schema": "ttt-hybrid.p59-official-installed-gymnasium-parity-preflight.v1",
+  "purpose": "Source-bound executable official installed Gymnasium MountainCarContinuous-v0 reset/step/TimeLimit qualification; FAIL CLOSED if official package unavailable or file blob differs",
+  "classification": "ENGINEERING_QUALIFICATION_HARNESS_NO_TRAINING_NO_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 156,
+    "commit": "4f0e4f405bd867c92fea26bbb0cd6b5f89b33cda",
+    "tree": "2d4a63787f5d6852ded6b71f93976443a864ffe8",
+    "p58_frozen_task_result": "PASS_ACTION_VALUE_TASK_ONLY_HANDCODED_MOMENTUM_NO_NEURAL_LEARNING"
+  },
+  "pinned_external": {
+    "repository": "Farama-Foundation/Gymnasium",
+    "commit": "e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "file": "gymnasium/envs/classic_control/continuous_mountain_car.py",
+    "blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "class": "Continuous_MountainCarEnv",
+    "env_id": "MountainCarContinuous-v0",
+    "expected_registered_time_limit": 999
+  },
+  "contract": {
+    "qualification_only_installed_module": true,
+    "precondition": "gymnasium module actually installed, gym.make registered env, env.unwrapped class belongs to official module, source file path resolves, entire file Git blob is exact pin; never write to or patch installed package",
+    "on_absent": "UNAVAILABLE nonzero exit, never PASS; optional isolated regression test SKIP only",
+    "on_mismatch": "FAIL_CLOSED source drift; never execute physics trial",
+    "reset": "compare 16 seeded official reset observations against independent P54 published_reset using at most absolute 5e-7; record exact source and seeds",
+    "transitions": "for 16 pinned source seeds test momentum and neutral actual actions up to 256 steps; compare observed next sensor absolute tolerance 5e-7, exact reward within 1e-9, exact terminated/truncated to P54 until time-limit; no future observations given to controller",
+    "wrapper": "on same official installed env 999 neutral actions from valid reset: no premature termination, final step triggers truncation, exact wrapper spec max_episode_steps=999; create fresh env for each audit",
+    "negative": "source mismatch and absent package both cannot produce PASS; wrong env id/class refused, no fallback to isolated upstream method",
+    "evidence": "source blob, official version, Python/pip environment, seed bounds, per policy trace sha256, max abs error, mismatch counts, time-limit, elapsed",
+    "no_new_training": true,
+    "no_new_source_seeds_claim": "Reuse P58 seeded engineering cases for parity; not new independent science",
+    "test_metadata": "do not claim full platform acceptance from local tests; Windows and Ubuntu mandatory separately",
+    "no_method_fragment_equivalence_conflation": true
+  },
+  "qualification": {
+    "local_gymnasium_currently_unavailable": true,
+    "local_index_dns_error": true,
+    "CI_G4_G5_G7_previous_runs": "5 jobs without runner or steps, exact platform regression unverified",
+    "external_source_owner_science_first_use": false,
+    "FORGE_integration": false
+  },
+  "authority": {
+    "no_merge": true,
+    "no_scheduler": true,
+    "no_new_runner_or_CI_workflow": true,
+    "no_FORGE_controller_or_queue": true,
+    "no_paid_APIs": true,
+    "no_model_promotion": true
+  }
+}
