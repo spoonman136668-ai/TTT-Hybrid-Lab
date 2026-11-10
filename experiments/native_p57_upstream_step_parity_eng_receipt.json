@@ -1,0 +1,79 @@
+{
+  "schema": "ttt-hybrid.p57.pinned-upstream-step-fragment-parity-engineering.v1",
+  "classification": "EXPLORATORY_ENGINEERING_SOURCE_FRAGMENT_PARITY_NOT_FULL_INSTALLED_GYMNASIUM_RUNTIME_NOT_SCIENTIFIC_ACCEPTANCE",
+  "parent": {
+    "pr": 150,
+    "sha": "e4e391a2a0ee6d972c851f6342f5a6e2007e3d36",
+    "tree": "07d9e57ce9cb32a59013c11cd045f0213fe0192c"
+  },
+  "source": {
+    "upstream_repository": "Farama-Foundation/Gymnasium",
+    "upstream_commit": "e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "upstream_path": "gymnasium/envs/classic_control/continuous_mountain_car.py",
+    "upstream_git_blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "step_method_exact_utf8_sha256": "405213fb980f17ab3a8593cd16504bd5d3c6fae5eb7b88a6c375fe5416d03b04",
+    "step_method_source_authority": "Read-only GitHub source; extracted exact byte-identical method tested in isolated class, constants taken from pinned upstream original __init__",
+    "official_package_installed": false,
+    "official_Gymnasium_inherited_env_wrapper_executed": false,
+    "upstream_license": "MIT"
+  },
+  "new_test": {
+    "path": "tests/test_p57_pinned_upstream_step_parity.py",
+    "git_blob": "30ca3b585e00e2ac7c5481525c6ce7019576cdd1",
+    "sha256": "a944ab3f03a69c68db3731d9ec4698f585692d841306ddefa4133f338ecba281",
+    "tested_exact_source": true
+  },
+  "comparisons": {
+    "random_seed": 576201,
+    "random_independent_state_action_pairs": 20000,
+    "random_sensor_bit_exact": 16926,
+    "random_sensor_max_absolute_difference": 1.1920928955078125e-7,
+    "edge_cases": 30,
+    "edge_sensor_max_absolute_difference": 2.9802322387695312e-8,
+    "edge_force_clipping_and_raw_action_reward_tested": true,
+    "full_rollouts": 256,
+    "rollout_max_steps_each": 64,
+    "rollout_actual_completed_transitions": 16384,
+    "rollout_sensor_max_absolute_difference": 2.384185791015625e-7,
+    "reward_mismatches": 0,
+    "termination_mismatches": 0,
+    "exploratory_float_absolute_tolerance": 5e-7
+  },
+  "focused_tests": {
+    "inherited_P50_P54_P55": 31,
+    "new_P57": 5,
+    "pass": 36,
+    "skipped": 1,
+    "skipped_reason": "Official installed Gymnasium runtime absent",
+    "elapsed_seconds": 2.29,
+    "Python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2"
+  },
+  "unchanged": {
+    "model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P55_factual_stream_git_blob": "731ac511090f1c3ca83c2bf784591e604cfc1a87",
+    "P54_published_physics_git_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "P56_training_negative_result": "PRESERVED_FAIL_0_OF_3",
+    "all_original_model_training_code": true
+  },
+  "qualification": {
+    "engineering_extracted_method_parity": "PASS_LOCAL",
+    "original_official_runtime_and_wrapper_parity": "NOT_RUN",
+    "full_final_exact_source_Windows_Linux_regression": "NOT_RUN",
+    "scientific_learning_or_transfer": "NOT_RUN",
+    "real_independent_physical_source": "NOT_RUN",
+    "frozen_scientific_first_use": "NOT_AUTHORIZED",
+    "model_promotion": false,
+    "merge": false
+  },
+  "authority": {
+    "no_runner_change": true,
+    "no_scheduler": true,
+    "no_new_workflow": true,
+    "no_controller_or_FORGE_integration": true,
+    "no_paid_API": true
+  },
+  "note": "The acceptance tolerance was chosen after an initial exploratory read-only probe, not a pre-registered scientific outcome. This is an engineering check of a pinned method extract, not source-owner official parity. No source or model promotion."
+}
