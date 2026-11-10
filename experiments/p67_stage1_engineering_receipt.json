@@ -42,7 +42,7 @@
     "The frozen full 3-seed study has a 1800-second budget, is not yet qualified by baseline convergence or matched whole-process compute.",
     "One PyTorch warning in test casts grad-tracked tensor in assertion; no test failure."
   ],
-  "orthogonal_negative_max_abs_delta": 2.384185791015625e-07,
+  "orthogonal_negative_max_abs_delta": 2.384185791015625e-7,
   "parent_pr": 175,
   "schema": "ttt-hybrid.p67-stage1-engineering-receipt.v1",
   "scope": {
@@ -54,8 +54,8 @@
     "ood_primary_mse": "NOT_SCORED",
     "pinned_original_g4": "NOT_RUN",
     "scheduled_task": "NONE",
-    "scienti\ufb01c_pass": "NOT_ESTABLISHED",
-    "training_full_3_seed": "NOT_RUN"
+    "training_full_3_seed": "NOT_RUN",
+    "scientific_pass": "NOT_ESTABLISHED"
   },
   "source_audits": {
     "fit": {
