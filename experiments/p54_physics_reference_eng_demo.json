@@ -1,0 +1,21 @@
+{
+  "action_schedule_sha256": "00d38ad8103b7fefba05dac18393d8879cdf222ab0fcc054b33c0abe12fba35a",
+  "all_history_commits_completed_only": true,
+  "candidate_model_parameters": 4659,
+  "completed_physical_interventions": 512,
+  "episodes": 64,
+  "no_model_training_or_adaptation": true,
+  "official_gymnasium_exact_runtime_parity": "NOT_VERIFIED_PACKAGE_UNAVAILABLE",
+  "original_analytical_mechanics_oracle_MSE": 0.0,
+  "prediction_is_reproducible": true,
+  "python": "3.13.5",
+  "rank_certified_streams": 64,
+  "schema": "ttt-hybrid.p54-pinned-mountaincar-factual-eng-demo.v1",
+  "scientific_result": "NOT_TESTED",
+  "seed_prefix": 5405400,
+  "source": "published equation transcription; NOT official upstream runtime",
+  "source_seed": 54054,
+  "time_seconds": 0.40411490899987257,
+  "torch": "2.10.0+cpu",
+  "untrained_native_two_action_next_sensor_mse": 0.07275886833667755
+}

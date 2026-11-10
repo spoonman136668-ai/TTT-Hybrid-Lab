@@ -1,0 +1,114 @@
+{
+  "authority": {
+    "no_FORGE_dispatch": true,
+    "no_live_actuation": true,
+    "no_model_promotion_or_merge": true,
+    "no_paid_api": true,
+    "no_runner_or_workflow_scheduled_task": true
+  },
+  "classification": "FOCUSED_DEV_ENG_ONLY_EXTERNAL_UPSTREAM_RUNTIME_UNVERIFIED",
+  "date_utc": "2026-11-09",
+  "demo": {
+    "action_schedule_sha256": "00d38ad8103b7fefba05dac18393d8879cdf222ab0fcc054b33c0abe12fba35a",
+    "all_history_commits_completed_only": true,
+    "candidate_model_parameters": 4659,
+    "completed_physical_interventions": 512,
+    "episodes": 64,
+    "no_model_training_or_adaptation": true,
+    "official_gymnasium_exact_runtime_parity": "NOT_VERIFIED_PACKAGE_UNAVAILABLE",
+    "original_analytical_mechanics_oracle_MSE": 0.0,
+    "prediction_is_reproducible": true,
+    "python": "3.13.5",
+    "rank_certified_streams": 64,
+    "schema": "ttt-hybrid.p54-pinned-mountaincar-factual-eng-demo.v1",
+    "scientific_result": "NOT_TESTED",
+    "seed_prefix": 5405400,
+    "source": "published equation transcription; NOT official upstream runtime",
+    "source_seed": 54054,
+    "time_seconds": 0.40411490899987257,
+    "torch": "2.10.0+cpu",
+    "untrained_native_two_action_next_sensor_mse": 0.07275886833667755
+  },
+  "environment": {
+    "full_system": "local Linux CPU reference",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu"
+  },
+  "files": {
+    "experiments/p54_physics_reference_eng_demo.json": {
+      "bytes": 880,
+      "git_blob_sha1": "e7a3822494a0260b003c9729ad0304e65c1d9051",
+      "sha256": "99e4038e315d9d426f80ba519cb4de7c68e1bda1fc0289bf9264212d339222d0"
+    },
+    "model.py": {
+      "bytes": 6279,
+      "git_blob_sha1": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+      "sha256": "6055a98775aabe165f099cdbf31a711bb5bd6570091d327eb53c1f36e68add94"
+    },
+    "native_factual_hybrid_stream.py": {
+      "bytes": 10844,
+      "git_blob_sha1": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+      "sha256": "bb611dfe5d79cc3778ca46f908f2b6d2152210dd5aa6c9210fbe1c522fa12cfe"
+    },
+    "native_p54_mountaincar_factual_bridge.py": {
+      "bytes": 9327,
+      "git_blob_sha1": "c23b36375f1a6931d4340a340a0ad6c817695258",
+      "sha256": "ab4a0d06e39ecd45b044d39fdbfa734415a2adbfb8fb7654e7df41a6a984e59b"
+    },
+    "run_p54_engineering.py": {
+      "bytes": 3056,
+      "git_blob_sha1": "1b55c6042403c4f129f4a1e56d8892b518925478",
+      "sha256": "a40e69ad3d39bf7ce5a38d028dd7343e6886e28c3cc3c6d2dbe8f2c108ceffae"
+    },
+    "tests/test_native_factual_hybrid_stream.py": {
+      "bytes": 8804,
+      "git_blob_sha1": "aaef2e08d5ce528f3a66addeed6586d671027963",
+      "sha256": "a68fa6219b63f568fca653b3ec3aad74afd866a41f99a925dc69b975d0ae2031"
+    },
+    "tests/test_native_p54_mountaincar_factual_bridge.py": {
+      "bytes": 9608,
+      "git_blob_sha1": "435320012ad7eab28db3143fa569dfd4de8d3499",
+      "sha256": "52ac15a9cf48464d4e9dc9980486b17d6fec4545fc0ad89698cbf40fe3f43627"
+    }
+  },
+  "freeze": {
+    "commit": "42c75ba61490a7abfd6f27543640fd79a9b00cd7",
+    "manifest_git_blob": "a92c76413d0628c6531cf9b2675dd2acb9a3871b",
+    "tree": "c559800fe6d2a2af4f93f3c102f42d1c6618c9fc"
+  },
+  "parent": {
+    "pr": 140,
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "sha": "7d0c253fc884b1a8979cf762518d8b1bbfedbcbc",
+    "tree": "7031a4cbadbac1ec079804ce9f92e23b8a983745"
+  },
+  "schema": "ttt-hybrid.p54-physics-factual-bridge-engineering-receipt.v1",
+  "scientific": {
+    "full_original_Windows_Ubuntu_regression": "NOT_RUN",
+    "independent_external_source": "NOT_EXECUTED",
+    "model_superiority_claim": "NONE",
+    "native_GPU_build": "NOT_RUN",
+    "published_formula_reference_only": true,
+    "strong_GRU_MLP_or_analytical_physics_comparison": "NOT_RUN",
+    "trained_P53_or_P50_model": "NOT_RUN"
+  },
+  "scope": "nonlive mathematical transcription of publicly published mechanics; no protected science first-use",
+  "tests": {
+    "inherited_original_P50": "12_PASS",
+    "initial_manual_golden_tests_fail": "Two own tests used incorrect overly strict float32 equality; adjusted test float32 expected/tolerance without modifying physics or frozen scope; final suite passed",
+    "new": "11_PASS_1_SKIPPED",
+    "result": "23_PASS_1_SKIPPED",
+    "skipped": "Official Gymnasium runtime direct source parity because Gymnasium not installed",
+    "wall_seconds": 1.26
+  },
+  "upstream": {
+    "environment": "MountainCarContinuous-v0",
+    "git_blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "provenance_verification": "Upstream exact SHA/blob read through GitHub connector; official installed runtime not run",
+    "repo": "Farama-Foundation/Gymnasium",
+    "source_path": "gymnasium/envs/classic_control/continuous_mountain_car.py",
+    "source_ref": "e6be96abfb0a9df36da5e7884522c4f1f2432e53"
+  }
+}

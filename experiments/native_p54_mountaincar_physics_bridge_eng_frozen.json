@@ -1,0 +1,107 @@
+{
+  "schema": "ttt-hybrid.p54-standard-mountaincar-factual-bridge-engineering-freeze.v1",
+  "stage": "ENGINEERING_ONLY_FROZEN_BEFORE_LOCAL_BRIDGE_SIMULATION",
+  "owner": "TTT-Hybrid-Lab architecture engineering; no scientific first use",
+  "parent": {
+    "pr": 140,
+    "head": "7d0c253fc884b1a8979cf762518d8b1bbfedbcbc",
+    "tree": "7031a4cbadbac1ec079804ce9f92e23b8a983745",
+    "original_p50_module_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "pr147_p53": "UNCHANGED_FAILED_SCIENCE_0_OF_3"
+  },
+  "upstream": {
+    "project": "Farama-Foundation/Gymnasium",
+    "commit": "e6be96abfb0a9df36da5e7884522c4f1f2432e53",
+    "commit_date_utc": "2026-11-08T16:10:56Z",
+    "path": "gymnasium/envs/classic_control/continuous_mountain_car.py",
+    "file_git_blob": "96dbb0d31a17d144468562f4bc68fce902e2a69f",
+    "standard_id": "MountainCarContinuous-v0",
+    "source_role": "external published reference specification, not a user-owned scientific dataset",
+    "local_official_package": "NOT_INSTALLED_OR_EXECUTED"
+  },
+  "physics": {
+    "action_range": [
+      -1,
+      1
+    ],
+    "sensor_order": [
+      "position",
+      "velocity"
+    ],
+    "position_range": [
+      -1.2,
+      0.6
+    ],
+    "velocity_range": [
+      -0.07,
+      0.07
+    ],
+    "power": 0.0015,
+    "gravity": 0.0025,
+    "wall_velocity_reset": true,
+    "goal_position": 0.45,
+    "goal_velocity": 0,
+    "time_limit_wrapped": 999,
+    "initial_position_uniform": [
+      -0.6,
+      -0.4
+    ],
+    "initial_velocity": 0,
+    "reward": "100 on reach goal minus 0.1*actual_action**2; otherwise negative 0.1*actual_action**2"
+  },
+  "bridge": {
+    "action_subset": "completed +/-1 executed actions only; original P50 declines zero action and is NOT a full continuous policy",
+    "observation": "two-element true physical state, one executed scalar motor action, positive discrete physical timestep and true returned next state only",
+    "commit": "no factual change until source returns a completed physical next state; original native_factual_hybrid_stream.observe updates bounded tensor memory",
+    "hypothetical": "preview across candidate +/-1 must not advance original physical state or tokenless factual memory",
+    "state": "entire original P50 factual state plus physical state/step/termination/reward, cold restorable",
+    "fair_comparison": "published physical reference is a known deterministic mechanics baseline; native learned predictions must be compared to exact mechanics and conventional regression; no model superiority claim",
+    "external_parity": "if verified Gymnasium installed on qualified executor, compare actual upstream environment .step on identical state/action against derived reference; this local container does not have the package"
+  },
+  "fixed_dev_fixtures": {
+    "no_model_training": true,
+    "tests": [
+      "formula golden",
+      "force clip and zero physics",
+      "wall inelastic",
+      "velocity and position clip",
+      "goal and cost",
+      "seeded resets",
+      "explicit action role failure",
+      "one true step commits exactly one event",
+      "candidate preview no physical or factual write",
+      "rank fail for identical action sequence",
+      "rank pass after alternating completed physical events",
+      "cold tensor and model restore",
+      "batch physical isolation",
+      "source SHA mismatch refuses",
+      "run bounded 8 physical steps with source custody"
+    ],
+    "negative_controls": [
+      "fake candidate never executes physical .step",
+      "corrupt external source file mismatch",
+      "nonfinite inputs fail closed",
+      "no claim of physically independent scientific OOD",
+      "Gymnasium native parity requires package and is not silently asserted"
+    ],
+    "validation": "focus pytest on exact byte-identical P50 model plus source bridge; original mandatory Windows and Linux full regression separately required"
+  },
+  "science_future": {
+    "preregister_source_protocol_separately": true,
+    "external_physical_world_source_first_use": "NOT_AUTHORIZED_OR_PERFORMED",
+    "learned_model": "not tested here",
+    "full_converged_GRU_MLP": "not tested",
+    "matched_original_analytical_dynamics_baseline": true,
+    "matched_interventions_and_whole_process_compute": "required",
+    "retention_reversal_and_interference": "required",
+    "external_env_native_parity": "required before independent source claims"
+  },
+  "isolation": {
+    "no_new_runner_schedule_workflow_controller_queue": true,
+    "no_FORGE_integration": true,
+    "no_science_authority_migration": true,
+    "no_merge_or_promotion": true,
+    "no_paid_api": true
+  }
+}
