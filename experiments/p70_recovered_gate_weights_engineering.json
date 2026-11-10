@@ -1,0 +1,69 @@
+{
+  "schema": "ttt-hybrid.p70-recovered-gate-weights-engineering-only.v1",
+  "classification": "REPRODUCED_ON_CONSUMED_FIT_VAL_ENGINEERING_NO_NEW_SCIENTIFIC_EVIDENCE",
+  "p70_parent_sha": "e21b1f381e4c64e43bfdc8b31a1ab5797bf600e9",
+  "source_blobs": {
+    "p68_slot_memory_dev.py": "7db52d3a150903b2feff661c9562017ee24c0dfe",
+    "p69_ring_cache.py": "bf12bd3525230ecf58ecc43837f67fdf23578f35",
+    "p70_unified_ring_dev.py": "7dc46812c639efe963a8d4d2972e6dbe1ed9ee77"
+  },
+  "source_hashes": {
+    "fit": "2a35ea8697c89977fe21c95d33eee505b37cb79da4d4d164ce5f4b9496490bbe",
+    "val": "40eec4e0d01f1919f4822f32f31782808902801a99b52295e2188f209eedc560"
+  },
+  "train_sampler_sha256": "bd60a581870e4fe4f8462e7dd83dd81acd55f51767a8d4722fa42a73fcf2c701",
+  "torch": "2.10.0+cpu",
+  "model_rows": [
+    {
+      "seed": 1000201,
+      "best_validation_mse": 0.006694135721772909,
+      "initialization_sha256": "24a2914f21655f3fba504cf944f770170411b5e39ef7a027bddddd66ed513b80",
+      "train_steps": 180,
+      "trained_theta": [
+        -0.9188888072967529,
+        -0.7191678881645203,
+        0.003978138789534569,
+        0.9039514660835266
+      ],
+      "trained_theta_sha256": "d703f692883fae50f578ef311dc7ceaa6af5a5ba5f51bd508dcbb4ada7cdaf59",
+      "validation_parity": "BIT_EXACT"
+    },
+    {
+      "seed": 1000203,
+      "best_validation_mse": 0.0058860923163592815,
+      "initialization_sha256": "87ceef06bb1beecbc99e522576f2fbce95d003472d5cb94024bdeff595af906f",
+      "train_steps": 180,
+      "trained_theta": [
+        -1.1371526718139648,
+        -0.7640940546989441,
+        -0.031886711716651917,
+        0.9210875034332275
+      ],
+      "trained_theta_sha256": "d95402c824e932d74435edd634d5685c407fd8b7df4741169835ea1357bd700a",
+      "validation_parity": "BIT_EXACT"
+    },
+    {
+      "seed": 1000207,
+      "best_validation_mse": 0.005593966227024794,
+      "initialization_sha256": "f93e01ae16782ba40b985171ce831fcd23198c5cc9df10dcc3d4c4963b70cb2f",
+      "train_steps": 180,
+      "trained_theta": [
+        -1.2033586502075195,
+        -0.7765178084373474,
+        -0.03707001730799675,
+        0.966083288192749
+      ],
+      "trained_theta_sha256": "1a460ab42e1c63dd3cc1f98a9d9944392113e9aa3043ca2391b445979ecdcb79",
+      "validation_parity": "BIT_EXACT"
+    }
+  ],
+  "all_val_bit_exact": true,
+  "ood_scored_in_recovery": false,
+  "reference_ood_result_not_reused": true,
+  "model_architecture_instantiated": false,
+  "physical_science_first_use": "NOT_RUN",
+  "full_windows_linux_regression": "NOT_RUN",
+  "gpu": "NOT_RUN",
+  "forge": "UNCHANGED",
+  "elapsed_seconds": 12.140115035000235
+}
