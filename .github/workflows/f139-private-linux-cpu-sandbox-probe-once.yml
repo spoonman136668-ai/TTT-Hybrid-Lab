@@ -1,0 +1,72 @@
+name: FORGE private Linux CPU sandbox control probe (one shot, no candidate)
+on:
+  push:
+    branches: ['operations/f139-private-cpu-sandbox-probe-once-20261110']
+permissions:
+  contents: read
+jobs:
+  static-isolation-probe:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.deleted == false && github.event.forced == false && github.run_attempt == 1 && github.run_number == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Verify pinned public helper and run credential-free Linux containment probe only
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $memory=Get-CimInstance Win32_OperatingSystem
+          if([int64]$memory.FreePhysicalMemory -lt 8388608){throw 'PRIVATE_SANDBOX_HOST_MEMORY_HEADROOM_REQUIRED'}
+          @'
+          import json, os, subprocess, textwrap
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as f: event=json.load(f)
+          assert not event['deleted'] and not event['forced'] and event['after']==os.environ['GITHUB_SHA']
+          runid=os.environ['GITHUB_RUN_ID'];assert runid.isdigit()
+          code=r"""
+          import hashlib, importlib, json, os, pathlib, sys, urllib.request
+          assert os.getuid()==1000
+          source='04f58618c9e46fb04996dbde1e1d198af1ffafd3'
+          expected={'private_cpu_runtime.py':'714d999068d58889ff906f0096cc39f84a84a153',
+                    'private_cpu_sandbox.py':'d3af0e1c3b00a3c84b7dfd7e03787abc0bbcdf22'}
+          runid='RUNID'
+          stage=pathlib.Path('/var/tmp/f139-private-cpu-sandbox-source-r'+runid)
+          root=pathlib.Path('/var/tmp/f139-private-cpu-sandbox-r'+runid)
+          runtime=pathlib.Path('/var/tmp/forge-private-cpu-runtime-r42799893920')
+          assert not stage.exists() and not root.exists() and not stage.is_symlink() and not root.is_symlink()
+          stage.mkdir(mode=0o700);pkg=stage/'f139';pkg.mkdir(mode=0o700)
+          (pkg/'__init__.py').write_bytes(b'')
+          for name,sha in expected.items():
+              url='https://raw.githubusercontent.com/spoonman136668-ai/FORGE/'+source+'/f139/'+name
+              with urllib.request.urlopen(url,timeout=25) as response:
+                  assert response.geturl()==url
+                  payload=response.read(150000)
+              gitsha=hashlib.sha1(b'blob '+str(len(payload)).encode()+b'\0'+payload).hexdigest()
+              assert gitsha==sha, 'PUBLIC_HELPER_BLOB_DRIFT:'+name
+              (pkg/name).write_bytes(payload)
+          sys.path.insert(0,str(stage))
+          from f139.private_cpu_sandbox import qualify
+          report=qualify(runtime,root,source)
+          assert report['sandbox_control_probe_pass'] is True
+          assert report['private_project_code_executed'] is False
+          assert report['signed_worker_qualified'] is False
+          assert report['scientific_first_use'] is False
+          print('F139_PRIVATE_SANDBOX_CONTROL_RESULT='+json.dumps(report,sort_keys=True,separators=(',',':')))
+          """.replace('RUNID',runid)
+          allowed={'SYSTEMROOT','WINDIR','PATH','TEMP','TMP','USERPROFILE','LOCALAPPDATA','APPDATA'}
+          env={k:v for k,v in os.environ.items() if k.upper() in allowed};env['WSLENV']=''
+          proc=subprocess.run(['wsl.exe','--distribution','Ubuntu-24.04','--exec',
+              '/usr/bin/timeout','--signal=TERM','--kill-after=10s','230s',
+              '/usr/bin/python3','-I','-B','-c',code],env=env,
+              stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+              timeout=250,check=False)
+          if proc.returncode:
+              print('F139_SANDBOX_PROBE_FAILURE_RETURN_CODE='+str(proc.returncode))
+              print('F139_SANDBOX_PROBE_DIAGNOSTIC='+proc.stderr.decode('utf-8','replace')[-1500:])
+              print('F139_SANDBOX_PROBE_OUTPUT_TAIL='+proc.stdout.decode('utf-8','replace')[-1500:])
+          assert proc.returncode==0, 'F139_SANDBOX_CONTROL_PROBE_NOT_QUALIFIED'
+          print(proc.stdout.decode('utf-8','strict').strip())
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'F139_SANDBOX_CONTROL_PROBE_NOT_QUALIFIED'}
