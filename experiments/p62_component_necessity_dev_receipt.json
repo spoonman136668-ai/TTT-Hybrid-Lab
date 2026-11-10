@@ -1,0 +1,148 @@
+{
+  "schema": "ttt-hybrid.p62-component-necessity-dev-negative-receipt.v1",
+  "source": "LOCAL_ISOLATED_CPU_EXACT_CODE_BLOBS_NOT_ORIGINAL_FULL_REPO_CI",
+  "frozen_before_first_use_commit": "8dc66c413a672500c84a6fb85fcb5e9dad7e983c",
+  "frozen_manifest_blob": "bad8e39c44b02c6bc4b7f9b17f2cccdde767c91f",
+  "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+  "script_blob": "69445cba37481c2166b840e4b299d83e9ee39d42",
+  "tests_blob": "f35c71165d2055b939f4425691336af660c5b299",
+  "script_sha256": "83aeb3739a8d356d16f54e2810c20cbc519482ba5a22cf67d1eb327a77252697",
+  "tests_sha256": "5b6366ad5acb4557a5d496faed2f60d7b33e743cfcf305e1694c6ee3dbab29c3",
+  "full_original_local_numerical_json_sha256": "794459a9d5ad872a1313e0e17b24c73b7ea1a9f69e3696503909cdbd592884e8",
+  "source_hashes": {
+    "fit": "ef6fd80c00f213bbd834a59119b71bc249ae1852095d8fc122048829984120c8",
+    "val": "1b5bde528780de571471d5ec92b146b6e3a01766ab72d54e033d16b673297f66",
+    "unfamiliar_dev": "e464d34ce1bcfce90adfd8363f454e00d2627d39869a63a63b72508515b2a3a5"
+  },
+  "minibatch_sample_index_sha256": "b2fe79f322f5f1845c6b43394ca1f7b76568674d48f4a98c985b5d789e0d00d8",
+  "environment": "Python 3.13.5, torch 2.10.0+cpu, pytest 9.0.2, NumPy 2.3.5, single CPU thread",
+  "focused_tests": {
+    "passed": 9,
+    "failed": 0
+  },
+  "authored_source": {
+    "fit_episodes": 4096,
+    "val_episodes": 512,
+    "unfamiliar_dev_episodes": 1024,
+    "physical_motor_probes_per_episode": 6,
+    "actual_logged_final_reward_actions_per_episode": 1,
+    "actual_fit_probe_observations": 24576,
+    "actual_fit_final_reward_actions": 4096,
+    "external_physical_world": false
+  },
+  "training": {
+    "seeds": [
+      994101,
+      994103,
+      994107
+    ],
+    "arms": 8,
+    "updates_each": 480,
+    "total_optimizer_updates": 11520,
+    "batch": 128,
+    "AdamW_lr": 0.003,
+    "fully_converged": false,
+    "compute_matched": false,
+    "model_param_counts": {
+      "Hybrid": 1282,
+      "no_TTT": 978,
+      "no_SSM": 970,
+      "no_attention": 978,
+      "no_depth": 977,
+      "GRU": 1242,
+      "history_MLP": 1225,
+      "destroyed_credit_Hybrid": 1282
+    }
+  },
+  "analytic_ood_accuracy": {
+    "recent_three": 0.798828125,
+    "all_six": 0.5986328125,
+    "affine_OLS": 0.609375,
+    "affine_OLS_rank_coverage": 0.970703125
+  },
+  "seeds": [
+    {
+      "seed": 994101,
+      "ood": {
+        "Hybrid": 0.7802734375,
+        "no_TTT": 0.7685546875,
+        "no_SSM": 0.7841796875,
+        "no_attention": 0.78125,
+        "no_depth": 0.787109375,
+        "GRU": 0.7705078125,
+        "history_MLP": 0.8056640625,
+        "destroyed_credit_Hybrid": 0.5224609375,
+        "post_train_TTT_disabled": 0.548828125
+      },
+      "gates": {
+        "Hybrid_success_min75": true,
+        "Hybrid_margin_best_conventional_min3pp": false,
+        "Hybrid_margin_separately_trained_no_TTT_min2pp": false,
+        "Hybrid_margin_destroyed_credit_min10pp": true,
+        "all_validation_plateau": false,
+        "all_cold_exact": true
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 994103,
+      "ood": {
+        "Hybrid": 0.783203125,
+        "no_TTT": 0.76953125,
+        "no_SSM": 0.7666015625,
+        "no_attention": 0.75390625,
+        "no_depth": 0.77734375,
+        "GRU": 0.7861328125,
+        "history_MLP": 0.8203125,
+        "destroyed_credit_Hybrid": 0.478515625,
+        "post_train_TTT_disabled": 0.568359375
+      },
+      "gates": {
+        "Hybrid_success_min75": true,
+        "Hybrid_margin_best_conventional_min3pp": false,
+        "Hybrid_margin_separately_trained_no_TTT_min2pp": false,
+        "Hybrid_margin_destroyed_credit_min10pp": true,
+        "all_validation_plateau": false,
+        "all_cold_exact": true
+      },
+      "all_pass": false
+    },
+    {
+      "seed": 994107,
+      "ood": {
+        "Hybrid": 0.78515625,
+        "no_TTT": 0.7626953125,
+        "no_SSM": 0.78125,
+        "no_attention": 0.775390625,
+        "no_depth": 0.7587890625,
+        "GRU": 0.78125,
+        "history_MLP": 0.7001953125,
+        "destroyed_credit_Hybrid": 0.478515625,
+        "post_train_TTT_disabled": 0.49609375
+      },
+      "gates": {
+        "Hybrid_success_min75": true,
+        "Hybrid_margin_best_conventional_min3pp": false,
+        "Hybrid_margin_separately_trained_no_TTT_min2pp": true,
+        "Hybrid_margin_destroyed_credit_min10pp": true,
+        "all_validation_plateau": false,
+        "all_cold_exact": true
+      },
+      "all_pass": false
+    }
+  ],
+  "summary": {
+    "frozen_scientific_DEV": "FAIL_0_OF_3",
+    "strongest_control_margin": "FAIL_0_OF_3",
+    "trained_TTT_component_margin": "PASS_1_OF_3",
+    "noninvertible_wrong_credit_margin": "PASS_3_OF_3",
+    "cold_restore": "PASS_ALL_ARMS",
+    "trained_validation_plateau": "FAIL_3_OF_3",
+    "full_original_windows_linux_regression": "UNVERIFIED",
+    "external_scientific_first_use": "NOT_AUTHORIZED_NOT_RUN",
+    "official_native_GPU": "NOT_RUN"
+  },
+  "runtime_wall_seconds": 70.578714252,
+  "provenance_notes": "Post-training TTT disable drops Hybrid performance to 49.6–56.8%, but independently trained no-TTT retains 76.3–77.0%; a post-training disable is distribution shift, not causal proof of TTT advantage. Group parameter counts differ (no-TTT 978 vs Hybrid 1282), computational equivalence not proven. Not owner-authenticated science. No source/orchestration or user runner changes.",
+  "disposition": "NEGATIVE_RESULT_PRESERVED_NO_MODEL_PROMOTION_NO_FORGE_CHANGE"
+}
