@@ -1,0 +1,162 @@
+{
+  "schema": "ttt-hybrid.p60.native-factual-history-necessity-ablation-dev-receipt.v1",
+  "classification": "FROZEN_AUTHORED_IMITATION_DEV_FAIL_0_OF_3_NO_INDEPENDENT_SCIENTIFIC_SUPERIORITY",
+  "freeze": {
+    "commit": "cda31c66e459b066c48fb3efa1087717bd95ae75",
+    "tree": "c7116ae546f2360e47446d6729bc8840cab57295",
+    "manifest_blob": "2286c5dac8affe6ef2986f96f744b0feb837048f",
+    "committed_before_any_new_P60_eval_data": true
+  },
+  "parent": {
+    "pr": 158,
+    "head": "af32bb43e4fc1a4271150ce27f7b6d101450c825",
+    "original_p59_source_git_blob": "70b8189cf46c4da492580fca88f1e17135ce30db",
+    "model_py_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "physics_git_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039"
+  },
+  "code": {
+    "path": "experiments/p60_history_necessity_ablation_dev.py",
+    "git_blob": "573e6b8cc67921959556cb924c3f74cd6fc46070",
+    "sha256": "b9f5ed77e901957cf1070cae25a3bcb4addfd8eb70f9048a3de8ab074cbeeba1"
+  },
+  "focused_tests": {
+    "path": "tests/test_p60_history_necessity_ablation_dev.py",
+    "git_blob": "95d56310d7438df1d185baab68b38dda7c58c798",
+    "sha256": "8c0c0aa7e6ddf35e789f2446f91a5b9b1e98dfac455b343b45db082c62d1430d",
+    "new_tests_8_of_8": "PASS",
+    "all_supported_local_repo_tests": "58_PASS_2_SKIPPED"
+  },
+  "source": {
+    "fit_seed_range": "986000-986127, previously consumed supervised fit only",
+    "fit_completed_action_count": 10195,
+    "fit_SHA256": "fa101629292fafb9013d63f4c3626f5cde184039e86db41b17dcd3b77ff61c8f",
+    "original_P59_fit_SHA256_verified_exact": true,
+    "val_seed_range": "987200-987231 NEW",
+    "val_SHA256": "455699befa52de2f322aff5334fa4de13db7759dc4d11f2107bf534679a5949b",
+    "ood_seed_range": "987400-987495 NEW",
+    "ood_SHA256": "9a47952985915a31467ba59bba1af7b2ca0be74b71aea0a2b98b7701b94960c7",
+    "published_physics_equations_not_installed_Gymnasium": true,
+    "teacher_is_function_only_of_current_velocity": true,
+    "intervention_all_actions_observed_before_memory_commit": true,
+    "unrealized_future_outcomes_not_used_for_training": true
+  },
+  "training": {
+    "model_seeds": [
+      9611,
+      9623,
+      9631
+    ],
+    "neural_models": [
+      "original_HybridPilot_full_SSM_attention_TTT_depth",
+      "comparable_current_only_MLP"
+    ],
+    "parameter_counts": {
+      "full_Hybrid": 1282,
+      "current_only_MLP": 1255
+    },
+    "updates_each_model_each_seed": 400,
+    "total_updates": 2400,
+    "batch": 96,
+    "lr": 0.003,
+    "torch": "2.10.0+cpu",
+    "python": "3.13.5",
+    "full_run_json_sha256": "5198733c0a02c7e3176dcfa56161890980ff6da71b5f6e91c307273f06820372",
+    "full_run_json_git_blob": "87d70625c822697677c5afefdaac7bc34f00107a",
+    "full_dev_wall_seconds": 11.429463768999994
+  },
+  "control_modes": [
+    "full_witnessed_history",
+    "no_history_same_trained_weights",
+    "wrong_credit_cyclic_historical_actual_actions_only",
+    "TTT_fast_state_updates_disabled_same_trained_weights",
+    "fully_trained_current_sensor_only_MLP"
+  ],
+  "seed_outcomes": [
+    {
+      "seed": 9611,
+      "sampler_SHA256": "5972a22f3f534ca784266d0b4c77505ecc2a8147ad894b9f35dde7609a4508ef",
+      "successes_96": {
+        "full": 96,
+        "no_history": 93,
+        "wrong_credit": 96,
+        "ttt_off": 95,
+        "current_only": 91
+      },
+      "mean_reward": {
+        "full": 92.284375,
+        "no_history": 88.6125,
+        "wrong_credit": 92.403125,
+        "ttt_off": 91.071875,
+        "current_only": 86.059375
+      },
+      "plateau_all": true,
+      "cold_exact_all": true,
+      "full_gate_pass": false
+    },
+    {
+      "seed": 9623,
+      "sampler_SHA256": "2bc1610021b49c07f80e16a2c5cf41f1b93e643bccfaca87c1d22614c4c16c1d",
+      "successes_96": {
+        "full": 96,
+        "no_history": 91,
+        "wrong_credit": 96,
+        "ttt_off": 96,
+        "current_only": 92
+      },
+      "mean_reward": {
+        "full": 92.34791666666668,
+        "no_history": 85.97083333333335,
+        "wrong_credit": 92.34791666666668,
+        "ttt_off": 92.35208333333337,
+        "current_only": 87.32708333333335
+      },
+      "plateau_all": true,
+      "cold_exact_all": true,
+      "full_gate_pass": false
+    },
+    {
+      "seed": 9631,
+      "sampler_SHA256": "5b874161334322a4d82fa72b533deae51f8fb0b1a61e197b0b0dd05f45cf41f5",
+      "successes_96": {
+        "full": 96,
+        "no_history": 93,
+        "wrong_credit": 96,
+        "ttt_off": 96,
+        "current_only": 93
+      },
+      "mean_reward": {
+        "full": 92.47395833333333,
+        "no_history": 88.61041666666667,
+        "wrong_credit": 92.52708333333335,
+        "ttt_off": 92.46770833333335,
+        "current_only": 88.60520833333334
+      },
+      "plateau_all": true,
+      "cold_exact_all": true,
+      "full_gate_pass": false
+    }
+  ],
+  "gates": {
+    "full_goal_rate_at_least_95pct": "PASS_3_OF_3",
+    "all_models_validation_accuracy_plateau": "PASS_3_OF_3",
+    "cold_weights_restore_exact": "PASS_3_OF_3",
+    "full_success_10pp_above_nohistory_and_currentonly": "FAIL_0_OF_3",
+    "full_reward_5_points_above_both_memoryless": "FAIL_2_OF_3",
+    "wrong_credit_ablation_success_delta_10pp": "FAIL_0_OF_3",
+    "ttt_fast_update_off_success_delta_10pp": "FAIL_0_OF_3",
+    "combined": "FAIL_0_OF_3"
+  },
+  "scientific_interpretation": "The successful P59 imitation task's optimal teacher action is exactly determined by a current-state velocity threshold. Shifting old action credit retains 96/96 successes in all seeds and disabling TTT fast writes retains 95-96/96, so memory and TTT necessity is NOT established on this easy task. Some modest performance loss with zero history is observed; do not claim zero history benefit or general uselessness.",
+  "qualification": {
+    "engineering_local_focus": "PASS",
+    "official_installed_gymnasium": "NOT_RUN",
+    "external_real_world_science_first_use": "NOT_RUN",
+    "fully_compute_matched_training": "NOT_PROVEN",
+    "all_source_platform_windows_linux_full_regression": "NOT_RUN",
+    "native_GPU_Build": "NOT_RUN",
+    "merge": "NO",
+    "model_promotion": "NO",
+    "FORGE": "UNCHANGED",
+    "scheduled_tasks": "NONE"
+  }
+}
