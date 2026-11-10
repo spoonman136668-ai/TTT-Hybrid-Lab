@@ -103,14 +103,15 @@ def test_cold_tensor_only_restore_does_not_regenerate_factual_prefix():
     io_buf=io.BytesIO()
     torch.save({'weights':core.state_dict(), 'state':{'ssm':state.ssm_hidden,
         'ak':state.attention_k,'av':state.attention_v,
-        'tw':state.ttt.fast_weights,'n':state.ttt.confirmed_count}},io_buf)
+        'tw':state.ttt.fast_weights,'n':state.ttt.confirmed_count,
+        'model_fingerprint':state.model_fingerprint}},io_buf)
     io_buf.seek(0)
     loaded=torch.load(io_buf,weights_only=True)
     replacement=HybridPilot(5,2,Configuration(width=8,heads=2)).eval()
     replacement.load_state_dict(loaded['weights'])
     adapter=StreamingHybridPilot(replacement,max_confirmed_events=12)
     s=loaded['state']
-    restored=HybridFactualState(s['ssm'],s['ak'],s['av'],TTTFactualState(s['tw'],s['n']))
+    restored=HybridFactualState(s['ssm'],s['ak'],s['av'],TTTFactualState(s['tw'],s['n']),s['model_fingerprint'])
     with torch.no_grad():
         after=adapter.preview(candidates,restored)
     assert torch.equal(original,after)
@@ -121,6 +122,9 @@ def test_real_factual_gradient_through_all_four_blocks():
     core,stream,events,candidates,state=setup(641,1)
     with torch.no_grad():
         core.depth.router.bias.fill_(2.)
+    # An adapter must be bound to the final parameter revision.
+    stream=StreamingHybridPilot(core,max_confirmed_events=12)
+    state=stream.initial_state(events[:,0,:])
     yes=torch.ones((1,9),dtype=torch.bool)
     _,new_state=stream.ingest_confirmed(events,state,yes)
     predicted=stream.preview(candidates,new_state)
