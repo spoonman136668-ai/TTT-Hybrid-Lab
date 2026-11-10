@@ -1,0 +1,150 @@
+{
+  "schema": "ttt-hybrid.p66-factual-action-learned-write-dev-negative-receipt.v1",
+  "classification": "EXACT_SOURCE_EXECUTED_AUTHORED_DEV_NOT_SCIENTIFIC_OR_ACCEPTANCE",
+  "scope": {
+    "parent_pr": 170,
+    "parent_sha": "5fe37fdb4b51e248159c66b2c3e426ca6d58c738",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P65_reference_null": "FROZEN_DEV_FAIL_0_OF_3_UNCHANGED",
+    "frozen_protocol_commit": "69cbd767b639fbb7194967c353e392fa4a071ef7",
+    "pre_source_arithmetic_and_shortcut_clarification_commit": "4d7fb1366bdaf02a26250a889b0154914e7503ed",
+    "code_path": "experiments/p66_learned_write_dev.py",
+    "code_git_blob": "c26a100d139f5e8409156fbebaba81b4fbef4f1c",
+    "code_sha256": "135916a4f06d5cffa67bb094eb0ec4320b25f30566aaa77e95c8aaa70a8972b9",
+    "test_path": "tests/test_p66_learned_write_dev.py",
+    "test_git_blob": "a88bfc3573c566142e0e665663d5672dcd501b65",
+    "test_sha256": "cb1fc76c6298f9daa600e049d953342f67bec8b3edc04790386b6d9874569bd5",
+    "full_json_local_sha256": "46a4b377aea200acc55deaca664f7c432ed8a45ac1a9f9e21d778d0845f0df1e",
+    "full_json_bytes": 8401
+  },
+  "source": {
+    "FIT_worlds": 1024,
+    "validation_worlds": 256,
+    "OOD_dev_worlds": 256,
+    "steps_per_world": 64,
+    "actual_target_events": 32,
+    "actual_distractor_events": 32,
+    "scalar_actual_action": "±1",
+    "observed_continuous_consequence_dim": 16,
+    "actual_query_outcomes_per_train_world": 1,
+    "sources_sha256": {
+      "fit": "48f1386998a9f5d1444b280b17cfa48b6cf998ed449b7167eebf17183353a71c",
+      "val": "3c7d76a21a6797f82047c9f9c25223cb105a424d4217e13337a24c3a6d17bfa5",
+      "ood": "6430f78a48992d7b393891719d436eee944cb02eb7443e29c8c036dd8e00566a"
+    },
+    "model_seeds": [
+      966201,
+      966203,
+      966207
+    ],
+    "shared_training_index_sha256": "0141929c3fbcdcc96c5e545173ea3ea83237fe93e14b416ba5ba27f159e87f1f",
+    "actual_simulated_facts_only": true,
+    "counterfactual_queries_not_available_during_writes": true,
+    "latent_effects_not_in_learner_inputs": true,
+    "source_is_authored_simulation_not_real_plant": true
+  },
+  "training": {
+    "torch": "2.10.0+cpu",
+    "python": "3.13",
+    "pytest": "9.0.2",
+    "platform": "isolated Linux CPU",
+    "one_CPU_thread": true,
+    "train_arms": [
+      "learned_write_gate",
+      "wrong_action_credit_learned_gate",
+      "GRU"
+    ],
+    "steps_per_arm_per_seed": 400,
+    "total_optimizer_updates": 3600,
+    "batch": 64,
+    "AdamW_lr": 0.003,
+    "full_study_seconds": 81.389400591,
+    "params": {
+      "learned_gate": 4,
+      "wrong_credit_gate": 4,
+      "trained_GRU": 4816
+    },
+    "source_index_parity": true,
+    "training_budgets_not_FLOPs_or_convergence_matched": true
+  },
+  "mse_ood": {
+    "learned_gate": [
+      0.107047,
+      0.100351,
+      0.099059
+    ],
+    "GRU": [
+      0.447105,
+      0.432257,
+      0.433909
+    ],
+    "wrong_credit": [
+      0.410204,
+      0.410443,
+      0.410002
+    ],
+    "random_write_rate_matched": [
+      0.287069,
+      0.29916,
+      0.296652
+    ],
+    "original_always_write": 0.4056224524974823,
+    "fixed_surprise_write": 0.45133498311042786,
+    "fixed_prior_read_norm": 0.39156374335289,
+    "classical_fifo_equal_256floats": 0.758462131023407,
+    "zero_memory": 0.39156374335289,
+    "privileged_known_phase_oracle": 0.0027454274240881205
+  },
+  "frozen_gates_all_seeds": {
+    "learned_10pct_ood_mse_better_than_best_nonprivileged": "PASS_3_OF_3",
+    "learned_20pct_ood_mse_better_than_noninvertible_wrong_credit": "PASS_3_OF_3",
+    "learned_15pct_ood_mse_better_than_equal_rate_random": "PASS_3_OF_3",
+    "GRU_validation_last80_mse_delta_le_0p005": "FAIL_0_OF_3",
+    "joint_sci_dev_full": "FAIL_0_OF_3"
+  },
+  "learned_gate_behavior": {
+    "seed_966201": {
+      "fit_write_rate": 0.3604,
+      "fit_first32": 0.5047,
+      "fit_last32": 0.2162
+    },
+    "seed_966203": {
+      "fit_write_rate": 0.3628,
+      "fit_first32": 0.5157,
+      "fit_last32": 0.2099
+    },
+    "seed_966207": {
+      "fit_write_rate": 0.3634,
+      "fit_first32": 0.5155,
+      "fit_last32": 0.2113
+    }
+  },
+  "caveats": [
+    "Fixed 32 target then 32 distractor order and an explicit normalized timestep gate feature allow trivial phase/time shortcut; strong privileged phase-known skip MSE 0.002745 and beats candidate by ~36x. Do not attribute win to learned causal relevance.",
+    "GRU validation MSE increases in the last 80 updates for all 3 seeds; comparator not qualified fully converged. Original protocol required validation plateau and therefore combined gate strictly FAIL.",
+    "Classical simple norm threshold fails to write fresh associations and equals the zero-memory baseline. Strong content-selective controls remain incomplete.",
+    "Comparator parameters, FLOPs, and whole process computational costs unmatched. Small 4-parameter fixed-event gate is not a novel native general intelligence architecture.",
+    "Trainable candidate uses exact reference fast matrix update with manually exposed normalized sensor keys, not original trained HybridPilot with SSM/attention/depth.",
+    "Simulated executed actions are factual within authored model only, not authenticated real physical source."
+  ],
+  "engineering": {
+    "focused_local_tests": "PASS_6_OF_6",
+    "original_final_tree_full_windows_linux_regression": "NOT_EXECUTED",
+    "hosted_G4_G5_G7": "UNVERIFIED_NEW_PR",
+    "original_model_no_edits": true,
+    "torch_only_CPU": true,
+    "unknown_official_native_GPU_build": true,
+    "exact_tested_code_and_test_github_blob_match": true
+  },
+  "scientific": "FROZEN_AUTHORED_DEV_FAIL_0_OF_3_NO_PROTECTED_FIRST_USE",
+  "deployment": {
+    "merged": false,
+    "accepted_ref_mutation": false,
+    "FORGE_owner_unchanged": true,
+    "controller_scheduler_runner_workflow_unchanged": true,
+    "model_promotion": false,
+    "paid_api": false,
+    "live_actions": false
+  },
+  "next_falsification": "Independently freeze randomized target/distractor interleaving and task-dependent relevance while excluding any time cue/phase oracle, train a competent GRU, attention/memory MLP and an equally-capable conventional temporal gate, and evaluate genuine unfamiliar transfer with matched actions/compute and original owner scientific qualification. Do not replay this consumed OOD as a new sealed result."
+}
