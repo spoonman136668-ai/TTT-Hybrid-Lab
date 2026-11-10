@@ -1,0 +1,54 @@
+name: FORGE integration exact private startup annotations (read only once)
+on:
+  push:
+    branches: ['operations/f139-private-startup-annotations-readonly-once-20261110']
+permissions:
+  actions: read
+  checks: read
+jobs:
+  fixed-startup-readback:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 3
+    steps:
+      - name: Read fixed failed-run startup annotations with existing project identity
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          import json, os, urllib.request
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          assert event['sender']['login']=='spoonman136668-ai'
+          base='https://api.github.com/repos/spoonman136668-ai/TTT-Hybrid-Lab/'
+          def get(path):
+              request=urllib.request.Request(base+path,method='GET',headers={
+                  'Authorization':'Bearer '+os.environ['GH_TOKEN'],
+                  'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'})
+              with urllib.request.urlopen(request,timeout=30) as response:
+                  assert response.url.startswith(base)
+                  return json.load(response)
+          run=get('actions/runs/42789421315')
+          assert run['id']==42789421315 and run['head_sha']=='815fbf85774e02beca0d63ad3e6a9799f1c671ce'
+          assert run['conclusion']=='failure' and run['run_attempt']==1
+          records=[]
+          for check in (129738733592,129738734378):
+              rows=get('check-runs/'+str(check)+'/annotations?per_page=10')
+              assert type(rows) is list and len(rows)<=2
+              for row in rows:
+                  records.append(dict(check_run_id=check,annotation_level=row['annotation_level'],
+                      title=str(row.get('title',''))[:300],message=str(row['message'])[:3000]))
+          print('F139_PRIVATE_STARTUP_ANNOTATIONS='+json.dumps(dict(
+              schema='forge.f139.private-startup-annotation-readback.v1',failed_run=42789421315,
+              records=records,metadata_only=True,owner_mutations=0,model_calls=0,
+              gpu_used=False,new_credentials=False,scientific_first_use=False),sort_keys=True))
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'PRIVATE_STARTUP_ANNOTATION_READBACK_FAILED'}
