@@ -1,0 +1,107 @@
+{
+  "schema": "ttt-hybrid.p63-persistent-factual-fast-weight-negative-receipt.v1",
+  "candidate_scope": "AUTHORED_CPU_DEV_ISOLATED_NO_ORIGINAL_REPOSITORY_ACCEPTANCE",
+  "prospective_frozen_before_authored_source_or_training": "09425435616c1c9d02073e749ae5da8f5525bbc3",
+  "frozen_manifest_blob": "8e3618ee8f4dbc90982ff1b777d5c3cf3fa51dba",
+  "model_source_unchanged_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+  "exact_executed_script_git_blob": "9f75ddad869579ca868982dee0c55d98aedbd2f9",
+  "exact_executed_tests_git_blob": "fb5175cfff7230301c99a4624471537813ff53ca",
+  "script_sha256": "c4ca486b764c0e299b973d23c31f8165db577ce7e7b7ade7daf94e86cb2b7d57",
+  "tests_sha256": "a0a0b2e82520a71a782858974fee02d7cd55104951b6c6bfb6d2362b5e4cd445",
+  "original_local_full_results_sha256": "054138e90d5726b8bedea2631014b8d4ee649e4bc8d7a97c59b52db8d3aedda1",
+  "authored_source_sha256": {
+    "fit": "fa441c24c55d8974f3463b168e2d790e101f5f267f6f4651f44bbeef90a81d4c",
+    "val": "2ae41483656a6d2585b0040d2f980806f04fcf4cc5cf2dfb4841efd4d3f498bf",
+    "ood": "ebd1e732433d86e95f6cc0ac865793b5f2bb123835b802cbcedbe1e01753ea31"
+  },
+  "minibatch_indices_sha256": "21e88762ead273faf1a8d241c9c3a2d77ddd182eadaa3d1f7bcd3d6669498ea4",
+  "run_environment": "Python 3.13.5, torch 2.10.0+cpu, numpy 2.3.5, pytest 9.0.2, single CPU thread",
+  "focused_tests": {
+    "passed": 8,
+    "failed": 0
+  },
+  "source": {
+    "fit_worlds": 512,
+    "val_worlds": 128,
+    "ood_worlds": 128,
+    "steps_per_world": 32,
+    "observed_actual_action_outcomes_per_fit_world": 32,
+    "external_authentic_world": false
+  },
+  "training": {
+    "outer_steps_per_trainable_arm": 240,
+    "batch": 96,
+    "initialization_seeds": [
+      996101,
+      996103,
+      996107
+    ],
+    "training_arms": [
+      "learned fast",
+      "trained GRU",
+      "wrong credit learned fast"
+    ],
+    "two_parameter_fast_initialization_is_seed_independent": true,
+    "GRU_trainable_parameters": 325,
+    "fast_trainable_parameters": 2,
+    "matched_compute": false,
+    "fully_converged": false
+  },
+  "controls_MSE": {
+    "fixed_online_lr_0p2": 0.05944174900650978,
+    "sliding_OLS_8": 0.06551741063594818,
+    "last_observed_delta": 0.1290227174758911
+  },
+  "seed_results": [
+    {
+      "seed": 996101,
+      "learned_fast_MSE": 0.054067958146333694,
+      "trained_GRU_MSE": 0.04888954386115074,
+      "wrong_credit_MSE": 0.07208109647035599,
+      "fast_lr": 0.5805038213729858,
+      "fast_decay": 0.9571742415428162,
+      "fast_val_MSE_final": 0.023061195388436317,
+      "GRU_val_MSE_final": 0.019436364993453026,
+      "fast_cold_resume_exact": true,
+      "all_training_validation_plateau": true,
+      "full_frozen_superiority": false
+    },
+    {
+      "seed": 996103,
+      "learned_fast_MSE": 0.054067958146333694,
+      "trained_GRU_MSE": 0.04652988538146019,
+      "wrong_credit_MSE": 0.07208109647035599,
+      "fast_lr": 0.5805038213729858,
+      "fast_decay": 0.9571742415428162,
+      "fast_val_MSE_final": 0.023061195388436317,
+      "GRU_val_MSE_final": 0.019281188026070595,
+      "fast_cold_resume_exact": true,
+      "all_training_validation_plateau": true,
+      "full_frozen_superiority": false
+    },
+    {
+      "seed": 996107,
+      "learned_fast_MSE": 0.054067958146333694,
+      "trained_GRU_MSE": 0.04704811051487923,
+      "wrong_credit_MSE": 0.07208109647035599,
+      "fast_lr": 0.5805038213729858,
+      "fast_decay": 0.9571742415428162,
+      "fast_val_MSE_final": 0.023061195388436317,
+      "GRU_val_MSE_final": 0.019700197502970695,
+      "fast_cold_resume_exact": true,
+      "all_training_validation_plateau": true,
+      "full_frozen_superiority": false
+    }
+  ],
+  "frozen_gates": {
+    "fast_10pct_better_than_best_GRU_or_sliding_OLS": "FAIL_0_OF_3",
+    "fast_10pct_better_than_fixed_lr": "FAIL_0_OF_3",
+    "destroyed_credit_20pct_worse": "PASS_ALL_3",
+    "cold_restore": "PASS_ALL_3",
+    "trained_validation_plateau": "PASS_ALL_3",
+    "overall": "SCIENTIFIC_DEV_FAIL_0_OF_3"
+  },
+  "wall_seconds": 16.37476646799996,
+  "limitations": "This is a simple two-weight learned online linear filter, not real recurrent Mamba, native attention, or official TTT. Three 'model seeds' only alter GRU random init; two-parameter fast model initialization and batches are identical, so fast outcomes are the same run repeated, not independent replicate evidence. One authored OOD cohort, no external physics. GRU ~162x parameter count; strict FLOP/training compute parity absent. No cold transfer or continual skills proof. Zero observed counterfactual targets supplied to models.",
+  "authority": "DRAFT DEV ONLY; no first-use, no original model changes, no FORGE/runner/queue/schedule, no promotion or merge; exact original Windows/Linux final regression UNVERIFIED"
+}
