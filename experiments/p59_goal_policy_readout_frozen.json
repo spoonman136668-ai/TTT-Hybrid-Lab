@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.p59.goal-control-imitation-readout-frozen-dev.v1",
+  "state": "PROSPECTIVELY_FROZEN_BEFORE_DATA_COLLECTION_OR_ANY_TRAINING",
+  "date": "2026-11-10",
+  "source": {
+    "parent_pr": 156,
+    "parent_sha": "4f0e4f405bd867c92fea26bbb0cd6b5f89b33cda",
+    "parent_tree": "2d4a63787f5d6852ded6b71f93976443a864ffe8",
+    "physical_module": "native_p54_mountaincar_factual_bridge.py",
+    "physical_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "model_module": "model.py",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "source_classification": "pinned published-equation transcription NOT authentic installed Gymnasium",
+    "original_P58_consumed_seeds": "985100..985195 MUST_NOT_REUSE",
+    "train_reset_seeds": [
+      986000,
+      986127
+    ],
+    "validation_seeds": [
+      986200,
+      986231
+    ],
+    "ood_seeds": [
+      986400,
+      986495
+    ],
+    "train_val_reset_range": [
+      -0.6,
+      -0.4
+    ],
+    "ood_reset_range": [
+      -0.75,
+      -0.25
+    ],
+    "horizon": 256
+  },
+  "hypothesis": "Can the existing token-free factual SSM/Attention/TTT/depth readout execute a genuinely delayed-goal motor policy after equally supervised expert action imitation, attaining >=95% of strong handcoded momentum controller's goal success and mean net reward on NEW physical resets, without future-outcome leakage? Compare independently trained MLP and GRU to prevent architectural overclaim.",
+  "arms": {
+    "teacher": "Existing original P58 conventional bang-bang velocity sign threshold, with first reset action negative; expert produces ONLY executed actual action/next/reward transitions",
+    "candidate": "unchanged parent model.HybridPilot(input_dim=5,output_dim=1,Configuration(width=8,heads=2,ssm=True,attention=True,ttt=True,depth=True)) on a four-fact-plus-current-query analog sequence; teacher labels used for supervised BCE loss, no source oracle at inference",
+    "conventional_GRU": "torch.nn.GRU on same sequence and current analog query; hidden width auto-selected before source-use for parameter budget within 10% of candidate; same BCE/AdamW updates/data/minibatches",
+    "conventional_MLP": "same flattened actual factual history/current query, 2-hidden-layer torch MLP hidden width auto-selected for <=10% candidate param budget; same BCE/AdamW updates/data/minibatches",
+    "negative": "untrained weights per model seed; report goal success and reward as zero-shot sanity, no claim of science gain"
+  },
+  "factual_input": {
+    "capacity": 4,
+    "query": "Current real sensor [position,velocity] plus zero delta and action; last four real pre-sensors+delta+motor action recorded only AFTER official published physical step",
+    "no_unexecuted_outcome": true,
+    "teacher_labels": "Demonstration labels from actual expert current-state action, explicitly imitation and NOT genuine reward-only causal exploration",
+    "closed_loop": "At each future physical step learned policy independently chooses actual +/-1 motor command, publisher advances the actual state, no teacher access"
+  },
+  "training": {
+    "seeds": [
+      9511,
+      9523,
+      9531
+    ],
+    "updates_each_model_each_seed": 400,
+    "batch_size": 96,
+    "optimizer": "AdamW",
+    "lr": 0.003,
+    "loss": "binary cross entropy on expert signed action",
+    "gradient_clip": 1,
+    "val_check_every": 100,
+    "training_data": "All actual expert state-action and factual history observations from 128 train resets; no test/validation gradient updates",
+    "validation": "32 distinct resets, actual closed-loop returns and teacher labels only for training-free classification diagnostics",
+    "train_minibatches": "same index minibatch sequence across models per seed; with-replacement, do not claim equal compute",
+    "deterministic_seed": true,
+    "parameter_ratio": "|baseline_params/candidate_params -1| <= .1",
+    "convergence": "last two heldout expert-action classification checks differ <=1 percentage point; otherwise convergence unverified"
+  },
+  "frozen_scientific_dev_gate": {
+    "required_each_of_three_seeds": [
+      "candidate validation closed-loop goal successes >= 95% of handcoded momentum",
+      "candidate OOD closed-loop goal successes >= 95% of handcoded momentum",
+      "candidate OOD mean physical net reward >= momentum OOD mean reward-5.0",
+      "candidate goal success no more than 5 percentage points below BOTH trained conventional MLP and GRU",
+      "candidate cold weight restore gives identical signed actions for same factual query",
+      "all models use identical actual teacher FIT records and optimizer update count"
+    ],
+    "negative_controls": [
+      "untrained goal success reported; no generic Hybrid improvement claim",
+      "no model gets future reward or teacher rule in closed-loop",
+      "source rewards verified reward=100*terminated-0.1*actual_action^2",
+      "same frozen OOD resets for teacher, MLP, GRU and Hybrid, natural termination counts disclosed"
+    ],
+    "success_interpretation": "DEV readout qualification only: expert imitation does not demonstrate autonomous action-consequence discovery, benefit from TTT fast weights, causal transfer, RSI, scientific pass or official Gymnasium runtime parity",
+    "total_system_compute": "measure individual training+full closed-loop wall and model parameter counts; do not claim compute match without measured active FLOP parity"
+  },
+  "authority": {
+    "no_external_science_first_use": true,
+    "no_scheduled_tasks": true,
+    "no_new_runner_controller_queue_or_workflow": true,
+    "no_FORGE_dispatch_or_integration": true,
+    "no_merge_or_model_promotion": true,
+    "no_paid_API": true,
+    "full_exact_SHA_Windows_and_Ubuntu_WSL_regression_required": true,
+    "preserve_prior_negative_findings": true
+  }
+}
