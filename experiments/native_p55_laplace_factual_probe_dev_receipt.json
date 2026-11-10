@@ -1,0 +1,182 @@
+{
+  "schema": "ttt-hybrid.p55.laplace-factual-probe-dev-result.v1",
+  "classification": "FROZEN_AUTHORED_DEV_FAIL_0_OF_2_STRICT_GAUSSIAN_MARGIN",
+  "source_parent": {
+    "pr": 149,
+    "head_sha": "e2ab8e7fb1000cdc7a530265adcec4c17e92ee71",
+    "original_gaussian_fit_blob": "c4239b125e3d5928807738aac117be89f202d7a1",
+    "original_P54_science": "AUTHORED_DEV_PASS_2_OF_2_BUT_ARCHITECTURE_UNVERIFIED"
+  },
+  "freeze": {
+    "commit_sha": "d7754a01fe39fdebad58b9c23499730df50f3411",
+    "path": "experiments/native_p55_laplace_factual_probe_frozen.json",
+    "git_blob": "810fe086e92e0f266fd2765975fb4a436008161f",
+    "committed_before_source_generation": true,
+    "all_seeds_thresholds_locked": true
+  },
+  "source": {
+    "law": "independent variance-one Laplace cue/probe/reward noise; binary physical effect; actual probe and actual signed final reward only",
+    "logging": "Bernoulli fair actually executed probe, fair signed final action; unexecuted measurement exactly zero; same FIT records for fitted Laplace and fitted Gaussian",
+    "cohorts": {
+      "FIT": {
+        "seed": 850001,
+        "n": 49152,
+        "sha256": "98c7e68fb33947b9dbe0eba794b269a12ddc3a54b717f091aad9f6db87d0d280",
+        "log_sha256": "3a96d5c82e96cbeaf3171de768d137f366f049881c983b3db9e490dbbc1f8c09"
+      },
+      "VALIDATION": {
+        "seed": 850101,
+        "n": 2048,
+        "sha256": "1fe0b9b0878c459ea27d8672ea80addd867e27254c216a251330420d9f8b2d28"
+      },
+      "UNFAMILIAR_A": {
+        "seed": 850201,
+        "n": 8192,
+        "sha256": "e747d93d550bd2c65dbf80db0b0d934819a9ccc70c2f451ed06162fc1467a702"
+      },
+      "UNFAMILIAR_B": {
+        "seed": 850301,
+        "n": 8192,
+        "sha256": "5284cc83603e9e873c14ad7e8c4584e04605533bb3676024a76bc67630ef1534"
+      },
+      "SHAM": {
+        "seed": 850401,
+        "n": 4096,
+        "sha256": "50d300b72957153d7204385c9156e7d9c85512473ba3261e4d8057092a47755b"
+      }
+    },
+    "all_original_840xxx_source_consumed_no_reuse": true,
+    "actual_fit_probe_count": 24557,
+    "fit_worlds": 49152
+  },
+  "trained_parameters": {
+    "prior_positive": 0.4997340534288999,
+    "cue_scale": 1.01141208012712,
+    "cue_variance": 0.9866775100255258,
+    "probe_scale": 1.0130357839757127,
+    "probe_variance": 0.989946768785279,
+    "reward_proxy_variance": 1.6757863858599877,
+    "actual_log_same_for_both_models": true,
+    "model_structure": "assumed independent Laplace/Gaussian noise family, only moment parameters learned"
+  },
+  "competitors": {
+    "laplace": "same P54 moment fit, Laplace log-likelihood and analytic factual probe VOI",
+    "gaussian": "unchanged P54 moment fit and Gaussian VOI",
+    "known_laplace": "model-aware distribution oracle not fair learner",
+    "never": "same learned Laplace posterior without probes",
+    "always": "same learned Laplace posterior always probes",
+    "wrong_credit": "P54 original shuffled reward credit"
+  },
+  "per_cohort": {
+    "850201": {
+      "reward_laplace": 0.6415010383663029,
+      "reward_gaussian": 0.632388682069748,
+      "reward_never": 0.5868465188706322,
+      "reward_oracle": 0.6408567534700778,
+      "reward_wrong_credit": 0.5873348001206322,
+      "probe_fraction_laplace": 0.25,
+      "probe_count_laplace": 2048,
+      "probe_count_gaussian": 2430,
+      "paired_gain_vs_never": 0.054654519495670684,
+      "paired_95CI_vs_never": [
+        0.04170771278995744,
+        0.0661929503657916
+      ],
+      "frozen_gaussian_margin": 0.01,
+      "actual_gaussian_margin": 0.009112356296554935,
+      "strict_margin_pass": false,
+      "other_positive_criteria_pass": true
+    },
+    "850301": {
+      "reward_laplace": 0.6616567198462633,
+      "reward_gaussian": 0.6550388437168237,
+      "reward_never": 0.6145455654986733,
+      "reward_oracle": 0.6623086204059234,
+      "reward_wrong_credit": 0.6108834561236733,
+      "probe_fraction_laplace": 0.2215576171875,
+      "probe_count_laplace": 1815,
+      "probe_count_gaussian": 2114,
+      "paired_gain_vs_never": 0.047111154347589945,
+      "paired_95CI_vs_never": [
+        0.036042591223773,
+        0.0579467433523007
+      ],
+      "frozen_gaussian_margin": 0.01,
+      "actual_gaussian_margin": 0.006617876129439537,
+      "strict_margin_pass": false,
+      "other_positive_criteria_pass": true
+    },
+    "850401": {
+      "probe_count_laplace": 0,
+      "probe_count_known_oracle": 0,
+      "no_information_sham_pass": true
+    }
+  },
+  "post_hoc_not_frozen": {
+    "question": "exploratory paired 2000-resample bootstrap Laplace minus Gaussian",
+    "seed_rule": "999000 + cohort_seed",
+    "result": {
+      "850201": {
+        "mean": 0.009112356296554935,
+        "interval_95": [
+          0.00218169,
+          0.01624338
+        ]
+      },
+      "850301": {
+        "mean": 0.006617876129439537,
+        "interval_95": [
+          0.00016989,
+          0.01294635
+        ]
+      }
+    },
+    "disposition": "post-result exploratory; may not substitute for frozen 0.01 required margin or scientific first-use"
+  },
+  "gates": {
+    "strict_all_ood_positive": "FAIL_0_OF_2",
+    "actual_probe_vs_no_probe_gain": "PASS_2_OF_2",
+    "within_oracle_0point025": "PASS_2_OF_2",
+    "paired_bootstrap_vs_never_positive": "PASS_2_OF_2",
+    "wrong_credit_negative": "PASS_2_OF_2",
+    "cost_sensitivity": "PASS_2_OF_2",
+    "sham_zero": "PASS",
+    "cold_exact": "PASS_ALL",
+    "superiority_over_P54_gaussian_0point01": "FAIL_0_OF_2"
+  },
+  "engineering": {
+    "source_path": "scripts/native_p55_laplace_transfer_dev.py",
+    "source_git_blob": "fe211b950c34377768047f5f78e38007b1de0e18",
+    "source_sha256": "097532cec03c40c068cda537fe431bea8f3d0033d3249fa6891bc6dc3b3866b0",
+    "test_path": "tests/test_native_p55_laplace_transfer_dev.py",
+    "test_git_blob": "99e92cbfbd5cd045e47f77c0b92ae762e4ce0a44",
+    "test_sha256": "774ef91980dfcab4dda66ff5dcb2e837fb747cf1ca96120c51cdf90f92ce21b1",
+    "full_local_result_json_sha256": "e3dc5415e0c8a60fac56a0d3b9a4db2e066f3ecbe52a7f8c88c863752fa01e3b",
+    "focused_new_tests": "PASS_6_OF_6",
+    "focused_inherited_P53_P54_P55": "PASS_18_OF_18",
+    "python": "3.13",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "torch": "2.10.0+cpu",
+    "original_full_Windows_Ubuntu_WSL_regression": "NOT_RUN",
+    "G4_G5_G7_hosted": "NOT_QUALIFIED"
+  },
+  "science": {
+    "frozen_verdict": "FAIL_0_OF_2_ON_STRONG_GAUSSIAN_SUPERIORITY",
+    "independent_external_source_first_use": "NOT_RUN",
+    "truly_unknown_noise_family": "NOT_LEARNED; Laplace likelihood was specified by researcher",
+    "fully_converged_neural_controls": "NOT_RUN",
+    "matched_total_training_process_FLOPs": "NOT_QUALIFIED",
+    "real_multi_step_interventions": "NOT_RUN",
+    "native_Hybrid_architecture_advantage": "NOT_PROVEN",
+    "prior_dev_positives_and_negatives_preserved": true
+  },
+  "deployment": {
+    "PR_draft": true,
+    "merge": false,
+    "FORGE_integration": false,
+    "no_runners_controllers_queues_schedulers": true,
+    "no_paid_API": true,
+    "no_model_promotion": true
+  }
+}

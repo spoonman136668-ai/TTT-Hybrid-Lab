@@ -1,0 +1,157 @@
+{
+  "schema": "ttt-hybrid.p55.laplace-factual-probe-transfer-dev.v1",
+  "phase": "FROZEN_BEFORE_SOURCE_AND_MODEL_EVALUATION",
+  "date": "2026-11-10",
+  "base": {
+    "pr": 149,
+    "sha": "e2ab8e7fb1000cdc7a530265adcec4c17e92ee71",
+    "original_module_git_blob": "c4239b125e3d5928807738aac117be89f202d7a1",
+    "previous": "P54 2/2 authored Gaussian-model DEV positive, no independent scientific pass"
+  },
+  "hypothesis": "A conventional model fitted from the same actual logged physical action/outcome records that learns Laplace cue and probe noise scales will earn > Gaussian-assumed P54 model on unfamiliar heavy-tail cue/probe/reward worlds, while choosing useful paid probes without unexecuted labels.",
+  "source": {
+    "environment": "new authored DEV two-step binary hidden sign + noisy cue + optional executed diagnostic + executed signed final action reward minus diagnostic cost",
+    "noise": "independent zero-centered Laplace distribution with variance 1 (scale=1/sqrt(2)) for cue, executed probe, and post-action reward, non-Gaussian",
+    "fit": {
+      "seed": 850001,
+      "n": 49152,
+      "cue_gain": [
+        0.1,
+        1.2
+      ],
+      "probe_gain": [
+        0.1,
+        1.2
+      ],
+      "cue_sigma": [
+        0.55,
+        0.95
+      ],
+      "probe_sigma": [
+        0.55,
+        0.95
+      ],
+      "price": [
+        0.05,
+        0.4
+      ],
+      "reward_sigma": [
+        0.5,
+        1.1
+      ]
+    },
+    "validation": {
+      "seed": 850101,
+      "n": 2048,
+      "same_fit_ranges": true
+    },
+    "ood_a": {
+      "seed": 850201,
+      "n": 8192,
+      "cue_gain": [
+        0,
+        1.5
+      ],
+      "probe_gain": [
+        0,
+        1.6
+      ],
+      "cue_sigma": [
+        0.95,
+        1.25
+      ],
+      "probe_sigma": [
+        0.95,
+        1.25
+      ],
+      "price": [
+        0.05,
+        0.65
+      ],
+      "reward_sigma": [
+        1.1,
+        1.6
+      ]
+    },
+    "ood_b": {
+      "seed": 850301,
+      "n": 8192,
+      "cue_gain": [
+        0,
+        2
+      ],
+      "probe_gain": [
+        0,
+        2
+      ],
+      "cue_sigma": [
+        1.1,
+        1.4
+      ],
+      "probe_sigma": [
+        1.1,
+        1.4
+      ],
+      "price": [
+        0.01,
+        0.75
+      ],
+      "reward_sigma": [
+        1.4,
+        2
+      ]
+    },
+    "sham": {
+      "seed": 850401,
+      "n": 4096,
+      "same_ood_a_ranges": true,
+      "probe_gain_exactly_zero": true
+    },
+    "logging": "same actually executed randomized 50% paid probe, independently randomized final sign, and physically observed noisy net reward for every fitted conventional policy",
+    "source_privacy": "fit API receives only visible prior, executed probe flag, actually observed probe measurement or exactly zero if no probe, actually executed final signed action and its physically observed net reward; latent sign, unchosen probe result and noise tape evaluator-only",
+    "no_seed_or_threshold_retuning_after_first_use": true
+  },
+  "comparators": {
+    "P54_Gaussian": "exact original P54.fit_moments() from same NEW 850001 factual logger; exact P54.decisions() Gaussian noise decision rule but with physical Laplace evaluator; all fitted Gaussian parameters, no source oracle",
+    "Laplace_fitted": "learn signal gain scales, prior sign and cue/probe second-moment residual variance from same executed-action noisy reward log via unchanged P54.fit_moments(); infer a Laplace noise family using learned variance/2 as b², posterior based on absolute-deviation likelihood, analytically calculate value of a paid probe",
+    "Laplace_model_aware": "knows true Laplace noise shape and true cue/probe gain/noise scaling, prior=0.5; not fair learner, ceiling",
+    "Laplace_fitted_never": "same learned posterior but never probe",
+    "Laplace_fitted_always": "same learned posterior but always pay for probe",
+    "wrong_credit": "P54.shuffled_credit_log applied to same new FIT log, then Laplace fitted; verify no oracle labels",
+    "sham_no_information": "zero physical probe signal, positive physical cost, must never probe"
+  },
+  "training": {
+    "neural_training": "NOT RUN; this gate isolates whether P54 Gaussian assumption caused a model-class transfer failure; P54 architecture PRs remain separate",
+    "no_frozen_consumed_P54_source_reuse": true,
+    "same_49152_logged_cases": true,
+    "same_realized_probe_count_for_fitted_Gaussian_and_Laplace": true,
+    "same_fitted_moment_statistics": true,
+    "zero_performance_tuning_on_ood": true,
+    "no_external_scientific_first_use": true
+  },
+  "frozen_gates": {
+    "all_ood_cohorts": [
+      "Laplace-fitted net reward >= same-fitted never probe +0.02",
+      "Laplace-fitted net reward >= Gaussian-fitted P54 net reward +0.01",
+      "Laplace-fitted within 0.025 net reward of known-Laplace oracle",
+      "actual Laplace fitted probe fraction between 0.05 and 0.95",
+      "paired 95% bootstrap lower-bound improvement versus fitted never strictly positive, exactly 1000 resamples, seeds 850901 + OOD seed",
+      "weak cue with strong probe gain: <0.2 price probe fraction >= >=0.4 price probe fraction + 0.15, groups each >=30"
+    ],
+    "negative_controls": [
+      "zero probes on no-information sham",
+      "Laplace-fitted reward exceeds wrong credit by 0.025 on both OOD",
+      "source rejects any unexecuted probe measurement and oracle theta keys",
+      "bit-exact cold replay of fitted sufficient stats and physically executed decisions"
+    ],
+    "nonpass_disposition": "Record exact negative, no threshold/seed hindsight revision or subsequent source first-use reclassification",
+    "science": "Even if all authored DEV gates pass, independent SCIENTIFIC_PASS is NOT established; real unfamiliar physical benchmark, trained conventional neural controls under equal compute, multi-step retention still missing."
+  },
+  "limits": {
+    "no_runners_or_schedulers_or_new_controller_or_paid_api": true,
+    "no_FORGE_owner_or_integration": true,
+    "no_merges_or_promotion": true,
+    "original_full_dual_OS_regression_required": true,
+    "all_existing_P13_to_P54_negative_results_preserved": true
+  }
+}
