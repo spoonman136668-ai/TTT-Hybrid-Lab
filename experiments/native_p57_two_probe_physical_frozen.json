@@ -1,0 +1,144 @@
+{
+  "schema": "ttt-hybrid.p57.two-diagnostic-sequential-factual-DEV.v1",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_SOURCE_GENERATION_OR_MODEL_EXECUTION",
+  "date": "2026-11-10",
+  "parent": {
+    "pr": 153,
+    "sha": "62389078702bc11884665c4f94104798db3da944",
+    "P56_outcome": "FROZEN_DEV_FAIL_mixed_world_decision_vs_Gaussian",
+    "P56_script_blob": "851ddf45fbd6e9330786bcc0be34c92b898b29cb"
+  },
+  "hypothesis": "Given TWO optional physical diagnostic types and a second action opportunity contingent on the first observed consequence, does fitting the observation family ONLY from disjoint factual training logs beat the best fixed Gaussian, fixed Laplace, and cheapest-first policies by >=0.005 net reward on ALL three fresh unfamiliar DEV cohorts?",
+  "sources": {
+    "families": [
+      {
+        "fit_seed": 870101,
+        "ood_seed": 870103,
+        "cue": "Gaussian",
+        "probe_A": "Gaussian",
+        "probe_B": "Laplace",
+        "reward": "Gaussian"
+      },
+      {
+        "fit_seed": 870201,
+        "ood_seed": 870203,
+        "cue": "Laplace",
+        "probe_A": "Laplace",
+        "probe_B": "Gaussian",
+        "reward": "Laplace"
+      },
+      {
+        "fit_seed": 870301,
+        "ood_seed": 870303,
+        "cue": "Gaussian",
+        "probe_A": "Laplace",
+        "probe_B": "Laplace",
+        "reward": "Gaussian"
+      }
+    ],
+    "sham_seed": 870401,
+    "fit_episodes_each": 28672,
+    "selection_holdout_last_n": 4096,
+    "ood_episodes_each": 16384,
+    "sham_episodes": 4096,
+    "latent": "fair hidden +/-1, never supplied to fit/policy",
+    "physics": "cue=theta*visible cue_gain+visible sigma*family noise; paid diagnostic A or B yields theta*visible instrument gain+sigma*family noise ONLY when executed; factual net final reward=theta*actual signed action+reward_sigma*independent family noise-minus actually paid A and B costs",
+    "fit_parameter_ranges": {
+      "cue_gain": [
+        0.1,
+        1.2
+      ],
+      "instrument_gain": [
+        0.1,
+        1.3
+      ],
+      "cue_sigma": [
+        0.55,
+        0.95
+      ],
+      "instrument_sigma": [
+        0.55,
+        0.95
+      ],
+      "instrument_cost": [
+        0.015,
+        0.24
+      ],
+      "reward_sigma": [
+        0.5,
+        1.1
+      ]
+    },
+    "ood_parameter_ranges": {
+      "cue_gain": [
+        0,
+        1.6
+      ],
+      "instrument_gain": [
+        0,
+        1.8
+      ],
+      "cue_sigma": [
+        0.95,
+        1.35
+      ],
+      "instrument_sigma": [
+        0.95,
+        1.35
+      ],
+      "instrument_cost": [
+        0.015,
+        0.35
+      ],
+      "reward_sigma": [
+        1.1,
+        1.8
+      ]
+    },
+    "sham": "both actual diagnostic gains exactly 0 with positive costs",
+    "logging": "Random first decision 0/A/B equally; second decision choose a not yet performed probe with p=.5; observed second action may condition on actual first sensor, not hidden theta; final executed sign independent fair; only measured probes observed; all policies fit identical real log.",
+    "no_prior_860_850_seeds_reused": true
+  },
+  "methods": {
+    "moment_fit": "Fit prior sign, cue/A/B gain and residual variance from actually logged reward proxy, cue and measured probes on first 24576 real fit episodes, no theta.",
+    "family_choice": "On separate last 4096 FIT logs, choose independently reward/cue/A/B Gaussian-vs-Laplace by integrated hidden-sign marginal likelihood; noise family options supplied by experimenter, not discovered open ended.",
+    "candidate": "After observed cue, choose best positive net-value probe A/B using fitted family, reveal ONLY chosen measurement, posterior update; decide whether not yet executed probe is worth paying for AFTER first consequence; choose signed final act, collect noisy actual net return.",
+    "controls": [
+      "same fitted moments fixed-all-Gaussian",
+      "same fitted moments fixed-all-Laplace",
+      "never buy physical probes, same cue posterior",
+      "cheapest-first probe then optional other",
+      "privileged known-family model-aware reference with true scales and parameters",
+      "wrong-credit shuffle training reward-to-world"
+    ],
+    "budget": "same two opportunities to execute at most two actual paid diagnostic actions and one final executed action, costs included; all evaluation exogenous tapes identical across arms; no unexecuted signal supplied as feedback",
+    "restore": "JSON fit stats exact cold decisions and outputs"
+  },
+  "frozen_metrics": {
+    "per_cohort": [
+      "correct four source family labels reward/cue/A/B",
+      "selected net reward >= max(fixed Gaussian, fixed Laplace, cheapest-first)+0.005",
+      "selected net reward >= fitted never+0.03",
+      "selected net reward >= known-model reference-0.02",
+      ">=4% of episodes buy at least one physical probe",
+      ">=1% of episodes buy second probe after first actual observation",
+      "paired 1000-resample bootstrap lower 95% bound selected vs never >0, seed 870901+OOD_seed",
+      "bit-exact cold replay"
+    ],
+    "sham": "zero paid probes on fully uninformative instruments",
+    "wrong_credit": "selected net >= wrong-credit+0.025 in EACH OOD",
+    "all_three_required": true,
+    "report": "reward, real paid A/B counts, second probe count, per-arm realized cost, decision runtime and full source hashes",
+    "science_boundary": "Synthetic DEV only. Does not prove a novel native Hybrid architecture, learning in real physics, equal trained recurrent compute, cold retained transfer or scientific first-use."
+  },
+  "authority": {
+    "no_merges": true,
+    "no_FORGE_owner_or_research_dispatch": true,
+    "no_new_runner_scheduler_controller_queue_workflow": true,
+    "no_paid_API": true,
+    "no_external_scientific_first_use": true,
+    "no_model_promotion": true,
+    "full_original_Windows_and_Ubuntu_WSL_regression_required": true,
+    "preserve_prior_nulls": true
+  }
+}

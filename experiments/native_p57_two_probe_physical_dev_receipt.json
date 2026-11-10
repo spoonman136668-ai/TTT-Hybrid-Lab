@@ -1,0 +1,197 @@
+{
+  "schema": "ttt-hybrid.p57.two-probe-physical-DEV-receipt.v1",
+  "classification": "FROZEN_AUTHORED_DEV_FAIL_1_OF_3_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 153,
+    "base_sha": "62389078702bc11884665c4f94104798db3da944",
+    "previous_result": "P56 mixed-family decision DEV FAIL"
+  },
+  "freeze": {
+    "commit_sha": "caee40fb164e7cde5291c108f6704bf1239120ea",
+    "git_blob": "60de39e76ce263d495f77a2dd0e6e71b38fe6c2f",
+    "before_first_p57_source": true,
+    "threshold_margin_stronger_control": 0.005,
+    "not_retuned": true
+  },
+  "custody": {
+    "source_module": "scripts/native_p57_two_probe_dev.py",
+    "exact_local_execution_git_blob": "ce080e62f8190369a9ac65a77b880e9b3b865bae",
+    "source_sha256": "2369d181184b8604bfb4b9d64088c358e1e6ebd5bb317e43478eb50945b2d3b9",
+    "test_module": "tests/test_native_p57_two_probe_dev.py",
+    "exact_local_execution_test_git_blob": "6e2bebf8e833287cde833efac80f36d7838598b6",
+    "tests_sha256": "2b6b8f510d37bb6360991bb79ee9e883b9ccb3cfff9c1c28ef049d0e7b0fe380",
+    "full_local_result_json_sha256": "3f9138643ae2ab7fb68cda3988e94dd757cb0cff96825ada98d247a59e6b9363",
+    "source_sha256_by_seed": {
+      "870101": "4fbeba79427f2cb0a24d53e8f2a007927d9f218f80ed0d163d018b372e2b7130",
+      "870103": "12126f89021985e901a00231674e837eced19197bf5f11074d0cd1181275c9a2",
+      "870201": "f677f056c4454ffd4ef80bf22e94bea7d0feaf9c920efe72b8d206a6f00a19fb",
+      "870203": "a78267749fd627e72feab4965ca78536b712101a0db50082a34b916f04af06e1",
+      "870301": "72a18b29dfb27fb9ab85d34cff41ee4231a1872ac39857c693252e7e6c48f338",
+      "870303": "bffa749a6272631c1601c6b3731529feac78c2c6634b66b7f437fc1f8eeed8dd",
+      "870401": "b74dea6673738624b3e8b50d6a090d6f85d7891d5795ccae0aaf7609289fc8ee"
+    }
+  },
+  "source": {
+    "new_authored_synthetic_worlds": true,
+    "train_worlds_each": 24576,
+    "disjoint_family_selection_worlds_each": 4096,
+    "OOD_worlds_each": 16384,
+    "sham_worlds": 4096,
+    "physical_timing": "at most two distinct diagnostics and one signed final action; second diagnostic choice observes first executed actual consequence",
+    "actual_probe_only": true,
+    "hidden_theta_and_unexecuted_outcome_not_supplied_to_policy": true,
+    "gaussian_laplace_hypotheses_explicitly_supplied": true
+  },
+  "cohorts": [
+    {
+      "seed": 870103,
+      "fit_seed": 870101,
+      "families": {
+        "cue": "G",
+        "A": "G",
+        "B": "L",
+        "reward": "G"
+      },
+      "rewards": {
+        "selected": 0.7055940268354057,
+        "gaussian": 0.699608200613006,
+        "laplace": 0.6910327631300739,
+        "cheapest": 0.6507053565263796,
+        "never": 0.4986800173539401,
+        "oracle": 0.7069133828495702,
+        "wrong_credit": 0.3707503298539401
+      },
+      "physical": {
+        "probe_any": 0.60162353515625,
+        "second_probe": 0.05914306640625,
+        "paid_probe_A": 4961,
+        "paid_probe_B": 5865,
+        "cost_sum": 1643.9208686556667,
+        "action_history_sha256": "39c29355ab213444ca621354659feffaff26e892f4b6bf908166652cc527da9f"
+      },
+      "paired": {
+        "mean": 0.20691400948146565,
+        "lower": 0.19425829005061246,
+        "upper": 0.21960478462873567,
+        "seed": 1741004
+      },
+      "better_strong": true,
+      "strongest_control_reward": 0.699608200613006,
+      "gain_vs_strongest": 0.005985826222399737,
+      "gain_vs_never": 0.20691400948146565
+    },
+    {
+      "seed": 870203,
+      "fit_seed": 870201,
+      "families": {
+        "cue": "L",
+        "A": "L",
+        "B": "G",
+        "reward": "L"
+      },
+      "rewards": {
+        "selected": 0.7171963733335597,
+        "gaussian": 0.7068174287534484,
+        "laplace": 0.713333863106096,
+        "cheapest": 0.6546246833579753,
+        "never": 0.5575267649003545,
+        "oracle": 0.7172887317861646,
+        "wrong_credit": 0.20777224731105068
+      },
+      "physical": {
+        "probe_any": 0.51885986328125,
+        "second_probe": 0.0482177734375,
+        "paid_probe_A": 5126,
+        "paid_probe_B": 4165,
+        "cost_sum": 1347.9731354303658,
+        "action_history_sha256": "422616f3143dc4c48f0eebb90344026c61408d08a40"
+      },
+      "paired": {
+        "mean": 0.1596696084332052,
+        "lower": 0.14848988706900884,
+        "upper": 0.17068229566025792,
+        "seed": 1741104
+      },
+      "better_strong": false,
+      "strongest_control_reward": 0.713333863106096,
+      "gain_vs_strongest": 0.0038625102274636447,
+      "gain_vs_never": 0.1596696084332052
+    },
+    {
+      "seed": 870303,
+      "fit_seed": 870301,
+      "families": {
+        "cue": "G",
+        "A": "L",
+        "B": "L",
+        "reward": "G"
+      },
+      "rewards": {
+        "selected": 0.7093417709079561,
+        "gaussian": 0.7064780108798503,
+        "laplace": 0.7011931339215651,
+        "cheapest": 0.6534858050579417,
+        "never": 0.4765851925761966,
+        "oracle": 0.7084487073181138,
+        "wrong_credit": 0.02016429413869658
+      },
+      "physical": {
+        "probe_any": 0.6068115234375,
+        "second_probe": 0.051025390625,
+        "paid_probe_A": 5487,
+        "paid_probe_B": 5291,
+        "cost_sum": 1638.5162206124514,
+        "action_history_sha256": "23de27efa706cc778a6f128aa46039e1daad42cb24d21838ef3a521f23575cbc"
+      },
+      "paired": {
+        "mean": 0.23275657833175956,
+        "lower": 0.21958841175183608,
+        "upper": 0.24653651051935838,
+        "seed": 1741204
+      },
+      "better_strong": false,
+      "strongest_control_reward": 0.7064780108798503,
+      "gain_vs_strongest": 0.002863760028105844,
+      "gain_vs_never": 0.23275657833175956
+    }
+  ],
+  "gates": {
+    "all_predeclared_cohorts": "FAIL_1_OF_3",
+    "correct_all_four_source_families": "PASS_3_OF_3",
+    "better_than_strongest_fixed_by_0point005": "PASS_1_OF_3",
+    "better_than_no_probe_by_0point03": "PASS_3_OF_3",
+    "near_model_aware_oracle": "PASS_3_OF_3",
+    "second_actual_diagnostic_above_1pct": "PASS_3_OF_3",
+    "wrong_reward_credit_negative": "PASS_3_OF_3",
+    "positive_paired_1000_resample_bootstrap": "PASS_3_OF_3",
+    "cold_exact_after_JSON_restore": "PASS_3_OF_3",
+    "no_information_sham_zero_diagnostics": "PASS",
+    "sham_physical_paid_probes": 0
+  },
+  "engineering": {
+    "new_focused": "PASS_8_OF_8",
+    "focused_P53_through_P57": "PASS_33_OF_33",
+    "same_source_and_test_remote_git_blob_readback": "PASS",
+    "hosted_G4_G5_G7": "NOT_QUALIFIED",
+    "original_repo_full_Windows_Ubuntu_WSL": "NOT_RUN",
+    "full_regression": "NOT_RUN",
+    "native_GPU": "NOT_RUN"
+  },
+  "scientific": {
+    "full_trained_competent_GRU_or_MLP": "NOT_COMPARED",
+    "external_independent_scientific_source": "NOT_RUN",
+    "architecture_superiority": "NOT_PROVEN",
+    "heldout_sources_consumed_as_dev": true,
+    "not_a_scientific_PASS": true
+  },
+  "deployment": {
+    "draft_unmerged": true,
+    "no_FORGE_owner_or_controller_edits": true,
+    "no_scheduler_runner_queue_or_workflow": true,
+    "no_paid_API": true,
+    "no_live_action_or_promotion": true
+  },
+  "frozen_all_pass": false,
+  "external_scientific_first_use": "NOT_RUN",
+  "original_full_regression": "NOT_RUN"
+}
