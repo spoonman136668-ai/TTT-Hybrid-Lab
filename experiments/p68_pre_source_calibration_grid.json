@@ -1,0 +1,39 @@
+{
+  "schema": "ttt-hybrid.p68-pre-source-classical-calibration-detail.v1",
+  "status": "COMMITTED_BEFORE_P68_CODE_DATA_OR_EVAL",
+  "original_freeze_sha": "66890be04e680f3b4976d2479025c16ad154baa4",
+  "control_selection": {
+    "fixed_surprise_l2_residual_grid": [
+      0.5,
+      1,
+      1.5,
+      2,
+      2.5
+    ],
+    "fixed_novelty_previous_read_l2_grid": [
+      0.05,
+      0.1,
+      0.25,
+      0.5,
+      0.75
+    ],
+    "proto8_cosine_match_grid": [
+      0.6,
+      0.7,
+      0.8,
+      0.88
+    ],
+    "selection": "Minimize mean VAL observed factual query-consequence MSE; tie choose earliest listed; only after all FIT and VAL precomputation; never use OOD to calibrate."
+  },
+  "candidate_training": {
+    "init": "torch.randn(4, generator=manual_seed(model_seed))*0.02 (distinct model init)",
+    "same_train_sampler_index": "torch.randint(0,256,(300,32),generator=manual_seed(968299))",
+    "optimizer": "AdamW lr .005",
+    "validation_every": 50
+  },
+  "random_control": {
+    "probability": "mean candidate gate write probability on first 64 FIT worlds after fitting; test fixed Bernoulli write per actually executed event with per-model-seed frozen random generator seed+303",
+    "state_budget": "same original 16x16 fast matrix only"
+  },
+  "science_status": "No independent first use; authored DEV only; fail closed if any registered comparator cannot be qualified"
+}
