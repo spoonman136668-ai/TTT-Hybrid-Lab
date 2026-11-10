@@ -1,0 +1,81 @@
+name: FORGE private CPU existing user-scope admission (no candidate execution)
+on:
+  push:
+    branches: ['operations/f139-private-cpu-kernel-scope-admission-once-20261110']
+permissions:
+  contents: read
+jobs:
+  private-kernel-scope:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 3
+    steps:
+      - name: Verify a bounded transient scope on the existing Linux user manager
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          @'
+          import json, os, subprocess, textwrap
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          assert os.environ['RUNNER_NAME']=='TTT-HYBRID-GPU-WIN'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          run_id=os.environ['GITHUB_RUN_ID'];assert run_id.isdigit()
+          code=r"""
+          import json, os, pathlib, subprocess, textwrap
+          uid=os.getuid();assert uid==1000
+          runtime=pathlib.Path('/run/user/'+str(uid))
+          bus=runtime/'bus'
+          report=dict(schema='forge.f139.private-cpu-kernel-scope-admission.v1',
+              user_manager_bus_present=bus.exists(),scope_created=False,
+              complete_tree_limits_verified=False,project_code_executed=False,
+              gpu_used=False,model_calls=0,new_credentials=False,installed_packages=0,
+              original_owner_mutations=0,new_controller=False,scientific_first_use=False,
+              signed_worker_qualified=False)
+          if not bus.exists():
+              report['status']='BLOCKED_EXISTING_USER_MANAGER_UNAVAILABLE'
+          else:
+              child=r'''
+          import json, pathlib
+          group=next(line.split(':',2)[2] for line in pathlib.Path('/proc/self/cgroup').read_text().splitlines() if line.startswith('0::'))
+          assert '..' not in group.split('/')
+          root=pathlib.Path('/sys/fs/cgroup')/group.lstrip('/')
+          values={name:(root/name).read_text().strip() for name in ('memory.max','memory.swap.max','pids.max','cpu.max')}
+          assert values['memory.max']=='4294967296' and values['memory.swap.max']=='0'
+          assert values['pids.max']=='64'
+          quota,period=map(int,values['cpu.max'].split())
+          assert quota>0 and period>0 and quota==period
+          print(json.dumps(dict(cgroup=group,limits=values,complete_tree_limits_verified=True),sort_keys=True))
+          '''
+              env={'PATH':'/usr/bin:/bin','LANG':'C.UTF-8','XDG_RUNTIME_DIR':str(runtime),
+                   'DBUS_SESSION_BUS_ADDRESS':'unix:path='+str(bus)}
+              unit='f139-private-cpu-preflight-rRUNID'
+              result=subprocess.run(['/usr/bin/systemd-run','--user','--scope','--quiet','--unit='+unit,
+                  '--property=MemoryMax=4294967296','--property=MemorySwapMax=0',
+                  '--property=CPUQuota=100%','--property=TasksMax=64',
+                  '/usr/bin/python3','-I','-B','-c',textwrap.dedent(child)],
+                  env=env,stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,
+                  timeout=20,check=False)
+              report['returncode']=result.returncode
+              if result.returncode==0:
+                  report.update(json.loads(result.stdout.decode('utf-8','strict')))
+                  report['scope_created']=True;report['status']='PASS_EXISTING_TRANSIENT_SCOPE_ONLY'
+              else:
+                  report['status']='BLOCKED_EXISTING_SCOPE_ADMISSION'
+                  report['diagnostic']=result.stderr.decode('utf-8','replace')[:1000]
+          print('F139_PRIVATE_CPU_KERNEL_SCOPE='+json.dumps(report,sort_keys=True,separators=(',',':')))
+          """.replace('RUNID',run_id)
+          allow={'SYSTEMROOT','WINDIR','PATH','TEMP','TMP','USERPROFILE','LOCALAPPDATA','APPDATA'}
+          env={k:v for k,v in os.environ.items() if k.upper() in allow};env['WSLENV']=''
+          result=subprocess.run(['wsl.exe','--distribution','Ubuntu-24.04','--exec',
+              '/usr/bin/timeout','--signal=TERM','--kill-after=5s','45s',
+              '/usr/bin/python3','-I','-B','-c',textwrap.dedent(code)],env=env,
+              stdin=subprocess.DEVNULL,stdout=subprocess.PIPE,stderr=subprocess.PIPE,timeout=60,check=False)
+          assert result.returncode==0,'PRIVATE_KERNEL_SCOPE_PREFLIGHT_FAILED'
+          print(result.stdout.decode('utf-8','strict').strip())
+          '@ | python -B -
+          if($LASTEXITCODE -ne 0){throw 'PRIVATE_KERNEL_SCOPE_PREFLIGHT_FAILED'}
