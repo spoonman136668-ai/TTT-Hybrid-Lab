@@ -1,0 +1,64 @@
+{
+  "schema": "ttt-hybrid.p64s-full-reference-streaming-factual-state-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_NEW_IMPLEMENTATION_AND_HAND_AUTHORED_FIXTURE_TESTS",
+  "parent": {
+    "original_p62_stream_pr": 165,
+    "sha": "f9fbe08932ba00863e6c01d1c2112c8c64df98d0",
+    "tree": "bff2ae8432f630ca4837a8cfd4851e3b5cb84ef4",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "streaming_ttt_blob": "776e63a0ff9474a860e87088718acb36637a7bec"
+  },
+  "scope": "opt-in engineering-only full reference HybridPilot SSM/attention/TTT/depth composition; NO network/GPU/scheduler/FORGE/scientific-source-first-use",
+  "hypothesis": "An opt-in bounded factual prefix plus persisted original TTT fast matrix exactly reproduces the unmodified original full HybridPilot's causal full-sequence outputs across separately confirmed calls, while speculative previews are pure and independently composed for each action.",
+  "algorithm": {
+    "factual_input": "caller-supplied analog events [B,L,D] all true confirmation bool [B,L]; caller is responsible for authenticating physical action and observed outcome",
+    "source": "two hand-authored deterministic random tensors seeds 64 and 86; no environmental scientific cohort",
+    "state": "history tensor of only confirmed original analog events, plus existing TTTFactualState fast_weights/count; no optimizer state in factual state",
+    "pre_ttt": "original HybridPilot.stem -> original SelectiveStateBlock -> original CausalAttentionBlock recomputed on confirmed prefix; ONLY new factual transformed embeddings update persisted original StreamingTTT",
+    "after_ttt": "original CausalDepthRouter -> original output head",
+    "hypothetical_preview": "separately append each candidate analog feature to a common factual prefix for pre-TTT context; read persisted TTT matrix with no fast-weight write; apply equivalent pure depth path with no telemetry side effects",
+    "max_confirmed_events": 16,
+    "batch_bound": 16,
+    "candidate_bound": 8,
+    "width_bound": 128,
+    "no_new_trainable_params": true,
+    "original_model_files_unchanged": true,
+    "costs": "explicitly record reference CPU timings; no speedup claim because full SSM/attention prefix recomputed per fact/query"
+  },
+  "controls": {
+    "full_reference": "unmodified core.forward(full_confirmed_history_plus_candidate,ttt_update=True)",
+    "chunking": "1+2+3 and 3+3 followed by two separate candidates",
+    "negative": [
+      "no facts abstain",
+      "unconfirmed factual mask rejects atomically",
+      "bad dtype and nonfinite rejects",
+      "over capacity rejects before model update",
+      "corrupt cold state rejects",
+      "candidate permutation invariance",
+      "hypothetical preview leaves all model weights, factual state and depth utilization unchanged"
+    ],
+    "cold_resume": "serialize weights-only original model state_dict plus factual tensor history/matrix/count; compare continued factual ingestion and hypothetical output against uninterrupted state at exact bytes",
+    "gradient": "factual history and pure-preview output have differentiable path through original stem, SSM, attention, TTT and head"
+  },
+  "frozen_gate": {
+    "focused_tests_min": 8,
+    "full_reference_last_output_allclose_atol": 0.000001,
+    "full_reference_last_output_allclose_rtol": 0.000001,
+    "all_test_seed_cases_pass": true,
+    "cold_bit_exact": true,
+    "strict_atomic_rejection": true,
+    "no_factual_preview_mutation": true,
+    "no_original_source_change": true,
+    "full_Windows_and_Linux_qualification_required_before_acceptance": true
+  },
+  "authority": {
+    "development_only": true,
+    "no_independent_scientific_first_use": true,
+    "no_novel_model_claim": true,
+    "no_training_experiment": true,
+    "no_new_controller_queue_runner_or_scheduler": true,
+    "no_forge_integration_or_dispatched_workflow": true,
+    "no_merge_or_accepted_ref_promotion": true,
+    "no_gpu_or_paid_api": true
+  }
+}
