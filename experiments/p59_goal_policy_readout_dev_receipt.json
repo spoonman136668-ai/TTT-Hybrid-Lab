@@ -1,0 +1,223 @@
+{
+  "schema": "ttt-hybrid.p59.goal-reaching-factual-imitation-readout-dev-receipt.v1",
+  "classification": "FROZEN_AUTHOR_GENERATED_IMITATION_DEV_PASS_NOT_CAUSAL_ACTION_CONSEQUENCE_SCIENCE",
+  "parent": {
+    "PR": 156,
+    "head_sha": "4f0e4f405bd867c92fea26bbb0cd6b5f89b33cda",
+    "tree": "2d4a63787f5d6852ded6b71f93976443a864ffe8",
+    "local_physics_git_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039",
+    "original_reference_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_P58_momentum_success": "96/96",
+    "prior_P58_seed_range": "985100-985195 (not reused)"
+  },
+  "freeze": {
+    "initial_commit": "7ddb997f4e95f946cd2d8ff7db91fb949a38c465",
+    "pre_first_source_addendum_commit": "254fb2d32cc266f2dfa027ed15886c054be3bce6",
+    "last_protocol_sha": "6fcf013a117dbf92f04b20a916c9f18e33c4370d",
+    "source_training_seeds": "986000..986127",
+    "validation_seeds": "986200..986231",
+    "OOD_seeds": "986400..986495",
+    "distinct_from_P58": true,
+    "no_post_result_seed_or_threshold_changes": true
+  },
+  "authored_experiment": {
+    "supervision": "Real motor action demonstrations by original handcoded conventional momentum controller; binary cross entropy teacher imitation, NOT reward-only reinforcement or causal self-discovery",
+    "original_reference": "unchanged model.HybridPilot with SSM, attention, TTT and depth, analog no-token histories",
+    "physical_source": "Pinned published-equation transcription; NO installed Gymnasium runtime or wrapper qualification",
+    "fit_executed_episodes": 128,
+    "fit_executed_actions": 10195,
+    "validation_episodes": 32,
+    "OOD_episodes": 96,
+    "max_actual_actions_per_episode": 256,
+    "OOD_only_initial_reset_range": [
+      -0.75,
+      -0.25
+    ],
+    "training_range": [
+      -0.6,
+      -0.4
+    ],
+    "source_SHA256": {
+      "train": "fa101629292fafb9013d63f4c3626f5cde184039e86db41b17dcd3b77ff61c8f",
+      "validation": "f12d268371eca7c5f4ce05dc46422f58a16e9cf3dd9ad04febc24b06a041b214",
+      "OOD": "99ea2fb450fe2121a7f198dd936ea3a581f0af836575b747b9a7d78be6c35151"
+    },
+    "parameter_counts": {
+      "Hybrid": 1282,
+      "GRU": 1242,
+      "MLP": 1249
+    },
+    "updates_per_seed_per_model": 400,
+    "batch_size": 96,
+    "lr": 0.003,
+    "training_minibatch_source_seed_rule": "numpy.default_rng(910000+model_seed)",
+    "same_train_examples_and_minibatch_indices_across_all_models": true,
+    "factual_history_capacity": 4,
+    "per_step_input": "4 witnessed physical pre-sensors, real deltas and executed actions, plus actual current sensor and ZERO unknown outcome",
+    "closed_loop_actions": "models independently choose real motor +/-1 on physical simulator, observe only executed consequence",
+    "no_oracle_in_inference": true
+  },
+  "source_fidelity": {
+    "local_model_py_git_blob_exact": true,
+    "local_physics_mirror_NOT_original_file": true,
+    "local_mirror_reproduced_complete_P58_momentum_trace_sha256": "1686baec1451b442b818a37f35843f75a3f0c8c42ae4a677c3b4f13d07652853",
+    "remote_original_parent_physics_blob_verified": true,
+    "installed_official_gymnasium_runtime": "NOT_AVAILABLE",
+    "full_original_exact_candidate_source_checkout": "NOT_EXECUTED",
+    "provenance_caveat": "DEV trained against local mirror independently validated against every P58 momentum trace, but actual original source import must be qualified on complete exact source platforms before acceptance."
+  },
+  "teacher_controls": {
+    "validation": {
+      "successes": 32,
+      "mean_net_return": 92.04687500000003,
+      "mean_executed_steps": 79.53125
+    },
+    "unfamiliar_OOD": {
+      "successes": 96,
+      "mean_net_return": 92.33750000000002,
+      "mean_executed_steps": 76.625
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 9511,
+      "batch_sha256": "eb13e67f805973bc026cbb5b60daec2c4aab52417a049ba2c972680d23e8f9c8",
+      "hybrid": {
+        "OOD_goals": 96,
+        "OOD_net": 92.35000000000002,
+        "OOD_steps": 76.5,
+        "train_s": 2.81534,
+        "zero_goals": 0,
+        "validation_goals": 32,
+        "cold": true
+      },
+      "GRU": {
+        "OOD_goals": 96,
+        "OOD_net": 92.403125,
+        "OOD_steps": 75.96875,
+        "train_s": 1.07551,
+        "zero_goals": 15,
+        "validation_goals": 32,
+        "cold": true
+      },
+      "MLP": {
+        "OOD_goals": 96,
+        "OOD_net": 92.35208333333334,
+        "OOD_steps": 76.47916666666667,
+        "train_s": 0.37652,
+        "zero_goals": 0,
+        "validation_goals": 32,
+        "cold": true
+      }
+    },
+    {
+      "seed": 9523,
+      "batch_sha256": "d68a3432d2436e4f78a0b04c97fba4afbb0c07b7b6566b312032a48b4eb8902a",
+      "hybrid": {
+        "OOD_goals": 96,
+        "OOD_net": 92.31145833333335,
+        "OOD_steps": 76.88541666666667,
+        "train_s": 2.83853,
+        "zero_goals": 29,
+        "validation_goals": 32,
+        "cold": true
+      },
+      "GRU": {
+        "OOD_goals": 96,
+        "OOD_net": 92.28125000000001,
+        "OOD_steps": 77.1875,
+        "train_s": 0.83755,
+        "zero_goals": 0,
+        "validation_goals": 32,
+        "cold": true
+      },
+      "MLP": {
+        "OOD_goals": 95,
+        "OOD_net": 91.00208333333335,
+        "OOD_steps": 79.5625,
+        "train_s": 0.37177,
+        "zero_goals": 0,
+        "validation_goals": 32,
+        "cold": true
+      }
+    },
+    {
+      "seed": 9531,
+      "batch_sha256": "3808b2f7f4799ae4800b1f83ee8622878668f739235b93e6411b742b59495c89",
+      "hybrid": {
+        "OOD_goals": 95,
+        "OOD_net": 91.02708333333335,
+        "OOD_steps": 79.3125,
+        "train_s": 2.76937,
+        "zero_goals": 15,
+        "validation_goals": 32,
+        "cold": true
+      },
+      "GRU": {
+        "OOD_goals": 96,
+        "OOD_net": 92.27083333333336,
+        "OOD_steps": 77.29166666666667,
+        "train_s": 0.86336,
+        "zero_goals": 0,
+        "validation_goals": 32,
+        "cold": true
+      },
+      "MLP": {
+        "OOD_goals": 95,
+        "OOD_net": 91.00625000000002,
+        "OOD_steps": 79.52083333333333,
+        "train_s": 0.39046,
+        "zero_goals": 52,
+        "validation_goals": 32,
+        "cold": true
+      }
+    }
+  ],
+  "frozen_gates": {
+    "imitation_policy_goal_readout": "PASS_3_OF_3",
+    "OOD_success_vs_teacher_95pct": "PASS_3_OF_3",
+    "OOD_net_return_within_5": "PASS_3_OF_3",
+    "OOD_success_noninferior_vs_trained_GRU_and_MLP_5ppt": "PASS_3_OF_3",
+    "validation_success_95pct": "PASS_3_OF_3",
+    "last_two_validation_classification_checkpoints_stable": "PASS_ALL",
+    "model_weights_cold_restore_exact": "PASS_ALL",
+    "overall": "DEV_PASS_3_OF_3"
+  },
+  "scientific_limits": {
+    "causal_action_consequence_learning": "NOT_TESTED; expert action labels directly supervised",
+    "independent_open_world_transfer": "NOT_TESTED",
+    "unknown_dynamics": "NOT_TESTED",
+    "true_unfamiliar_physics": "NOT_TESTED; only reset range changed",
+    "strong_GRU_control": "288/288 success; Hybrid has no demonstrated gain",
+    "whole_process_compute_parity": "NOT_QUALIFIED; Hybrid training ~2.8s vs GRU ~0.8-1.1s and MLP ~0.4s",
+    "TTT_specific_ablation": "NOT_RUN",
+    "retention_after_new_learning": "NOT_RUN",
+    "sufficiently_trained_novel_architecture_superiority": "NOT_PROVEN",
+    "SCIENTIFIC_PASS": "UNVERIFIED"
+  },
+  "engineering": {
+    "script_path": "experiments/p59_goal_policy_readout_dev.py",
+    "script_git_blob": "70b8189cf46c4da492580fca88f1e17135ce30db",
+    "script_sha256": "60db406cc3d4c1002cedfd9c42048ed828df6803ec628e68c57eabb81c4cab26",
+    "focused_tests_path": "tests/test_p59_goal_policy_readout_dev.py",
+    "focused_tests_git_blob": "a9c0141fa7d0a052cf6ddb374e4cfe3b4b6e2d11",
+    "tests_sha256": "cb6f0bbf37e194f83885b4015de8fb859eb6e29944a2cbadf90adfc1bf4e3967",
+    "full_local_result_SHA256": "d4a90cbe0ee7014557a4d57309d6290443d2905874031e042832420e70d7152d",
+    "local_python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "numpy": "2.3.5",
+    "pytest": "9.0.2",
+    "focused_new_tests": "PASS_8_OF_8",
+    "new_dev_experiment_wall_seconds": 19.094623340999533,
+    "mandatory_full_exact_SHA_Windows_Ubuntu_regression": "NOT_RUN",
+    "hosted_G4_G5_G7": "UNVERIFIED_FOR_P59_SHA"
+  },
+  "deployment": {
+    "PR_draft_unmerged": true,
+    "no_FORGE_dispatch": true,
+    "no_new_runner_scheduler_workflow_controller_queue": true,
+    "no_external_scientific_first_use": true,
+    "no_paid_API": true,
+    "no_model_promotion": true
+  }
+}
