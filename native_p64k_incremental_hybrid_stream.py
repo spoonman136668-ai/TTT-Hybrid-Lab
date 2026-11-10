@@ -149,6 +149,10 @@ class StreamingHybridPilot:
     def preview(self,candidates:torch.Tensor,state:HybridFactualState)->torch.Tensor:
         """Separate one-step same-state candidate branches; no predicted fact writes."""
         self._validate_sequence(candidates,state,16)
+        # Preserve P64-S factual-readiness: no hypothetical recommendation
+        # before at least one caller-confirmed completed observation.
+        if not bool((state.ttt.confirmed_count > 0).all()):
+            raise ValueError('P64K_NO_CONFIRMED_FACTUAL_HISTORY')
         outputs=[]
         for i in range(candidates.shape[1]):
             output,_=self._step(candidates[:,i,:],state,False)
