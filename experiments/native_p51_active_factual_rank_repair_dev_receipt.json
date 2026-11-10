@@ -1,0 +1,189 @@
+{
+  "schema": "ttt-hybrid.p51.active-rank-repair-authored-dev-negative-receipt.v1",
+  "classification": "FROZEN_DEV_FAIL_0_OF_3_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 141,
+    "sha": "1ccbe42579be6788224405b3315f83f920bab76c",
+    "p50_pol_result": "DEV_FAIL_0_OF_3",
+    "parallel_architecture_pr": 140,
+    "previous_active_p13_pr": 79,
+    "previous_p13_null": "Doptimal failed vs equal-budget random in delayed-feedback synthetic worlds"
+  },
+  "source_custody": {
+    "freeze_commit": "341e8c62b9bc4e22ebdf3d0af4976b9806885592",
+    "frozen_before_first_development_use": true,
+    "source_seeds": [
+      800101,
+      800103,
+      800107
+    ],
+    "worlds_per_seed": 1536,
+    "total_distinct_worlds": 4608,
+    "policy_kinds": [
+      "constant",
+      "feedback",
+      "sticky",
+      "random"
+    ],
+    "policy_each_seed": 384,
+    "world_kinds": [
+      "stable",
+      "causal_reverse",
+      "exogenous_jump",
+      "no_effect_sham"
+    ],
+    "world_kind_each_seed": 384,
+    "first_six_factual_actions_shared_by_all_arms": true,
+    "two_executed_probe_actions_each_arm": true,
+    "common_exogenous_noise_and_world_across_arms": true,
+    "unobserved_alternative_outcomes_never_generated": true,
+    "previous_consumed_sources_not_reused": true,
+    "cohort_sha256": {
+      "800101": "fd3ea4e69e4d309e78c83eab7f2b1613414ff6092f70be41e5be01389b43508b",
+      "800103": "906f3d412b0f9efa590f4d9bbc0a1b77f540cd98109e2bb0cecd6fe816e220b5",
+      "800107": "7ec6ac68b597e654c7d0afcdc595c6a2b9920cc328bdbaad2bc6ecd72d8efa8f"
+    },
+    "source_history_sha256": {
+      "800101": "957c96518899dd9dc78a39cd3eca8f9e9eae2c5219bf643ec784be7fdfc2e1cd",
+      "800103": "e47385e727f40dc94c2d1cee328a3280cd18643c5071420a4c16d99676b9a326",
+      "800107": "3d5e68467268bf5cb9983e6d9dec8db5c94cfa02f301b6e8dc39071689477b92"
+    }
+  },
+  "tested_source": {
+    "module": "scripts/native_p51_rank_repair_dev.py",
+    "git_blob": "ec311d20b29041aef9cc27acd0d304c200a641ab",
+    "sha256": "3e29328a61127f1c1eb7cc5d8008ad34cf867f9ae11be3c73c3ef62a674a9271",
+    "tests": "tests/test_native_p51_rank_repair_dev.py",
+    "test_blob": "92878309d8e5d941a6a08609dc2fa34d5788b087",
+    "test_sha256": "2a758491f25f112e7816d05d9fb0146194cbb6638d6e2689942d8b48b20effa3",
+    "full_local_result_sha256": "db0ae5dc9691ac6f71b7178b008540c857fa346ea143353bff2bbae56559ea51"
+  },
+  "arms": [
+    "orthogonal residualized action-column rank greedy",
+    "conventional ridge regularized D-optimal",
+    "flip previous physical action",
+    "fair seeded random",
+    "continue original uncontrolled policy"
+  ],
+  "results": [
+    {
+      "seed": 800101,
+      "orthogonal": {
+        "full_rank_coverage": 1,
+        "recent_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.011133761557384271,
+        "constant_full_rank_coverage": 1,
+        "sham_effect_mae": 0.011779263692667139,
+        "actions_outcomes_sha256": "5353235f4627726fdc2e2135c48c7423b008143d9813eaeed24024af1322cbee"
+      },
+      "Doptimal": {
+        "full_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.011133761557384271,
+        "actions_outcomes_sha256": "5353235f4627726fdc2e2135c48c7423b008143d9813eaeed24024af1322cbee"
+      },
+      "flip": {
+        "full_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.01043605441300926
+      },
+      "random": {
+        "full_rank_coverage": 0.900390625,
+        "causal_switch_penalized_MAE": 0.24759826654560202,
+        "constant_full_rank_coverage": 0.7552083333333334
+      },
+      "passive": {
+        "full_rank_coverage": 0.6497395833333334,
+        "causal_switch_penalized_MAE": 0.6567592370614475,
+        "constant_full_rank_coverage": 0
+      }
+    },
+    {
+      "seed": 800103,
+      "orthogonal": {
+        "full_rank_coverage": 1,
+        "recent_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.012006270092711643,
+        "constant_full_rank_coverage": 1,
+        "sham_effect_mae": 0.011114826939588493,
+        "actions_outcomes_sha256": "830f9dbb7e55910aa2a9efddaae2a1f21db16d0bb336577719bb116f6111b1b0"
+      },
+      "Doptimal": {
+        "full_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.012006270092711643,
+        "actions_outcomes_sha256": "830f9dbb7e55910aa2a9efddaae2a1f21db16d0bb336577719bb116f6111b1b0"
+      },
+      "flip": {
+        "full_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.011339706419382931
+      },
+      "random": {
+        "full_rank_coverage": 0.9029947916666666,
+        "causal_switch_penalized_MAE": 0.27945557726571474,
+        "constant_full_rank_coverage": 0.7630208333333334
+      },
+      "passive": {
+        "full_rank_coverage": 0.6510416666666666,
+        "causal_switch_penalized_MAE": 0.6476831821735255,
+        "constant_full_rank_coverage": 0
+      }
+    },
+    {
+      "seed": 800107,
+      "orthogonal": {
+        "full_rank_coverage": 1,
+        "recent_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.015387220596406256,
+        "constant_full_rank_coverage": 1,
+        "sham_effect_mae": 0.014677504541913031,
+        "actions_outcomes_sha256": "e9beb7263dccc751b4204943aa9320d199e4de33f9c29400d7fa1cf5063d25b5"
+      },
+      "Doptimal": {
+        "full_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.015387220596406256,
+        "actions_outcomes_sha256": "e9beb7263dccc751b4204943aa9320d199e4de33f9c29400d7fa1cf5063d25b5"
+      },
+      "flip": {
+        "full_rank_coverage": 1,
+        "causal_switch_penalized_MAE": 0.014367762496748178
+      },
+      "random": {
+        "full_rank_coverage": 0.8990885416666666,
+        "causal_switch_penalized_MAE": 0.3010658692638734,
+        "constant_full_rank_coverage": 0.7734375
+      },
+      "passive": {
+        "full_rank_coverage": 0.6380208333333334,
+        "causal_switch_penalized_MAE": 0.6497276626953187,
+        "constant_full_rank_coverage": 0
+      }
+    }
+  ],
+  "primary_negative": {
+    "positive_10_percent_advantage_over_strongest_control": "FAIL_0_OF_3",
+    "orthogonal_vs_Doptimal": "EXACT_SAME_ACTION_HISTORY_AND_REALIZED_OUTCOMES_IN_ALL_3_COHORTS",
+    "exhaustive_binary_action_histories": "64/64 length6 and 128/128 length7 produce identical next actions",
+    "simple_flip_causal_effect_MAE": "BETTER_THAN_BOTH_DOPT_AND_ORTHOGONAL_ON_ALL_3_COHORTS",
+    "constant_rank_coverage_gain_vs_random": "PASS_3_OF_3",
+    "no_effect_sham_false_attribution_error_under_0point06": "PASS_3_OF_3",
+    "bitwise_restore_from_completed_facts": "PASS_ALL_ARMS_ALL_SEEDS",
+    "all_frozen_pass": "FAIL_0_OF_3"
+  },
+  "qualifications": {
+    "focused_new_pytest": "PASS_6_OF_6",
+    "exact_source_and_test_git_blob_readback": "PASS",
+    "original_repository_full_Windows_and_Ubuntu_WSL_regression": "NOT_RUN",
+    "hosted_G4_G5_G7": "NOT_QUALIFIED",
+    "GPU": "NOT_RUN",
+    "trained_GRU_MLP_comparison": "NOT_RUN",
+    "external_independent_physical_source_first_use": "NOT_RUN",
+    "causal_identifiability_under_hidden_confounders": "NOT_PROVEN",
+    "whole_process_compute": "UNVERIFIED: sub-20ms individual arm timing underpowered; physical source is simulator only"
+  },
+  "research_disposition": "Support limited intervention-diversity/rank-repair on authored DEV; reject novelty/superiority vs D-optimal and trivial action flip; preserve prior P13, P38-P50 negative outcomes. Do not merge/promote as intelligence gain.",
+  "isolation": {
+    "no_FORGE_owner_or_research_dispatch": true,
+    "no_new_controller_scheduler_queue_runner": true,
+    "no_paid_API": true,
+    "no_source_first_use": true,
+    "no_accepted_ref_or_merge": true
+  }
+}

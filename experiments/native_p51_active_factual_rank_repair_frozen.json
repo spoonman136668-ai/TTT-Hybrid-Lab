@@ -1,0 +1,112 @@
+{
+  "schema": "ttt-hybrid.p51.active-factual-rank-repair-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_NEW_SOURCE_GENERATION_AND_EXECUTION",
+  "as_of": "2026-11-09",
+  "parent": {
+    "pr": 141,
+    "sha": "1ccbe42579be6788224405b3315f83f920bab76c",
+    "source_blob": "973624acca10cb0de7d6d3c9b9dc07a78ccdfc2b",
+    "outcome": "P50-POL 0/3 development FAIL, source 790xxx consumed"
+  },
+  "separate_older_active_research": {
+    "p13_pr": 79,
+    "p13_outcome": "D-optimal active probes lost to same-budget random probes in known lag worlds",
+    "p14_pr": 81,
+    "scope": "P51 compares causal rank repair in nonalternating policy histories, not new claim of universal active exploration or novelty over P13"
+  },
+  "hypothesis": "Given six already-completed actions from a potentially confounded feedback/sticky/constant policy and only two further factual actions, can greedily residualizing the prospective executed action against a quadratic nuisance basis recover identifiability and reduce the final current-causal-effect error relative to equal two-probe random, last-action reversal, and a conventional D-optimal selector?",
+  "source": {
+    "kind": "fresh openly authored simulated DEV worlds, not authentic independent owner science",
+    "seeds": [
+      800101,
+      800103,
+      800107
+    ],
+    "worlds_per_seed": 1536,
+    "groups_per_cohort": {
+      "stable": 384,
+      "causal_reverse": 384,
+      "exogenous_jump": 384,
+      "no_effect_sham": 384
+    },
+    "policy_families": {
+      "constant": 384,
+      "feedback": 384,
+      "sticky": 384,
+      "random": 384
+    },
+    "history_length": 8,
+    "uncontrolled_factual_steps": 6,
+    "actual_probe_slots": [
+      6,
+      7
+    ],
+    "initial_sensor": "uniform(-.3,.3)",
+    "base_b0": "uniform(-.2,.2)",
+    "base_trend": "uniform(-.4,.4)",
+    "base_curvature": "uniform(-.1,.1)",
+    "sinusoid_amplitude": "uniform(0,.08)",
+    "sinusoid_phase": "uniform(-pi,pi)",
+    "frequency_by_seed": [
+      [
+        0.35,
+        0.9
+      ],
+      [
+        0.95,
+        1.35
+      ],
+      [
+        1.4,
+        2
+      ]
+    ],
+    "independent_noise_sigma": 0.02,
+    "latent_effect": "equiprobable sign * uniform(.25,.45), except zero-effect sham = exactly 0",
+    "causal_reverse": "flip effect sign starting at k uniform integer{3,4,5} on causal worlds",
+    "nuisance_jump": "independent signed step with |step| uniform(.4,.7) starting at k uniform{3,4,5}",
+    "uncontrolled_action_policy": "first 6 completed actual actions: constant sign, feedback(-sign of past sensor) with 20% random exploration, 80%-sticky prior actual action, or 50/50 fair random; all use only previously realized observation and policy RNG",
+    "matched_source": "All probe-arm clones share the same 6 actual action-outcome facts, latent physical world, and exogenous/noise arrays for every t; their own two executed probe actions create different actual observed states. No alternative never-executed outcome shown.",
+    "probe_budget": "Every arm executes exactly 2 real interventions at t=6 and 7; no source world receives extra probes, labels, future outcomes or special thresholds",
+    "action_signs": "Both -1/+1 permitted, no forced naturalness limits."
+  },
+  "probes": {
+    "candidate_orthogonal": "greedily choose +1/-1 maximizing squared residual of prospective action column after projecting it against [1,t,t^2] on all completed facts and the proposed current action; identical before/after action history for alternatives except proposed factual action; tie -> last-action reversal",
+    "conventional_Doptimal": "greedily choose +1/-1 maximizing logdet(X^TX + 1e-4*I) with X=[1,t,t²,action] through current candidate, exact same factual history and opportunities, tie -> last-action reversal",
+    "simple_flip": "execute opposite of immediately previous actual action at both probe slots, no model",
+    "random": "seeded independent fair +/-1, no oracle, same two slots",
+    "passive": "continue the *same* original policy for two more completed actual events, no privileged labels",
+    "source_order": "precommitted sorted arm order candidate, Doptimal, flip, random, passive; all share the same independent world noise and common random values; do not accidentally consume different hidden-world randomness by policy"
+  },
+  "estimator": {
+    "factual_effect_full": "OLS float64 [1,t,t²,executed_action] after 8 actual actions, reject rank <4 or condition>1e6",
+    "factual_effect_recent": "OLS float64 [1,t,executed_action] on final 3 completed facts, reject rank <3 or condition>1e6",
+    "no_hidden_supervision": true,
+    "rank_deficient": "NaN, explicit abstention, count as missing; for main score missing incurs fixed 1.0 absolute-effect error",
+    "no_effect_sham": "report absolute fitted false effect and identifiable fraction",
+    "observation_memory": "8 actual pairs only; deterministic cold replay from serialized facts, no model or source secret"
+  },
+  "metrics": {
+    "all_cohorts_and_per_initial_policy": true,
+    "information_coverage": "overall and by initial policy, for full8 and last3",
+    "primary": "causal-switch current-effect penalized_MAE from final 3 factual outcomes, missing counts as 1.0, for every cohort and per policy",
+    "frozen_pass": [
+      "candidate causal-switch penalized MAE <=0.9*min(Doptimal,random,flip) on each of 3 cohorts",
+      "candidate full rank coverage >=0.95 in constant policy in each cohort and >=random+0.10 in constant policy in each cohort",
+      "candidate sham mean abs false effect <=0.06 on identifiable last3 in each cohort",
+      "candidate no world uses unexecuted outcomes, 2 probes exactly, bit-exact cold replay",
+      "candidate whole-process wall and all comparator wall measured; if >Doptimal by >25% cannot claim efficiency"
+    ],
+    "full_trained_neural_GRU_MLP": "NOT_RUN_THIS_NARROW_CLASSICAL_INFO_PROBE_DEV, required for future architecture superiority",
+    "total_cost": "report actual process seconds and per-arm source action count; no paid APIs, no GPU",
+    "scientific_PASS": "NOT_POSSIBLE here; source is authored synthetic and not independent project-owner scientific first-use"
+  },
+  "authority": {
+    "no_new_workflow_runner_scheduler_queue_or_controller": true,
+    "no_FORGE_dispatch_or_integration": true,
+    "no_accepted_ref_mutation": true,
+    "no_merge_or_promotion": true,
+    "no_source_reuse_from_prior_P13_or_P47_to_P50": true,
+    "full_exact_SHA_windows_and_ubuntu_regression_for_acceptance": true
+  }
+}
