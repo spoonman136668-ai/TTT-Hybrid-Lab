@@ -1,0 +1,32 @@
+{
+  "schema": "ttt-hybrid.p51-pre-source-precision-amendment.v1",
+  "original_freeze": {
+    "commit": "ecd9731f033ed0d8a12348f2872626c01c38861d",
+    "manifest_git_blob": "7be01ec88b39dca446da99ec39a4fe8cd2c1a965"
+  },
+  "reason": "On a manually authored source-free four-action fixture, PyTorch CPU batched same-P50-pilot and original P50.preview single-candidate paths differ by 1.1920928955078125e-7 due to floating accumulation order, despite identical input/memory/weights. Bit-exact *shape-changing* forward parity is not an appropriate source/semantics check.",
+  "change": "Before generating any of the newly registered 811xxx source cohorts, correct the API parity check to absolute numeric tolerance 1e-6 and rtol 0; preserve separate bit-exact tensor-only cold checkpoint/replay. No model/optimizer/source seed/arm, fit budget, numeric target, frozen gain thresholds, split/heldout changed.",
+  "manual_fixture_only": true,
+  "independent_scientific_source_first_use": false,
+  "no_new_training_or_trial_source_generated_prior_to_amendment": true,
+  "new_gate_name": "numerically_equivalent_P50_API_1e_6",
+  "unchanged": [
+    "source_seeds",
+    "sampler_seed",
+    "model_seeds",
+    "160_optimizer_steps_each",
+    "batch_size_64",
+    "strong_neural_and_ridge_baselines",
+    "5percent_mse",
+    "5percent_effect_mae",
+    "20percent_wrong_credit_margin",
+    "all_seeds",
+    "validation_1percent_plateau",
+    "cold_bit_exact"
+  ],
+  "authority": {
+    "no_external_source_first_use": true,
+    "no_runner_or_schedule": true,
+    "no_merge_or_promotion": true
+  }
+}
