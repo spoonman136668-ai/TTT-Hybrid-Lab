@@ -1,0 +1,106 @@
+{
+  "schema": "ttt-hybrid.p60-factual-history-necessity-architecture-dev.v1",
+  "classification": "PREREGISTERED_AUTHORED_DEVELOPMENT_DIAGNOSTIC_NOT_INDEPENDENT_SCIENTIFIC_ACCEPTANCE",
+  "question": "On P59-POL supervised momentum imitation, does factual executed-action history and online TTT fast-memory actually contribute to physical long-horizon success beyond the current velocity alone?",
+  "parent": {
+    "pr": 158,
+    "sha": "af32bb43e4fc1a4271150ce27f7b6d101450c825",
+    "tree": "3a630ec01ba730da290dc7072de8ad02df768281",
+    "original_p59_policy_module_blob": "70b8189cf46c4da492580fca88f1e17135ce30db",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p54_physics_blob": "9ecfc5822989336b3bbb14f29b8ebf84296c7039"
+  },
+  "hypothesis": "The trained full Hybrid's action-outcome history contributes a genuine >=10 percentage-point and >=5 reward advantage over both zero-history inference and an equally trained current-only neural policy on all 3 new development seeds.",
+  "frozen_source": {
+    "fit_trajectories": "REUSE original P59-POL exact 128 teacher training seeds 986000..986127 as FIT only; do not reuse its previously evaluated validation/OOD cohorts as fresh evidence",
+    "val_seeds": [
+      987200,
+      987231
+    ],
+    "ood_seeds": [
+      987400,
+      987495
+    ],
+    "val_reset_range": [
+      -0.6,
+      -0.4
+    ],
+    "ood_reset_range": [
+      -0.75,
+      -0.25
+    ],
+    "episodes_per_arm_ood": 96,
+    "horizon": 256,
+    "source": "exact original P54 published-step transcription, NOT installed official Gymnasium",
+    "expert": "P59 teacher action chooses -1 if current velocity < 0.00005 else +1; exact current-state-only conventional baseline",
+    "actual_actions": "training uses actually completed teacher actions/outcomes; evaluation models choose actual step action from current witnessed source only",
+    "factual_history_features": "exact P59 position, velocity*100, physical position_delta*100, velocity_delta*100, executed_action for last four physically completed observations, no alternative futures",
+    "seeds_are_prospective": true
+  },
+  "models": {
+    "full_hybrid": "P59 exact HybridPilot(5,1,Configuration(width=8,heads=2,ssm=attention=ttt=depth=True)); train original binary expert action objective",
+    "current_only": "two-input MLP [position,velocity*100] -> 34->32->1, ~1255 trainable params vs P59 full Hybrid ~1282; same examples and minibatch indexes",
+    "on_frozen_weights_ablate": [
+      "full witnessed history",
+      "zeroed last-4 action-outcome history, current physical sensor intact",
+      "cyclically shift completed historical executed-action credit only",
+      "TTT enabled but inference fast memory updates disabled by original model's ttt_update=False"
+    ],
+    "all_comparators_use_same_physics": "yes; no teacher oracle passed to model input; deterministic teacher baseline only in scores"
+  },
+  "budget": {
+    "model_initializations": [
+      9611,
+      9623,
+      9631
+    ],
+    "sampler_seeds": "910000+model_initialization",
+    "optimizer": "AdamW",
+    "steps_per_arm": 400,
+    "batch": 96,
+    "lr": 0.003,
+    "gradient_norm": 1,
+    "validation_every": 100,
+    "torch_threads": 1,
+    "model_total_training_steps": 2400
+  },
+  "frozen_gates": {
+    "full_hybrid_ood_goal_rate_at_least_0_95": true,
+    "history_relevance_success_ge_10_percentage_points_vs_both_nohistory_and_currentonly": true,
+    "history_relevance_reward_ge_5_vs_both_nohistory_and_currentonly": true,
+    "executed_action_credit_ablation_success_loss_ge_10_percentage_points": true,
+    "ttt_fast_update_off_success_loss_ge_10_percentage_points": true,
+    "all_models_validation_final_two_accuracy_delta_le_1pct": true,
+    "cold_weights_exact": true,
+    "all_three_init_seeds_must_pass": true
+  },
+  "negative_controls": [
+    "fixed teacher uses only current observed velocity",
+    "no-history ablation preserves live physical state and trained weights",
+    "action credit ablation only shifts already-completed actions within bounded history",
+    "TTT off keeps all trained parameters and factual history intact",
+    "current-only train uses exact same physical FIT labels and sampler indices",
+    "fresh untouched OOD world seeds for this DEV result",
+    "rejected/source-mismatch inputs fail closed"
+  ],
+  "provenance": [
+    "original exact P59/P50/P54 Git blob readback",
+    "full fit/val/OOD source trace hashes",
+    "sampling index SHA256",
+    "per-seed model weights/cold restore hashes",
+    "training curves and CPU wallseconds",
+    "physical executed action counts and terminal rewards"
+  ],
+  "limits": {
+    "no_external_source_first_use": true,
+    "no_science_promotion": true,
+    "no_scheduled_tasks": true,
+    "no_new_runner_or_workflow": true,
+    "no_FORGE_controller_or_queue": true,
+    "no_paid_API": true,
+    "no_merge": true,
+    "full_windows_linux_exact_sha_regression_required": true,
+    "owner_independence_and_official_gymnasium_runtime_unverified": true
+  },
+  "interpretation": "A failure to establish historical or TTT necessity on this imitation task says only the *task* is too easy to require memory, not that SSM/TTT components are inherently useless or that learning is absent."
+}
