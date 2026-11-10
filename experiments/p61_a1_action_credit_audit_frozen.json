@@ -1,0 +1,69 @@
+{
+  "schema": "ttt-hybrid.p61-a1-action-credit-identifiability-retrospective.v1",
+  "status": "FROZEN_BEFORE_RETROSPECTIVE_ANALYSIS_EXECUTION",
+  "classification": "HISTORICAL_CONSUMED_P61_SOURCE_AUDIT_NOT_NEW_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "pr": 160,
+    "sha": "0cabb458dc6881761423368a43fc4e4343cd6dc2",
+    "original_module_blob": "e8895f3a5386626f4b12c068c0c17b2bf84cc9ca",
+    "protocol_blob": "4841d0aae71d055db4b9b7b575da66ebb3496f34",
+    "original_ood_source_sha256": "a151ee31fae9814a2c7e5bba8c199a1f065bf5f237365f5b46bae429c857763b"
+  },
+  "question": "Does a non-invertible action-identity deletion destroy ability to infer latent motor polarity, and how much headroom do strong classical factual controls leave beyond the original P61 3-fact rule?",
+  "inputs": "Historical already-consumed P61 source only, no novel sources or newly protected scientific experiments",
+  "historical_source": {
+    "fit": [
+      991101,
+      4096,
+      0.5,
+      0.24
+    ],
+    "val": [
+      991103,
+      512,
+      0.5,
+      0.24
+    ],
+    "ood": [
+      991107,
+      1024,
+      0.75,
+      0.3
+    ],
+    "probes": 6,
+    "observed_delta": "0.18*latent_sign*executed_action + Normal(0,noise)",
+    "switch_after_probe": 3,
+    "query": "one real actual executed ±1 and observed ±1 reward, no unrealized training reward",
+    "redaction": "training models receive only original factual [actual probe actions, recorded deltas, actually executed final query action, observed reward]; never latent target from source oracle",
+    "source_hash_gate": "all three byte-identical SHA256 from original published receipt before any scoring"
+  },
+  "controls": {
+    "last3": "sign of sum of last 3 actual executed action*observed outcome products, original P61",
+    "all6": "sign all six",
+    "factual_linear_ridge": "train supervised simple [credited first3 sum, credited last3 sum] against executed-query*real-observed-reward only on historical FIT, lambda=1e-3, report fit and OOD",
+    "noninvertible_deleted_credit": "train conventional ridge on six observed deltas with all historical executed action identities truly removed (not permuted), same FIT-only factual reward-derived supervision, report OOD",
+    "fixed_action": "always choose +1",
+    "fit_prior_bayes": "source-author conditional latent polarity posterior, p_switch=0.50, noise=0.24 from published FIT source; explain access to source family; not authentic learnt prior",
+    "ood_prior_oracle": "upper bound only, source-author p_switch=0.75, noise=0.30 from published OOD source (NOT a fair deployment comparator)",
+    "wrong_credit_rotation": "known bijection admits exact inverse; original wrong-credit P61 control is not a destructive ablation"
+  },
+  "statistics": {
+    "odds_evaluation": "only heldout consumed historical OOD, no training or tuning on OOD; fixed known priors are author-privileged",
+    "paired_bootstrap_seed": 993399,
+    "paired_bootstrap_replicates": 10000,
+    "ci": "paired percentile 95% intervals vs recent3",
+    "redacted_action_sanity": "measured OOD accuracy 44%-56% only; chance-like, not proof from one sample",
+    "primary_gate": "no architecture PASS claim; original P61 negative remains frozen regardless of audit"
+  },
+  "budget": {
+    "max_cpu_local_seconds": 30,
+    "no_gpu": true,
+    "no_new_runners": true,
+    "no_workflows": true,
+    "no_scheduled_tasks": true,
+    "no_controller_or_forge_modifications": true,
+    "no_merge": true,
+    "no_scientific_first_use": true
+  },
+  "authorization": "retrospective read-only source reanalysis on independent draft branch; original published source/refs protected; no owner or scientific first-use touched"
+}
