@@ -1,0 +1,387 @@
+{
+  "artifacts": {
+    "README_P61.md": {
+      "bytes": 5506,
+      "git_blob": "a896e2117bf9ca77eb7f48c3dfadd9f12084c764",
+      "sha256": "40f21c162864bf2cd28ab9f78b3f9b8738a3897c0f5e9ac1c545db6df228582a"
+    },
+    "experiments/p61_factual_hidden_polarity_dev_frozen.json": {
+      "bytes": 5837,
+      "git_blob": "2bfaf3c163bad0fe1c626bff29b12db6a7239f92",
+      "sha256": "0b6e9ab1cbaa8b8d93c8e972cfd28b8801dc776f51cc057f020060819c7a0eb3"
+    },
+    "experiments/p61_hidden_motor_polarity_dev.py": {
+      "bytes": 12523,
+      "git_blob": "e8895f3a5386626f4b12c068c0c17b2bf84cc9ca",
+      "sha256": "5b6253f9512495b1f7e2a3ba4d6cf3a715107a6d4ea3702ddd1c40a1c0b4f668"
+    },
+    "experiments/p61_hidden_motor_polarity_dev_result.json": {
+      "bytes": 17670,
+      "git_blob": "eb0a1f03083d96c1923bde8cd7752d5c47bbc39b",
+      "sha256": "c83c3a98293bcf051879a3467bd9aceb31d017c7823cafb84100f32fb13f2b8e"
+    },
+    "tests/test_p61_hidden_motor_polarity_dev.py": {
+      "bytes": 5449,
+      "git_blob": "2735f14c9e2a969659602ef11b049cf309f8642a",
+      "sha256": "ef291239df3eeb4d97ee7819b39045ab8f3092c9d08117e1a26187156f43d96b"
+    }
+  },
+  "baseline": {
+    "all_6_analytic": {
+      "actual_final_motor_actions": 1024,
+      "mean_realized_reward": 0.205078125,
+      "success": 0.6025390625,
+      "success_stable": 0.9254902005195618,
+      "success_switched": 0.49544864892959595
+    },
+    "recent_3_analytic": {
+      "actual_final_motor_actions": 1024,
+      "mean_realized_reward": 0.70703125,
+      "success": 0.853515625,
+      "success_stable": 0.8588235378265381,
+      "success_switched": 0.8517554998397827
+    }
+  },
+  "classification": "AUTHORED_PARTIALLY_OBSERVED_REWARD_ONLY_DEVELOPMENT_NOT_EXTERNAL_SCIENCE",
+  "deployment": {
+    "FORGE_UNCHANGED": true,
+    "no_live_actuation": true,
+    "no_merge": true,
+    "no_model_promotion": true,
+    "no_runner": true,
+    "no_scheduler": true,
+    "no_workflow": true
+  },
+  "diagnostic_caveats": [
+    "Wrong-credit rotation of history action identities is bijective/invertible and weak as a causal discredit control; do not treat as destroyed information",
+    "TTT ablation is off within an already trained model and per-forward fast memory is rebuilt for each query, NOT across-episode persistent autonomous learning",
+    "Synthetic fully authored task, no independent physical source, no scientific acceptance",
+    "Some conventional arms have not plateaued, so no claim fully converged",
+    "Matched minibatch examples and optimizer step count do not establish FLOPs/compute parity"
+  ],
+  "engineering": {
+    "available_local_regression": "68_PASS_2_SKIPPED",
+    "exact_parent_full_windows_linux": "UNVERIFIED",
+    "numpy": "2.3.5",
+    "official_gymnasium": "NOT_APPLICABLE_TO_CUSTOM_TASK",
+    "pytest": "9.0.2",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu"
+  },
+  "frozen_outcome": {
+    "GRU_vs_memoryless_15pp": "PASS_3_OF_3",
+    "all_seeds_full_pass": false,
+    "classification": "FAIL_0_OF_3",
+    "cold_bit_exact": "PASS_3_OF_3",
+    "hybrid_strongest_gain": "FAIL_0_OF_3",
+    "hybrid_success_ge_75pct": "PASS_3_OF_3",
+    "hybrid_ttt_on_5pp": "PASS_3_OF_3",
+    "hybrid_wrong_credit_10pp": "FAIL_0_OF_3",
+    "neural_validation_plateau_all_arms": "FAIL_0_OF_3"
+  },
+  "optimization": {
+    "batch_size": 128,
+    "model_parameters": {
+      "GRU": 1242,
+      "Hybrid": 1282,
+      "history_MLP": 1225,
+      "memoryless": 561,
+      "wrong_credit_Hybrid": 1282
+    },
+    "neural_arms": 5,
+    "same_actual_factual_fit_examples_and_minibatches": true,
+    "sampler_indices_sha256": "dafd62017373191600d5e355823771e82296a383a30517a468bd39e404e33f20",
+    "sampler_seed": 992199,
+    "seeds": [
+      992101,
+      992103,
+      992107
+    ],
+    "steps_per_arm": 480,
+    "total_updates": 7200,
+    "wall_seconds": 30.347954629000014
+  },
+  "parent": {
+    "pr": 159,
+    "sha": "e906945c010ce82f2e2dd3b0f19bbe35a3ccfc94",
+    "source_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "prospective_protocol": {
+    "first_freeze_commit": "963ce8f602bef9ac62dd8383d291264cb724f8d8",
+    "manifest_blob": "4841d0aae71d055db4b9b7b575da66ebb3496f34",
+    "source_not_generated_before_freeze": true
+  },
+  "rows": [
+    {
+      "OOD_success_by_arm": {
+        "GRU": 0.8349609375,
+        "Hybrid": 0.8291015625,
+        "TTT_disabled": 0.5244140625,
+        "history_MLP": 0.830078125,
+        "memoryless": 0.4794921875,
+        "wrong_credit_Hybrid": 0.7880859375
+      },
+      "cpu_fit_seconds_by_arm": {
+        "GRU": 1.1490108159996453,
+        "Hybrid": 3.8231160409995937,
+        "history_MLP": 0.4566542720003781,
+        "memoryless": 0.45205864300078247,
+        "wrong_credit_Hybrid": 3.9631454940008553
+      },
+      "frozen_gates": {
+        "GRU_15pp_over_memoryless": true,
+        "all_cold_exact": true,
+        "all_neural_validation_plateau": false,
+        "hybrid_10pp_over_wrong_credit": false,
+        "hybrid_5pp_over_TTT_off": true,
+        "hybrid_5pp_over_strongest": false,
+        "hybrid_success_ge_75pct": true
+      },
+      "full_pass": false,
+      "seed": 992101,
+      "switched_success_by_arm": {
+        "GRU": 0.8257477283477783,
+        "Hybrid": 0.8101430535316467,
+        "TTT_disabled": 0.5396618843078613,
+        "history_MLP": 0.8192457556724548,
+        "memoryless": 0.46033811569213867,
+        "wrong_credit_Hybrid": 0.7711313366889954
+      },
+      "validation_curves": {
+        "GRU": [
+          0.51953125,
+          0.51953125,
+          0.744140625,
+          0.880859375,
+          0.892578125,
+          0.888671875
+        ],
+        "Hybrid": [
+          0.8515625,
+          0.87890625,
+          0.884765625,
+          0.8828125,
+          0.876953125,
+          0.880859375
+        ],
+        "history_MLP": [
+          0.51953125,
+          0.51953125,
+          0.658203125,
+          0.80078125,
+          0.853515625,
+          0.892578125
+        ],
+        "memoryless": [
+          0.51953125,
+          0.51953125,
+          0.51953125,
+          0.48046875,
+          0.48046875,
+          0.51953125
+        ],
+        "wrong_credit_Hybrid": [
+          0.544921875,
+          0.65234375,
+          0.791015625,
+          0.8046875,
+          0.837890625,
+          0.85546875
+        ]
+      }
+    },
+    {
+      "OOD_success_by_arm": {
+        "GRU": 0.8447265625,
+        "Hybrid": 0.8291015625,
+        "TTT_disabled": 0.521484375,
+        "history_MLP": 0.8388671875,
+        "memoryless": 0.4794921875,
+        "wrong_credit_Hybrid": 0.794921875
+      },
+      "cpu_fit_seconds_by_arm": {
+        "GRU": 0.9992584209994675,
+        "Hybrid": 3.825279500999386,
+        "history_MLP": 0.4998492329996225,
+        "memoryless": 0.4507696519995079,
+        "wrong_credit_Hybrid": 3.9817750849997537
+      },
+      "frozen_gates": {
+        "GRU_15pp_over_memoryless": true,
+        "all_cold_exact": true,
+        "all_neural_validation_plateau": false,
+        "hybrid_10pp_over_wrong_credit": false,
+        "hybrid_5pp_over_TTT_off": true,
+        "hybrid_5pp_over_strongest": false,
+        "hybrid_success_ge_75pct": true
+      },
+      "full_pass": false,
+      "seed": 992103,
+      "switched_success_by_arm": {
+        "GRU": 0.8348504304885864,
+        "Hybrid": 0.8101430535316467,
+        "TTT_disabled": 0.540962278842926,
+        "history_MLP": 0.8322497010231018,
+        "memoryless": 0.46033811569213867,
+        "wrong_credit_Hybrid": 0.7880364060401917
+      },
+      "validation_curves": {
+        "GRU": [
+          0.51953125,
+          0.51953125,
+          0.8359375,
+          0.8828125,
+          0.892578125,
+          0.892578125
+        ],
+        "Hybrid": [
+          0.83984375,
+          0.880859375,
+          0.888671875,
+          0.900390625,
+          0.884765625,
+          0.8828125
+        ],
+        "history_MLP": [
+          0.51953125,
+          0.51953125,
+          0.775390625,
+          0.77734375,
+          0.845703125,
+          0.90234375
+        ],
+        "memoryless": [
+          0.51953125,
+          0.51953125,
+          0.51953125,
+          0.51953125,
+          0.48046875,
+          0.51953125
+        ],
+        "wrong_credit_Hybrid": [
+          0.6015625,
+          0.779296875,
+          0.794921875,
+          0.83203125,
+          0.853515625,
+          0.865234375
+        ]
+      }
+    },
+    {
+      "OOD_success_by_arm": {
+        "GRU": 0.83203125,
+        "Hybrid": 0.82421875,
+        "TTT_disabled": 0.5859375,
+        "history_MLP": 0.837890625,
+        "memoryless": 0.4794921875,
+        "wrong_credit_Hybrid": 0.78125
+      },
+      "cpu_fit_seconds_by_arm": {
+        "GRU": 1.0725664010005858,
+        "Hybrid": 4.357017172000269,
+        "history_MLP": 0.42628802900071605,
+        "memoryless": 0.5397163750003529,
+        "wrong_credit_Hybrid": 4.081424119000076
+      },
+      "frozen_gates": {
+        "GRU_15pp_over_memoryless": true,
+        "all_cold_exact": true,
+        "all_neural_validation_plateau": false,
+        "hybrid_10pp_over_wrong_credit": false,
+        "hybrid_5pp_over_TTT_off": true,
+        "hybrid_5pp_over_strongest": false,
+        "hybrid_success_ge_75pct": true
+      },
+      "full_pass": false,
+      "seed": 992107,
+      "switched_success_by_arm": {
+        "GRU": 0.8257477283477783,
+        "Hybrid": 0.8075422644615173,
+        "TTT_disabled": 0.5175552368164062,
+        "history_MLP": 0.8348504304885864,
+        "memoryless": 0.46033811569213867,
+        "wrong_credit_Hybrid": 0.7659297585487366
+      },
+      "validation_curves": {
+        "GRU": [
+          0.51953125,
+          0.51953125,
+          0.787109375,
+          0.88671875,
+          0.890625,
+          0.892578125
+        ],
+        "Hybrid": [
+          0.84765625,
+          0.87109375,
+          0.876953125,
+          0.884765625,
+          0.87890625,
+          0.880859375
+        ],
+        "history_MLP": [
+          0.51953125,
+          0.51953125,
+          0.560546875,
+          0.7890625,
+          0.833984375,
+          0.890625
+        ],
+        "memoryless": [
+          0.51953125,
+          0.51953125,
+          0.51953125,
+          0.48046875,
+          0.48046875,
+          0.51953125
+        ],
+        "wrong_credit_Hybrid": [
+          0.505859375,
+          0.75,
+          0.787109375,
+          0.81640625,
+          0.828125,
+          0.845703125
+        ]
+      }
+    }
+  ],
+  "schema": "ttt-hybrid.p61-hidden-motor-polarity-dev-negative-receipt.v1",
+  "source": {
+    "OOD_noise_sd": 0.3,
+    "OOD_switch_frequency": 0.75,
+    "fit_size": 4096,
+    "hashes_sha256": {
+      "fit": "85ddaf146e170dee79a00358479ca0df2971c3ee927c8d9a65d21688e40d7c49",
+      "unfamiliar_dev": "a151ee31fae9814a2c7e5bba8c199a1f065bf5f237365f5b46bae429c857763b",
+      "val": "831beae2d2e2e92e6f9d6a9196620608d931b8a46ab0dd148290a88dbb72df1e"
+    },
+    "hidden_mode_not_input": true,
+    "no_counterfactual_fit_targets": true,
+    "ood_size": 1024,
+    "real_completed_probe_actions_fit": 24576,
+    "real_final_acted_reward_labels_fit": 4096,
+    "seeds": {
+      "fit": [
+        991101,
+        4096,
+        0.5,
+        0.24
+      ],
+      "unfamiliar_dev": [
+        991107,
+        1024,
+        0.75,
+        0.3
+      ],
+      "val": [
+        991103,
+        512,
+        0.5,
+        0.24
+      ]
+    },
+    "val_size": 512
+  }
+}
