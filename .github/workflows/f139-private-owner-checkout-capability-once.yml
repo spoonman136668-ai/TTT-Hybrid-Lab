@@ -1,0 +1,65 @@
+name: FORGE integration private-owner checkout capability (read only once)
+on:
+  push:
+    branches: ['operations/f139-private-owner-checkout-capability-once-20261110']
+permissions:
+  contents: read
+jobs:
+  source-custody:
+    if: github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.actor == 'spoonman136668-ai' && github.event.created == true && github.run_attempt == 1
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    steps:
+      - name: Validate fixed private-owner event before source access
+        shell: bash
+        run: |
+          python -B - <<'PY'
+          import json, os
+          assert os.environ['GITHUB_REPOSITORY']=='spoonman136668-ai/TTT-Hybrid-Lab'
+          assert os.environ['GITHUB_ACTOR']=='spoonman136668-ai'
+          assert os.environ['GITHUB_EVENT_NAME']=='push' and os.environ['GITHUB_RUN_ATTEMPT']=='1'
+          with open(os.environ['GITHUB_EVENT_PATH']) as stream:
+              event=json.load(stream)
+          assert event['created'] is True and event['deleted'] is False and event['forced'] is False
+          assert event['before']=='0'*40 and event['after']==os.environ['GITHUB_SHA']
+          assert event['sender']['login']=='spoonman136668-ai'
+          PY
+      - name: Read-only checkout with existing private-repository worker identity
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: spoonman136668-ai/TTT-Hybrid-Lab
+          ref: '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Verify immutable source custody without executing project code
+        shell: bash
+        run: |
+          python -B - <<'PY'
+          import json, os, subprocess
+          def git(*args):
+              return subprocess.check_output(['git',*args],text=True,timeout=20).strip()
+          source='6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2'
+          tree='1159dc3e20a9c457e17d74805edee942985efa07'
+          assert git('rev-parse','HEAD')==source
+          assert git('rev-parse','HEAD^{tree}')==tree
+          assert git('status','--porcelain','--untracked-files=all')==''
+          config=subprocess.run(['git','config','--local','--get-regexp','http.*extraheader'],
+              capture_output=True,check=False,text=True,timeout=20)
+          assert config.returncode==1 and not config.stdout
+          report=dict(schema='forge.f139.hybrid-private-owner-checkout-capability.v1',
+              project='spoonman136668-ai/TTT-Hybrid-Lab',source_sha=source,source_tree=tree,
+              run_id=int(os.environ['GITHUB_RUN_ID']),runner_os=os.environ['RUNNER_OS'],
+              existing_private_repository_identity=True,read_only_checkout_pass=True,
+              checkout_credentials_removed=True,private_source_uploaded=False,
+              project_code_executed=False,model_calls=0,training_started=False,
+              gpu_used=False,owner_mutations=0,forge_dispatches=0,scientific_first_use=False,
+              new_credentials=False,new_controller=False,
+              signed_forge_worker_route_qualified=False)
+          print('F139_PRIVATE_OWNER_CHECKOUT='+json.dumps(report,sort_keys=True,separators=(',',':')))
+          PY
