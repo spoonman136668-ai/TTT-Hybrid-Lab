@@ -1,0 +1,87 @@
+{
+  "schema": "ttt-hybrid.p69-genuine-cyclic-comparator-preregister.v1",
+  "state": "FROZEN_BEFORE_P69_SOURCE_USE",
+  "date_utc": "2026-11-10",
+  "scope": "AUTHORED_DEVELOPMENT_ONLY_NOT_INDEPENDENT_SCIENCE",
+  "lineage": {
+    "parent_pr": 176,
+    "parent_sha": "f079dfb1a181d8cbde78b0a07f7dba0a8ad33b5a",
+    "parent_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_P68_source_blob": "7db52d3a150903b2feff661c9562017ee24c0dfe",
+    "P68_control_fail": "cyclic cache selects min norm, not round-robin; post-outcome correction was not preregistered"
+  },
+  "hypothesis": "Against a genuinely cyclic 256-float content-addressed cache and strong frequency/all-write controls on freshly generated, interleaved factual streams, the P68 4-param causal memory write gate either maintains or loses its OOD advantage.",
+  "new_development_cohorts": {
+    "fit_seed": 990111,
+    "val_seed": 990113,
+    "ood_seed": 990117,
+    "orth_seed": 990119,
+    "fit_worlds": 512,
+    "val_worlds": 128,
+    "ood_worlds": 128,
+    "orth_worlds": 64,
+    "generation": "same P68 generator family but entirely fresh independent random seeds, per-world 16D orthogonal action keys, 8 targets x6 FIT/VAL, 8 targets x4 OOD, respectively 16 and 48 interleaved distractor events; one simulated actually executed final query and observed consequence, hidden during writes",
+    "exclusions": "No P68 consumed OOD reuse, no real source authentication, no phase/role/query at write, no OOD model selection"
+  },
+  "comparator": {
+    "exact_cyclic": "8 slots each of 16-dimensional key +16-dimensional value =256 persistent float32. An empty cache implies next replacement slot 0. Last inserted slot is marked by multiplying its normalized stored key by 2. On every unfamiliar key miss, normalize the previous marked key back to unit norm, then replace (last slot+1)%8, marking new key with norm 2. On match (cosine>=0.98), update value only; marker and next position remain. Keys are unit normalized before storage. No separate pointer/counter/step is stored or passed to readout. This enforces round-robin with exact 256-float capacity and deterministic cold-restore.",
+    "reject": "Any hidden clock, t%8, extra scalar, external pointer, wrong hit updating pointer, or >256 persistent float state invalidates baseline and entire study.",
+    "other_arms": [
+      "P68 frequency protected 256 float key/value cache",
+      "P68 256 float all-write fast matrix",
+      "zero predictor"
+    ],
+    "gate": "Unmodified P68 four-param gate trained afresh with three distinct seeds; factual-only write input. Cross-check source identity against P68 parent."
+  },
+  "freeze": {
+    "model_seeds": [
+      990201,
+      990203,
+      990207
+    ],
+    "wrong_credit_seeds": [
+      991001,
+      991003,
+      991007
+    ],
+    "sampler_seed": 990299,
+    "bootstrap_seed": 990401,
+    "bootstrap_replicates": 2000,
+    "optimizer": "AdamW",
+    "rate": 0.01,
+    "steps": 180,
+    "batch": 32,
+    "validate_each": 30,
+    "weight_decay": "PyTorch AdamW default 0.01",
+    "select_by": "best validation only",
+    "cpu_wall_budget_seconds": 480,
+    "controls": [
+      "uniformly randomized target/distractor interleaving; quartile role imbalance <=.05",
+      "heldout position-only balanced accuracy <=.55 per split",
+      "exact 256 float check and >8 distinct misses pointer wraps",
+      "restart at midpoint plus new instance yields bitwise exact cyclic cache/prediction",
+      "query withheld until readout; no evaluator labels to model",
+      "three distinct model initializations and no OOD tuning"
+    ],
+    "competence": "On VAL before seeing OOD: frequency_cache MSE <=.75 zero MSE; true cyclic MSE <=.75 zero MSE; all_write <=.75 zero MSE; each learned seed best VAL MSE <=.85 zero MSE. Stop without OOD score on any failure.",
+    "primary": "One OOD evaluation on new P69 cohort after VAL selection; each learned seed <=0.90 of strongest eligible OOD baseline among true cyclic, frequency, allwrite and zero, plus lower 2.5% percentile paired bootstrap relative improvement >0 using 2000 world resamples.",
+    "negative": "Every wrong-credit trained gate OOD MSE >=1.2*correct gate OOD; orthogonal distracting factual events alter target prediction <=1e-5; bitwise midstream restore; all controls required.",
+    "strict": "DEV_PASS only if all controls, competent baselines, primary for all 3 distinct seeds, negatives, custody, and source/budget checks pass; otherwise DEV_FAIL. None is SCIENTIFIC_PASS.",
+    "scientific": "Even DEV_PASS cannot establish independent scientific advantage, original Mamba/attention/TTT/MoD integration, physical action learning or long-run cognition. Original-source first-use separately authorized and authenticated."
+  },
+  "qualification": {
+    "same_exact_P69_source_code_and_tests": "must validate local blobs equal committed GitHub",
+    "original_full_Win_Linux": "REQUIRED_BUT_NOT_RUN",
+    "native_GPU": "NOT_RUN",
+    "whole_process_compute": "record times and caveat unequal training compute",
+    "MERGE": "NOT_AUTOMATIC",
+    "FORGE": "UNCHANGED",
+    "deployment": "NONE"
+  },
+  "execution_state": {
+    "source_generated": false,
+    "model_training": false,
+    "OOD_scored": false,
+    "scientific_pass": false
+  }
+}
