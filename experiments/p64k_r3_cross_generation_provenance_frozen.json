@@ -1,0 +1,48 @@
+{
+  "schema": "ttt-hybrid.p64k-r3-cross-generation-state-provenance-frozen.v1",
+  "phase": "FROZEN_BEFORE_IMPLEMENTATION_OR_NEW_TEST_FIXTURES",
+  "status": "DEVELOPMENT_ENGINEERING_ONLY",
+  "parent": {
+    "pr": 169,
+    "sha": "065792e6c3674ef4d9c789431205c75aceadcbbd",
+    "tree": "d02fe6dbc39a3149d861275a93fc77ce89b1a103",
+    "source_blob": "d7e00682e5a9f175dd2623ec57a6e415eb031581"
+  },
+  "defect": "A newly constructed adapter snapshots current parameters, then accepts a structurally valid but stale HybridFactualState from a previous model generation because factual state carries no provenance",
+  "hypothesis": "Tag every generated/cold-restored factual state with a stable cryptographic content digest of its source model state_dict and TTT eta; new adapter validates tag against its own exact source weight digest alongside existing live parameter revision guard",
+  "design": {
+    "provenance": "SHA256 sorted state_dict key+dtype+shape+raw tensor bytes plus TTT eta",
+    "computed": "adapter construction, not every fact",
+    "cold_restorable": "same weights and eta restore preserves identity; after model edit/retrain old state must fail closed",
+    "legacy": "untagged four-field state rejected; cold restore contract updated to persist tag",
+    "scope": "original model and forward code unchanged; no original research first-use; no new trainable weights"
+  },
+  "frozen_negative_controls": [
+    "same-model old state remains usable until model revision",
+    "cross-adapter stale state after changed weights MUST reject before any cached read",
+    "adapter from different same-shaped random weight seed MUST reject foreign state",
+    "cold restore with exactly matching weights and eta must match preview bitwise",
+    "missing provenance tag on manually restored legacy state must reject",
+    "head or stem optimizer update invalidates old state under both old and fresh adapters",
+    "TTT eta difference invalidates old state",
+    "fresh adapter after update accepts only state initialized and factually confirmed under new weights",
+    "all unchanged ancestor P62-S P64-S and P64K R1/R2 focused tests pass on exact candidate",
+    "40/60-event CPU engineering timing and numeric parity remain within previously pinned bounds",
+    "no full original Windows/Linux/GPU/official science acceptance claim without exact final-source owner qualification"
+  ],
+  "limits": [
+    "digest is provenance tag, not MAC or authenticity proof; caller may forge string and tensor bytes",
+    "direct untracked .data alias writes after adapter construction may bypass PyTorch _version",
+    "extra setup costs/time are not included in historical local benchmark",
+    "old untagged saved states require explicit re-confirmation or trusted provenance migration"
+  ],
+  "authority": {
+    "no_merge": true,
+    "no_scheduled_tasks": true,
+    "no_controllers": true,
+    "no_new_runner_or_workflow": true,
+    "no_model_promotion": true,
+    "no_paid_API": true,
+    "no_protected_scientific_first_use": true
+  }
+}
