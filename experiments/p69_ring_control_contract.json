@@ -1,0 +1,52 @@
+{
+  "schema": "ttt-hybrid.p69-ring-cursor-equal-persistent-state-engineering-contract.v1",
+  "classification": "ENGINEERING_COMPARATOR_ONLY_NOT_SCIENTIFIC_PREREGISTRATION",
+  "source_of_motivation": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "p68_pr": 176,
+    "parent_sha": "f079dfb1a181d8cbde78b0a07f7dba0a8ad33b5a",
+    "p68_scored_ood": "CONSUMED_DO_NOT_REUSE",
+    "p68_strict_status": "FAIL"
+  },
+  "scope": "Add standalone 8-slot 16D factual key/value ring comparator and tests, preserving original P68 code, receipts, frozen source, scientific negatives and other lanes",
+  "mechanism": {
+    "persistent_state": "2 tensors per world: 8x16 keys plus 8x16 last measured effects, exactly 256 float scalars; no out-of-band step/age/phase/counter",
+    "key_norms": "0=empty, 1=occupied ordinary, 2=last MISS insertion marker; marker embedded in one existing key norm",
+    "on_miss": "first empty by lowest slot index; otherwise replace (last_insert_marker_slot + 1) mod 8; clear old marker by dividing prior norm-2 key by 2; mark incoming observed key by multiplying unit vector by 2",
+    "on_hit": "cosine similarity >=0.98, update that slot with actual just-observed effect; do not advance cursor",
+    "on_read": "normalize stored keys, cosine similarity >=0.98 and return observed effect, otherwise zero; no state update",
+    "input": "past actually executed simulated action and observed effects only; final query and held-out target unavailable during writes",
+    "cold_restore": "tensor-only carry from prior chunk produces bitwise identical state and prediction to uninterrupted factual stream",
+    "negative_guards": [
+      "reject future_query field",
+      "reject nonfinite or wrong-shape inputs",
+      "reject zero action",
+      "reject malformed or mismatched/corrupt carry"
+    ]
+  },
+  "custody": {
+    "local_exploratory_prototype_before_this_contract": true,
+    "author_local_pytorch_tests": "7/7 PASS (synthetic unit tests only)",
+    "source_sha256": "487b22b1943efdfafe426911754cfd477629ec5c6b0110de616326a04886dcda",
+    "test_sha256": "aa60bffd2a2f583eaceacdcdf86284188a96c2f924d0ee95f61261c4d4e55740",
+    "not_a_new_science_source": true,
+    "new_ood_or_fit_created": false,
+    "next_scientific_protocol_must_be_frozen_separately_before_source_birth": true
+  },
+  "qualification": {
+    "focused_local": "7/7 PASS",
+    "exact_repo_linux": "UNVERIFIED",
+    "exact_repo_windows": "UNVERIFIED",
+    "full_original_regression": "UNVERIFIED",
+    "science": "NOT_RUN"
+  },
+  "authority": {
+    "no_scheduled_tasks": true,
+    "no_owner_or_runner_use": true,
+    "no_forge_integration": true,
+    "no_accepted_ref_or_main_changes": true,
+    "no_first_use_science": true,
+    "no_merge_or_deployment": true,
+    "no_paid_api": true
+  }
+}
