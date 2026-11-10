@@ -28,17 +28,20 @@
     "local_exploratory_prototype_before_this_contract": true,
     "author_local_pytorch_tests": "7/7 PASS (synthetic unit tests only)",
     "source_sha256": "487b22b1943efdfafe426911754cfd477629ec5c6b0110de616326a04886dcda",
-    "test_sha256": "aa60bffd2a2f583eaceacdcdf86284188a96c2f924d0ee95f61261c4d4e55740",
+    "test_sha256": "7035ea0e43b5a589c975bee8d7d731153761d3eee81ba893db99e3ac80ad8952",
     "not_a_new_science_source": true,
     "new_ood_or_fit_created": false,
-    "next_scientific_protocol_must_be_frozen_separately_before_source_birth": true
+    "next_scientific_protocol_must_be_frozen_separately_before_source_birth": true,
+    "committed_source_blob": "bf12bd3525230ecf58ecc43837f67fdf23578f35",
+    "committed_test_blob": "2014ed313f7a4eaa105e98704f3122b0c958d861"
   },
   "qualification": {
     "focused_local": "7/7 PASS",
     "exact_repo_linux": "UNVERIFIED",
     "exact_repo_windows": "UNVERIFIED",
     "full_original_regression": "UNVERIFIED",
-    "science": "NOT_RUN"
+    "science": "NOT_RUN",
+    "exact_blob_readback": "SOURCE_AND_TEST_MATCH_LOCAL_TESTED_GIT_BLOB_SHA"
   },
   "authority": {
     "no_scheduled_tasks": true,
