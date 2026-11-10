@@ -1,0 +1,178 @@
+{
+  "schema": "ttt-hybrid.p67-counterbalanced-relevance-preregister.v1",
+  "classification": "PROSPECTIVE_PROTOCOL_ONLY_NO_SOURCE_BIRTH_NO_TRAINING_NO_SCIENTIFIC_FIRST_USE",
+  "freeze_date_utc": "2026-11-10",
+  "parent": {
+    "branch": "research/p65-fast-memory-interference-mechanistic-dev-20261110",
+    "sha": "5fe37fdb4b51e248159c66b2c3e426ca6d58c738",
+    "pr": 170,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "predecessors": [
+    {
+      "pr": 173,
+      "sha": "cac0d7562bcf09c98522f6dbab77bc205c4fd0e1",
+      "scientific": "DEV_FAIL_0_OF_3",
+      "failures": [
+        "fixed phase provides clock shortcut",
+        "GRU not baseline qualified; validation rises",
+        "compute and parameter mismatches"
+      ]
+    },
+    {
+      "pr": 174,
+      "sha": "a46f3a2463c3b4293a71fe7d203c6d0dfe70f50f",
+      "scientific": "DEV_FAIL_0_OF_3",
+      "failures": [
+        "gate not converged",
+        "identical gate initialization and batch sequence across 3 reported seeds",
+        "conventional GRU capacity/compute not matched"
+      ]
+    }
+  ],
+  "scope": {
+    "purpose": "Falsify event-order shortcut: can learned causal factual write admission predict future unseen executed action consequences after interleaved interference?",
+    "allowed": "Synthetic development source generation and tests ONLY after implementation exact-source readback; no sealed/independent original first use without separate source-owner authentication",
+    "forbidden": [
+      "reuse any P65/P66 FIT/VAL/OOD source or evaluation cohort",
+      "edit P65/P66 original files or original model.py",
+      "expose evaluator relevance labels or future queries before writes",
+      "retrospective tuning of this freeze after dev result",
+      "FORGE/owner/controller/runner/queue/accepted-ref/production edits",
+      "scheduled tasks or paid APIs",
+      "scientific or integration PASS based on authored DEV data"
+    ]
+  },
+  "hypothesis": {
+    "candidate": "Four-trainable-parameter content-sensitive gate on the original P65 16x16 fast-weight outer-product residual update, with no event-index input",
+    "null": "Improvement in P66 came from chronology, data marginals, undertrained conventional baselines, or differing compute rather than transferrable factual memory selectivity",
+    "mechanism": "Gate may learn to prioritize repeated causally predictive associations without seeing future query identity, evaluator relevance, or time index"
+  },
+  "source_design": {
+    "prospective_seed_registry": {
+      "fit": 970111,
+      "val": 970113,
+      "ood_dev": 970117,
+      "negative": 970119
+    },
+    "world_counts": {
+      "fit": 1024,
+      "val": 256,
+      "ood_dev": 256,
+      "negative": 128
+    },
+    "space": {
+      "action_key_dim": 16,
+      "observed_effect_dim": 16,
+      "persistent_matrix_floats": 256,
+      "query_action_dim": 16
+    },
+    "training_world": {
+      "event_count": 64,
+      "target_action_outcome_events": 32,
+      "distractor_action_outcome_events": 32,
+      "target_keys": 8,
+      "target_repetitions_each": 4,
+      "distractor_key_instances": 32,
+      "order": "fresh uniformly randomized interleaving per world; condition on content, never phase; audit balanced relevance across time bins",
+      "causal_generation": "Per-world independent action-effect mappings; observed effects emitted only after an executed simulated action. Same broad key/effect marginals for repeated target and one-off distractor families; no explicit target flag in model input",
+      "readout": "One genuinely executed simulated final query after all factual writes; label is measured consequence and is revealed only to the loss/evaluator, not an earlier write decision"
+    },
+    "unfamiliar_ood": {
+      "event_count": 96,
+      "target_events": 32,
+      "distractor_events": 64,
+      "change": "new mapping seed, unseen rotations and noise scales, length and distractor load; target events uniformly interleaved with distractors",
+      "report": "Measure cold retention and final action-consequence prediction separately; no OOD selection or OOD-driven checkpoint/threshold changes"
+    },
+    "controls": {
+      "phase": "No timestep, remaining length, first-half/second-half flag or role label as gate input; detect and fail any target-vs-distractor position imbalance > 0.05 in 4 equally sized time bins",
+      "shortcut": "An index-only nuisance classifier's held-out BALANCED role accuracy must be <=0.55 on each source split, because OOD prevalence is 1/3; raw accuracy is misleading there. If exceeded, source design invalid.",
+      "wrong_credit": "Independently permuted factual action keys paired with actual effects; compare same training budget and delayed query",
+      "orthogonal": "Negative distractors orthogonal to query subspace must not materially change correct prediction under identical factual-target stream",
+      "cold_restore": "Checkpoint model weights plus factual 16x16 state at midpoint; bitwise equality of resumed versus continuous readout on deterministic CPU"
+    }
+  },
+  "arms": {
+    "candidate": "P66-174 four-feature sigmoid residual gate without time-index input; three distinct seeded nonzero gate initializations",
+    "strongest_trained": "Conventional GRU with 256-dimensional recurrent factual state and query-conditioned head; ensure actual query is unavailable until final readout; report trainable parameter and FLOPs mismatch instead of claiming parameter equivalence",
+    "classical": [
+      "always-write same P65 residual rule",
+      "validation-selected surprise threshold",
+      "validation-selected novelty/frequency-aware adaptive write rule",
+      "last-eight factual FIFO 256 floats",
+      "random write gate matched to candidate FIT write fraction",
+      "zero-state predictor"
+    ],
+    "negative": [
+      "incorrect action-credit gate trained separately",
+      "index-only nuisance predictor",
+      "privileged evaluator oracle strictly diagnostic; excluded from best baseline"
+    ]
+  },
+  "training": {
+    "paired_model_seeds": [
+      970201,
+      970203,
+      970207
+    ],
+    "init": "Seed all trainable parameters with separate per-arm/per-seed torch generators; for gate theta sample uniform[-0.05,0.05] not all-zero; record per-seed parameter SHA256 and verify all three differ",
+    "batch_seed": 970299,
+    "fixed_budget": {
+      "max_optimizer_updates_per_trainable_arm_per_seed": 2000,
+      "batch_size": 64,
+      "validation_every_updates": 100,
+      "min_steps_before_early_stop": 500,
+      "patience_validations": 6,
+      "optimizer": "AdamW",
+      "gradient_clip_norm": 1,
+      "max_total_CPU_runtime_seconds": 1800
+    },
+    "selection": "Select and freeze best checkpoint using validation only, at first registered patience stop; no OOD lookahead; if reaching maximum steps without patience or valid convergence evidence, training_not_qualified",
+    "conventional_competence": "Every trained GRU baseline must reduce validation query MSE >=15% versus a zero-state predictor, and show a precommitted validated early stop; otherwise the scientific comparison is FAIL/UNQUALIFIED, even if candidate wins",
+    "fairness": "Exactly the same FIT/VAL worlds, actions, observed effects, supervised final-query outcomes, batch indices, and action opportunities for all arms; persistent factual state compared at 256 floats; report distinct trainable parameters, exact training/inference wall-clock, FLOPs estimates and peak memory, and do not claim whole-process cost matching when unsupported"
+  },
+  "frozen_decisions": {
+    "dev_primary_metric": "MSE of held-out executed final-query observed consequences, per world, on previously unseen OOD-DEV worlds",
+    "required_gain": "In all three independent initialized runs, learned gate OOD-DEV MSE <=0.90 times strongest eligible nonprivileged comparator on same worlds",
+    "confidence": "For each run, resample worlds with replacement in 5000 paired bootstrap replicates (seed 970401). The 95% percentile lower bound on relative MSE reduction versus strongest nonprivileged comparator must be strictly positive.",
+    "causal_negative": "In each run, wrong-action-credit model OOD-DEV MSE >=1.20 times correct-credit candidate; rate-matched random gating >=1.15 times candidate",
+    "controls_required": [
+      "all source/balance and index-only leakage checks",
+      "all three distinct init hashes",
+      "all three competent early-stopped conventional baselines",
+      "exact midstream cold restoration",
+      "read-only final query",
+      "report process time/FLOPs even on failure",
+      "no OOD reuse for hyperparameter selection"
+    ],
+    "stop_or_fail": "Any missing item, shortcut leakage, nonconverged baseline, budget exhaustion, data reuse, uncertain source provenance, or absent custody => DEV_FAIL or UNVERIFIED, never promoted to PASS",
+    "real_science": "No SCIENTIFIC_PASS from this authored dev; independently authenticated protected novel source and owner-controlled first use require a separately qualified gate"
+  },
+  "engineering_qualification": {
+    "protocol_schema_and_invariants": "Can be static-validated before source generation",
+    "later_required": "Implement isolated candidate and baseline tests, negative controls, hash all Python/fixtures/receipt, original exact-head Windows+Ubuntu/WSL full regression, pinned G4 environment and GPU separate from any science",
+    "no_replay": "Do not rerun consumed P65/P66 OOD as novel or unseal protected source; baseline qualification must be prospective"
+  },
+  "status": {
+    "protocol": "FROZEN_ONLY",
+    "source_generated": false,
+    "model_executed": false,
+    "dev_result": "NOT_RUN",
+    "full_regression": "NOT_RUN",
+    "independent_science": "NOT_RUN",
+    "merge": "NOT_AUTHORIZED",
+    "deployment": "NONE",
+    "forge": "UNCHANGED"
+  },
+  "freeze_history": [
+    {
+      "stage": "original_pre_source_preregistration",
+      "commit": "6925c57865b25650517f6708b7cebac12bb6f071"
+    },
+    {
+      "stage": "pre_source_arithmetic_clarification",
+      "note": "Use prevalence-adjusted balanced index-only accuracy on 1/3-role OOD; clarify bootstrap replicates rather than number of worlds. No P67 source/data/model executed."
+    }
+  ]
+}

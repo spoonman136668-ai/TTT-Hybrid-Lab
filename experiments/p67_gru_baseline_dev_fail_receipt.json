@@ -1,0 +1,92 @@
+{
+  "schema": "ttt-hybrid.p67-early-stopped-gru-baseline-dev-fail.v1",
+  "classification": "LOCAL_AUTHORED_DEV_BASELINE_FALSIFICATION_NOT_FROZEN_FULL_STUDY_NOT_SCIENTIFIC_PASS",
+  "pr": 175,
+  "candidate_before_receipt": "37342b90eec953e0c28b6ff9a7dc1cf71e12348d",
+  "parent_sha": "5fe37fdb4b51e248159c66b2c3e426ca6d58c738",
+  "frozen_protocol_blob": "d7797b11645c66ed977eb4b54b5816627d7e7349",
+  "original_executable_blob": "2029c0d359af4bdf861d74563c82cf8b5a584b98",
+  "original_test_blob": "52fa247d77aea9f6287b13deba7ad31f876a9048",
+  "environment": {
+    "os": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "cpu_threads": 1,
+    "conventional_state_floats": 256,
+    "gru_parameters": 227088,
+    "pinned_original_G4_environment": false
+  },
+  "method": {
+    "seed": 970201,
+    "fit_source_sha256": "ddcca02fa58df931f533c164fe3d6e8a6ac0cfd08e0a2a3b20e72ad4fa9aaec2",
+    "val_source_sha256": "c4b85a21811adfccc14835246e130ff34fe27a6f6b293496ac7bd973e5a414bf",
+    "same_train_batch_sampler_seed": 970299,
+    "optimizer": "AdamW",
+    "learning_rate": 0.003,
+    "gradient_clip_norm": 1,
+    "batch_size": 64,
+    "validation_every_steps": 100,
+    "minimum_stop_step": 500,
+    "nonimprovement_patience": 6,
+    "max_updates": 2000,
+    "training_steps_completed": 700,
+    "training_stopped_on_frozen_patience": true,
+    "resumable_chunks": [
+      200,
+      200,
+      200,
+      100
+    ],
+    "model_training_path": "training update and loss equations from exact unchanged P67 source; local resumable harness with persisted optimizer state"
+  },
+  "source_step100_parity": {
+    "exact_unmodified_source_function": "train",
+    "checkpoint_resumed_mse": 0.4257088899612427,
+    "direct_unmodified_source_mse": 0.4257088899612427,
+    "bitwise_float_equal": true
+  },
+  "validation": {
+    "zero_state_mse": 0.3997551500797272,
+    "required_max_mse_for_15pct_better": 0.3397918775677681,
+    "best_gru_mse": 0.4257088899612427,
+    "gru_vs_zero_ratio": 1.064924091350266,
+    "validation_every_100_steps": [
+      0.4257088899612427,
+      0.5152344107627869,
+      0.572902500629425,
+      0.5851712822914124,
+      0.5809535384178162,
+      0.5805402398109436,
+      0.5773531794548035
+    ],
+    "gru_competence": false
+  },
+  "custody": {
+    "resumable_harness_local_sha256": "13b02097964b68643c2452f41541de46e81d1a2dd3a0628cad24d4e33efa5af8",
+    "checkpoint_local_sha256": "eb9c5a90343adb34ad405c64b822ee50eb4bd122438b26a035e4101ecf365360",
+    "checkpoint_local_size_bytes": 3643701,
+    "diagnostic_local_sha256": "2f93eaf08138c6bfd3c41260aada27bec47dfd89b40b43be02517f43cc30b5d1"
+  },
+  "execution": {
+    "active_training_seconds_completed_chunks": 63.8384582839999,
+    "interrupted_prior_monolithic_study": "TIMEOUT_WITHOUT_COMPLETED_RECEIPT_OR_RECOVERABLE_MODEL_STATE",
+    "total_process_cost": "INCOMPLETE_PRIOR_TIMEOUT_NOT_METRIC_ACCOUNTED",
+    "cross_platform": "NOT_RUN"
+  },
+  "outcome": {
+    "strict_combined_three_seed_success": "MATHEMATICALLY_PRECLUDED_BY_SEED_970201_BASELINE_FAILURE",
+    "qualified_model_comparison": "FAIL_BEFORE_OOD_SCORING",
+    "frozen_three_seed_study": "NOT_COMPLETED",
+    "remaining_two_seed_baselines": "NOT_RUN",
+    "learned_gate_frozen_study": "NOT_RUN",
+    "OOD_dev_outcome_mse": "NOT_SCORED",
+    "source_role_position_audit": "PASS_PREVIOUS_ENGINEERING_ONLY",
+    "scientific_pass": false,
+    "model_retention_or_transfer": "NOT_ESTABLISHED",
+    "original_model_modified": false,
+    "merge": "NONE",
+    "deployment": "NONE",
+    "FORGE": "UNCHANGED"
+  },
+  "next_falsifier": "Prospectively freeze a competent conventional associative-memory baseline and a fresh causal task family before creating any further synthetic source. Maintain exact input/action/compute reporting; do not tune P67 on its consumed development source."
+}
