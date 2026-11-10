@@ -1,0 +1,110 @@
+{
+  "schema": "ttt-hybrid.p64s-original-full-hybrid-streaming-engineering-receipt.v1",
+  "classification": "EXACT_SOURCE_LOCAL_FOCUSED_PASS_NO_SCIENTIFIC_FIRST_USE_OR_ACCEPTANCE",
+  "frozen_first": {
+    "commit": "3267d1cefc8cf81805e3270ea5abd77dce9416ab",
+    "original_parent_pr": 165,
+    "original_parent_sha": "f9fbe08932ba00863e6c01d1c2112c8c64df98d0",
+    "manifest_blob": "97f9a18c428bae3f77f25fdc461008fc0c3c0dc2"
+  },
+  "source_custody": {
+    "original_hybrid_model_py_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_p62_streaming_ttt_blob": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "new_p64s_adapter_blob": "440aa8717e1aef15d7547be669dfa8d0f4da666a",
+    "new_p64s_test_blob": "eb1a5c2c574c33071c6c6a79f08e9dd87360a8ff",
+    "previous_p62_test_blob": "b9a18ac5df3b2ff26edd7f57f08cbf8a0e57918b",
+    "adapter_sha256": "7b7a0e6ecc1c74c948400931f469ee24b794d8b8e68b44484fbb011e7c90d921",
+    "test_sha256": "774a4230512013a8387ab043f8f7d35f9200c72003376acefea7eaadb828f999",
+    "exact_original_parent_files_unchanged": true
+  },
+  "local_execution": {
+    "python": "3.13.5",
+    "pytorch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "system": "Linux CPU container (not user GPU / not owner self-hosted runner)",
+    "command": "python -m pytest -q -p no:cacheprovider tests/test_native_p62_streaming_ttt.py tests/test_native_p64s_full_hybrid_stream.py",
+    "passed": 15,
+    "failed": 0,
+    "prior_parent_tests_passed": 8,
+    "new_adapter_tests_passed": 7,
+    "wall_seconds": 1.36
+  },
+  "mechanism": {
+    "reference": "Original HybridPilot(SSM->causal attention->TTT->hard depth)->head with identical original weights",
+    "state": "External SSM h, bounded causal attention KV, external original TTT matrix and confirmed count",
+    "no_new_trainable_parameters": true,
+    "confirmed_inputs": "all true caller-provided completed-event mask; NOT independently authenticated",
+    "hypothetical_previews": "pure, separate same-state branch, no attn/SSM/TTT memory writes or router utilization telemetry mutation",
+    "cold_checkpoint": "weights_only tensor-only exact restore of full model weights and factual state",
+    "gradients": "nonzero finite stem/SSM/attention/TTT/depth/head grads on confirmed prefix and pure preview",
+    "source_type": "deterministic authored random tensors, not authentic physical event source",
+    "input_dims": 5,
+    "output_dims": 2,
+    "width": 8,
+    "heads": 2,
+    "events_per_batch": 9,
+    "chunk_split": [
+      2,
+      3,
+      4
+    ],
+    "candidates": 2,
+    "limit_confirmed_events": 128
+  },
+  "frozen_parity": [
+    {
+      "seed": 641,
+      "batch": 1,
+      "max_full_vs_streamed_abs": 1.1920928955078125e-7,
+      "max_query_vs_preview_abs": 1.1920928955078125e-7,
+      "max_reset_vs_carried_abs": 0.4624220132827759
+    },
+    {
+      "seed": 643,
+      "batch": 2,
+      "max_full_vs_streamed_abs": 2.384185791015625e-7,
+      "max_query_vs_preview_abs": 5.960464477539063e-8,
+      "max_reset_vs_carried_abs": 0.2736457288265228
+    },
+    {
+      "seed": 647,
+      "batch": 3,
+      "max_full_vs_streamed_abs": 1.1920928955078125e-7,
+      "max_query_vs_preview_abs": 1.1920928955078125e-7,
+      "max_reset_vs_carried_abs": 0.5784057378768921
+    }
+  ],
+  "parity_tolerance": {
+    "atol": 0.000001,
+    "rtol": 0.000001
+  },
+  "frozen_parity_all_pass": true,
+  "microsecond_timing_not_comparative": {
+    "seed641_seconds": 0.00643307,
+    "seed643_seconds": 0.0070726,
+    "seed647_seconds": 0.00698775,
+    "includes_9_factual_updates_and_2_read_only_queries": true,
+    "hardware_speedup_or_total_cost_proof": "NOT_CLAIMED"
+  },
+  "original_full_final_SHA_windows_ubuntu_wsl_regression": "NOT_RUN",
+  "original_build_native_gpu": "NOT_RUN",
+  "CI_hosted": "CHECK_SEPARATELY_NEVER_EQUATE_QUEUED_OR_RUNNERLESS_WITH_PASS",
+  "scientific": {
+    "genuine_action_consequence_learning_gain": "UNVERIFIED",
+    "trained_strong_conventional_baselines": "NOT_RUN",
+    "long_term_cold_learning_retention": "UNVERIFIED",
+    "independent_unfamiliar_source_first_use": "NOT_RUN",
+    "original_p61_p62_p63_negative_results": "UNCHANGED"
+  },
+  "deployment": {
+    "merge": "NONE",
+    "FORGE_owner_research_loop": "UNCHANGED",
+    "controller": "UNCHANGED",
+    "queue": "UNCHANGED",
+    "schedule": "NONE",
+    "runner": "NONE",
+    "paid_api": "NONE",
+    "model_promotion": "NONE",
+    "live_actuation": "NONE"
+  }
+}
