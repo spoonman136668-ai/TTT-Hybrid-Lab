@@ -1,0 +1,154 @@
+{
+  "schema": "ttt-hybrid.p64k-incremental-actual-original-reference-benchmark-receipt.v1",
+  "status": "LOCAL_CPU_ENGINEERING_PASS_NO_SCIENTIFIC_OR_DEPLOYMENT_CLAIMS",
+  "parent_pr": 166,
+  "parent_sha": "ce49ca5d4c09aa6b743541be72b9ae9c577dd384",
+  "protocol_frozen_first_commit": "e9aac47477ffd78c48b1935d22db3678840b27f2",
+  "development_reuse": {
+    "original_frozen_before_implementation_commit": "3267d1cefc8cf81805e3270ea5abd77dce9416ab",
+    "original_local_trial_before_independent_frozen_replication": "model seed 641, input seed 644, lengths 9,16,32,48; explicitly exploratory"
+  },
+  "exact_source": {
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_tttonly_stream_blob": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "parent_full_prefix_recompute_blob": "56f4d566db9375e4b27e7d9eabcaf67498c25d94",
+    "new_true_incremental_adapter_blob": "440aa8717e1aef15d7547be669dfa8d0f4da666a",
+    "new_exact_locally_executed_test_blob": "ee4b7eedbe6712a7bc69375b8b03262dd8b7ae19",
+    "new_exact_locally_executed_benchmark_blob": "c65956a830f6c37ea016a0467d88192e56c7379a"
+  },
+  "local_execution": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "local_cpu": "single-thread Linux x86_64 container, not user GPU",
+    "source": "torch.manual_seed(711) original model weights; actual benchmark sample data seeds 713 and 719",
+    "neural_training": "NONE",
+    "local_focused_suite": "15_PASS_0_FAIL",
+    "new_incremental_tests": 7,
+    "unchanged_p62_tests": 8,
+    "unchanged_parent_p64s_original_tests": "NOT_RERUN_WITHIN_THIS_LOCAL_SUITE",
+    "exact_github_blob_readback": true,
+    "threads": 1,
+    "optimizer_calls": 0,
+    "batch": 2,
+    "candidate_actions": 2,
+    "repetitions": 8,
+    "warmups_discarded": 2,
+    "model_init_excluded_from_timer": true,
+    "actions": "one actually confirmed analog input update per factual event; two read-only candidate previews",
+    "full_local_numeric_result_sha256": "a0b70211c1eedbcacbb7bc1ac468cb8a287580bf6604322ae946637c596302c7",
+    "benchmark_script_sha256": "6e381669f51647b6c4261b0e6bdae7a4082d5c4da4e10e921fabe2f57ab18582"
+  },
+  "frozen_primary_thresholds": {
+    "n40_speedup_at_least": 1.5,
+    "n60_speedup_at_least": 2,
+    "max_abs_output_difference_at_most": 0.000001,
+    "both_data_seed_cohorts_must_pass": true
+  },
+  "measured": {
+    "all_pass": true,
+    "rows": [
+      {
+        "data_seed": 713,
+        "n_facts": 12,
+        "source_sha256": "418358b9ee0ea027064c0bce02d416eac088d673fe1cf6d91919ab1b2468b035",
+        "incremental_median_seconds": 0.010138636000078804,
+        "prefix_recompute_median_seconds": 0.012610473499989894,
+        "speedup_x": 1.2438037522889545,
+        "max_absolute_output_difference": 2.384185791015625e-7
+      },
+      {
+        "data_seed": 713,
+        "n_facts": 24,
+        "source_sha256": "83de8a490126846443a4dc62a1535c1a760f02007cd716262bc97be644061a89",
+        "incremental_median_seconds": 0.01774638999995659,
+        "prefix_recompute_median_seconds": 0.03053567350002595,
+        "speedup_x": 1.7206695840731914,
+        "max_absolute_output_difference": 2.384185791015625e-7
+      },
+      {
+        "data_seed": 713,
+        "n_facts": 40,
+        "source_sha256": "696b12a5b2613bb3b76b2dabf45a473f52aa6d0edb9ef273850dee0574bff63d",
+        "incremental_median_seconds": 0.027600376999998844,
+        "prefix_recompute_median_seconds": 0.06332086799989156,
+        "speedup_x": 2.2942030103391056,
+        "max_absolute_output_difference": 2.384185791015625e-7
+      },
+      {
+        "data_seed": 713,
+        "n_facts": 60,
+        "source_sha256": "e11cbb8141d309a22246cd546cd5c9381713f477951229fee3a5c1550aa95348",
+        "incremental_median_seconds": 0.04402514250000422,
+        "prefix_recompute_median_seconds": 0.12236044250005307,
+        "speedup_x": 2.7793309811556277,
+        "max_absolute_output_difference": 2.384185791015625e-7
+      },
+      {
+        "data_seed": 719,
+        "n_facts": 12,
+        "source_sha256": "8cf1ef9a00bd8ef8c96ab6c0657fcdf9b309192b2c6e4c1f00f6dfe74a1867c3",
+        "incremental_median_seconds": 0.00977118549997158,
+        "prefix_recompute_median_seconds": 0.01331131999995705,
+        "speedup_x": 1.3623034789377162,
+        "max_absolute_output_difference": 1.1920928955078125e-7
+      },
+      {
+        "data_seed": 719,
+        "n_facts": 24,
+        "source_sha256": "cf934b2d783eb2b8cdcffb8f85dc227c8669b84b64a57fce2a9e6a294a8d30d5",
+        "incremental_median_seconds": 0.01732977949995984,
+        "prefix_recompute_median_seconds": 0.029657566999958362,
+        "speedup_x": 1.7113643598308386,
+        "max_absolute_output_difference": 1.1920928955078125e-7
+      },
+      {
+        "data_seed": 719,
+        "n_facts": 40,
+        "source_sha256": "87dd7035b799fd3733fffe2309cad0d66fe6ca32ba0149cdda9cb4976ccd5c5b",
+        "incremental_median_seconds": 0.028981057499890994,
+        "prefix_recompute_median_seconds": 0.06191135950007265,
+        "speedup_x": 2.136269854897652,
+        "max_absolute_output_difference": 2.682209014892578e-7
+      },
+      {
+        "data_seed": 719,
+        "n_facts": 60,
+        "source_sha256": "42adf51b052c9de8ebdc30962bd168dadd0a37ec12f8f8edf5a7aea1dd730613",
+        "incremental_median_seconds": 0.04120506399988244,
+        "prefix_recompute_median_seconds": 0.11651295150011265,
+        "speedup_x": 2.8276367074795723,
+        "max_absolute_output_difference": 2.384185791015625e-7
+      }
+    ],
+    "minimum_n40_speedup_x": 2.136269854897652,
+    "minimum_n60_speedup_x": 2.7793309811556277,
+    "maximum_parity_error": 2.682209014892578e-7
+  },
+  "interpretation": "Incremental prefix SSM+attention KV caching delivers 2.14–2.29x at 40 factual events and 2.78–2.83x at 60 in this matched small single-thread CPU bench; no general GPU/performance/science advantage has been proven.",
+  "engineering": {
+    "exact_source_local_focused": "PASS",
+    "independent_benchmark_frozen_thresholds": "PASS_BOTH_SEEDS",
+    "original_final_tree_full_windows_linux_wsl_regression": "NOT_RUN",
+    "native_gpu_build": "NOT_RUN",
+    "hosted_ci": "CHECK_SEPARATELY"
+  },
+  "scientific": {
+    "learned_action_consequence_improvement": "UNVERIFIED",
+    "cold_learnt_retention": "UNVERIFIED",
+    "unfamiliar_dynamics": "NOT_RUN",
+    "total_process_compute_parity": "NOT_RUN",
+    "original_p61_p62_p63_scientific_fails": "PRESERVED"
+  },
+  "deployment": {
+    "state": "DRAFT_UNMERGED",
+    "FORGE": "UNCHANGED",
+    "original_owner": "UNCHANGED",
+    "controller": "UNCHANGED",
+    "workflow": "UNCHANGED",
+    "schedule": "NONE",
+    "runner": "NONE",
+    "model_promotion": "NONE",
+    "live_actions": "NONE"
+  }
+}
