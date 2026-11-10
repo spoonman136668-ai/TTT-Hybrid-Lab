@@ -27,9 +27,11 @@ class StreamingTTT:
         self.core = core
         self.max_confirmed_events = max_confirmed_events
         self.width = core.key.out_features
+        if not 1 <= self.width <= 128:
+            raise ValueError("P62_UNSUPPORTED_STREAM_WIDTH")
 
     def initial_state(self, template: torch.Tensor) -> TTTFactualState:
-        if not isinstance(template, torch.Tensor) or template.ndim != 2 or template.shape[0] < 1 or template.shape[1] != self.width:
+        if not isinstance(template, torch.Tensor) or template.ndim != 2 or not 1 <= template.shape[0] <= 256 or template.shape[1] != self.width:
             raise ValueError("P62_BAD_INITIAL_TEMPLATE")
         if template.dtype not in (torch.float32, torch.float64) or not bool(torch.isfinite(template).all()):
             raise ValueError("P62_NONFINITE_OR_UNSUPPORTED_DTYPE")
@@ -39,7 +41,7 @@ class StreamingTTT:
                                torch.zeros(template.shape[0], device=template.device, dtype=torch.long))
 
     def _validate(self, x: torch.Tensor, state: TTTFactualState) -> None:
-        if not isinstance(x, torch.Tensor) or x.ndim != 3 or x.shape[0] < 1 or x.shape[1] < 1 or x.shape[2] != self.width:
+        if not isinstance(x, torch.Tensor) or x.ndim != 3 or not 1 <= x.shape[0] <= 256 or x.shape[1] < 1 or x.shape[2] != self.width:
             raise ValueError("P62_BAD_SEQUENCE_SHAPE")
         if x.dtype not in (torch.float32, torch.float64) or x.dtype != self.core.key.weight.dtype or x.device != self.core.key.weight.device:
             raise ValueError("P62_CORE_DEVICE_DTYPE_MISMATCH")
