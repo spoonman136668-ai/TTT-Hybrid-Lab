@@ -1,0 +1,185 @@
+{
+  "schema": "ttt-hybrid.p50-nonalternating-factual-policy-development-negative-receipt.v1",
+  "classification": "FROZEN_AUTHORED_DEV_FAIL_0_OF_3_NOT_INDEPENDENT_SCIENCE",
+  "source_parent": {
+    "canonical_P49_pr": 139,
+    "canonical_P49_sha": "9f7c0044b6dc08ebb648c88000ac8fd459e65598",
+    "inherited_P47_git_blob": "9be334264131db3bae79f19bed3271e060a1a903",
+    "prior_negative": "P49_FAIL_0_OF_3_PRESERVED"
+  },
+  "prospective": {
+    "freeze_commit": "420799a5d520eb72f49ed80aafa4d0d614c32e02",
+    "freeze_git_blob": "fa81ee7bd13b344566039c73f649fb54d44eba0e",
+    "before_first_source_use": true,
+    "source_seeds": {
+      "calibration": 790001,
+      "evaluation": [
+        790101,
+        790103,
+        790107
+      ]
+    },
+    "older_P47_P48_P49_consumed_seeds_reused": false,
+    "parameters_and_thresholds_retuned_after_results": false
+  },
+  "actual_source": {
+    "kind": "New authored simulated development; not external scientific benchmark",
+    "calibration_worlds": 4096,
+    "eval_worlds_each": 1536,
+    "total_eval_worlds": 4608,
+    "history_actual_actions_per_world": 8,
+    "source_groups_per_cohort": {
+      "causal_switch": 768,
+      "exogenous_step": 384,
+      "stable": 384
+    },
+    "policy_count_each": {
+      "constant": 384,
+      "feedback": 384,
+      "sticky": 384,
+      "random": 384
+    },
+    "sensor_policy": "Feedback depends on prior physical cumulative observed state; no hidden label or future outcome supplied",
+    "true_action_effect": "causal flip after hidden event k in {3,4,5}; nuisance exogenous jump independent",
+    "distinct_source_sha256": {
+      "calibration": "878678fe12b771e4ae2461963d878ba942bed8b94db6edb49179b4b5968a44da",
+      "eval790101": "59ab65b4a1a0f0f83fec6c5cad4d95ce5e263758a1e23fc4dfc5cb32e2e9a6c8",
+      "eval790103": "e2849e95616549923b3255162a4c2bb27b22e3d220f8fa30d6a6407838071b5a",
+      "eval790107": "4fe6f7475ddb5af4203411a9ec066ed60b9fa88e647f1708c470e18dba81c167"
+    }
+  },
+  "original_limitation": "P47 exact source checks strictly alternating action sequence and rejects more realistic nonalternating physical-policy histories; P50 generalizes action features but abstains under rank deficiency",
+  "candidate": {
+    "method": "Factual full 8-event time/action polynomial regression, three change-point hypotheses with action-aware causal and nuisance models, BIC comparison, calibrated 99-percentile stable-only causal alarm, and fixed BIC posterior soft mixing for nuisance",
+    "parameters_tuned_after_results": false,
+    "trained_neural_model": false,
+    "calibrated_cutoffs": {
+      "causal": 16.538569065137636,
+      "nuisance": 22.949393413592226,
+      "valid_calibration_histories": 2572
+    },
+    "strong_comparators": [
+      "full-window OLS",
+      "recency-weighted OLS",
+      "trailing-five OLS",
+      "trailing-three OLS",
+      "P48 single-null hard nuisance selection",
+      "P49 dual-null hard nuisance threshold"
+    ]
+  },
+  "results": [
+    {
+      "seed": 790101,
+      "identifiable": 1000,
+      "coverage": 0.6510416666666666,
+      "causal_recall": 0.44573643410852715,
+      "causal_effect_MAE": 0.22644199794670644,
+      "last3_factual_MAE": 0.01650581763094653,
+      "stable_effect_MAE": 0.010688241233957622,
+      "full_stable_MAE": 0.009298689929945718,
+      "exogenous_effect_MAE": 0.018926880857888243,
+      "stable_false_causal_alarm": 0,
+      "exogenous_false_causal_alarm": 0,
+      "per_policy_valid": {
+        "constant": 0,
+        "feedback": 317,
+        "sticky": 301,
+        "random": 382
+      },
+      "failed_frozen": [
+        "causal_recall",
+        "causal_effect_MAE",
+        "stable_effect_MAE"
+      ]
+    },
+    {
+      "seed": 790103,
+      "identifiable": 992,
+      "coverage": 0.6458333333333334,
+      "causal_recall": 0.41767068273092367,
+      "causal_effect_MAE": 0.22970351645890724,
+      "last3_factual_MAE": 0.01797704480524785,
+      "stable_effect_MAE": 0.013686309127773712,
+      "full_stable_MAE": 0.014043575698518983,
+      "exogenous_effect_MAE": 0.020129366562986063,
+      "stable_false_causal_alarm": 0.021551724137931036,
+      "exogenous_false_causal_alarm": 0,
+      "per_policy_valid": {
+        "constant": 0,
+        "feedback": 316,
+        "sticky": 296,
+        "random": 380
+      },
+      "failed_frozen": [
+        "coverage",
+        "causal_recall",
+        "causal_effect_MAE"
+      ]
+    },
+    {
+      "seed": 790107,
+      "identifiable": 1008,
+      "coverage": 0.65625,
+      "causal_recall": 0.46942800788954636,
+      "causal_effect_MAE": 0.21598136939389512,
+      "last3_factual_MAE": 0.025017028571385314,
+      "stable_effect_MAE": 0.02062941621585515,
+      "full_stable_MAE": 0.01929406178369218,
+      "exogenous_effect_MAE": 0.02972608879384501,
+      "stable_false_causal_alarm": 0.011904761904761904,
+      "exogenous_false_causal_alarm": 0,
+      "per_policy_valid": {
+        "constant": 0,
+        "feedback": 319,
+        "sticky": 307,
+        "random": 382
+      },
+      "failed_frozen": [
+        "causal_recall",
+        "causal_effect_MAE"
+      ]
+    }
+  ],
+  "frozen_verdict": {
+    "strict_all_cohort_gate": "FAIL_0_OF_3",
+    "causal_recall_70pct": "FAIL_0_OF_3",
+    "causal_effect_vs_recency_last5_15pct": "FAIL_0_OF_3",
+    "minimum_coverage_65pct": "FAIL_1_OF_3",
+    "stable_false_alarm_10pct": "PASS_3_OF_3",
+    "exogenous_false_alarm_10pct": "PASS_3_OF_3",
+    "cold_replay": "PASS_3_OF_3",
+    "constant_policy_rank_refusal": "PASS_3_OF_3"
+  },
+  "engineering": {
+    "source_path": "scripts/native_p50_nonalternating_policy_dev.py",
+    "exact_tested_source_git_blob": "973624acca10cb0de7d6d3c9b9dc07a78ccdfc2b",
+    "source_sha256": "c6222c798ab49b9f6c81aa7079b8e034d9d51ce472d6f7bc7d5455d79201152e",
+    "tests_path": "tests/test_native_p50_nonalternating_policy_dev.py",
+    "tests_git_blob": "ca64e708051b0dba1c045b44c8e22516dc2e4c24",
+    "tests_sha256": "9bb02d4e157f82fdcbf46ae6820e3ab5238da5531e8fa98b4335a4b3b3cbe32c",
+    "full_local_result_json_sha256": "b4f236afb7a511b60c8c9c27767e701037a0c006c6995543af9253b02230650c",
+    "local_CPU_run_seconds": 4.084425653999915,
+    "new_focused_tests": "5/5 PASS",
+    "inherited_p47_plus_p50_tests": "11/11 PASS",
+    "first_run_failure": "Output JSON failed to serialize numpy.bool_ AFTER full study; repaired serialization only then replayed identical DEV data, not new science",
+    "original_repository_full_windows_ubuntu_wsl_regression": "NOT_RUN",
+    "hosted_qualification": "NOT_VERIFIED"
+  },
+  "scientific": {
+    "outcome": "NEGATIVE_DEVELOPMENT_FALSIFICATION",
+    "source_first_use": "NOT_EXTERNAL_OR_OWNER_QUALIFIED",
+    "real_world_physics": "NOT_TESTED",
+    "nonalternating_and_feedback_policy": "TESTED_ON_AUTHORED_SIMULATION_ONLY",
+    "fully_trained_GRU_MLP": "NOT_RUN",
+    "strong_original_CI_and_scientific_qualification": "UNVERIFIED",
+    "no_neural_learning_gain_claim": true,
+    "previous_scientific_negative_results_preserved": true
+  },
+  "deployment": {
+    "draft_unmerged": true,
+    "no_FORGE_controller_scheduler_or_queue_changes": true,
+    "no_runner_dispatch": true,
+    "no_paid_api": true,
+    "no_model_promotion": true
+  }
+}
