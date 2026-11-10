@@ -1,0 +1,37 @@
+{
+  "schema": "ttt-hybrid.p64k-r2-model-revision-cached-state-dev-frozen.v1",
+  "phase": "ENGINEERING_MANUAL_NEGATIVE_REGRESSION_BEFORE_NEW_IMPLEMENTATION",
+  "parent": {
+    "pr": 168,
+    "sha": "2b816ed2f1dd3ea022f76a2bc91d2e585977192c",
+    "tree": "10f9c3e98dfd85d30a5c71685e46c8e13bf9a144",
+    "source_blob": "b828829ca0e544dbd9f0f786c516d0b573d4d8bb",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "defect": "Existing cached SSM, attention K/V and TTT fast weights assume the parameters used when confirming historical observations. A normal optimizer step or load_state_dict after state creation changes those parameters but the pre-existing adapter accepts cached predictions computed from an inconsistent model version.",
+  "hypothesis": "A small fail-closed original-parameter revision guard must reject cached factual ingest, candidate preview and fresh adapter-state creation after any in-place model parameter update or parameter object replacement; a new adapter constructed after the change may initialize a fresh factual cache. No claim of seamless learning across optimizer steps.",
+  "expected_negative_controls": [
+    "accept unchanged model with confirmed facts and read-only candidate previews",
+    "reject model.stem.weight.add_ under no_grad after factual history confirmed",
+    "reject changed PyTorch optimizer.step parameter versions",
+    "reject model.load_state_dict called after adapter construction",
+    "reject replacing original head Parameter object",
+    "reject changed TTT learning_rate eta that otherwise invalidates cached fast state",
+    "no model-revision bypass from new initial_state on old adapter",
+    "new adapter after optimizer step permits new cache from independently re-confirmed factual events",
+    "preserve exact prior P62-S, P64-S and P64-K plus R1 focused tests",
+    "preserve frozen 40/60 event CPU benchmark tolerance if original runtime present"
+  ],
+  "design": "Private immutable adapter-local tuple of original nn.Parameter object identities and PyTorch _version counters plus original TTT eta, checked before new state initialization and before every factual read/write. Changes fail closed; does not guarantee detection of unsupported direct .data or external-memory writes, or support reuse of cache across re-trained weight generations.",
+  "authority": {
+    "engineering_dev_only": true,
+    "no_scientific_source_first_use": true,
+    "no_model_training_runs_required": true,
+    "no_actual_GPU": true,
+    "no_merge": true,
+    "no_controller_runner_workflow_scheduler": true,
+    "no_FORGE_integration": true,
+    "no_paid_API": true
+  },
+  "status": "UNVERIFIED_UNTIL_EXACT_SOURCE_TEST"
+}
