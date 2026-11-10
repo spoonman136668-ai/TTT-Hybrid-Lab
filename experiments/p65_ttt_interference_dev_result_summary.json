@@ -1,0 +1,94 @@
+{
+  "schema": "ttt-hybrid.p65-frozen-mechanism-dev-summary.v1",
+  "freeze_commit": "682a65039a75b44b4e6105023376d212814659c7",
+  "full_exact_local_receipt_sha256": "1875ba09ab0f49ccba09976c2fe7513cca5ba2be967bc8b4c51cf218a9b05321",
+  "executed_script_sha256": "7b512128d30b4644e84aadabaf92f8403cf9cbae9e1c0c9b7f895aa0d71395f2",
+  "executed_script_git_blob": "ca1d6e4045d26d764f1aed880243e3a3a756fcac",
+  "tests_git_blob": "d8846cb00b49e6ba0ed788fd2aabc1e26697f660",
+  "exact_source": "mechanism TTTLinearMemory.forward online update, original model.py blob 5d9ea57b827aa1796548447868fa5ee14c251b49; analytic idealized key=value-noisy direct read; not actual full neural model",
+  "environment": "Python 3.13.5 Linux CPU, Torch 2.10.0+cpu, pytest 9.0.2",
+  "executed": "3/3 focused tests PASS; authored script rerun byte-identical receipt",
+  "all_orthogonal_controls_preserved": true,
+  "strict_candidate_success_all_seeds": false,
+  "rows": [
+    {
+      "seed": 8001,
+      "world": "overlap",
+      "data_sha256": "9bd814aad256e74109347a0c80097ea964e954c075c1231f6d60b2f7f2dc1572",
+      "pre_mse": 0.0015343775739893317,
+      "post_mse": 0.43704110383987427,
+      "oracle_gated_mse": 0.0015343775739893317,
+      "indexed_mse": 0,
+      "cosine_after": 0.19344553351402283,
+      "strict_pass": false
+    },
+    {
+      "seed": 8001,
+      "world": "orthogonal",
+      "data_sha256": "151b5319bced366772ae1935506a5672233bfca22452dbaedb03146a239be462",
+      "pre_mse": 0.0015343775739893317,
+      "post_mse": 0.00153437745757401,
+      "oracle_gated_mse": 0.0015343775739893317,
+      "indexed_mse": 0,
+      "cosine_after": 1,
+      "negative_control_pass": true
+    },
+    {
+      "seed": 8003,
+      "world": "overlap",
+      "data_sha256": "5f0eee436acb8f50d99a9c0cb9e2e00618802f0d9a086af12333898aec8d3e95",
+      "pre_mse": 0.0015360477846115828,
+      "post_mse": 0.4282853603363037,
+      "oracle_gated_mse": 0.0015360477846115828,
+      "indexed_mse": 0,
+      "cosine_after": 0.21152549982070923,
+      "strict_pass": false
+    },
+    {
+      "seed": 8003,
+      "world": "orthogonal",
+      "data_sha256": "3931e352f673a1e20136feaf2d96a5482d0b46ded88228e597fbb486d129dd65",
+      "pre_mse": 0.0015360477846115828,
+      "post_mse": 0.0015360477846115828,
+      "oracle_gated_mse": 0.0015360477846115828,
+      "indexed_mse": 0,
+      "cosine_after": 1,
+      "negative_control_pass": true
+    },
+    {
+      "seed": 8007,
+      "world": "overlap",
+      "data_sha256": "8fbafa0ae3cadeba57833a467df9e5e0bb474f1453392a9b7e2aad8bf1769a39",
+      "pre_mse": 0.00152408960275352,
+      "post_mse": 0.43234118819236755,
+      "oracle_gated_mse": 0.00152408960275352,
+      "indexed_mse": 0,
+      "cosine_after": 0.1953057050704956,
+      "strict_pass": false
+    },
+    {
+      "seed": 8007,
+      "world": "orthogonal",
+      "data_sha256": "e6e6da216fae1efee174632908f516cdac04bc5d92636eb8314ab056b52aa31b",
+      "pre_mse": 0.00152408960275352,
+      "post_mse": 0.0015240893699228764,
+      "oracle_gated_mse": 0.00152408960275352,
+      "indexed_mse": 0,
+      "cosine_after": 1,
+      "negative_control_pass": true
+    }
+  ],
+  "scope": "DEVELOPMENT_NEGATIVE_RESULT_ONLY",
+  "training": "NONE",
+  "scientific_first_use": "NOT_RUN",
+  "original_full_source_windows_linux_regression": "UNVERIFIED",
+  "native_gpu": "NOT_RUN",
+  "runner_changes": "NONE",
+  "merge": "NONE",
+  "caveats": [
+    "All-event memory deliberately lacks the oracle phase-awareness used by skip-write and indexed-memory controls",
+    "Classical matched 256-float indexed cache is idealized exact-key recall; not a fully trained conventional neural comparator",
+    "Original model TTTLinearMemory nonlinear key/value projections and SSM/attention/depth were not run",
+    "Checkpoint check is exact tensor copy, not persistent serialized owner recovery"
+  ]
+}
