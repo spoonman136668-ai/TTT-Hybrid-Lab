@@ -1,0 +1,183 @@
+{
+  "schema": "ttt-hybrid.native-p51.p50-vs-trained-baselines-negative-dev-receipt.v1",
+  "classification": "AUTHORED_SYNTHETIC_DEVELOPMENT_FAIL_ALL_THREE_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "p50_pr": 140,
+    "sha": "7d0c253fc884b1a8979cf762518d8b1bbfedbcbc",
+    "p50_module_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "reference_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "preregistration": {
+    "freeze_commit": "ecd9731f033ed0d8a12348f2872626c01c38861d",
+    "freeze_manifest_blob": "7be01ec88b39dca446da99ec39a4fe8cd2c1a965",
+    "precision_amendment_commit": "fc5f28fd732939eede8696ee27732afc77463bfc",
+    "precision_amendment_blob": "99767115088235ba371658e28951122ec29cd9df",
+    "amendment_before_source_first_generation": true
+  },
+  "exact_tested_files": {
+    "script": "scripts/native_p51_factual_hybrid_learning_dev.py",
+    "script_blob": "d7dbf31f5ee46167775eef7b0c273cb18ba0d606",
+    "script_sha256": "bc5a82767f2fb82d4b23d479c7a1b99b36fc72b7614b2f13a397595615d58fa8",
+    "tests": "tests/test_native_p51_factual_hybrid_learning_dev.py",
+    "tests_blob": "d3a6fec1ae3892fae513305ebb20da1056b30b1f",
+    "tests_sha256": "4f5a0067e2e2eb8ba01ccbd06e1847b135cecbd5b270bbce48ad1cb281d26713",
+    "source_version_same_as_local_run": true
+  },
+  "source": {
+    "kind": "newly_generated_authored_dev_only",
+    "seeds": {
+      "fit": 811101,
+      "validation": 811103,
+      "unfamiliar_dev": 811107
+    },
+    "source_sha256": {
+      "fit": "6b2286550060ba976e1ec159c2d11d52b88dc2a7ade8f11789fb311a8bbe9410",
+      "validation": "f5934a7cf92b64cb4e3c7935b036b1badcb3b51c279db4f985ef552d0b486e38",
+      "unfamiliar_dev": "c40e47d742b1587611f786cfb38ae5fab15175cbd0f2d9a1d63af487f6301f00"
+    },
+    "index_sha256": "1b81bef4d58e1ed49c41521cacaedcbca2bcb2522fcb03137a3e1cfc79a09168",
+    "hist_completed_factual_events": 8,
+    "n": {
+      "fit": 2048,
+      "validation": 256,
+      "unfamiliar_dev": 512
+    },
+    "unfamiliar_sign_flips": 128,
+    "unfamiliar_unswitched": 384,
+    "evaluator_only_pair_not_used_in_training": true
+  },
+  "models": {
+    "p50_params": 4610,
+    "gru_params": 4521,
+    "mlp_params": 4621,
+    "wrong_credit_p50_params": 4610,
+    "adamw_updates_each_seed_arm": 160,
+    "batch": 64,
+    "model_seeds": [
+      831101,
+      831103,
+      831107
+    ],
+    "total_optimizer_steps": 1920,
+    "total_wall_seconds": 11.310009676999925,
+    "strict_FLOP_full_process_match": "UNVERIFIED",
+    "neural_convergence": "FAIL_ALL_SEEDS_VALIDATION_STILL_CHANGING"
+  },
+  "conventional": {
+    "quadratic_ridge": {
+      "mse": 0.12613236904144287,
+      "effect_mae": 0.1000099629163742,
+      "goal_accuracy": 0.837890625
+    },
+    "last_factual_effect": {
+      "mse": 0.06318368017673492,
+      "effect_mae": 0.13507166504859924,
+      "goal_accuracy": 0.9296875,
+      "switched_effect_mae": 0.13730134069919586,
+      "switched_mse": 0.06020199880003929
+    }
+  },
+  "per_seed": [
+    {
+      "seed": 831101,
+      "mse": {
+        "p50": 0.0701361820101738,
+        "gru": 0.1318352222442627,
+        "mlp": 0.10435681790113449,
+        "wrong_credit": 0.0625845342874527
+      },
+      "effect_mae": {
+        "p50": 0.12698279321193695,
+        "gru": 0.3206622004508972,
+        "mlp": 0.21112175285816193,
+        "wrong_credit": 0.13604138791561127
+      },
+      "p50_switched_effect_mae": 0.40037089586257935,
+      "all_frozen_pass": false,
+      "gates": {
+        "mse_5pct": true,
+        "effect_mae_5pct": false,
+        "wrong_credit_20pct": false,
+        "cold_exact": true,
+        "api_numeric_equivalent": true,
+        "all_neural_plateau": false
+      }
+    },
+    {
+      "seed": 831103,
+      "mse": {
+        "p50": 0.04389747604727745,
+        "gru": 0.12599152326583862,
+        "mlp": 0.103661447763443,
+        "wrong_credit": 0.07796281576156616
+      },
+      "effect_mae": {
+        "p50": 0.09300796687602997,
+        "gru": 0.31125539541244507,
+        "mlp": 0.2149621695280075,
+        "wrong_credit": 0.15210632979869843
+      },
+      "p50_switched_effect_mae": 0.26838546991348267,
+      "all_frozen_pass": false,
+      "gates": {
+        "mse_5pct": true,
+        "effect_mae_5pct": true,
+        "wrong_credit_20pct": true,
+        "cold_exact": true,
+        "api_numeric_equivalent": true,
+        "all_neural_plateau": false
+      }
+    },
+    {
+      "seed": 831107,
+      "mse": {
+        "p50": 0.05490567162632942,
+        "gru": 0.12869471311569214,
+        "mlp": 0.10736270993947983,
+        "wrong_credit": 0.06053337827324867
+      },
+      "effect_mae": {
+        "p50": 0.10285887122154236,
+        "gru": 0.3163732588291168,
+        "mlp": 0.24793405830860138,
+        "wrong_credit": 0.13553306460380554
+      },
+      "p50_switched_effect_mae": 0.303743839263916,
+      "all_frozen_pass": false,
+      "gates": {
+        "mse_5pct": true,
+        "effect_mae_5pct": false,
+        "wrong_credit_20pct": false,
+        "cold_exact": true,
+        "api_numeric_equivalent": true,
+        "all_neural_plateau": false
+      }
+    }
+  ],
+  "engineering": {
+    "focused_tests_pass": 21,
+    "total_focused_tests": 21,
+    "Python": "3.13.5",
+    "PyTorch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused_seconds": 1.18,
+    "cold_P50_original_exact": "PASS_3_OF_3",
+    "API_same_original_numeric_tolerance": "PASS_3_OF_3_ATOL_1e-6",
+    "full_original_windows_linux_regression": "UNVERIFIED"
+  },
+  "harness_failure": "Initial trial aborted at first validation (step40) because of NameError values/vals; no completed first result. Fix only corrected variable identifier; same frozen source/seed/budget reused for engineering receipt and not treated as independent repeat.",
+  "full_result_sha256": "416ec5c692c6331c0d3096a94d5bdb39ed290c1eded518b3213d9aa3982ece1f",
+  "disposition": {
+    "frozen_all_three_seeds": "FAIL_0_OF_3",
+    "p50_raw_mse_better_neural_controls": "3_OF_3",
+    "strong_last_effect_comparator_mse": "P50_LOSES_1_OF_3",
+    "wrong_credit_margin": "PASS_1_OF_3",
+    "effect_mae_strongest_margin": "PASS_1_OF_3",
+    "all_neural_plateau": "PASS_0_OF_3",
+    "scientific_pass": false,
+    "no_external_first_use": true,
+    "no_FORGE_integration": true,
+    "no_merge_or_promotion": true,
+    "no_new_runners_schedulers_controllers": true
+  }
+}

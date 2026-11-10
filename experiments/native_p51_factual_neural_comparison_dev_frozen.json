@@ -1,0 +1,140 @@
+{
+  "schema": "ttt-hybrid.p51-factual-continuous-hybrid-learning-dev-frozen.v1",
+  "classification": "NEW_AUTHORED_SYNTHETIC_DEV_SOURCE_NOT_EXTERNAL_SCIENTIFIC_FIRST_USE",
+  "source_parent": {
+    "pr": 140,
+    "commit": "7d0c253fc884b1a8979cf762518d8b1bbfedbcbc",
+    "tree": "7031a4cbadbac1ec079804ce9f92e23b8a983745",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p50_module_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "p50_focused_result": "12_OF_12_LOCAL_ENGINEERING_PASS",
+    "parallel_policy_pr_141": "DIFFERENT_RESEARCH_LINE_DEV_FAIL"
+  },
+  "hypothesis": "The intact reference P50 SSM+attention+TTT+depth causal factual-history path trained on observed action outcomes predicts two-action consequences at least 5% better than a comparably sized fully trained GRU and MLP and a degree-two nuisance+action fitted ridge on unfamiliar nonlinear disturbances; a wrong-credit control demonstrates causal use of factual actions.",
+  "freeze_before_source_generation": true,
+  "source": {
+    "source_seeds": {
+      "fit": 811101,
+      "validation": 811103,
+      "unfamiliar_dev": 811107
+    },
+    "examples": {
+      "fit": 2048,
+      "validation": 256,
+      "unfamiliar_dev": 512
+    },
+    "historical_completed_actions": 8,
+    "action_schedule": "independent fair +/-1 factual executed action in each history step; no fixed alternation",
+    "sensor_initial_uniform": [
+      -0.3,
+      0.3
+    ],
+    "nuisance_intercept_uniform": [
+      -0.1,
+      0.1
+    ],
+    "nuisance_linear_uniform": [
+      -0.25,
+      0.25
+    ],
+    "nuisance_quadratic_uniform": [
+      -0.15,
+      0.15
+    ],
+    "nuisance_sinusoidal_amp_uniform": [
+      -0.15,
+      0.15
+    ],
+    "sinusoidal_freq_fit_validation": [
+      0.35,
+      0.8
+    ],
+    "sinusoidal_freq_unfamiliar_dev": [
+      1.2,
+      1.8
+    ],
+    "nuisance_phase_uniform": [
+      -3.141592653589793,
+      3.141592653589793
+    ],
+    "effect_abs_uniform": [
+      0.2,
+      0.45
+    ],
+    "effect_sign": "equiprobable",
+    "unannounced_sign_flip_fraction_unfamiliar_dev": 0.25,
+    "flip_after_history_event_index": 4,
+    "observation_noise_sd": 0.01,
+    "factual_time_step": 0.125,
+    "history_event_layout": "sensor_before_real_action, realized_delta_sensor, executed_scalar_action, elapsed_dt, is_candidate_query=0",
+    "query_event_layout": "current_sensor, 0_no_future_outcome, proposed_action, elapsed_dt, is_candidate_query=1",
+    "training_label": "actual completed single query action sensor_next (one factual future for the training query only)",
+    "evaluator_only": "paired -1/+1 query outcomes generated in evaluation cohorts and never exposed in train or model input; physical effect and switch label never fed to model",
+    "fresh_not_reuse_sources": "P47–P50-POL dev cohorts remain consumed; this protocol uses new 811xxx seeds"
+  },
+  "arms": {
+    "p50": "Original NativeFactualHybridStream.pilot (width=16, all 4 components) with input [8 completed factual events,1 no-outcome query]",
+    "matched_gru": "GRU hidden=33, common head 16; same event input; ~4521 parameters",
+    "matched_mlp": "flatten 8*5 factual features + 5 query features, widths 60->30, ~4621 params",
+    "wrong_credit_p50": "same P50 model and size but historical factual action field cyclically shifted; physical outcomes and actual query labels intact",
+    "classical_ridge": "degree-two nuisance polynomial in elapsed time + executed factual action, ridge penalty 0.001 on 8 completed history rows, no future outcome",
+    "last_factual_effect": "latest observed sensor delta divided by executed action, zero-training negative/comparator",
+    "parameters_and_active_flops": "record exact parameter counts and CPU times; strict equal compute/FLOP matching unverified without full receipt"
+  },
+  "optimization": {
+    "torch_threads": 1,
+    "model_seeds": [
+      831101,
+      831103,
+      831107
+    ],
+    "sampler_seed": 831199,
+    "updates_each_arm": 160,
+    "batch_size": 64,
+    "adamw_lr": 0.003,
+    "optimizer": "AdamW",
+    "clip_grad_norm": 1,
+    "same_factual_train_indices_all_arms": true,
+    "same_p50_initial_weights_for_true_and_wrong_credit_per_seed": true,
+    "validation_every_updates": 40,
+    "no_retuning_or_extra_train_if_frozen_gate_fails": true,
+    "no_hyperparameters_changed_after_source_first_dev_execution": true,
+    "total_neural_updates": 1920,
+    "stop_on_nonfinite": "FAIL_CLOSED",
+    "validation_competence_gate": "relative validation factual MSE decrease from last penultimate to final 40 updates <= 1%; report this as limited proxy, not proof fully converged"
+  },
+  "preset_success_requirements_all_three_seeds": {
+    "p50_unfamiliar_both_action_mse_at_least_5percent_better_than_strongest_gru_mlp_ridge": true,
+    "p50_unfamiliar_causal_effect_mae_at_least_5percent_better_than_strongest_gru_mlp_ridge": true,
+    "p50_mse_at_least_20percent_better_than_wrong_credit": true,
+    "all_training_and_validation_finite": true,
+    "p50_cold_weight_and_persistent_factual_tensor_restore_bit_exact": true,
+    "all_neural_validation_last_interval_plateau_le_1percent": true,
+    "all_three_seeds_must_pass": true
+  },
+  "additional_metrics": [
+    "goal-action-optimality for explicit target +/-0.3",
+    "mode-switch vs nonswitch MAE and MSE",
+    "factual rank-3 identifiable fraction",
+    "per-arm train and inference wall seconds",
+    "parameter counts, CPU hardware, torch/python versions",
+    "full source SHA256 and sampler indices SHA256",
+    "cold state restoration bit exact"
+  ],
+  "negative_controls": [
+    "wrong-credit original P50",
+    "no-future-outcome in input",
+    "model branch order invariance",
+    "no tokenizer path",
+    "no numerical ground-truth effect in training",
+    "source seeds all distinct from previously consumed PRs"
+  ],
+  "authority": {
+    "no_external_owner_science_first_use": true,
+    "no_scientific_promotion_or_merge": true,
+    "no_paid_API": true,
+    "no_new_controller_runner_workflow_or_schedule": true,
+    "no_FORGE_integration": true,
+    "required_original_windows_linux_final_regression_before_engineering_acceptance": true
+  }
+}
