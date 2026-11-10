@@ -272,5 +272,4 @@ def main():
     a.receipt.write_text(json.dumps(out,sort_keys=True,indent=2)+'\n')
     print(json.dumps({'all_pass':out['strict_all_seed_qualification'],'baselines':out['classical_same_OOD_query_baselines'],'elapsed':out['wall_seconds']},indent=2))
 
-
 if __name__=='__main__':main()
