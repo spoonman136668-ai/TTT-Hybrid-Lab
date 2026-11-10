@@ -1,0 +1,134 @@
+{
+  "schema": "ttt-hybrid.p52-action-factorized-native-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_NEW_AUTHORED_SOURCE_AND_TRAINING_NOT_INDEPENDENT_SCIENCE",
+  "p51": {
+    "pr": 143,
+    "parent": "57bb854ca2342f5d20b94c963bb62445c5401d84",
+    "tree": "27e962a57f4285156f4574199b1078d78020dadc",
+    "previous_result": "DEV_FAIL_0_OF_3",
+    "previous_seeds": [
+      811101,
+      811103,
+      811107
+    ],
+    "previous_init": [
+      831101,
+      831103,
+      831107
+    ],
+    "previous_train_steps": 160,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p50_module_blob": "f78803f9f1d864382f7c4e27f72492dad7175bfd",
+    "p51_source_blob": "d7dbf31f5ee46167775eef7b0c273cb18ba0d606"
+  },
+  "hypothesis": "Explicit sensor-delta factorization into candidate-independent learned nuisance and candidate-action multiplied learned effect, with unchanged original P50 SSM/attention/TTT/depth trunk, beats fully trained matched P50/GRU/MLP and honest ridge/last-effect on unfamiliar nonlinear causal worlds, including withheld switches and correct-credit negatives.",
+  "architecture": {
+    "new_trainable_model": "P50 HybridPilot with original stem/SSM/attention/TTT/depth; head output dimensionality=2, yielding nuisance + factual candidate action * effect; candidate action forced zero in the query input to the shared trunk to make action dependence uniquely explicit in the output factorization.",
+    "historical_observations": "Only 8 actually completed physical [sensor, delta, executed_action, dt, nonquery_tag] events; no hidden beta, switch label or unobserved alternative future outcomes in train model input.",
+    "future_query": "Current sensor + unknown next-outcome zero + candidate action represented only by final antisymmetric multiplication; query tag=1; all arms same factual history and one actually observed supervised query outcome per fit example.",
+    "no_external_source_or_first_use": true,
+    "no_replacement_of_original_p50_or_p51": true,
+    "not_claimed_as_causal_identification_under_hidden_confounding": true
+  },
+  "source": {
+    "generator": "exact original P51 source() function and physics code, with only fresh explicitly frozen per-split seeds; FIT/VAL/unfamiliar frequencies remain same as P51, ensuring causal hypotheses are comparable but independent authored samples.",
+    "fit_seed": 851101,
+    "validation_seed": 851103,
+    "unfamiliar_dev_seed": 851107,
+    "fit_examples": 2048,
+    "validation_examples": 256,
+    "unfamiliar_dev_examples": 512,
+    "completed_history_steps": 8,
+    "query_factual_supervision": "one executed random sign and actual next-sensor; both hypothetical counterfactual actions only in isolated validation/OOD scorer, never fed as training targets",
+    "nuisance_fit_freq_range": [
+      0.35,
+      0.8
+    ],
+    "nuisance_unfamiliar_freq_range": [
+      1.2,
+      1.8
+    ],
+    "unfamiliar_hidden_switch_fraction": 0.25,
+    "action_schedule": "fair random +/-1 completed steps",
+    "forbidden_prior_seeds": [
+      760111,
+      760117,
+      760123,
+      770001,
+      770101,
+      770103,
+      770107,
+      780001,
+      780101,
+      780103,
+      780107,
+      790001,
+      790101,
+      790103,
+      790107,
+      811101,
+      811103,
+      811107
+    ]
+  },
+  "comparison": {
+    "arms": [
+      "original_P50_exact",
+      "action_factorized_P50",
+      "original_GRU",
+      "original_MLP",
+      "wrong_history_action_credit_factorized_P50"
+    ],
+    "classical": [
+      "original_polynomial_ridge",
+      "original_last_observed_effect"
+    ],
+    "parameter_bound": "must show parameter count; factorized P50 <= 1.02 original P50",
+    "training_seeds": [
+      861101,
+      861103,
+      861107
+    ],
+    "sampler_seed": 861199,
+    "optimizer": "AdamW",
+    "lr": 0.003,
+    "lr_schedule": "cosine anneal to 0.0001 over fixed steps",
+    "updates_per_seed_arm": 800,
+    "batch_size": 64,
+    "total_updates": 12000,
+    "matching": "same train batches/split/observed outcomes/query action across all arms; original P50 and factorized P50 share same torch seed, wrong-credit factorized starts byte-identical to factorized true-credit per seed; cannot claim matched total FLOPs",
+    "validation_every": 40,
+    "no_adaptation_after_first_eval": true
+  },
+  "frozen_gates_per_seed": {
+    "factorized_OOD_two_action_MSE_le_95pct_min_of_P50_GRU_MLP_ridge_last": true,
+    "factorized_OOD_action_effect_MAE_le_95pct_min_of_P50_GRU_MLP_ridge_last": true,
+    "factorized_MSE_le_80pct_wrong_credit_MSE": true,
+    "factorized_switched_effect_MAE_le_90pct_last_effect_switched_MAE": true,
+    "factorized_query_action_antisymmetry_atol": 0.000001,
+    "cold_model_weights_exact": true,
+    "last_40_update_validation_plateau_relative_change_le_1pct_all_neural_arms": true,
+    "all_three_seeds_must_meet_all": true
+  },
+  "record": [
+    "source_SHA256_each_split",
+    "sampling_index_SHA256",
+    "every_40_update_validation_curves",
+    "parameter_counts",
+    "MSE_MAE_switched_unswitched",
+    "training_and_inference_walltime_per_arm",
+    "original_P51_and_P50_sha_custody",
+    "negative_controls_and_strong_classical_baselines",
+    "full_source_validation/test integrity"
+  ],
+  "no_hindsight": "Do not change thresholds, seed/source cohort, training steps, generator or comparator arms after consuming evaluation source; preserve nulls and nonplateau.",
+  "qualification": {
+    "focused_CPU_DEV_only": true,
+    "protected_original_scientific_first_use": "NOT_AUTHORIZED",
+    "Windows_Linux_full_regression": "REQUIRED_BUT_UNVERIFIED",
+    "authentic_GPU_build": "NOT_AUTHORIZED_NOT_DONE",
+    "FORGE_model_promotion": "NOT_AUTHORIZED",
+    "no_schedule_runner_or_new_controller": true,
+    "no_merge": true
+  }
+}
