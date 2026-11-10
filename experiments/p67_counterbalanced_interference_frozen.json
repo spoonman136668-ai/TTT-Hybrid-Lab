@@ -87,7 +87,7 @@
     },
     "controls": {
       "phase": "No timestep, remaining length, first-half/second-half flag or role label as gate input; detect and fail any target-vs-distractor position imbalance > 0.05 in 4 equally sized time bins",
-      "shortcut": "An index-only nuisance classifier's held-out role accuracy must not exceed 0.55; if it does, label as invalid source design",
+      "shortcut": "An index-only nuisance classifier's held-out BALANCED role accuracy must be <=0.55 on each source split, because OOD prevalence is 1/3; raw accuracy is misleading there. If exceeded, source design invalid.",
       "wrong_credit": "Independently permuted factual action keys paired with actual effects; compare same training budget and delayed query",
       "orthogonal": "Negative distractors orthogonal to query subspace must not materially change correct prediction under identical factual-target stream",
       "cold_restore": "Checkpoint model weights plus factual 16x16 state at midpoint; bitwise equality of resumed versus continuous readout on deterministic CPU"
@@ -135,7 +135,7 @@
   "frozen_decisions": {
     "dev_primary_metric": "MSE of held-out executed final-query observed consequences, per world, on previously unseen OOD-DEV worlds",
     "required_gain": "In all three independent initialized runs, learned gate OOD-DEV MSE <=0.90 times strongest eligible nonprivileged comparator on same worlds",
-    "confidence": "For each run, paired 5000-world-bootstrap resamples with seed 970401 must give a positive lower bound on reduction in MSE versus strongest comparator at 95% percentile confidence",
+    "confidence": "For each run, resample worlds with replacement in 5000 paired bootstrap replicates (seed 970401). The 95% percentile lower bound on relative MSE reduction versus strongest nonprivileged comparator must be strictly positive.",
     "causal_negative": "In each run, wrong-action-credit model OOD-DEV MSE >=1.20 times correct-credit candidate; rate-matched random gating >=1.15 times candidate",
     "controls_required": [
       "all source/balance and index-only leakage checks",
@@ -164,5 +164,15 @@
     "merge": "NOT_AUTHORIZED",
     "deployment": "NONE",
     "forge": "UNCHANGED"
-  }
+  },
+  "freeze_history": [
+    {
+      "stage": "original_pre_source_preregistration",
+      "commit": "6925c57865b25650517f6708b7cebac12bb6f071"
+    },
+    {
+      "stage": "pre_source_arithmetic_clarification",
+      "note": "Use prevalence-adjusted balanced index-only accuracy on 1/3-role OOD; clarify bootstrap replicates rather than number of worlds. No P67 source/data/model executed."
+    }
+  ]
 }
