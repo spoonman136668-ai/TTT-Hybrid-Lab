@@ -1,0 +1,95 @@
+{
+  "schema": "ttt-hybrid.p67-interleaved-clockless-factual-write-dev-frozen.v1",
+  "status": "FROZEN_BEFORE_NEW_SOURCE_GENERATION_OR_TRAINING",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 173,
+    "sha": "cac0d7562bcf09c98522f6dbab77bc205c4fd0e1",
+    "source_blob": "c26a100d139f5e8409156fbebaba81b4fbef4f1c",
+    "negative_result": "JOINT_DEV_FAIL_0_OF_3",
+    "original_reference_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "When repeated genuinely causal associations and unique distracting facts are independently interleaved within each world, a clockless learned actual-outcome write gate retains useful mappings and outperforms strong fully trained conventional action-history and exact-key classical factual controls under heldout distracting overlap.",
+  "source": {
+    "type": "FRESH_AUTHOR_SIMULATED_PHYSICAL_ANALOG_DEV_NOT_INDEPENDENT_SCIENCE",
+    "split_seeds": {
+      "fit": 967101,
+      "val": 967103,
+      "ood": 967107
+    },
+    "sizes": {
+      "fit": 768,
+      "val": 192,
+      "ood": 256
+    },
+    "dim": 16,
+    "targets": 8,
+    "actual_target_visits_per_key": 4,
+    "unique_distractors": 32,
+    "actual_observations_per_world": 64,
+    "action": "independently executed randomized +/-1 for each observed key",
+    "outcome": "observed_next_delta=executed_action*unknown_tanh_Gaussian_key_effect + Normal(0,0.03)",
+    "query": "single independently executed query action/outcome at one randomly chosen target key AFTER all facts; query target not revealed to write gates",
+    "interleaving": "per-world uniformly randomized permutation of 32 repeated-target and 32 unique distractor events; all keys, actions and observed deltas permuted together",
+    "unfamiliar_shift": "OOD distractor keys project 2x onto target subspace before normalization, versus unmodified normalized FIT/VAL distractor keys",
+    "already_consumed_P66_source_seeds_forbidden": [
+      966101,
+      966103,
+      966107
+    ],
+    "no_hidden_effect_or_phase_or_target_flags_in_learner_input": true
+  },
+  "arms": {
+    "candidate": "3 scalar learned gate using original 16x16 TTT update with current factual before-write norm and observed residual cosine, NO timestep or phase feature",
+    "wrong_credit": "same capacity/architecture and training, independently redrawn incorrect executed action labels on historical facts, true executed query action and observed reward intact",
+    "GRU": "fully trained conventional GRU 33-dimensional factual events and 16d physical query readout; hidden width 32, train once per initialization on identical factual episodes and factual-only final reward",
+    "strong_classical": "256-float original all-write, learned FIT-only threshold surprise and prior read norm, 8-slot key/value FIFO 256-float, and unlimited-capacity all-history exact-context factual nearest neighbor (explicitly OVER_BUDGET baseline, not matched-state eligible for formal strong-capacity gate)",
+    "random": "same 256-float matrix and learned FIT write acceptance rate, random gate, per-init fixed random seed",
+    "oracle": "source-privileged hidden label skip of distractors; NOT fair benchmark or deployment claim"
+  },
+  "training": {
+    "seeds": [
+      967201,
+      967203,
+      967207
+    ],
+    "sampler_seed": 967299,
+    "steps_each_neural_arm": 600,
+    "batch": 32,
+    "adamw_lr": 0.003,
+    "validation_every": 100,
+    "training_arms": 3,
+    "total_optimizer_updates": 5400,
+    "frozen_tolerance_validation_last100_abs_mse_change_le": 0.005,
+    "parameter_and_FLOP_parity": "NOT_GUARANTEED_REPORT_COUNTS_AND_CPU"
+  },
+  "frozen_gates_all_seeds": {
+    "candidate_MSE_le_best_eligible_conventional_and_TTT_x_0p90": true,
+    "candidate_MSE_le_wrong_credit_x_0p80": true,
+    "candidate_MSE_le_random_x_0p85": true,
+    "GRU_validation_mse_plateau_le_0p005": true,
+    "candidate_mse_le_unlimited_exact_key_x_0p90": "diagnostic only: not equal capacity; do not treat as formal capacity-matched science",
+    "strict_all_three_seeds": true
+  },
+  "negative_controls": [
+    "No time/phase feature in learned gate; all 64 events randomized and actual query key unknown until completed history",
+    "Quantify same-key repetitions and chance query lookahead",
+    "Wrong-credit actual-action labels are independently redrawn, never invertible by fixed rolling",
+    "Same query physical observation and action for ALL comparable arms",
+    "Retain 1,024-float+ all-history KNN as explicitly unfair memory but conventional shortcut check",
+    "Exact 8-slot FIFO memory capacity 256 floats; no hidden phase oracle",
+    "Run 6 no-source tests against exact code and immutable source/split hashes",
+    "No post-OOD source/threshold/seed retune. DEV failures not reclassified."
+  ],
+  "authority": {
+    "no_independent_protected_scientific_first_use": true,
+    "no_main_or_accepted_ref": true,
+    "no_merge": true,
+    "no_workflow_or_scheduler": true,
+    "no_runner_or_controller": true,
+    "no_FORGE_integration": true,
+    "no_paid_API": true,
+    "no_live_motor_or_actuator": true,
+    "full_original_final_SHA_Windows_Ubuntu_WSL_regression_required_before_acceptance": true
+  }
+}
