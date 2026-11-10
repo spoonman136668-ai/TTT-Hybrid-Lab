@@ -281,5 +281,4 @@ def main():
         'rows':[{'seed':r['seed'],'conditions':r['conditions'],
           'gate':r['arms']['gate']['ood_mse'],'gru':r['arms']['gru']['ood_mse']} for r in result['rows']]}),flush=True)
 
-
 if __name__=='__main__':main()
