@@ -47,7 +47,10 @@
     "query": "Current real sensor [position,velocity] plus zero delta and action; last four real pre-sensors+delta+motor action recorded only AFTER official published physical step",
     "no_unexecuted_outcome": true,
     "teacher_labels": "Demonstration labels from actual expert current-state action, explicitly imitation and NOT genuine reward-only causal exploration",
-    "closed_loop": "At each future physical step learned policy independently chooses actual +/-1 motor command, publisher advances the actual state, no teacher access"
+    "closed_loop": "At each future physical step learned policy independently chooses actual +/-1 motor command, publisher advances the actual state, no teacher access",
+    "published_units_normalization": "fixed before any source first-use: [position, velocity*100, delta_position*100, delta_velocity*100, actual_motor_action]; zero-padding for missing completed facts; query [current_position,current_velocity*100,0,0,0]. No training-statistics fit, oracle, or future observation",
+    "training_label": "sign of same real demonstrated momentum action; labels supervised, no reward-only claim",
+    "training_aggregation": "sample last-four observed completed facts and one current sensor from each expert-generated actual step"
   },
   "training": {
     "seeds": [
@@ -96,5 +99,6 @@
     "no_paid_API": true,
     "full_exact_SHA_Windows_and_Ubuntu_WSL_regression_required": true,
     "preserve_prior_negative_findings": true
-  }
+  },
+  "provenance_addendum": "This clarification occurs BEFORE source first-use; parent freeze already committed. No source/training/outcomes generated at time of addendum."
 }
