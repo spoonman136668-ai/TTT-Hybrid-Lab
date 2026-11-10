@@ -1,0 +1,158 @@
+{
+  "schema": "ttt-hybrid.p68-budgeted-noisy-causal-memory-authored-DEV-negative.v1",
+  "classification": "SOURCE_FROZEN_LOCAL_AUTHOR_SIMULATED_DEV_NOT_SCIENTIFIC_FIRST_USE",
+  "source_custody": {
+    "parent_pr": 175,
+    "parent_head": "37342b90eec953e0c28b6ff9a7dc1cf71e12348d",
+    "frozen_protocol_commit": "66890be04e680f3b4976d2479025c16ad154baa4",
+    "pre_source_control_grid_commit": "e2f0c154965e88f5e5fbf795080a31abfc5993f4",
+    "exact_pre_heldout_local_source_code_and_tests_hash_commit": "1d29ddc50d995c0d3c3748a0e6f87902c9c1d13f",
+    "source_git_blob": "f2f959f1168465cb0487d619ce56b7d4756af093",
+    "source_sha256": "9c6995a979719609c8496f35c88b0b404ceb396842087df1fec86e0b398d1230",
+    "test_git_blob": "fd567f0d322e4cb2b38072f670ee87743c61ce93",
+    "test_sha256": "e9b02fd48a9f3ce70917dd42a7dbb528129c46efe39204f786b93ae8088a13d0",
+    "source_code_repository_status": "SHA256_PRECOMMITTED_ONLY_FILES_INCLUDED_IN_ATTACHED_ZIP_NOT_YET_IN_GITHUB_BRANCH",
+    "evidence_artifact": "TTT-Hybrid-P68-Budgeted-Noisy-Causal-Memory-DEV-20261110.zip"
+  },
+  "study": {
+    "source_seeds": {
+      "fit": 968101,
+      "val": 968103,
+      "ood": 968107
+    },
+    "source_counts": {
+      "fit": 256,
+      "val": 96,
+      "ood": 128
+    },
+    "source_sha256": {
+      "fit": "eb4b336fcd841dbf111f35c8ce05809087cd208f1c25b9dc9ac5408ceefbc173",
+      "val": "0456b9f299520ee76f7dad57fd2b1ceec9e601029737895b7d491114a108b80c",
+      "ood": "bc8b64754a976b75c919871f6cc5a0c791005b4b47efac7553defe681ca743cb"
+    },
+    "train_indices_sha256": "33ff7521c15df0d62429221533b0e43134ec6f26ba5761b88d1aec99d7752d5f",
+    "initialization_seeds": [
+      968201,
+      968203,
+      968207
+    ],
+    "actual_optimizer_updates": 2700,
+    "wall_seconds": 56.37121172299976,
+    "full_JSON_sha256": "73e64b044dea3c6efcb63fca9fd990d6bd675055541de43fa825ef0c8a6b24ad",
+    "full_JSON_bytes": 7894,
+    "executed_on": "Linux local Python 3.13.5, PyTorch 2.10.0+cpu, one CPU thread",
+    "executed_action_and_measured_consequence": "simulated ±1 actual action with generated signed 16-vector feedback, no imagined training counterfactual",
+    "no_identical_query_views": true,
+    "randomly_interleaved_relevant_distractors": true
+  },
+  "source_balance": {
+    "fit": {
+      "max_quartile_deviation": 0.00927734375,
+      "index_only_balanced_accuracy": 0.50048828125
+    },
+    "val": {
+      "max_quartile_deviation": 0.025390625,
+      "index_only_balanced_accuracy": 0.498046875
+    },
+    "ood": {
+      "max_quartile_deviation": 0.005533874034881592,
+      "index_only_balanced_accuracy": 0.5
+    },
+    "registered_balance_all_pass": true
+  },
+  "validation_only_classical_choices": {
+    "surprise_threshold": 2.5,
+    "novelty_threshold": 0.05,
+    "proto8_cosine_threshold": 0.6
+  },
+  "ood_MSE": {
+    "learned_gate": [
+      0.13895127177238464,
+      0.13865390419960022,
+      0.13827738165855408
+    ],
+    "GRU": [
+      0.683125376701355,
+      0.6883291602134705,
+      0.6949554681777954
+    ],
+    "wrong_credit": [
+      0.4039086699485779,
+      0.40387552976608276,
+      0.40389683842658997
+    ],
+    "matched_rate_random": [
+      0.2285538762807846,
+      0.24782812595367432,
+      0.24741138517856598
+    ],
+    "original_TTT_always_write": 0.23194128274917603,
+    "strict_256_float_proto8": 0.36844706535339355,
+    "strict_256_float_surprise": 0.33955180644989014,
+    "strict_256_float_novelty": 0.4049679636955261,
+    "zero_state": 0.4049679636955261,
+    "all_history_nearest_overbudget_diagnostic": 0.007318516261875629
+  },
+  "frozen_controls_all_model_seeds": {
+    "candidate_10pct_better_than_best_eligible": "PASS_3_OF_3",
+    "noninvertible_wrong_credit_20pct_degradation": "PASS_3_OF_3",
+    "FIT_rate_matched_random_15pct_degradation": "PASS_3_OF_3",
+    "cold_state_exact_restore": "PASS_3_OF_3",
+    "GRU_validation_competence_and_plateau": "FAIL_0_OF_3",
+    "combined_registered_DEV": "FAIL_0_OF_3"
+  },
+  "training_details": {
+    "candidate_params": 4,
+    "conventional_GRU_params": 20304,
+    "GRU_validation_MSE_by_50_steps": {
+      "968201": [
+        0.45737946033477783,
+        0.5279615521430969,
+        0.5982345938682556,
+        0.6436774134635925,
+        0.6702883243560791,
+        0.6732048392295837
+      ],
+      "968203": [
+        0.4615232050418854,
+        0.5333113670349121,
+        0.6169204115867615,
+        0.6680449843406677,
+        0.697328507900238,
+        0.7061517834663391
+      ],
+      "968207": [
+        0.46103206276893616,
+        0.5403780937194824,
+        0.6098924279212952,
+        0.6609764099121094,
+        0.6774253249168396,
+        0.6904571652412415
+      ]
+    },
+    "candidate_validation_MSE_last": {
+      "968201": 0.04432283714413643,
+      "968203": 0.04420599341392517,
+      "968207": 0.04381268098950386
+    },
+    "candidate_not_converged": true,
+    "whole_process_compute_and_parameter_matching": "NOT_QUALIFIED"
+  },
+  "qualifications": {
+    "local_source_free_focused_pytest": "PASS_6_OF_6",
+    "replay_reproduction_second_full_science": "NOT_RUN",
+    "full_original_repo_final_head_Windows_Ubuntu_WSL_regression": "UNVERIFIED",
+    "native_GPU": "NOT_RUN",
+    "official_Mamba2_TTT_MoD": "NOT_RUN",
+    "authentic_independent_physical_first_use": "NOT_RUN",
+    "original_HybridPilot_training": "NOT_RUN",
+    "scientific_pass": false,
+    "engineering_full_acceptance": "UNVERIFIED",
+    "merge": false,
+    "FORGE_controller_and_research_loop": "UNCHANGED",
+    "runner_workflow_scheduler_and_paid_API": "NONE",
+    "live_actuation": "NONE"
+  },
+  "conclusion": "Learned content-sensitive 256-float TTT gate beats tested equal-state conventional baselines on new noisy OOD synthetic action-consequence data, but combined frozen development FAIL because GRU not competent and candidate training not plateaued. Over-budget exact-history lookup beats all. No general causal-learning superiority, native-intelligence or RSI claim. Never tune the consumed 968107 OOD cohort.",
+  "next": "Use real independent authenticated novel source, relevant causal intervention changes and convergence-qualified conventional controls; investigate stronger equal-memory classical sketches and fully trained budget-parity."
+}
