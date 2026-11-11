@@ -101,7 +101,12 @@ def toy_replay(manifest, worlds, *, kind="learned3", seed=978201):
                     raise ValueError("P79MR_PROBE_MUTATED_MEMORY")
                 # The ground truth is read ONLY after the read-only prediction.
                 outcome = torch.tensor(probe["realized_effect"],dtype=torch.float32)
+                if (not bool(torch.isfinite(prediction).all()) or
+                        not bool(torch.isfinite(outcome).all())):
+                    raise ValueError("P79MR_NONFINITE_REPLAY")
                 squared_error = float((prediction-outcome).square().mean())
+                if not math.isfinite(squared_error):
+                    raise ValueError("P79MR_NONFINITE_REPLAY")
                 estimates[probe["probe_id"]] = {
                     "probe_id": probe["probe_id"],
                     "after_events": cut,
