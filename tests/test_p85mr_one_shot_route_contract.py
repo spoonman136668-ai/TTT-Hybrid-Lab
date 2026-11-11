@@ -127,3 +127,56 @@ def test_collector_entrypoint_imports_exact_adjacent_modules_without_first_use()
     assert "--approved-once" in p.stdout
     assert "--source-checkout" in p.stdout
     assert "--project-checkout" in p.stdout
+
+
+
+def test_new_f2_workflow_will_not_be_triggered_from_earlier_engineering_commits():
+    """The newly approved workflow is written last and has a unique path trigger."""
+    path=ROOT/".github"/"workflows"/"p85mr-f2-pinned-fitcal-once.yml"
+    f2=json.loads((ROOT/"experiments"/"p85mr_f2_pinned_fitcal_authorization_freeze.json").read_text())
+    assert f2["execution"]["trigger"]=="push of named file on exact branch only"
+    assert f2["execution"]["github_run_number"]==1
+    assert f2["execution"]["github_run_attempt"]==1
+    assert f2["execution"]["runner_name"]=="TTT-HYBRID-GPU-WIN"
+    assert f2["execution"]["workflow"]==".github/workflows/p85mr-f2-pinned-fitcal-once.yml"
+    assert f2["authority"]["first_attempt"]["scientific_source_effects"]==0
+    if not path.exists():
+        pytest.skip("F2 trigger file not committed; safe engineering preflight only")
+    s=path.read_text()
+    assert "  push:" in s and "  schedule:" not in s
+    assert "research/p85mr-f2-pinned-source-fitcal-once-20261111" in s
+    assert "p85mr-f2-pinned-fitcal-once.yml" in s
+    assert "github.run_number == 1" in s
+    assert "github.run_attempt == 1" in s
+    assert "runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]" in s
+    assert "CausalAILab/Causal-Gymnasium" in s
+    assert "c94e9a4cd3641588b6b8507e71ccee5c27032bdf" in s
+    assert "p85mr-upstream-source" in s
+    assert "persist-credentials: false" in s
+    assert "P85MR_F2" in s
+    assert "--approved-once" not in s or "p85mr_fitcal_owner_launch.ps1" in s
+    assert "qualify_cpu.py" in s
+    assert "if: always()" in s
+    assert "retention-days: 30" in s
+    assert "  workflow_dispatch:" not in s
+    assert "  pull_request:" not in s
+    assert "contents: write" not in s
+    assert "schedule:" not in s
+
+
+def test_f2_shares_exact_frozen_source_and_preflight_before_actual_do():
+    src=(ROOT/"experiments"/"p85mr_fitcal_owner_firstuse.py").read_text()
+    launcher=OWNER.read_text()
+    assert 'F2_BLOB = "bf7738238a52b6570530d86d30fe36fb594eb12d"' in src
+    assert 'owner_context(environ)' in src
+    assert 'locked_f2_route()' in src
+    assert '"P85F2_ROUTE_FREEZE_DRIFT"' in src
+    assert "$expectedRef = 'refs/heads/research/p85mr-f2-pinned-source-fitcal-once-20261111'" in launcher
+    assert "p85mr-f2-pinned-fitcal-once.yml" in launcher
+    assert '"$workspaceRoot/p85mr-upstream-source"' in launcher
+    assert 'NO_EXISTING_PINNED_PY311_CAUSALGYM_RUNTIME' in launcher
+    assert "--approved-once" in launcher
+    assert "2550s" in launcher
+    assert "Start-ScheduledTask" not in launcher
+    assert "pip install" not in launcher
+    assert "git clone" not in launcher
