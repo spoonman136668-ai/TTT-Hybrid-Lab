@@ -1,0 +1,4 @@
+# Preserve exact Git blob bytes across Windows, Linux and WSL checkouts.
+# Scientific custody tests intentionally verify bytes, not normalized text.
+*.py text eol=lf
+*.json text eol=lf
