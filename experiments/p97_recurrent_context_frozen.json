@@ -1,0 +1,113 @@
+{
+  "schema": "ttt-hybrid.p97-recurrent-context-dev-freeze.v1",
+  "date": "2026-11-11",
+  "purpose": "Test a two-context, causal-surprise routed confirmed action-consequence memory on A->B->A recurrence rather than continuous forgetting or a neural residual. Author-synthetic DEV falsification only.",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "sha": "f9712ebb3195f889d7c4187363ba80aa592c7ef9",
+    "pr": 217,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p86_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "p94_blob": "378167499362173023b02a44e1b9ffb7a1eeba42"
+  },
+  "prior_negative": {
+    "p95": 218,
+    "p96": 220,
+    "not_dependent": true,
+    "do_not_retune_prior_CAL": true
+  },
+  "hypothesis": "Preserving an earlier causal model while learning an alternative and non-oracle selecting it will improve both mid-episode switched-regime prediction and post-return recovery without degrading stable worlds relative to strong FIT-selected W256, within a CPU budget.",
+  "source": {
+    "families": {
+      "A": "isotropic integer/dyadic actions",
+      "B": "independently-seeded anisotropic actions with coordinate integer division by 2**(j%4)"
+    },
+    "seeds": {
+      "A_FIT": 970111,
+      "A_CAL": 970113,
+      "B_FIT": 970211,
+      "B_CAL": 970213,
+      "OOD_RESERVED": 970117,
+      "NEGATIVE_RESERVED": 970119
+    },
+    "worlds": {
+      "FIT": 256,
+      "CAL": 128
+    },
+    "events": 72,
+    "phases": [
+      {
+        "events": "0..23",
+        "rule": "A",
+        "query_after": 24
+      },
+      {
+        "events": "24..47",
+        "rule": "B for half of worlds, otherwise A",
+        "query_after": 48
+      },
+      {
+        "events": "48..71",
+        "rule": "A",
+        "query_after": 72
+      }
+    ],
+    "probes": "3 fresh withheld actions per world, never written as factual events",
+    "causal_rule": "P86 integer/dyadic rank4 basis u0,v0 and u1,v1; no oracle labels passed to predictor",
+    "fresh_before_source": true
+  },
+  "model": {
+    "learned_state": "2x16x16 float32 W plus 2 float32 innovation EWMAs = 514 float32 persistent values/world; active context and counts are int control state and must be disclosed",
+    "training": "confirmed-only online updates using normalized actions; no offline neural weights",
+    "route": "recurrent causal-surprise gate compares active-vs-inactive predictive errors; spawn alternate context only after sufficient active-history and sequential surprise, return to previously learned context only when consistently lower observed prediction error; threshold/tolerance selected on FIT only from fixed 2x2 grid",
+    "warmup": 8,
+    "source_never_reads_labels": true,
+    "query_read_only": true
+  },
+  "controls": [
+    "FIT-selected 9-point conventional W256 eta∈{0.5,1.0,1.5}, decay∈{0.95,0.99,1.0}; evaluated on untouched CAL",
+    "P86 fixed W256 eta=1 decay=0.99",
+    "514-float capacity-matched W256 with 258 inert floats, output bitwise identical to selected W256",
+    "zero predictor",
+    "wrong-time action-effect credit",
+    "unconfirmed NaN cannot write",
+    "bitwise 24+24+24 cold restoration",
+    "no oracle regime labels",
+    "source fingerprint equality Windows/Ubuntu"
+  ],
+  "acceptance": {
+    "all_two_families": true,
+    "all_switch_cases": true,
+    "changed_at_48_mse_ratio_max_vs_FIT_selected_W256": 0.9,
+    "returned_at_72_mse_ratio_max_vs_FIT_selected_W256": 0.85,
+    "stable_at_72_mse_ratio_max_vs_FIT_selected_W256": 1.05,
+    "all_probe_combined_mse_ratio_max": 0.95,
+    "wrong_credit_mse_ratio_min": 1.05,
+    "whole_episode_cpu_ratio_max": 3,
+    "source_hash_identical_cross_platform": true,
+    "cold_restoration_bitwise": true,
+    "no_confirmation_leak": true
+  },
+  "reproducibility": {
+    "selection": "deterministic FIT-only grid; CAL scores once; never change thresholds after CAL",
+    "dev_only": true,
+    "science_pass_ever_claimed": false,
+    "original_model_unchanged": true,
+    "no_OOD_or_NEGATIVE_birth": true,
+    "negative_outcomes_preserved": true
+  },
+  "qualification": {
+    "G4": "full Windows+Ubuntu test suite at exact candidate SHA",
+    "G5": "native TTT Windows+Ubuntu at exact candidate SHA",
+    "G7": "pinned Mamba2 Ubuntu at exact candidate SHA",
+    "scientific": "independent external preapproved source and robust multi-seed qualification NOT included"
+  },
+  "isolation": {
+    "draft_only": true,
+    "no_merge": true,
+    "no_gpu": true,
+    "no_forge_controller_runner_workflow_scheduler_change": true,
+    "no_paid_api": true,
+    "no_library_artifact": true
+  }
+}
