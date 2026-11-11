@@ -36,7 +36,7 @@ STEP_FIELDS = frozenset((
 
 def _git_blob(raw: bytes) -> str:
     return hashlib.sha1(b"blob " + str(len(raw)).encode("ascii") +
-                        b"\\0" + raw).hexdigest()
+                        b"\0" + raw).hexdigest()
 
 
 def locked_protocol() -> dict:
