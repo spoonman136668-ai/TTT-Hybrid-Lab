@@ -1,0 +1,62 @@
+{
+  "schema": "ttt-hybrid.p85mr-r3-wsl-runtime-only.v1",
+  "parent_sha": "55faf21d05de4a6b62af52666130517e3aeb260e",
+  "branch": "research/p85mr-r3-wsl-runtime-only-20261111",
+  "scope": "bounded owner WSL dependency inventory; optional isolated CPU venv install; NO source checkout, simulator constructor/reset/do, model training or new science",
+  "runner": "TTT-HYBRID-GPU-WIN",
+  "labels": [
+    "self-hosted",
+    "Windows",
+    "X64",
+    "ttt-hybrid-gpu-isolated"
+  ],
+  "wsl": "Ubuntu-24.04",
+  "wsl_user_uid": "1000",
+  "single_use": {
+    "trigger": "owner branch push that introduces exact workflow file last",
+    "run_number": 1,
+    "run_attempt": 1,
+    "no_replay": true
+  },
+  "existing_candidates": [
+    "g7-s25-cpu311-r1/venv/bin/python",
+    "p85mr-causalgym-cpu311/venv/bin/python",
+    "causalgym-cpu311/venv/bin/python"
+  ],
+  "new_runtime_relative": "p85mr-causalgym-cpu311-r3/venv",
+  "pinned_distributions": {
+    "numpy": "1.26.4",
+    "gymnasium": "0.29.1",
+    "networkx": "3.4.2",
+    "pydash": "8.0.5",
+    "toposort": "1.10",
+    "cloudpickle": "3.0.0",
+    "farama-notifications": "0.0.4",
+    "typing-extensions": "4.12.2"
+  },
+  "install_policy": {
+    "only_binary": true,
+    "isolated_pip": true,
+    "approved_index": "https://pypi.org/simple",
+    "no_system_packages": true,
+    "no_root": true,
+    "no_alter_existing_venvs": true,
+    "install_timeout_seconds": 480,
+    "receipt": "GitHub Actions artifact only",
+    "followup_lock_installed_wheel_hashes": true
+  },
+  "prohibitions": [
+    "no F1 or F2 replay",
+    "no collector invocation",
+    "no external causal source execution",
+    "no system pip/install",
+    "no CPU/GPU model training",
+    "no credentials or secret prints",
+    "no schedule",
+    "no new runner/controller",
+    "no automatic branch merge",
+    "no FORGE/main edits",
+    "no reserved seeds"
+  ],
+  "acceptance": "ENGINEERING_RUNTIME_ONLY: existing or fresh WSL CPython3.11 exact distribution metadata and finite import smoke; never SCIENTIFIC_PASS"
+}
