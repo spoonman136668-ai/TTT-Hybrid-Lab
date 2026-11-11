@@ -196,3 +196,11 @@ def test_no_upstream_execution_or_hidden_scoring_entrypoint():
     assert "run_experiment(" not in text
     assert ".do(" not in text
     assert "score(" not in text
+
+
+def test_state_delta_overflow_is_explicit_failure_not_silent_tanh_clamp():
+    capture = raw_capture()
+    capture["worlds"][0]["transitions"][0]["state_before"][0] = 1e308
+    capture["worlds"][0]["transitions"][0]["state_after"][0] = -1e308
+    with pytest.raises(ValueError, match="P80MR_BAD_EFFECT"):
+        adapt_capture(capture)
