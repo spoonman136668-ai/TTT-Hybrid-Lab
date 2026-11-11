@@ -1,0 +1,234 @@
+{
+  "schema": "ttt-hybrid.p79-frozen-convergence-summary-custody.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_FAIL_NO_SCIENTIFIC_PASS",
+  "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "branch": "research/p79-extended-convergence-bounded-ttt-20261110",
+  "pre_source_freeze": "448a8f43b03ec0e2aa202c165b64865f8eb4385f",
+  "parent_pr": 191,
+  "parent_sha": "590cdab8a345f8ace52680d1291c499a115ac4e8",
+  "canonical_code_path": "experiments/p79_reproducible_from_p78.py",
+  "canonical_code_blob": "289b22aafd41afeaac868f18afaf7a77a722edbb",
+  "test_path": "tests/test_p79_repo_exact.py",
+  "test_blob": "5e7fe6328d8ab89acdfeb78b11f601f9e13d9a0e",
+  "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+  "parent_p78_source_blob": "02ea492f8a3b61bb37f53b933ade3e0334b6a379",
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "os": "local Linux CPU",
+    "cpu_threads": 1
+  },
+  "source_seeds": {
+    "fit": 790111,
+    "val": 790113,
+    "ood_dev": 790117,
+    "negative": 790119
+  },
+  "worlds": {
+    "fit": 256,
+    "val": 128,
+    "ood_dev": 128,
+    "negative": 64
+  },
+  "source_sha256": {
+    "fit": "0b8cabdde081bf355619e9e7f6240363f40dc26501b71689989e0a7dff71f4b4",
+    "val": "93770aee5f90548740057c88dedbfe861a29cf07a54464f07d25ee5687c36e10"
+  },
+  "source_audits": {
+    "fit": {
+      "quartile_imbalance": 0.016276001930236816,
+      "position_only_balanced_accuracy": 0.5,
+      "pass": true
+    },
+    "val": {
+      "quartile_imbalance": 0.03515625,
+      "position_only_balanced_accuracy": 0.5,
+      "pass": true
+    }
+  },
+  "sample_indices_sha256": "b3e0a457eb2140bc783b58b636c685f9c9a81be3bfe437a071ff407105fc5a37",
+  "train": {
+    "models_per_arm": 3,
+    "arms": [
+      "raw_internal",
+      "native_original",
+      "no_memory"
+    ],
+    "updates_per_arm": 420,
+    "total_updates": 3780,
+    "trainable_parameters_per_model": 544,
+    "batch": 16,
+    "lr": 0.01,
+    "optimizer": "AdamW",
+    "checkpoint_every": 30,
+    "original_backbone_frozen": true,
+    "all_paired_initialization_bitwise": true,
+    "all_raw_stored_state_256_float": true,
+    "cold_restore_bitwise": true
+  },
+  "validation": {
+    "zero_mse": 0.38756096363067627,
+    "fixed_256_float_fast_mse": 0.06485660374164581,
+    "fixed_256_float_frequency_mse": 0.12625755369663239,
+    "strong_controls_competent": true,
+    "raw_acceptance_mse_required_at_most": 0.06161377355456352,
+    "checkpoint_step_at_most": 390,
+    "last_two_val_at_most_1_05_best": true
+  },
+  "rows": [
+    {
+      "seed": 790201,
+      "full_model_initial_sha256": "51f4b28afb0faddf25125e58a90206d0d22ed28121f6e42f9d625de27ef33732",
+      "paired_init_exact": true,
+      "raw_early_stop_qualification": false,
+      "raw_best_at_terminal": true,
+      "raw_last_two_within_5_percent": true,
+      "raw_internal": {
+        "mse": 0.06435654312372208,
+        "step": 420,
+        "ckpt": "6611422da31cbeb5d3a5087a7eff17bbdf09ff430779e9c7741be4b57c8beab5",
+        "seconds": 0.36183219799931976
+      },
+      "native_original": {
+        "mse": 0.39643123745918274,
+        "step": 120,
+        "ckpt": "0a4821ec76328c17ec0bf4297eac6d7821f286d19164f4069be627c621024731",
+        "seconds": 0.36264337900138344
+      },
+      "no_memory": {
+        "mse": 0.39163702726364136,
+        "step": 180,
+        "ckpt": "20db2bdcd64845039cca9ba1f95a8d2fd2e963eafbc1515822db9765f3844b95",
+        "seconds": 0.38621605899970746
+      },
+      "raw_validation_trajectory_steps_30_to_420": [
+        0.22600771486759186,
+        0.15535205602645874,
+        0.12108652293682098,
+        0.10443528741598129,
+        0.09646445512771606,
+        0.08489862829446793,
+        0.0724138617515564,
+        0.0704301968216896,
+        0.06992080062627792,
+        0.06931532919406891,
+        0.06942615658044815,
+        0.06753961741924286,
+        0.06670670956373215,
+        0.06435654312372208
+      ]
+    },
+    {
+      "seed": 790203,
+      "full_model_initial_sha256": "fa8fedbe9b088890b21aa38f3fe13d35ac0bc15314b79393d9a7d3902d3ee18d",
+      "paired_init_exact": true,
+      "raw_early_stop_qualification": false,
+      "raw_best_at_terminal": true,
+      "raw_last_two_within_5_percent": true,
+      "raw_internal": {
+        "mse": 0.06545630842447281,
+        "step": 420,
+        "ckpt": "6cb39f74bb28f5820566ce305d06097785a68466e7c10a4941ef126653f9ee85",
+        "seconds": 0.38255927299906034
+      },
+      "native_original": {
+        "mse": 0.4030568301677704,
+        "step": 120,
+        "ckpt": "9340d5aacd11ec36617692c11224ddf006a11fc2d13aed442697fde280cddd37",
+        "seconds": 0.3546369309988222
+      },
+      "no_memory": {
+        "mse": 0.39257633686065674,
+        "step": 120,
+        "ckpt": "c9a5d2199c3dc3ddbb695b541f29ecc0fa13b66c1724257d94fbf61980c8a02b",
+        "seconds": 0.38772268899992923
+      },
+      "raw_validation_trajectory_steps_30_to_420": [
+        0.22488531470298767,
+        0.16119670867919922,
+        0.13087190687656403,
+        0.09565362334251404,
+        0.08202453702688217,
+        0.07230478525161743,
+        0.071025550365448,
+        0.06833526492118835,
+        0.07084067910909653,
+        0.06762789189815521,
+        0.06901154667139053,
+        0.06652174144983292,
+        0.06828571856021881,
+        0.06545630842447281
+      ]
+    },
+    {
+      "seed": 790207,
+      "full_model_initial_sha256": "d909fd7e640f7fd5810f8bdeacc90ca7249304b52192019a81ac7566f976c609",
+      "paired_init_exact": true,
+      "raw_early_stop_qualification": false,
+      "raw_best_at_terminal": true,
+      "raw_last_two_within_5_percent": true,
+      "raw_internal": {
+        "mse": 0.0655745193362236,
+        "step": 420,
+        "ckpt": "bf42ecd3d2f8b2b5498ee1819dda902c855f291cd24724c248a45f0e5067647f",
+        "seconds": 0.41713319499831414
+      },
+      "native_original": {
+        "mse": 0.4009022116661072,
+        "step": 120,
+        "ckpt": "25a57057a40467749b953a0f7912853067f37f54370ab8a8a1ecf86c6c4cbdcf",
+        "seconds": 0.3564610419998644
+      },
+      "no_memory": {
+        "mse": 0.39411306381225586,
+        "step": 180,
+        "ckpt": "52a1a0e8eca93e3faa760570ce981348cc62d77b20c5bd59520abbcb1d967246",
+        "seconds": 0.2855629250007041
+      },
+      "raw_validation_trajectory_steps_30_to_420": [
+        0.22211241722106934,
+        0.14602476358413696,
+        0.10931456089019775,
+        0.08599669486284256,
+        0.0736437663435936,
+        0.07059673964977264,
+        0.07147546112537384,
+        0.07004010677337646,
+        0.07183840870857239,
+        0.06954214721918106,
+        0.06994377821683884,
+        0.06704965978860855,
+        0.06804759800434113,
+        0.0655745193362236
+      ]
+    }
+  ],
+  "execution": {
+    "initial_source_execution_status": "DEV_FAIL_OR_UNQUALIFIED_VAL_CONVERGENCE_OR_STRONG_BASELINE",
+    "canonical_replay_status": "DEV_FAIL_OR_UNQUALIFIED_VAL_CONVERGENCE_OR_STRONG_BASELINE",
+    "canonical_replay_wall_seconds": 3.4118055930011906,
+    "all_9_model_arm_best_val_and_checkpoint_equal_original_execution": true,
+    "original_local_full_canonical_result_sha256": "8ca7c55865e818c0fc4dae5582ae0e4a0b559d0e1528656aa44bac0b40702152",
+    "reproducible_command": "python -m experiments.p79_reproducible_from_p78 --receipt /tmp/p79-replay.json",
+    "focused_regression": "68/68 PASS (local canonical+original P71-P78 subset; 2.01 seconds)"
+  },
+  "ood": {
+    "full_study_generated": false,
+    "full_study_scored": false,
+    "local_test_sample_4_worlds_generated": true,
+    "note": "An earlier exploratory local focused test instantiated four deterministic OOD worlds from seed 790117. They were NOT used to select/check model, and the frozen study did not score its OOD, but conservatively classify P79 OOD seed as TOUCHED/CONSUMED and disallow future first-use. The later repo exact test explicitly avoids OOD source birth.",
+    "independent_scientific_ood_qualified": false
+  },
+  "status": {
+    "engineering_focused": "PASS",
+    "science_development": "FAIL_ALL_3_TERMINAL_CHECKPOINT_AND_2_OF_3_FAIL_FIXED_BASELINE",
+    "full_Windows_Linux": "UNVERIFIED",
+    "GPU": "UNVERIFIED",
+    "scientific_pass": false,
+    "whole_process_FLOPs_matched": false,
+    "merge": false,
+    "deployment": "NONE",
+    "main_original_FORGE_P75": "UNCHANGED"
+  },
+  "interpretation": "420 updates narrow the raw-internal-to-strong-fixed error gap but do not establish true convergence or robust superiority. Retain negative without retroactive threshold changes; use fresh preregistered cohort for any subsequent substantive hypothesis."
+}
