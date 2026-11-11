@@ -1,0 +1,181 @@
+{
+  "schema": "ttt-hybrid.p102-consequence-conditioned-interventions-dev-freeze.v1",
+  "identity": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/p102-confirmed-consequence-directed-interventions-20261111",
+    "parent_pr": 228,
+    "parent_sha": "fcf260b966e8e6dd12a2dc1594103f5a5cc44725",
+    "parent_original_p101_blob": "a4375102e64492f179826b8775855b63b1c315fd",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p86_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "unrelated_parallel_p100_pr": 227
+  },
+  "status": "FROZEN_BEFORE_P102_IMPLEMENTATION_OR_DATA_BIRTH",
+  "hypothesis": "Can outcome-conditioned action-selection based on a previously learned causal map outperform both posterior-geometric max-variance acquisition and a FIT-selected strongest passive policy, with identical confirmed effect budgets and learner capacity, across isotropic and anisotropic 16D worlds?",
+  "intervention": "For each 16D candidate normalized action k, calculate posterior geometry v=k^T P k and model-estimated consequence impact c=||W k||_2^2. Score v*(1+beta*c/(mean_candidate_impact+1e-9)); choose maximum, first-index tie. W and P must come ONLY from earlier confirmed intervention consequences in this SAME task. Before any observed outcome W=0, so falls back exactly to max-variance. No counterfactual, oracle map, heldout query, other task future data or outcome lookahead to policy.",
+  "parameter_selection": {
+    "beta_grid": [
+      0.25,
+      1,
+      4
+    ],
+    "selected_on": "per family and independent FIT seed: min 24-world two-task withheld-query MSE",
+    "cal_frozen": true,
+    "geometry_baseline": "fixed P101 k^T P k (no parameter)",
+    "passive_baseline": "independently choose min FIT MSE of hash_random,cyclic,max_norm on same FIT worlds",
+    "strongest_cal_reference": "candidate must beat both the predeclared geometry and FIT-chosen passive; do not switch baseline policy on CAL"
+  },
+  "families": {
+    "isotropic": {
+      "coordinate_exponents": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "mildly_anisotropic": {
+      "coordinate_exponents": [
+        0,
+        0,
+        1,
+        1
+      ]
+    },
+    "anisotropic": {
+      "coordinate_exponents": [
+        0,
+        1,
+        2,
+        3
+      ]
+    }
+  },
+  "source": {
+    "author_synthetic_only": true,
+    "dim_action": 16,
+    "dim_effect": 16,
+    "rank": 4,
+    "per_world_tasks": 2,
+    "task_boundary_announced_to_all": true,
+    "FIT_worlds_per_seed": 24,
+    "CAL_worlds_per_seed": 12,
+    "seed_index_count": 3,
+    "seeds": {
+      "isotropic": {
+        "FIT": [
+          1020111,
+          1020113,
+          1020119
+        ],
+        "CAL": [
+          1020127,
+          1020131,
+          1020133
+        ]
+      },
+      "mildly_anisotropic": {
+        "FIT": [
+          1020311,
+          1020317,
+          1020323
+        ],
+        "CAL": [
+          1020329,
+          1020331,
+          1020337
+        ]
+      },
+      "anisotropic": {
+        "FIT": [
+          1020211,
+          1020217,
+          1020223
+        ],
+        "CAL": [
+          1020227,
+          1020229,
+          1020233
+        ]
+      },
+      "OOD_RESERVED": [
+        1020401,
+        1020403
+      ],
+      "NEGATIVE_RESERVED": [
+        1020501,
+        1020503
+      ]
+    },
+    "salts": [
+      "p102-u",
+      "p102-v",
+      "p102-action-",
+      "p102-probe-",
+      "p102-random"
+    ],
+    "candidate_actions_per_opportunity": 8,
+    "intervention_opportunities_per_task": 8,
+    "new_heldout_readonly_query_actions_per_task": 12,
+    "source_boundary": "8 unseen action candidates offered to every policy; choose one index; only then return selected k and M@k; never return unchosen effects. 16 actual outcomes/world (8 per task).",
+    "nonreuse": "All seeds/salts independent of consumed P101 FIT/CAL and earlier P86-P100, original P101 sources not regenerated for candidate selection."
+  },
+  "learner": {
+    "shared": "Exactly P101 regularized RLS W16x16 plus P16x16 float64 with prior=0.5; one independent state/task. Combined persistent 1024 floats; no training except real selected action/effect pairs, same update for all policies.",
+    "snapshot": "Task0 weights+precision cloned before Task1 and cold restored bitwise, withheld-query read-only",
+    "same_candidate_pools": true,
+    "same_oracle_effect_calls": true,
+    "causal_impact_ablation": "misaligned input columns of W (reverse column order), same beta FIT, evaluated without CAL retuning; improvement over ablation is exploratory, not posthoc positive criterion"
+  },
+  "controls": [
+    "geometry kTPk",
+    "FIT-chosen strongest hash_random/cyclic/max_norm",
+    "FIT beta choice, no CAL tuning",
+    "misaligned learned consequence weights ablation",
+    "zero predictor",
+    "wrong-confirmed-action credit negative >=1.05x",
+    "unconfirmed NaN cannot write",
+    "future oracle maps withheld from chooser",
+    "read-only query no write",
+    "bitwise cold Task0 after Task1",
+    "all policies same 16 factual outcome calls per world and same 1024 learned float64 values",
+    "source SHA256 Windows/Ubuntu",
+    "full-process CPU matched"
+  ],
+  "acceptance": {
+    "primary": "mean 2-task novel withheld 16D effect MSE CAL per independently pinned seed, candidate ratio to EACH (geometry and FIT-selected passive) <=0.90, not a CAL-selected baseline",
+    "task0_cold_ratio_to_each_max": 0.95,
+    "task1_ratio_to_each_max": 0.95,
+    "both_isotropic_and_anisotropic_require_2_of_3_seeds_all_conditions": true,
+    "both_isotropic_and_anisotropic_median_primary_ratio_to_each_max": 0.9,
+    "mild_anisotropy": "report all three seeds and median as independent gradient diagnostic, no claim of general trend from posthoc slicing",
+    "wrong_action_credit_MSE_ratio_min": 1.05,
+    "full_episode_cpu_candidate_ratio_vs_geometric_max": 1.6,
+    "full_episode_cpu_candidate_ratio_vs_passive_max": 3,
+    "zero_baseline_qualified": true,
+    "task0_cold_bitwise": true,
+    "strict_source_custody": true,
+    "no_future_oracle": true,
+    "negative_result_preserved": true,
+    "scientific_pass": false
+  },
+  "qualification": {
+    "original_full_G4_Windows_Ubuntu": true,
+    "original_native_G5_Windows_Ubuntu": true,
+    "pinned_G7_Ubuntu": true,
+    "output": "same G4 full pytest writes local_runs/p102_dev_result.json with candidate SHA and run ID; no new workflows, no duplicate science runs",
+    "DEV_only": true,
+    "independent_external_science_not_run": true,
+    "protected_OOD_NEGATIVE_never_generated": true
+  },
+  "isolation": {
+    "draft_only": true,
+    "no_merge": true,
+    "no_GPU": true,
+    "no_live_external_F3_F5": true,
+    "no_FORGE": true,
+    "no_controller_runner_scheduler_workflow_change": true,
+    "no_paid_API": true,
+    "no_file_library_artifacts": true
+  }
+}
