@@ -1,0 +1,229 @@
+{
+  "schema": "ttt-hybrid.p78mr-fit-cal-one-val-complete-dev-receipt.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_NOT_SCIENTIFIC_ACCEPTANCE",
+  "frozen": {
+    "protocol_commit": "f934a44715cb4b2b08abd8fb6c0782688575c072",
+    "path": "experiments/p78mr_calibrated_adaptive_freeze.json",
+    "before_source_birth_and_outcome": true,
+    "parent_p77_pr": 190,
+    "parent_p77_head": "4ef7e003a09f07e85f2ab744dae5020b01365f0d",
+    "original_p77_model_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02",
+    "original_p69_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "consumed_prior_p77_val_excluded": true
+  },
+  "qualification": {
+    "source_blobs": {
+      "experiments/p78mr_factual_source.py": "bb9e1fe332dbf592be8f68be9ed42a569dd37d8b",
+      "experiments/p78mr_adaptive_controls.py": "36f9c0bb9a9ecdd7c308a123956f528ef45b344d",
+      "experiments/p78mr_fitcal_val_dev.py": "5e75b3d686b660872de76ae29fe48cacd5b939d7",
+      "tests/test_p78mr_adaptive_controls.py": "acdce1d0e7b119ce8c1d2b9190577f22024ca241"
+    },
+    "source_and_test_git_blobs_equal_locally_run_bytes": true,
+    "local_focused": "103/103 PASS in 4.05s; source-exact available P69/P75/P76/P77/P78MR focused suites",
+    "local_torch": "2.10.0+cpu",
+    "local_python": "3.13.5",
+    "cpu_threads": 1,
+    "original_pinned_windows_linux_full_regression": "UNVERIFIED",
+    "g4_g5_g7_original_ci": "UNVERIFIED, prior zero-step runner-allocation failures",
+    "native_gpu": "NOT_RUN",
+    "full_original_build": "UNVERIFIED"
+  },
+  "source": {
+    "worlds": {
+      "fit": 512,
+      "cal": 192,
+      "val": 192
+    },
+    "seeds": {
+      "fit": 978101,
+      "cal": 978103,
+      "val": 978109,
+      "ood": [
+        978107,
+        978111,
+        978113
+      ],
+      "model": [
+        978201,
+        978203,
+        978207
+      ],
+      "sampler": 978299
+    },
+    "digests": {
+      "fit": "3e1abe9747ea855cdba27453100d09ffc06fc79b92c81f2903115a803d7ea488",
+      "cal": "753b2ac6b1f25b10849a623045916820d53a30970e22fc3c0c902a4666fe3c72",
+      "val": "0a1f21673c126e111f59e5afd5f2d2a6ef9e90ca7f8dd5fad007d635505f71a7"
+    },
+    "index_audit": {
+      "fit": {
+        "target_BA": 0.5093587189912796,
+        "changed_role_BA": 0.5021158903837204,
+        "quartile_max": 0.0068359375,
+        "exact_query_duplicate": false
+      },
+      "cal": {
+        "target_BA": 0.5045572817325592,
+        "changed_role_BA": 0.498046875,
+        "quartile_max": 0.01671004295349121,
+        "exact_query_duplicate": false
+      },
+      "val": {
+        "target_BA": 0.513237863779068,
+        "changed_role_BA": 0.4991319477558136,
+        "quartile_max": 0.01671004295349121,
+        "exact_query_duplicate": false
+      }
+    },
+    "source_audit_gates": "PASS",
+    "source_access_scope": "FIT/CAL for training/model selection; 1 VAL engineering world used for deterministic fixture before training with no outcomes scored; complete VAL scored once only after all FIT/CAL selection; OOD and negative selectors sealed.",
+    "p78mr_ood_generated": false,
+    "p78mr_ood_scored": false
+  },
+  "experiment": {
+    "trained_arms": [
+      "non_directional3",
+      "cosine4"
+    ],
+    "learned_static_params": [
+      3,
+      4
+    ],
+    "fast_state_floats_per_world": 256,
+    "fixed_control_count": 83,
+    "fixed_grid": {
+      "constant": 10,
+      "piecewise_direction": 36,
+      "piecewise_residual": 36,
+      "fixed_contradiction": 1
+    },
+    "calibration_only_fixed_selection": "lowest total CAL MSE, tie stable grid order",
+    "all_candidate_checkpoints_selected_on_cal_only": true,
+    "sampler_indices_sha256": "34b28594b5b500b8bce5ada7e960bbe6139be8177daeb123fe5d468f5b23a454",
+    "learning": "AdamW lr .01, wd .01, gradient clip 1; 240 updates and six CAL checkpoints per each of 6 learned runs",
+    "selected_fixed": {
+      "rule": "constant",
+      "gain": 0.4,
+      "cal_total_mse": 0.09114861488342285,
+      "val_total_mse": 0.09507384151220322,
+      "val_changed_mse": 0.11435633152723312,
+      "val_stable_mse": 0.0784122571349144
+    },
+    "seeds": [
+      {
+        "seed": 978201,
+        "no_direction": {
+          "total": 0.051203012466430664,
+          "changed": 0.07288874685764313,
+          "stable": 0.03246484696865082,
+          "selected_theta": [
+            -0.9993179440498352,
+            -1.4212849140167236,
+            0.3390440046787262
+          ]
+        },
+        "cosine": {
+          "total": 0.050325702875852585,
+          "changed": 0.07358918339014053,
+          "stable": 0.03022424317896366,
+          "selected_theta": [
+            -0.815855085849762,
+            -1.0960551500320435,
+            0.3783367872238159,
+            0.9162639379501343
+          ]
+        },
+        "simple_pass": true,
+        "directional_10pct_gain": false,
+        "cold_restore_both": true
+      },
+      {
+        "seed": 978203,
+        "no_direction": {
+          "total": 0.051087286323308945,
+          "changed": 0.07282955944538116,
+          "stable": 0.03230027109384537,
+          "selected_theta": [
+            -1.014487385749817,
+            -1.446208119392395,
+            0.34172534942626953
+          ]
+        },
+        "cosine": {
+          "total": 0.05031109228730202,
+          "changed": 0.07363037765026093,
+          "stable": 0.0301614161580801,
+          "selected_theta": [
+            -0.8325980305671692,
+            -1.1237943172454834,
+            0.37964969873428345,
+            0.9021434783935547
+          ]
+        },
+        "simple_pass": true,
+        "directional_10pct_gain": false,
+        "cold_restore_both": true
+      },
+      {
+        "seed": 978207,
+        "no_direction": {
+          "total": 0.051319483667612076,
+          "changed": 0.07300159335136414,
+          "stable": 0.032584454864263535,
+          "selected_theta": [
+            -0.9876767992973328,
+            -1.3994858264923096,
+            0.33621612191200256
+          ]
+        },
+        "cosine": {
+          "total": 0.0503556914627552,
+          "changed": 0.07360038161277771,
+          "stable": 0.030270487070083618,
+          "selected_theta": [
+            -0.801752507686615,
+            -1.072608470916748,
+            0.37745070457458496,
+            0.933059573173523
+          ]
+        },
+        "simple_pass": true,
+        "directional_10pct_gain": false,
+        "cold_restore_both": true
+      }
+    ],
+    "decision": {
+      "primary_vs_cal_selected_strong_fixed": "AUTHOR_SYNTHETIC_DEV_VAL_PASS_3_OF_3",
+      "direction_feature_10pct_changed_role_necessity": "DEV_VAL_FAIL_0_OF_3",
+      "directional_total_mse_lower": "OBSERVED_but_not_prespecified_mechanistic_effect",
+      "mean_relative_total_error_reduction_simple_vs_fixed_pct": 46.14,
+      "non_direction_wins_changed_role_against_cosine_in_all_seeds": true,
+      "direction_wins_stable_role_against_nondirection_in_all_seeds": true
+    },
+    "full_local_study_wall_s": 53.52632461599933,
+    "peak_rss_mib": 389.59375,
+    "not_equal_compute_qualified": true,
+    "raw_local_json_sha256": "6640861be66acb6201fed7755cd86af7a64c2a914b1bf828435e4ee327dded36",
+    "evidence_zip_sha256": "d63c675784d0a8ed79e515f1e9f88041cc04521bbd258146d9cec7551d297e27",
+    "local_manifest_sha256": "eecc6ddac80e85e25ca2ec639936b8e35ba60e623869126acd3582a805cf7786"
+  },
+  "science": {
+    "status": "NOT_ESTABLISHED",
+    "original_hybrid_training": "NOT_RUN",
+    "independent_external_source": "NOT_RUN",
+    "real_action_consequence_intervention": "NOT_RUN",
+    "source_contamination": "NO_PRIOR_CONSUMED_DATA_REUSED",
+    "whole_process_qualified_equal_compute": "NO",
+    "heldout_scientific_first_use": "NOT_AUTHORIZED_OR_RUN"
+  },
+  "deployment": {
+    "status": "NONE",
+    "no_runners_allocated": true,
+    "no_scheduled_tasks": true,
+    "no_merge": true,
+    "main_unchanged": true,
+    "forge_unchanged": true,
+    "no_live_actuation": true,
+    "no_paid_api": true
+  }
+}
