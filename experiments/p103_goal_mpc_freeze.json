@@ -1,0 +1,147 @@
+{
+  "schema": "ttt-hybrid.p103-goal-conditioned-epistemic-mpc-dev-freeze.v1",
+  "status": "PROSPECTIVELY_FROZEN_BEFORE_ANY_P103_SOURCE_IMPLEMENTATION_OR_DATA",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "branch": "research/p103-goal-conditioned-causal-control-20261111",
+  "parent": {
+    "pr": 229,
+    "sha": "52553526ceea2ce01f26cc035bb486b351974fd8",
+    "P102_DEV": "FAIL",
+    "P102_source_NOT_reused": true,
+    "P102_sealed_OOD_unopened": true,
+    "P101_baseline_blob": "a4375102e64492f179826b8775855b63b1c315fd",
+    "P86_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "On newly seeded causal physical goal tasks, two-step learned-consequence model-predictive control with a bounded epistemic action bonus yields >=10% lower realized goal tracking error than FIT-selected strongest conventional pure two-step MPC, greedy goal-directed, P101 geometric acquisition or random policy, with same factual interventions, capacity and CPU <=2x pure two-step MPC.",
+  "source": {
+    "kind": "NEW author-synthetic DEVELOPMENT not external science",
+    "families": [
+      "isotropic",
+      "anisotropic"
+    ],
+    "seeds": {
+      "isotropic": {
+        "FIT": [
+          1030111,
+          1030113,
+          1030119
+        ],
+        "CAL": [
+          1030127,
+          1030131,
+          1030133
+        ]
+      },
+      "anisotropic": {
+        "FIT": [
+          1030211,
+          1030217,
+          1030223
+        ],
+        "CAL": [
+          1030227,
+          1030229,
+          1030233
+        ]
+      },
+      "reserved_OOD": [
+        1030401,
+        1030403
+      ],
+      "reserved_NEGATIVE": [
+        1030501,
+        1030503
+      ]
+    },
+    "fit_worlds_per_seed": 16,
+    "cal_worlds_per_seed": 12,
+    "per_world_tasks": 2,
+    "action_dim": 16,
+    "consequence_dim": 16,
+    "low_rank": 4,
+    "causal_map": "M=V @ U.T/256, two independent maps per world, P86 basis with P103 unique labels",
+    "goal": "public 16D fixed target M @ (2.5 * normalize(hidden goal proposal)); hidden proposal never passed to policies, goal vector visible to all, including strong MPC; goal is in attainable effect subspace",
+    "physical_state": "starts at zero at control phase; each chosen action has actual effect M @ k and physical state increases by that factual effect; goal tracking scored after every executed control step",
+    "calibration": "8 initial actual interventions per task selected with identical fixed P101 geometric variance policy for all arms; exact same confirmed RLS updates and returned outcome; common state at control start",
+    "control": "8 more real goal-directed interventions per task with action candidate pools identical across all policies, 8 alternatives per step",
+    "action_candidates": "new deterministic independent signed integers /128, anisotropic dimensions j divided by 2**(j%4) before unit normalize; goal and calibration pool disjoint salts",
+    "lookahead": "current + next candidate pool disclosed to all policies, next true consequence never disclosed; at last step single candidate scoring",
+    "no_future_oracle": true,
+    "task_labels_announced": true,
+    "novel_queries_each_task": 12,
+    "protected_seeds_unavailable": true
+  },
+  "learner": {
+    "same_RLS": "exact imported P101 original confirmed action effect update with lambda 0.5; W16x16 float64 and P16x16 float64 per task",
+    "persistent_state_per_world": "1024 float64 across two tasks; all arms identical plus same 16D physical state and goal",
+    "same_action_budget": "8 calibrate + 8 control = 16 actual confirmed outcomes per task = 32/world per policy",
+    "no_pseudo_outcome_write": true,
+    "read_only_novel_query": true,
+    "task0_cold_checkpoint_before_task1": true,
+    "task0_cold_restore_bitwise_after_task1": true
+  },
+  "policies": {
+    "candidate": "For each available k_i choose i minimizing min_j ||s+W k_i+ W k_next_j - goal||^2/16 - beta*(k_i^T P k_i)/(mean_candidate_uncertainty+1e-9)*(||goal||^2/16); future k_next_j is hypothetical MODEL prediction only, no factual outcome call. Last step use one-step model error and same bounded bonus.",
+    "beta_grid": [
+      0.02,
+      0.08,
+      0.2
+    ],
+    "beta_select": "per family/seed FIT ONLY by average 2-task actual physical tracking loss, tie smallest beta; CAL scored exactly once",
+    "pure_mpc": "Same candidate action pools and exact two-step prediction minimizing goal squared error, beta0, no exploration bonus; unchanged strong comparator",
+    "greedy": "Conventional one-step goal-distance minimization with same W and physical state",
+    "geometry": "P101 max k^T P k only, same calibration, goal visible but policy does not use it",
+    "random": "deterministic candidate index based on new action seed, same per-step options",
+    "cyclic": "t mod 8, no extras",
+    "strong_baseline": "FIT-only select minimum tracking MSE from pure_mpc,greedy,geometry,random,cyclic, NEVER CAL-selected; must additionally beat pure_mpc separately",
+    "goal_sham": "Permute signs of public goal only in chooser while scoring original actual goal, preserve exact simulation/learning budget; posthoc negative must worsen tracking >=5% in each family/seed",
+    "wrong_action_credit": "Cycle-shift factual action labels and replay actual effect stream; novel-query prediction error must worsen >=5% vs original",
+    "zero_predictor": "Report tracking cost for doing zero effects, not an eligible comparator"
+  },
+  "acceptance": {
+    "required_families": [
+      "isotropic",
+      "anisotropic"
+    ],
+    "seed_pass_per_family_at_least": 2,
+    "median_primary_ratio_each_family_max": 0.9,
+    "per_seed_primary_ratio_vs_FIT_strongest_max": 0.9,
+    "per_seed_primary_ratio_vs_pure_mpc_max": 0.9,
+    "task1_tracking_ratio_to_both_max": 0.95,
+    "task0_tracking_ratio_to_both_max": 0.95,
+    "goal_sham_worse_ratio_min": 1.05,
+    "wrong_time_credit_worse_ratio_min": 1.05,
+    "cold_restore_bitwise": true,
+    "negative_unconfirmed_NaN_no_write": true,
+    "no_hidden_map_or_oracle_access": true,
+    "same_causal_action_budget": true,
+    "whole_episode_CPU_candidate_vs_mpc_max": 2,
+    "source_hash_crossplatform_equal": true,
+    "nonfinite_fail_closed": true,
+    "scientific_pass": false
+  },
+  "compute": {
+    "torch_single_thread_deterministic": true,
+    "CPU_only": true,
+    "full_episode_timing": "same 8 CAL worlds, warmups 2, median 7, full calibration + control + queries; telemetry excluded from timed block",
+    "whole_study_cap_seconds": 900,
+    "source_and_per_action_receipts": "SHA256 source and action journal per arm/seed",
+    "FIT_only_hyperparameters": true,
+    "CAL_once": true,
+    "no_result_tuning": true
+  },
+  "qualification": {
+    "G4": "existing full original Windows+Ubuntu exact-final-SHA regression and admission negative",
+    "G5": "original native TTT Windows+Ubuntu",
+    "G7": "pinned Mamba2 Ubuntu",
+    "artifact": "existing G4 pytest writes local_runs/p103_dev_result.json; GitHub artifacts only",
+    "no_new_workflows": true,
+    "no_new_runners": true,
+    "no_merge": true,
+    "no_schedules": true,
+    "original_neural_model_unchanged": true,
+    "original_P101_P102_unchanged": true
+  },
+  "limitations": "Positive dev is not real external science, native Hybrid trained competence, unfamiliar transfer, retention beyond this fixed cold checkpoint, or autonomous planning generalization; no protected OOD source birth; preserve failed/null results."
+}
