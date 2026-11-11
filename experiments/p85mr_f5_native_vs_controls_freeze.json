@@ -1,0 +1,149 @@
+{
+  "schema": "ttt-hybrid.p85mr-f5-real-fitcal-native-hybrid-vs-strong-controls-freeze.v1",
+  "stage": "FROZEN_BEFORE_F5_NATIVE_TRAINER_AND_TRAINING",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "parent": {
+    "pr": 223,
+    "source_sha": "00196c634509c7d04962e78988f4da97227f38f6",
+    "owner_run": 43080774054,
+    "F3_collect_run": 43073165842,
+    "source_artifact_id": 13878284321,
+    "source_zip_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "F4_controls_artifact_id": 13883054583,
+    "F4_controls_archive_sha256": "ac93a3616619bf4376023e18cfc2ab32757a1a89715fbc02394164682c0159b5",
+    "F4_controls_result_sha256": "0ce28fcf2976d4a97e922998dbc8696e483db1cfbf1a01bfdd5cb77052ecc56d",
+    "F4_controls_all_competent": true,
+    "F4_original_science_freeze_blob": "d8136313dd90cc406f00c49770ed3beeff4a1ee4",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "data": {
+    "cohorts": {
+      "FIT": 128,
+      "CAL": 64
+    },
+    "events": {
+      "FIT": 2923,
+      "CAL": 1524
+    },
+    "same_factual_stream_as_F4": true,
+    "p80_action16_and_measured_effect16": true,
+    "state_action_markov_observed": true,
+    "source_upstream_SHA": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "no_external_simulation": true,
+    "never_ood_or_dev": true
+  },
+  "controls": {
+    "fully_trained_F4_four_arms": true,
+    "comparison": "strongest per seed among linear7/mlp7/gru256/ssm256 selected on previously consumed CAL; all four model states/checkpoint files verified",
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "SSM_strongest_CAL": {
+      "985201": 0.00001328794543553613,
+      "985203": 0.000012177126073709132,
+      "985207": 0.000012313318364931547
+    },
+    "SSM_npz_sha256": {
+      "985201": "9ff9bbad4d545780cf1d5c6108075b2720aa51032ba3c2c70773abf6a6e2cec4",
+      "985203": "c6af43defa91f8cf308845d72e9b6acf15008761d88d3ede054029affcce4cc5",
+      "985207": "0836105936aba355ad08102075209828f748040d85d50a827648d6166ea64c45"
+    },
+    "training_wall_s": {
+      "985201": 3.713414343,
+      "985203": 3.712595833,
+      "985207": 3.709768981
+    }
+  },
+  "native_model": {
+    "class": "Original model.HybridPilot",
+    "input_dim": 32,
+    "output_dim": 16,
+    "configuration": {
+      "width": 16,
+      "heads": 2,
+      "ssm": true,
+      "attention": true,
+      "ttt": true,
+      "depth": true
+    },
+    "all_original_four_blocks": true,
+    "no_original_model_edits": true,
+    "sequence_input": "At each factual time t: concat(current unit state-action key16, previous CONFIRMED effect16); t=0 previous effect all zeros; no same-time effect input",
+    "predict": "Each effect y_t from x<=t; current y_t is label only, included in x_(t+1) after factual confirmation",
+    "valid_supervision": "Use t>=1 (0-index), mask padded, only 4 real state-delta channels + .2 reward + .1 terminated + .1 truncated",
+    "min_no_oracle": true,
+    "output": "full 16D effect but primary 4 physical deltas only",
+    "persistent_state_audit": "Explicit attention O(T) and native TTT fast weights; not assumed capacity-matched solely from hidden width"
+  },
+  "training": {
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "sampler_seed": 985299,
+    "original_frozen_sampler_sha256": "212ce45052b6095056238381491417d965eec23733e8ce7190033eed65ab93e8",
+    "batch_size": 16,
+    "max_updates": 800,
+    "check_every": 50,
+    "early_stop_min_updates": 400,
+    "nonimproving_checks": 6,
+    "last_three_spread_max": 0.005,
+    "optimizer": "AdamW",
+    "lr": 0.002,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1,
+    "torch_threads": 1,
+    "deterministic_cpu": true,
+    "fit_only_backprop": true,
+    "cal_only_select_best_checkpoint": true
+  },
+  "evaluation": {
+    "fixed_control_competence_prior": true,
+    "required_all_three_seeds": true,
+    "quality_max_ratio_vs_strongest": 0.9,
+    "negative_wrong_credit_mse_ratio_min": 1.05,
+    "inference_cpu_median_ratio_max_vs_SSM": 3,
+    "training_cpu_time_ratio_max_vs_SSM": 3,
+    "training_cpu_max_per_seed_seconds": 3600,
+    "peak_RSS_GiB_max": 3,
+    "whole_process_cost_source_fetch_and_training_reported": true,
+    "cold_checkpoint_fidelity_exact": true,
+    "negative_mutated_current_target_must_not_change_current_prediction": true,
+    "do_not_generate_unseen_OOD": true,
+    "dev_cal_pass_is_not_SCIENTIFIC_PASS": true
+  },
+  "execution": {
+    "branch": "research/p85mr-f5-native-hybrid-vs-competent-controls-20261111",
+    "workflow": ".github/workflows/p85mr-f5-native-fitcal-once.yml",
+    "event": "push",
+    "run_number": 1,
+    "run_attempt": 1,
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "WSL": "Ubuntu-24.04",
+    "WSL_uid": 1000,
+    "CPU_python": "existing g7-s25-cpu311-r1/venv/bin/python",
+    "source_only_CI_first": true,
+    "owner_full_final_regression_before_data": true,
+    "receipts": "GitHub artifact only",
+    "no_replay": true
+  },
+  "stop": [
+    "If any source/archive identity/capture/checkpoint drift",
+    "If any negative leaks current effect",
+    "If any nonfinite",
+    "If original model or P85 sources changed",
+    "If CAL already-used threshold or hyperparameters changed",
+    "If resource bound exceeded",
+    "Never unseal reserved OOD/negative without independent qualification"
+  ],
+  "interpretation": "Development-only CAL comparison. If failed, preserve null and stop; if passes, independently qualify and separately freeze pristine unfamiliar-world transfer first use. Engineering PASS and CAL PASS never constitute SCIENTIFIC_PASS."
+}
