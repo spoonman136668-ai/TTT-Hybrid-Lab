@@ -1,0 +1,112 @@
+{
+  "schema": "ttt-hybrid.p80mr-causalgym-cartpolewind-readonly-adapter-freeze.v1",
+  "stage": "FROZEN_BEFORE_P80MR_BRIDGE_IMPLEMENTATION_AND_ANY_UPSTREAM_EXECUTION",
+  "classification": "SOURCE_INTEGRATION_ENGINEERING_ONLY_NOT_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 194,
+    "head": "52d34a9e41a8e4fae4135584e51df8cad956b483",
+    "p79_contract_blob": "01fdd7376151a01490c1f14bd70e6330ef93a42a",
+    "p79_admission_blob": "c5550d6a82cd14f9b5fd93412e4daaf5f084d2fe",
+    "p79_original_ci": {
+      "g4_windows_linux": "PASS",
+      "g5_windows_linux": "PASS",
+      "g7_ubuntu": "PASS"
+    }
+  },
+  "independent_software": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "commit": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "path": "causal_gym/envs/cartpole_wind.py",
+    "git_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+    "environment": "CartPoleWindPCH",
+    "interface": "env.do(lambda obs: forced_action) returns obs,reward,terminated,truncated,info; pre-action obs must be recorded explicitly BEFORE do()",
+    "dependency_behavior": "May rely on Gymnasium and NumPy; no import, package install, upstream execution or action performed at P80 engineering gate",
+    "independence_limit": "Third-party source code is independently maintained; source code origin does not prove independent outcome custody or fair evaluation.",
+    "license": "UNVERIFIED_FROM_CURRENT_TOOL_EVIDENCE_DO_NOT_VENDOR_SOURCE"
+  },
+  "intervention_trace": {
+    "record_kind": "observed actual do-mode transitions only; no counterfactual, unrealized or natural-action-only samples",
+    "raw_schema": "ttt-hybrid.p80mr.cartpole-do-capture.v1",
+    "world_fields": [
+      "world_id",
+      "episode_seed",
+      "transitions",
+      "probe_event_ids"
+    ],
+    "transition_fields": [
+      "event_id",
+      "state_before",
+      "executed_action",
+      "state_after",
+      "reward",
+      "terminated",
+      "truncated",
+      "mode",
+      "receipt_ref"
+    ],
+    "constraints": {
+      "ordered_contiguous_ids": "1..N",
+      "N_min": 2,
+      "mode": "do",
+      "action_values": [
+        0,
+        1
+      ],
+      "observations": "finite 4D real vectors; state_after[i] equals state_before[i+1] with absolute tolerance<=1e-5",
+      "reward": "finite scalar; boolean termination/truncation only on final transition",
+      "probe_event_ids": "unique subset of 2..N; derived from ACTUALLY EXECUTED next transitions, not independent counterfactual branches or unseen fake effects",
+      "witness": "each event needs provenance receipt_ref, source_id, producer_id and upstream exact SHA metadata; self-attested receipts do not prove witnessing",
+      "no_oracle": "no hidden wind, change labels or future state in historical action key"
+    }
+  },
+  "embedding": {
+    "purpose": "Deterministic unsupervised fixed state+action key and next-delta effect for P79 16D schema; this is NOT original native 16D physical action. Report input semantics as state-action context.",
+    "state_scales": [
+      2.4,
+      3,
+      0.2095,
+      3.5
+    ],
+    "key_formula": "unit_l2([1, tanh(pre_state_j / scale_j) for j=0..3, onehot(actual_discrete_action,2), 0 repeated 9])",
+    "key_dim": 16,
+    "effect_formula": "[tanh((next_state_j - pre_state_j)/scale_j) j=0..3, tanh(realized_reward), int(terminated), int(truncated), zeros 9]",
+    "effect_dim": 16,
+    "invariants": "All transformation parameters fixed before data use; no training or adaptation, no hidden wind/counterfactual; no privileged fields, probe targets excluded from history before indexed prefix.",
+    "metric_caveat": "16D padded MSE is not a physically meaningful or balanced total metric; eventual scientific evaluation must separately report four state deltas, reward, termination, per-channel weights and normalized untransformed scales with preregistration.",
+    "information": "action key includes pre-state and executed discrete action, unlike P78's unit continuous action; not same task and cannot claim matched representation or action-only transfer."
+  },
+  "p79_export": {
+    "schema": "ttt-hybrid.p79mr.trace.v1",
+    "events": "one factual event per actual logged transition; receipt_ref preserved verbatim; all historical events are available only when time becomes past",
+    "probes": "for logged transition with 1-based event_id k>=2, probe.after_events=k-1, query built from its state_before+actual action, target built from its already realized state_after/reward; replay must read before the event is written to history",
+    "group": "unknown; never infer changed/stable from action stream absent independently witnessed intervention",
+    "manifest": "source_kind=external_simulator, SHA256 canonical event worlds; source_id/producer_id/custody_ref supplied and validated, NOT independently attested",
+    "first_use": "Actual source raw conversion can be schema-validated, but NEVER model-scored without independent project owner first-use and exact-GitHub qualification."
+  },
+  "engineering_tests": [
+    "Mock/fictional two-state CartPole-style transition data only; never import or run upstream environment",
+    "No-score adapter with canonical deterministic source digest and strict P79 schema consistency",
+    "Pre/post action-effect shape/dtype, norm, finite, chronology, terminal containment, receipt and ID guard",
+    "Probe at event k reads only events < k, and exact actual event k target is present only as a read-only scoring label",
+    "Actions and intervened effects not silently synthesized, no future output or hidden wind included",
+    "Source-upstream commit and path are constant/pinned but NOT proof of actual software used by log producer",
+    "Source_id and checksum spoofing risks disclosed; engine-side external scoring must remain forbidden",
+    "Full final candidate SHA pinned CPU Windows/Linux G4/G5/G7 plus original regression; no scientific first-use or auto-scheduled owners"
+  ],
+  "authority": {
+    "no_real_upstream_install": true,
+    "no_network_benchmark_run": true,
+    "no_new_runner": true,
+    "no_scheduler": true,
+    "no_owner_execution": true,
+    "no_external_model_inference": true,
+    "no_ood_scoring": true,
+    "no_forge_integration": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "no_paid_api": true,
+    "no_live_actuation": true,
+    "science_admission": "SEPARATELY_REQUIRED"
+  }
+}
