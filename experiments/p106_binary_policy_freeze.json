@@ -1,0 +1,127 @@
+{
+  "schema": "ttt-hybrid.p106-f6-two-action-policy-preflight.v1",
+  "stage": "SOURCE_NEUTRAL_ENGINEERING_FREEZE_BEFORE_IMPLEMENTATION_NO_FIRSTUSE",
+  "identity": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "base_pr": 232,
+    "base_sha": "955d032ac21b71b9d5e02061ae9727600205d569",
+    "base_F5_pr": 224,
+    "base_F5_sha": "4d5c49be278077fe3b0be80080d39128a153aa77",
+    "branch": "research/p106-f6-binary-policy-preflight-20261111",
+    "p105_freeze_blob": "cd1bb40fd74df9d693067798fa5360a0cb205cbb",
+    "p105_source_blob": "ab1bcb17da2e4eade5b0422e627cedb7b41da544",
+    "p80_original_action_adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "original_neural_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_P101_geometry_src_blob": "a4375102e64492f179826b8775855b63b1c315fd"
+  },
+  "hypothesis": "Engineering-only feasibility of a transparent two-binary-action, state-conditioned, confirmed-consequence RLS interface and A-optimal comparator. Test source-neutral input boundaries, sealed unchosen outcomes, update/decision ordering, bitwise cold restore; no scientific inference from synthetic fixture.",
+  "factual_task": {
+    "upstream": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "env": "CartPoleWindPCH",
+    "learning_regime": "LearningRegime.do",
+    "actual_action_domain": [
+      0,
+      1
+    ],
+    "observed_state_dim": 4,
+    "p80_continuous_key_dim": 16,
+    "observed_effect_dim": 16,
+    "pre_step_features": "P80 exact action key = normalized [1, tanh(state_i/STATE_SCALES_i), indicator_action0, indicator_action1, nine trailing zeroes]",
+    "state_scales": [
+      2.4,
+      3,
+      0.2095,
+      3.5
+    ],
+    "source_birth_permitted": false
+  },
+  "candidate_mechanism": {
+    "policy": "P101-original maximum k^T P k over only two actual legal actions encoded via public current state",
+    "capacity": "16x16 float64 RLS W +16x16 P=512 floats per active task",
+    "init": "P101 original W=zeros, P=I/0.5",
+    "effect_write": "only after authentic confirmed selected consequence arrives, RLS g=P*k, denom=1+kTg, W+=outer(effect-Wk,g)/denom, P-=outer(g,g)/denom",
+    "no_oracle": true
+  },
+  "controls": {
+    "a_opt": "Classical A-opt expected query-risk reduction kT P Sigma P k / (1+kT P k); Sigma must be positive-semidefinite and selected ONLY from independently collected FIT public keys, not CAL/private oracle or outcomes; freeze Sigma choice before CAL.",
+    "passive": [
+      "SHA256 hash seed/world/step",
+      "alternating cyclic"
+    ],
+    "strong_trained_model": "Original fully trained conventional SSM control must be independently trained/checkpoint-verified on each policy's matched FIT factual streams and benchmarked; new F6 authorization required; P106 does not train models.",
+    "cost": "Measure all source constructor/reset/do, logs, model updates, training, selection, heldout evaluation, CPU cost. No GPU required to execute P106."
+  },
+  "prospective_F6_design_only": {
+    "authorization": "NOT_GRANTED_BY_P105_OR_THIS_FREEZE",
+    "first_use_scope": "New exact operator F6 first-use approval required after separately frozen final experiment/seed/budget and complete engineering/owner preflights",
+    "original_F3_source": "Historical FIT/CAL consumed, only read-only comparator context, never re-run F1–F5 or simulate unchosen effects",
+    "replicate_groups": 3,
+    "new_seed_domains": {
+      "FIT": [
+        1811000000,
+        1811010000,
+        1811020000
+      ],
+      "CAL": [
+        1811100000,
+        1811110000,
+        1811120000
+      ],
+      "UNSEEN_RESERVED": [
+        1811200000,
+        1811210000,
+        1811220000
+      ]
+    },
+    "cohort_worlds_per_policy_seed": {
+      "FIT": 32,
+      "CAL": 16
+    },
+    "max_steps_per_world": 96,
+    "policy_arms": [
+      "two-action RLS max variance",
+      "two-action FIT-qualified A-opt",
+      "FIT-selected strongest binary passive",
+      "fully trained conventional SSM-assisted policy, if separately preregistered"
+    ],
+    "fairness": "Same world seeds and public reset distribution; independent per-policy source environments, action proposal only on public current state, only committed action/effect returned. No exact-equal factual effect count assumption after policy-dependent early terminations; bound opportunity count, report actual count, early-stop imbalance, treatment-policy intention-to-treat episode return on every randomized world, no posthoc survival filtering.",
+    "training": "Same factual FIT data for each arm's own model update and matched 3-seed fully trained SSM control; equal data/compute where possible and report unmatched details; common independently observed heldout prediction dataset for model-MSE, NO model-predicted unchosen outcome as a real observation.",
+    "primary_metric": "Actual factual per-world cumulative reward on independent CAL intervention trials and standardized terminal outcome, all seeded worlds including early stop; report 3 seed group paired differences vs strongest FIT-selected conventional control, confidence intervals; higher is better",
+    "acceptance": "At least 2 of 3 fully prespecified CAL seed groups >=5% gain over strongest FIT-selected goal/reward-aware conventional and A-opt control with separately frozen 95% confidence criterion, no marked negative retention/transfer/CPU cost. Cannot tune thresholds, models or baselines on consumed CAL.",
+    "science": "Even positive CAL is development only; independent unseen reserved OOD first-use separately authorized after positive result and fresh source custody",
+    "one_shot_bounds": "Before first-use freeze exact source/runner/WSL SHA, wall, max reset/do attempts and abort-on-unknown-effect replay ban. No effects until operator explicitly authorizes.",
+    "do_not_claim": "No external causal policy improvement, native Hybrid superiority, cold retention transfer or SCIENTIFIC_PASS from P106 engineering tests"
+  },
+  "implementation_contract": {
+    "no_network_import": true,
+    "no_upstream_simulator_import": true,
+    "no_env_constructor_reset_do": true,
+    "no_F3_capture_read": true,
+    "no_trial_workflow": true,
+    "no_owner_run": true,
+    "no_schedule": true,
+    "no_paid_API": true,
+    "no_model_train": true,
+    "no_experimental_source_birth": true,
+    "pure_tests_only": true,
+    "mandatory_final_G4_Win_Ubuntu": true,
+    "mandatory_G5_Win_Ubuntu": true,
+    "mandatory_G7_Ubuntu": true,
+    "no_merge_or_deployment": true,
+    "original_sha_pin_mandatory": true
+  },
+  "fail_closed_conditions": [
+    "unknown action or receipt",
+    "same effect credit to unchosen action",
+    "wrong confirmation token",
+    "observation NaN/Inf",
+    "reward/effect/oracle same-step leaked into chooser",
+    "nonpositive RLS denom or corrupt state",
+    "PSD-invalid A-opt covariance",
+    "partial/uncertain simulator effect replay",
+    "operator F6 approval missing",
+    "existing attempt marker/changed owner SHA"
+  ],
+  "result_classification": "ENGINEERING_PREFLIGHT_ONLY; F6_EFFECTFUL_SCIENCE_NOT_RUN; no OOD/NEGATIVE; no promotion"
+}
