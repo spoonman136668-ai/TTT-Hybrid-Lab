@@ -1,0 +1,145 @@
+# P85MR_F1 EXACTLY ONE first-use FIT/CAL attempt on the existing project runner.
+# Authorized operator approval, prospective route amendment and source freeze
+# committed BEFORE this trigger file. No workflow_dispatch, cron, PR or rerun.
+name: P85MR-F1 owner one-shot CartPoleWind FIT-CAL
+on:
+  push:
+    branches:
+      - research/p85mr-authorized-fitcal-firstuse-20261111
+    paths:
+      - .github/workflows/p85mr-fitcal-firstuse-once.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-p85mr-f1-exclusive-firstuse
+  cancel-in-progress: false
+
+jobs:
+  p85mr-f1:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 75
+    steps:
+      - name: Check out exact one-shot branch candidate, no credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: p85mr-f1
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+          fetch-depth: 1
+
+      - name: Read-only exact source and route identity admission
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $expectedRef='refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111'
+          $expectedWorkflow='spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-fitcal-firstuse-once.yml@' + $expectedRef
+          if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+              $env:GITHUB_REF -cne $expectedRef -or
+              $env:GITHUB_WORKFLOW_REF -cne $expectedWorkflow -or
+              $env:GITHUB_EVENT_NAME -cne 'push' -or
+              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+              $env:GITHUB_RUN_NUMBER -cne '1' -or
+              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+              $env:RUNNER_OS -cne 'Windows' -or
+              $env:RUNNER_ARCH -cne 'X64' -or
+              $env:GITHUB_SHA -cnotmatch '^[0-9a-f]{40}$') {
+            throw 'P85MR_F1_OWNER_EXACT_ONE_SHOT_DENIED'
+          }
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f1'
+          $sha=(& git -C $root rev-parse HEAD | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $sha -cne $env:GITHUB_SHA) {
+            throw 'P85MR_F1_SOURCE_SHA_DRIFT'
+          }
+          $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $dirty) {throw 'P85MR_F1_DIRTY_SOURCE'}
+          $scope=(& git -C $root hash-object -- experiments/p85mr_fitcal_firstuse_authorization_freeze.json | Out-String).Trim()
+          $route=(& git -C $root hash-object -- experiments/p85mr_fitcal_owner_route_amendment.json | Out-String).Trim()
+          $protocol=(& git -C $root hash-object -- experiments/p84mr_external_science_preflight_freeze.json | Out-String).Trim()
+          $trainer=(& git -C $root hash-object -- experiments/p85mr_strong_baseline_freeze.json | Out-String).Trim()
+          if ($scope -cne 'cde1faee905027b4069deb329149e73d48292394' -or
+              $route -cne 'afdf193a1f5a9e0f3c0f003aaea19585728a0020' -or
+              $protocol -cne '9c259f7e03ecbd32f8d3e5f9bfdaef2a8860f724' -or
+              $trainer -cne '85ae6d1eee3332ef55a653b678733e012cb57158') {
+            throw 'P85MR_F1_FROZEN_SOURCE_OR_ROUTE_DRIFT'
+          }
+          Write-Output 'P85MR_F1_SOURCE_ROUTE_PREFLIGHT=PASS_NO_EXTERNAL_EFFECTS'
+
+      - name: Full exact-head native Windows engineering regression and original negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f1'
+          $python=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if (-not(Test-Path -LiteralPath $python -PathType Leaf)) {
+            throw 'P85MR_F1_EXISTING_WINDOWS_PY311_UNAVAILABLE'
+          }
+          $receipt=Join-Path $root 'local_runs\p85mr_windows_cpu.json'
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1'
+          $env:PYTHONDONTWRITEBYTECODE='1'
+          $env:PYTHONHASHSEED='0'
+          & $python -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'P85MR_F1_WINDOWS_FULL_REGRESSION_FAIL'}
+          $r=Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+          if($r.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or
+             $r.revision -cne $env:GITHUB_SHA -or
+             $r.checkout_identity.pass -ne $true -or
+             $r.negative_control.pass -ne $true -or
+             $r.tests.exit_code -ne 0) {
+            throw 'P85MR_F1_WINDOWS_EXACT_SHA_OR_NEGATIVE_RECEIPT_FAIL'
+          }
+          Write-Output 'P85MR_F1_WINDOWS_FULL_REGRESSION=PASS_NO_SCIENCE'
+
+      - name: Full exact-head isolated WSL CPU regression and original negative control
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f1'
+          $linuxRoot=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $root | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or
+              $who -cnotmatch '^[A-Za-z_][A-Za-z0-9_-]{0,32}$' -or
+              $linuxRoot -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,260}$') {
+            throw 'P85MR_F1_WSL_OWNER_UNQUALIFIED'
+          }
+          $python="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $receipt="$linuxRoot/local_runs/p85mr_wsl_cpu.json"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 720s /usr/bin/env "EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA" 'CUDA_VISIBLE_DEVICES=-1' 'PYTHONDONTWRITEBYTECODE=1' 'PYTHONHASHSEED=0' $python -I -B "$linuxRoot/scripts/qualify_cpu.py" --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'P85MR_F1_WSL_FULL_REGRESSION_FAIL'}
+          $winReceipt=Join-Path $root 'local_runs\p85mr_wsl_cpu.json'
+          $r=Get-Content -LiteralPath $winReceipt -Raw | ConvertFrom-Json
+          if($r.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or
+             $r.revision -cne $env:GITHUB_SHA -or
+             $r.checkout_identity.pass -ne $true -or
+             $r.negative_control.pass -ne $true -or
+             $r.tests.exit_code -ne 0){
+            throw 'P85MR_F1_WSL_EXACT_SHA_OR_NEGATIVE_RECEIPT_FAIL'
+          }
+          Write-Output 'P85MR_F1_WSL_FULL_REGRESSION=PASS_NO_SCIENCE'
+
+      - name: One-time operator-authorized exact CartPoleWind FIT/CAL only
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f1'
+          & (Join-Path $root 'scripts\p85mr_fitcal_owner_launch.ps1') -ProjectRoot $root -ExpectedSha $env:GITHUB_SHA
+          if ($LASTEXITCODE -ne 0) {throw 'P85MR_F1_EXTERNAL_FIRSTUSE_ABORTED_NO_REPLAY'}
+
+      - name: Preserve exact-source engineering and scientific attempt receipts, even on failure
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p85mr-f1-fitcal-once-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            p85mr-f1/local_runs/p85mr_*.json
+            p85mr-f1/evidence/p85mr_fitcal_firstuse/ONCE/**
+          retention-days: 30
+          if-no-files-found: warn
