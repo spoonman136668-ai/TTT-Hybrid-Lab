@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.p95-native-residual-credit-falsifier-freeze.v1",
+  "purpose": "Author-synthetic DEV falsification: does training original native HybridPilot as a factual-confirmation-conditioned residual over exact P86/W256 produce novel action-consequence prediction gain without leakage?",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "sha": "f9712ebb3195f889d7c4187363ba80aa592c7ef9",
+    "pr": 217,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p86_source_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "p94_source_blob": "378167499362173023b02a44e1b9ffb7a1eeba42"
+  },
+  "data": {
+    "generator": "P87 portable P86-style dyadic 16D action->16D effect; 48 observed action-consequence pairs, novel final query withheld; 50% hidden switch after event24; no query effect in history",
+    "seeds": {
+      "FIT": 950111,
+      "CAL": 950113,
+      "OOD_RESERVED": 950117,
+      "NEGATIVE_RESERVED": 950119
+    },
+    "worlds": {
+      "FIT": 384,
+      "CAL": 128
+    },
+    "prohibit": [
+      "protected OOD/negative source generation",
+      "P87/P93 previously consumed VAL reuse",
+      "cross-platform source drift or source hash retrofit"
+    ]
+  },
+  "arms": {
+    "experimental": "AnchoredHybridPilot with original intact 5,297-param HybridPilot and explicit W256 confirmed causal memory; only residual path trainable; initial residual_scale=0; all factual history confirmed; predict final query withheld outcome",
+    "comparator": [
+      "P86 CAL-frozen eta=1 decay=0.99 W256 with 256 float32 predictive values",
+      "same AnchoredHybridPilot with zero residual: exact baseline parity",
+      "zero predictor",
+      "P78 original eta=0.5 and decay=1 (additional control)"
+    ],
+    "negatives": [
+      "wrong-action-to-effect assignment",
+      "unconfirmed effect replacement, including NaN, must not change prediction",
+      "query outcome not observed or written",
+      "cold restored W256 fast state must be bitwise identical",
+      "residual model must not read oracle world-change labels"
+    ]
+  },
+  "training": {
+    "model_seeds": [
+      950201,
+      950203,
+      950207
+    ],
+    "updates_per_seed": 300,
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "weight_decay": 0.01,
+    "batch_size": 16,
+    "gradient_clip": 1,
+    "sampler_seed": 950299,
+    "checkpoint_every": 30,
+    "checkpoint_selection": "CAL only; exact same FIT actions/effects/indices across experimental arms; record initial/final model hashes",
+    "runtime_budget_seconds": 180,
+    "torch_threads": 1,
+    "deterministic_cpu": true
+  },
+  "metrics": [
+    "final 16D effect MSE combined, stable and changed",
+    "score every checkpoint; no post-CAL tuning",
+    "cold restore bitwise factual state and query read-only",
+    "full 49-step history+query end-to-end CPU latency including factual updates and native Hybrid residual",
+    "trainable parameter count and persistent float state disclosed separately",
+    "wrong-action and no-confirmation negatives"
+  ],
+  "acceptance": {
+    "all_3_seeds_required": true,
+    "combined_MSE_ratio_max_vs_frozen_W256": 0.9,
+    "stable_MSE_ratio_max_vs_frozen_W256": 0.95,
+    "changed_MSE_ratio_max_vs_frozen_W256": 0.9,
+    "wrong_action_MSE_ratio_min_vs_clean": 1.05,
+    "whole_episode_CPU_ratio_max_vs_W256": 3,
+    "cold_state_bitwise": true,
+    "source_frozen_before_birth": true,
+    "source_hash_cross_platform": true,
+    "full_regression_required": true,
+    "interpretation": "DEV-only admission at best; not scientific pass or deployable model"
+  },
+  "stop_criteria": [
+    "any source overlap or hash drift",
+    "unqualified baseline or nonfinite gradients",
+    "no gain over W256 in either regime after frozen schedule",
+    "cost exceeds the ceiling",
+    "missing exact candidate source custody",
+    "any risk to original model or owner science first-use"
+  ],
+  "qualification": {
+    "G4": "mandatory exact candidate Windows+Linux complete CPU regression",
+    "G5": "native TTT Windows+Linux CPU",
+    "G7": "pinned Mamba2 Ubuntu CPU",
+    "scientific": "separate independent real-source first-use, fully trained matched controls and external qualification required before SCIENTIFIC_PASS"
+  },
+  "isolation": {
+    "no_original_model_edits": true,
+    "no_main_or_forge_changes": true,
+    "no_runner_workflow_scheduler_changes": true,
+    "no_gpu_or_external_source_first_use": true,
+    "no_merges_or_deployment": true,
+    "no_paid_APIs": true,
+    "no_library_artifacts": true
+  }
+}
