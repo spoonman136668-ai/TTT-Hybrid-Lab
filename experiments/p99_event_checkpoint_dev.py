@@ -259,9 +259,16 @@ def diagnostic(mode: torch.Tensor, world: dict):
     stable = ~changed
     spawned = mode == 1
     return_old = mode == 2
+    # Event-time entry edges, NOT occupancy of a previously entered state.
+    entered_alternate = torch.zeros_like(spawned)
+    entered_restored = torch.zeros_like(return_old)
+    entered_alternate[:, 0] = spawned[:, 0]
+    entered_restored[:, 0] = return_old[:, 0]
+    entered_alternate[:, 1:] = spawned[:, 1:] & ~spawned[:, :-1]
+    entered_restored[:, 1:] = return_old[:, 1:] & ~return_old[:, :-1]
     fp = spawned[stable].any(-1) | return_old[stable].any(-1)
-    mid = spawned[changed, 24:36].any(-1)
-    back = return_old[changed, 48:60].any(-1)
+    mid = entered_alternate[changed, 24:36].any(-1)
+    back = entered_restored[changed, 48:60].any(-1)
     return {
         "false_stable_switch_count": int(fp.sum()),
         "false_stable_switch_rate": float(fp.float().mean()),
