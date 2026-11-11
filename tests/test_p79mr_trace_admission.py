@@ -184,3 +184,14 @@ def test_external_source_has_no_science_execution_entrypoint():
     assert "if __name__" not in source
     assert "subprocess" not in source
     assert "requests." not in source
+
+
+def test_large_float64_effect_fails_closed_after_float32_conversion():
+    _, worlds = fixture()
+    worlds = copy.deepcopy(worlds)
+    # Schema-level float64 finite, but numerical replay is float32.
+    worlds[0]["probes"][0]["realized_effect"] = [1e100] * 16
+    manifest = toy_manifest(worlds)
+    assert validate_trace(manifest, worlds)["scientific_pass"] is False
+    with pytest.raises(ValueError, match="P79MR_NONFINITE_REPLAY"):
+        toy_replay(manifest, worlds)
