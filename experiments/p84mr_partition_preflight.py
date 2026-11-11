@@ -103,7 +103,11 @@ def preflight_partition():
         raise ValueError("P84MR_EPISODE_TOTAL_DRIFT")
 
     regimes = cfg["upstream_regimes"]
-    if set(regimes) != set(SPLITS):
+    # The immutable protocol also includes one human-readable limitation
+    # note; it is metadata, never a cohort or learner feature.
+    if (set(regimes) != set(SPLITS) | {"limitations"} or
+            not isinstance(regimes["limitations"], str) or
+            not regimes["limitations"]):
         raise ValueError("P84MR_REGIME_SCHEMA_DRIFT")
     for k in SPLITS:
         reg = regimes[k]
