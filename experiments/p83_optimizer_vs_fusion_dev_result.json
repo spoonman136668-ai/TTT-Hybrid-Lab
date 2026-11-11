@@ -1,0 +1,309 @@
+{
+  "schema": "ttt-hybrid.p83-frozen-optimizer-ridge-dev-result-repo.v1",
+  "classification": "AUTHORED_SYNTHETIC_DEV_FAILURE_NO_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 199,
+    "sha": "1564457a30cc434351e1375e300a88f48438e88d"
+  },
+  "protocol": {
+    "pre_source_commit": "f56eef527eba4b8d89d85b8535e7263ad156948e",
+    "source_path": "experiments/p83_optimizer_vs_fusion_dev.py",
+    "source_git_blob": "491aecfea292fcf245c233fa7097fb62ed418e27",
+    "test_path": "tests/test_p83_optimizer_vs_fusion_dev.py",
+    "test_git_blob": "845984f261c78f5ba45df3c26383eda495a65271",
+    "model_original_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P82_source_git_blob": "c44f77093db501502c3741fdcf70f606f2f202b7"
+  },
+  "environment": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "cpu_threads": 1,
+    "local_study_seconds": 2.180174341000111,
+    "local_focused_and_P81_P82_tests": "30/30 PASS 7.39s",
+    "full_crossplatform_exact_SHA": "PENDING"
+  },
+  "source": {
+    "fit_seed": 830111,
+    "val_seed": 830113,
+    "transfer_reserved_seed": 830117,
+    "negative_reserved_seed": 830119,
+    "fit_worlds": 224,
+    "val_worlds": 112,
+    "sha256": {
+      "fit": "019d145a9df004cf414b4f5de9436340561fa192ff7d1d3af65371315242f665",
+      "val": "48ba60203f3a4e1d57c1d1136f8c4cacac0438b716222861db50b9b6a192084f"
+    },
+    "fit_val_source_audits": "PASS",
+    "quartile_imbalances": {
+      "fit": 0.029761910438537598,
+      "val": 0.023809492588043213
+    },
+    "position_only_balanced_accuracy": 0.5,
+    "no_future_effect": true,
+    "sampler_sha256": "97da945f7b5eb9301b41603bc33ef61995e7adb6451e864325686854b3488d4b"
+  },
+  "fixed_controls": {
+    "zero_mse": 0.4056694209575653,
+    "raw_fast_256_mse": 0.07119690626859665,
+    "frequency_cache_256_mse": 0.1541610062122345,
+    "both_competent": true,
+    "linear_ridge_gate_max": 0.06407721564173699,
+    "cosine_gate_max": 0.06763706095516682
+  },
+  "training": {
+    "trainable_parameters_all_AdamW_arms": 544,
+    "updates_per_arm": 300,
+    "batch": 16,
+    "check_every": 30,
+    "total_model_updates": 2700,
+    "original_backbone_frozen": true,
+    "paired_initialization_bitwise": true,
+    "cold_256_float_state_restore_bitwise": true,
+    "full_process_FLOP_equivalence": false,
+    "ridge_272_fit_coefficients_extra_fit_solution": true
+  },
+  "rows": [
+    {
+      "seed": 830201,
+      "original_core_init_sha256": "faf0a37a3a0c7d10b36d1a524ebcd7a3149b5678a6ef99fd59b2ca37f5d31c0a",
+      "ridge_frozen_initial_readout": {
+        "mse": 0.06272593885660172,
+        "trained_coefficients": 272,
+        "sha256": "2a0312025b61737736f17a398e26b490f921171a6364f7f3f720fa1b6cec15b4",
+        "eligible": true
+      },
+      "arms": {
+        "constant": {
+          "best_validation_mse": 0.05596737191081047,
+          "best_step": 240,
+          "best_model_sha256": "2fee004f66251db2005659c5d5a96e52f235eb671462932be961a54c6eeff4c1",
+          "training_seconds": 0.16771791500013933,
+          "validation_mse_steps_30_to_300": [
+            0.19328846037387848,
+            0.10818120092153549,
+            0.07875356823205948,
+            0.058807458728551865,
+            0.05632837489247322,
+            0.05853009968996048,
+            0.057029932737350464,
+            0.05596737191081047,
+            0.05988151952624321,
+            0.05766933038830757
+          ]
+        },
+        "cosine": {
+          "best_validation_mse": 0.05365505442023277,
+          "best_step": 270,
+          "best_model_sha256": "c932fcbee8a9a01f0bebd2f0567378c0f31b6cc38ec93622a972399111f881e8",
+          "training_seconds": 0.20864700399988578,
+          "validation_mse_steps_30_to_300": [
+            0.19410440325737,
+            0.11062832921743393,
+            0.08160918205976486,
+            0.06400883942842484,
+            0.056512873619794846,
+            0.054747987538576126,
+            0.05419282987713814,
+            0.05379766225814819,
+            0.05365505442023277,
+            0.05366789177060127
+          ]
+        },
+        "original_fusion": {
+          "best_validation_mse": 0.06884264200925827,
+          "best_step": 240,
+          "best_model_sha256": "83d0fcdaa61f7044bc3f5b889248bbb491ac5473392cd767ac1a4da45b7d8f98",
+          "training_seconds": 0.30428052199977174,
+          "validation_mse_steps_30_to_300": [
+            0.22612328827381134,
+            0.15127132833003998,
+            0.11569972336292267,
+            0.09262799471616745,
+            0.08261702209711075,
+            0.07730922847986221,
+            0.07080111652612686,
+            0.06884264200925827,
+            0.07119398564100266,
+            0.06997044384479523
+          ]
+        }
+      },
+      "ridge_sufficient": true,
+      "cosine_plateau": true,
+      "cosine_eligible": false
+    },
+    {
+      "seed": 830203,
+      "original_core_init_sha256": "2c3026ba3afa10f640d627e95e54d291b720b467a891bb3c66797610fbff26d6",
+      "ridge_frozen_initial_readout": {
+        "mse": 0.07927322387695312,
+        "trained_coefficients": 272,
+        "sha256": "91b19f91783d7924c5d091a50ccdea6714dbd20b42ca3d7cf7b21dfc73388c13",
+        "eligible": false
+      },
+      "arms": {
+        "constant": {
+          "best_validation_mse": 0.056524522602558136,
+          "best_step": 240,
+          "best_model_sha256": "63511ab9b30f4bb5d80774c692b8a9e5f5492660c9b87920935ad6b25b83bc3e",
+          "training_seconds": 0.23159331100032432,
+          "validation_mse_steps_30_to_300": [
+            0.18088757991790771,
+            0.10427798330783844,
+            0.08607687056064606,
+            0.06890833377838135,
+            0.0632743313908577,
+            0.05815839022397995,
+            0.056812528520822525,
+            0.056524522602558136,
+            0.05976363644003868,
+            0.057693932205438614
+          ]
+        },
+        "cosine": {
+          "best_validation_mse": 0.05582711473107338,
+          "best_step": 300,
+          "best_model_sha256": "4b4e59093290862a8231ff178818395b1d45f4719cd9a601c45a63c3d2c13ac4",
+          "training_seconds": 0.2052811759999713,
+          "validation_mse_steps_30_to_300": [
+            0.18176880478858948,
+            0.10596324503421783,
+            0.0887041836977005,
+            0.07235867530107498,
+            0.0671602264046669,
+            0.062339894473552704,
+            0.0585864782333374,
+            0.05653205141425133,
+            0.0559576191008091,
+            0.05582711473107338
+          ]
+        },
+        "original_fusion": {
+          "best_validation_mse": 0.07564859837293625,
+          "best_step": 300,
+          "best_model_sha256": "b5d4620e7cc9641fbeddfb414c8e41e1caaba6c6405173cde5e87b073d0fecea",
+          "training_seconds": 0.3168220519996794,
+          "validation_mse_steps_30_to_300": [
+            0.23542554676532745,
+            0.15679404139518738,
+            0.1283586621284485,
+            0.10995040833950043,
+            0.09990061819553375,
+            0.08568369597196579,
+            0.07887426763772964,
+            0.0774783045053482,
+            0.0775112584233284,
+            0.07564859837293625
+          ]
+        }
+      },
+      "ridge_sufficient": false,
+      "cosine_plateau": true,
+      "cosine_eligible": false
+    },
+    {
+      "seed": 830207,
+      "original_core_init_sha256": "04c84b86d292ff923a89e998514617c0bc71d3f1750604a025fc9123640e1440",
+      "ridge_frozen_initial_readout": {
+        "mse": 0.06532441079616547,
+        "trained_coefficients": 272,
+        "sha256": "bfff4dd18ad582ca67c743b7d475d9519d67dc94f0e866220272c369b6d82527",
+        "eligible": false
+      },
+      "arms": {
+        "constant": {
+          "best_validation_mse": 0.05646085739135742,
+          "best_step": 240,
+          "best_model_sha256": "713f5f67af00f2983b0953f1e6344b5f1e92240d06f8d00e3a40bc849afe1b27",
+          "training_seconds": 0.18919730200013873,
+          "validation_mse_steps_30_to_300": [
+            0.19419576227664948,
+            0.10613981634378433,
+            0.07981551438570023,
+            0.07035546749830246,
+            0.06399291008710861,
+            0.058577120304107666,
+            0.05722803995013237,
+            0.05646085739135742,
+            0.05994421988725662,
+            0.05783094838261604
+          ]
+        },
+        "cosine": {
+          "best_validation_mse": 0.05757305398583412,
+          "best_step": 300,
+          "best_model_sha256": "f10d3e3358ceb5bce4e3e53506735dba7f12540f7d95e99ac7bb1bd79f07cb45",
+          "training_seconds": 0.1888438020000649,
+          "validation_mse_steps_30_to_300": [
+            0.19504329562187195,
+            0.10858746618032455,
+            0.08126219362020493,
+            0.07091812044382095,
+            0.06841830909252167,
+            0.06518189609050751,
+            0.06134701520204544,
+            0.05871724337339401,
+            0.05774453282356262,
+            0.05757305398583412
+          ]
+        },
+        "original_fusion": {
+          "best_validation_mse": 0.07250954210758209,
+          "best_step": 300,
+          "best_model_sha256": "674b150b43906db94299a409345c986c6f51b4f7603dc32c2bfb0170a4f4f3ef",
+          "training_seconds": 0.2692487799999981,
+          "validation_mse_steps_30_to_300": [
+            0.24322636425495148,
+            0.15692518651485443,
+            0.11519826948642731,
+            0.09834937006235123,
+            0.09186752885580063,
+            0.08905615657567978,
+            0.07873785495758057,
+            0.07330650091171265,
+            0.07540649175643921,
+            0.07250954210758209
+          ]
+        }
+      },
+      "ridge_sufficient": false,
+      "cosine_plateau": true,
+      "cosine_eligible": false
+    }
+  ],
+  "decision": {
+    "status": "DEV_DIAGNOSTIC_FROZEN_FEATURE_INSUFFICIENT",
+    "ridge_pass_seeds": [
+      830201
+    ],
+    "ridge_fail_seeds": [
+      830203,
+      830207
+    ],
+    "cosine_nonterminal_seed": [
+      830201
+    ],
+    "cosine_terminal_seeds": [
+      830203,
+      830207
+    ],
+    "all_three_cosine_below_fixed_baseline": true,
+    "cosine_consistent_outperformance_vs_constant": false,
+    "scientific_pass": false,
+    "OOD_generated": false,
+    "OOD_scored": false,
+    "negative_generated": false,
+    "interpretation": "Initial frozen corrected features not linearly competent in 2/3; yet jointly trained original projection+head 544-param seam reaches <strong fixed baseline error in 3/3. Cosine schedule does not reliably beat constant nor converge early; no isolated optimizer-only or structural-only root cause."
+  },
+  "deployment": {
+    "FORGE": "UNCHANGED",
+    "P80_MR": "UNCHANGED",
+    "P75": "UNCHANGED",
+    "original_model": "UNCHANGED",
+    "main": "UNCHANGED",
+    "merge": "NONE",
+    "scheduled_tasks": "NONE",
+    "GPU": "NOT_RUN"
+  }
+}
