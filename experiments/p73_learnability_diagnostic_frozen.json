@@ -1,0 +1,94 @@
+{
+  "schema": "ttt-hybrid.p73-raw-associative-learner-vs-native-hybrid-frozen.v1",
+  "phase": "FROZEN_BEFORE_ANY_P73_SOURCE_GENERATION_OR_TRAINING",
+  "scope": "SYNTHETIC_AUTHOR_DEV_ONLY_NO_INDEPENDENT_SCIENCE_SOURCE",
+  "base": {
+    "pr": 181,
+    "sha": "4807cf6af88dfa4fe949c4521b840493c8e85378",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_p71_gate_blob": "e93ffe29806ac15705cbfd002c5725b9bc4b5e45",
+    "p72_loss": "DEV_FAIL_FULL_HYBRID_ALL_6_VAL",
+    "P72_OOD": "NOT_GENERATED_OR_SCORED"
+  },
+  "question": "Is the factual action→consequence task learnable by a budget-matched conventional trainable content-retrieval model given exactly the same factual events and final observed query, while original four-block hybrid remains unable to acquire the same associations under the same number of optimizer steps?",
+  "source": {
+    "seeds": {
+      "fit": 730111,
+      "val": 730113,
+      "negative": 730119
+    },
+    "worlds": {
+      "fit": 192,
+      "val": 128,
+      "negative": 64
+    },
+    "dimension": 16,
+    "repeated_targets": 8,
+    "repetitions_per_key": 2,
+    "singletons": 8,
+    "events": 24,
+    "generation": "Independent per-world orthogonal 16D target action keys with independent continuous tanh-valued 16D observed effects; each repeated twice; eight distinct random normalized nuisance actions and effects; events uniformly shuffled per world with seeded RNG; one simulated actually executed delayed target query, whose true consequence is a supervised target revealed only after all writes.",
+    "secrecy": "History API sees action key and observed effect of actually executed simulated past actions; never future query, withheld consequence, evaluator role or index; test no target-role position leakage.",
+    "source_separation": "All P65-P72 previously seen/consumed seeds and examples forbidden; no independent sealed physical source; P73 has NO OOD outcome generation or scoring in this gate."
+  },
+  "arms": {
+    "trained_conventional": "Metricized content-addressed conventional retrieval: positive query-key normalized cosine in a 16x16 trainable projection, softmax temperature learned from deliberately low starting gain, values are actually observed factual consequences. Single forward pass over factual history. No role/time/future target during history write. 257 learned parameters and full 24x32-float history retained; report memory mismatch instead of equal-state claim.",
+    "classical_fixed": "Fixed raw-key cosine softmax temperature 8 with actual effects; no learned parameters. Report as distinct nonprivileged control; it may be stronger than trainable arm.",
+    "frequency_cache": "P72's exact 256-float conventional key/effect cache, no gradient; diagnostic only.",
+    "original_all_write": "Exact unchanged four-block native P71 original, trained from separately seeded initialization per model seed; no modifications to original model.py",
+    "original_gate": "Exact original four-block native P71 with P70 frozen gate, paired identical initialization and FIT batches with all-write.",
+    "negative": "Trainable conventional retrieval on each world's shuffled action/effect pairing; final query's true outcome unchanged, measure trained model's validation consequence MSE to test action-credit dependence; no hidden oracle.",
+    "zero": "All-zero baseline vs withheld query label"
+  },
+  "training": {
+    "seeds": [
+      730201,
+      730203,
+      730207
+    ],
+    "training_sample_seed": 730299,
+    "credit_shuffle_seed": 730399,
+    "adamw_lr": {
+      "hybrid": 0.002,
+      "conventional": 0.04
+    },
+    "weight_decay": 0.01,
+    "updates": 120,
+    "batch_size": 8,
+    "validation_every": 20,
+    "max_CPU_seconds": 330,
+    "gradient_clip": 1,
+    "best": "Validation-only best checkpoint per arm; log all 20-step validation points, pretrained/initial performance, parameter counts, optimizer and memory, and distinct SHA256 for independent initializations.",
+    "pairing": "Same FIT/VAL factual-world tensors and sample indices for each arm; same initial full-model tensor state across all-write versus gate on each seed; gate is fixed and not retrained on P73; all models get the same executed past observations and final-query supervised label.",
+    "qualification": "120 updates alone do NOT prove convergence of any model. Label limited-budget comparison explicitly; do not call fully trained conventional baseline if loss still improving."
+  },
+  "controls": {
+    "source": "FIT+VAL role imbalance per 4 quartiles <=0.05; heldout index-only balanced accuracy <=0.55; no future query or outcome in historical updates; float finiteness; exact novel seed registry.",
+    "trainable_competence": "All three conventional seeds achieve <=0.60*zero VAL MSE AND <=0.85*their independently measured initialized VAL MSE after 120 updates; else P73 DEV_FAIL_INCOMPETENT_RETRIEVAL. Independently trained negative-action-credit scores >=1.5x correct conventional VAL MSE per seed.",
+    "hybrid_criterion": "Each hybrid mode per seed qualifies only if its best VAL MSE <=0.85*zero VAL MSE; if fewer than all six qualify, previous full-hybrid deficiency not disproven.",
+    "negative": "Wrong-credit conventional learner must fail per seed, fixed raw similarity and frequency controls must be reported; no fresh data reuse in retroactive tuning.",
+    "fairness": "Same data, actions, labels, minibatches and optimizer update count; state storage and trainable parameter/FLOP cost unequal and MUST be reported; no superiority claim on matched compute.",
+    "diagnostic_PASS": "All source/negative/custody controls pass, 3/3 conventional learner qualifies, and >=2/3 paired seeds have BOTH original all-write and gated Hybrid validation competence fail. Classify as DEV_DIAGNOSTIC_SUPPORTED_END_TO_END_HYBRID_LEARNING_PATH, NOT proof that one specific representation block is defective.",
+    "outcome_if_hybrid_qualifies": "FAIL or INCONCLUSIVE as preregistered; do not relabel as hybrid scientific gain.",
+    "STOP": "No OOD data generated or scored for P73 even on diagnostic PASS; only author-generated fresh FIT/VAL source; no independent scientific claim.",
+    "independent_science": "Separate owner-authenticated first-use source, stronger matched compute and fully trained conventional hybrid baselines, cross-platform full regression, transfer/cold-retention/causal-shift required for SCIENTIFIC_PASS."
+  },
+  "authority": {
+    "no_runner_or_scheduler_mutation": true,
+    "no_workflow_dispatch": true,
+    "no_forge": true,
+    "no_paid_API": true,
+    "no_original_ref_edits": true,
+    "no_model_merges": true,
+    "no_protected_science_firstuse": true
+  },
+  "status": {
+    "frozen": true,
+    "source_generated": false,
+    "train_completed": false,
+    "OOD_scored": false,
+    "scientific_pass": false,
+    "full_Windows_Linux_regression": "NOT_RUN",
+    "native_GPU": "NOT_RUN"
+  }
+}

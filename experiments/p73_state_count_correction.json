@@ -1,0 +1,23 @@
+{
+  "schema": "ttt-hybrid.p73-persistent-state-arithmetic-audit.v1",
+  "classification": "POST_FIT_VAL_ENGINEERING_ANNOTATION_NO_MODEL_OR_SOURCE_REEXECUTION",
+  "p73_source_git_blob": "33efe5ea2c9dedeb8199a82c70ecc1ce2a173f12",
+  "p73_receipt_git_blob": "b97aabdb857ba2415715af5bcdefb4b48de2a00c",
+  "issue": "The optional unexecuted study() return metadata string mislabels hybrid state as 656 floats from `SSM16+TTT256+Attention K/V 24*16`, omitting the second (V) cache.",
+  "correction": {
+    "width": 16,
+    "confirmed_factual_events": 24,
+    "SSM_floats": 16,
+    "TTT_fast_weight_floats": 256,
+    "attention_keys_floats": 384,
+    "attention_values_floats": 384,
+    "total_persisted_hybrid_floats": 1040,
+    "direct_retrieval_history_floats": 768,
+    "conventional_frequency_cache_floats": 256,
+    "model_weights_not_included": true
+  },
+  "qualification": "The entire monolithic P73 study timed out without receipt. P73 result was separately recovered from original exact 120-step p72.train_arm in six bounded per-arm runs and 120-step conventional training in six arms. Source code result string was not used for scoring; no results changed and no new outcomes were generated.",
+  "original_model_unchanged": true,
+  "full_final_platform_regression": "NOT_RUN",
+  "scientific_pass": false
+}
