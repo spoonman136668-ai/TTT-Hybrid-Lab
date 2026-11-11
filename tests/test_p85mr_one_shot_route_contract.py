@@ -89,3 +89,40 @@ def test_branch_workflow_exactly_once_if_present():
         "actions/cache", "contents: write", "pull-requests: write",
     ):
         assert prohibited not in s
+
+
+
+def test_exact_previous_s28_checkout_candidate_has_no_new_source_download():
+    source=OWNER.read_text()
+    assert '"$workspaceRoot/s28-upstream-source"' in source
+    assert "$linuxRoot.EndsWith('/p85mr-f1'" in source
+    assert "c94e9a4cd3641588b6b8507e71ccee5c27032bdf" in source
+    assert 'NO_EXISTING_EXACT_PINNED_CAUSALGYM_SOURCE_CHECKOUT' in source
+    # The source must still be reverified against exact upstream SHA/blobs,
+    # not assumed trusted because an older workflow created its directory.
+    collector=(ROOT/"experiments"/"p85mr_fitcal_owner_firstuse.py").read_text()
+    for phrase in ("P85F1_CHECKOUT_SHA_MISMATCH", "P85F1_SOURCE_BLOB_MISMATCH",
+                   "P85F1_SOURCE_ORIGIN_MISMATCH", "P85F1_DIRTY_SOURCE"):
+        assert phrase in collector
+
+
+def test_collector_entrypoint_imports_exact_adjacent_modules_without_first_use():
+    """Verify real -s -B entrypoint can import local pinned modules.
+
+    --help stops at argparse before owner admission, source checkout,
+    simulator construction, reset, do or model training.
+    """
+    import subprocess
+    import sys
+    launch=OWNER.read_text()
+    assert '$py -s -B "$linuxRoot/experiments/p85mr_fitcal_owner_firstuse.py"' in launch
+    assert '$py -I -B "$linuxRoot/experiments/p85mr_fitcal_owner_firstuse.py"' not in launch
+    assert "'PYTHONNOUSERSITE=1'" in launch
+    app=ROOT/"experiments"/"p85mr_fitcal_owner_firstuse.py"
+    p=subprocess.run(
+        [sys.executable,"-s","-B",str(app),"--help"],
+        cwd=str(ROOT),text=True,capture_output=True,timeout=25,check=False)
+    assert p.returncode == 0, (p.stdout[-1000:],p.stderr[-1200:])
+    assert "--approved-once" in p.stdout
+    assert "--source-checkout" in p.stdout
+    assert "--project-checkout" in p.stdout
