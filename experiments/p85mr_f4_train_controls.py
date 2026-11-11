@@ -14,8 +14,11 @@ import json
 import os
 from pathlib import Path
 import re
-import resource
 import signal
+try:
+    import resource  # POSIX only; actual training is guarded to owner WSL Linux
+except ImportError:
+    resource = None
 import subprocess
 import sys
 import time
@@ -203,6 +206,8 @@ def read_source_zip(path: Path) -> tuple[list[dict], list[dict], dict]:
 
 def memory_gib() -> float:
     # Linux ru_maxrss is reported in KiB. No background RSS telemetry.
+    if resource is None:
+        raise PermissionError("F4_NONPOSIX_TRAINING_DENIED")
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / (1024 * 1024)
 
 
