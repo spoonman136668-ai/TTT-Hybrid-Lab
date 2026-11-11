@@ -15,9 +15,9 @@ def fixture_fit():
         "upstream_commit":p105.UPSTREAM_SHA,
         "upstream_path":p105.UPSTREAM_PATH,
         "upstream_blob":p105.UPSTREAM_BLOB,
-        "source_id":"p85mr-fit-fixture",
-        "producer_id":"unit-test-fake-producer",
-        "custody_ref":"unit-test-no-owner-run",
+        "source_id":"p85mr-f3-fit-43073165842",
+        "producer_id":"ttt-hybrid-f3-owner",
+        "custody_ref":"ghrun:43073165842",
         "worlds":[{
             "world_id":"fit-fixture-000",
             "episode_seed":7,
@@ -68,6 +68,9 @@ def test_p105_factual_fixture_has_no_direct_offpolicy_counterfactual():
     assert s["science_pass"] is False
     assert s["authentic_source_effects_executed"] is False
     assert s["new_F6_source_authorized_or_generated"] is False
+    assert s["original_F3_fit_capture_authenticated"] is False
+    assert s["source_pinned_to_F3"] is False
+    assert s["source_claims_F3_header_identity"] is True
 
 
 def test_p105_even_paired_identical_states_do_not_prove_factual_counterfactual():
@@ -90,6 +93,12 @@ def test_p105_fail_closed_on_any_cal_or_unpinned_source_or_broken_effect():
         with pytest.raises(ValueError,match=expected):
             p105.observational_support(f)
 
+    bad(lambda f:f.__setitem__("source_id","p85mr-fit-fixture"),
+        "P105_ONLY_CONSUMED_FIT_PERMITTED")
+    bad(lambda f:f.__setitem__("producer_id","forged-producer"),
+        "P105_ONLY_CONSUMED_FIT_PERMITTED")
+    bad(lambda f:f.__setitem__("custody_ref","ghrun:other"),
+        "P105_ONLY_CONSUMED_FIT_PERMITTED")
     bad(lambda f:f.__setitem__("source_id","p85mr-cal-fixture"),
         "P105_ONLY_CONSUMED_FIT_PERMITTED")
     bad(lambda f:f.__setitem__("upstream_commit","different"),
