@@ -11,7 +11,7 @@
     "source_path": "experiments/p85_continuous_causal_preflight.py",
     "git_blob": "3ec870dd455561ad23fe3a4946c402094cc1e3ad",
     "tests_path": "tests/test_p85_continuous_causal_preflight.py",
-    "tests_git_blob": "986e50b266f248496fb446d00f080fce411fd6cf",
+    "tests_git_blob": "c5027fd736d252639304fb8dec046678b56c55c0",
     "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
     "original_P78_rawTTT_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba"
   },
@@ -20,10 +20,11 @@
     "python": "3.13.5",
     "torch": "2.10.0+cpu",
     "pytest": "9.0.2",
-    "focused": "12/12 PASS 2.11 s",
+    "focused": "13/13 PASS 2.08 s",
     "model_run_seconds": 0.0905422699997871,
     "full_Windows_Linux": "NOT_YET_RUN",
-    "native_GPU": "NOT_RUN"
+    "native_GPU": "NOT_RUN",
+    "explicit_exact_FIT_CAL_source_hash_crossplatform_test": "REQUIRED_CI_PENDING"
   },
   "world_source": {
     "FIT": {
