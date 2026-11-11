@@ -1,5 +1,7 @@
 """P95: frozen source/custody, confirmed-credit, cold and DEV-only negative controls."""
 import json
+import os
+from pathlib import Path
 
 import pytest
 import torch
@@ -91,3 +93,15 @@ def test_p95_full_frozen_dev_study_nonpromoting(tmp_path):
     assert report["cohorts"]["FIT"]["sha256"] == p95.EXPECTED_SHA["FIT"]
     assert report["cohorts"]["CAL"]["sha256"] == p95.EXPECTED_SHA["CAL"]
     assert report["cpu_ratio"] > 0
+    # Preserve the numerical result from this exact test invocation in the
+    # existing G4 artifact; do not train a second time or alter the protocol.
+    candidate = os.environ.get("EXPECTED_CANDIDATE_SHA")
+    if candidate:
+        report["capture_provenance"] = {
+            "candidate_sha": candidate,
+            "github_run_id": os.environ.get("GITHUB_RUN_ID"),
+            "purpose": "DEV_ONLY_NUMERICAL_EVIDENCE_NONPROMOTING",
+        }
+        output = Path(__file__).resolve().parents[1] / "local_runs" / "p95_dev_result.json"
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
