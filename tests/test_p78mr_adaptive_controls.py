@@ -125,3 +125,25 @@ def test_scoring_stratifies_but_only_evaluator_receives_label():
     assert r['changed']==[1.,1.]
     assert r['stable']==[1.,1.]
     assert set(source.factual(source.make_world('fit',0)))=={'action','effect'}
+
+
+def test_wrong_action_credit_changes_fixed_memory_state():
+    facts, query = toy(batch=2, steps=9)
+    swapped={'action':facts['action'].flip(1), 'effect':facts['effect']}
+    configs=(('constant',0.4,0.0,0.0),)
+    pred, state=fixed_outputs(facts,query,configs=configs)
+    wrong_pred, wrong_state=fixed_outputs(swapped,query,configs=configs)
+    assert not torch.equal(state,wrong_state)
+    assert not torch.equal(pred,wrong_pred)
+
+
+def test_adaptive_direction_switch_on_explicit_contradiction():
+    action=torch.zeros(1,2,16);action[0,:,0]=1
+    effect=torch.zeros_like(action);effect[0,0,0]=1;effect[0,1,0]=-1
+    query=action[:,0]
+    cfg=(('direction',0.1,0.75,0.0),)
+    prediction,state=fixed_outputs({'action':action,'effect':effect},query,configs=cfg)
+    # t0: prediction is zero -> low gain .1 -> 0.1; t1 predicts +0.1
+    # but observes -1 -> negative cosine -> gain .75; final=0.1-.75*1.1
+    assert abs(float(prediction[0,0,0])-(-0.725))<1e-6
+    assert state.shape==(1,1,16,16)
