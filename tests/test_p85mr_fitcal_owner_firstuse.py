@@ -11,7 +11,7 @@ sys.path.insert(0,str(EXPERIMENTS))
 
 from p85mr_fitcal_owner_firstuse import (
     SCOPE_BLOB, COHORTS, MAX_STEPS, MAX_ACTIONS,
-    locked_scope, owner_context, observed_episode, collect_one_shot,
+    locked_scope, locked_route, owner_context, observed_episode, collect_one_shot,
     _state, blob, _put_new, _append_progress, DEPS, SOURCE_BLOBS,
 )
 from p84mr_partition_preflight import preflight_partition, proposed_seed, planned_discrete_action
@@ -77,6 +77,10 @@ def test_scope_and_parent_freezes_have_exact_git_blob_and_authorization():
     assert scope["lineage"]["parent_pr"]==207
     assert scope["cohorts"]["fit"]["n"]==128
     assert scope["cohorts"]["cal"]["n"]==64
+    route=locked_route()
+    assert route["supersedes"]["blob"]==SCOPE_BLOB
+    assert route["execution"]["event"]=="push"
+    assert route["authority"]["workflow_only_once"] is True
 
 
 def test_sealed_ood_no_development_collected_and_budgets():
@@ -92,11 +96,15 @@ def authorized_env():
     return {
         "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
         "GITHUB_ACTOR":"spoonman136668-ai",
-        "GITHUB_EVENT_NAME":"workflow_dispatch",
-        "GITHUB_REF":"refs/heads/main",
-        "GITHUB_REF_PROTECTED":"true",
+        "GITHUB_EVENT_NAME":"push",
+        "GITHUB_REF":"refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111",
         "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_RUN_NUMBER":"1",
         "RUNNER_NAME":"TTT-HYBRID-GPU-WIN",
+        "RUNNER_OS":"Windows",
+        "RUNNER_ARCH":"X64",
+        "P85MR_OWNER_EXECUTION":"FIT_CAL_ONLY",
+        "GITHUB_WORKFLOW_REF":"spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-fitcal-firstuse-once.yml@refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111",
         "GITHUB_RUN_ID":"42999999111",
         "GITHUB_SHA":"a"*40,
     }
@@ -105,11 +113,15 @@ def authorized_env():
 @pytest.mark.parametrize("field,value",[
     ("GITHUB_REPOSITORY","spoonman136668-ai/FORGE"),
     ("GITHUB_ACTOR","someone-else"),
-    ("GITHUB_EVENT_NAME","pull_request"),
-    ("GITHUB_REF","refs/heads/research/candidate"),
-    ("GITHUB_REF_PROTECTED","false"),
+    ("GITHUB_EVENT_NAME","workflow_dispatch"),
+    ("GITHUB_REF","refs/heads/main"),
+    ("GITHUB_RUN_NUMBER","2"),
     ("GITHUB_RUN_ATTEMPT","2"),
     ("RUNNER_NAME","FORGE-CODEX-REMOTE"),
+    ("RUNNER_OS","Linux"),
+    ("RUNNER_ARCH","ARM64"),
+    ("P85MR_OWNER_EXECUTION","OOD_ONLY"),
+    ("GITHUB_WORKFLOW_REF","spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/g4-cpu-qualification.yml@refs/heads/main"),
     ("GITHUB_RUN_ID",""),
     ("GITHUB_SHA","not-a-sha"),
 ])
@@ -303,3 +315,17 @@ def test_owner_execution_source_does_not_write_upstream_bytecode():
     assert 'attempt/(cohort+".steps.ndjson")' in code
     assert '"phase":"action_attempt"' in code
     assert '"phase":"action_observed"' in code
+
+
+def test_correct_research_branch_is_only_one_shot_owner_source_event():
+    env=authorized_env()
+    result=owner_context(env)
+    assert result["run_id"]=="42999999111"
+    assert result["attempt"]==1
+    assert locked_route()["scientific_scope"]["ood"]=="SEALED"
+    for key in ("GITHUB_RUN_NUMBER","GITHUB_WORKFLOW_REF",
+                "P85MR_OWNER_EXECUTION","RUNNER_ARCH"):
+        altered=env.copy()
+        altered.pop(key)
+        with pytest.raises(PermissionError,match="P85F1_TRUSTED_OWNER_ROUTE_NOT_VERIFIED"):
+            owner_context(altered)
