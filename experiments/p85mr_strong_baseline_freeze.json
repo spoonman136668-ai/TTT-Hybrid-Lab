@@ -1,0 +1,102 @@
+{
+  "schema": "ttt-hybrid.p85mr-independent-dynamics-strong-control-freeze.v1",
+  "stage": "FROZEN_BEFORE_NEW_P85_MODEL_IMPLEMENTATION_OR_ANY_EXTERNAL_FIRST_USE",
+  "source_parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 202,
+    "sha": "d7d3611572600ee2d535aebc9dd0d9da3979d622",
+    "p84_freeze_path": "experiments/p84mr_external_science_preflight_freeze.json",
+    "p84_freeze_blob": "9c259f7e03ecbd32f8d3e5f9bfdaef2a8860f724",
+    "P69_GRU_SSM_path": "experiments/p69_trainable_competitors.py",
+    "P69_GRU_SSM_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa",
+    "P75_prequential_path": "experiments/p75_prequential_baselines.py",
+    "P75_prequential_blob": "197946f52c7a23fb4847628696dd71802bec4e30",
+    "P80_adapter_path": "experiments/p80mr_causalgym_trace_adapter.py",
+    "P80_adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72"
+  },
+  "hypothesis": "A fitted state-and-action-conditioned domain predictor can explain CartPoleWind dynamics substantially better than a candidate learned on unrelated synthetic role memory. A fair test must include fully trained strong stateless and stateful competitors; engineering fixture improvement is not scientific evidence.",
+  "null": "The external-transfer claim does not survive conventional controls with matched factual data, or stronger control cannot be competently trained. An untrained model is never treated as a strong baseline.",
+  "source_policy": {
+    "actual_external_first_use": "NOT_AUTHORIZED",
+    "allowed_now": "Only in-memory authored toy vectors with P80 key/effect shapes; no Causal-Gymnasium import, P84 FIT/CAL or OOD source generation, trainer dispatch, inference on externally collected data, runner/schedule changes",
+    "facts": "Only actually executed chronological (key16, effect16) memory writes; for training at t, state before event t and action_t are inputs, effect_t is label only AFTER prediction",
+    "action_key": "P80 16D unit state-action [bias,state-scaled4,onehot2,zero9], never action-only physical 16D",
+    "target": "P80 measured effect16 [tanh(normalized 4D state deltas),tanh(reward),terminated,truncated,zero9]; padded channels 7:16 must never count toward primary evaluation",
+    "real_source_witness": "P84 immutable source protocol and project-owned attestation required separately"
+  },
+  "models": {
+    "linear7": {
+      "input_dim": 7,
+      "outputs": 7,
+      "hidden_state_floats": 0,
+      "static_params": 56,
+      "architecture": "nn.Linear(7,7) with bias; output padded with 9 exact zeros; uses current P80 state+action key and NO historical facts"
+    },
+    "mlp7": {
+      "input_dim": 7,
+      "hidden": 32,
+      "outputs": 7,
+      "hidden_state_floats": 0,
+      "static_params": 487,
+      "architecture": "nn.Linear(7,32),SiLU,nn.Linear(32,7); output padded with 9 exact zeros; no historical facts"
+    },
+    "gru256": {
+      "input_dim": 33,
+      "hidden_state_floats": 256,
+      "source": "P69 TrainedGRU, as-is, no duplicated class; use P75 before_write_predictions; 16-output head includes nine padded outputs but loss never rewards zeros"
+    },
+    "ssm256": {
+      "input_dim": 33,
+      "hidden_state_floats": 256,
+      "source": "P69 DiagonalContinuousSSM as-is; P75 before_write_predictions; 16-output head includes nine padded outputs but loss never rewards zeros"
+    },
+    "zero": {
+      "input_dim": 7,
+      "hidden_state_floats": 0,
+      "static_params": 0,
+      "architecture": "fixed zero predictor only as ablation, never strongest conventional"
+    }
+  },
+  "training": {
+    "model_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "sample_seed": 985299,
+    "bootstrap_seed": 985401,
+    "initializer": "Seed-scoped CPU torch.random.fork_rng plus manual_seed(model_seed), same seed per arm but architecture differs; no global RNG pollution",
+    "fit_only": "Only immutable independently witnessed FIT (128 episodes) after separately authorized first-use",
+    "cal_only": "Only CAL (64) for checkpoint selection and fixed eta/sweep thresholds; no DEV or science OOD in optimizer or checkpoint selectors",
+    "objective": "Per observed event t>=2 (one-indexed), prequential prediction from prefix<t factual effects plus current action, then loss on actually measured effect_t; optimize delta_loss(mean four normalized state-delta channels) + .2*reward_MSE + .1*terminated_MSE + .1*truncated_MSE. No padded zeros in loss. All arms see exactly same historical events and current action; recurrent use past true observed effects; stateless ignore history as architecture choice.",
+    "optimizer": "AdamW learning_rate .001 for GRU/SSM, .005 for linear/MLP; weight_decay .01, grad_clip_norm 1",
+    "sample": "Batch 16 independent episodes (variable lengths handled by world-wise or masked batching), up to 800 optimizer updates; select checkpoint every 50 updates by CAL four-delta MSE, with tie earliest step; first checkpoint only after 50 updates.",
+    "stop": "Early stop allowed only after >=400 updates, six consecutive nonimproving CAL checkpoints, and CAL last-three delta-MSE spread<=.005; otherwise complete all 800. On nonfinite loss, resource or custody failure STOP, not retry uncertain source.",
+    "competence": "All conventional arms must finish registration, restore best checkpoint, and achieve CAL delta MSE <=.75*zero-predictor CAL delta MSE for all 3 seeds; if this preset requirement is infeasible, record SCIENCE_CONTROL_FAIL and stop before any independent OOD.",
+    "resource": "CPU development single thread, <=3 GiB peak and <=3600s per full conventional arm, no paid API; record wall time and full process generate/train/sweep/eval separately; cost parity not established merely by 256 persistent state floats",
+    "statistical": "P84 frozen 5000 paired world bootstrap and 9 independent seed×OOD comparisons; do not select metrics on OOD"
+  },
+  "qualification": [
+    "Separate prospective registration before any code or external source training",
+    "Model factory deterministic per seed; stateless model 0 persistent floats, GRU/SSM exactly 256 floats, all static weights separately counted",
+    "Reject privileged role, future effect, query target, held-out source; prequential predictions do not change when CURRENT event label changes",
+    "Cold restoration of GRU/SSM past state, original source, and readout information matched",
+    "Unit-normalized input and padded 9 channels enforced before any scoring",
+    "Primary loss uses only 4 physical delta channels, not padded 16D mean",
+    "Toy engineering optimization positive gradient and loss decrease without external simulator",
+    "Full exact candidate G4 Windows/Ubuntu regression and G5 Windows/Ubuntu and G7 Ubuntu CPU qualification",
+    "No OOD data, external first-use, model promotion, deployment, owner/runner/schedule changes"
+  ],
+  "authority": {
+    "source_first_use": false,
+    "science_first_use": false,
+    "owner_native_execution_required": true,
+    "no_merge": true,
+    "no_forge_dispatch": true,
+    "no_runner_changes": true,
+    "no_scheduled_tasks": true,
+    "no_paid_API": true,
+    "no_live_actuation": true,
+    "artifact_evidence": "Repository PR and GitHub Actions only"
+  }
+}
