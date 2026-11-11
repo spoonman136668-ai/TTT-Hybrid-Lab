@@ -1,0 +1,72 @@
+{
+  "schema": "ttt-hybrid.p92-two-timescale-lowrank-256float-online-causal-memory-freeze.v1",
+  "phase": "FROZEN_BEFORE_P92_SOURCE_OR_SCORES",
+  "parent": {
+    "PR": 213,
+    "SHA": "2326700d8dfe678c63bffd4bb4b62ff70e957841",
+    "P91": "G4_WINDOWS_385_PASS_UBUNTU_384_PASS_G5_G7_PASS_DEV_FAIL",
+    "P86_source_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "Two independently decaying rank-4 online causal factorizations, using a combined 256 float32 per-world persistent state, can balance rapid changes and stable mechanism memory more effectively than equally sized full-rank 16x16 predictor, without exceeding 3x end-to-end CPU latency.",
+  "source": {
+    "families": [
+      {
+        "name": "A",
+        "FIT": 920111,
+        "VAL": 920113
+      },
+      {
+        "name": "B",
+        "FIT": 920121,
+        "VAL": 920123
+      }
+    ],
+    "worlds": {
+      "FIT_per_family": 96,
+      "VAL_per_family": 64
+    },
+    "reserved": {
+      "OOD": 920117,
+      "NEGATIVE": 920119
+    },
+    "construction": "Use pinned P86's pure SHA256-indexed integer and exact dyadic 16D action and rank4 16D consequence generation; 48 confirmed executed action/effect pairs and novel withheld-effect action49. Hidden second independent causal map after action24 in exactly half worlds. No prior P86-P91 FIT/VAL reuse. Do not create protected OOD/NEGATIVE.",
+    "audit": "FIT+VAL source hashes byte-identical across Windows/Linux; all finite, source half changed; final query new key no repeated cosine abs>=.999; effect of final query never enters model."
+  },
+  "methods": {
+    "fixed": "P86 CAL-locked W256 eta1 decay.99, 0 trained params.",
+    "full_grid": "FIT-only eta {.5,1,1.5} × decay {.95,.99} =6 full 16x16 W256 conventional rules. Choose one globally by A+B FIT combined final-query MSE, freeze before VAL.",
+    "dual_grid": "FIT-only eta_fast {.5,1} × decay_fast {.90,.97} × eta_slow {.10,.25}, decay_slow .99 =8. Each fast and slow slot factor U[16,4] V[4,16] = 128 floats; two slots total 256 float32 predictive floats. Read (Ufast@Vfast+Uslow@Vslow)@normalize(action), then upon actually observed event form each slot W_candidate=decay_slot*(U@V)+eta_slot*(effect-read)*key.T; project via batched torch.linalg.svd to rank4 and store U_top4*sqrt(S4) / sqrt(S4)*Vh_top4. SVD temporary matrix memory included in CPU cost.",
+    "single_rank4_ablation": "Evaluate selected dual's fast slot alone using 128 floats, disclose capacity mismatch and no VAL tuning."
+  },
+  "protocol": {
+    "read_before_write": true,
+    "confirmed_events": 48,
+    "withheld_query_event": 49,
+    "CPU_threads": 1,
+    "CPU_budget_seconds": 110,
+    "wrong_credit": "Cyclic rotation within-world observed historical effects must cause >=1.5x conventional fixed VAL final MSE and >=.01 absolute on each family.",
+    "cold": "Checkpoint factor tensors after 24 observed events, resume and compare bitwise final states and predicted query; no extra persistent state.",
+    "qualify": "Dual must beat stronger of frozen fixed and FIT-selected W256 full model by >=10% each family's combined final MSE, >=15% each changed-world MSE, stable <=5% worse each; dual must beat single-rank4 ablation by >=10% on both families. Any miss => DEV_FAIL; no OOD/NEG generation.",
+    "cost": "Run 5 warmups and 20 timed loops on identical VAL inputs, full 49-read/48-update forward CPU thread1. Dual must be <=3x median wall of full W256 comparator. Transient SVD workspace uncounted in persistent 256 floats but cost disclosed. Failure cost => DEV_FAIL.",
+    "science": "Author-synthetic DEV comparison only; no fully trained original HybridPilot, no inference transfer, external causal intervention first-use, matched whole-process compute, RSI or SCIENTIFIC_PASS; no threshold retuning after results."
+  },
+  "isolation": {
+    "additive_draft_PR_only": true,
+    "original_model_unchanged": true,
+    "main_unchanged": true,
+    "FORGE_unchanged": true,
+    "P84_MR_unchanged": true,
+    "no_runners_schedulers_or_dispatch": true,
+    "no_merge": true,
+    "no_paid_APIs": true,
+    "no_GPU": true
+  },
+  "status": {
+    "source_generated": false,
+    "FIT_val_scored": false,
+    "OOD_generated": false,
+    "NEGATIVE_generated": false,
+    "scientific_pass": false
+  }
+}

@@ -1,0 +1,350 @@
+{
+  "schema": "ttt-hybrid.p92-two-timescale-lowrank-256float-causal-dev-repo-result.v1",
+  "classification": "AUTHOR_SYNTHETIC_FROZEN_DEV_FAIL_NOT_SCIENTIFIC_PASS",
+  "parent": {
+    "pr": 213,
+    "sha": "2326700d8dfe678c63bffd4bb4b62ff70e957841"
+  },
+  "protocol": {
+    "freeze_pre_source_commit": "3af59fa35a180f52d4f827216a51c0c5d5b31b63",
+    "protocol_path": "experiments/p92_lowrank_twospeed_frozen.json",
+    "original_P86_source_git_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "source_custody": {
+    "code_path": "experiments/p92_lowrank_twospeed_dev.py",
+    "code_git_blob": "09b18e9432e0808eb130084bb7be734cc8ab58a1",
+    "tests_path": "tests/test_p92_lowrank_twospeed_dev.py",
+    "tests_git_blob": "17f6fccb13098788ce1dd4efd1745402ce4cd46e",
+    "local_original_full_result_sha256": "243d9b92bab0a90e7d0dbb604a291c41035b4d1231ef68d556ed87e7d125753b",
+    "local_original_full_result_bytes": 9774,
+    "source_A": {
+      "FIT": {
+        "seed": 920111,
+        "n": 96,
+        "changed": 48,
+        "sha256": "c4db80417b60230878a30b12d6b49d922e1b3ad11ccd98eda3178c930998f1e5"
+      },
+      "VAL": {
+        "seed": 920113,
+        "n": 64,
+        "changed": 32,
+        "sha256": "86254f9f817f60523e864b718a4a175dfafcb5fafaa450739b9a446a46523904"
+      }
+    },
+    "source_B": {
+      "FIT": {
+        "seed": 920121,
+        "n": 96,
+        "changed": 48,
+        "sha256": "25dd4c9f92500991a7f1b72b8da1c533eeeb86412b64f101fdac5a1b241a9976"
+      },
+      "VAL": {
+        "seed": 920123,
+        "n": 64,
+        "changed": 32,
+        "sha256": "e30a07fc7ca1e90e986823bed7682a64692c95b6a3bf09202cafa72790929826"
+      }
+    },
+    "all_dyadic_source_audits_pass": true,
+    "novel_query_action": true,
+    "withheld_query_effect": true,
+    "OOD_reserved_seed": 920117,
+    "NEGATIVE_reserved_seed": 920119
+  },
+  "FIT_grid": {
+    "columns_full": [
+      "eta",
+      "decay",
+      "A_final_mse",
+      "B_final_mse"
+    ],
+    "full": [
+      [
+        0.5,
+        0.95,
+        0.005231156945228577,
+        0.005709984805434942,
+        0.0054705708753317595
+      ],
+      [
+        0.5,
+        0.99,
+        0.003462257096543908,
+        0.0036757688503712416,
+        0.003569012973457575
+      ],
+      [
+        1,
+        0.95,
+        0.003420541761443019,
+        0.003886840073391795,
+        0.003653690917417407
+      ],
+      [
+        1,
+        0.99,
+        0.002357435179874301,
+        0.0023209056816995144,
+        0.0023391704307869077
+      ],
+      [
+        1.5,
+        0.95,
+        0.003183170920237899,
+        0.0037364407908171415,
+        0.00345980585552752
+      ],
+      [
+        1.5,
+        0.99,
+        0.003539505647495389,
+        0.0034779899287968874,
+        0.003508747788146138
+      ]
+    ],
+    "columns_dual": [
+      "fast_eta",
+      "fast_decay",
+      "slow_eta",
+      "slow_decay",
+      "A_final_mse",
+      "B_final_mse",
+      "mean_final_mse"
+    ],
+    "dual": [
+      [
+        0.5,
+        0.9,
+        0.1,
+        0.99,
+        0.005626223515719175,
+        0.006153907626867294,
+        0.005890065571293235
+      ],
+      [
+        0.5,
+        0.9,
+        0.25,
+        0.99,
+        0.0043234992772340775,
+        0.004754568915814161,
+        0.004539034096524119
+      ],
+      [
+        0.5,
+        0.97,
+        0.1,
+        0.99,
+        0.003859705524519086,
+        0.004169151186943054,
+        0.00401442835573107
+      ],
+      [
+        0.5,
+        0.97,
+        0.25,
+        0.99,
+        0.0031830815132707357,
+        0.003348834114149213,
+        0.0032659578137099743
+      ],
+      [
+        1,
+        0.9,
+        0.1,
+        0.99,
+        0.004460046533495188,
+        0.00504094734787941,
+        0.004750496940687299
+      ],
+      [
+        1,
+        0.9,
+        0.25,
+        0.99,
+        0.0037289243191480637,
+        0.00422653229907155,
+        0.003977728309109807
+      ],
+      [
+        1,
+        0.97,
+        0.1,
+        0.99,
+        0.0026487133000046015,
+        0.002867773873731494,
+        0.0027582435868680477
+      ],
+      [
+        1,
+        0.97,
+        0.25,
+        0.99,
+        0.00255617150105536,
+        0.002675008261576295,
+        0.0026155898813158274
+      ]
+    ],
+    "selected_full": {
+      "eta": 1,
+      "decay": 0.99
+    },
+    "selected_dual": {
+      "fast_eta": 1,
+      "fast_decay": 0.97,
+      "slow_eta": 0.25,
+      "slow_decay": 0.99
+    }
+  },
+  "VAL": {
+    "A": {
+      "zero": {
+        "combined": 0.010748475790023804,
+        "stable": 0.009053423069417477,
+        "changed": 0.012443527579307556,
+        "stable_late": 0.011061386205255985,
+        "change_early": 0.01084913033992052,
+        "change_late": 0.01113922894001007
+      },
+      "fixed": {
+        "combined": 0.002928651636466384,
+        "stable": 0.0008123487932607532,
+        "changed": 0.005044954363256693,
+        "stable_late": 0.001336088520474732,
+        "change_early": 0.014850938692688942,
+        "change_late": 0.005159562453627586
+      },
+      "FIT_selected_full": {
+        "combined": 0.002928651636466384,
+        "stable": 0.0008123487932607532,
+        "changed": 0.005044954363256693,
+        "stable_late": 0.001336088520474732,
+        "change_early": 0.014850938692688942,
+        "change_late": 0.005159562453627586
+      },
+      "two_timescale_rank4": {
+        "combined": 0.0032870855648070574,
+        "stable": 0.0014486596919596195,
+        "changed": 0.0051255119033157825,
+        "stable_late": 0.0018175950972363353,
+        "change_early": 0.014331776648759842,
+        "change_late": 0.0050048502162098885
+      },
+      "single_fast_rank4": {
+        "combined": 0.0034581124782562256,
+        "stable": 0.0017144432058557868,
+        "changed": 0.00520178209990263,
+        "stable_late": 0.0022535522002726793,
+        "change_early": 0.012971360236406326,
+        "change_late": 0.004875200800597668
+      },
+      "wrong_credit_MSE": 0.02112036757171154,
+      "cold_restore_bitwise": true,
+      "persistent_float32_full": 256,
+      "persistent_float32_dual": 256,
+      "acceptance": {
+        "overall": false,
+        "changed": false,
+        "stable": false,
+        "two_slots": false
+      },
+      "local_CPU_rollout_median_ms": {
+        "full": 1.8285649999825182,
+        "dual": 161.4657570000304,
+        "ratio": 88.30189629659,
+        "max_allowed_ratio": 3
+      }
+    },
+    "B": {
+      "zero": {
+        "combined": 0.010786106809973717,
+        "stable": 0.012897821143269539,
+        "changed": 0.008674392476677895,
+        "stable_late": 0.0116888964548707,
+        "change_early": 0.010903503745794296,
+        "change_late": 0.01103555504232645
+      },
+      "fixed": {
+        "combined": 0.0025042686611413956,
+        "stable": 0.0012872330844402313,
+        "changed": 0.0037213044706732035,
+        "stable_late": 0.0014144469751045108,
+        "change_early": 0.01470285002142191,
+        "change_late": 0.005083300173282623
+      },
+      "FIT_selected_full": {
+        "combined": 0.0025042686611413956,
+        "stable": 0.0012872330844402313,
+        "changed": 0.0037213044706732035,
+        "stable_late": 0.0014144469751045108,
+        "change_early": 0.01470285002142191,
+        "change_late": 0.005083300173282623
+      },
+      "two_timescale_rank4": {
+        "combined": 0.0029139812104403973,
+        "stable": 0.0020482519175857306,
+        "changed": 0.0037797107361257076,
+        "stable_late": 0.0019898340106010437,
+        "change_early": 0.014100715517997742,
+        "change_late": 0.0048289611004292965
+      },
+      "single_fast_rank4": {
+        "combined": 0.003096551401540637,
+        "stable": 0.0026977956295013428,
+        "changed": 0.003495307406410575,
+        "stable_late": 0.002513032639399171,
+        "change_early": 0.012747823260724545,
+        "change_late": 0.004774825647473335
+      },
+      "wrong_credit_MSE": 0.016261544078588486,
+      "cold_restore_bitwise": true,
+      "persistent_float32_full": 256,
+      "persistent_float32_dual": 256,
+      "acceptance": {
+        "overall": false,
+        "changed": false,
+        "stable": false,
+        "two_slots": false
+      },
+      "local_CPU_rollout_median_ms": {
+        "full": 1.8061309999666264,
+        "dual": 146.58579299998564,
+        "ratio": 81.16011131124722,
+        "max_allowed_ratio": 3
+      }
+    }
+  },
+  "local_qualification": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "one_CPU_thread": true,
+    "source_study_wall_seconds": 13.156058503999986,
+    "focused_tests": "8/8 PASS 17.42 seconds with exact source at Git blob; original source present only on repo CI",
+    "cost_sample": "5 warmups + 20 measured complete 49-action rollouts per model/source family; local CPU median; transient 16x16 SVD allocations not counted as persistent state",
+    "final_exact_candidate_windows_linux": "PENDING"
+  },
+  "decision": {
+    "status": "DEV_FAIL_QUALITY",
+    "all_performance_gates_pass": false,
+    "all_cost_gates_pass": false,
+    "substance": "Two-timescale rank4 representation lost to FIT-selected 256-float full matrix on both fresh families, failed stable and changed thresholds, and requires ~81-88x CPU wall because every event uses two batched SVDs; no scientific acceptability. Single rank4 ablation slightly worse in combined score, insufficient to demonstrate independent two-timescale benefit.",
+    "scientific_pass": false,
+    "OOD_generated": false,
+    "NEGATIVE_generated": false,
+    "fully_trained_native_HybridPilot": false,
+    "whole_process_compute_matched": false
+  },
+  "authority": {
+    "draft_PR_only": true,
+    "original_model_unchanged": true,
+    "main_unchanged": true,
+    "FORGE_unchanged": true,
+    "P84_MR_unchanged": true,
+    "runners_unchanged": true,
+    "scheduled_tasks_created": false,
+    "paid_API": false,
+    "merge": false,
+    "deployment": false
+  }
+}
