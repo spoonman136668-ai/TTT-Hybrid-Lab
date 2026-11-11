@@ -204,6 +204,8 @@ def run_world(world: World, policy: str, seed: int, wid: int,
     states=[]
     receipts=[]
     all_journal=[]
+    task0_prediction_before_task1 = None
+    task0_snapshot = None
     for task in range(2):
         state=initial()
         journal=[]
@@ -221,6 +223,10 @@ def run_world(world: World, policy: str, seed: int, wid: int,
         states.append(RLS(state.weights.detach().clone(),
                           state.precision.detach().clone()))
         all_journal.append(journal)
+        if task == 0:
+            task0_snapshot = RLS(states[0].weights.clone(),
+                                 states[0].precision.clone())
+            task0_prediction_before_task1 = world.queries[0]@states[0].weights.T
     # Both tasks' read-only outputs, and cold Task0 after Task1.
     scores=[]
     for task in range(2):
@@ -229,7 +235,11 @@ def run_world(world: World, policy: str, seed: int, wid: int,
         expected=q@world.maps[task].T
         scores.append(float((predicted-expected).square().mean()))
     cold0=world.queries[0]@states[0].weights.T
-    if not torch.equal(cold0,world.queries[0]@states[0].weights.T):
+    reloaded0=world.queries[0]@task0_snapshot.weights.T
+    if (not torch.equal(cold0,task0_prediction_before_task1)
+        or not torch.equal(cold0,reloaded0)
+        or not torch.equal(states[0].weights,task0_snapshot.weights)
+        or not torch.equal(states[0].precision,task0_snapshot.precision)):
         raise ValueError("P101_COLD_RETENTION_CHANGED")
     counterfactual_wrong=None
     if wrong_credit:
