@@ -1,0 +1,74 @@
+{
+  "schema": "ttt-hybrid.p93-svd-free-two-rank4-factual-update-freeze.v1",
+  "phase": "FROZEN_BEFORE_P93_SOURCE_GENERATION_OR_FIT_VAL_EVALUATION",
+  "parent": {
+    "PR": 214,
+    "SHA": "11935f1be9ba475ea8eb6d8240caea03cfe5c2ba",
+    "P92": "DEV_FAIL_QUALITY_AND_81_88X_CPU_OVERHEAD_OF_SVD_RANK4X2",
+    "P92_source_blob": "09b18e9432e0808eb130084bb7be734cc8ab58a1",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "external_P84_MR": "independent external source first-use unmodified"
+  },
+  "hypothesis": "Direct gradient-based updates of two rank4 factorizations, without matrix reconstruction/SVD projection, can preserve a single 256-float state, reduce full 49-step CPU cost to <=3x the full W256 reference, and achieve final action consequence error no worse than 1.05x a stronger FIT-selected full 256-float conventional rule, across 2 independently seeded new source families.",
+  "source": {
+    "families": [
+      {
+        "name": "A",
+        "FIT": 930111,
+        "VAL": 930113
+      },
+      {
+        "name": "B",
+        "FIT": 930121,
+        "VAL": 930123
+      }
+    ],
+    "worlds_per_family": {
+      "FIT": 96,
+      "VAL": 64
+    },
+    "reserved": {
+      "OOD": 930117,
+      "NEGATIVE": 930119
+    },
+    "generation": "Reuse P92 pinned pure SHA256 integer/dyadic simulator with independent P93 source seeds; 49 new 16-dimensional continuous actions and 16-dimensional consequences from independent rank4 world-specific linear maps. In exactly half worlds switch map after confirmed action24; first48 action/effect pairs can be observed, 49th query has unknown future effect. No physical or independent external source.",
+    "audits": "Strict SHA256 FIT and VAL cohort hashes must be pinned and match Windows/Linux; no exact repeated action keys (|cos|<.999), finite dyadic source, exactly 50% hidden-changed, no withheld answer in stream; source code denies reserved seeds."
+  },
+  "models": {
+    "full_fixed": "CAL-locked P86 η=1, decay=.99, original full W16x16 256-float source-independent baseline, no training.",
+    "full_FIT_grid": "FIT-only eta∈{0.5,1,1.5} × decay∈{.95,.99} 6 conventional W256 updates; select mean A+B FIT final-MSE only, before VAL.",
+    "dual_direct": "Per-world one U[B,2,16,4]+V[B,2,4,16] pair of two rank4 slots -> exactly 256 predictive float32 values. Read p = sum_slot U_slot(V_slot @ normalize(action)). At observed action, r=observed_effect-p. Compute pre-update h_slot=V_slot@key and g_slot=U_slot.T@r. U_slot_new=sqrt(decay_slot)*U_slot+ etaU_slot * r outer h_slot/(||h_slot||²+.25). V_slot_new=sqrt(decay_slot)*V_slot+ etaV_slot * g_slot outer key/(||U_slot||_F²+.25), all gradients read from OLD state, update simultaneously. Initial U=zero, initial V=distinct deterministic signed Walsh-Hadamard 4x16 row groups (first slot rows0:4, second rows4:8) divided by4; deterministic and not source dependent. Fast slot decay∈{.95,.99}, slow decay fixed .999. ηU_fast∈{.10,.35,.75}, ηV_fast∈{.025,.10}; slow gains exactly quarter fast gains. No truncation, SVD, dense 16x16 candidate or future labels; state contains only U/V.",
+    "factor_grid": "12 FIT-only rules 3 etaU × 2 etaV × 2 fast decays. Select best mean A+B FIT MSE before any VAL. No VAL tuning.",
+    "ablations": "Single fast rank4 (128 floats) and frozen V-coordinate 2-rank4 (etaV=0, 256 floats) evaluated with FIT-selected dual params as diagnostic, not VAL-tuned.",
+    "factual_rules": "Read-before-write on 48 confirmed executed action/effect pairs; 49th query never writes. Bitwise exact state cold restore after event24; no extra per-world cursor, inferred regime flag, full-history cache or oracle."
+  },
+  "qualify": {
+    "source_admission": "Exact source and P92 original blob custody, audited independent cohorts, strong fixed reference stable/changed each <=0.8*zero on both VAL families, wrong-credit rotated effect control >=1.5x clean and >=.01, bitwise 256-state restore, all finite. Fail closed.",
+    "quality": "For EACH family: selected dual final MSE <=1.05x stronger of fixed full or FIT-selected full W256, dual stable and changed final each <=1.10x stronger full comparator, dual <=.95x both single-fast ablation and frozen-V ablation (diagnostic contribution of both state factors). All required; else DEV_FAIL_QUALITY. No OOD.",
+    "cost": "Local single CPU thread; identical full 49-read/48-update VAL batch inputs, 5 warmups, 30 measured loops; median dual <=3x FIT-selected full W256 wall time in EACH family. Cost gate independent; no false 256-float end-to-end memory/compute equivalence; transient factor workspace and global code overhead reported. No GPU.",
+    "science": "Even dev pass only synthetic dev hypothesis, not scientifically witnessed action-consequence transfer, independent retention, native full Hybrid training or scientific pass. Do not claim RSI/integration. No future source generated."
+  },
+  "limits": {
+    "CPU_threads": 1,
+    "CPU_wall_budget_seconds": 100,
+    "local_py": "3.13",
+    "no_model_source_changes": true,
+    "no_FORGE": true,
+    "no_main": true,
+    "no_P84_MR": true,
+    "no_workflow_dispatch": true,
+    "no_scheduled_tasks": true,
+    "no_runner_changes": true,
+    "no_merge": true,
+    "no_paid_API": true,
+    "no_native_GPU": true
+  },
+  "status": {
+    "frozen": true,
+    "FIT_generated": false,
+    "VAL_generated": false,
+    "OOD_generated": false,
+    "NEGATIVE_generated": false,
+    "scientific_pass": false
+  }
+}
