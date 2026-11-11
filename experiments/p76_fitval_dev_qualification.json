@@ -1,0 +1,139 @@
+{
+  "schema": "ttt-hybrid.p76-frozen-authored-FITVAL-only-v1",
+  "status": "DEV_VAL_PASS_3_OF_3_WITH_POSTHOC_MECHANISM_CAUTION",
+  "classification": "AUTHOR_SYNTHETIC_DEV_VAL_NOT_INDEPENDENT_SCIENCE",
+  "history": {
+    "parent_p75_pr": 184,
+    "parent_sha": "85eab928e719aa31224e30588e4328c09c9382da",
+    "prior_p69_p75_negatives": "UNCHANGED"
+  },
+  "preregistration": {
+    "commit": "bd992c2a73e483054311a45495d62ff6847451fe",
+    "frozen_file": "experiments/p76_contradiction_repair_freeze.json",
+    "frozen_blob": "89df37558235de7a0a3d71bfc7d5f28ed80fa7cd",
+    "committed_before_source_or_model": true
+  },
+  "source": {
+    "parent_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "new_fit_seed": 976101,
+    "new_val_seed": 976103,
+    "fit_worlds": 512,
+    "val_worlds": 192,
+    "fit_digest": "0e6109f516a834ec4bbd6c9d4c619739446848c0aafcd4e993ecf763bb5fa1b5",
+    "val_digest": "add333e96dc52e5535d70bfd6150875be587b8ad2069f2668a20f3f7b1bf534f",
+    "fit_index_only_target_balanced_accuracy": 0.504638671875,
+    "val_index_only_target_balanced_accuracy": 0.5030381977558136,
+    "fit_changed_role_balanced_accuracy": 0.5059407353401184,
+    "val_changed_role_balanced_accuracy": 0.4884982705116272,
+    "query_duplicates": false,
+    "ood_generations": 0,
+    "ood_scored": false
+  },
+  "fixed_val_mse": {
+    "zero": 0.3926447331905365,
+    "allwrite_0p5": {
+      "total": 0.09515503793954849,
+      "changed": 0.10204750299453735,
+      "stable": 0.09001701325178146
+    },
+    "allwrite_1p0": {
+      "total": 0.2249523252248764,
+      "changed": 0.21501292288303375,
+      "stable": 0.23236167430877686
+    },
+    "fixed_contradiction": {
+      "total": 0.19526736438274384,
+      "changed": 0.19716553390026093,
+      "stable": 0.19385232031345367
+    }
+  },
+  "strongest_registered_control": "allwrite_0p5",
+  "training": {
+    "updates_per_seed": 240,
+    "optimizer": "AdamW lr=.01 weight_decay=.01 clip_grad=1",
+    "batch": 32,
+    "check_every": 40,
+    "sample_indices_sha256": "bd82407b99ecf46488e2818be1cf31907817e639c616e62d5b8b378cc931325e",
+    "persistent_floats": 256,
+    "learned_static_params": 5,
+    "seeds": [
+      {
+        "seed": 976201,
+        "total": 0.04291488230228424,
+        "changed": 0.056016091257333755,
+        "stable": 0.033148523420095444,
+        "wrong_credit_ratio": 10.448045100485457,
+        "random_fitmatched_ratio": 6.6095357276415125,
+        "raw_receipt_sha256": "20a1279829a57471909fcf4b3cdcc47adfafba2d862de2c0153a07b84442f9b4",
+        "cold_restoration": true
+      },
+      {
+        "seed": 976203,
+        "total": 0.04305871203541756,
+        "changed": 0.056240856647491455,
+        "stable": 0.03323201835155487,
+        "wrong_credit_ratio": 10.482170976559644,
+        "random_fitmatched_ratio": 6.854330130635633,
+        "raw_receipt_sha256": "8e02582e099283aedc34b2fd6e777f8378880f5aa83021291bf8611869c10eca",
+        "cold_restoration": true
+      },
+      {
+        "seed": 976207,
+        "total": 0.04308439791202545,
+        "changed": 0.05628849193453789,
+        "stable": 0.03324134275317192,
+        "wrong_credit_ratio": 10.620378405205882,
+        "random_fitmatched_ratio": 6.291272055047045,
+        "raw_receipt_sha256": "16773e509c7f439188606f940957cedc4c29b564d2f52c1ca95395c767b16f22",
+        "cold_restoration": true
+      }
+    ]
+  },
+  "prespecified_val_criteria": {
+    "all_three_25pct_better_than_zero": true,
+    "all_three_changed_at_least_15pct_gain_vs_strongest_fixed": true,
+    "all_three_stable_within_5pct_of_strongest_fixed": true,
+    "all_three_wrong_action_credit_at_least_1p2x_worse": true,
+    "all_three_cold_restore_bitwise": true
+  },
+  "posthoc_ablation_not_registered": {
+    "fixed_eta_grid_best_mse": 0.08892699331045151,
+    "ablate_explicit_contradiction_feature_mse": [
+      0.04298892617225647,
+      0.04314519837498665,
+      0.04317173734307289
+    ],
+    "ablate_directional_cosine_plus_contradiction_mse": [
+      0.062414031475782394,
+      0.06313597410917282,
+      0.062428902834653854
+    ],
+    "interpretation": "Strong evidence for learned write policy vs registered fixed controls; explicit contradiction feature NOT shown necessary. Directional cosine matters, separate preregistered ablation still needed."
+  },
+  "engineering": {
+    "local_tests": "80/80 PASS",
+    "local_python": "3.13.5",
+    "local_torch": "2.10.0+cpu",
+    "project_pinned_torch": "2.5.1+cpu UNTESTED",
+    "full_exact_final_sha_windows_linux": "UNVERIFIED",
+    "native_gpu": "UNVERIFIED",
+    "original_g4_g5_g7": "UNVERIFIED"
+  },
+  "local_evidence": {
+    "receipt_sha256": "7997b7886681c2272eba33032f7e0a1adee06a1c0a6809666a05c17e29ac0788",
+    "training_runner_sha256": "d08fe315208adc25193a43f78f058e3cb368ba2bdf57f14103476adfb7b4155c",
+    "negatives_runner_sha256": "9338d8eec9665a3e331dec21f5e48085bf5bbdf10fb6a234079c1bcf587b88a7",
+    "ablation_runner_sha256": "ab4c6236f01480a9d0f5f1682469078382931c53ac673f8b4358a0f5ada132e9",
+    "artifact_filename": "P76_Memory_Repair_DEV_Evidence.zip"
+  },
+  "authority": {
+    "independently_authenticated_science": "NOT_RUN",
+    "no_ood": true,
+    "forge_unchanged": true,
+    "no_scheduled_tasks": true,
+    "no_runner_dispatch": true,
+    "main_unchanged": true,
+    "no_merge": true,
+    "no_deployment": true
+  }
+}
