@@ -1,0 +1,78 @@
+{
+  "schema": "ttt-hybrid.p85mr-fitcal-firstuse-owner-run-route-amendment.v1",
+  "stage": "FROZEN_BEFORE_OWNER_BRANCH_WORKFLOW_IMPLEMENTATION_AND_BEFORE_ANY_CARTPOLE_SOURCE_USE",
+  "authority": {
+    "operator_approval": "User explicitly authorized exactly one branch-scoped single-use GitHub Actions workflow on the existing TTT-Hybrid dedicated runner in this conversation",
+    "date": "2026-11-11",
+    "firstuse_authorized": true,
+    "merge_authorized": false,
+    "workflow_only_once": true,
+    "artifact_only": true
+  },
+  "supersedes": {
+    "path": "experiments/p85mr_fitcal_firstuse_authorization_freeze.json",
+    "blob": "cde1faee905027b4069deb329149e73d48292394",
+    "only": [
+      "authority.no_new_workflow -> allowed exactly one named new branch-scoped one-use workflow",
+      "owner_context prior requirement workflow_dispatch protected main -> require source-locked branch push with run_number=1, run_attempt=1 and matching actor/runner"
+    ],
+    "preserves": [
+      "FIT 128/CAL 64 only",
+      "OOD/dev/heldout sealed",
+      "192 episode count, 96 max do per episode",
+      "one-time no uncertain-effect retry",
+      "P84 disjoint 448 seed schedule",
+      "upstream source Git SHA/blobs",
+      "source dependency exact verification",
+      "full native Windows+WSL final SHA regression before source reset",
+      "no runner creation, controller, scheduler, merge or deploy",
+      "no paid APIs, no hardware actuation beyond in-memory simulator"
+    ]
+  },
+  "execution": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/p85mr-authorized-fitcal-firstuse-20261111",
+    "workflow": ".github/workflows/p85mr-fitcal-firstuse-once.yml",
+    "event": "push",
+    "trigger_path": ".github/workflows/p85mr-fitcal-firstuse-once.yml",
+    "actor": "spoonman136668-ai",
+    "runner_name": "TTT-HYBRID-GPU-WIN",
+    "runner_labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "github_run_number": 1,
+    "github_run_attempt": 1,
+    "one_shot_source_commit": "MUST_EQUAL_EFFECTIVE_GITHUB_SHA_AND_PINNED_GIT_TREE",
+    "job_timeout_minutes": 75,
+    "hard_wsl_timeout_seconds": 2550,
+    "source_internal_timeout_seconds": 2400,
+    "no_retry": true,
+    "on_failure": "retain receipts/failure artifacts; do not replay same scientific split; no second push trigger permitted",
+    "evidence": "artifact only, no secrets, no ChatGPT Library or user workstation ledger"
+  },
+  "prerequisites": [
+    "Exact upstream checkout must already be present locally and clean; no git clone/fetch/network download from job",
+    "Existing WSL Python3.11 installed and pinned numpy/gymnasium/networkx/pydash/toposort",
+    "Actual runner native Windows+WSL CPU full regression and source negative control success on final SHA",
+    "Exact Git blob preflight and original scientific freeze custody",
+    "Repository/actor/branch/workflow/run-number/runner identity"
+  ],
+  "scientific_scope": {
+    "source": "CausalAILab/Causal-Gymnasium",
+    "commit": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "fit_seeds": "1810000000..1810000127",
+    "cal_seeds": "1810100000..1810100063",
+    "ood": "SEALED",
+    "fully_trained_controls": "NOT_INCLUDED_IN_FIRST_SOURCE_COLLECTION",
+    "science_pass": false
+  },
+  "source_parent": {
+    "pr": 209,
+    "qualified_head": "4d0d1c5e4af5c189a47e5ded5e76a3303eee0b72",
+    "source_freeze_blob": "cde1faee905027b4069deb329149e73d48292394"
+  },
+  "claim_limits": "A project-owned runner's past success does not certify it online now. A run failure before scientific source effects is an infrastructure/preflight failure, not scientific falsification. Any actual source effect is first use, even if the job fails afterward."
+}
