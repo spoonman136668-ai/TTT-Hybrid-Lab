@@ -5,7 +5,7 @@ import torch
 import pytest
 from experiments import p92_lowrank_twospeed_dev as p92
 
-ROOT=Path(__file__).resolve().parent
+ROOT=Path(__file__).resolve().parents[1]
 torch.set_num_threads(1)
 
 
