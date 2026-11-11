@@ -15,6 +15,28 @@ from p69_trainable_competitors import (
 MATCH_THRESHOLD = 0.85
 AUX_WEIGHT = 0.50
 
+P75_MODEL_SEEDS = (975201, 975203, 975207)
+P75_SAMPLER_SEED = 975299
+
+
+def model_from_p75_recipe(kind, seed):
+    """Independent P75 controls; model initialization does not perturb caller RNG."""
+    if kind not in ('gru', 'ssm') or seed not in P75_MODEL_SEEDS:
+        raise ValueError('P75_BAD_MODEL_SPEC')
+    with torch.random.fork_rng(devices=[]):
+        torch.manual_seed(seed)
+        return TrainedGRU() if kind == 'gru' else DiagonalContinuousSSM()
+
+
+def frozen_sample_indices(fit_world_count, updates=600, batch_size=32):
+    """One fixed factual-world index sequence shared by both training arms."""
+    if (not isinstance(fit_world_count,int) or fit_world_count <= 0 or
+            updates < 1 or updates > 600 or batch_size != 32):
+        raise ValueError('P75_BAD_SAMPLER')
+    generator = torch.Generator(device='cpu').manual_seed(P75_SAMPLER_SEED)
+    return torch.randint(fit_world_count,(updates,batch_size),generator=generator)
+
+
 
 def historical_match_mask(facts):
     """Only executed actions a[:t] determine if a[t] has a prior signed match.
