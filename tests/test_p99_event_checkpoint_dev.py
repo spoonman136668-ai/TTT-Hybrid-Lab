@@ -85,6 +85,26 @@ def test_p99_no_oracle_label_or_query_effect_credit_and_denied_observation():
         m.ingest(tiny["history"][:,:,:16],poisoned,~zero,start)
 
 
+def test_p99_transition_timing_rejects_early_occupancy():
+    # Changed-world context was entered BEFORE actual B at event 24;
+    # restored model was entered BEFORE actual A return at event 48.
+    # The earlier occupancy metric incorrectly counted both as timely.
+    w = {"changed_world": torch.tensor([True, False], dtype=torch.bool)}
+    modes = torch.zeros((2, 72), dtype=torch.int64)
+    modes[:, 20:45] = 1
+    modes[:, 45:] = 2
+    early = p99.diagnostic(modes, w)
+    assert early["mid_changed_12_count"] == 0
+    assert early["returned_12_count"] == 0
+    assert early["false_stable_switch_count"] == 1
+    modes[0, :] = 0
+    modes[0, 27:52] = 1
+    modes[0, 52:] = 2
+    timely = p99.diagnostic(modes, w)
+    assert timely["mid_changed_12_count"] == 1
+    assert timely["returned_12_count"] == 1
+
+
 def test_p99_frozen_dev_result_preserved_to_existing_ci_artifact(tmp_path):
     report=p99.run()
     assert report["freeze_commit"] == p99.FREEZE
