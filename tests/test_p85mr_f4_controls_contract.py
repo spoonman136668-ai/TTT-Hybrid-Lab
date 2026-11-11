@@ -65,3 +65,24 @@ def test_f4_original_baseline_contract_still_unmodified():
     old = (ROOT / "experiments/p85mr_t1_fitcal_engine_freeze.json").read_bytes()
     old_blob = hashlib.sha1(f"blob {len(old)}\0".encode() + old).hexdigest()
     assert old_blob == "7745855deaafdb80117e68ba437af27059005524"
+
+
+def test_f4r1_only_postblock_authorized_route():
+    r = f4.locked_r1_route(ROOT)
+    assert r["original_f4"]["run_id"] == 43079777841
+    assert r["original_f4"]["model_training_updates"] == 0
+    assert r["original_f4"]["original_attempt_consumed"] is True
+    assert f4.WORKFLOW == ".github/workflows/p85mr-f4r1-postblock-fitcal-once.yml"
+    assert f4.FROZEN_WORKFLOW == ".github/workflows/p85mr-f4-train-controls-once.yml"
+
+
+def test_f4r1_python_isolated_cli_import_only_no_source_use():
+    # This exact -I -B invocation previously failed BEFORE training on owner WSL.
+    # It must import the original P80/P85 adapters in both Linux and Windows.
+    import subprocess
+    cmd = [sys.executable, "-I", "-B",
+           str(ROOT / "experiments/p85mr_f4_train_controls.py"), "--help"]
+    completed = subprocess.run(cmd, capture_output=True, text=True, timeout=35)
+    assert completed.returncode == 0, completed.stderr[-1500:]
+    assert "--source-archive" in completed.stdout
+    assert "--receipt" in completed.stdout
