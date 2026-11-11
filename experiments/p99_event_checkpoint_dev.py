@@ -19,6 +19,7 @@ from experiments import p86_portable_causal_preflight as p86
 from experiments import p97_recurrent_context_dev as p97
 
 FREEZE = "910ffd2d0fe68ec1f52d49b4e266e31db2d1736a"
+FREEZE_BLOB = "0bcf6c248f0f468f998aa18112d984f13283bb83"
 D = 16
 SEEDS = {"A_FIT": 990111, "A_CAL": 990113,
          "B_FIT": 990211, "B_CAL": 990213}
@@ -320,7 +321,10 @@ def run():
     torch.set_num_threads(1)
     torch.use_deterministic_algorithms(True)
     root = Path(__file__).resolve().parents[1]
-    freeze = json.loads((root/"experiments/p99_event_checkpoint_frozen.json").read_text())
+    freeze_path = root/"experiments/p99_event_checkpoint_frozen.json"
+    if p86.blob(freeze_path) != FREEZE_BLOB:
+        raise ValueError("P99_FROZEN_CONTRACT_BLOB_DRIFT")
+    freeze = json.loads(freeze_path.read_text())
     if freeze["schema"] != "ttt-hybrid.p99-event-driven-checkpoint-dev-freeze.v1":
         raise ValueError("P99_FREEZE_SCHEMA_DRIFT")
     for path, digest in BLOBS.items():
@@ -329,7 +333,10 @@ def run():
     if freeze["new_source"]["seeds"] != {**SEEDS, **{"OOD_RESERVED":990117,"NEGATIVE_RESERVED":990119}}:
         raise ValueError("P99_PROTOCOL_SOURCE_DRIFT")
     if (freeze["frozen_method"]["shock_threshold_grid"] != list(SHOCK)
-        or freeze["frozen_method"]["shock_persistence_grid"] != list(PERSIST)):
+        or freeze["frozen_method"]["shock_persistence_grid"] != list(PERSIST)
+        or freeze["frozen_method"]["restore_relative_threshold"] != .8
+        or freeze["frozen_method"]["restore_persistence"] != 2
+        or freeze["frozen_acceptance"]["CPU_full_episode_ratio_to_fit_W256_max"] != 3.):
         raise ValueError("P99_PROTOCOL_GRID_DRIFT")
     out = {"schema":"ttt-hybrid.p99-event-checkpoint-dev-result.v1",
            "freeze_commit":FREEZE, "status":"NOT_RUN", "scientific_pass":False,
