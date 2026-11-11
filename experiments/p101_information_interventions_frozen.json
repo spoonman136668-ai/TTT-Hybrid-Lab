@@ -1,0 +1,157 @@
+{
+  "schema": "ttt-hybrid.p101-information-directed-causal-intervention-dev-freeze.v1",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_SOURCE_BIRTH_IMPLEMENTATION_OR_CAL",
+  "identity": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/p101-information-directed-causal-interventions-20261111",
+    "parent_sha": "5f932c24f37c396e7d1d0f89f40321303a14be24",
+    "parent_pr": 226,
+    "p99_dev_hypothesis": "FAIL",
+    "unrelated_parallel_p100": "different owner / scale-normalized change detector",
+    "do_not_reuse_p99_cal": true,
+    "blobs": {
+      "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+      "experiments/p86_portable_causal_preflight.py": "008492665ee9090db5791963f2e2336ea283ee62",
+      "experiments/p97_recurrent_context_dev.py": "74030c3d7d2f5f51781c740493be21d3c769792d",
+      "experiments/p98_blind_switch_diagnostics.py": "7cd9521c2ceaa6f84f2128ba16d37ceaae7ff006",
+      "experiments/p99_event_checkpoint_dev.py": "23279971d2f7531716c349991d6fd56095656c9e"
+    }
+  },
+  "hypothesis": "Information-directed intervention acquisition from identical observed-action candidate sets, with identical online ridge learners and equal confirmed outcome calls, improves out-of-sample causal consequence predictions vs the strongest fully trained passive intervention policy; maintains exact cold Task-0 knowledge after Task-1.",
+  "source": {
+    "kind": "FRESH AUTHOR-SYNTHETIC DEVELOPMENT; NOT EXTERNAL OR OOD",
+    "families": [
+      "isotropic",
+      "anisotropic"
+    ],
+    "seeds": {
+      "isotropic": {
+        "FIT": [
+          1010111,
+          1010113,
+          1010119
+        ],
+        "CAL": [
+          1010127,
+          1010131,
+          1010133
+        ]
+      },
+      "anisotropic": {
+        "FIT": [
+          1010211,
+          1010217,
+          1010223
+        ],
+        "CAL": [
+          1010227,
+          1010229,
+          1010233
+        ]
+      },
+      "OOD_RESERVED": [
+        1010401,
+        1010403
+      ],
+      "NEGATIVE_RESERVED": [
+        1010501,
+        1010503
+      ]
+    },
+    "worlds_per_seed": {
+      "FIT": 24,
+      "CAL": 12
+    },
+    "tasks": [
+      "Task0",
+      "Task1"
+    ],
+    "task_change_announced_to_all_policies": true,
+    "causal_map": "two independent world-specific rank4 16x16 M=V@U.T/256, deterministic P86 basis seeded independently by task and world",
+    "interventions_per_task": 8,
+    "candidate_actions_per_intervention": 8,
+    "query_actions_per_task": 12,
+    "action_dim": 16,
+    "effect_dim": 16,
+    "action_candidates": "seeded 16D integer /128 (anisotropic scales coordinate j by floor-div 2**(j%4)), normalized to unit; generated before choice, same for all policies",
+    "outcome_boundary": "WorldEnvironment observes committed selected integer candidate index, then returns ONLY selected action's M@normalized(action); no counterfactual outcome or latent M to chooser",
+    "query_boundary": "12 novel independent actions withheld from learner; evaluator-only outcomes generated after task training",
+    "source_salts": {
+      "u0": "p101-u0",
+      "v0": "p101-v0",
+      "u1": "p101-u1",
+      "v1": "p101-v1",
+      "candidate": "p101-action",
+      "query": "p101-probe",
+      "random_policy": "p101-random"
+    },
+    "no_prior_P86_P99_FIT_CAL_reuse": true
+  },
+  "learner": {
+    "kind": "identical regularized online recursive least squares for every policy",
+    "input_output": "confirmed action16 -> effect16 causal map, no tokens",
+    "prior_lambda": 0.5,
+    "model_state_per_task": "W 16x16 float64 + P inverse precision 16x16 float64; 512 floats per task, 1024 total for two tasks",
+    "update": "P' = P - (Pk)(Pk)^T/(1+k^T Pk), W' = W + (y-Wk)(Pk)^T/(1+k^T Pk), only AFTER confirmed selected effect",
+    "independent_task_states": true,
+    "Task0_snapshot_before_Task1": true,
+    "Task0_cold_probe_after_Task1_readonly": true,
+    "all_controls_exact_same_capacity_update_precision": true
+  },
+  "policies": {
+    "candidate": "max_variance: choose candidate with highest k.T@P@k, first-index tie; no outcome lookahead",
+    "strong_passives": [
+      "hash_random",
+      "cyclic",
+      "max_norm"
+    ],
+    "hash_random": "independent seeded candidate index without effect",
+    "cyclic": "index = time step mod 8",
+    "max_norm": "choose candidate with largest unnormalized candidate vector norm, first-index tie",
+    "selection": "One strongest passive per FAMILY and FIT seed (same index 0/1/2 as its CAL seed), selected on FIT only by world-averaged (Task0+Task1) heldout MSE; first tie by listed passive ordering; no CAL-dependent selection",
+    "same_8x2_outcome_budget": true,
+    "identical_8x8_candidates_at_each_step_for_all": true,
+    "all_recover_unmodified_task0_snapshot": true,
+    "all_passive_controls_reported": true,
+    "zero_effect_control": true
+  },
+  "acceptance": {
+    "primary": "CAL mean per-world two-task 16D effect MSE under 12 withheld query actions per task, lower better; world mean then seed mean",
+    "candidate_vs_strongest_passive_primary_ratio_max": 0.85,
+    "task1_ratio_max": 0.95,
+    "task0_cold_ratio_max": 0.95,
+    "require_at_least_two_of_three_CAL_seeds_each_family_ALL_criteria": true,
+    "require_per_family_median_ratio_max": 0.85,
+    "wrong_action_credit_MSE_ratio_min": 1.05,
+    "no_future_oracle_leak": true,
+    "unselected_effect_unavailable": true,
+    "Task0_cold_restore_bitwise_exact": true,
+    "exact_16_actions_per_world": true,
+    "candidate_full_episode_cpu_ratio_max": 3,
+    "source_sha256_exact_cross_platform": true,
+    "scientific_pass": false
+  },
+  "measurement": {
+    "device": "CPU only, deterministic torch, 1 thread",
+    "budget": "12 FIT worlds? EXACT 24 FIT/12 CAL per seed, 6 seed pairs total, 16 confirmed source calls per world per policy",
+    "matched_cpu": "each policy entire 2-task 16 intervention choose+confirmed oracle+model-write+24 novel query read on fixed 8 world batch; 2 warmups +7 timed trials; no diagnostic telemetry in timed block",
+    "per_run_max_seconds": 850,
+    "fit_only_passive_choice": true,
+    "no_CAL_tuning": true,
+    "per_world_selected_action_journal_hash": true,
+    "source_hashes_by_split_seed": true,
+    "negative_controls": "counterfactual label sealed, wrong-time credit destroys learned causality, cold checkpoint, read-only queries"
+  },
+  "qualification": {
+    "source": "P86 original and P97/P98/P99 original SHA/frozen source unchanged",
+    "platforms": "G4 Windows+Ubuntu full final regression; G5 native TTT CPU both OS; G7 pinned Mamba2 Ubuntu CPU",
+    "test": "existing G4 pytest and existing artifact local_runs/p101_dev_result.json, no new workflows",
+    "science": "DEVELOPMENT_ONLY; external transfer, native Hybrid learnable intelligence and RSI NOT proven",
+    "deployment": "NONE",
+    "no_merge": true,
+    "no_scheduler": true,
+    "no_runner_or_controller_mutation": true,
+    "no_paid_APIs": true,
+    "no_library_evidence": true
+  }
+}
