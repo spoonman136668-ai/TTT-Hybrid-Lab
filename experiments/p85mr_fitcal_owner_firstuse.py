@@ -12,6 +12,7 @@ import importlib.metadata
 import json
 import math
 import os
+import signal
 from pathlib import Path
 import subprocess
 import sys
@@ -197,8 +198,23 @@ def _put_new(path,object_):
     return hashlib.sha256(raw).hexdigest()
 
 
+def _append_progress(path, event):
+    raw=(json.dumps(event,sort_keys=True,allow_nan=False)+"\n").encode()
+    if path.exists() and path.stat().st_size+len(raw)>MAX_OUTPUT:
+        raise ValueError("P85F1_PROGRESS_BUDGET")
+    with path.open("ab") as f:
+        f.write(raw)
+        f.flush()
+        os.fsync(f.fileno())
+
+
 def collect_one_shot(*,source_root,project_root,environ=None):
     owner=owner_context(os.environ if environ is None else environ)
+    # The authorized owner route executes in WSL Linux, never on GH-hosted
+    # PR runners. A hard alarm bounds a stalled external env.do call.
+    if (os.name!="posix" or not hasattr(signal,"SIGALRM") or
+            "microsoft" not in os.uname().release.lower()):
+        raise PermissionError("P85F1_WRONG_EXECUTION_OS")
     src,project,scope=preflight(source_root,project_root,owner)
     base=project/"evidence"/"p85mr_fitcal_firstuse"
     base.mkdir(parents=True,exist_ok=True)
@@ -210,6 +226,11 @@ def collect_one_shot(*,source_root,project_root,environ=None):
         "upstream_sha":UPSTREAM_SHA,"cohorts":["fit","cal"],
         "max_actions":MAX_ACTIONS,"ood_opened":False})
     begun=time.monotonic()
+    previous_handler=signal.getsignal(signal.SIGALRM)
+    def _time_limit(_signum,_frame):
+        raise TimeoutError("P85F1_HARD_WALL_CLOCK_STOP")
+    signal.signal(signal.SIGALRM,_time_limit)
+    signal.alarm(MAX_SECONDS)
     total=0
     summary={}
     try:
@@ -220,6 +241,9 @@ def collect_one_shot(*,source_root,project_root,environ=None):
             short=[]
             for index in range(n):
                 world=observed_episode(factory,task,split,index,regime,owner["run_id"],begun+MAX_SECONDS)
+                # Preserve every completed episode BEFORE the next effectful
+                # reset, including early-short and terminal observations.
+                _append_progress(attempt/(split+".ndjson"),world)
                 total+=len(world["transitions"])
                 if total>MAX_ACTIONS:
                     raise ValueError("P85F1_ACTION_BUDGET")
@@ -258,6 +282,9 @@ def collect_one_shot(*,source_root,project_root,environ=None):
             "failure_type":type(exc).__name__,"actions_so_far":total,
             "ood_created":False,"science_pass":False})
         raise
+    finally:
+        signal.alarm(0)
+        signal.signal(signal.SIGALRM,previous_handler)
 
 
 def main():
