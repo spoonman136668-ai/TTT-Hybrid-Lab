@@ -1,0 +1,90 @@
+{
+  "schema": "ttt-hybrid.p79-bounded-TTT-convergence-strong-baseline.v1",
+  "state": "FROZEN_BEFORE_SOURCE_GENERATION",
+  "classification": "AUTHOR_SYNTHETIC_DEVELOPMENT_ONLY",
+  "parent": {
+    "pr": 191,
+    "sha": "590cdab8a345f8ace52680d1291c499a115ac4e8",
+    "p78_status": "DEV_FAIL_TERMINAL_CHECKPOINT_2_OF_3_OOD_UNGENERATED",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p78_source_blob": "02ea492f8a3b61bb37f53b933ade3e0334b6a379"
+  },
+  "hypothesis": "An extended predeclared training budget may permit bounded raw-identity 256-float TTT to converge on freshly seeded task; to qualify it must beat both native original trained readout AND the strongest 256-float untrained factual memory, with explicit compute mismatch disclosure.",
+  "source": {
+    "seeds": {
+      "fit": 790111,
+      "val": 790113,
+      "ood_dev": 790117,
+      "negative": 790119
+    },
+    "worlds": {
+      "fit": 256,
+      "val": 128,
+      "ood_dev": 128,
+      "negative": 64
+    },
+    "dimension": 16,
+    "events_fit_val": 24,
+    "events_ood": 48,
+    "generator": "Independent new P78-family worlds: eight per-world orthogonal 16D action keys with independent tanh 16D effects each repeated twice, plus eight FIT/VAL or 32 OOD unique random normalized distractor keys/effects. Uniform random interleaving; final simulated executed action query with 16 zero future consequence features. Historical updates see only executed action and observed effect, no roles or final target.",
+    "audit": "FIT and VAL 4-position quartile max departure <=0.05 and index-only balanced accuracy<=0.55, deterministic cohort SHA, zero future query effect, no P65-P78 cohort reuse. No OOD generation until validation gate."
+  },
+  "model": {
+    "reference": "Exact original HybridPilot(32,16,width16,heads2,SSM,attention,TTT,depth) from pinned model.py; frozen original stem/SSM/attention/TTT key/query/value/depth. Train only original ttt.proj and head; distinct seeds 790201,790203,790207.",
+    "seeds": [
+      790201,
+      790203,
+      790207
+    ],
+    "arms": [
+      "raw_internal",
+      "native_original",
+      "no_memory"
+    ],
+    "state": "256-float per world raw fast-state W using raw normalized action and observed effect, eta=.5, no other raw memory, cold restores bitwise. Original SSM and attention also have memory costs beyond 256 floats.",
+    "conventional": [
+      "fixed direct 256-float raw-fast matrix",
+      "fixed direct 256-float P72 frequency cache",
+      "zero predictor"
+    ]
+  },
+  "training": {
+    "updates": 420,
+    "batch": 16,
+    "validation_every": 30,
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.01,
+    "clip": 1,
+    "sampler_seed": 790299,
+    "CPU_threads": 1,
+    "max_wall_seconds": 240,
+    "checkpoint_selection": "lowest validation MSE only",
+    "pairing": "same initial full core weights and exact training sample indices for three arms per seed",
+    "convergence": "each raw_internal best checkpoint <=390 (never terminal 420), last two validation MSE <=1.05x best validation MSE. Otherwise STOP and preserve negative.",
+    "cost": "record full training/feature extraction/inference time and trainable parameter/state counts; zero-parameter fixed baselines omit core SSM/attention and are NOT same whole-process FLOPs."
+  },
+  "eligibility": {
+    "pre_ood": "All FIT/VAL audit, cold restore, exact original parameter, state and seed independence checks PASS. Both fixed 256-float baselines each <=0.75 zero VAL. Every raw_internal seed must <=0.95 strongest fixed direct 256-float baseline VAL, <=0.75 paired trained original native VAL, <=0.75 zero VAL AND meet 390-step and 5%-late-plateau convergence. All arms complete 420 updates. On any failure do not generate or score OOD.",
+    "ood": "Single new OOD dev cohort 128 worlds of 48 facts ONLY after all validation gates. Each raw_internal model <=0.90 strongest 256-float direct fixed baseline OOD, <=0.75 paired native model OOD, plus 2000 world bootstrap 95% lower relative gain >0 with seed 790401.",
+    "negative": "On newly generated independent negative worlds shuffle action/effect credit in past history; raw_internal wrong-credit MSE >=1.4x clean MSE per seed; bitwise cold restore and original source unchanged.",
+    "status": "DEV_PASS only if all frozen checks PASS; otherwise DEV_FAIL. Any DEV_PASS is engineering synthetic only, NOT SCIENTIFIC_PASS or full-model learning or matched whole-process efficiency."
+  },
+  "authority": {
+    "no_original_source_edits": true,
+    "no_main_edits": true,
+    "no_forge": true,
+    "no_runner_changes": true,
+    "no_workflow_dispatch": true,
+    "no_scheduled_tasks": true,
+    "no_paid_API": true,
+    "no_merge": true,
+    "no_independent_physical_science_first_use": true
+  },
+  "status": {
+    "source_generated": false,
+    "trained": false,
+    "ood_scored": false,
+    "scientific_pass": false
+  }
+}
