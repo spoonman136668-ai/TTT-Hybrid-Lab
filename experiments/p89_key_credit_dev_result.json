@@ -1,0 +1,225 @@
+{
+  "schema": "ttt-hybrid.p89-action-key-credit-frozen-dev-result.v1",
+  "stage": "P89_FROZEN_AUTHOR_SYNTHETIC_DEV_RESULT_SOURCE_EXACT_LOCAL",
+  "freeze_commit": "750dd41bbd66e372ae13b4e1b2a1246f6f9a9d9e",
+  "parent": {
+    "pr": 210,
+    "sha": "84073dda997d4ef431ee899418cc058046e08bfb",
+    "P88_science": "DEV_FAIL",
+    "P88_missing_local_study_source_on_repo": true
+  },
+  "repo_files": {
+    "source": "experiments/p89_key_credit_dev.py",
+    "source_git_blob": "3441742393dd66427f04bfc31b6047b8b5e04b7b",
+    "source_sha256": "95197600749760f3d2c487a14140a6c665b2af8ff06a82b81fd53fd59f635220",
+    "tests": "tests/test_p89_key_credit_dev.py",
+    "tests_git_blob": "fdf57e0bca4908232405b469bceb4e7ca44e9642",
+    "local_unabridged_receipt_sha256": "LOCAL_RESULT_BYTES_SEPARATE_IF_PRESENT"
+  },
+  "local_qualification": {
+    "platform": "Linux CPU",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "threads": 1,
+    "focused_tests": {
+      "passed": 8,
+      "failed": 0,
+      "wall_seconds": 3.32
+    },
+    "study_wall_seconds": 0.5957540380004502,
+    "final_exact_candidate_windows_linux": "PENDING"
+  },
+  "source": {
+    "FIT": {
+      "n": 128,
+      "seed": 890111,
+      "sha256": "d7eaa4d2fbb99be7cc9eff9e13c8a0f36bcc5dc74f558c1ae52901195fa981d7",
+      "audited_pass": true
+    },
+    "VAL": {
+      "n": 64,
+      "seed": 890113,
+      "sha256": "c0fd5bfc2c3d0b7ec605e31a3b538353f732376d32e60fbdb6f816fb80fc7cd2",
+      "audited_pass": true
+    },
+    "OOD_reserved": 890117,
+    "OOD_generated": false,
+    "causal_interventions": "48 actual interventions with effects, 49th novel action effect withheld; hidden rank4 mechanism change in half worlds",
+    "P78_cold_restore_bitwise": true
+  },
+  "fixed_controls": {
+    "raw_fast_256": {
+      "final": 0.002830254379659891,
+      "stable": 0.0012395407538861036,
+      "changed": 0.004420967772603035,
+      "late": 0.004173811059445143
+    },
+    "zero": {
+      "final": 0.013142788782715797,
+      "stable": 0.013917784206569195,
+      "changed": 0.012367794290184975,
+      "late": 0.01222766749560833
+    },
+    "wrong_credit": {
+      "final": 0.022009117528796196,
+      "stable": 0.023007502779364586,
+      "changed": 0.021010730415582657,
+      "late": 0.021727006882429123
+    },
+    "wrong_credit_pass": true,
+    "P86_original_online_bitwise_tolerance_parity": true
+  },
+  "model_custody": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "experiments/p86_portable_causal_preflight.py": "008492665ee9090db5791963f2e2336ea283ee62",
+    "experiments/p87_native_causal_falsifier.py": "18713cdd7c04f0c22ec33dad7d2f158b6fd59c24"
+  },
+  "model_seeds": [
+    890201,
+    890203,
+    890207
+  ],
+  "rows": [
+    {
+      "seed": 890201,
+      "original_model_SHA256": "e50bc77551e32aa44068bd626833e7d8054b2d43302fe92f1adac5cb3df66482",
+      "action_ridge_SHA256": "ae6c9cd1f30af4f1e140de2895d99815054082b03450a2ad19f742238323b1d8",
+      "trainable_extra_ridge_coefficients": 272,
+      "per_seed_cpu_seconds": 0.05688106999878073,
+      "scores": {
+        "context_mismatched": {
+          "final": 0.017389433458447456,
+          "stable": 0.016761861741542816,
+          "changed": 0.018017005175352097,
+          "late": 0.01784677617251873
+        },
+        "context_shared": {
+          "final": 0.016691625118255615,
+          "stable": 0.016068298369646072,
+          "changed": 0.017314955592155457,
+          "late": 0.016353296115994453
+        },
+        "raw_direct": {
+          "final": 0.002830254379659891,
+          "stable": 0.0012395407538861036,
+          "changed": 0.004420967772603035,
+          "late": 0.004173811059445143
+        },
+        "ridge_recovered_action": {
+          "final": 0.0077928039245307446,
+          "stable": 0.0062092021107673645,
+          "changed": 0.009376405738294125,
+          "late": 0.008628337644040585
+        },
+        "stem_shared": {
+          "final": 0.012500153854489326,
+          "stable": 0.011171320453286171,
+          "changed": 0.013828990049660206,
+          "late": 0.01263092365115881
+        }
+      }
+    },
+    {
+      "seed": 890203,
+      "original_model_SHA256": "b61900b6aa4e045d6854cfb12daab460f436ceff7d129862f322e74af620a235",
+      "action_ridge_SHA256": "ee25fa2390d8e9203c2814a46688b3570598b56b1b75fcea6709ae048245dbfa",
+      "trainable_extra_ridge_coefficients": 272,
+      "per_seed_cpu_seconds": 0.05183138699976553,
+      "scores": {
+        "context_mismatched": {
+          "final": 0.018503280356526375,
+          "stable": 0.019241465255618095,
+          "changed": 0.017765095457434654,
+          "late": 0.01849519833922386
+        },
+        "context_shared": {
+          "final": 0.017001084983348846,
+          "stable": 0.015400932170450687,
+          "changed": 0.01860123686492443,
+          "late": 0.01678880676627159
+        },
+        "raw_direct": {
+          "final": 0.002830254379659891,
+          "stable": 0.0012395407538861036,
+          "changed": 0.004420967772603035,
+          "late": 0.004173811059445143
+        },
+        "ridge_recovered_action": {
+          "final": 0.009007129818201065,
+          "stable": 0.009411388076841831,
+          "changed": 0.008602871559560299,
+          "late": 0.008779600262641907
+        },
+        "stem_shared": {
+          "final": 0.012453830800950527,
+          "stable": 0.010152481496334076,
+          "changed": 0.014755180105566978,
+          "late": 0.012530623935163021
+        }
+      }
+    },
+    {
+      "seed": 890207,
+      "original_model_SHA256": "d4c367dca99b27f528211007dad4de2cadcdd2e59a5a8c8fd431387d7dbccf8d",
+      "action_ridge_SHA256": "513b35008dc7168dea312a5747547a0d3f574f4022df864c30c37d0f6df8b960",
+      "trainable_extra_ridge_coefficients": 272,
+      "per_seed_cpu_seconds": 0.050002253001366626,
+      "scores": {
+        "context_mismatched": {
+          "final": 0.01931186579167843,
+          "stable": 0.020243128761649132,
+          "changed": 0.018380604684352875,
+          "late": 0.018800856545567513
+        },
+        "context_shared": {
+          "final": 0.015399536117911339,
+          "stable": 0.015157804824411869,
+          "changed": 0.015641268342733383,
+          "late": 0.016059301793575287
+        },
+        "raw_direct": {
+          "final": 0.002830254379659891,
+          "stable": 0.0012395407538861036,
+          "changed": 0.004420967772603035,
+          "late": 0.004173811059445143
+        },
+        "ridge_recovered_action": {
+          "final": 0.009798726998269558,
+          "stable": 0.007821589708328247,
+          "changed": 0.01177586242556572,
+          "late": 0.009672218933701515
+        },
+        "stem_shared": {
+          "final": 0.011427655816078186,
+          "stable": 0.009288067929446697,
+          "changed": 0.013567243702709675,
+          "late": 0.012793416157364845
+        }
+      }
+    }
+  ],
+  "frozen_signatures": {
+    "mismatched_key_failure_three_of_three": false,
+    "context_mixing_harm_three_of_three": false,
+    "FIT_only_action_ridge_recovery_three_of_three": false
+  },
+  "decision": {
+    "status": "DEV_INCONCLUSIVE_OR_NEGATIVE",
+    "reason": "None of the three prespecified all-seed signatures is met. All frozen native key geometry and context routes are much worse than true raw-action 256-float fast state, but the specific key mismatch, context mixing, or FIT-only ridge rescue cannot be uniquely identified as the trained-model causal failure.",
+    "scientific_pass": false,
+    "full_model_trained": false,
+    "whole_process_cost_matched": false,
+    "external_source_used": false,
+    "no_OOD_birth": true
+  },
+  "isolation": {
+    "original_model_unchanged": true,
+    "P84_MR_unchanged": true,
+    "FORGE_unchanged": true,
+    "main_unchanged": true,
+    "runner_changes": false,
+    "new_schedules": false,
+    "merge": false,
+    "deployment": false
+  }
+}
