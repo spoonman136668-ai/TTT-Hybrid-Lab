@@ -1,0 +1,102 @@
+{
+  "schema": "ttt-hybrid.p98-blinded-context-switch-diagnostics-dev-freeze.v1",
+  "status": "FROZEN_BEFORE_NEW_SOURCE_BIRTH_OR_CODE",
+  "identity": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/p98-blind-context-switch-diagnostics-20261111",
+    "parent_pr": 222,
+    "parent_sha": "94e3370f4869869effd19a6d849cc93a722f2bde",
+    "p97_source_sha": "74030c3d7d2f5f51781c740493be21d3c769792d",
+    "p97_freeze_blob": "469783262784a766c556dcf247393595c8609aef",
+    "p86_source_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "question": "Does the P97 two-context failure associate with false context switches on stable worlds, or with failure to detect true returning contexts, on entirely fresh author-synthetic FIT/CAL cohorts?",
+  "hypotheses": {
+    "H1_false_positive": "If stable-world flip fraction > 0.20 in both CAL families, P97's thresholding has excessive false routing under stable causal dynamics.",
+    "H2_performance_association": "Among stable-world CAL, flipped worlds have at least 1.25x the P97 final read-only query MSE of stable worlds that never flipped, in both families. An association not proof of causal mechanism.",
+    "H3_detection": "At least 75% of true changed-worlds switch to the alternative context within 12 observations of B arrival (events 24:35) and return to original model within 12 observations of A return (events 48:59), both families.",
+    "H4_budget": "Full 72-event P97 read+write and three held-out query operation has <=3x median CPU vs 256-float FIT-selected conventional baseline, benchmark on matched 8 worlds.",
+    "interpretation": "Diagnostic: if H1+H2 hold both families, false routing is a plausible contributor, not proven cause; if not, prefer redesign of context signal/non-stationary update over retuning P97 CAL. All H1-H4 plus negatives needed for diagnostic target PASS, not SCIENTIFIC_PASS."
+  },
+  "source": {
+    "type": "author-synthetic NEW seeded dyadic causal action-effect 16D source; no external simulator, no prior P97 FIT/CAL, no protected OOD",
+    "families": {
+      "A": "isotropic integer action /128",
+      "B": "anisotropic coordinate-wise integer floor divide by 2**(j%4)"
+    },
+    "seeds": {
+      "A_FIT": 980111,
+      "A_CAL": 980113,
+      "B_FIT": 980211,
+      "B_CAL": 980213,
+      "OOD_RESERVED": 980117,
+      "NEGATIVE_RESERVED": 980119
+    },
+    "worlds": {
+      "FIT": 128,
+      "CAL": 64
+    },
+    "events": 72,
+    "phase_lengths": [
+      24,
+      24,
+      24
+    ],
+    "true_regime": "Half changed A-B-A, half stable A-A-A, sorted by blinded deterministic hash; no labels passed to learner",
+    "probes": "3 fresh withheld actions after event 24,48,72, read-only; no ground-truth effect fed to model",
+    "independence": "All four split seeds distinct from prior P97, P96 and protected unseen seeds; source byte fingerprints recorded for crossplatform reproducibility."
+  },
+  "candidate": {
+    "unchanged_class": "experiments.p97_recurrent_context_dev.RecurrentContextMemory",
+    "exact_code_blob": "74030c3d7d2f5f51781c740493be21d3c769792d",
+    "memory": "514 float32 predictive state + five integer control tensors",
+    "threshold_grid": {
+      "surprise": [
+        2,
+        3
+      ],
+      "alternative": [
+        0.5,
+        0.7
+      ]
+    },
+    "selection": "FIT-only best all-probe MSE; early tie retains earliest; CAL scored exactly once per family, no after-CAL parameter choice",
+    "diagnostics": "Step-by-step observed active route transitions without looking at regime flags inside model; evaluator has hidden switch labels only for scoring",
+    "no_change_to_existing_P97": true
+  },
+  "controls": {
+    "W256_GRID": {
+      "eta": [
+        0.5,
+        1,
+        1.5
+      ],
+      "decay": [
+        0.95,
+        0.99,
+        1
+      ]
+    },
+    "W256_SELECTION": "FIT-only lowest three-probe MSE independently per family",
+    "extra": "zero, fixed W256 eta1 decay .99, wrong-time credit roll13, unconfirmed NaN masked no write, bitwise 24+24+24 restore",
+    "capacity_matched": "W256 256 float plus 258 inert values; disclose state+int control overhead",
+    "compute": "one CPU thread, median 7 runs after 2 warmups at batch8, entire original P97 episode vs W256 episode; diagnostic telemetry excluded from latency measurement",
+    "protocol": "No oracle regime flags used in model, no model first-use, no original Hybrid edits, no prior CAL data used in selection"
+  },
+  "qualification": {
+    "tests": "Source freeze hash, new source hash cross OS, unique worlds, no protected seeds; route segmented bitwise parity; confirm-only controls, wrong-credit, no oracle; present numeric DEV_FAIL or DEV_DIAGNOSTIC_PASS under frozen criteria",
+    "mandatory": "Full exact candidate G4 Windows+Ubuntu and G5 Windows+Ubuntu and G7 Ubuntu CPU; no extra workflow/test-only dispatch",
+    "scientific_pass": false,
+    "interpretation": "Author-synthetic development only; actual unseen causal transfer, trained intelligence and RSI not established."
+  },
+  "isolation": {
+    "no_merge": true,
+    "no_runner_scheduler_controller_workflow_change": true,
+    "no_ood_birth": true,
+    "no_paid_api": true,
+    "no_original_model_change": true,
+    "no_F3_real_data_training": true,
+    "repo_only_evidence": true
+  }
+}
