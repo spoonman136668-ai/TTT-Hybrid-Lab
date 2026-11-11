@@ -1,0 +1,138 @@
+{
+  "schema": "ttt-hybrid.p85mr-f3-independent-repaired-fitcal-source-firstuse-freeze.v1",
+  "status": "FROZEN_BEFORE_F3_CODE_AND_EXTERNAL_EFFECTS",
+  "authority": {
+    "operator": "Standing chat authorization for bounded Unconventional Training trials/tests, reaffirmed next gate 2026-11-11",
+    "scope": "Exactly one new owner-scoped FIT128/CAL64 source-firstuse attempt, once only after exact qualifications",
+    "not_source": "F1/F2 spent attempts are historical pre-effect failures; never replay, rerun or alter their freezes",
+    "effects_started": false,
+    "one_run_number": 1,
+    "one_run_attempt": 1,
+    "no_replay": true,
+    "no_new_controller": true,
+    "no_scheduler": true,
+    "no_paid_api": true,
+    "no_merge": true
+  },
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 219,
+    "sha": "b4c273251a3a8e24fb22ccd850579111e5a73527",
+    "r3_owner_run": 43054709366,
+    "r3_engineering_artifact_id": 13869564824,
+    "r3_artifact_sha256": "1240602593c84280c7c8b47255a1648eecbf0f32defdad7398afe228caf35b42",
+    "f2_original_sha": "55faf21d05de4a6b62af52666130517e3aeb260e",
+    "f2_original_collector_blob": "f5deeed08624d4dbe878a58e6869c9c4bb062ae3",
+    "f2_original_launcher_blob": "d55070fa9bb509b96eb84f003e5f34aa348a85af"
+  },
+  "execution": {
+    "branch": "research/p85mr-f3-repaired-fitcal-once-20261111",
+    "workflow": ".github/workflows/p85mr-f3-repaired-fitcal-once.yml",
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "actor": "spoonman136668-ai",
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "runner_labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "distribution": "Ubuntu-24.04",
+    "uid": 1000,
+    "event": "push",
+    "run_number": 1,
+    "run_attempt": 1,
+    "no_PR_CI_source_effects": true,
+    "wall_seconds": 2400,
+    "external_timeout_seconds": 2550,
+    "max_episode_steps": 96,
+    "max_actions": 18432,
+    "artifact_only": true,
+    "source_branch_trigger_file_created_last": true
+  },
+  "source": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "checkout_path": "p85mr-upstream-f3",
+    "checkout_action_sha": "11d5960a326750d5838078e36cf38b85af677262",
+    "source_blobs": {
+      "causal_gym/envs/cartpole_wind.py": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "causal_gym/core/pch.py": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "causal_gym/core/task.py": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+      "causal_gym/core/scm.py": "f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5"
+    },
+    "license_note": "Public upstream has previously observed malformed/truncated license; execution is non-redistributive ephemeral source checkout only. No third-party source vendored, bundled or promoted."
+  },
+  "runtime": {
+    "path_alias": "p85mr-causalgym-cpu311-r3",
+    "python_minor": "3.11",
+    "package_pins": {
+      "numpy": "1.26.4",
+      "gymnasium": "0.29.1",
+      "networkx": "3.4.2",
+      "pydash": "8.0.5",
+      "toposort": "1.10",
+      "cloudpickle": "3.0.0",
+      "farama-notifications": "0.0.4",
+      "typing-extensions": "4.12.2"
+    },
+    "wheel_sha256": {
+      "numpy": "666dbfb6ec68962c033a450943ded891bed2d54e6755e35e5835d63f4f6931d5",
+      "gymnasium": "61c3384b5575985bb7f85e43213bcb40f36fcdff388cae6bc229304c71f2843e",
+      "networkx": "df5d4365b724cf81b8c6a7312509d0c22386097011ad1abe274afd5e9d3bbc5f",
+      "pydash": "b2625f8981862e19911daa07f80ed47b315ce20d9b5eb57aaf97aaf570c3892f",
+      "toposort": "cbdbc0d0bee4d2695ab2ceec97fe0679e9c10eab4b2a87a9372b929e70563a87",
+      "cloudpickle": "246ee7d0c295602a036e86369c77fecda4ab17b506496730f2f576d9016fd9c7",
+      "farama-notifications": "14de931035a41961f7c056361dc7f980762a143d05791ef5794a751a2caf05ae",
+      "typing-extensions": "04e5ca0351e0f3f85c6853954072df659d0d13fac324d0072316b67d7794700d"
+    }
+  },
+  "scientific": {
+    "cohorts": {
+      "fit": {
+        "n": 128,
+        "base_seed": 1810000000
+      },
+      "cal": {
+        "n": 64,
+        "base_seed": 1810100000
+      }
+    },
+    "original_p84_protocol_blob": "9c259f7e03ecbd32f8d3e5f9bfdaef2a8860f724",
+    "original_p85_control_blob": "85ae6d1eee3332ef55a653b678733e012cb57158",
+    "original_scope_blob": "cde1faee905027b4069deb329149e73d48292394",
+    "original_F1_route_blob": "afdf193a1f5a9e0f3c0f003aaea19585728a0020",
+    "original_F2_route_blob": "bf7738238a52b6570530d86d30fe36fb594eb12d",
+    "no_ood": true,
+    "no_dev": true,
+    "no_training": true,
+    "one_action_one_effect": true,
+    "journal_intent_before_constructor_reset_do": true,
+    "fsync_step_receipts": true,
+    "no_uncertain_replay": true,
+    "scientific_pass": false,
+    "need_independent_witness": true
+  },
+  "qualification": {
+    "mandatory_original_G4_windows_ubuntu": true,
+    "mandatory_original_G5_windows_ubuntu": true,
+    "mandatory_original_G7_ubuntu": true,
+    "pre_effect_owner_regressions": true,
+    "source_sha_and_blobs": true,
+    "pre_effect_runtime_version_and_imports": true,
+    "check_no_prior_effect_claim": true,
+    "all_before_source_import": true
+  },
+  "prohibitions": [
+    "no F1/F2 replay",
+    "no unsealed OOD",
+    "no source firstuse outside exact owner WSL workflow",
+    "no new worker/runner/controller",
+    "no timed/scheduled tasks",
+    "no trusted code modification after freeze",
+    "no direct deployment/merge",
+    "no model training/score",
+    "no paid APIs",
+    "no repo-external evidence"
+  ]
+}
