@@ -1,0 +1,881 @@
+{
+  "schema": "ttt-hybrid.p87-native-causal-falsifier-repo-summary-from-complete-local-run.v1",
+  "source": "experiments/p87_native_causal_falsifier.py",
+  "source_git_blob": "18713cdd7c04f0c22ec33dad7d2f158b6fd59c24",
+  "freeze_commit": "ab92a50e4c27261b0aa02aa31fd4263b17980ae7",
+  "parent_sha": "e5a057c267352ea4f5515a3fae0a583110bf0651",
+  "classification": "AUTHOR_SYNTHETIC_DEV_FAIL_NOT_SCIENTIFIC_PASS",
+  "environment": {
+    "OS": "Linux CPU",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "cpu_threads": 1,
+    "study_seconds": 45.99855091500012,
+    "focused_test_passed": 12,
+    "focused_test_seconds": 2.51,
+    "exact_full_local_JSON_sha256": "ba94cb420b170a93502a86d5d72ef609f40a744832d32ee387c56e63db352709",
+    "representation": "This on-repo readable receipt retains full 9 selected model provenance and 10 combined MSE validation checkpoints per arm. Stable/changed errors at intermediate checkpoints remain in original local full receipt and are reproducible from source; selected stable/changed exact scores are retained here."
+  },
+  "original_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p78_bounded_raw_ttt.py": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "experiments/p86_portable_causal_preflight.py": "008492665ee9090db5791963f2e2336ea283ee62"
+  },
+  "cohorts": {
+    "FIT": {
+      "n": 384,
+      "seed": 870111,
+      "sha256": "1b7d00e764a4e6f38307439e8ca66905d72851907cd0e554db5fa835a39518a9",
+      "changed": 192,
+      "audit": {
+        "pass": true,
+        "finite": true,
+        "max_abs_query_history_cosine": 0.8253578543663025
+      }
+    },
+    "VAL": {
+      "n": 128,
+      "seed": 870113,
+      "sha256": "ed76f5e93fa8af3ca36e087d90106f5f13bd96094dc2aa2fdfaac3cf48d9612c",
+      "changed": 64,
+      "audit": {
+        "pass": true,
+        "finite": true,
+        "max_abs_query_history_cosine": 0.8110325336456299
+      }
+    }
+  },
+  "training": {
+    "model_seeds": [
+      870201,
+      870203,
+      870207
+    ],
+    "steps": 400,
+    "batch": 16,
+    "checkpoint_every": 40,
+    "three_model_arms": [
+      "hybrid",
+      "gru",
+      "ssm"
+    ],
+    "total_updates": 3600,
+    "sampler_sha256": "202df1991a87bd000b4af761428bd2e71284c13536064f35f5f511296da6a54d",
+    "original_hybrid_all_weights_trainable": 5297,
+    "GRU_trainable": 2672,
+    "SSM_trainable": 1936,
+    "optim": "AdamW lr .002 wd .01 gradclip1",
+    "all_FIT_VAL_indices_same_per_arm": true,
+    "cold_restore_bitwise_P78": true,
+    "full_original_hybrid_backbone_trained": true,
+    "original_Hybrid_W256_plus_SSM_and_attention_KV_state": true,
+    "whole_process_compute_matched": false
+  },
+  "controls": {
+    "zero": {
+      "combined": 0.012546319514513016,
+      "stable": 0.013254999183118343,
+      "changed": 0.011837638914585114
+    },
+    "P86_CAL_frozen_eta1_decay099": {
+      "combined": 0.002412713598459959,
+      "stable": 0.0011754499282687902,
+      "changed": 0.0036499775014817715
+    },
+    "P78_original_eta05_decay1": {
+      "combined": 0.0034030331298708916,
+      "stable": 0.001400090055540204,
+      "changed": 0.005405975505709648
+    },
+    "last24_OLS_unmatched": {
+      "combined": 2.166193752151102e-10,
+      "stable": 1.5996141911056583e-10,
+      "changed": 2.7327728968629117e-10,
+      "uses_history_float32": 768,
+      "extra_solve_workspace": true
+    }
+  },
+  "rows": [
+    {
+      "seed": 870201,
+      "models": {
+        "gru": {
+          "arm": "gru",
+          "seed": 870201,
+          "params_trainable": 2672,
+          "best_step": 320,
+          "best_VAL_mse": {
+            "combined": 0.01315135695040226,
+            "stable": 0.013939624652266502,
+            "changed": 0.012363088317215443
+          },
+          "train_seconds": 2.2986947769995822,
+          "initial_sha256": "30cfdd3bd03e7686eb008da68e900807d98b683db6e9a15c5db51cbc13fad417",
+          "best_sha256": "19c314d2c2bfe98d83aa85af3243697b03bffd9b7436dcee1720f34deadc2c56",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01580358
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01409898
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01350371
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01329211
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01322262
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.0132347
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01318388
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01315136
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01322255
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01324502
+              }
+            }
+          ],
+          "num_updates": 400
+        },
+        "hybrid": {
+          "arm": "hybrid",
+          "seed": 870201,
+          "params_trainable": 5297,
+          "best_step": 320,
+          "best_VAL_mse": {
+            "combined": 0.01368598360568285,
+            "stable": 0.014378584921360016,
+            "changed": 0.01299338135868311
+          },
+          "train_seconds": 8.44192357600059,
+          "initial_sha256": "35b20e7b8e5f60d2e21db1ca5ab2c4db0a7a11c843cdbaa07dc775fa766f69cd",
+          "best_sha256": "8d498855d6bacfe906f2c11433d42975dbe9a37ab7edc9f509e8553fb69057b0",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01702171
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01446839
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01387302
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01382372
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01371303
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01383263
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01376441
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01368598
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01455177
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.0140062
+              }
+            }
+          ],
+          "num_updates": 400
+        },
+        "ssm": {
+          "arm": "ssm",
+          "seed": 870201,
+          "params_trainable": 1936,
+          "best_step": 120,
+          "best_VAL_mse": {
+            "combined": 0.013386799953877926,
+            "stable": 0.014040404930710793,
+            "changed": 0.01273319497704506
+          },
+          "train_seconds": 3.924946725999689,
+          "initial_sha256": "07660b96be26df372d091a8cfeeddacaaca34fe29615c64e2ffa4b909d56ee9c",
+          "best_sha256": "d6d6a5cb0a4e9b10777020101a217b7bcf534f9edaa00fd5f031386faf845066",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01550238
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.0136073
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.0133868
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01343075
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01344976
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01346252
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01349193
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01350363
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01358315
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01367147
+              }
+            }
+          ],
+          "num_updates": 400
+        }
+      },
+      "eligible": {
+        "gru": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true
+        },
+        "ssm": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true
+        },
+        "hybrid": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true,
+          "qualified_strongest_mse": 0.002412713598459959
+        }
+      }
+    },
+    {
+      "seed": 870203,
+      "models": {
+        "gru": {
+          "arm": "gru",
+          "seed": 870203,
+          "params_trainable": 2672,
+          "best_step": 320,
+          "best_VAL_mse": {
+            "combined": 0.013268476352095604,
+            "stable": 0.013862298801541328,
+            "changed": 0.012674652971327305
+          },
+          "train_seconds": 2.2362994429995524,
+          "initial_sha256": "711e373deefff441910222daad289f2fce2e06e283736bcf7855ebc90ba45b0e",
+          "best_sha256": "a29a3dab1e826d140af9568685f5b588a09adfa2c98e78ee03eb120e43b47b50",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01533227
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01378782
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01339816
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01333992
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01326886
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01333659
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01329999
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01326848
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01332246
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.0134339
+              }
+            }
+          ],
+          "num_updates": 400
+        },
+        "hybrid": {
+          "arm": "hybrid",
+          "seed": 870203,
+          "params_trainable": 5297,
+          "best_step": 280,
+          "best_VAL_mse": {
+            "combined": 0.013440359383821487,
+            "stable": 0.013969700783491135,
+            "changed": 0.012911016121506691
+          },
+          "train_seconds": 8.853957577000074,
+          "initial_sha256": "4d767ad5ab39a8f36f14fc74cc4ed9a0952a8217236eb60ec9e13a8db38cb126",
+          "best_sha256": "f4b0488e93044260b722e7a3bc051dafa710c810eb4a119813a074d1d39764ca",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01666408
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01445724
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01391501
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.0136994
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01384658
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01397993
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01344036
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01353035
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01396728
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01392075
+              }
+            }
+          ],
+          "num_updates": 400
+        },
+        "ssm": {
+          "arm": "ssm",
+          "seed": 870203,
+          "params_trainable": 1936,
+          "best_step": 200,
+          "best_VAL_mse": {
+            "combined": 0.013235235586762428,
+            "stable": 0.013921181671321392,
+            "changed": 0.012549289502203465
+          },
+          "train_seconds": 4.156099028000426,
+          "initial_sha256": "a63acfa1cd9b24521d40cbb852865aa30dbb25afcf5330930a8f2bafac56a19a",
+          "best_sha256": "10f146520b7e099a267e6be170ceee185fbb9e1cbc3de858abc9c4530f405c60",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01499537
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01341599
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01325212
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01326354
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01323524
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01334224
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01324165
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01343821
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01352987
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01354369
+              }
+            }
+          ],
+          "num_updates": 400
+        }
+      },
+      "eligible": {
+        "gru": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true
+        },
+        "ssm": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true
+        },
+        "hybrid": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true,
+          "qualified_strongest_mse": 0.002412713598459959
+        }
+      }
+    },
+    {
+      "seed": 870207,
+      "models": {
+        "gru": {
+          "arm": "gru",
+          "seed": 870207,
+          "params_trainable": 2672,
+          "best_step": 200,
+          "best_VAL_mse": {
+            "combined": 0.013173594139516354,
+            "stable": 0.013662826269865036,
+            "changed": 0.012684360146522522
+          },
+          "train_seconds": 2.253729038000529,
+          "initial_sha256": "a300de7792b9768f0cefedbf8be2d4238b9bdc147110502bc22dfebbffa73b98",
+          "best_sha256": "78e360be8cdbabf97a71e7a7bb2c69eda49d7e683802a094c792cde3bc52beed",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01535722
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01383482
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01334093
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01319361
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01317359
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01327982
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01323363
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01321873
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01333181
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01346655
+              }
+            }
+          ],
+          "num_updates": 400
+        },
+        "hybrid": {
+          "arm": "hybrid",
+          "seed": 870207,
+          "params_trainable": 5297,
+          "best_step": 320,
+          "best_VAL_mse": {
+            "combined": 0.01361522451043129,
+            "stable": 0.014231354929506779,
+            "changed": 0.012999095022678375
+          },
+          "train_seconds": 8.774272201999338,
+          "initial_sha256": "9f61d163448d5951ab6b01da3bd1dfeba01fcc7ce9bdc14a0378f50d971fb72e",
+          "best_sha256": "2b2768dfad63c6bc682283ecef256fd8c855cf7b585a22a82f45a0dcacfd504d",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.0166116
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01436962
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01375704
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01366684
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01364704
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.0136913
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01369099
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01361522
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01396438
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01397458
+              }
+            }
+          ],
+          "num_updates": 400
+        },
+        "ssm": {
+          "arm": "ssm",
+          "seed": 870207,
+          "params_trainable": 1936,
+          "best_step": 200,
+          "best_VAL_mse": {
+            "combined": 0.013486119918525219,
+            "stable": 0.014355042949318886,
+            "changed": 0.012617197819054127
+          },
+          "train_seconds": 4.082790299999942,
+          "initial_sha256": "d5e80a5a41cfda66f0b096bd4ab0e908a42f736517ee8bbe865899ee385994bc",
+          "best_sha256": "a0996a1b3f64e6f3a858527ae67b4ee7d7cc5f55a6bc07fca17707249318cb8b",
+          "validation_trace": [
+            {
+              "step": 40,
+              "mse": {
+                "combined": 0.01552735
+              }
+            },
+            {
+              "step": 80,
+              "mse": {
+                "combined": 0.01369305
+              }
+            },
+            {
+              "step": 120,
+              "mse": {
+                "combined": 0.01348903
+              }
+            },
+            {
+              "step": 160,
+              "mse": {
+                "combined": 0.01360173
+              }
+            },
+            {
+              "step": 200,
+              "mse": {
+                "combined": 0.01348612
+              }
+            },
+            {
+              "step": 240,
+              "mse": {
+                "combined": 0.01364291
+              }
+            },
+            {
+              "step": 280,
+              "mse": {
+                "combined": 0.01358262
+              }
+            },
+            {
+              "step": 320,
+              "mse": {
+                "combined": 0.01354689
+              }
+            },
+            {
+              "step": 360,
+              "mse": {
+                "combined": 0.01359785
+              }
+            },
+            {
+              "step": 400,
+              "mse": {
+                "combined": 0.01371728
+              }
+            }
+          ],
+          "num_updates": 400
+        }
+      },
+      "eligible": {
+        "gru": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true
+        },
+        "ssm": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true
+        },
+        "hybrid": {
+          "pass": false,
+          "nonterminal": true,
+          "plateau": true,
+          "qualified_strongest_mse": 0.002412713598459959
+        }
+      }
+    }
+  ],
+  "scientific_pass": false,
+  "full_hybrid_trained": true,
+  "OOD_generated": false,
+  "negative_generated": false,
+  "cold_restore_bitwise_P78": true,
+  "frozen_eligibility": {
+    "trained_gru_ssm_all_qualified": false,
+    "original_hybrid_all_qualified": false
+  },
+  "status": "DEV_FAIL_TRAINED_CONVENTIONAL_UNQUALIFIED",
+  "interpretation": "All 9 original/trained baseline arms completed exact frozen 400 optimizer updates but are worse than zero prediction and far worse than competent P86 CAL frozen W256. All 3 GRU, 3 SSM and 3 fully trainable original HybridPilot arms fail their prospective VAL competence, so no novelty/negative source was generated. Not an engineering failure or proof that longer training could not help. Lack of matched compute/memory prevents original vs recurrent efficiency claims.",
+  "deployment": {
+    "merge": false,
+    "main_mutated": false,
+    "FORGE_changed": false,
+    "independent_P84_MR_changed": false,
+    "schedules": false,
+    "GPU_not_run": true
+  }
+}
