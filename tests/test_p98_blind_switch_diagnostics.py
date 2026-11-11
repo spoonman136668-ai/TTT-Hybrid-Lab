@@ -38,7 +38,9 @@ def test_p98_new_source_is_factual_without_protected_birth():
 
 def test_p98_step_telemetry_is_bitwise_equal_to_original_P97():
     c=p98.source("A_CAL")
-    tiny={k:v[:4] for k,v in c.items()}
+    idx=torch.cat((torch.where(c["changed_world"])[0][:2],
+                   torch.where(~c["changed_world"])[0][:2]))
+    tiny={k:v[idx].clone() for k,v in c.items()}
     model=p97.RecurrentContextMemory(2.,.7)
     pred,route,state=p98.route_trace(model,tiny)
     assert pred.shape == (4,3,16)
@@ -55,7 +57,9 @@ def test_p98_step_telemetry_is_bitwise_equal_to_original_P97():
 
 def test_p98_stable_false_switch_audit_is_posthoc_only():
     c=p98.source("B_CAL")
-    tiny={k:v[:4] for k,v in c.items()}
+    idx=torch.cat((torch.where(c["changed_world"])[0][:2],
+                   torch.where(~c["changed_world"])[0][:2]))
+    tiny={k:v[idx].clone() for k,v in c.items()}
     m=p97.RecurrentContextMemory(3.,.5)
     y,route,state=p98.route_trace(m,tiny)
     altered={k:v.clone() for k,v in tiny.items()}
