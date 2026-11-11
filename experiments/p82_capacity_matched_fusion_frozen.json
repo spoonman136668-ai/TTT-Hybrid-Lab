@@ -1,0 +1,95 @@
+{
+  "schema": "ttt-hybrid.p82-internal-capacity-matched-fusion-control-dev-freeze.v1",
+  "stage": "FROZEN_BEFORE_ANY_P82_SOURCE_OR_TRAINING",
+  "classification": "FRESH_AUTHOR_SYNTHETIC_DEV_ONLY_NOT_AUTHENTICATED_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 197,
+    "sha": "8f7b2e55a9489ff9ee784b589e9af2c9b354f4ca",
+    "science": "P81_FROZEN_RANDOM_DEPTH_FUSION_DIAGNOSTIC_ONLY",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "bounded_raw_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "p81_source_blob": "80f136a3507cf53434695c1d083cb774d40857e9"
+  },
+  "hypothesis": "A no-new-parameter memory-priority depth/fusion correction, acting on original HybridPilot's bounded 256-float fast-weight readout, improves actually trained original final effect predictions over matched raw-state original fusion and native-state original TTT across fresh worlds, without hiding extra persistence or assuming superiority over zero-trained strong 256-float conventional memory.",
+  "sources": {
+    "seeds": {
+      "fit": 820111,
+      "val": 820113,
+      "transfer": 820117,
+      "negative": 820119
+    },
+    "worlds": {
+      "fit": 256,
+      "val": 128,
+      "transfer": 128,
+      "negative": 64
+    },
+    "action_effect_dim": 16,
+    "fit_val_targets": 8,
+    "repeats": 2,
+    "distractors_fit_val": 8,
+    "distractors_transfer": 32,
+    "generation": "Per-world eight random orthogonal 16D action keys with independent tanh 16D consequences, two observed executions each and eight single-use random normalized nuisance action/observed effects, uniformly shuffled 24 events. Final simulated actually executed action query contains raw 16D key and 16 zero unknown effect values. Transfer doubles interference to 32 nuisance events over 48 historical executions, new basis and causal mapping, no learning at transfer.",
+    "leakage": "History ingestion receives only executed historical action and observed consequence, never final effect, queried-event index, role or future query. FIT+VAL quartile role departure<=.05 and position-only balanced accuracy<=.55, source digests. Transfer generated only after ALL frozen VAL qualification. No prior P65-P81 consumed seeds or data reuse."
+  },
+  "model": {
+    "original": "Pinned original unmodified HybridPilot(32,16,Configuration(16,heads2,SSM+causalAttention+TTT+depth)) with random pretrained=false cores, seeds [820201,820203,820207]. Freeze stem, SSM, attention, TTT key/query/value, depth. Train only original ttt.proj (272) and original head (272) =544 parameters per arm.",
+    "raw_memory": "Exact P78 BoundedRawTTT, 16x16 float32 fast state=256 persistent floats with eta=.5; no raw lookup side-cache; reads after confirmed observed facts and before querying future.",
+    "four_matched_arms": {
+      "corrected": "Original stem->SSM->attention pre-query context and frozen original depth; raw fast read r; output=original head(original ttt.proj(r) + 0.05*original depth(context)). No new trainable params. Same original depth called once per output and no extra state; a small fixed context coefficient is frozen, NOT optimized.",
+      "original_raw_fusion": "Same exact raw fast read r and same original random core/head/proj params, but output=original head(original depth(context + original ttt.proj(r))); isolate fusion and depth only.",
+      "original_native_TTT": "Same original complete native TTT fast operand using original projected keys/queries/values and frozen backbone, then original depth(context+original ttt.proj(native_read)), output head; same 256-float TTT matrix.",
+      "no_memory": "Same original pre-query context and original depth(context+original ttt.proj(zeros_like(r))), output head; negative ablation."
+    },
+    "conventional": [
+      "fixed direct 256-float raw-action residual fast state, W@action and no learnable readout",
+      "fixed 256-float frequency key/effect cache from exact P72 implementation (may consume full past history to construct fixed cache; not claim matched streaming process)",
+      "zero-prediction control"
+    ],
+    "fairness": "All trainable arms same initial model tensors per seed, same FIT/VAL factual worlds, sample index schedule, 300 updates, optimizer and 544 trainable original params. Corrected path does not add memory or params but uses different no-parameter fixed fusion. Original full SSM+attention carries per-event KV context and costs beyond TTT 256 state. Fixed direct baseline omits original backbone and is more efficient; report whole-process metrics separately. Native original reads projected facts whereas corrected reads raw factual action/effect; a strong information-access difference."
+  },
+  "training": {
+    "seeds": [
+      820201,
+      820203,
+      820207
+    ],
+    "sample_seed": 820299,
+    "updates": 300,
+    "batch": 16,
+    "validate_every": 30,
+    "optimizer": "AdamW",
+    "learning_rate": 0.01,
+    "weight_decay": 0.01,
+    "grad_clip": 1,
+    "threads": 1,
+    "max_wall_seconds": 180,
+    "selection": "best FIT-only trained checkpoint by VAL MSE, no transfer/negative selection; requires selected step <300 and last three validations <=1.05*best (descriptive plateau), no post-result tuning",
+    "test_method": "Source hash, strict model/seed identity and cold restore. Recompute final layers from frozen no-grad pre-TTT features (cached for fair repeated training, report preprocessing time), 300 optimizer updates for every arm. Fit evaluation includes all original stem, SSM, attention, TTT fast-state generation cost. Measure CPU timings and 256 float state."
+  },
+  "predeclared_gates": {
+    "pre_transfer": "All FIT VAL source/role/leak controls, pristine original source and fast memory, cold restore, paired initial weights and distinct core seeds. Fixed raw and frequency cache controls each <=.75*zero VAL MSE. For each of 3 seeds corrected VAL MSE <=.95*minimum(fixed_raw_mse,frequency_mse), <=.80*paired_original_raw_fusion_mse, <=.75*paired_native_TTT_mse, best step <300 and final 3 validations <=1.05*its own best. No nonfinites or budget overruns. Any fail => STOP BEFORE TRANSFER/NEGATIVE MATERIALIZATION.",
+    "transfer": "On newly generated author-synthetic 48-event worlds, all 3 seeds corrected MSE <=.90*best fixed 256-float control AND <=.80*paired original raw-fusion, paired world-level bootstrap 2000 replicates seed 820401 with 95% lower relative improvement >0; report sample/CPU overhead.",
+    "negative": "Independent wrong-action-credit 64-world source once after transfer criteria, shuffle effects within each history leaving final true consequences unchanged; wrong-credit corrected MSE >=1.4x clean and clean cold recovery bitwise in all 3 seeds.",
+    "success": "DEV_PASS_CAPACITY_MATCHED_FUSION_ONLY if ALL source, VAL, transfer, negative and provenance/cost controls pass. Otherwise preserve failure and stop at proper boundary. Never interpret development PASS as SCIENTIFIC_PASS.",
+    "science_limit": "No full-model original SSM/attention/TTT representation training, no authentic real-world causal intervention/first use, no independently administered unfamiliar source, no matched whole-process compute to fast fixed control, no native-GPU qualification or deployment."
+  },
+  "isolation": {
+    "FORGE": "UNCHANGED",
+    "original_model_py": "UNCHANGED",
+    "other_research_lanes": "UNCHANGED",
+    "main": "UNCHANGED",
+    "no_runner_or_scheduler_change": true,
+    "no_workflow_dispatch": true,
+    "no_paid_api": true,
+    "no_merge": true,
+    "no_physical_first_use": true
+  },
+  "status": {
+    "frozen": true,
+    "fit_val_generated": false,
+    "transfer_scored": false,
+    "science_pass": false,
+    "mandatory_full_final_SHA_CI": "NOT_RUN"
+  }
+}
