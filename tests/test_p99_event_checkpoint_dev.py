@@ -104,6 +104,8 @@ def test_p99_frozen_dev_result_preserved_to_existing_ci_artifact(tmp_path):
     for family,row in report["families"].items():
         assert len(row["FIT_grid"]) == 9
         assert len(row["FIT_candidate_grid"]) == 4
+        assert len(row["FIT_prior_P97_grid"]) == 4
+        assert "prior_P97_two_context" in row["CAL"]
         assert row["changed_world_count"] == 32
         assert row["matched_inert_513_baseline_parity"] is True
         assert all(row["negative_controls"].values())
