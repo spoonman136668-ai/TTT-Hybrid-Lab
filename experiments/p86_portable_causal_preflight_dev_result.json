@@ -1,0 +1,287 @@
+{
+  "schema": "ttt-hybrid.p86-prospective-portable-causal-CAL-baseline-receipt.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_CAL_PASS_ONLY_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "PR": 201,
+    "SHA": "427dc5819b7e39d53402f0eb3e2afbde0f01f3fb",
+    "P85_unqualified_PR": 205,
+    "P85_issue": "Torch QR source cohort changed FIT SHA across Ubuntu/Windows, frozen evidence preserved. P86 is fully new source seed family and code, not a P85 retune."
+  },
+  "freeze": {
+    "commit": "2050098d4548fc332b1360af7ff79ed41c692fa3",
+    "path": "experiments/p86_portable_causal_preflight_frozen.json"
+  },
+  "source": {
+    "code_path": "experiments/p86_portable_causal_preflight.py",
+    "code_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "test_path": "tests/test_p86_portable_causal_preflight.py",
+    "test_blob": "9c0c43205cc1b5e317711b58aaa20d0960a15628",
+    "FIT": {
+      "seed": 860111,
+      "n": 256,
+      "changed": 128,
+      "sha256": "116200b48a00131d1e6bf9581ed730cabdbb9a298204058e477efe63a796a060",
+      "max_abs_query_history_cosine": 0.9195388555526733
+    },
+    "CAL": {
+      "seed": 860113,
+      "n": 128,
+      "changed": 64,
+      "sha256": "c090d996946fc113382d0b61e5c83e4d78a1932d27e67a6573ed3afb603eddde",
+      "max_abs_query_history_cosine": 0.8879998922348022
+    },
+    "reserved": {
+      "heldout_seed": 860117,
+      "negative_seed": 860119
+    },
+    "method": "Pure SHA256 counter derivation, first4 little-endian uint modulo frozen integer ranges, 16D action multiples of 1/128, effect multiples of 1/16384, rank4 integer causal map with hidden mechanism change after24 observed executions in 50%. Exact float32 source bytes independent of PyTorch/QR RNG.",
+    "all_finite": true,
+    "no_future_outcome_in_observations": true
+  },
+  "original_custody": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p78_bounded_raw_ttt.py": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "P78_state_256_float32": true,
+    "P78_has_bounded_safety_count_and_tag": true
+  },
+  "controls": {
+    "columns": [
+      "eta",
+      "decay",
+      "CAL_combined_MSE",
+      "CAL_stable_MSE",
+      "CAL_changed_MSE"
+    ],
+    "all_25_grid": [
+      [
+        0.25,
+        1,
+        0.006004468537867069,
+        0.0043000103905797005,
+        0.007708927150815725
+      ],
+      [
+        0.25,
+        0.99,
+        0.006661942228674889,
+        0.005601858254522085,
+        0.007722025271505117
+      ],
+      [
+        0.25,
+        0.97,
+        0.007959399372339249,
+        0.007747945841401815,
+        0.008170852437615395
+      ],
+      [
+        0.25,
+        0.95,
+        0.008980507031083107,
+        0.009235872887074947,
+        0.008725140243768692
+      ],
+      [
+        0.25,
+        0.9,
+        0.010515483096241951,
+        0.011202966794371605,
+        0.009828000329434872
+      ],
+      [
+        0.5,
+        1,
+        0.003753604833036661,
+        0.0019222503760829568,
+        0.005584959406405687
+      ],
+      [
+        0.5,
+        0.99,
+        0.00417072419077158,
+        0.0029550939798355103,
+        0.005386355333030224
+      ],
+      [
+        0.5,
+        0.97,
+        0.00545663433149457,
+        0.005124302580952644,
+        0.005788965150713921
+      ],
+      [
+        0.5,
+        0.95,
+        0.0066738370805978775,
+        0.006868357770144939,
+        0.006479316391050816
+      ],
+      [
+        0.5,
+        0.9,
+        0.008754446171224117,
+        0.009488457813858986,
+        0.008020435459911823
+      ],
+      [
+        1,
+        1,
+        0.0027510703075677156,
+        0.0011192519450560212,
+        0.004382888786494732
+      ],
+      [
+        1,
+        0.99,
+        0.002647585701197386,
+        0.0015983461635187268,
+        0.0036968253552913666
+      ],
+      [
+        1,
+        0.97,
+        0.0034292503260076046,
+        0.0031844235491007566,
+        0.0036740771029144526
+      ],
+      [
+        1,
+        0.95,
+        0.004507951904088259,
+        0.004739323165267706,
+        0.004276580177247524
+      ],
+      [
+        1,
+        0.9,
+        0.00677746394649148,
+        0.007547158747911453,
+        0.006007769610732794
+      ],
+      [
+        1.5,
+        1,
+        0.004537245724350214,
+        0.0018773914780467749,
+        0.007197100669145584
+      ],
+      [
+        1.5,
+        0.99,
+        0.003414070699363947,
+        0.0017999298870563507,
+        0.00502821197733283
+      ],
+      [
+        1.5,
+        0.97,
+        0.003225751919671893,
+        0.0028269472531974316,
+        0.003624556353315711
+      ],
+      [
+        1.5,
+        0.95,
+        0.0039286380633711815,
+        0.004122693091630936,
+        0.0037345830351114273
+      ],
+      [
+        1.5,
+        0.9,
+        0.006024109199643135,
+        0.006801431067287922,
+        0.005246787331998348
+      ],
+      [
+        2,
+        1,
+        0.022724231705069542,
+        0.013195153325796127,
+        0.03225331008434296
+      ],
+      [
+        2,
+        0.99,
+        0.013606889173388481,
+        0.007382879965007305,
+        0.019830899313092232
+      ],
+      [
+        2,
+        0.97,
+        0.006909315939992666,
+        0.004542182665318251,
+        0.009276448749005795
+      ],
+      [
+        2,
+        0.95,
+        0.005534701980650425,
+        0.004923830274492502,
+        0.00614557322114706
+      ],
+      [
+        2,
+        0.9,
+        0.006465557962656021,
+        0.007167158182710409,
+        0.005763957276940346
+      ]
+    ],
+    "zero": {
+      "combined": 0.013246185146272182,
+      "stable": 0.013880100101232529,
+      "changed": 0.01261227112263441
+    },
+    "original_p78": {
+      "combined": 0.003753604833036661,
+      "stable": 0.0019222503760829568,
+      "changed": 0.005584959406405687
+    },
+    "selected": {
+      "eta": 1,
+      "decay": 0.99,
+      "combined": 0.002647585701197386,
+      "stable": 0.0015983461635187268,
+      "changed": 0.0036968253552913666,
+      "predictive_fast_state_float32": 256
+    },
+    "last24_OLS_unmatched_history": {
+      "combined": 2.0663609712201492e-10,
+      "stable": 2.7636878896508676e-10,
+      "changed": 1.3690340527894307e-10,
+      "history_floats": 768,
+      "additional_solver_workspace": true
+    },
+    "nearest_unmatched_history": {
+      "combined": 0.014446627348661423,
+      "stable": 0.011693681590259075,
+      "changed": 0.017199570313096046,
+      "history_floats": 1536
+    },
+    "P78_exact_recurrence_parity": true
+  },
+  "local_qualification": {
+    "platform": "Linux",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused": "14/14 PASS 5.69s",
+    "cross_platform_source_SHA": "REQUIRED_FINAL_CI_PENDING",
+    "native_gpu": "NOT_RUN"
+  },
+  "decision": {
+    "status": "PREFLIGHT_PASS_PORTABLE_CAL_BASELINE_ONLY",
+    "stable_competence": true,
+    "changed_competence": true,
+    "combined_competence": true,
+    "OLS_identifiability": true,
+    "heldout_generated": false,
+    "negative_generated": false,
+    "original_hybrid_trained": false,
+    "scientific_pass": false,
+    "whole_process_compute_parity": false
+  },
+  "interpretation": "A 256-float CAL-selected conventional fast-weight matrix predicts previously unseen continuous actions in authored rank4 worlds including hidden within-episode changes. This is baseline admission, not independent heldout advantage. OLS is much stronger but uses more history/compute; a future trained Hybrid must beat both the CAL-selected 256-float conventional comparator and matched trained recurrent/SSM controls on untouched source."
+}

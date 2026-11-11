@@ -1,0 +1,63 @@
+{
+  "schema": "ttt-hybrid.p86-portable-integer-causal-preflight-freeze.v1",
+  "stage": "FROZEN_BEFORE_P86_CODE_AND_SOURCE_BIRTH",
+  "classification": "AUTHOR_SYNTHETIC_DEV_ONLY_NO_SCIENTIFIC_FIRST_USE",
+  "lineage": {
+    "parent_P83_PR": 201,
+    "parent_sha": "427dc5819b7e39d53402f0eb3e2afbde0f01f3fb",
+    "P85_unqualified_PR": 205,
+    "P85_diagnosis": "G4 crossplatform source hash drift caused by torch.randn + QR; P85 remains unchanged/UNQUALIFIED",
+    "source_cannot_reuse_any_P85_seed": true,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_fast_memory_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba"
+  },
+  "question": "Can a platform-identical source of genuinely unseen continuous actions and hidden within-episode causal-map changes be prequalified against a competent calibrated conventional 256-float memory baseline before any original Hybrid training or science first use?",
+  "generator": {
+    "seeds": {
+      "FIT": 860111,
+      "CAL": 860113,
+      "RESERVED_HELDOUT": 860117,
+      "RESERVED_NEGATIVE": 860119
+    },
+    "worlds": {
+      "FIT": 256,
+      "CAL": 128,
+      "RESERVED_HELDOUT": 128,
+      "RESERVED_NEGATIVE": 64
+    },
+    "algorithm": "Use only Python hashlib.sha256(namespace='p86-portable-v1', split_seed, world_index, field_tag, index...) and little-endian unsigned int from digest first 4 bytes modulo the frozen discrete range to generate *integer* tensors; DO NOT use torch/NumPy random, torch QR or platform transcendental functions to generate source. For each world independent 16x4 action and effect causal low-rank bases with integer entries uniformly in {-3,-2,-1,0,1,2,3}. Each of 49 16D executed actions or query has deterministic independent integer components uniformly in [-96,96]; convert action float32 = a_int / 128 exactly, effect float32 = sum_k(sum_j(a_int[j]*action_basis[j,k])*effect_basis[d,k])/16384 exactly (integer arithmetic then power-of-two division). No noise. 48 actually executed historical actions, regime switch after 24 in exactly half worlds to independent second integer low-rank causal map, final query is action49 and true effect under final causal map. Source is deterministic on Windows/Linux and float values are exactly representable with no QR/cosine float arithmetic in source itself.",
+    "source_shape": "history[N,48,32] = actually executed 16D action plus its actually observed 16D outcome, query[N,32] = new 16D action + 16 zero withheld-effect features, target[N,16] = effect of final query; internal evaluator_only changed_world[N] bool never passed to prediction/update.",
+    "regime_selection": "For each split, sort (SHA256 namespace 'regime', seed, world_index) and choose exactly half as changed; prevents world index from revealing regime.",
+    "audits": "Source SHA256 over bytes of history/query/target/evaluator regime; FIT and CAL SHA must match the initial local receipt byte-for-byte in both G4 CPU platforms. All tensors finite, exact dyadic values, no query-history cosine>=.999, exactly half regimes, no future effect or role/clock/source label supplied to write. Recompute deterministic source twice. On mismatch mark FAIL and DO NOT weaken test or interpret outcomes as reproducible.",
+    "source_boundary": "Never generate RESERVED_HELDOUT or RESERVED_NEGATIVE at this preflight. No P65-P85 reused data. Not independently witnessed real-world external intervention; P84-MR owns CausalGym first-use."
+  },
+  "controls": {
+    "grid": "25 frozen fixed 256 float32 online SGD states W: η in [.25,.5,1,1.5,2], scalar decay in [1,.99,.97,.95,.90], W <- decay W + η*(observed_effect-W@normalize(executed_action))*normalize(executed_action)^T. No predictive per-world cursor or sidecar.",
+    "original": "Exact P78 BoundedRawTTT η=.5 decay1, same states up to 1e-7; original protective confirmed_count/policy_tag metadata separately disclosed.",
+    "unmatched": "Last24-history 24x32=768 float32 observations + ridge OLS solve temporary memory, and last-48 1536-float nearest observed action control; diagnostics only, not memory/cost matched.",
+    "selection": "Evaluate all 25 only on fresh CAL (64 stable and 64 hidden-change worlds), pick lowest combined MSE exactly once; FIT is only source audit for later model training. No CAL retuning after results and no HELDOUT use."
+  },
+  "gates": {
+    "pre_source": "Source FIT/CAL strict exact SHA and query novelty audits PASS, 256 float32 prediction state exactly, original source Git blobs match, P78 ETA=.5 comparator bitwise-approx <=1e-7.",
+    "baseline": "CAL-selected 256-state conventional rule STABLE MSE <=.75*zero STABLE, CHANGED MSE <=.80*zero CHANGED, COMBINED MSE <=.80*zero COMBINED; last24 OLS >=25% better than zero in both regimes. Any failure is preserved as DEV_FAIL and no OOD/negative data generated.",
+    "science": "No SCIENTIFIC_PASS on this author synthetic CAL result. Later preregistered fully trained original Hybrid + conventional GRU/SSM, matched actions/effects/state/compute, 3 seeds and untouched heldout causal shifts, cold retention, intervention value and paired bootstrap are required.",
+    "stop": "On platform source SHA discrepancy, STOP qualification; do not silently regenerate a 'compatible' source on the same frozen cohort. Need a new prospective protocol if source implementation changes."
+  },
+  "authority": {
+    "no_prior_P85_edits": true,
+    "no_original_model_changes": true,
+    "no_other_lanes_or_FORGE": true,
+    "no_ref_merge": true,
+    "no_scheduled_tasks": true,
+    "no_runner_mutation": true,
+    "no_workflow_dispatch": true,
+    "no_paid_API": true,
+    "no_external_source_first_use": true
+  },
+  "status": {
+    "frozen": true,
+    "source_generated": false,
+    "local_result": "NOT_RUN",
+    "scientific_pass": false
+  }
+}
