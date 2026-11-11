@@ -24,8 +24,11 @@ from p80mr_causalgym_trace_adapter import adapt_capture, UPSTREAM_REPO, UPSTREAM
 
 SCOPE_BLOB = "cde1faee905027b4069deb329149e73d48292394"
 ROUTE_BLOB = "afdf193a1f5a9e0f3c0f003aaea19585728a0020"
-OWNER_BRANCH = "research/p85mr-authorized-fitcal-firstuse-20261111"
-OWNER_WORKFLOW = ".github/workflows/p85mr-fitcal-firstuse-once.yml"
+F2_BLOB = "bf7738238a52b6570530d86d30fe36fb594eb12d"
+OWNER_BRANCH = "research/p85mr-f2-pinned-source-fitcal-once-20261111"
+OWNER_WORKFLOW = ".github/workflows/p85mr-f2-pinned-fitcal-once.yml"
+F1_BRANCH = "research/p85mr-authorized-fitcal-firstuse-20261111"
+F1_WORKFLOW = ".github/workflows/p85mr-fitcal-firstuse-once.yml"
 PROJECT = "spoonman136668-ai/TTT-Hybrid-Lab"
 SOURCE_BLOBS = {
     "causal_gym/envs/cartpole_wind.py":"d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
@@ -74,8 +77,8 @@ def locked_route():
     if (route["schema"] != "ttt-hybrid.p85mr-fitcal-firstuse-owner-run-route-amendment.v1"
         or route["supersedes"]["blob"] != SCOPE_BLOB
         or route["authority"]["workflow_only_once"] is not True
-        or execution["branch"] != OWNER_BRANCH
-        or execution["workflow"] != OWNER_WORKFLOW
+        or execution["branch"] != F1_BRANCH
+        or execution["workflow"] != F1_WORKFLOW
         or execution["event"] != "push"
         or execution["github_run_number"] != 1
         or execution["github_run_attempt"] != 1
@@ -84,8 +87,29 @@ def locked_route():
     return route
 
 
+def locked_f2_route():
+    raw = Path(__file__).with_name("p85mr_f2_pinned_fitcal_authorization_freeze.json").read_bytes()
+    if blob(raw) != F2_BLOB:
+        raise ValueError("P85F2_ROUTE_FREEZE_DRIFT")
+    route = json.loads(raw)
+    execution = route["execution"]
+    prior = route["parent"]
+    if (route["schema"] != "ttt-hybrid.p85mr-f2-second-owner-fitcal-source-route-freeze.v1"
+        or prior["F1_route_git_blob"] != ROUTE_BLOB
+        or prior["science_scope_git_blob"] != SCOPE_BLOB
+        or execution["branch"] != OWNER_BRANCH
+        or execution["workflow"] != OWNER_WORKFLOW
+        or execution["github_run_number"] != 1
+        or execution["github_run_attempt"] != 1
+        or execution["scope"] != "FIT128/CAL64; no DEV/OOD"
+        or route["authority"]["second_scoped_attempt"].startswith("ONE, no repeat") is not True):
+        raise ValueError("P85F2_ROUTE_CONTRACT_DRIFT")
+    return route
+
+
 def owner_context(environ):
-    locked_route()  # frozen, versioned replacement for manual protected-main route
+    locked_route()  # verify immutable F1 history, never reuse F1 attempt
+    locked_f2_route()  # newly authorized, immutable one-shot route
     needed={
         "GITHUB_REPOSITORY": PROJECT,
         "GITHUB_ACTOR": "spoonman136668-ai",
@@ -262,6 +286,7 @@ def _append_progress(path, event):
 def collect_one_shot(*,source_root,project_root,environ=None):
     # Check immutable execution-route amendment before reading any owner input.
     locked_route()
+    locked_f2_route()
     owner=owner_context(os.environ if environ is None else environ)
     # The authorized owner route executes in WSL Linux, never on GH-hosted
     # PR runners. A hard alarm bounds a stalled external env.do call.
