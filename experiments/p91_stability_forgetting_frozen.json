@@ -1,0 +1,95 @@
+{
+  "schema": "ttt-hybrid.p91-stability-protected-selective-forgetting-frozen.v1",
+  "stage": "FROZEN_BEFORE_ANY_P91_SOURCE_GENERATION_TRAINING_OR_SCORE",
+  "parent": {
+    "pr": 212,
+    "sha": "110ad7acd61326708ea701952a05840019657ed3",
+    "source_blob": "c1a3866f02201bbf87106c073a57c07bd695bcc5",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P90_status": "DEV_FAIL_STABLE_MEMORY_DEGRADATION",
+    "other_lanes": "P84-MR independent first-use; no overlap"
+  },
+  "hypothesis": "A 4-parameter learned selective-forgetting gate that suppresses forgetting quadratically for low observed action-prediction contradictions can adapt to hidden causal changes while preserving stable-world factual memory, unlike P90's unprotected contradiction-conditioned gate.",
+  "source": {
+    "family_seeds": [
+      {
+        "name": "A",
+        "FIT": 910111,
+        "VAL": 910113
+      },
+      {
+        "name": "B",
+        "FIT": 910121,
+        "VAL": 910123
+      }
+    ],
+    "worlds_per_family": {
+      "FIT": 128,
+      "VAL": 64
+    },
+    "reserved": {
+      "OOD": 910117,
+      "NEGATIVE": 910119
+    },
+    "training_model_seeds": [
+      910201,
+      910203,
+      910207
+    ],
+    "fit_sampler_seed": 910299,
+    "generator": "P86 reference pure counter-SHA256 indexed exact dyadic 16D continuous action→effect hidden rank4 world with two independent causal matrices. Each source family independently generates 48 confirmed executed action/effect observations then unseen 49th action with effect withheld. Half worlds change mapping after t24, half remain unchanged. No P90 FIT/VAL source reuse; A/B SHA256 checked independently on Windows and Linux. Do not generate reserved OOD/NEGATIVE.",
+    "audit": "No query consequence in inputs, query not equal to prior action, all finite, exact half stable/changed per family; no step index/regime/current effect accessible to controller; observed-only updates."
+  },
+  "controllers": {
+    "state": "Exactly one 16x16 256-float per-world W. key=normalize(raw observed action); before every confirmed update predict W@key, residual=observed effect - prediction. On query t48 predict but never update.",
+    "fixed": "P86 CAL-frozen eta=1, decay=.99, 0 trained parameters.",
+    "constant": "2 trainable global scalars b_eta,b_forget: eta=2sigmoid(b_eta), forget=.2sigmoid(b_forget), W←(1-forget)W+eta*residual*k^T.",
+    "contradiction": "4 trainable global scalars b_eta,b_forget,s_eta,s_forget; f=RMS(residual)/(RMS(residual)+.1). eta=2sigmoid(b_eta+s_eta*f), forget=.2sigmoid(b_forget+s_forget*f). Identical to P90 controlled branch but new P91 FIT/VAL source and independent global model initializations.",
+    "observation": "4 trainable global scalars with identical parameterization but feature RMS(observed effect)/(RMS(observed effect)+.1).",
+    "protected": "4 trainable global scalars, SAME eta as contradiction but forget=.2sigmoid(b_forget+s_forget*f)*f*f, f from genuine residual; structural guaranteed low-error forgetting suppression. Does not use oracle change/phase/time; no additional per-world state."
+  },
+  "training": {
+    "steps": 80,
+    "batch": 16,
+    "validation_every": 10,
+    "AdamW_lr": 0.05,
+    "weight_decay": 0,
+    "gradient_clip_norm": 1,
+    "CPU_threads": 1,
+    "CPU_budget_seconds": 165,
+    "paired_batches": "Every arm and seed uses exactly same FIT index sequence drawn from concatenated 2 family FIT; initial b_eta/b_forget matched across all arms per seed; four-param slopes initially 0.",
+    "objective": "Mean prequential MSE queries 32..48; checkpoint selection based on arithmetic mean across A and B VAL final query MSE. Report each family stable/changed/late final, early/late retention and adaptation windows, all eight validation checkpoints. No change of protocol after viewing outcomes."
+  },
+  "controls": {
+    "source": "Each FIT/VAL family has independent byte SHA and shape/withheld label audits; P90/P86 Git blob custody and exact fixed 256 W parity PASS. Bitwise 256-float fast-state cold restore for every arm including trained selected logits.",
+    "competence": "P86 CAL locked fixed raw W256 VAL stable and changed each <=.80*zero on both A,B, and within-family rotated historical effect wrong-credit MSE >=1.5x fixed and >=.01.",
+    "negative": "Wrong-credit control uses VAL histories only with rotated past 48 effects, does not consume reserved NEGATIVE source.",
+    "retention": "On stable worlds compare mean online prequential MSE t32..48 after observations 0..31 vs fixed; report change-world early post-change t24..31 vs late t40..48. Stability retention gate: protected stable-world late t32..48 <=1.05x fixed late on each VAL family and each seed.",
+    "no_science_first_use": "Reserved unfamiliar OOD and separate negative source functions do not exist in study; no new science evaluation."
+  },
+  "acceptance": {
+    "baseline": "All three newly trained constant baselines must beat 0.90× zero VAL final on both A and B, have selected checkpoint <=70 and final two checkpoints <=1.05× selected best. Otherwise baseline unqualified.",
+    "protected": "ALL 3 seeds AND BOTH independent VAL families: protected final combined <=.90× fixed, <=.90× newly trained constant and <=.90× newly trained P90-contradiction; stable final <=1.05× fixed stable; changed final <=.85× fixed changed; stable late32..48 <=1.05× fixed stable late; selected step <=70; final two overall checkpoints <=1.05× selected overall best. If any fail label DEV_FAIL and keep reserved sources untouched.",
+    "decision": "Even full 2-family synthetic VAL PASS only DEV_PASS_CANDIDATE not SCIENTIFIC_PASS; independent cold unfamiliar heldout and matched end-to-end model/compute qualification separately authorized. If fail, no post-result tuning or changed frozen thresholds."
+  },
+  "isolation": {
+    "draft_additive_files_only": true,
+    "original_model_unchanged": true,
+    "main_unchanged": true,
+    "FORGE_unchanged": true,
+    "P84_MR_unchanged": true,
+    "no_runner_scheduler_changes": true,
+    "no_workflow_dispatch": true,
+    "no_paid_APIs": true,
+    "no_merge": true,
+    "no_GPU": true,
+    "no_external_scientific_first_use": true
+  },
+  "status": {
+    "source_generated": false,
+    "training_run": false,
+    "scientific_pass": false,
+    "OOD_generated": false,
+    "NEGATIVE_generated": false
+  }
+}
