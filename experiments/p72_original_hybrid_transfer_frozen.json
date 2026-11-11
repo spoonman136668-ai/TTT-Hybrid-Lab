@@ -1,0 +1,108 @@
+{
+  "schema": "ttt-hybrid.p72-original-four-block-learned-gate-transfer-dev-freeze.v1",
+  "classification": "PROSPECTIVE_SYNTHETIC_DEVELOPMENT_ONLY_NO_PROTECTED_SCIENCE_FIRST_USE",
+  "freeze_stage": "BEFORE_SOURCE_GENERATION_OR_MODEL_TRAINING",
+  "source": {
+    "seed_registry": {
+      "fit": 720111,
+      "val": 720113,
+      "ood_dev": 720117,
+      "negative": 720119
+    },
+    "world_counts": {
+      "fit": 96,
+      "val": 48,
+      "ood_dev": 48,
+      "negative": 32
+    },
+    "action_dim": 16,
+    "observed_effect_dim": 16,
+    "world": "per-world random orthogonal keys for 8 target actions, independently sampled tanh effects for each action, repeated target exposures, interleaved uniformly randomized singleton distractor actions with random observed effects. Final simulated action after factual history yields its actual consequence; future query and outcome not available during factual ingestion.",
+    "fit_val": {
+      "target_action_keys": 8,
+      "repetitions_each": 2,
+      "distractor_events": 8,
+      "events": 24
+    },
+    "ood_dev": {
+      "target_action_keys": 8,
+      "repetitions_each": 2,
+      "distractor_events": 16,
+      "events": 32,
+      "effect_amplitude": 1.2
+    },
+    "input": "32 floats per factual event = normalized executed action key (16) concatenated with observed effect (16); final query = action key concatenated with 16 zero 'not yet observed' effect placeholders",
+    "factual_boundary": "Pass only historical executed action/outcome pairs into ingest_confirmed, with synthetic confirmation flags true; this is not physical external source authentication",
+    "leakage": "No future query, target-role flag, effect label for final query, index, or change-point in factual input; assert 4-bin role prevalence departure <=0.05 and position-only balanced accuracy <=0.55 on FIT/VAL/OOD",
+    "provenance": "New source seeds, do not regenerate P65-P70 consumed OOD, no sealed or independently protected data."
+  },
+  "frozen_models": {
+    "exact_original": "Use immutable P71 parent model.py, native_p62_streaming_ttt.py, native_p64k_incremental_hybrid_stream.py, native_p71_gated_hybrid_stream.py; do not modify parameters outside optimizer or rework architecture",
+    "core": "HybridPilot(input_dim=32,output_dim=16,Configuration(width=16,heads=2,ssm=true,attention=true,ttt=true,depth=true)), initial random weights from each model seed",
+    "paired_seeds": [
+      720201,
+      720203,
+      720207
+    ],
+    "gate_policy_seed": 1000203,
+    "arms": [
+      "original all-write (the P71 all_write mode, exact original TTT update)",
+      "P70-frozen four-float learned gate on original TTT factual residual, otherwise same original model"
+    ],
+    "conventional": "8-slot 16D action key+16D effect frequency-protected content cache (256 persistent floats) with cosine hit>=0.98, norm-encoded recurrence, plus zero-state predictor; report total hybrid state larger than classical cache, no equal-FLOP claim",
+    "negative": "All trained original models queried on a no-factual/incorrect-credit synthetic history after VAL qualification; if tested on OOD compare same worlds with action/effect credit shuffled and require >=20% worse MSE, no trial/parameter selection on negative OOD."
+  },
+  "training": {
+    "steps": 120,
+    "batch_size": 8,
+    "valid_every": 20,
+    "optimizer": "AdamW",
+    "lr": 0.002,
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1,
+    "sampler_seed": 720299,
+    "data_visibility": "paired FIT/VAL episodes, same indices and initial full-model tensors for each learned/all-write pair, separate optimizer instances",
+    "selection": "best validation checkpoint per arm, before any OOD scoring; no OOD tuning",
+    "limits": {
+      "max_cpu_seconds": 300,
+      "max_total_training_updates": 720,
+      "cpu_threads": 1
+    },
+    "all_state": "Recreate P71 adapter after each optimizer update so stale adapter cache never crosses parameter revisions; all sequences <=32 confirmed events; read-only one final query",
+    "compute": "Measure combined training+validation+inference elapsed seconds, model parameter counts, memory/state floats and report process parity constraints."
+  },
+  "frozen_gates": {
+    "before_ood": [
+      "full original core bitwise initial weights shared between paired arms",
+      "three seeded distinct initial weights",
+      "all source/position audits and nonfinite checks",
+      "classical baseline validation <=.75 times zero-state VAL MSE",
+      "each trained all-write original and learned gate must reduce VAL query MSE by >=15% versus zero-state",
+      "each trained arm's best validation checkpoint must be prior to step 120 (not max-step trending improvement)",
+      "original all-write unchanged under P71 compatibility and all prior P71 focused controls",
+      "within 300 sec CPU cap; any missing control FAIL"
+    ],
+    "ood_primary": "On one generated OOD dev cohort, for every model seed learned-gate error <=0.90 of the strongest eligible nonprivileged baseline among trained original all-write, conventional cache, zero; paired 2000 bootstrap world resamples seed 720401 95% lower relative improvement bound>0",
+    "negative": "Incorrect credit OOD MSE >=1.2x correct trained learned gate; no factual-query leakage; exact cold restore for each arm",
+    "stop": "On any pre-OOD failure STOP without generating/scoring OOD outcomes, preserve negative; no after-result changes to rules or source for claimed P72 qualification.",
+    "science": "Even authored DEV_PASS cannot establish SCIENTIFIC_PASS without independent sealed owner-authenticated physical source, matched fully trained alternative models, independent cross-platform qualification, cold retention/intervention transfer and whole-process cost."
+  },
+  "authority": {
+    "no_merge": true,
+    "no_owner_runner_scheduled_tasks": true,
+    "no_workflow_dispatch": true,
+    "no_forge": true,
+    "no_gpu_first_use": true,
+    "no_external_physical_action": true,
+    "no_paid_api": true
+  },
+  "status": {
+    "protocol": "FROZEN_ONLY",
+    "source_generated": false,
+    "training_started": false,
+    "ood_scored": false,
+    "model_pass": "NOT_RUN",
+    "scientific_pass": false,
+    "full_regression": "NOT_RUN"
+  }
+}
