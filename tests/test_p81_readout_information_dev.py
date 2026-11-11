@@ -114,3 +114,16 @@ def test_original_model_seeds_independent():
     hashes=[p81.core_sha(p81.core(s)) for s in p81.CORE_SEEDS]
     assert len(set(hashes))==3
     assert p81.core_sha(p81.core(p81.CORE_SEEDS[0]))==hashes[0]
+
+
+
+def test_frozen_full_dev_diagnostic_reproduces_without_ood():
+    receipt=p81.run()
+    assert receipt['status']=='DEV_MECHANISTIC_DIAGNOSTIC_PASS_ONLY'
+    assert not receipt['OOD_generated'] and not receipt['OOD_scored']
+    assert not receipt['science_pass']
+    assert receipt['cold_bitwise']
+    assert len(receipt['rows'])==3
+    assert all(r['projection_decodable'] and not r['depth_decodable']
+               and r['additive_fusion_bottleneck'] for r in receipt['rows'])
+    assert receipt['negative_credit']['pass']
