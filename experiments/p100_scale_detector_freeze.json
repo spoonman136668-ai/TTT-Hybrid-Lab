@@ -1,0 +1,103 @@
+{
+  "schema": "ttt-hybrid.p100-scale-normalized-causal-change-detector-freeze.v1",
+  "origin": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 226,
+    "parent_sha": "5f932c24f37c396e7d1d0f89f40321303a14be24",
+    "branch": "research/p100-scale-normalized-change-detector-20261111",
+    "source_sha": {
+      "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+      "experiments/p86_portable_causal_preflight.py": "008492665ee9090db5791963f2e2336ea283ee62",
+      "experiments/p97_recurrent_context_dev.py": "74030c3d7d2f5f51781c740493be21d3c769792d",
+      "experiments/p99_event_checkpoint_dev.py": "23279971d2f7531716c349991d6fd56095656c9e"
+    }
+  },
+  "status": "FROZEN_BEFORE_DATA_AND_CODE",
+  "question": "Can a strictly observational, scale-normalized 16D causal prediction-error detector identify both actual change events without P99's missed triggers or false stable triggers, under matched compute and confirmed-only input?",
+  "scope": "Detector-only: DO NOT modify the online causal memory predictions, restore or create dual checkpoint state; demonstrate detection before attempting new architecture.",
+  "source": {
+    "families": {
+      "A": "independently seeded isotropic dyadic causal effect of 16D actions",
+      "B": "independent anisotropic action coordinates integer floor-divided by 2**(j mod 4)"
+    },
+    "seeds": {
+      "A_FIT": 1000111,
+      "A_CAL": 1000113,
+      "B_FIT": 1000211,
+      "B_CAL": 1000213,
+      "OOD_RESERVED": 1000117,
+      "NEGATIVE_RESERVED": 1000119
+    },
+    "worlds": {
+      "FIT": 128,
+      "CAL": 64
+    },
+    "events": 72,
+    "phases": [
+      24,
+      24,
+      24
+    ],
+    "changed": "half A->B->A hidden switch at events 24 and 48; half A->A->A",
+    "new_deterministic_tags": "p100-*; hash independent of P97,P98,P99",
+    "oracle_visibility": "evaluator only, no access in detector",
+    "protected": "source() must refuse OOD,NEGATIVE,unknown"
+  },
+  "method": {
+    "causal_weights": "single fixed P86 W[16,16] online eta=1 decay=.99, same as conventional reference, no change in predictions",
+    "observations": "confirmed action and effect only; rank16 normalized action, per-event pre-write error, no unconfirmed future",
+    "detector": "EWMA normalized innovation surprise: error_mse / max(EMA(effect_mse),1e-6); threshold selected from FIT, require consecutive event triggers, 8-step refractory and minimum 16-step warmup; ewm scale updated on confirmed only",
+    "ema_alpha": 0.1,
+    "ratio_grid": [
+      1.5,
+      2,
+      3
+    ],
+    "persistence_grid": [
+      2,
+      3
+    ],
+    "warmup": 16,
+    "refractory": 8,
+    "threshold_selection": "FIT balanced score: sum of true-event recall at each change (within 12) minus 2*stable false-positive rate across entire FIT, tie by first frozen grid order; CAL once",
+    "no_offline_neural_training": true,
+    "memory": "256 float32 W plus one float32 confirmed scale + integer trigger and refractory counters; observed declared"
+  },
+  "controls": [
+    "W256 fixed same exact weights and predictions, zero additional detection",
+    "P99 original event checkpoint model with FIT-only choice (historical comparator), original unchanged",
+    "Raw unnormalized squared causal innovation detector same FIT grid (control against scale normalization)",
+    "wrong-time consequence effect rotation negative",
+    "missing/unconfirmed NaN no-write and no alarm",
+    "24+24+24 bitwise snapshot cold-resume",
+    "full run wall CPU vs original W256 measured batch8, single thread, seven medians after two warmups",
+    "source SHA256 Windows/Ubuntu equality",
+    "no hidden regime or withheld query effect used"
+  ],
+  "acceptance": {
+    "both_families_required": true,
+    "stable_false_alarm_world_rate_max": 0.1,
+    "changed_B_event_within_12_rate_min": 0.75,
+    "returned_A_event_within_12_rate_min": 0.75,
+    "normalized_recall_advantage_min_vs_raw": 0.1,
+    "whole_episode_cpu_ratio_max": 2.5,
+    "wrong_credit_error_min_ratio_vs_clean": 1.05,
+    "bitwise_cold_restore": true,
+    "unconfirmed_nan_cannot_write": true,
+    "no_oracle": true,
+    "scientific_pass": false
+  },
+  "diagnostic_policy": "Return measured DEV failure when thresholds fail, never modify algorithm or regenerate CAL to retune. P100 cannot prove causal recovery since predictions remain identical W256; only detection capability is under test.",
+  "execution": {
+    "artifact": "existing G4 local_runs/p100_dev_result.json numeric from same pytest invocation; no new workflow",
+    "final": "mandatory complete G4 Windows+Ubuntu, G5 Windows+Ubuntu, G7 Ubuntu exact final SHA",
+    "no_merge": true,
+    "no_gpu": true,
+    "no_real_external_F3_F4_F5_data": true,
+    "no_protected_first_use": true,
+    "no_new_runner_controller_scheduler_workflow": true,
+    "no_forge_change": true,
+    "no_paid_api": true,
+    "no_library_artifact": true
+  }
+}
