@@ -1,0 +1,107 @@
+{
+  "schema": "ttt-hybrid.p99-event-driven-checkpoint-dev-freeze.v1",
+  "purpose": "Falsify whether a single online causal estimator with a lazy persistent causal checkpoint and confirmation-only event trigger can preserve stable competence, adapt to B, and recover A under A-B-A recurrence at <=3x W256 whole-episode CPU.",
+  "identity": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/p99-event-driven-checkpoint-memory-20261111",
+    "parent_pr": 225,
+    "parent_sha": "d42629b3176feb3bed0e9f166cc53707f2a69237",
+    "p97_original_blob": "74030c3d7d2f5f51781c740493be21d3c769792d",
+    "p98_original_blob": "7cd9521c2ceaa6f84f2128ba16d37ceaae7ff006",
+    "p86_original_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "The detector performs a causal write only on confirmed observations; when surprise persists it checkpoints the active W and resets one active model, and when the checkpoint predicts better over successive confirmed observations it restores it. This may reduce CPU cost vs P97 and improve retained-model recovery without harming stable worlds.",
+  "new_source": {
+    "families": {
+      "A": "independently seeded isotropic dyadic actions",
+      "B": "independently seeded anisotropic actions with coordinate-wise floor division by 2^(j mod4)"
+    },
+    "seeds": {
+      "A_FIT": 990111,
+      "A_CAL": 990113,
+      "B_FIT": 990211,
+      "B_CAL": 990213,
+      "OOD_RESERVED": 990117,
+      "NEGATIVE_RESERVED": 990119
+    },
+    "FIT": 128,
+    "CAL": 64,
+    "events": 72,
+    "segments": [
+      24,
+      24,
+      24
+    ],
+    "phase_rule": "half A->B->A and half A->A->A, hidden labels EVALUATOR ONLY",
+    "probes": "three novel and withheld 16D action/effect queries after events24,48,72; never written",
+    "source_birth_after_freeze": true
+  },
+  "frozen_method": {
+    "predictive_state": "one active W16x16 and one lazy dormant W16x16 512 floats, plus one active innovation EMA scalar per world (513 max predictive floats); context/mode/visits/shock/recovery are declared integer/bool control state",
+    "activation": "single active W256 ordinary eta1 decay.99. Before step 12 do not fire shock. After step >=12 require persistent large normalized per-event error relative to confirmed-only running EMA to checkpoint W and zero active W. No oracle regime labels or future effects.",
+    "restoration": "after a stored checkpoint exists, compare causal error of stored checkpoint versus current active estimator for successive confirmed events; only revert on demonstrated checkpoint advantage; zero write from unconfirmed and query outcomes",
+    "shock_threshold_grid": [
+      4,
+      6
+    ],
+    "shock_persistence_grid": [
+      2,
+      3
+    ],
+    "restore_relative_threshold": 0.8,
+    "restore_persistence": 2,
+    "innovation_ema_decay": 0.9,
+    "shock_absolute_floor": 0.000001,
+    "model_eta": 1,
+    "model_decay": 0.99,
+    "FIT_selection": "four combinations, best FIT all-query MSE, stable-first tie-breaking via grid order; freeze before CAL and no post-CAL tuning",
+    "no_model_offline_training": true
+  },
+  "matched_controls": [
+    "strong 9-grid FIT-selected W256 eta[.5,1,1.5] decay[.95,.99,1.0]",
+    "fixed W256 eta1 decay.99",
+    "513-float matched capacity conventional with 257 inert floats",
+    "original P97 two-context preserved/read-only as historical negative; no CAL retuning",
+    "zero predictor",
+    "wrong-time confirmed consequence credit",
+    "NaN unconfirmed inert and source admission negative",
+    "bitwise cold restoration 24+24+24",
+    "no oracle label effect",
+    "cross OS byte-stable source fingerprints"
+  ],
+  "frozen_acceptance": {
+    "families_A_B_both_required": true,
+    "changed_middle_MSE_ratio_vs_fit_selected_W256_max": 0.95,
+    "returned_A_MSE_ratio_vs_fit_selected_W256_max": 0.85,
+    "stable_final_MSE_ratio_vs_fit_selected_W256_max": 1.05,
+    "all_three_probes_combined_MSE_ratio_max": 0.95,
+    "wrong_credit_MSE_ratio_min": 1.05,
+    "CPU_full_episode_ratio_to_fit_W256_max": 3,
+    "cold_restore_bitwise_required": true,
+    "unconfirmed_nan_inert_required": true,
+    "false_switch_rate_stable_max": 0.1,
+    "changed_detection_within_12_min": 0.75,
+    "return_detection_within_12_min": 0.75
+  },
+  "negative_outcomes": "All constraints must pass both families for DEV CAL candidate; retain actual failures without retuning CAL; no scientific PASS regardless of DEV result. New unseen OOD/NEGATIVE source is protected and never generated.",
+  "qualification": {
+    "G4": "complete exact SHA original Windows+Ubuntu CPU regression",
+    "G5": "exact SHA native TTT Windows+Ubuntu CPU",
+    "G7": "exact SHA pinned Mamba2 Ubuntu CPU",
+    "receipt": "from same full G4 pytest invocation in existing local_runs/*.json artifact",
+    "source_SHA": "cross OS source digest required"
+  },
+  "authority": {
+    "original_model_unchanged": true,
+    "no_changes_P86_P97_P98": true,
+    "no_external_real_science_firstuse": true,
+    "no_CUDA_GPU": true,
+    "no_FORGE": true,
+    "no_owner_runner_controller_scheduler_workflow": true,
+    "no_merge": true,
+    "draft_only": true,
+    "no_paid_API": true,
+    "no_Library_evidence": true
+  }
+}
