@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.p77-identity-preservation-dev-frozen.v1",
+  "phase": "FROZEN_BEFORE_ANY_P77_DATA_GENERATION_OR_MODEL_EXECUTION",
+  "classification": "AUTHORED_SYNTHETIC_DEVELOPMENT_NOT_INDEPENDENT_SCIENCE",
+  "lineage": {
+    "parent_pr": 187,
+    "parent_sha": "597b1bd8fba84e85c72d3a69a75f3baf754a7dee",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "source_parent_blob": "d4a9313a760d36a2929a823061ad61aa7098a5d4",
+    "parent_negative": "P76 Native-only alignment failed frozen VAL 3/3; OOD ungenerated",
+    "unrelated_parallel_p75_pr": 184
+  },
+  "question": "Does explicitly preserving observed raw action identity alongside original frozen four-block native TTT projections restore factual key/query addressing, and does a FIT-only decoder make original-native TTT factual value vectors useful after that fix?",
+  "source": {
+    "fit_seed": 770111,
+    "val_seed": 770113,
+    "ood_seed": 770117,
+    "neg_seed": 770119,
+    "worlds": {
+      "fit": 256,
+      "val": 128,
+      "ood_dev": 128,
+      "negative": 64
+    },
+    "dimension": 16,
+    "targets": 8,
+    "repetitions": 2,
+    "fit_val_distractors": 8,
+    "ood_distractors": 32,
+    "generator": "Fresh independently seeded P76-family synthetic world generator: 16D per-world random orthogonal basis with eight target action keys, independent tanh target consequences, each target repeated twice and uniformly interleaved with 8 FIT/VAL or 32 OOD single-use normalized nuisance actions and random effects; one final executed simulated target action and withheld consequence. Keys and values only from executed historical facts; future query not used in historical writes. No OOD generation prior to qualification.",
+    "audit": "FIT and VAL quarter-position max deviation <=0.05 and held-out index-only balanced accuracy <=0.55; queries' future effect 16-vector exactly zero; no target-role flags enter model; original model params byte-identical and three distinct initial core hashes.",
+    "source_provenance": "No P65-P76 consumed cohorts reused; fresh authored RNG is not independently source-authenticated scientific first use."
+  },
+  "arms": {
+    "model_seeds": [
+      770201,
+      770203,
+      770207
+    ],
+    "sampler_seed": 770299,
+    "bootstrap_seed": 770401,
+    "original_frozen": "Original exact model.HybridPilot(32,16,Configuration(width=16, heads=2, ssm=true,attention=true,ttt=true,depth=true)) frozen random core per seed. Compute original causal stem, selective state recurrence, attention, TTT LayerNorm, projected factual TTT keys/query/values; no changes to native code or weights.",
+    "native_only": "Reuse P76 paired trainable 16x16 normalized projected-key and projected-query matrices (512 parameters), trained with only historical matching supervision and final query positive mask. Same original frozen native features as bypass; 512 params.",
+    "raw_only": "Matched 512-param key/query metric on normalized raw action keys, same training updates/minibatches, reference strong conventional raw full-history method.",
+    "raw_bypass": "Two 16x16 trainable native projection matrices as native_only + one sigmoid logit scalar (513 parameters). For history key and final query separately, L2-normalize weighted combination (1-alpha)*normalized(native@map)+(alpha)*normalized(raw_action). alpha shared between keys/query, learned on FIT. Init sigmoid(logit) near 0.20 (logit -1.3862943611). Same contrastive loss/VAL selection, no ground-truth effects or privileged relevance provided to forward() during historical writes.",
+    "raw_exact": "No-train raw-action nearest history matched against observed effects, strong conventional unbounded-history benchmark, must report 0-ish MSE and 100% matching.",
+    "native_value_decoder": "For each seed, train a closed-form FIT-only ridge (alpha=0.01, 16 projected native TTT value features plus bias to observed historical 16D consequences). Use the trained raw-bypass address index on VAL/OOD to select native value and map back to effect; separate from direct-value lookup. Original core/head is unchanged; this is a sidecar, not native full-model output.",
+    "negative": "Shuffle observed effects across history in independent P77 negative worlds, hold keys and final true effects fixed. After frozen FIT/VAL qualification require clean raw-bypass direct consequent prediction MSE much better than wrong credit.",
+    "zero": "Zero-effect output and competence threshold."
+  },
+  "training": {
+    "three_seed_model": [
+      770201,
+      770203,
+      770207
+    ],
+    "n_worlds_fit": 256,
+    "n_worlds_val": 128,
+    "updates": 180,
+    "batch": 32,
+    "val_each": 30,
+    "AdamW_lr": 0.02,
+    "weight_decay": 0.01,
+    "clip_grad_norm": 1,
+    "threads": 1,
+    "wall_budget_seconds": 180,
+    "init": "Each arm seeded independent initial projection matrices but native-only and raw-bypass share byte-identical projection initialization per original model seed. Raw-only matched 512 initialized similarly.",
+    "checkpoint": "Select lowest VAL contrastive loss only. After selection evaluate VAL matching and native decoded effects; do not use OOD for hyperparameters or threshold.",
+    "restore": "Exact state_dict reload must produce bitwise equal logits on VAL subset. Original core hash must remain unchanged.",
+    "cost": "Measure training wall time per arm, total experiment wall time, parameter count, full history required, native core state and FLOPs not equal with conventional raw method; no matched whole-process compute claim."
+  },
+  "eligibility": {
+    "before_ood": "Every FIT/VAL audit PASS, raw exact VAL match>=0.99 and mse<=1e-5, all model and arm checkpoints finite, byte-identical native vs bypass initial matrices, model unchanged, cold restore PASS. Each of three bypass VAL match@1 >=0.90, bypass direct-value MSE <= 0.15*zero VAL MSE, and bypass native-value-decoded MSE <=0.75*zero VAL MSE. Native-only and raw-only reported, not eligible for tuning. If ANY fail STOP and OOD NOT GENERATE.",
+    "ood": "Fresh OOD DEV once. For all three seeds bypass raw-value MSE<=0.20*zero OOD, match@1>=0.85; bypass native-decoded-value MSE<=0.80*zero OOD; relative gain in bypass direct value MSE over paired native-only MSE >=20% with 2000 paired bootstrap worlds lower 95% improvement bound>0. Raw exact control must pass, no reuse.",
+    "negative": "Every model seed wrong-credit OOD MSE >=2x clean correct credit MSE (if clean 0, use denominator floor 1e-5); native original unchanged; cold restore and no query leak.",
+    "status": "Only DEV_PASS_IDENTITY_BYPASS_SIDE_CAR if all preregistered checks pass. If frozen failure, record DEV_FAIL and stop. Even pass proves only an externally supplied identity-preserving retrieval sidecar, not improvement to original TTT fast-weight state or original model output.",
+    "science": "No independent science claim: synthetic tasks, extra raw action observation/state, incompatible state/FLOPs to original and raw controls, no trained complete HybridPilot, no novel physical first-use. Full frozen scientific evaluation separately authorized and matched compute."
+  },
+  "qualification": {
+    "local_focused": "NOT_RUN",
+    "source_sha": "PENDING",
+    "full_windows_linux_final_sha": "NOT_RUN",
+    "G4_G5_G7": "NOT_RUN",
+    "native_gpu": "NOT_RUN",
+    "main": "UNCHANGED",
+    "p75": "UNCHANGED",
+    "forge": "UNCHANGED",
+    "deployment": "NONE"
+  },
+  "authority": {
+    "no_original_modifications": true,
+    "no_existing_pr_ref_edits": true,
+    "no_scheduler_or_runner_changes": true,
+    "no_workflow_dispatch": true,
+    "no_paid_api": true,
+    "no_merge": true,
+    "no_physical_action": true,
+    "no_science_first_use": true
+  }
+}

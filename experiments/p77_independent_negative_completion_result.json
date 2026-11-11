@@ -1,0 +1,50 @@
+{
+  "FORGE": "UNCHANGED",
+  "classification": "AUTHORED_DEV_FROZEN_INDEPENDENT_NEGATIVE_COHORT_COMPLETED_AFTER_PRIMARY_OOD_WITH_NO_RETUNE",
+  "elapsed_seconds": 1.3861028289993556,
+  "first_study_ood_already_consumed": true,
+  "full_cross_platform": "NOT_RUN",
+  "merge": "NONE",
+  "model_rows": [
+    {
+      "clean_address_hit": 1.0,
+      "clean_negative_cohort_mse": 0.0,
+      "cold_state_match": true,
+      "incorrect_credit_negative_cohort_mse": 0.6381295323371887,
+      "model_sha256": "f834c50684620c1a21b7a98a82214341db25f94f248139995f537bd15bf93199",
+      "seed": 770201,
+      "trained_checkpoint_parity": true,
+      "wrong_credit_worse_2x": true
+    },
+    {
+      "clean_address_hit": 1.0,
+      "clean_negative_cohort_mse": 0.0,
+      "cold_state_match": true,
+      "incorrect_credit_negative_cohort_mse": 0.7043807506561279,
+      "model_sha256": "0b7980c874ed4af78fd0289303b3143c771c1f60ff9f1bb87c94626baec2adda",
+      "seed": 770203,
+      "trained_checkpoint_parity": true,
+      "wrong_credit_worse_2x": true
+    },
+    {
+      "clean_address_hit": 1.0,
+      "clean_negative_cohort_mse": 0.0,
+      "cold_state_match": true,
+      "incorrect_credit_negative_cohort_mse": 0.6893999576568604,
+      "model_sha256": "11a55dc9ef147e23c86d1e25d3a2e77b6328103fb3281a153d0416724d0988b8",
+      "seed": 770207,
+      "trained_checkpoint_parity": true,
+      "wrong_credit_worse_2x": true
+    }
+  ],
+  "negative_cohort_source_sha256": "768f7201b2072f0106e690b36a92ea5ddd935f3116b0d3571d22f7ad8e44aab8",
+  "negative_seed": 770119,
+  "no_new_ood_generated_or_rescored": true,
+  "none_of_p77_parameter_settings_changed": true,
+  "original_study_git_blob_expected": "248b64897562d26cd75f75e804182f9e24dabe42",
+  "protocol_commit": "d01f9f4b7246ee88d10cb1d16ed8700b82cbc258",
+  "schema": "ttt-hybrid.p77-independent-negative-completion-dev.v1",
+  "scientific_pass": false,
+  "status": "NEGATIVE_PASS_ALL_3",
+  "wrong_credit_source_sha256": "b0e9d7c3413f1a5a514aced55da7150583ca57c01014ff7a02fb15763381d476"
+}
