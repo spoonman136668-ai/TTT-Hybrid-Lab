@@ -1,0 +1,148 @@
+{
+  "FORGE": "UNCHANGED",
+  "classification": "AUTHORED_FRESH_SYNTHETIC_FIT_VAL_DIAGNOSTIC_NOT_INDEPENDENT_SCIENCE",
+  "conventional_frequency_cache_256f_mse": 0.15901435911655426,
+  "deployment": "NONE",
+  "execution_provenance": {
+    "first_monolithic_run": "TIMEOUT_120S_NO_RECEIPT",
+    "full_original_regression": "NOT_RUN",
+    "identical_init_pairwise_proven": true,
+    "local_python": "3.13.5",
+    "native_gpu": "NOT_RUN",
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "recovery": "separate deterministic bounded arm runs using unchanged p72.train_arm training function, fresh P73 FIT/VAL, 3 seeded conventional and 3 wrong-credit arms, no OOD",
+    "torch": "2.10.0+cpu"
+  },
+  "fixed_untrained_cosine_mse": 0.0001254023372894153,
+  "merge": "NONE",
+  "original_model_modified": false,
+  "outcomes": {
+    "diagnostic_status": "DEV_DIAGNOSTIC_SUPPORTED_FULL_HYBRID_LEARNING_PATH_BOTTLENECK",
+    "hybrid_both_modes_unqualified_pairs": "3_OF_3",
+    "ood_generated": false,
+    "ood_scored": false,
+    "scientific_pass": false,
+    "specific_hybrid_layer_cause": "NOT_IDENTIFIED",
+    "trained_conventional_competent": "3_OF_3_PASS",
+    "trained_original_hybrid_competent": "0_OF_6_FAIL",
+    "wrong_credit_negative": "3_OF_3_PASS"
+  },
+  "protocol_commit": "994dcd4ead1b2b176c5b612805e3a4aef78c1c7e",
+  "rows": [
+    {
+      "all_write_best_step": 40,
+      "all_write_seconds": 4.160104655000396,
+      "all_write_val_mse": 0.409341424703598,
+      "conventional_competent": true,
+      "conventional_init_val_mse": 0.3350520730018616,
+      "conventional_seconds": 0.09225700300157769,
+      "conventional_val_mse": 0.0004993659094907343,
+      "gated_best_step": 40,
+      "gated_seconds": 5.447538079999504,
+      "gated_val_mse": 0.40857404470443726,
+      "hybrid_all_write_competent": false,
+      "hybrid_gated_competent": false,
+      "hybrid_init_same": true,
+      "hybrid_init_sha": "0b3cee60e9dd9cb534adfd387928ba1b9999ed8f99dc1b6edae9764184bd1af3",
+      "retrieval_initial_sha": "9d035c233b886b84d2da4cbe1536ee0e305c2a99eaf884e46af501392e5bf8e7",
+      "seed": 730201,
+      "training_updates_per_arm": 120,
+      "wrong_credit_ratio": 730.8470548164998,
+      "wrong_credit_seconds": 0.09040933600044809,
+      "wrong_credit_val_mse": 0.36496010422706604
+    },
+    {
+      "all_write_best_step": 40,
+      "all_write_seconds": 4.472497906999706,
+      "all_write_val_mse": 0.4074561893939972,
+      "conventional_competent": true,
+      "conventional_init_val_mse": 0.33486461639404297,
+      "conventional_seconds": 0.09464048700101557,
+      "conventional_val_mse": 0.0005241833860054612,
+      "gated_best_step": 40,
+      "gated_seconds": 5.097692999999708,
+      "gated_val_mse": 0.4069218635559082,
+      "hybrid_all_write_competent": false,
+      "hybrid_gated_competent": false,
+      "hybrid_init_same": true,
+      "hybrid_init_sha": "72d9ed15f4f5c7928aa6aee3edde85f24163777d644acf681534f26d6ba28b82",
+      "retrieval_initial_sha": "829faeabee775388fd69c643de2a59d468014e1f32c965c7a647c4ef190750fa",
+      "seed": 730203,
+      "training_updates_per_arm": 120,
+      "wrong_credit_ratio": 696.4286653721844,
+      "wrong_credit_seconds": 0.09228815999995277,
+      "wrong_credit_val_mse": 0.3650563359260559
+    },
+    {
+      "all_write_best_step": 100,
+      "all_write_seconds": 4.10256672200012,
+      "all_write_val_mse": 0.41010183095932007,
+      "conventional_competent": true,
+      "conventional_init_val_mse": 0.33524712920188904,
+      "conventional_seconds": 0.09333310300098674,
+      "conventional_val_mse": 0.0005009420565329492,
+      "gated_best_step": 100,
+      "gated_seconds": 5.097726423000495,
+      "gated_val_mse": 0.4085434377193451,
+      "hybrid_all_write_competent": false,
+      "hybrid_gated_competent": false,
+      "hybrid_init_same": true,
+      "hybrid_init_sha": "d4312975056f7eb91476ccc1dfdf5a94cb584c0eae296de5218aef2cb52a3daa",
+      "retrieval_initial_sha": "bd9593f87845c35a4c27475a8be14ad0b5a5028eb2f79a5a34dac914d8f6afcd",
+      "seed": 730207,
+      "training_updates_per_arm": 120,
+      "wrong_credit_ratio": 728.782240635994,
+      "wrong_credit_seconds": 0.09503347999998368,
+      "wrong_credit_val_mse": 0.3650776743888855
+    }
+  ],
+  "schema": "ttt-hybrid.p73-readout-diagnostic-frozen-fitval-result.v1",
+  "source_git_blobs": {
+    "experiments/p72_original_hybrid_transfer_dev.py": "83099a6fb0ae3f37aea2715ff8351caf5f5cd39e",
+    "experiments/p73_raw_retrieval_diagnostic_dev.py": "33efe5ea2c9dedeb8199a82c70ecc1ce2a173f12",
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p62_streaming_ttt.py": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "native_p64k_incremental_hybrid_stream.py": "89c3ef5819ac594ad687c67c579a559754109d4c",
+    "native_p71_gated_hybrid_stream.py": "e93ffe29806ac15705cbfd002c5725b9bc4b5e45",
+    "tests/test_p73_raw_retrieval_diagnostic_dev.py": "dfe2dfeabe486e122bd0342f620eb91bd646b8a0"
+  },
+  "source_hashes": {
+    "fit": "07c4bd37df2609d4601c4c0371a5abd149c16fe16e9e5a2f96652473db4f51e8",
+    "val": "37ad018eccb0a43c6f0de59027851c18fe226d3889c476a028abc1b0991e1bf8"
+  },
+  "source_ownership": "author-synthetic only",
+  "source_position_audits": {
+    "FIT": {
+      "heldout_index_only_balanced_accuracy": 0.5,
+      "max_quartile_departure": 0.033854126930236816,
+      "pass": true
+    },
+    "VAL": {
+      "heldout_index_only_balanced_accuracy": 0.5,
+      "max_quartile_departure": 0.0390625,
+      "pass": true
+    }
+  },
+  "source_seed_registry": {
+    "fit": 730111,
+    "negative": 730119,
+    "val": 730113
+  },
+  "training_pairing": {
+    "allwrite_hybrid_arm_count": 3,
+    "conventional_correct_arm_count": 3,
+    "conventional_wrong_credit_arm_count": 3,
+    "learnedgate_hybrid_arm_count": 3,
+    "same_fit_val_batch_schedule_seed": 730299,
+    "same_hybrid_init_each_pair": true,
+    "steps_per_arm": 120,
+    "three_independent_seeds": true
+  },
+  "validation_competence_thresholds": {
+    "conventional_max": 0.24030364751815794,
+    "original_hybrid_max": 0.34043016731739045,
+    "wrong_credit_multiplier_min": 1.5
+  },
+  "validation_zero_mse": 0.40050607919692993,
+  "whole_process_compute": "NOT_MATCHED (full-hybrid maintains SSM+attention KV+TTT, retrieval retains 24*32=768 floats history)"
+}
