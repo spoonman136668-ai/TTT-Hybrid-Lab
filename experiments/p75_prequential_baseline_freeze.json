@@ -1,0 +1,151 @@
+{
+  "schema": "ttt-hybrid.p75-causal-prequential-conventional-baseline-prospective-dev.v1",
+  "stage": "FROZEN_BEFORE_P75_TRAINING_IMPLEMENTATION_AND_NEW_SOURCE_BIRTH",
+  "research_question": "Does a strict read-before-observed-effect, past-match-masked auxiliary prediction loss produce competent conventional GRU/diagonal SSM 256-float factual memory, in the nonstationary numeric action-consequence world where P69 end-query-only GRU/SSM had DEV_FAIL?",
+  "hypothesis": "On fresh disjoint P75 synthetic FIT/VAL and three sealed OOD-DEV cohorts, matched-source and matched-update read-before-write masked-prequential training produces at least 25% lower validation final-query MSE than zero, and beats same-architecture final-only supervised training by >=10% mean final-query MSE in all 3 model seeds.",
+  "source": {
+    "generator": "identical fixed P69 causal-shift generator logic (16D, eight causal roles, four hidden changes, 96 factual events/world), deterministic independent P75 seed namespace and immutable code SHA required before any first-use",
+    "parent_p69_source_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "p69_fit_val_labels": "CONSUMED_EXCLUDED",
+    "p69_ood_labels": "UNGENERATED_EXCLUDED",
+    "p68_p70_ood": "CONSUMED_EXCLUDED",
+    "splits": {
+      "fit": {
+        "seed": 975101,
+        "n": 512
+      },
+      "val": {
+        "seed": 975103,
+        "n": 192
+      },
+      "ood_dev_0": {
+        "seed": 975107,
+        "n": 192
+      },
+      "ood_dev_1": {
+        "seed": 975109,
+        "n": 192
+      },
+      "ood_dev_2": {
+        "seed": 975111,
+        "n": 192
+      },
+      "negative": {
+        "seed": 975113,
+        "n": 96
+      }
+    },
+    "seeds": {
+      "model": [
+        975201,
+        975203,
+        975207
+      ],
+      "sample_indices": 975299,
+      "bootstrap": 975401,
+      "source_leakage": 975301
+    },
+    "split_digest": "sha256(concatenated per-world action/effect/query/outcome sha256 for ordered indices), computed once on authorized source birth; no tuning to digest"
+  },
+  "models": {
+    "gru": {
+      "state_floats": 256,
+      "input_dim": 33,
+      "hidden_dim": 256,
+      "readout": "linear([state256,query16])->effect16",
+      "static_weights": "fixed same per-seed within pair; independent across seeds"
+    },
+    "ssm": {
+      "state_floats": 256,
+      "input_dim": 33,
+      "hidden_dim": 256,
+      "decay_init_logit": 2,
+      "readout": "linear([state256,query16])->effect16",
+      "static_weights": "fixed same per-seed within pair; independent across seeds"
+    }
+  },
+  "training": {
+    "arms": [
+      "final_only",
+      "matched_prequential"
+    ],
+    "matched_pair_seed": true,
+    "matched_batch_indices": true,
+    "matched_fit_val_worlds": true,
+    "registered_model_seeds": [
+      975201,
+      975203,
+      975207
+    ],
+    "sampler_seed": 975299,
+    "batch_size": 32,
+    "max_updates": 600,
+    "check_every": 50,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1,
+    "prequential_rule": "Predict measured effect for each already executed action a_t using the state after factual events before t and the current action a_t, BEFORE encoder consumes current observed effect y_t. Then train on y_t after it is observed; no future observations/query/hidden roles/change-time available for decision.",
+    "prequential_mask": "For t>0, mark if max abs(cos(a_t,a_i)) over i<t is >=0.85, using ONLY past actually executed actions and current action. Mask is detached and no role labels, phase flags, future query or target-effect magnitude is permitted. If zero matched events in a batch, aux loss=0 exactly.",
+    "loss_final_only": "mse(model(factual_history,final_action),actually_observed_final_effect)",
+    "loss_matched_prequential": "final_loss + 0.50*mean(mse(prequential_before_write_prediction,actual_effect) over masked events); normalization by masked-event count, fallback zero. Both use same train world and same final action label.",
+    "validation_selection": "Best VAL final-query MSE only (ignore prequential aux in checkpoint selection); plateau/convergence last 3 checkpoints spread <=0.01, and <=0.75*VAL zero-state MSE for conventional competence",
+    "early_stop": "Only >=200 updates and 4 nonimproving checks and converged last-three MSE spread <=0.01; otherwise full 600 updates",
+    "comparability": "Same state floats and optimizer updates and train/val examples; dense auxiliary has extra floating-point operations and supervision from observed historical consequences; report training time/FLOPs/peak RAM separately and do not claim equal compute.",
+    "resource_budget": {
+      "single_thread_cpu": true,
+      "max_total_cpu_wall_seconds": 3600,
+      "max_peak_ram_gib": 3,
+      "no_paid_api": true
+    }
+  },
+  "checks_before_any_holdout": [
+    "P75 FIT/VAL source integrity and cross-split deterministic digest; no index-only shortcut; no exact future-query leakage",
+    "Frozen P69 baseline 256-float state shape, no extra recurrent state",
+    "Read-before-write numerical equivalence to independent prefix unroll for 3-step and 8-step toy examples (GRU and SSM)",
+    "Target effect permutation changes loss but not any prequential prediction at current step",
+    "Past-match mask forbids future actions, catches anti-parallel signed repeats, excludes non-repeated distractors and first event",
+    "No hidden role/phase/label dependence and no final-query data leakage during encoding",
+    "Gradients and exact model-state cold restoration for both architectures",
+    "Every candidate GRU/SSM trained validation score <=0.75 * zero in all 3 seeds; if none competent, strict DEV_FAIL and do not generate or score OOD",
+    "Any missing exact-head Windows/Linux regression and original build blocks full engineering acceptance and external science"
+  ],
+  "primary_ood_if_admitted": {
+    "only_if": "All source/audit gates, trained competency, exact-source custody, full regression and separately owner-authorized DEV first-use pass",
+    "cohorts": 3,
+    "per_seed": "prequential <=0.9 * corresponding final-only validation-qualified baseline on each cohort, 9/9 paired comparisons",
+    "bootstrap": "5000 paired world-bootstrap relative gain 95pct lower bound>0 in each of 9 comparisons",
+    "negative": "Shuffled action credit and future-query leakage sentinels fail closed; no retroactive tuning",
+    "outcome": "Development only; not independently authenticated physics/real-world scientific evidence"
+  },
+  "negative_p69_result": {
+    "baseline_zero_mse": 0.3940924108028412,
+    "required_75pct_mse": 0.2955693081021309,
+    "gru_mse": [
+      0.40354559,
+      0.40361533,
+      0.40081024
+    ],
+    "ssm_mse": [
+      0.39992306,
+      0.39799073,
+      0.39911506
+    ],
+    "label": "P69 DEV_FAIL_0_OF_6_UNCHANGED"
+  },
+  "provenance_and_authority": {
+    "base_exact_sha": "9146e550249c582571cb5b8d85f47896d7c67cec",
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "separate_branch_no_existing_lane_edits": true,
+    "main_unchanged": true,
+    "no_new_model_or_source_heldout_data_this_freeze_commit": true,
+    "first_use_authority": "OWNER_SEPARATELY_AUTHORIZED_REQUIRED",
+    "no_runner_dispatch": true,
+    "no_scheduler": true,
+    "no_forge_controller": true,
+    "no_merge": true,
+    "no_paid_api": true,
+    "no_live_actuation": true,
+    "no_deployment": true
+  }
+}
