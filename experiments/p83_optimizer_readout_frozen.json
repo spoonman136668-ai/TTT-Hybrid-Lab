@@ -1,0 +1,83 @@
+{
+  "schema": "ttt-hybrid.p83-optimizer-vs-fusion-readout-dev-freeze.v1",
+  "stage": "FROZEN_BEFORE_ANY_P83_SOURCE",
+  "classification": "AUTHOR_SYNTHETIC_DEV_NO_SCIENTIFIC_FIRST_USE",
+  "parent": {
+    "pr": 199,
+    "sha": "1564457a30cc434351e1375e300a88f48438e88d",
+    "p82_status": "DEV_FAIL_2_OF_3_TERMINAL",
+    "p82_source_blob": "c44f77093db501502c3741fdcf70f606f2f202b7",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "raw_memory_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba"
+  },
+  "hypothesis": "Is the frozen P82 readout information linearly recoverable, and does a predefined cosine annealing schedule rather than constant LR resolve terminal convergence, with exact original P82 memory and unchanged 544 trainable seam parameters? Strong 256-float conventional baseline must not be hidden.",
+  "source": {
+    "fit_seed": 830111,
+    "val_seed": 830113,
+    "transfer_reserved_seed": 830117,
+    "negative_reserved_seed": 830119,
+    "fit_worlds": 224,
+    "val_worlds": 112,
+    "transfer_reserved_worlds": 128,
+    "negative_reserved_worlds": 64,
+    "dimension": 16,
+    "history_events": 24,
+    "targets": 8,
+    "repetitions_per_target": 2,
+    "distractors": 8,
+    "transfer_distractors": 32,
+    "generator": "Per-world independent orthogonal 16D keys, 8 action targets twice each with independent tanh 16D actually observed effects, 8 random nuisance actions and observed effects. Uniform interleaved 24 factual events. Delayed executed final query receives key16 + 16 zero unknown future effects. No role/time/query/future effect in historical writes.",
+    "audit": "FIT/VAL 4-quartile role departure<=.05 and held-out index-only balanced accuracy<=.55, zero final unknown effect features, distinct seed families, SHA256 source hashes. OOD and negative never generated before all VAL competence checks. Authored synthetic, not external scientific environment."
+  },
+  "arms": {
+    "seeds": [
+      830201,
+      830203,
+      830207
+    ],
+    "model": "Pinned original HybridPilot(32,16,width16,heads2,SSM+attn+TTT+depth). Original original raw factual 16x16 float32 bounded TTT eta=.5, no extra memory. Frozen backbone/depth; train only original ttt.proj(272)+head(272), exactly 544 parameters.",
+    "constant": "P82 corrected hidden=head(ttt.proj(raw_read)+.05*depth(context)), AdamW constant .01 all 300 steps, weight_decay .01, batch16.",
+    "cosine": "Same hidden and initial weights as constant, SAME 300 updates, same batch indices, AdamW cosine LR .01*(.01+.99*(1+cos(pi*step/300))/2), step 0..299, min .0001; nothing tuned from outcomes.",
+    "original_fusion": "P82 uncorrected native-context+raw memory fusion=head(depth(context+ttt.proj(raw_read))), 300 constant AdamW paired steps, 544 params.",
+    "ridge": "FIT-only 16D corrected initial hidden->consequence float64 ridge alpha=.01 with bias unregularized (272 fitted head params); unequal parameter-count/whole-process compute diagnostic, not matched optimizer arm.",
+    "fixed": "Original direct P78 256-float W@action and P72 256-float key/effect frequency cache; zero predictor. Original SSM/attention costs beyond 256 floats must be reported."
+  },
+  "training": {
+    "steps": 300,
+    "batch": 16,
+    "check_every": 30,
+    "clip": 1,
+    "weight_decay": 0.01,
+    "cpu_threads": 1,
+    "max_wall_seconds": 120,
+    "sampler_seed": 830299,
+    "selection": "Best validation MSE checkpoint only, no transfer tuning. All trained arms same original initial weights and FIT batch sequence; report 10-validation trajectory, selected step, model SHA, training time, param counts.",
+    "cold": "Exact bitwise 256-float factual state and query read, no hypothetical updates."
+  },
+  "gates": {
+    "pre_transfer": "All source/blobs/negative admission/cold controls and conventional fixed baselines each <=.75 zero VAL. For each original core seed ridge FIT-only <=.9 strongest fixed direct VAL. For cosine all three best VAL <=.95 strongest fixed direct, <=.8 paired constant and original-fusion VAL, selected step <300 and last three checkpoint errors <=1.05 own best. Any miss => stop before novel transfer & negative source creation, preserve FAIL and per-arm trajectory.",
+    "transfer": "If and only if all 3 pre-transfer pass, once generate 128 new 48-event author synthetic OOD worlds, require each cosine <=.9 strongest direct fixed baseline, and paired 2000-bootstrap worlds lower relative gain 95% >0; no OOD tuning.",
+    "negative": "Only if transfer qualifies, generate 64 independent wrong-credit worlds, shuffle factual effect associations, compare correct vs corrupted MSE ratio>=1.4 for all cosine seeds.",
+    "interpretation": "Ridge sufficient but cosine frozen gate fails -> learnable linear feature, unresolved optimizer/criterion; ridge also fails -> frozen feature insufficiency; do not infer original fully trained model learning. Full cross-platform regression and independent science separate.",
+    "strict": "Do not retune after failed preregistration, do not generate P83 transfer/negative on VAL failure, do not claim whole-process FLOP or fully trained model parity."
+  },
+  "authority": {
+    "no_main_ref_edits": true,
+    "no_original_architecture_edits": true,
+    "no_FORGE": true,
+    "no_P80_MR_edits": true,
+    "no_scheduled_tasks": true,
+    "no_runner_mutation": true,
+    "no_dispatch": true,
+    "no_merges": true,
+    "no_paid_APIs": true,
+    "no_external_first_use": true
+  },
+  "status": {
+    "frozen": true,
+    "fit_val_generated": false,
+    "training_run": false,
+    "OOD_generated": false,
+    "science_pass": false
+  }
+}
