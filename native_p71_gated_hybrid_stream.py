@@ -155,4 +155,3 @@ class GatedStreamingHybridPilot(StreamingHybridPilot):
             raise ValueError('P71_GATE_WEIGHTS_CHANGED_REBUILD_STATE')
         if isinstance(self.ttt,GatedStreamingTTT):
             self.ttt.require_original_gate()
-
