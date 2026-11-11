@@ -1,0 +1,94 @@
+{
+  "schema": "ttt-hybrid.p76-native-ttt-address-alignment-dev-freeze.v1",
+  "stage": "PRE_SOURCE_PRE_TRAINING_PROTOCOL_FROZEN",
+  "classification": "AUTHOR_GENERATED_SYNTHETIC_DEV_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 183,
+    "sha": "5ea5d87253b030fa23041db020616dd09eb942c3",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p74_source_blob": "372bf317ffcc0b2efc62af3357aaed014f09b145",
+    "p74_result": "FROZEN_RANDOM_NATIVE_PROJECTION_TOP1_2.3_TO_10.9_PERCENT",
+    "p75_parallel_pr": 184
+  },
+  "hypothesis": "Supervised projected-history to projected-query alignment can extract some true factual action-consequence associations from the exact frozen original four-block hybrid pre-TTT representations on unfamiliar worlds; compare against raw-action memory under identical episode observations, and preserve failure if not.",
+  "source": {
+    "seed_fit": 760111,
+    "seed_val": 760113,
+    "seed_ood_dev": 760117,
+    "seed_negative": 760119,
+    "fit_worlds": 256,
+    "val_worlds": 192,
+    "ood_worlds": 256,
+    "negative_worlds": 64,
+    "seed_model": [
+      760201,
+      760203,
+      760207
+    ],
+    "seed_sample": 760299,
+    "seed_bootstrap": 760401,
+    "fit_val": "16D random per-world orthogonal 8 target action keys repeated twice, 8 singleton normalized random distractor keys; independent target and distractor tanh effect vectors 16D; randomly interleaved 24 executed factual (action, observed effect) events; one final target-action query, withheld consequence label.",
+    "ood": "Fresh independently generated per-world causal mapping and action basis with 8 targets repeated twice plus 32 singleton distractor events, randomly interleaved 48 facts; new source seed, longer interference, unchanged generated effect distribution.",
+    "future_label": "Historical input=32D concatenated observed action and effect only; final query=16D executed action key concatenated with 16 zeros; never provide future effect to model or future query during factual ingestion.",
+    "exclusions": "P65-P75 previously consumed sources are forbidden; this is a different RNG cohort in same author-designed synthetic task family, NOT independently authenticated source or truly novel external environment.",
+    "source_audit": "FIT/VAL before training: four quartiles target-position deviation<=0.05, heldout index-only balanced accuracy<=0.55. OOD cohort generated/scored once only after VAL eligibility. Ensure no role or ground-truth future labels passed to learner."
+  },
+  "mechanisms": {
+    "native": "Frozen original model.HybridPilot(32,16,Config(width=16,heads=2,ssm=true,attention=true,ttt=true,depth=true)); exactly original stem->SSM->causal attention->TTT LayerNorm; historical TTT key projections and final TTT query projection, no source or weight changes. Three distinct frozen model seeds.",
+    "learned_native": "Two independently initialized trainable 16x16 linear transforms (512 trainable scalars total) mapping native historical key vectors and native final query vector into common normalized cosine addressing space; no bias; supervised contrastive objective logsumexp(all facts) minus logsumexp(positive matches), where positives derive only from repeated executed action identity equal to final query action; no target effect labels or role labels passed to address map. Predict effect by selecting actually observed historical consequence at highest projected cosine.",
+    "learned_raw_control": "Same exact 512-parameter trainable matching architecture trained identically on raw 16D historical actions and final raw 16D action, using same positive matching objective; isolate original frozen projected representation information loss.",
+    "frozen_native": "Original random pre-TTT projected key/query cosine nearest historical observed consequence (no training) baseline.",
+    "raw_exact": "Raw factual action-key cosine nearest observed consequence (nonprivileged but retains full 24/48-fact history and extra state), strong control.",
+    "zero": "Zero effect vector control.",
+    "credit_negative": "Shuffle only actually observed historical effects across distinct events within each world, keeping query and future true effect unchanged; compare trained native OOD MSE; action-credit must matter.",
+    "untrained_model": "Original HybridPilot parameters stay byte-identical to initial state; original native integrated output quality is NOT measured by this experiment."
+  },
+  "training": {
+    "model_seeds": [
+      760201,
+      760203,
+      760207
+    ],
+    "sampler_seed": 760299,
+    "updates": 240,
+    "batch": 32,
+    "AdamW_lr": 0.02,
+    "weight_decay": 0.01,
+    "validate_every": 40,
+    "optimizer": "AdamW",
+    "gradient_clip": 1,
+    "initial": "N(0,0.1) added to identity per 16x16 projection, separate RNG per model seed",
+    "selection": "lowest held-out VAL contrastive loss; report VAL address hit@1 and consequence MSE for chosen checkpoint",
+    "max_elapsed_CPU_seconds": 300,
+    "torch_threads": 1,
+    "original_model_frozen": true
+  },
+  "gates": {
+    "pre_ood": "FIT/VAL source audits pass, raw fixed VAL exact-address hit@1>=0.99 and MSE<=1e-5, three independent original seeds + independent aligner seeds and original byte preservation, finite gradients and loss, model VAL top1>=0.35 and VAL MSE<=0.85*zero for EACH native alignment seed, cold restoration bitwise exact on a fixed VAL batch. Otherwise STOP before OOD creation/scoring.",
+    "primary": "On one held-out OOD dev cohort, each native aligner top1 correct-action retrieval>=0.50 and MSE<=0.70*zero-state OOD MSE, and each improves on its own untrained frozen-native address MSE by >=20% (not required to beat raw strong control). 2000 paired bootstrap world resamples seed 760401 95% lower relative improvement bound over frozen-native >0.",
+    "negatives": "For each model seed incorrect-credit OOD consequence error>=2x trained native correct-credit OOD MSE; raw retrieval remains near exact; cold checkpoint restore bitwise equal; no final effect leaked into address features.",
+    "stronger_control": "Report trained raw counterpart on same data and train updates; do NOT describe a native win over conventional raw retrieval unless measured native MSE is lower. Raw conventional full-history state and model CPU time/FLOPs not capacity matched.",
+    "strict": "DEV_PASS_NATIVE_ALIGNER_TRANSFER only if all pre-OOD/primary/negative controls pass for all three seeds. SCIENTIFIC_PASS is always false; native key/query alignment isolated head is not a trained original four-block hybrid.",
+    "exit": "Stop on failures without OOD evaluation where preregistered; do not posthoc tune gate/thresholds based on consumed OOD. Record negative and full cost/custody."
+  },
+  "authority": {
+    "no_existing_P75_PR_mutation": true,
+    "no_model_py_modification": true,
+    "no_runner_or_scheduled_task": true,
+    "no_workflow_dispatch": true,
+    "no_forge": true,
+    "no_merge_or_promotion": true,
+    "no_protected_science_firstuse": true,
+    "no_paid_API": true
+  },
+  "status": {
+    "frozen": true,
+    "source_generated": false,
+    "model_training": false,
+    "ood_scored": false,
+    "original_hybrid_training": false,
+    "full_regression": "NOT_RUN",
+    "gpu": "NOT_RUN",
+    "science_pass": false
+  }
+}
