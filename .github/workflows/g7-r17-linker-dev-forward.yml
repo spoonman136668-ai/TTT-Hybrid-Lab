@@ -1,0 +1,182 @@
+# G7-R17 operator-authorized ONE attempt only: diagnose C linker, conditionally
+# install libc6-dev plus bounded development dependencies, then one native forward.
+# Never run on main; no dispatch, retries, schedulers, training, or deployments.
+name: G7-R17 one-use C linker repair and authentic native forward
+on:
+  push:
+    branches:
+      - engineering/g7-r17-single-use-linker-forward-20261107
+    paths:
+      - .github/workflows/g7-r17-linker-dev-forward.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-g7-r17-one-use-linker-repair
+  cancel-in-progress: false
+
+jobs:
+  linker-and-forward:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/engineering/g7-r17-single-use-linker-forward-20261107' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 14
+    steps:
+      - name: Checkout exact candidate without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 3
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: One approved linker diagnosis, conditional libc6-dev and one authentic forward
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $r = [ordered]@{
+            schema = 'ttt-hybrid.g7-r17-one-use-linker-forward.v1'
+            candidate_sha = $env:GITHUB_SHA
+            source_custody = 'UNVERIFIED'
+            runner = $env:RUNNER_NAME
+            status = 'BLOCKED_NOT_STARTED'
+            linker_before = 'NOT_RUN'
+            root_context = 'NOT_USED'
+            package_simulation = 'NOT_RUN'
+            libc6_dev_install = 'NOT_RUN'
+            linker_after = 'NOT_RUN'
+            native_forward = 'NOT_RUN'
+            original_forward_receipt = 'local_runs/g7_r15_compiler_forward.json'
+            cuda_changes = 'NONE'
+            model_package_changes = 'NONE'
+            training = 'NOT_RUN'
+            scientific = 'UNVERIFIED'
+            deployment = 'NOT_AUTHORIZED'
+          }
+          $outDir = Join-Path $env:GITHUB_WORKSPACE 'local_runs'
+          try {
+            if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+                $env:GITHUB_REF -cne 'refs/heads/engineering/g7-r17-single-use-linker-forward-20261107' -or
+                $env:GITHUB_EVENT_NAME -cne 'push' -or
+                $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+                $env:GITHUB_RUN_NUMBER -cne '1' -or
+                $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+                $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+                $env:RUNNER_OS -cne 'Windows') {
+              $r.status = 'BLOCKED_OWNER_RUNNER_IDENTITY'
+              throw 'G7_R17_OWNER_RUNNER_DENIED'
+            }
+            $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+            $headExit = $LASTEXITCODE
+            $parent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^' | Out-String).Trim()
+            $parentExit = $LASTEXITCODE
+            $grandparent = (& git -C $env:GITHUB_WORKSPACE rev-parse 'HEAD^^' | Out-String).Trim()
+            $grandparentExit = $LASTEXITCODE
+            $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+            $dirtyExit = $LASTEXITCODE
+            if ($headExit -ne 0 -or $parentExit -ne 0 -or $grandparentExit -ne 0 -or
+                $dirtyExit -ne 0 -or $dirty -or $head -cne $env:GITHUB_SHA -or
+                $parent -cne '150dcb2e7df0326d3d59a8f6a99deff3a9d91221' -or
+                $grandparent -cne '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2') {
+              $r.status = 'BLOCKED_EXACT_SOURCE_CHAIN'
+              throw 'G7_R17_EXACT_SOURCE_CHAIN'
+            }
+            $changed = @(& git -C $env:GITHUB_WORKSPACE diff --name-only '6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2' $env:GITHUB_SHA)
+            if ($LASTEXITCODE -ne 0 -or $changed.Count -ne 2 -or
+                $changed -notcontains '.github/workflows/g7-r17-linker-dev-forward.yml' -or
+                $changed -notcontains 'scripts/g7_r17_linker_probe.py') {
+              $r.status = 'BLOCKED_DIFF_SCOPE_DRIFT'
+              throw 'G7_R17_DIFF_SCOPE_DRIFT'
+            }
+            $r.source_custody = 'PASS'
+            $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+            if ($LASTEXITCODE -ne 0 -or $linuxRoot -notmatch '^/mnt/[a-z]/') {
+              $r.status = 'BLOCKED_WSL_PATH'
+              throw 'G7_R17_WSL_PATH'
+            }
+            $pre = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 55s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r17_linker_probe.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r17_linker_pre.json")
+            $preExit = $LASTEXITCODE
+            $preText = ($pre | Out-String).Trim()
+            $r.linker_before = $preText
+            if ($preExit -eq 0 -and $preText -ceq 'G7_R17_LINK_STATUS=PASS_HOST_C_SHARED_LINK') {
+              $r.libc6_dev_install = 'SKIPPED_LINKER_ALREADY_GOOD'
+              $r.linker_after = 'REUSED_PRE_PASS'
+            } elseif ($preExit -eq 3 -and $preText -ceq 'G7_R17_LINK_STATUS=NEEDS_LIBC6_DEV') {
+              $uid = (& wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/id -u | Out-String).Trim()
+              if ($LASTEXITCODE -ne 0 -or $uid -cne '0') {
+                $r.status = 'BLOCKED_ROOT_CONTEXT'
+                throw 'G7_R17_ROOT_CONTEXT'
+              }
+              $r.root_context = 'ROOT_UID_ZERO_CONFIRMED'
+              $simulation = @(& wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/timeout --signal=TERM --kill-after=5s 45s /usr/bin/apt-get -s -o Debug::NoLocking=1 install -y --no-install-recommends libc6-dev)
+              $simExit = $LASTEXITCODE
+              $allowed = @('libc6-dev','libc-dev-bin','linux-libc-dev','libcrypt-dev','rpcsvc-proto','libnsl-dev','libtirpc-dev')
+              $inst = @()
+              $removed = @()
+              foreach ($line in $simulation) {
+                if ($line -match '^Inst\s+([^\s]+)') { $inst += $Matches[1] }
+                if ($line -match '^Remv\s+([^\s]+)') { $removed += $Matches[1] }
+              }
+              if ($simExit -ne 0 -or $removed.Count -gt 0 -or
+                  $inst -notcontains 'libc6-dev' -or
+                  @($inst | Where-Object { $_ -notin $allowed }).Count -gt 0) {
+                $r.status = 'BLOCKED_APT_SCOPE_OR_DEPENDENCY'
+                $r.package_simulation = 'FAIL_OR_OUT_OF_SCOPE'
+                throw 'G7_R17_APT_SCOPE_OR_DEPENDENCY'
+              }
+              $r.package_simulation = 'PASS_DEV_DEPENDENCIES_ONLY'
+              $r.libc6_dev_install = 'ATTEMPTED'
+              $install = @(& wsl.exe --distribution Ubuntu-24.04 --user root --exec /usr/bin/timeout --signal=TERM --kill-after=10s 180s /usr/bin/env DEBIAN_FRONTEND=noninteractive /usr/bin/apt-get -o Acquire::Retries=0 install -y --no-install-recommends libc6-dev)
+              if ($LASTEXITCODE -ne 0) {
+                $r.status = 'BLOCKED_LIBC6_DEV_INSTALL'
+                throw 'G7_R17_LIBC6_DEV_INSTALL'
+              }
+              $r.libc6_dev_install = 'PASS'
+              $post = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=5s 55s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r17_linker_probe.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r17_linker_post.json")
+              $postExit = $LASTEXITCODE
+              $postText = ($post | Out-String).Trim()
+              $r.linker_after = $postText
+              if ($postExit -ne 0 -or $postText -cne 'G7_R17_LINK_STATUS=PASS_HOST_C_SHARED_LINK') {
+                $r.status = 'BLOCKED_POST_INSTALL_LINK'
+                throw 'G7_R17_POST_INSTALL_LINK'
+              }
+            } else {
+              $r.status = 'BLOCKED_DIAGNOSTIC_NOT_QUALIFIED'
+              throw 'G7_R17_DIAGNOSTIC_NOT_QUALIFIED'
+            }
+            # Reuse exact G7-R15 controls: normal-user C linker guard then
+            # one original pinned R6 -> G3 authentic, nonfused GPU forward.
+            # No retry, model training, CUDA/Torch/Triton install or deployment.
+            $r.native_forward = 'ONE_BOUNDED_FORWARD_STARTED'
+            $native = @(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 270s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r15_compiler_repair_forward.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r15_compiler_forward.json")
+            $nativeExit = $LASTEXITCODE
+            $nativeText = ($native | Out-String).Trim()
+            if ($nativeExit -ne 0 -or $nativeText -notmatch 'G7_R15_STATUS=PASS_COMPILER_REPAIR_AND_NATIVE_FORWARD') {
+              $r.native_forward = 'NOT_QUALIFIED'
+              $r.status = 'BLOCKED_NATIVE_FORWARD'
+              throw 'G7_R17_NATIVE_FORWARD_NOT_QUALIFIED'
+            }
+            $r.native_forward = 'PASS_ONE_AUTHENTIC_FORWARD'
+            $r.status = 'PASS_LINKER_AND_BOUNDED_FORWARD'
+          } finally {
+            New-Item -ItemType Directory -Path $outDir -Force | Out-Null
+            $r | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $outDir 'g7_r17_gate.json') -Encoding UTF8
+            Write-Output ('G7_R17_STATUS=' + $r.status)
+            Write-Output ('G7_R17_INSTALL=' + $r.libc6_dev_install)
+            Write-Output ('G7_R17_FORWARD=' + $r.native_forward)
+          }
+
+      - name: Preserve sanitized evidence, including blocks
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r17-linker-forward-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/g7_r17_gate.json
+            local_runs/g7_r17_linker_pre.json
+            local_runs/g7_r17_linker_post.json
+            local_runs/g7_r15_compiler_forward.json
+          if-no-files-found: warn
+          retention-days: 30
