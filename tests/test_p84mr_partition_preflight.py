@@ -97,7 +97,7 @@ def test_old_protocol_rejected_when_substituted_into_preflight(monkeypatch):
     fake = json.loads(json.dumps(frozen))
     previous = fake["preexisting_protocol_negative_control"]
     replacement = fake["frozen_successor"]
-    replacement["seed_bases"] = previous["previous_split_bases"]
+    replacement["seed_bases"] = dict(previous["previous_split_bases"])
     # Old stepped 10; this test also checks collisions when revised as a
     # purported contiguous independent source without changing cohort widths.
     replacement["seed_bases"]["science_ood_1"] = replacement["seed_bases"]["fit"]
