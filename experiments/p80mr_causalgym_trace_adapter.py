@@ -61,7 +61,10 @@ def _action_key(state, executed_action):
 
 
 def _observed_effect(before, after, reward, terminated, truncated):
-    delta = [math.tanh((y-x)/scale) for x, y, scale in zip(before, after, STATE_SCALES)]
+    differences = [y-x for x, y in zip(before, after)]
+    if not all(math.isfinite(value) for value in differences):
+        raise ValueError("P80MR_BAD_EFFECT")
+    delta = [math.tanh(d/scale) for d, scale in zip(differences, STATE_SCALES)]
     delta += [math.tanh(reward), float(terminated), float(truncated)]
     delta += [0.0] * 9
     if len(delta) != 16 or not all(math.isfinite(v) for v in delta):
