@@ -20,7 +20,7 @@ P75_NAMESPACE = 'ttt-hybrid/p75/prospective-v1'
 def _locked_generator():
     path = Path(__file__).with_name('p69_causal_shift_source.py')
     data = path.read_bytes()
-    blob = hashlib.sha1(`blob ${len(data)}\0`.encode()+data).hexdigest()
+    blob = hashlib.sha1(f'blob {len(data)}\0'.encode()+data).hexdigest()
     if blob != SOURCE_BLOB:
         raise ValueError('P75_PARENT_SOURCE_BLOB_DRIFT')
     spec=importlib.util.spec_from_file_location('_p75_isolated_p69_generator',path)
