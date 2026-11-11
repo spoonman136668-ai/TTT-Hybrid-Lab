@@ -144,7 +144,7 @@ def test_future_observed_events_cannot_change_early_predictions():
     manifest, worlds = fixture()
     original = toy_replay(manifest, worlds)
     modified = copy.deepcopy(worlds)
-    modified[0]["events"][3]["effect"] = [2.0] * 16
+    modified[0]["events"][4]["effect"] = [2.0] * 16
     out = toy_replay(toy_manifest(modified), modified)
     assert original["worlds"][0]["probes"][0]["estimate"] == (
         out["worlds"][0]["probes"][0]["estimate"])
