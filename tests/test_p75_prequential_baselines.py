@@ -6,8 +6,8 @@ import torch
 import torch.nn.functional as F
 EXPERIMENTS=Path(__file__).resolve().parents[1]/'experiments'
 sys.path.insert(0,str(EXPERIMENTS))
-from p75_prequential_baselines import before_write_predictions,historical_match_mask,losses
-from p69_trainable_competitors import model_from_recipe
+from p75_prequential_baselines import (before_write_predictions,historical_match_mask,losses,
+                                       model_from_p75_recipe,frozen_sample_indices)
 
 
 def fixture():
@@ -41,7 +41,7 @@ def test_future_action_cannot_change_prior_mask():
 @pytest.mark.parametrize('kind',('gru','ssm'))
 def test_before_write_agrees_with_independent_prefix(kind):
     f,_,_=fixture()
-    model=model_from_recipe(kind,981201).eval()
+    model=model_from_p75_recipe(kind,975201).eval()
     with torch.no_grad():
         pre,final=before_write_predictions(model,f)
         for t in (0,1,2,5,6):
@@ -58,7 +58,7 @@ def test_before_write_agrees_with_independent_prefix(kind):
 @pytest.mark.parametrize('kind',('gru','ssm'))
 def test_future_effect_changes_cannot_affect_current_prediction(kind):
     f,_,_=fixture()
-    model=model_from_recipe(kind,981203).eval()
+    model=model_from_p75_recipe(kind,975203).eval()
     with torch.no_grad():
         before,_=before_write_predictions(model,f)
         changed={'action':f['action'].clone(),'effect':f['effect'].clone()}
@@ -71,7 +71,7 @@ def test_future_effect_changes_cannot_affect_current_prediction(kind):
 @pytest.mark.parametrize('kind',('gru','ssm'))
 def test_aux_loss_gradient_finite_and_optimizer_step(kind):
     f,q,y=fixture()
-    model=model_from_recipe(kind,981207)
+    model=model_from_p75_recipe(kind,975207)
     opt=torch.optim.AdamW(model.parameters(),lr=.001)
     before={k:v.detach().clone() for k,v in model.state_dict().items()}
     out=losses(model,f,q,y,'matched_prequential')
@@ -88,7 +88,7 @@ def test_aux_loss_gradient_finite_and_optimizer_step(kind):
 @pytest.mark.parametrize('kind',('gru','ssm'))
 def test_final_only_has_no_added_training_loss(kind):
     f,q,y=fixture()
-    model=model_from_recipe(kind,981201)
+    model=model_from_p75_recipe(kind,975201)
     a=losses(model,f,q,y,'final_only')
     b=losses(model,f,q,y,'matched_prequential')
     assert torch.equal(a['final_loss'],b['final_loss'])
@@ -98,7 +98,7 @@ def test_final_only_has_no_added_training_loss(kind):
 
 def test_input_role_metadata_rejected():
     f,q,y=fixture()
-    model=model_from_recipe('ssm',981201)
+    model=model_from_p75_recipe('ssm',975201)
     f['role_label']=torch.ones(2,7)
     with pytest.raises(ValueError,match='P69_HISTORICAL_FACTS_ONLY'):
         losses(model,f,q,y,'matched_prequential')
@@ -107,7 +107,7 @@ def test_input_role_metadata_rejected():
 def test_no_prior_match_has_exact_zero_auxiliary():
     f,q,y=fixture()
     f['action']=torch.eye(16)[:7][None].repeat(2,1,1)
-    model=model_from_recipe('gru',981201)
+    model=model_from_p75_recipe('gru',975201)
     out=losses(model,f,q,y,'matched_prequential')
     assert out['matched_events']==0
     assert out['auxiliary_loss']==0
@@ -116,7 +116,7 @@ def test_no_prior_match_has_exact_zero_auxiliary():
 
 def test_observation_at_t_changes_loss_not_prediction_at_t():
     f,q,y=fixture()
-    model=model_from_recipe('gru',981201)
+    model=model_from_p75_recipe('gru',975201)
     pre,_=before_write_predictions(model,f)
     g={'action':f['action'].clone(),'effect':f['effect'].clone()}
     g['effect'][:,2]+=10.0
@@ -128,10 +128,31 @@ def test_observation_at_t_changes_loss_not_prediction_at_t():
 def test_future_query_does_not_enter_encoder():
     f,q,y=fixture()
     with pytest.raises(ValueError,match='P69_HISTORICAL_FACTS_ONLY'):
-        before_write_predictions(model_from_recipe('gru',981201),dict(f,final_query=q))
+        before_write_predictions(model_from_p75_recipe('gru',975201),dict(f,final_query=q))
 
 
 def test_negative_and_controlled_mode():
     f,q,y=fixture()
     with pytest.raises(ValueError,match='P75_UNKNOWN_MODE'):
-        losses(model_from_recipe('ssm',981201),f,q,y,'oracle')
+        losses(model_from_p75_recipe('ssm',975201),f,q,y,'oracle')
+
+def test_new_model_seed_space_independent_and_no_global_rng_effect():
+    state=torch.get_rng_state().clone()
+    first=model_from_p75_recipe('gru',975201)
+    second=model_from_p75_recipe('gru',975201)
+    other=model_from_p75_recipe('gru',975203)
+    assert torch.equal(state,torch.get_rng_state())
+    assert all(torch.equal(a,b) for a,b in zip(first.parameters(),second.parameters()))
+    assert any(not torch.equal(a,b) for a,b in zip(first.parameters(),other.parameters()))
+    with pytest.raises(ValueError,match='P75_BAD_MODEL_SPEC'):
+        model_from_p75_recipe('gru',981201)
+
+
+def test_sampler_fixed_across_two_training_arms_and_no_global_rng_effect():
+    state=torch.get_rng_state().clone()
+    a=frozen_sample_indices(512,steps:=11)
+    b=frozen_sample_indices(512,steps)
+    assert a.shape==(11,32) and torch.equal(a,b)
+    assert torch.equal(state,torch.get_rng_state())
+    with pytest.raises(ValueError,match='P75_BAD_SAMPLER'):
+        frozen_sample_indices(512,updates=601)
