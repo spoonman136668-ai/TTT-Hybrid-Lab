@@ -20,11 +20,20 @@ old = types.ModuleType("g7_r15_compiler_repair_forward")
 old.Blocked = Blocked
 old.source_custody = lambda _sha: None
 old.selected_compiler = lambda: None
+# The stand-in must not contaminate other G4/G5/G7 test modules in the same
+# pytest process. Only this diagnostic's module retains a reference to it.
+_previous = sys.modules.get(old.__name__)
 sys.modules[old.__name__] = old
-spec = importlib.util.spec_from_file_location("g7_r17_link_diagnostic", SRC)
-assert spec and spec.loader
-subject = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(subject)
+try:
+    spec = importlib.util.spec_from_file_location("g7_r17_link_diagnostic", SRC)
+    assert spec and spec.loader
+    subject = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(subject)
+finally:
+    if _previous is None:
+        sys.modules.pop(old.__name__, None)
+    else:
+        sys.modules[old.__name__] = _previous
 
 @pytest.mark.parametrize("message,expected", [
     ("/usr/bin/ld: cannot find crti.o", "C_RUNTIME_STARTUP_OBJECT_MISSING"),
