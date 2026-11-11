@@ -1,0 +1,69 @@
+{
+  "schema": "ttt-hybrid.p82mr-owner-do-session-driver-frozen-v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_ANY_EXTERNAL_EXECUTION",
+  "parent": {
+    "pr": 196,
+    "head": "ad7b7d92b27a5ebdc889ec9f07bd754c29cc9784",
+    "P81_recorder_blob": "1d53e111172d3747d5868cb6f2b5169a01214995",
+    "P80_adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "P81_freeze_blob": "c8cef067e5ce5b1410542526a8e1b12dc4d5e0ab"
+  },
+  "research_goal": "Close the gap between P81's pure caller-fed recorder and a testable reset/do single-episode source session, preserving no-replay and no-future information; NO genuine external first-use in this engineering gate.",
+  "source_software": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "CartPoleWind_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+    "PCH_blob": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+    "Task_blob": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+    "task_regime": "LearningRegime.do or other do-permitted, never ctf_do",
+    "info_action": "CartPoleWindPCH.do() reports actual action under info['action']"
+  },
+  "driver": {
+    "stage_only": "TOY_TESTED_INJECTED_SESSION_IMPLEMENTATION, real external env gate remains CLOSED",
+    "run_method": "drive_toy_session(session, source_kind, split, episode_index, ...)",
+    "caller_supplied_session": "object exposing reset(seed=...), do(callable), close() optional; allowed only for in-memory fake toy fixture from test scope, never call owner source in this gate",
+    "preconditions": "Explicit source_kind='toy_engineering'; split in FIT/CAL; all IDs valid; no upstream import; no standalone CLI; no network; validate before session.reset() or .do(); disallowed external/physical must fail before touching source",
+    "one_shot": "reset exactly once with frozen P81 episode seed; do exactly once per planned observed event; no see/ctf_do/step calls; callback returns frozen discrete 0/1",
+    "semantic_guard": "Check exact returned 5-tuple (nextstate4,reward,terminated_bool,truncated_bool,info_dict) and info['action']==planned; reject float/bool misuse and any hidden-mode override; record outcome after do() with receipt only",
+    "uncertain_effects": "Any exception after reset/do is terminal abort; no retry, no compensation call, never reuse same session; close exactly once after terminal/abort, but no close if pre-admission failed; if close() fails after actual effect, error recorded and not retried",
+    "short_episodes": "If fewer than two witnessed true transitions, no padded success; retain failure/no external score",
+    "max_steps": 96,
+    "output": "exact P81 toy fixture record and P80/P79 offline schema, never external-source report; no model predictions, no training, no artifact library write",
+    "expected_resource": "single CPU thread, low resource, zero paid API and GPU use"
+  },
+  "tests": [
+    "Admitted mock reset/do produces exactly 2 factual steps and correct P80/P79 schema",
+    "Default unknown/external/physical source rejected before touching session",
+    "Forbidden split/episode index/custody rejected before reset",
+    "One reset, one do per observed action, one close, no see/ctf_do/step",
+    "Actual info action mismatch or absent raises, abort, never retry or next step",
+    "Exception from do marks uncertain action and does not retry, close once",
+    "Unexpected do() 5-tuple types and nonfinite observations/reward rejected",
+    "Pending action mismatch and stop after termination",
+    "Float32/NumPy-like state tolist accepted as action-free conversion, no hidden info output",
+    "No uncontrolled repo/library/network modifications or owner workflow calls",
+    "Exact-head full G4 CPU Windows/Linux and G5 authentic TTT Windows/Linux and G7 pinned Mamba2 CPU qualified, no heldout science"
+  ],
+  "science_boundary": {
+    "real_source_runs": 0,
+    "real_external_effects": 0,
+    "science_first_use": "REQUIRES_SEPARATE_OWNER_VERIFICATION_AND_AUTHORIZATION",
+    "independent_causal_environment": "NOT_YET_EXECUTED",
+    "domain_appropriate_trained_baseline": "NOT_QUALIFIED",
+    "independent_intervention_holdout": "UNOPENED",
+    "scientific_pass": false,
+    "do_not_reuse_P78_synthetic_DEV_as_heldout": true
+  },
+  "scope": {
+    "no_schedules": true,
+    "no_new_runner": true,
+    "no_new_controller": true,
+    "no_forge_dispatch": true,
+    "no_unreviewed_external_import": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "no_paid_API": true,
+    "no_UI_artifacts": true,
+    "repo_evidence_only": true
+  }
+}
