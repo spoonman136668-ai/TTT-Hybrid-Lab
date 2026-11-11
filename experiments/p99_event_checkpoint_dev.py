@@ -345,9 +345,12 @@ def run():
         fit,cal = worlds[family+"_FIT"],worlds[family+"_CAL"]
         selected_base, base_grid = p97.select_control(fit)
         selected, candidate_grid = select_fit(fit)
+        prior_setting, prior_grid = p97.select_candidate(fit)
         model=EventCheckpointMemory(*selected)
+        prior_model=p97.RecurrentContextMemory(*prior_setting)
         with torch.no_grad():
             candidate,state,modes=model.episode(cal["history"],cal["probes"],trace=True)
+            prior_prediction,_=prior_model.episode(cal["history"],cal["probes"])
             baseline=p97.baseline(cal["history"],cal["probes"],*selected_base)
             fixed=p97.baseline(cal["history"],cal["probes"])
             zero=torch.zeros_like(candidate)
@@ -355,6 +358,7 @@ def run():
             wrong[:,:,D:]=wrong[:,:,D:].roll(13,dims=1)
             wrong_pred,_=model.episode(wrong,cal["probes"])
             scores={"candidate":p97.mse(candidate,cal),
+                    "prior_P97_two_context":p97.mse(prior_prediction,cal),
                     "FIT_selected_W256":p97.mse(baseline,cal),
                     "fixed_W256":p97.mse(fixed,cal),
                     "zero":p97.mse(zero,cal),
@@ -365,9 +369,11 @@ def run():
             scores["wrong_credit"]["all"]>=1.05*scores["candidate"]["all"])
         if not all(neg.values()):
             raise ValueError("P99_REQUIRED_NEGATIVE_FAILED")
+        inert=cal["history"].new_zeros((len(cal["history"]),257))
         if (state.active.numel()!=len(cal["history"])*256
             or state.checkpoint.numel()!=len(cal["history"])*256
             or state.energy.numel()!=len(cal["history"])
+            or inert.numel()!=len(cal["history"])*257
             or not torch.equal(baseline,p97.baseline(cal["history"],cal["probes"],*selected_base))):
             raise ValueError("P99_CAPACITY_PARITY")
         slice8={k:v[:8] for k,v in cal.items()}
@@ -390,6 +396,8 @@ def run():
             "FIT_grid":base_grid,
             "FIT_candidate":{"shock":selected[0],"persist":selected[1]},
             "FIT_candidate_grid":candidate_grid,
+            "FIT_prior_P97":{"surprise":prior_setting[0],"alternative":prior_setting[1]},
+            "FIT_prior_P97_grid":prior_grid,
             "CAL":scores,"routing":routing,"negative_controls":neg,
             "quality":quality,"cpu":cost,"family_pass":all(quality.values()),
             "changed_world_count":int(cal["changed_world"].sum()),
