@@ -53,9 +53,19 @@ def test_disjoint_seed_families_and_source_sealed_receipt():
     assert len(set(p59.TRAIN_SEEDS+p59.VALID_SEEDS+p59.OOD_SEEDS))==256
     assert set(range(985100,985196)).isdisjoint(p59.TRAIN_SEEDS+p59.VALID_SEEDS+p59.OOD_SEEDS)
     data=json.loads((ROOT/'experiments/p59_goal_policy_readout_dev_receipt.json').read_text())
-    assert data['source_sha256']==EXPECTED
-    assert data['source_sizes']=={'training_trajectories':128,'training_completed_actions':10195,'validation_trajectories':32,'OOD_trajectories':96}
-    assert data['model_seeds']==[9511,9523,9531]
+    assert data['schema']=='ttt-hybrid.p59.goal-reaching-factual-imitation-readout-dev-receipt.v1'
+    # Read the original frozen receipt's actual nested fields; never rewrite it.
+    assert data['authored_experiment']['source_SHA256']=={
+        'train':EXPECTED['train_executed_trajectories'],
+        'validation':EXPECTED['validation_executed_trajectories'],
+        'OOD':EXPECTED['OOD_executed_trajectories']}
+    assert (data['authored_experiment']['fit_executed_episodes'],
+            data['authored_experiment']['fit_executed_actions'],
+            data['authored_experiment']['validation_episodes'],
+            data['authored_experiment']['OOD_episodes'])==(128,10195,32,96)
+    assert [row['seed'] for row in data['per_seed']]==[9511,9523,9531]
+    assert data['parent']['original_reference_model_git_blob']==p59.MODEL_GIT_BLOB
+    assert data['parent']['local_physics_git_blob']==p59.PHYSICS_GIT_BLOB
 
 
 def test_exact_param_budget_and_reference_unchanged():
@@ -73,7 +83,9 @@ def test_query_contains_no_future_and_observation_only_after_completed_step():
     assert np.array_equal(q[:3],np.zeros((3,5),np.float32))
     assert np.array_equal(q[-2],one)
     assert q[-1,2:].tolist()==[0.,0.,0.]
-    assert np.array_equal(q[-1,:2],np.array([observed.next_sensor[0],observed.next_sensor[1]*100.]))
+    # The candidate stores float32; compare against the same explicit cast.
+    assert np.array_equal(q[-1,:2],np.array(
+        [observed.next_sensor[0],observed.next_sensor[1]*100.],dtype=np.float32))
     with pytest.raises(ValueError,match='P59_FACTUAL_CAPACITY_OVERFLOW'):
         p59.feature([one]*5,sensor)
     src=inspect.getsource(p59.batch_rollout)
@@ -102,13 +114,21 @@ def test_cold_weights_unchanged_for_all_factory_classes():
 
 def test_frozen_outcomes_preserve_strong_GRU_and_imitation_only():
     data=json.loads((ROOT/'experiments/p59_goal_policy_readout_dev_receipt.json').read_text())
-    assert data['classification']=='AUTHORED_SUPERVISED_IMITATION_DEV_NOT_ACTION_CONSEQUENCE_LEARNING'
-    assert data['overall_dev_pass']
-    assert data['official_installed_gymnasium']=='NOT_AVAILABLE'
-    assert data['independent_science']=='NOT_RUN'
-    assert data['teacher']['OOD']['success']==1.0
-    assert all(row['frozen_per_seed_pass'] for row in data['results'])
-    assert all(row['arms']['GRU']['OOD']['success']==1.0 for row in data['results'])
-    assert [row['arms']['Hybrid']['OOD']['successes'] for row in data['results']]==[96,96,95]
-    assert all(all(v['cold_exact'] for v in row['arms'].values()) for row in data['results'])
-    assert all(all(v>0 for v in (row['arms'][name]['train_seconds'] for name in p59.ARMS)) for row in data['results'])
+    # Exact outcome class and strong conventional-control negatives are frozen.
+    assert data['classification']=='FROZEN_AUTHOR_GENERATED_IMITATION_DEV_PASS_NOT_CAUSAL_ACTION_CONSEQUENCE_SCIENCE'
+    gates=data['frozen_gates']
+    assert gates['overall']=='DEV_PASS_3_OF_3'
+    assert gates['OOD_success_noninferior_vs_trained_GRU_and_MLP_5ppt']=='PASS_3_OF_3'
+    assert gates['model_weights_cold_restore_exact']=='PASS_ALL'
+    assert data['source_fidelity']['installed_official_gymnasium_runtime']=='NOT_AVAILABLE'
+    limits=data['scientific_limits']
+    assert limits['SCIENTIFIC_PASS']=='UNVERIFIED'
+    assert limits['causal_action_consequence_learning'].startswith('NOT_TESTED')
+    assert limits['strong_GRU_control']=='288/288 success; Hybrid has no demonstrated gain'
+    assert data['teacher_controls']['unfamiliar_OOD']['successes']==96
+    rows=data['per_seed']
+    assert [row['seed'] for row in rows]==[9511,9523,9531]
+    assert [row['hybrid']['OOD_goals'] for row in rows]==[96,96,95]
+    assert all(row['GRU']['OOD_goals']==96 for row in rows)
+    assert all(all(row[arm]['cold'] for arm in ('hybrid','GRU','MLP')) for row in rows)
+    assert all(all(row[arm]['train_s']>0 for arm in ('hybrid','GRU','MLP')) for row in rows)

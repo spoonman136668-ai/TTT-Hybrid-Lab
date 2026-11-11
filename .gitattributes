@@ -1,0 +1,2 @@
+# QA-only checkout policy: preserve canonical Git LF bytes for exact-source Python identity on Windows.
+*.py text eol=lf
