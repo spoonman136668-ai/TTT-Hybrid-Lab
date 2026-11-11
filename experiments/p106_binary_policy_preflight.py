@@ -92,6 +92,7 @@ class Proposal:
     state_before:tuple[float,float,float,float]
     model_state_sha256:str
     opaque_trial_key:str
+    public_step:int
     commitment_sha256:str
 
 
@@ -174,7 +175,7 @@ def commit(model,state_before,policy,*,sigma=None,trial_public_key,step):
         "state_before":state,"policy":policy,
     },sort_keys=True,separators=(",",":")).encode()
     return Proposal(event_number,chosen,policy,state,model_id,
-                    trial_public_key,hashlib.sha256(payload).hexdigest())
+                    trial_public_key,step,hashlib.sha256(payload).hexdigest())
 
 
 def confirmed_write(model,proposal,*,executed_action,state_before,
@@ -192,6 +193,21 @@ def confirmed_write(model,proposal,*,executed_action,state_before,
         proposal.model_state_sha256!=model_sha(model) or
         _four(state_before)!=proposal.state_before):
         raise ValueError("P106_UNKNOWN_OR_REPLAYED_PROPOSAL")
+    if (proposal.policy not in POLICIES or
+        type(proposal.action) is not int or proposal.action not in (0,1) or
+        not isinstance(proposal.opaque_trial_key,str) or
+        not 1<=len(proposal.opaque_trial_key)<=128 or
+        type(proposal.public_step) is not int or proposal.public_step<0):
+        raise ValueError("P106_PROPOSAL_SCOPE_DRIFT")
+    payload=json.dumps({
+        "event":proposal.event_number,"action":proposal.action,
+        "model_sha":proposal.model_state_sha256,
+        "public_trial_key":proposal.opaque_trial_key,
+        "public_step":proposal.public_step,
+        "state_before":proposal.state_before,"policy":proposal.policy,
+    },sort_keys=True,separators=(",",":")).encode()
+    if hashlib.sha256(payload).hexdigest()!=proposal.commitment_sha256:
+        raise ValueError("P106_TAMPERED_PROPOSAL_COMMITMENT")
     if (type(executed_action) is not int or executed_action!=proposal.action
         or executed_action not in (0,1)):
         raise ValueError("P106_WRONG_ACTION_EFFECT_CREDIT")
