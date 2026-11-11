@@ -1,0 +1,145 @@
+{
+  "schema": "ttt-hybrid.p85mr-f4-actual-fitcal-conventional-controls-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_F4_TRAINER_IMPL_AND_ANY_F4_TRAINING",
+  "project": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "parent": {
+    "pr": 221,
+    "sha": "00b3f45f47660af4c1016c64b656160975982227",
+    "source_owner_run": 43073165842,
+    "source_artifact_id": 13878284321,
+    "artifact_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "upstream_sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "f3_freeze_blob": "92b0c9fc1b80dfcd8914928b83011f84473d9391",
+    "F3_collected_and_independently_witnessed": true
+  },
+  "source": {
+    "kind": "external_cartpolewind_F3_already_consumed_FIT_CAL",
+    "source_data_scope": "FIT128 CAL64 ONLY; no new reset/do or OOD/unseen DEV",
+    "fit_sha256": "b495d6c41fd54c6955fd83ead7569282146af45bc68b3a3dba2a63808e1d6f7b",
+    "cal_sha256": "15bcbe25b492ad095fca35ee37ec97d0d141c9beb9899549a30558659ded3aef",
+    "fit_valid": 128,
+    "cal_valid": 64,
+    "fit_events": 2923,
+    "cal_events": 1524,
+    "total_observations": 4447,
+    "artifact_zip_entries": 11,
+    "loader": "Strict parse in-memory ZIP with exact sha256, normalized P80 action16/effect16 from witnessed factual observations only; never execute or import third-party source"
+  },
+  "controls": {
+    "kinds": [
+      "linear7",
+      "mlp7",
+      "gru256",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "zero_ablation": true,
+    "persistent_floats_per_world": {
+      "linear7": 0,
+      "mlp7": 0,
+      "gru256": 256,
+      "ssm256": 256
+    },
+    "input": "P80 state+action unit-normalized 7 active + 9 zero key, factual effect 7 active + 9 zero",
+    "baseline_freeze_blob": "85ae6d1eee3332ef55a653b678733e012cb57158",
+    "t1_engine_freeze_blob": "7745855deaafdb80117e68ba437af27059005524",
+    "same_action_effect_stream": true,
+    "original_hybrid_comparison": "separate lane after fully trained conventional controls, no F4 Hybrid training"
+  },
+  "training": {
+    "sampler_seed": 985299,
+    "batch_size": 16,
+    "max_updates": 800,
+    "check_every": 50,
+    "min_early_stop_updates": 400,
+    "early_stop_nonimprovement_checks": 6,
+    "early_stop_plateau_spread_max": 0.005,
+    "optimizer": "AdamW",
+    "learning_rate": {
+      "linear7": 0.005,
+      "mlp7": 0.005,
+      "gru256": 0.001,
+      "ssm256": 0.001
+    },
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1,
+    "threads": 1,
+    "fit_only_backprop": true,
+    "cal_only_checkpoint_selection": true,
+    "world_equal_cal_weight": true,
+    "actual_effect_only": true,
+    "ignore_first_event_and_padded_timesteps": true
+  },
+  "metrics": {
+    "primary": "CAL measured four physical state deltas mean squared error per world; zero comparator same",
+    "quality_competence_max_ratio_vs_zero": 0.75,
+    "all_three_seeds_every_arm": true,
+    "read_before_write": true,
+    "cold_checkpoint_restore": true,
+    "resource_accounting": [
+      "per arm wall clock",
+      "training time",
+      "calibration scoring",
+      "complete process",
+      "peak rss",
+      "persistent floats",
+      "static params",
+      "checkpoint hashes"
+    ],
+    "per_arm_wall_seconds_max": 3600,
+    "peak_process_rss_gib_max": 3,
+    "workload": "800 or frozen non-improvement early stop",
+    "no_positive_claim_from_raw_source": true
+  },
+  "execution": {
+    "route": "exact source-bound owner branch first push workflow, run_number=1 run_attempt=1; no retrials upon ambiguity",
+    "branch": "research/p85mr-f4-actual-fitcal-controls-20261111",
+    "workflow": ".github/workflows/p85mr-f4-train-controls-once.yml",
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "wsl": "Ubuntu-24.04",
+    "uid": 1000,
+    "cpu_python": "existing g7-s25-cpu311-r1 Torch pinned CPU venv",
+    "output": "GitHub Actions artifact receipts and non-pickle model checkpoints only; never ChatGPT Library",
+    "evidence_retention_days": 30,
+    "one_time_training_only": true
+  },
+  "stop": {
+    "on_incomplete_artifact": true,
+    "on_owner_ref_or_source_drift": true,
+    "on_cal_leakage": true,
+    "on_any_nonfinite": true,
+    "on_bad_frozen_sampler": true,
+    "on_missing_dependency": true,
+    "on_first_use_policy_crossing": true,
+    "no_ood_unseal": true,
+    "no_training_update_after_cal_results": true,
+    "cal_only_dev_control_falsification": true
+  },
+  "prohibitions": [
+    "no reexecute spent F1/F2/F3 owner effects",
+    "no external simulator imports",
+    "no source birth or OOD",
+    "no schedule/controller/runner changes",
+    "no paid APIs",
+    "no merge/promotion/deployment",
+    "no original model or FORGE edits",
+    "no modified frozen existing model interfaces"
+  ],
+  "qualification": [
+    "exact pretrigger SHA original full G4 Windows and Linux regression, G5 native TTT both OS, G7 pinned Mamba2 Ubuntu",
+    "final owner candidate exact-SHA native Windows+WSL full regression and admission negative before source artifact consumed",
+    "cryptographic GitHub F3 artifact/capture/identity check",
+    "independent receipt witness before scientific result claims"
+  ],
+  "interpretation": "Strong conventional control competence screen on already consumed actual simulator FIT/CAL only. Passing competence is not scientific generalization; SCIENTIFIC_PASS=false until independent reserved OOD and matched original Hybrid comparison separately qualified."
+}
