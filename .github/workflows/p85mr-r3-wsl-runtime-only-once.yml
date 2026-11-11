@@ -1,0 +1,150 @@
+# P85MR-R3: one owner-only WSL CPU dependency repair; NO causal simulation or model use.
+# F1/F2 runs are spent; this workflow neither checks out upstream nor invokes their collector.
+name: P85MR-R3 owner one-shot WSL runtime only
+on:
+  push:
+    branches:
+      - research/p85mr-r3-wsl-runtime-only-20261111
+    paths:
+      - .github/workflows/p85mr-r3-wsl-runtime-only-once.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-p85mr-r3-runtime-only
+  cancel-in-progress: false
+
+jobs:
+  owner-runtime-only:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/p85mr-r3-wsl-runtime-only-20261111' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 30
+    steps:
+      - name: Checkout exact R3 candidate without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: p85mr-r3
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+          fetch-depth: 1
+
+      - name: Exact owner runner, source blobs, frozen protocol and clean-tree admission
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $expectedRef='refs/heads/research/p85mr-r3-wsl-runtime-only-20261111'
+          $expectedWorkflow='spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-r3-wsl-runtime-only-once.yml@'+$expectedRef
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+             $env:GITHUB_REF -cne $expectedRef -or $env:GITHUB_WORKFLOW_REF -cne $expectedWorkflow -or
+             $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or $env:GITHUB_EVENT_NAME -cne 'push' -or
+             $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+             $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+             $env:RUNNER_OS -cne 'Windows' -or $env:RUNNER_ARCH -cne 'X64' -or
+             $env:GITHUB_SHA -cnotmatch '^[0-9a-f]{40}$'){
+            throw 'P85MR_R3_OWNER_OR_SOURCE_ROUTE_DENIED'
+          }
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-r3'
+          $observed=(& git -C $root rev-parse HEAD | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $observed -cne $env:GITHUB_SHA){
+            throw 'P85MR_R3_CANDIDATE_SHA_DRIFT'
+          }
+          $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $dirty){throw 'P85MR_R3_DIRTY_SOURCE'}
+          $blobs=@{
+            'experiments/p85mr_r3_runtime_only_frozen.json'='daf6c6cfb841f716dbf81767e25cb388c0240850';
+            'scripts/p85mr_r3_runtime_only.py'='497e79f24eaaccb964bb60eb747d951b1e925328';
+            'tests/test_p85mr_r3_runtime_only.py'='152c7add3ef1bc265d3b9f9f0487d9b314172c46'
+          }
+          foreach($f in $blobs.Keys){
+            $h=(& git -C $root hash-object -- $f | Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $h -cne $blobs[$f]){throw 'P85MR_R3_FROZEN_SOURCE_BLOB_DRIFT'}
+          }
+          Write-Output 'P85MR_R3_CUSTODY=PASS_NO_SCIENCE'
+
+      - name: Full original native Windows CPU engineering regression on exact owner SHA
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-r3'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'R3_ORIGINAL_WINDOWS_PY311_MISSING'}
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1'
+          $env:PYTHONDONTWRITEBYTECODE='1'
+          $env:PYTHONHASHSEED='0'
+          $receipt=Join-Path $root 'local_runs\p85mr_r3_windows_cpu.json'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'R3_WINDOWS_FULL_REGRESSION_FAILED'}
+          $r=Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+          if($r.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $r.revision -cne $env:GITHUB_SHA -or
+             $r.checkout_identity.pass -ne $true -or $r.negative_control.pass -ne $true -or
+             $r.tests.exit_code -ne 0){throw 'R3_WINDOWS_NEGATIVE_OR_SOURCE_RECEIPT_FAILED'}
+
+      - name: Full original isolated WSL CPU engineering regression on exact owner SHA
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-r3'
+          $linuxRoot=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $root | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or
+             $who -cnotmatch '^[A-Za-z_][A-Za-z0-9_-]{0,32}$' -or
+             $linuxRoot -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,260}$'){
+            throw 'R3_WSL_OWNER_NOT_QUALIFIED'
+          }
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $envs=@("EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA",
+                  'CUDA_VISIBLE_DEVICES=-1','PYTHONDONTWRITEBYTECODE=1','PYTHONHASHSEED=0')
+          $receipt="$linuxRoot/local_runs/p85mr_r3_wsl_cpu.json"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 720s /usr/bin/env @envs $py -I -B "$linuxRoot/scripts/qualify_cpu.py" --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'R3_WSL_FULL_REGRESSION_FAILED'}
+          $r=Get-Content -LiteralPath (Join-Path $root 'local_runs\p85mr_r3_wsl_cpu.json') -Raw | ConvertFrom-Json
+          if($r.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $r.revision -cne $env:GITHUB_SHA -or
+             $r.checkout_identity.pass -ne $true -or $r.negative_control.pass -ne $true -or
+             $r.tests.exit_code -ne 0){throw 'R3_WSL_NEGATIVE_OR_SOURCE_RECEIPT_FAILED'}
+
+      - name: Inventory exact pinned WSL runtime; provision isolated CPU venv only if absent
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-r3'
+          $linuxRoot=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $root | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or $who -cnotmatch '^[A-Za-z_][A-Za-z0-9_-]{0,32}$' -or
+             $linuxRoot -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,260}$'){
+            throw 'R3_RUNTIME_WSL_USER_DENIED'
+          }
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $envs=@("GITHUB_REPOSITORY=$env:GITHUB_REPOSITORY",
+                  "GITHUB_ACTOR=$env:GITHUB_ACTOR",
+                  "GITHUB_EVENT_NAME=$env:GITHUB_EVENT_NAME",
+                  "GITHUB_REF=$env:GITHUB_REF",
+                  "GITHUB_RUN_NUMBER=$env:GITHUB_RUN_NUMBER",
+                  "GITHUB_RUN_ATTEMPT=$env:GITHUB_RUN_ATTEMPT",
+                  "GITHUB_SHA=$env:GITHUB_SHA",
+                  "RUNNER_NAME=$env:RUNNER_NAME",
+                  'P85MR_R3_RUNTIME_ONLY=1','CUDA_VISIBLE_DEVICES=-1',
+                  'PYTHONDONTWRITEBYTECODE=1','PYTHONHASHSEED=0')
+          $receipt="$linuxRoot/local_runs/p85mr_r3_runtime.json"
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 630s /usr/bin/env @envs $py -I -B "$linuxRoot/scripts/p85mr_r3_runtime_only.py" --project $linuxRoot --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'R3_ISOLATED_WSL_RUNTIME_NOT_QUALIFIED'}
+          $r=Get-Content -LiteralPath (Join-Path $root 'local_runs\p85mr_r3_runtime.json') -Raw | ConvertFrom-Json
+          if($r.status -cnotmatch '^PASS_(EXISTING_PINNED|NEW_ISOLATED_PINNED)_WSL_RUNTIME$' -or
+             $r.science_started -ne $false -or $r.simulator_reset -ne $false -or
+             $r.source_first_use -ne $false -or $r.training_started -ne $false -or
+             $r.reserved_data_access -ne $false){throw 'R3_RUNTIME_RECEIPT_REFUSED'}
+
+      - name: Preserve only engineering and sanitized dependency SHA receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p85mr-r3-runtime-only-${{ github.sha }}-${{ github.run_id }}
+          path: p85mr-r3/local_runs/p85mr_r3_*.json
+          retention-days: 30
+          if-no-files-found: warn
