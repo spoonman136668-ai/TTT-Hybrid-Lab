@@ -1,0 +1,67 @@
+{
+  "FORGE": "UNCHANGED",
+  "base_pr": 172,
+  "base_sha": "36190b8eb3a1baad5309a8ad7e017c0983774662",
+  "checkpoint_receipt_commit": "ad92632178241b5ccdeb7d347198484cbb4f68d1",
+  "checkpoint_source_pr": 178,
+  "checkpoint_validation_reproduced_3_of_3": true,
+  "classification": "LOCAL_EXACT_SOURCE_FOCUSED_ENGINEERING_NOT_FULL_REGRESSION_OR_SCIENCE",
+  "deployment": "NONE",
+  "environment": {
+    "platform": "Linux-6.18.57-x86_64-with-glibc2.41",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu"
+  },
+  "focused_tests": {
+    "elapsed_seconds": 4.361594984999101,
+    "failed": 0,
+    "passed": 10,
+    "source_custody": "EXACT_MATCH"
+  },
+  "full_original_Windows_Ubuntu_WSL_regression": "NOT_RUN",
+  "independent_action_consequence_source": "NOT_RUN",
+  "merge": "NONE",
+  "native_GPU": "NOT_RUN",
+  "original_architecture_scientific_comparison": "NOT_RUN",
+  "pinned_original_G4_G5_G7": "NOT_RUN",
+  "schema": "ttt-hybrid.p71-exact-original-four-block-local-engineering-v1",
+  "scientific_pass": false,
+  "seams": {
+    "SSM_attention_carry_unchanged": "PASS",
+    "cold_restore": "PASS",
+    "cross_gate_state_reuse_refused": "PASS",
+    "gate_theta_frozen_p70_dev_only": true,
+    "invalid_or_unconfirmed_fact_refusal": "PASS",
+    "no_hypothetical_write": "PASS",
+    "original_allwrite_parity": "PASS",
+    "original_core_weight_changes": false,
+    "p70_math_factual_write": "TESTED",
+    "separate_trainable_model_parameters_added": 0
+  },
+  "source_git_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p62_streaming_ttt.py": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "native_p64k_incremental_hybrid_stream.py": "89c3ef5819ac594ad687c67c579a559754109d4c",
+    "native_p71_gated_hybrid_stream.py": "e93ffe29806ac15705cbfd002c5725b9bc4b5e45",
+    "tests/test_native_p71_gated_hybrid_stream.py": "d17cdefc1832400c0eb777776833c00280cbcb9c"
+  },
+  "timing_fixture": {
+    "batch": 2,
+    "candidates": 3,
+    "cpu_threads": 1,
+    "p50_ms": {
+      "all_write_original": 6.494274500255415,
+      "learned_gate": 7.9139905001284205
+    },
+    "p95_ms": {
+      "all_write_original": 6.871515999591793,
+      "learned_gate": 8.4452360006253
+    },
+    "repeats_per_arm": 20,
+    "scope": "engineering latency only, no model quality",
+    "synthetic_factual_events": 9,
+    "warmups": 3,
+    "whole_process_training_cost": "UNMEASURED",
+    "width": 16
+  }
+}
