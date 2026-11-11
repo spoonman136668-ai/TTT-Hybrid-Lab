@@ -1,0 +1,44 @@
+{
+  "schema": "ttt-hybrid.p94-native-confirmed-causal-memory-freeze.v1",
+  "parent_sha": "bf1d65ff30b240beb13b8669a84d5461f35a7c74",
+  "scope": "Engineering architecture only; no new world generation, no external first-use, no model training, no scientific performance claim",
+  "hypothesis": "An explicit stateful confirmed-action/consequence interface can reproduce P86 CAL-frozen W256 per-event predictions, preserve causal read-before-write ordering, and cold-restore identical state; zero-gated residual Hybrid agrees with same conventional control.",
+  "interface": {
+    "action_dim": 16,
+    "effect_dim": 16,
+    "persistent_fast_floats": 256,
+    "eta": 1,
+    "decay": 0.99,
+    "confirm_only": true,
+    "read_before_write": true,
+    "episode_reset_required": true,
+    "unconfirmed_effect_ignored": true,
+    "original_model_untouched": true
+  },
+  "controls": [
+    "P86 CAL-frozen eta1 decay0.99 result parity on already-consumed CAL as engineering fixture only",
+    "Factual outcomes shuffled against action keys worsen final MSE",
+    "Unconfirmed future outcomes altered without changing output or state",
+    "Checkpoint resume bitwise equals uninterrupted factual stream",
+    "Empty/residual-zero read agrees with P86 for identical actions and history"
+  ],
+  "qualification": [
+    "focused tests exact source",
+    "mandatory original G4 final SHA Windows and Linux CPU full regression",
+    "G5 authentic TTT Windows and Linux CPU",
+    "G7 Mamba2 Linux CPU",
+    "exact parent SHA and original model blob check"
+  ],
+  "scientific_requirements_after_engineering": [
+    "Separate fresh source-birth and preregistration",
+    "Fully trained conventional W256, GRU, SSM controls with matched observations, training steps, compute and capacity",
+    "Native residual Hybrid with explicit factual credit, cold retention, hidden causal changes, unfamiliar OOD transfer and independent qualification"
+  ],
+  "prohibitions": [
+    "no changes to main or original model.py",
+    "no FORGE, P85-MR, runner, scheduler, workflow or credentials mutation",
+    "no protected source generation or first-use",
+    "no merges or promotions"
+  ],
+  "pass_meaning": "ENGINEERING_ONLY; strict baseline parity is not an improvement"
+}
