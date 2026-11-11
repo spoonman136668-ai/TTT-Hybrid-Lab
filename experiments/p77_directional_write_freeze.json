@@ -1,0 +1,190 @@
+{
+  "schema": "ttt-hybrid.p77-direction-sensitive-write-mechanism-prospective-dev.v1",
+  "status": "PRE-SOURCE_AND_TRAINING_FROZEN",
+  "classification": "AUTHOR_SYNTHETIC_DEVELOPMENT_ONLY_NOT_SCIENTIFIC_FIRST_USE",
+  "lineage": {
+    "parent_pr": 188,
+    "parent_sha": "c8beaa3465954a5d9e08d2350e3bb3eee1db6214",
+    "p76_model_blob": "39614148c5a5428c50a9b84493b379902c4d9190",
+    "p69_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "p76_fit_val": "ALREADY_CONSUMED_EXCLUDED",
+    "prior_ood_p68_p70": "CONSUMED_EXCLUDED",
+    "p69_p75_heldout": "EXCLUDED"
+  },
+  "hypotheses": {
+    "directional": "A learned directional alignment (cosine(prediction,observed)) feature materially improves changed-role causal memory versus a matched-architecture learner with no directional inputs, at same observation and optimizer budgets.",
+    "explicit_contradiction": "A second explicit contradiction term in addition to cosine improves post-switch changed-role error versus otherwise identical learned cosine-only control (necessity test).",
+    "fixed_comparison": "A learned full five-feature gate surpasses the strongest validation-calibrated constant update gain on total and changed-role MSE without losing stable-role retention.",
+    "null": "No reproducible improvement over stronger competent controls; no contradiction-feature necessity after controlling for cosine."
+  },
+  "source": {
+    "source_mechanics": "Identical P69 parent frozen code and dimensions, separately loaded and fail-closed original Git blob, 16D continuous actions and measured consequences, 8 independent target roles, 4 hidden changed relationships, 96 actual history events/world, no future query or role labels at write.",
+    "namespace": "ttt-hybrid/p77/directional-mechanism-v1",
+    "seeds": {
+      "fit": 977101,
+      "val": 977103,
+      "ood_0": 977107,
+      "ood_1": 977109,
+      "ood_2": 977111,
+      "negative": 977113,
+      "model": [
+        977201,
+        977203,
+        977207
+      ],
+      "sampler": 977299,
+      "bootstrap": 977401,
+      "wrong_credit": [
+        977221,
+        977223,
+        977227
+      ]
+    },
+    "counts": {
+      "fit": 512,
+      "val": 192,
+      "ood_0": 192,
+      "ood_1": 192,
+      "ood_2": 192,
+      "negative": 96
+    },
+    "selector": "FIT and VAL only; reject OOD and negative cohorts at loader boundary, never compute their digests or scores in this gate.",
+    "custody": "Independent per-world SHA256, frozen namespace and seeds, FIT/VAL source digest, source quartile deviation<=.05, target-index heldout balanced accuracy<=.55, changed-role index BA conditional on true target<=.55, future query raw-input duplication zero"
+  },
+  "arms": {
+    "fixed": [
+      {
+        "id": "eta_grid",
+        "values": [
+          0.05,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          1
+        ],
+        "selection": "Evaluate all on VAL and select minimum TOTAL VAL MSE; this is stronger than original fixed eta .5 and is an explicitly registered VAL-calibrated control"
+      },
+      {
+        "id": "fixed_contradiction",
+        "step_rule": "0.5+0.5*(cosine(pred,obs)<0 and ||pred||/(||obs||+1e-6) > 0.3)"
+      },
+      {
+        "id": "zero",
+        "constant": "zero predicted effect, reference only"
+      }
+    ],
+    "trained": [
+      {
+        "id": "full5",
+        "features": [
+          "1",
+          "ln(mean((y-Wa)^2)+1e-6)",
+          "ln(mean((Wa)^2)+1e-6)",
+          "cos(Wa,y)",
+          "ReLU(-cos(Wa,y))*clip(||Wa||/(||y||+1e-6),0,1)"
+        ],
+        "gain": "sigmoid(theta dot features)",
+        "eta_max": 1,
+        "theta_params": 5
+      },
+      {
+        "id": "cosine4",
+        "features": [
+          "1",
+          "ln(mean((y-Wa)^2)+1e-6)",
+          "ln(mean((Wa)^2)+1e-6)",
+          "cos(Wa,y)"
+        ],
+        "gain": "sigmoid(theta dot features)",
+        "eta_max": 1,
+        "theta_params": 4
+      },
+      {
+        "id": "non_directional3",
+        "features": [
+          "1",
+          "ln(mean((y-Wa)^2)+1e-6)",
+          "ln(mean((Wa)^2)+1e-6)"
+        ],
+        "gain": "sigmoid(theta dot features)",
+        "eta_max": 1,
+        "theta_params": 3
+      },
+      {
+        "id": "p70_four_param",
+        "features": [
+          "1",
+          "ln(mean((y-Wa)^2)+1e-6)",
+          "ln(mean((Wa)^2)+1e-6)",
+          "cos(Wa,y)"
+        ],
+        "gain": "0.5*sigmoid(theta dot features)",
+        "eta_max": 0.5,
+        "theta_params": 4,
+        "meaning": "P70-equation control trained from fresh P77 FIT, not P70 frozen trained parameters or consumed data"
+      }
+    ],
+    "shared": {
+      "persistent_fast_state_floats_per_world": 256,
+      "history_access": "Only ordered realized factual action and observed outcome; eval query action read after history only",
+      "static_params_not_counted_as_floats": "Count separately; report difference 5/4/3",
+      "initialization": "Each trainable theta_i=(torch.rand(generator=torch.Generator().manual_seed(seed))-0.5)*0.1, truncated to arm feature count; seeds distinct across model seeds and paired first shared features across ablations",
+      "factual_update": "W <- W + gain * (observed-W a) outer(a), no role/phase/time data"
+    }
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1,
+    "batch_size": 32,
+    "updates": 240,
+    "val_every": 40,
+    "checkpoint": "lowest TOTAL VAL query-effect MSE only, freeze best theta before any holdout",
+    "model_seeds": [
+      977201,
+      977203,
+      977207
+    ],
+    "sampling_seed": 977299,
+    "same_train_val_worlds_and_step_index_sequence": true,
+    "early_stop": "No early stopping except error/budget, all 240 updates otherwise",
+    "cpu_threads": 1,
+    "max_total_wall_seconds": 3600,
+    "max_peak_ram_gib": 3,
+    "no_paid_api": true
+  },
+  "val_success": {
+    "global_learned_vs_fixed": "full5 total MSE<=0.85 * strongest eta_grid VAL total and changed MSE<=0.80*its changed with stable MSE<=1.05*its stable for all 3 seeds; otherwise strict improvement FAIL",
+    "directional_needed": "cosine4 changed-role MSE<=0.90*non_directional3 changed-role MSE, stable error<=1.05*non_directional3 stable, all 3 seeds; otherwise directional importance FAIL",
+    "explicit_contradiction_needed": "full5 changed-role MSE<=0.95*cosine4 changed-role MSE AND stable MSE<=1.05*cosine4 stable for all 3 seeds, otherwise contradiction-specific claim FAIL",
+    "comparison_to_p70": "full5 total VAL MSE <=0.9*p70_four_param total VAL MSE for all 3 seeds, otherwise no superiority to P70 update rule",
+    "eligibility": "All arms finite loss, 240 updates, source leakage controls, distinct model initializations, exact 256-state read-before-write and cold-restored bitwise; any failed prerequisite is strict DEV_FAIL, no OOD",
+    "negative": "Wrong action-credit and no-direction controls; required wrong credit >=1.2*full5 VAL MSE, otherwise gate FAIL.",
+    "decision": "Do not merge direction and contradiction hypothesis outcomes; one may pass while the other fails. Keep complete primary/negative values; no post-result changes."
+  },
+  "heldout": {
+    "first_use": "No OOD source generation/scoring unless ALL gates, exact-platform regression and separate project owner first-use authority confirmed.",
+    "if_admitted": "3 independently seeded synthetic OOD cohorts, 3 trained seeds, point gain >=10% against strongest nonprivileged preregistered competitor 9/9, paired 5000-bootstrap lower relative gain>0, cold retention and changed-role recovery separately.",
+    "science": "Authored synthetic DEV never SCIENTIFIC_PASS; independent physical/externally qualified intervention source, equal-information fully trained baselines, whole-process cost and approval required."
+  },
+  "engineering": {
+    "freeze_before_source_birth": true,
+    "source_sha_verification": true,
+    "focused_tests": "Pure causal read-before-write, parity of frozen model full5, three ablations, fixed calibrator, bad input fail closed, same factual state 256, deterministic cold restore, source split isolation",
+    "full_final_regression": "Exact candidate SHA Windows+Linux original project test/build plus G4/G5/G7 separately needed; no claim from 0-step runner failures",
+    "no_runners_allocated": true,
+    "no_scheduled_tasks": true,
+    "no_controller_change": true,
+    "no_forge_integration": true,
+    "no_main_change": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "no_live_trading": true
+  }
+}
