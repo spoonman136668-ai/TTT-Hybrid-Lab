@@ -27,6 +27,10 @@ import zipfile
 import numpy as np
 import torch
 
+# Python -I intentionally removes script-side implicit sys.path. Add only this
+# exact project experiments directory for immutable, local project imports.
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 from p80mr_causalgym_trace_adapter import adapt_capture
 from p85mr_dynamics_baselines import KINDS, SEEDS, new_baseline, model_metadata
 from p85mr_t1_fitcal_engine import (
@@ -37,7 +41,9 @@ from p85mr_t1_fitcal_engine import (
 
 PROJECT = "spoonman136668-ai/TTT-Hybrid-Lab"
 BRANCH = "research/p85mr-f4-actual-fitcal-controls-20261111"
-WORKFLOW = ".github/workflows/p85mr-f4-train-controls-once.yml"
+FROZEN_WORKFLOW = ".github/workflows/p85mr-f4-train-controls-once.yml"
+WORKFLOW = ".github/workflows/p85mr-f4r1-postblock-fitcal-once.yml"
+AMENDMENT_BLOB = "89e3a986a851e7ebab385b4a99d5f15ad5162b3c"
 FROZEN_BLOB = "d8136313dd90cc406f00c49770ed3beeff4a1ee4"
 PARENT_SHA = "00b3f45f47660af4c1016c64b656160975982227"
 RUN_ID = "43073165842"
@@ -95,10 +101,35 @@ def locked_protocol(root: Path) -> dict:
         or f["controls"]["kinds"] != list(KINDS)
         or f["controls"]["seeds"] != list(SEEDS)
         or f["execution"]["branch"] != BRANCH
-        or f["execution"]["workflow"] != WORKFLOW
+        or f["execution"]["workflow"] != FROZEN_WORKFLOW
         or f["metrics"]["quality_competence_max_ratio_vs_zero"] != .75):
         raise ValueError("F4_FROZEN_PROTOCOL_DRIFT")
     return f
+
+
+def locked_r1_route(root: Path) -> dict:
+    raw = (root / "experiments/p85mr_f4r1_route_amendment.json").read_bytes()
+    git_blob = hashlib.sha1(
+        b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+    if git_blob != AMENDMENT_BLOB:
+        raise ValueError("F4R1_ROUTE_AMENDMENT_BLOB_DRIFT")
+    v = json.loads(raw)
+    if (
+        v["schema"] != "ttt-hybrid.p85mr-f4r1-pretraining-transport-repair.v1"
+        or v["original_science_freeze_blob"] != FROZEN_BLOB
+        or v["original_f4"]["source_sha"] !=
+           "ef032435948bb05d5fb7cf4f79e79fcd2670b1f3"
+        or v["original_f4"]["run_id"] != 43079777841
+        or v["original_f4"]["model_training_updates"] != 0
+        or v["original_f4"]["original_attempt_consumed"] is not True
+        or v["new_route"]["workflow"] != WORKFLOW
+        or v["new_route"]["run_number"] != 1
+        or v["new_route"]["run_attempt"] != 1
+        or v["new_route"]["source_original_artifact_id"] != 13878284321
+        or v["new_route"]["source_original_run_id"] != 43073165842
+    ):
+        raise ValueError("F4R1_AUTHORIZED_ROUTE_MISMATCH")
+    return v
 
 
 def owner_admission(root: Path) -> dict:
@@ -135,6 +166,7 @@ def owner_admission(root: Path) -> dict:
     ):
         raise PermissionError("F4_WRONG_PROJECT_ORIGIN")
     locked_protocol(root)
+    locked_r1_route(root)
     return {"repo": PROJECT, "run_id": run_id, "sha": sha,
             "runner": expected["RUNNER_NAME"], "source_run_id": RUN_ID}
 
