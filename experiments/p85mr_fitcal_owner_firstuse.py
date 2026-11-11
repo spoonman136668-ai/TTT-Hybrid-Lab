@@ -23,6 +23,9 @@ from p84mr_partition_preflight import preflight_partition, planned_discrete_acti
 from p80mr_causalgym_trace_adapter import adapt_capture, UPSTREAM_REPO, UPSTREAM_SHA, UPSTREAM_BLOB, UPSTREAM_PATH
 
 SCOPE_BLOB = "cde1faee905027b4069deb329149e73d48292394"
+ROUTE_BLOB = "afdf193a1f5a9e0f3c0f003aaea19585728a0020"
+OWNER_BRANCH = "research/p85mr-authorized-fitcal-firstuse-20261111"
+OWNER_WORKFLOW = ".github/workflows/p85mr-fitcal-firstuse-once.yml"
 PROJECT = "spoonman136668-ai/TTT-Hybrid-Lab"
 SOURCE_BLOBS = {
     "causal_gym/envs/cartpole_wind.py":"d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
@@ -62,11 +65,40 @@ def locked_scope():
     return scope
 
 
+def locked_route():
+    raw = Path(__file__).with_name("p85mr_fitcal_owner_route_amendment.json").read_bytes()
+    if blob(raw) != ROUTE_BLOB:
+        raise ValueError("P85F1_OWNER_ROUTE_AMENDMENT_DRIFT")
+    route = json.loads(raw)
+    execution = route["execution"]
+    if (route["schema"] != "ttt-hybrid.p85mr-fitcal-firstuse-owner-run-route-amendment.v1"
+        or route["supersedes"]["blob"] != SCOPE_BLOB
+        or route["authority"]["workflow_only_once"] is not True
+        or execution["branch"] != OWNER_BRANCH
+        or execution["workflow"] != OWNER_WORKFLOW
+        or execution["event"] != "push"
+        or execution["github_run_number"] != 1
+        or execution["github_run_attempt"] != 1
+        or route["scientific_scope"]["ood"] != "SEALED"):
+        raise ValueError("P85F1_ROUTE_REGISTRATION_DRIFT")
+    return route
+
+
 def owner_context(environ):
-    needed={"GITHUB_REPOSITORY":PROJECT,"GITHUB_ACTOR":"spoonman136668-ai",
-            "GITHUB_EVENT_NAME":"workflow_dispatch","GITHUB_REF":"refs/heads/main",
-            "GITHUB_REF_PROTECTED":"true","GITHUB_RUN_ATTEMPT":"1",
-            "RUNNER_NAME":"TTT-HYBRID-GPU-WIN"}
+    locked_route()  # frozen, versioned replacement for manual protected-main route
+    needed={
+        "GITHUB_REPOSITORY": PROJECT,
+        "GITHUB_ACTOR": "spoonman136668-ai",
+        "GITHUB_EVENT_NAME": "push",
+        "GITHUB_REF": "refs/heads/" + OWNER_BRANCH,
+        "GITHUB_RUN_ATTEMPT": "1",
+        "GITHUB_RUN_NUMBER": "1",
+        "RUNNER_NAME": "TTT-HYBRID-GPU-WIN",
+        "RUNNER_OS": "Windows",
+        "RUNNER_ARCH": "X64",
+        "P85MR_OWNER_EXECUTION": "FIT_CAL_ONLY",
+        "GITHUB_WORKFLOW_REF": PROJECT + "/" + OWNER_WORKFLOW + "@refs/heads/" + OWNER_BRANCH
+    }
     if any(environ.get(k)!=v for k,v in needed.items()):
         raise PermissionError("P85F1_TRUSTED_OWNER_ROUTE_NOT_VERIFIED")
     run=environ.get("GITHUB_RUN_ID","")
@@ -228,6 +260,8 @@ def _append_progress(path, event):
 
 
 def collect_one_shot(*,source_root,project_root,environ=None):
+    # Check immutable execution-route amendment before reading any owner input.
+    locked_route()
     owner=owner_context(os.environ if environ is None else environ)
     # The authorized owner route executes in WSL Linux, never on GH-hosted
     # PR runners. A hard alarm bounds a stalled external env.do call.
