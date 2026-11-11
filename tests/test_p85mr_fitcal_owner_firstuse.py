@@ -12,7 +12,7 @@ sys.path.insert(0,str(EXPERIMENTS))
 from p85mr_fitcal_owner_firstuse import (
     SCOPE_BLOB, COHORTS, MAX_STEPS, MAX_ACTIONS,
     locked_scope, owner_context, observed_episode, collect_one_shot,
-    _state, blob, _put_new, _append_progress, DEPENDENCIES, SOURCE_BLOBS,
+    _state, blob, _put_new, _append_progress, DEPS, SOURCE_BLOBS,
 )
 from p84mr_partition_preflight import preflight_partition, proposed_seed, planned_discrete_action
 from p80mr_causalgym_trace_adapter import adapt_capture
@@ -226,8 +226,8 @@ def test_repository_local_evidence_write_is_create_only(tmp_path):
 
 def test_source_dependencies_predeclared_and_not_installed_by_script():
     assert SOURCE_BLOBS["causal_gym/envs/cartpole_wind.py"]=="d65a6a31941709dc9201259d80dd4ebbcf48b4fa"
-    assert DEPENDENCIES["numpy"]=="1.26.4"
-    assert DEPENDENCIES["gymnasium"]=="0.29.1"
+    assert DEPS["numpy"]=="1.26.4"
+    assert DEPS["gymnasium"]=="0.29.1"
     code=(EXPERIMENTS/"p85mr_fitcal_owner_firstuse.py").read_text()
     assert "pip install" not in code
     assert "env.do(policy)" in code  # The real function exists but was NOT called in these tests.
