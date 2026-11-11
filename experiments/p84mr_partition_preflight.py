@@ -99,7 +99,7 @@ def preflight_partition():
         raise ValueError("P84MR_CROSS_SPLIT_SEED_COLLISION")
     if _collisions(scheduled):
         raise ValueError("P84MR_CROSS_SPLIT_SEED_COLLISION")
-    if sum(len(scheduled[k]) for k in SPLITS) != spec["total"] != 448:
+    if sum(len(scheduled[k]) for k in SPLITS) != spec["total"] or spec["total"] != 448:
         raise ValueError("P84MR_EPISODE_TOTAL_DRIFT")
 
     regimes = cfg["upstream_regimes"]
