@@ -1,0 +1,426 @@
+{
+  "schema": "ttt-hybrid.p91-source-exact-two-family-selected-control-receipt.v1",
+  "classification": "PROSPECTIVE_AUTHOR_SYNTHETIC_DEV_FAIL_DO_NOT_CLAIM_SCIENTIFIC_PASS",
+  "parent": {
+    "pr": 212,
+    "sha": "110ad7acd61326708ea701952a05840019657ed3"
+  },
+  "freeze": {
+    "commit": "96fe23932f87b04dd689bd147277a4cea8b250f3",
+    "path": "experiments/p91_stability_forgetting_frozen.json"
+  },
+  "tested": {
+    "source": "experiments/p91_stability_forgetting_dev.py",
+    "source_git_blob": "8de087adec335088b06696197313c20b365ef841",
+    "tests": "tests/test_p91_stability_forgetting_dev.py",
+    "tests_git_blob": "efb20e819e405746ee5dadce3b0e4b53ad74ae78",
+    "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P90_git_blob": "c1a3866f02201bbf87106c073a57c07bd695bcc5",
+    "P86_git_blob": "008492665ee9090db5791963f2e2336ea283ee62"
+  },
+  "local": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "CPU_threads": 1,
+    "full_study_seconds": 12.492069355999774,
+    "focused_tests": "10/10 PASS 17.02s",
+    "source_exact_test_blob": true,
+    "full_unabridged_local_result_sha256": "73b06c5a5b2c5e2e9c46b23ae53aa9e89f9c383e0cb353e1a146324f7b1c7962",
+    "full_unabridged_local_bytes": 115430,
+    "full_exact_SHA_G4_Windows_Ubuntu": "PENDING"
+  },
+  "sources": {
+    "A": {
+      "FIT_seed": 910111,
+      "FIT_worlds": 128,
+      "FIT_sha256": "13374e0ba586148fc1e13a1cf5846c5de122acd569e66a02817c569394a8940e",
+      "VAL_seed": 910113,
+      "VAL_worlds": 64,
+      "VAL_sha256": "8f72576cc1e4da6d121e83409259cc7015c1ef9181740375e9ad486b63443c4b"
+    },
+    "B": {
+      "FIT_seed": 910121,
+      "FIT_worlds": 128,
+      "FIT_sha256": "214d1e415c0a2a786fe6f841fb87f798c162f9e8f307caadebe0c227c2ff6384",
+      "VAL_seed": 910123,
+      "VAL_worlds": 64,
+      "VAL_sha256": "6a90abe7783788f2eb171a11169130018084d76eca1d8add23293d816bdb7221"
+    },
+    "reserved_OOD_seed": 910117,
+    "reserved_negative_seed": 910119,
+    "created_reserved": false
+  },
+  "training": {
+    "model_seeds": [
+      910201,
+      910203,
+      910207
+    ],
+    "arms": [
+      "constant",
+      "observation",
+      "contradiction",
+      "protected"
+    ],
+    "params": {
+      "constant": 2,
+      "observation": 4,
+      "contradiction": 4,
+      "protected": 4
+    },
+    "total_optimizer_updates": 960,
+    "batch": 16,
+    "train_objective": "prequential MSE events32..48",
+    "check_every": 10,
+    "full_model_trained": false,
+    "within_world_state": 256,
+    "source_families": 2
+  },
+  "controls": {
+    "A": {
+      "fixed": {
+        "final": 0.0025558986235409975,
+        "stable": 0.0009073299006558955,
+        "changed": 0.0042044674046337605,
+        "stable_late": 0.0013415055582299829
+      },
+      "zero_final": 0.012862307950854301,
+      "wrong_credit_final": 0.021518127992749214,
+      "cold": true,
+      "source_parity": true
+    },
+    "B": {
+      "fixed": {
+        "final": 0.0023246812634170055,
+        "stable": 0.0007565359119325876,
+        "changed": 0.0038928273133933544,
+        "stable_late": 0.00136092072352767
+      },
+      "zero_final": 0.012917764484882355,
+      "wrong_credit_final": 0.019854938611388206,
+      "cold": true,
+      "source_parity": true
+    }
+  },
+  "columns": [
+    "model_seed",
+    "arm",
+    "best_step",
+    "A_final",
+    "A_stable",
+    "A_changed",
+    "A_stable_late",
+    "B_final",
+    "B_stable",
+    "B_changed",
+    "B_stable_late",
+    "selected_model_sha256",
+    "mean_val_final_at_steps_10_through_80"
+  ],
+  "selected_models": [
+    [
+      910201,
+      "constant",
+      10,
+      0.002503016,
+      0.001140431,
+      0.003865601,
+      0.001553829,
+      0.002419812,
+      0.000975597,
+      0.003864027,
+      0.001563531,
+      "66c889f1fdf0bde563ba30f90c86a4c3ec3a39d476d35cd5fbd11dfb97e49c8d",
+      [
+        0.002461414,
+        0.00254419,
+        0.002555568,
+        0.002565457,
+        0.002520147,
+        0.002506387,
+        0.002502947,
+        0.002516552
+      ]
+    ],
+    [
+      910201,
+      "contradiction",
+      70,
+      0.002446966,
+      0.001244698,
+      0.003649234,
+      0.001681321,
+      0.002451246,
+      0.001079231,
+      0.003823261,
+      0.001671113,
+      "b1e503fc7d500a645ced028a4b21fb3cb70b93d68f3a3db1518d5ffa3f045ce2",
+      [
+        0.002463231,
+        0.002594307,
+        0.002543301,
+        0.00249854,
+        0.002466493,
+        0.002451343,
+        0.002449106,
+        0.002469117
+      ]
+    ],
+    [
+      910201,
+      "observation",
+      10,
+      0.002520454,
+      0.001255981,
+      0.003784927,
+      0.00165241,
+      0.002459272,
+      0.001077357,
+      0.003841187,
+      0.001655622,
+      "7f646b4f98ee597ed299569d039c6696a3f17f9195622501beae7d862ed53a4b",
+      [
+        0.002489863,
+        0.002617575,
+        0.002549092,
+        0.002520151,
+        0.0025052,
+        0.002498978,
+        0.002506488,
+        0.002527418
+      ]
+    ],
+    [
+      910201,
+      "protected",
+      40,
+      0.002224746,
+      0.000820649,
+      0.003628843,
+      0.001344481,
+      0.002238997,
+      0.000673495,
+      0.003804499,
+      0.001326232,
+      "c831fc0723e525943fdcb32ca93193e93cbfbe89a3a69364f84fd25a61d27ef7",
+      [
+        0.002554175,
+        0.002390128,
+        0.002269952,
+        0.002231872,
+        0.002239731,
+        0.002262627,
+        0.002269875,
+        0.002282691
+      ]
+    ],
+    [
+      910203,
+      "constant",
+      10,
+      0.002501607,
+      0.001123153,
+      0.003880062,
+      0.001539316,
+      0.0024148,
+      0.00095994,
+      0.003869659,
+      0.00154944,
+      "f033f2f2af15268313e532487a19da9524eb63d2cb1467acc5e93b51dd1911b8",
+      [
+        0.002458204,
+        0.002537466,
+        0.002554975,
+        0.002567043,
+        0.002521578,
+        0.002506689,
+        0.002502847,
+        0.002516318
+      ]
+    ],
+    [
+      910203,
+      "contradiction",
+      70,
+      0.002446411,
+      0.001243413,
+      0.00364941,
+      0.001680257,
+      0.002450419,
+      0.001078086,
+      0.003822752,
+      0.001670043,
+      "baa20a78fcd42bfd42fb8f67a5b40a3ee90bc5fbb416d86f550a5347c12b2413",
+      [
+        0.002456863,
+        0.002589631,
+        0.002545225,
+        0.002500272,
+        0.002466107,
+        0.002450498,
+        0.002448415,
+        0.002468824
+      ]
+    ],
+    [
+      910203,
+      "observation",
+      10,
+      0.002517187,
+      0.001238515,
+      0.003795859,
+      0.00163744,
+      0.002451567,
+      0.001061711,
+      0.003841422,
+      0.001641142,
+      "8c0060f969fb31d58d34e9eea26a0ab2dc9a0d27f2e622ef0333ad4c25299af0",
+      [
+        0.002484377,
+        0.002616415,
+        0.002551435,
+        0.002521624,
+        0.002504905,
+        0.002498521,
+        0.002506098,
+        0.002527354
+      ]
+    ],
+    [
+      910203,
+      "protected",
+      40,
+      0.002226373,
+      0.000817996,
+      0.00363475,
+      0.001340683,
+      0.002236829,
+      0.000670425,
+      0.003803232,
+      0.001323132,
+      "704174d3a9422cfd41a12b1d8caf3bd1c6be2d94f927e16682c63c5b9a35710a",
+      [
+        0.002558467,
+        0.00239578,
+        0.002273159,
+        0.002231601,
+        0.002238573,
+        0.002261751,
+        0.002269311,
+        0.002282391
+      ]
+    ],
+    [
+      910207,
+      "constant",
+      10,
+      0.00250037,
+      0.001130435,
+      0.003870305,
+      0.001547074,
+      0.00242358,
+      0.000966652,
+      0.003880507,
+      0.001556657,
+      "c188b0c79bbe13482f658ad3a5974fc9e12b2ec9fccccdc0c6ce46cd2c2576d6",
+      [
+        0.002461975,
+        0.002537064,
+        0.002556368,
+        0.002565573,
+        0.002521469,
+        0.002506444,
+        0.002502731,
+        0.002516552
+      ]
+    ],
+    [
+      910207,
+      "contradiction",
+      70,
+      0.002446498,
+      0.001243905,
+      0.003649092,
+      0.001680861,
+      0.002451366,
+      0.001078555,
+      0.003824177,
+      0.001670671,
+      "ac6bc933326304a070b181a72e1bca4930b34c21eff6b1349542806c94ab91f8",
+      [
+        0.00245668,
+        0.002593042,
+        0.002545131,
+        0.002499946,
+        0.002466686,
+        0.002450545,
+        0.002448932,
+        0.002469059
+      ]
+    ],
+    [
+      910207,
+      "observation",
+      10,
+      0.002516545,
+      0.001236093,
+      0.003796996,
+      0.001635623,
+      0.00245115,
+      0.001059522,
+      0.003842777,
+      0.001639465,
+      "f12048002f897e87271ab5a706880846319b8d5924026c7942d0e9289ea8ea3f",
+      [
+        0.002483847,
+        0.002618066,
+        0.002551097,
+        0.00252137,
+        0.002505055,
+        0.002498282,
+        0.002506227,
+        0.002527258
+      ]
+    ],
+    [
+      910207,
+      "protected",
+      40,
+      0.002223723,
+      0.000819317,
+      0.003628129,
+      0.00134444,
+      0.002244212,
+      0.00067259,
+      0.003815833,
+      0.00132628,
+      "3914b8c78afac0b9d79625f358896c7c271aa25c488728ab38ae9228910c279f",
+      [
+        0.002563368,
+        0.002395378,
+        0.00227269,
+        0.002233967,
+        0.002239522,
+        0.002262573,
+        0.002270381,
+        0.002282106
+      ]
+    ]
+  ],
+  "outcome": {
+    "status": "DEV_FAIL_STABILITY_OR_ADAPTATION",
+    "conventional_qualified_all3": true,
+    "protected_qualified_all3": false,
+    "cold_restore_all_models_both_families": true,
+    "all_seeds_protected_better_final_than_fixed": true,
+    "all_seeds_protected_better_stable_than_fixed": true,
+    "each_family_changed_gate_fails": true,
+    "threshold_changed_relative_to_fixed": 0.85,
+    "threshold_stable_relative_to_fixed": 1.05,
+    "scientific_pass": false,
+    "OOD_generated": false,
+    "NEGATIVE_generated": false,
+    "whole_process_cost_matched": false
+  },
+  "limits": "These 3 seeds perturb global controller initialization on the same two source families, not 3 independent training-source families. The full 115430-byte local intermediate JSON is not copied byte-for-byte into GitHub: this on-repo summary preserves all selected checkpoints/hashes/8-step mean MSE trajectories and tests rerun full study on CI. Raw intermediates reproducible from exact committed study. No original native Hybrid learning, no external CausalGym first-use, no full model matched compute, no scientific inference."
+}
