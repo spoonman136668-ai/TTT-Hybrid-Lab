@@ -1,0 +1,284 @@
+{
+  "schema": "ttt-hybrid.p85-source-bound-CAL-frozen-conventional-admission.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_CONVENTIONAL_PREFLIGHT_ONLY_NO_SCIENTIFIC_PASS",
+  "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "branch": "research/p85-continuous-action-causal-preflight-20261111",
+  "frozen_protocol": {
+    "before_source_commit": "df086a69514576f2afbe61e2ad79656810cd25ec",
+    "path": "experiments/p85_continuous_causal_preflight_frozen.json"
+  },
+  "source_custody": {
+    "source_path": "experiments/p85_continuous_causal_preflight.py",
+    "git_blob": "3ec870dd455561ad23fe3a4946c402094cc1e3ad",
+    "tests_path": "tests/test_p85_continuous_causal_preflight.py",
+    "tests_git_blob": "986e50b266f248496fb446d00f080fce411fd6cf",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_P78_rawTTT_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba"
+  },
+  "environment": {
+    "platform": "local Linux CPU",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused": "12/12 PASS 2.11 s",
+    "model_run_seconds": 0.0905422699997871,
+    "full_Windows_Linux": "NOT_YET_RUN",
+    "native_GPU": "NOT_RUN"
+  },
+  "world_source": {
+    "FIT": {
+      "seed": 850111,
+      "worlds": 256,
+      "changed": 128,
+      "sha256": "77e192ebc1b877a2c4ba59409c67caa82f03aeb5804bc57ae73ccdb70fac5ea6",
+      "max_query_history_cosine": 0.823857843875885
+    },
+    "CAL": {
+      "seed": 850113,
+      "worlds": 128,
+      "changed": 64,
+      "sha256": "ecd04b7aff6cb35479d6c563eb3d37ca0c9c64bae627453b4d6636c58ac2908a",
+      "max_query_history_cosine": 0.7831685543060303
+    },
+    "query_effect_unknown": 0,
+    "all_finite": true,
+    "action_consequence": "48 original continuous actions, rank4 causal map; changed regime after 24 actions in 50% of worlds",
+    "heldout_reserved_seed": 850117,
+    "negative_reserved_seed": 850119
+  },
+  "calibration": {
+    "mse_columns": [
+      "eta",
+      "decay",
+      "combined",
+      "stable",
+      "changed"
+    ],
+    "grid_25": [
+      [
+        0.25,
+        1,
+        0.044890761375427246,
+        0.02713852934539318,
+        0.06264300644397736
+      ],
+      [
+        0.25,
+        0.99,
+        0.04970633238554001,
+        0.036420006304979324,
+        0.06299266964197159
+      ],
+      [
+        0.25,
+        0.97,
+        0.06014089658856392,
+        0.052445244044065475,
+        0.06783653795719147
+      ],
+      [
+        0.25,
+        0.95,
+        0.06871964782476425,
+        0.06386008858680725,
+        0.07357921451330185
+      ],
+      [
+        0.25,
+        0.9,
+        0.0820322036743164,
+        0.07939090579748154,
+        0.08467350155115128
+      ],
+      [
+        0.5,
+        1,
+        0.02896563895046711,
+        0.01052108034491539,
+        0.04741019755601883
+      ],
+      [
+        0.5,
+        0.99,
+        0.030712446197867393,
+        0.017078693956136703,
+        0.044346194714307785
+      ],
+      [
+        0.5,
+        0.97,
+        0.0397334061563015,
+        0.03221501037478447,
+        0.047251805663108826
+      ],
+      [
+        0.5,
+        0.95,
+        0.04920294135808945,
+        0.04481034725904465,
+        0.05359552428126335
+      ],
+      [
+        0.5,
+        0.9,
+        0.06622955203056335,
+        0.06419561058282852,
+        0.06826350837945938
+      ],
+      [
+        1,
+        1,
+        0.024324970319867134,
+        0.005692381877452135,
+        0.04295756295323372
+      ],
+      [
+        1,
+        0.99,
+        0.02119883894920349,
+        0.008262865245342255,
+        0.034134816378355026
+      ],
+      [
+        1,
+        0.97,
+        0.025243548676371574,
+        0.01914084330201149,
+        0.03134625777602196
+      ],
+      [
+        1,
+        0.95,
+        0.032912421971559525,
+        0.030144276097416878,
+        0.03568056598305702
+      ],
+      [
+        1,
+        0.9,
+        0.05014624074101448,
+        0.04977361857891083,
+        0.05051884800195694
+      ],
+      [
+        1.5,
+        1,
+        0.04424263909459114,
+        0.01291470043361187,
+        0.07557058334350586
+      ],
+      [
+        1.5,
+        0.99,
+        0.03146601840853691,
+        0.01121525652706623,
+        0.051716774702072144
+      ],
+      [
+        1.5,
+        0.97,
+        0.02628288045525551,
+        0.018193665891885757,
+        0.03437209874391556
+      ],
+      [
+        1.5,
+        0.95,
+        0.030270153656601906,
+        0.02761727385222912,
+        0.03292303532361984
+      ],
+      [
+        1.5,
+        0.9,
+        0.04510311782360077,
+        0.04623528569936752,
+        0.04397095739841461
+      ],
+      [
+        2,
+        1,
+        0.2336730659008026,
+        0.12238490581512451,
+        0.3449612259864807
+      ],
+      [
+        2,
+        0.99,
+        0.1391739696264267,
+        0.06579852849245071,
+        0.21254941821098328
+      ],
+      [
+        2,
+        0.97,
+        0.06667640060186386,
+        0.03574911132454872,
+        0.0976036936044693
+      ],
+      [
+        2,
+        0.95,
+        0.04895249009132385,
+        0.03693193197250366,
+        0.06097305193543434
+      ],
+      [
+        2,
+        0.9,
+        0.051229219883680344,
+        0.05229375138878822,
+        0.050164684653282166
+      ]
+    ],
+    "selected": {
+      "eta": 1,
+      "decay": 0.99,
+      "mse": {
+        "combined": 0.02119883894920349,
+        "stable": 0.008262865245342255,
+        "changed": 0.034134816378355026
+      },
+      "state_float32_per_world": 256
+    },
+    "zero": {
+      "combined": 0.10811889171600342,
+      "stable": 0.10581623017787933,
+      "changed": 0.1104215532541275
+    },
+    "original_P78": {
+      "combined": 0.02896563895046711,
+      "stable": 0.01052108034491539,
+      "changed": 0.04741019755601883
+    },
+    "original_P78_matches_eta_0_5_decay1": true,
+    "last24_OLS_unequal_persistent_history": {
+      "combined": 0.002049615839496255,
+      "stable": 0.0018929275684058666,
+      "changed": 0.0022063041105866432,
+      "history_float32_per_world": 768,
+      "extra_matrix_workspace": true
+    },
+    "nearest_neighbor_unequal_full_history": {
+      "combined": 0.13423848152160645,
+      "stable": 0.10883885622024536,
+      "changed": 0.15963812172412872,
+      "history_float32_per_world": 1536
+    }
+  },
+  "decision": {
+    "status": "PREFLIGHT_PASS_BASELINES_ONLY",
+    "selected_conventional_beats_stable_zero_25pct": true,
+    "beats_changed_zero_20pct": true,
+    "beats_combined_zero_20pct": true,
+    "OLS_identifiability_in_both_regimes": true,
+    "original_fast_state_256_floats_P78_comparator_exact": true,
+    "heldout_generated": false,
+    "negative_generated": false,
+    "full_original_hybrid_trained": false,
+    "scientific_pass": false,
+    "whole_process_compute_matched": false
+  },
+  "limits": "Calibration data were used to select a fixed 256-state conventional rule. This result is not independent heldout performance, full original hybrid learning, general intelligence, trained GRU/SSM match, independent real-world causal action source, or equal whole-process compute. The P78 original carry also includes a non-predictive safety count/tag, disclosed separately from its 256 float prediction matrix.",
+  "next": "Preregister three-seed full-native or paired seam hybrid test on NEW FIT/CAL+reserved heldout after model and conventional calibration freeze, compare to CAL-selected eta1/decay.99 and trained conventional GRU/SSM if qualified. Independent P84-MR external first-use lane remains isolated."
+}
