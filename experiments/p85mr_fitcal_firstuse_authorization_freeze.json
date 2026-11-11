@@ -1,0 +1,86 @@
+{
+  "schema": "ttt-hybrid.p85mr-first-source-fitcal-authorized-scope-freeze.v1",
+  "stage": "FROZEN_AFTER_OPERATOR_APPROVAL_BEFORE_FIRST_EFFECTFUL_SOURCE_USE",
+  "operator_approval": {
+    "date": "2026-11-11",
+    "scope": "Operator approved one bounded pinned CartPoleWind FIT/CAL first-use on verified TTT-Hybrid-owned route, OOD sealed, no paid API/scheduler",
+    "approved_in_chat": true,
+    "owner_execution_route_verified": false,
+    "effects_started": false
+  },
+  "lineage": {
+    "parent_pr": 207,
+    "parent_sha": "b755e8fc39a0e4f9b5c86136e4319ddd708ba427",
+    "P84_protocol_blob": "9c259f7e03ecbd32f8d3e5f9bfdaef2a8860f724",
+    "P85_baselines_blob": "85ae6d1eee3332ef55a653b678733e012cb57158",
+    "T1_engine_blob": "b5cec828075499344e839bdf0c39f4bdf2b06b3b"
+  },
+  "upstream": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "source_blobs": {
+      "causal_gym/envs/cartpole_wind.py": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "causal_gym/core/pch.py": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "causal_gym/core/task.py": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+      "causal_gym/core/scm.py": "f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5"
+    }
+  },
+  "cohorts": {
+    "fit": {
+      "n": 128,
+      "base": 1810000000,
+      "wind_mean": 0,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "cal": {
+      "n": 64,
+      "base": 1810100000,
+      "wind_mean": 0,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    }
+  },
+  "budget": {
+    "max_episode_steps": 96,
+    "max_total_actions": 18432,
+    "max_wall_seconds": 2400,
+    "max_output_bytes": 18000000,
+    "no_retry": true,
+    "short_episode_max_fraction": 0.15
+  },
+  "policy": {
+    "action": "SHA256('ttt-hybrid/p84mr/independent-cartpolewind-source-v1/<split>/<index>/<seed>/<step>')[0] & 1",
+    "task": "LearningRegime.do",
+    "no_oracle": true,
+    "no_ood": true,
+    "no_external_dev": true
+  },
+  "runtime": {
+    "python": "3.11",
+    "numpy": "1.26.4",
+    "gymnasium": "0.29.1",
+    "networkx": "3.4.2",
+    "pydash": "8.0.5",
+    "toposort": "1.10",
+    "source_import": "Exact CartPoleWind module in isolated upstream package namespace; do not execute unrelated env imports"
+  },
+  "authority": {
+    "approved_scope_only_not_runtime_permission": true,
+    "verified_project_owner_runner_required": true,
+    "no_new_workflow": true,
+    "no_scheduler": true,
+    "no_paid_api": true,
+    "no_forgerunner": true,
+    "no_merge": true,
+    "no_deployment": true
+  },
+  "evidence": {
+    "where": "Repository-local evidence/p85mr_fitcal_firstuse for subsequent owner-authenticated GitHub commit, never Library",
+    "once": "Atomic one-shot attempt marker written BEFORE source.reset; never replay uncertain-effect reset/do",
+    "success": "Full raw factual FIT/CAL + per-step receipts + SHA256; not SCIENTIFIC_PASS",
+    "no_external_use_in_tests": true
+  }
+}
