@@ -94,6 +94,7 @@ def test_branch_workflow_exactly_once_if_present():
 
 def test_exact_previous_s28_checkout_candidate_has_no_new_source_download():
     source=OWNER.read_text()
+    assert '"$workspaceRoot/p85mr-upstream-source"' in source
     assert '"$workspaceRoot/s28-upstream-source"' in source
     assert "$linuxRoot.EndsWith('/p85mr-f1'" in source
     assert "c94e9a4cd3641588b6b8507e71ccee5c27032bdf" in source
