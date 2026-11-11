@@ -1,0 +1,94 @@
+{
+  "schema": "ttt-hybrid.p81-fixed-memory-readout-information-diagnostic-freeze.v1",
+  "stage": "FROZEN_BEFORE_ANY_P81_FIT_VAL_OR_EXPERIMENT",
+  "project": "TTT-Hybrid Lab independent native four-block research; no FORGE authority",
+  "lineage": {
+    "parent_pr": 193,
+    "parent_sha": "0d9776da52623b741fecaeef5072bea41e9b88ef",
+    "parent_p79_science": "DEV_FAIL_ALL_3_TERMINAL_CHECKPOINT_AND_FIXED_MEMORY_SUPERIORITY",
+    "P80_MR": "independent PR #195 untouched",
+    "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "bounded_ttt_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "P79_source_blob": "289b22aafd41afeaac868f18afaf7a77a722edbb"
+  },
+  "hypotheses": {
+    "H1": "Original random ttt.proj may distort the 16D bounded raw-memory content.",
+    "H2": "Mixing projected raw memory by addition with unrelated frozen native context into 16D before original depth/head may make valid memory information inaccessible to a simple trainable linear head.",
+    "H3": "A separate content/context channel could preserve information, but must disclose extra 16D readout features and learned parameters, without claiming equal full-model memory or compute."
+  },
+  "source": {
+    "fit_seed": 810111,
+    "val_seed": 810113,
+    "negative_seed": 810119,
+    "ood_reserved_seed": 810117,
+    "worlds": {
+      "fit": 192,
+      "val": 128,
+      "negative": 64
+    },
+    "dimension": 16,
+    "historical_events": 24,
+    "targets": 8,
+    "target_repetitions": 2,
+    "distractors": 8,
+    "generator": "Novel independent author-synthetic per-world random orthogonal 16D target action keys paired with independently sampled 16D tanh effects, each repeated twice plus 8 singleton normalized distractor action/observed-effect pairs, 24 events uniformly shuffled; final simulated executed target action query=action16 plus zero16 unknown effect. No role/time/query/future effect given as historical factual observation.",
+    "source_audit": "FIT and VAL max quartile target-position imbalance <=0.05 and heldout position-only balanced accuracy <=0.55; source SHA256 of factual input/query/labels/role audit; no P65-P79 consumed data reuse; no sealed OOD generated; future query effect must be all zero.",
+    "negative": "Independent author-synthetic negative source, shuffle effect credit within each history, final true effect/query fixed, no tuning on negative source."
+  },
+  "models": {
+    "frozen_original": "Original exact HybridPilot(input_dim=32, output_dim=16,width=16,heads=2,ssm+attn+TTT+depth), frozen random 3 model seeds [810201,810203,810207], no optimizer updates to any original core weights or original model.py.",
+    "factual_state": "P78 BoundedRawTTT original-size 16x16 (256 float32) raw executed action/effect fast state, eta 0.5, read-before-write, exact cold restore; original SSM and attention causal history separately included in full-core compute; no auxiliary raw memory.",
+    "fit_only_linear_probe": "Closed-form L2 ridge on FIT labels with alpha=0.01, 16 output effects, float64 solve, bias unregularized, fixed hyperparameters; no validation/OOD optimizer updates.",
+    "features": {
+      "raw_16": "Direct bounded raw-fast W@normalized(query_action); fixed direct conventional 256-float baseline",
+      "native_context_16": "Exact original stem->SSM->attention final query latent, no factual fast contribution",
+      "memory_projected_16": "Exact original frozen ttt.proj(raw_16), without context and without depth; isolates projection.",
+      "memory_projected_after_depth_16": "Exact frozen depth( original frozen ttt.proj(raw_16) ) without native residual; isolates depth.",
+      "sum_pre_depth_16": "Original native final latent + original frozen ttt.proj(raw_16), before depth; original compressed additive fusion.",
+      "sum_post_depth_16": "Original depth(native last + original frozen ttt.proj(raw_16)), as input to original head; exact P79 raw_internal 16D pre-head representation.",
+      "concat_32": "Concatenation of native context and raw_16, 32D FIT-only ridge; 2x readout features and additional 16*16 parameters vs 16D, no equal-budget claim.",
+      "native_memory_actual": "Original native four-block reference output with full factual history, diagnostic baseline only."
+    },
+    "control": "Same FIT and VAL worlds, original core weights and original 256-float factual state for all feature arms. Report matrix ranks/condition numbers of learnable directions, zero-state and model initial errors. No adaptive feature selection."
+  },
+  "preregistered_decisions": {
+    "source": "Any malformed factual source, leakage, unexpected model SHA or cold restore fail stops; do not generate OOD.",
+    "raw_sufficient": "Original fixed raw_16 direct VAL MSE <=0.75*zero-state VAL MSE for all models; FIT-only ridge on raw_16 <=0.90*fixed direct VAL MSE in all three seeds; otherwise original premise unqualified.",
+    "oracle_readout": "FIT-only ridge on concat_32 <=1.10*ridge(raw_16) VAL MSE for each seed; a linear head with separate raw memory must be competent.",
+    "projection_test": "FIT-only ridge(memory_projected_16) <=1.15*ridge(raw_16) => projected memory remains linearly decodable; otherwise classify projection bottleneck under this specific frozen random core.",
+    "depth_test": "FIT-only ridge(memory_projected_after_depth_16) <=1.15*ridge(raw_16) => depth preserves readout accessibility; otherwise classify depth bottleneck under this specific frozen random core.",
+    "fusion_test": "If FIT-only ridge(sum_post_depth_16) >=1.25*ridge(raw_16) in each seed while concat_32 <=1.10*ridge(raw_16), classify frozen additive-fusion bottleneck supported in 3/3; if threshold only subset, report mixed/failed not PASS.",
+    "negative": "Independent negative source wrong-credit direct fast MSE >=2x clean source MSE and >=0.1; source seeds distinct; FIT ridge coefficients fixed before negative scoring.",
+    "success_label": "DEV_MECHANISTIC_DIAGNOSTIC_PASS_ONLY if source/cold/raw/oracle/negative all pass and either at least one of projection/depth/fusion failure patterns consistently appears in all seeds. Otherwise INCONCLUSIVE/FAIL. This never proves causal architectural learning gains or SCIENTIFIC_PASS.",
+    "stop": "No OOD data generation/scoring. No post-result threshold/source re-selection. Preserve nulls and all data/weights hashes.",
+    "limitations": "Frozen randomly initialized original core and 256-float raw fast-state trained on an authored source family, not complete trained original model, not real unfamiliar transfer, no authentic physical first-use, no matched fully-trained alternate models, no whole-process compute equality."
+  },
+  "resources": {
+    "cpu_threads": 1,
+    "max_seconds": 100,
+    "model_seeds": [
+      810201,
+      810203,
+      810207
+    ],
+    "ridge_alpha": 0.01,
+    "no_gpu": true
+  },
+  "authority": {
+    "no_main_or_original_file_edits": true,
+    "no_P80_MR_or_P75_edits": true,
+    "no_Forge": true,
+    "no_runner_or_scheduler_changes": true,
+    "no_paid_API": true,
+    "no_workflow_dispatch": true,
+    "no_merges_or_deployment": true,
+    "no_scientific_first_use": true
+  },
+  "status": {
+    "source_generated": false,
+    "diagnostic_run": false,
+    "OOD_scored": false,
+    "scientific_pass": false,
+    "full_Windows_Linux": "NOT_RUN"
+  }
+}
