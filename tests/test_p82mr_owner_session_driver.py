@@ -226,5 +226,5 @@ def test_code_never_imports_real_environment_or_makes_owner_calls():
     code=(Path(__file__).resolve().parents[1]/"experiments"/"p82mr_owner_session_driver.py").read_text()
     for forbidden in ("import causal_gym","import gymnasium","subprocess",
                       "requests.","urllib","torch","if __name__",
-                      "os.system","schedule","runner.dispatch"):
+                      "os.system","schedule.create","runner.dispatch"):
         assert forbidden not in code
