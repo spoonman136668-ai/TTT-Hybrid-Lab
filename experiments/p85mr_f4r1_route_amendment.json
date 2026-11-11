@@ -1,0 +1,58 @@
+{
+  "schema": "ttt-hybrid.p85mr-f4r1-pretraining-transport-repair.v1",
+  "status": "FROZEN_BEFORE_REPAIR_AND_NO_SCIENTIFIC_USE",
+  "original_science_freeze_blob": "d8136313dd90cc406f00c49770ed3beeff4a1ee4",
+  "original_f4": {
+    "pr": 223,
+    "source_sha": "ef032435948bb05d5fb7cf4f79e79fcd2670b1f3",
+    "run_id": 43079777841,
+    "job_id": 130728967488,
+    "job_conclusion": "failure",
+    "failure": "ModuleNotFoundError: No module named 'p80mr_causalgym_trace_adapter'",
+    "stage": "PRE_TRAIN_PYTHON_IMPORT",
+    "owner_sha_and_negative_regression": "PASS",
+    "F3_artifact_sha256_verified": true,
+    "simulation_effects": 0,
+    "model_training_updates": 0,
+    "scientific_metrics_scored": false,
+    "original_attempt_consumed": true,
+    "no_replay": true,
+    "artifact_id": 13883856294
+  },
+  "reason": "Python -I -B runs script without adding its own experiments directory to sys.path. Isolated script imports fail before run_training. Only fix sys.path in source, add python -I -B --help negative/positive crossplatform test, and route under new first-only F4R1 workflow.",
+  "repair_scope": [
+    "Insert exact dirname of current script to sys.path before local project imports, only script directory, no PYTHONPATH/environment/site-packages changes",
+    "Keep original 800-update FIT/CAL science protocol/data/seeds/models/metrics/thresholds/compute unchanged",
+    "Distinct new workflow owner first push/first run/first attempt; F4 original spent workflow not modified",
+    "Source and test exact SHA requalify G4 G5 G7 both original platforms before owner dispatch",
+    "Final owner source and full native Windows+WSL regression before reading original F3 artifact"
+  ],
+  "new_route": {
+    "branch": "research/p85mr-f4-actual-fitcal-controls-20261111",
+    "workflow": ".github/workflows/p85mr-f4r1-postblock-fitcal-once.yml",
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "runner_labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "event": "push",
+    "run_number": 1,
+    "run_attempt": 1,
+    "source_original_artifact_id": 13878284321,
+    "source_original_run_id": 43073165842
+  },
+  "constraints": [
+    "no new science dataset",
+    "no re-open OOD",
+    "no F1 F2 F3 or F4 retry",
+    "no source boundary change",
+    "no model change or hyperparameter change",
+    "no runner/controller/scheduler changes",
+    "no main/FORGE mutations",
+    "no paid APIs",
+    "no merge/promotion",
+    "GitHub source-only evidence"
+  ]
+}

@@ -1,0 +1,165 @@
+name: P85MR-F4 owner one-shot conventional FIT-CAL training
+on:
+  push:
+    branches:
+      - research/p85mr-f4-actual-fitcal-controls-20261111
+    paths:
+      - .github/workflows/p85mr-f4-train-controls-once.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ttt-hybrid-p85mr-f4-controls-once
+  cancel-in-progress: false
+
+jobs:
+  fitcal-controls:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/p85mr-f4-actual-fitcal-controls-20261111' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 165
+    steps:
+      - name: Exact F4 checkout with no stored credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: p85mr-f4
+          persist-credentials: false
+          lfs: false
+          submodules: false
+          clean: true
+          fetch-depth: 1
+
+      - name: Owner identity and frozen Git blob custody preflight
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $ref='refs/heads/research/p85mr-f4-actual-fitcal-controls-20261111'
+          $wf='spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-f4-train-controls-once.yml@'+$ref
+          if($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+             $env:GITHUB_REF -cne $ref -or $env:GITHUB_WORKFLOW_REF -cne $wf -or
+             $env:GITHUB_EVENT_NAME -cne 'push' -or $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+             $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+             $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+             $env:RUNNER_OS -cne 'Windows' -or $env:RUNNER_ARCH -cne 'X64' -or
+             $env:GITHUB_SHA -cnotmatch '^[0-9a-f]{40}$'){throw 'F4_OWNER_EXACT_ONESHOT_DENIED'}
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f4'
+          $got=(& git -C $root rev-parse HEAD | Out-String).Trim()
+          $dirty=(& git -C $root status --porcelain --untracked-files=all | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $got -cne $env:GITHUB_SHA -or $dirty){throw 'F4_DIRTY_OR_DRIFTED_SOURCE'}
+          $blobs=@{
+            'experiments/p85mr_f4_controls_freeze.json'='d8136313dd90cc406f00c49770ed3beeff4a1ee4';
+            'experiments/p85mr_f4_train_controls.py'='a2428a1931646ae1f9d35c7e81e2325ff010d003';
+            'tests/test_p85mr_f4_controls_contract.py'='8e55d9524a10322d046063e88d70ba032c5d2a52';
+            'experiments/p85mr_fitcal_owner_firstuse.py'='f5deeed08624d4dbe878a58e6869c9c4bb062ae3';
+            'experiments/p85mr_t1_fitcal_engine_freeze.json'='7745855deaafdb80117e68ba437af27059005524';
+            'experiments/p85mr_strong_baseline_freeze.json'='85ae6d1eee3332ef55a653b678733e012cb57158'
+          }
+          foreach($p in $blobs.Keys){
+            $actual=(& git -C $root hash-object -- $p | Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $actual -cne $blobs[$p]){throw 'F4_ORIGINAL_SOURCE_BLOB_DRIFT'}
+          }
+          Write-Output 'P85MR_F4_EXACT_OWNER_SOURCE=PASS'
+
+      - name: Full original native Windows regression and negative controls before training
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f4'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'F4_WINDOWS_CPU_RUNTIME_MISSING'}
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1'
+          $env:PYTHONDONTWRITEBYTECODE='1'
+          $env:PYTHONHASHSEED='0'
+          $rc=Join-Path $root 'local_runs\p85mr_f4_windows_cpu.json'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt $rc
+          if($LASTEXITCODE -ne 0){throw 'F4_WINDOWS_FULL_TEST_FAIL'}
+          $j=Get-Content -LiteralPath $rc -Raw | ConvertFrom-Json
+          if($j.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $j.revision -cne $env:GITHUB_SHA -or
+             $j.checkout_identity.pass -ne $true -or $j.negative_control.pass -ne $true -or
+             $j.tests.exit_code -ne 0){throw 'F4_WINDOWS_NEGATIVE_OR_SHA_FAIL'}
+
+      - name: Full original WSL CPU regression and negative controls before training
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f4'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $root | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or
+             $who -cnotmatch '^[A-Za-z_][A-Za-z0-9_-]{0,32}$' -or
+             $linux -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,260}$'){throw 'F4_WSL_OWNER_DENIED'}
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $vars=@("EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA",
+                  'CUDA_VISIBLE_DEVICES=-1','PYTHONDONTWRITEBYTECODE=1','PYTHONHASHSEED=0')
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 720s /usr/bin/env @vars $py -I -B "$linux/scripts/qualify_cpu.py" --receipt "$linux/local_runs/p85mr_f4_wsl_cpu.json"
+          if($LASTEXITCODE -ne 0){throw 'F4_WSL_FULL_TEST_FAIL'}
+          $j=Get-Content -LiteralPath (Join-Path $root 'local_runs\p85mr_f4_wsl_cpu.json') -Raw | ConvertFrom-Json
+          if($j.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $j.revision -cne $env:GITHUB_SHA -or
+             $j.checkout_identity.pass -ne $true -or $j.negative_control.pass -ne $true -or
+             $j.tests.exit_code -ne 0){throw 'F4_WSL_NEGATIVE_OR_SHA_FAIL'}
+
+      - name: Read immutable F3 historical source archive without simulator execution
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        env:
+          F4_GITHUB_READ_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f4'
+          $api='https://api.github.com/repos/spoonman136668-ai/TTT-Hybrid-Lab/actions/artifacts/13878284321'
+          $headers=@{Authorization=('Bearer '+$env:F4_GITHUB_READ_TOKEN);Accept='application/vnd.github+json';'X-GitHub-Api-Version'='2022-11-28'}
+          $v=Invoke-RestMethod -Uri $api -Method Get -Headers $headers -TimeoutSec 60
+          if($v.id -ne 13878284321 -or $v.expired -ne $false -or
+             $v.workflow_run.id -ne 43073165842 -or
+             $v.workflow_run.head_sha -cne '00b3f45f47660af4c1016c64b656160975982227' -or
+             $v.digest -cne 'sha256:a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5'){
+            throw 'F4_F3_ARCHIVE_PROVENANCE_DENIED'
+          }
+          $dst=Join-Path $root 'local_runs\p85mr_f4_source_F3.zip'
+          Invoke-WebRequest -Uri ($api+'/zip') -Method Get -Headers $headers -OutFile $dst -MaximumRedirection 5 -TimeoutSec 150
+          $sha=(Get-FileHash -LiteralPath $dst -Algorithm SHA256).Hash.ToLowerInvariant()
+          if($sha -cne 'a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5'){
+            throw 'F4_F3_ARCHIVE_SHA256_MISMATCH'
+          }
+          Write-Output 'F4_ORIGINAL_SOURCE_ARCHIVE_READ_ONLY=PASS'
+
+      - name: Owner WSL CPU 4x3 fully trained conventional controls on consumed FIT-CAL
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f4'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $root | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or
+             $who -cnotmatch '^[A-Za-z_][A-Za-z0-9_-]{0,32}$' -or
+             $linux -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,260}$'){throw 'F4_WRONG_WSL_OWNER'}
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $vars=@("GITHUB_REPOSITORY=$env:GITHUB_REPOSITORY",
+                  "GITHUB_ACTOR=$env:GITHUB_ACTOR","GITHUB_EVENT_NAME=$env:GITHUB_EVENT_NAME",
+                  "GITHUB_REF=$env:GITHUB_REF","GITHUB_WORKFLOW_REF=$env:GITHUB_WORKFLOW_REF",
+                  "GITHUB_RUN_NUMBER=$env:GITHUB_RUN_NUMBER","GITHUB_RUN_ATTEMPT=$env:GITHUB_RUN_ATTEMPT",
+                  "GITHUB_RUN_ID=$env:GITHUB_RUN_ID","GITHUB_SHA=$env:GITHUB_SHA",
+                  "RUNNER_NAME=$env:RUNNER_NAME","RUNNER_OS=$env:RUNNER_OS",
+                  "RUNNER_ARCH=$env:RUNNER_ARCH",
+                  'P85MR_F4_FITCAL_CONTROLS_ONLY=1','CUDA_VISIBLE_DEVICES=-1',
+                  'PYTHONDONTWRITEBYTECODE=1','PYTHONHASHSEED=0')
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=30s 9000s /usr/bin/env @vars $py -I -B "$linux/experiments/p85mr_f4_train_controls.py" --project-checkout $linux --source-archive "$linux/local_runs/p85mr_f4_source_F3.zip" --receipt "$linux/local_runs/p85mr_f4_controls_result.json"
+          if($LASTEXITCODE -ne 0){throw 'F4_CONTROL_QUALITY_OR_OWNER_RUN_FAIL_NO_REPLAY'}
+          Write-Output 'F4_FITCAL_CONTROLS_FINISHED_NO_OOD'
+
+      - name: Store only original engineering receipts, numerical results and nonpickle checkpoints
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p85mr-f4-fitcal-controls-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            p85mr-f4/local_runs/p85mr_f4_windows_cpu.json
+            p85mr-f4/local_runs/p85mr_f4_wsl_cpu.json
+            p85mr-f4/local_runs/p85mr_f4_controls_result.json
+            p85mr-f4/local_runs/p85mr_f4_models/*.npz
+          retention-days: 30
+          if-no-files-found: warn
