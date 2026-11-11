@@ -1,0 +1,74 @@
+{
+  "schema": "ttt-hybrid.p85-continuous-action-consequence-admission-freeze.v1",
+  "phase": "PROSPECTIVE_FROZEN_BEFORE_DATA_GENERATION",
+  "classification": "OFFLINE_AUTHOR_SYNTHETIC_DEVELOPMENT_BASELINE_PREFLIGHT_NOT_SCIENTIFIC_PASS",
+  "parent": {
+    "pr": 201,
+    "head": "427dc5819b7e39d53402f0eb3e2afbde0f01f3fb",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "raw_fast_source_blob": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "prior_P83_science": "DEV_FAIL_FROZEN_READOUT_INSUFFICIENT",
+    "parallel_external_science_lane": "P84-MR #202 owns independent CausalGym first-use; no overlap or physical source execution"
+  },
+  "question": "Can a truly continuous previously unseen action consequence be predicted from finitely observed action-consequence interventions with exactly a 16x16=256-float persistent fast memory, under stable and hidden within-episode changed mechanisms, versus a fully specified strong calibrated 256-float conventional update rule? If the conventional mechanism cannot learn the task, do not spend full-native-hybrid training budget or consume independent heldout evaluation.",
+  "data": {
+    "seeds": {
+      "fit": 850111,
+      "calibration": 850113,
+      "heldout_reserved": 850117,
+      "negative_reserved": 850119
+    },
+    "worlds": {
+      "fit": 256,
+      "calibration": 128,
+      "heldout_reserved": 128,
+      "negative_reserved": 64
+    },
+    "action_effect_dim": 16,
+    "causal_rank": 4,
+    "history_events": 48,
+    "stable_fraction": 0.5,
+    "changed_fraction": 0.5,
+    "mechanism_change_after_event": 24,
+    "generation": "Per-world independently generated orthonormal rank-4 action subspace and effect subspace. Each actually executed action is independently drawn from the 16-dimensional continuous unit sphere (never repeated); its resulting observed effect is tanh(3.0 * (effect_basis @ action_basis.T @ executed_action)) with no measurement noise. Half the worlds use a single frozen causal matrix; half switch to a separately drawn independent rank-4 matrix after history event 24, without exposing a regime flag. All 48 historical actions and their observed effects are consumed in arrival order; only afterward a new independently sampled unit action query arrives with 16 zero unknown-effect features. The ground-truth query outcome is the current mechanism's effect, not available at write time.",
+    "intervention": "The study specifies each executed action before its consequence, providing an actual simulated do(action)->effect rather than repeated exact-key lookup. No future target, change flag, evaluator role, or generated outcome enters memory prior to the corresponding action.",
+    "admission": "FIT/CAL source identities and SHA256; confirm query action is not equal to an earlier action (all cosines<0.999), nonfinite/shape guards, confirm stable/change balance exactly 50/50, effects generated only from correct before/after mechanism and no future effect input. All world seeds disjoint from P65-P84 consumed cohorts; this author-synthetic mechanism is not an independently witnessed physical source.",
+    "sealed": "Do not generate heldout_reserved or negative_reserved worlds unless a subsequent independently frozen experiment is eligible. This preflight only materializes FIT and CAL; no protected external first-use, no GPU."
+  },
+  "controls": {
+    "model_representations": "All output vectors 16D. Any tested online fixed state exactly 256 float32 values per world; no hidden trainable parameters, cursor, per-action store or source feedback. Global fixed scalar learning rate/decay are protocol settings, not persistent per-world state.",
+    "conventional_grid": "Predeclared grid η∈{0.25,0.5,1.0,1.5,2.0} × decay∈{1.0,0.99,0.97,0.95,0.90}; W starts all zeros; after observing executed action a_t (unit) and effect y_t, W := decay*W + η*(y_t-W@a_t)@a_t.T. Query predicts W@a_query. Calibrate one rule using CAL combined MSE (50% stable+50% change), freeze before heldout first-use; report separate stable/change outcomes and entire 25-rule calibration table. This selection is a CAL-trained conventional mechanism and must not be retrospectively reselected on heldout.",
+    "original_P78": "Exact previously pinned BoundedRawTTT η=0.5, decay1.0, 256-float state, must score identical to grid arm η=.5 decay1 up to floating precision; original source remains unchanged.",
+    "zero": "All-zero effect predictor; baseline per CAL regime.",
+    "full_history_oracle": "As diagnostic upper bound only, fit ridge linear map using up to last24 observed action/effect pairs via new (X^TX+1e-4 I) solution, using entire 24×(16+16)=768 float observed history and temporary matrix workspace; not memory-matched and never a contender for 256-float superiority.",
+    "nearest_neighbor": "As diagnostics only, retain all 48 action/effect events and return effect for closest action; 1536-float retained history, not comparable.",
+    "original_full_hybrid": "NOT TRAINED OR SCORED until conventional admission validates task. No model-integration or 'intelligence' claim from conventional preflight."
+  },
+  "frozen_gate": {
+    "preconditions": "All source/audit and P78 original blob PASS; CAL 128 worlds perfectly split stable/change; no query equals any historical key, all observations finite; 256-element state exact; original P78 matches grid eta=.5 decay1 within 1e-7.",
+    "baseline_competency": "Selected CAL-grid conventional effect MSE <=0.75*zero MSE on STABLE AND <=0.80*zero MSE on CHANGED worlds, and <=0.80*zero combined. Nonmatching regime causes explicit FAIL, not selective successes. Last24 OLS must be more accurate than zero by >=25% in each regime (identifiability control). If any fail mark PRE_FLIGHT_FAIL, preserve all rows, do not generate heldout/negative, do not train hybrid.",
+    "strong_control": "For any future admission-qualified trained hybrid comparator require prospectively frozen identical FIT/CAL/heldout actions/effects, full native end-to-end training, 3 independent seeds, 256-float fast state, cold restoration and a 10% gain with paired bootstrap over this CAL-selected strongest conventional plus fully trained GRU/SSM matching capacity and compute. Stronger control exists and can falsify hypothesis.",
+    "negative": "Wrong-credit or causal-changepoint outcomes on reserved negative source will be materialized only in a subsequent qualified owner-isolated preregistration, not this baseline preflight.",
+    "science_boundary": "This is synthetic DEV evidence even on CAL pass. No protected external CartPole or physical first use, no autonomous cognitive claim, no RSI, no whole-process speed/efficiency proof."
+  },
+  "execution": {
+    "cpu_threads": 1,
+    "cpu_wall_budget_seconds": 90,
+    "test_framework": "pytest",
+    "no_workflow_dispatch": true,
+    "no_schedule_or_runner_changes": true,
+    "no_paid_APIs": true,
+    "no_ref_merge": true,
+    "no_original_source_change": true,
+    "no_FORGE": true,
+    "no_parallel_P84_MR_mutation": true
+  },
+  "status": {
+    "frozen": true,
+    "FIT_CAL_generated": false,
+    "heldout_generated": false,
+    "negative_generated": false,
+    "scientific_pass": false,
+    "full_crossplatform_regression": "NOT_RUN"
+  }
+}
