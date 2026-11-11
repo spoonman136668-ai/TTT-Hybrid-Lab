@@ -110,3 +110,9 @@ def test_source_shift_and_baseline_effect_is_causal_not_nearest_key_lookup():
     assert z['selected']['mse']['changed']<z['zero']['changed']
     assert z['selected']['mse']['stable']<z['zero']['stable']
     assert z['nearest_neighbor_unmatched_1536_float_history']['combined']>z['selected']['mse']['combined']
+
+
+def test_cross_platform_source_digests_must_match_original_development_receipt():
+    # A different QR/torch backend changing source bytes invalidates scientific custody.
+    assert p85.world_sha(p85.make_worlds('fit')) == '77e192ebc1b877a2c4ba59409c67caa82f03aeb5804bc57ae73ccdb70fac5ea6'
+    assert p85.world_sha(p85.make_worlds('calibration')) == 'ecd04b7aff6cb35479d6c563eb3d37ca0c9c64bae627453b4d6636c58ac2908a'
