@@ -136,20 +136,28 @@ def _load_scoped_source(src):
     return imported.CartPoleWindPCH,tasks.Task(learning_regime=tasks.LearningRegime.do)
 
 
-def observed_episode(factory,task,split,index,regime,run_id,deadline):
+def observed_episode(factory,task,split,index,regime,run_id,deadline,*,journal=None):
     """Execute only factual do effects, exactly once per step/seed."""
     seed=proposed_seed(split,index)
     if time.monotonic()>deadline:
         raise TimeoutError("P85F1_EXPIRED")
+    # Journal begins before any potentially effectful source construction.
+    if journal is not None:
+        journal({"phase":"episode_attempt","split":split,"index":index,"seed":seed})
     env=factory(max_episode_steps=MAX_STEPS,task=task,
         wind_mean=regime["wind_mean"],wind_std=regime["wind_std"],
         init_theta_mean=regime["init_theta_mean"],init_theta_std=regime["init_theta_std"])
     events=[]
     try:
+        if journal is not None:
+            journal({"phase":"reset_attempt","split":split,"index":index,"seed":seed})
         reset=env.reset(seed=seed)
         if not isinstance(reset,(tuple,list)) or len(reset)!=2 or not isinstance(reset[1],dict):
             raise ValueError("P85F1_BAD_RESET")
         previous=_state(reset[0])
+        if journal is not None:
+            journal({"phase":"reset_observed","split":split,"index":index,
+                     "seed":seed,"state":previous})
         for step in range(1,MAX_STEPS+1):
             if time.monotonic()>deadline:
                 raise TimeoutError("P85F1_EXPIRED")
@@ -160,7 +168,12 @@ def observed_episode(factory,task,split,index,regime,run_id,deadline):
                 if seen[0]!=1 or any(abs(a-b)>1e-5 for a,b in zip(_state(obs),previous)):
                     raise ValueError("P85F1_WRONG_POLICY_OBSERVATION")
                 return desired
-            # Effectful: one call only, no retries even if outcome unknown.
+            # Persist attempted action before the potentially effectful do().
+            # If do throws, the attempt remains and is NEVER replayed.
+            if journal is not None:
+                journal({"phase":"action_attempt","split":split,"index":index,
+                         "seed":seed,"step":step,"action":desired,
+                         "state_before":list(previous)})
             result=env.do(policy)
             if (not isinstance(result,(tuple,list)) or len(result)!=5 or seen[0]!=1):
                 raise ValueError("P85F1_UNKNOWN_ACTION_OUTCOME")
@@ -177,6 +190,12 @@ def observed_episode(factory,task,split,index,regime,run_id,deadline):
                 "executed_action":desired,"state_after":current,"reward":float(reward),
                 "terminated":terminated,"truncated":truncated,"mode":"do",
                 "receipt_ref":f"ghrun:{run_id}:{split}:{index}:{step}"})
+            # Persist each witnessed effect BEFORE another intervention.
+            if journal is not None:
+                journal({"phase":"action_observed","split":split,"index":index,
+                         "seed":seed,"step":step,"action":desired,
+                         "state_after":current,"reward":float(reward),
+                         "terminated":terminated,"truncated":truncated})
             previous=current
             if terminated or truncated:
                 break
@@ -234,13 +253,19 @@ def collect_one_shot(*,source_root,project_root,environ=None):
     total=0
     summary={}
     try:
+        # Upstream source must not create untracked Python bytecode files.
+        sys.dont_write_bytecode=True
         factory,task=_load_scoped_source(src)
         for split,n in COHORTS:
             regime=scope["cohorts"][split]
             accepted=[]
             short=[]
             for index in range(n):
-                world=observed_episode(factory,task,split,index,regime,owner["run_id"],begun+MAX_SECONDS)
+                world=observed_episode(
+                    factory,task,split,index,regime,owner["run_id"],
+                    begun+MAX_SECONDS,
+                    journal=lambda entry, cohort=split: _append_progress(
+                        attempt/(cohort+".steps.ndjson"),entry))
                 # Preserve every completed episode BEFORE the next effectful
                 # reset, including early-short and terminal observations.
                 _append_progress(attempt/(split+".ndjson"),world)
