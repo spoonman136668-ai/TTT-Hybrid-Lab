@@ -18,8 +18,17 @@ SOURCE_PATH = ROOT / PATH
 HISTORY = "e" * 64
 
 
+def source_git_bytes():
+    """Use canonical Git LF blob bytes across Linux/Windows worktree settings.
+
+    The supplier's immutable BASE_BLOB check remains strict. Windows checkout
+    may present CRLF working bytes; only this test fixture normalizes them.
+    """
+    return SOURCE_PATH.read_bytes().replace(b"\r\n", b"\n")
+
+
 def build(**change):
-    before = SOURCE_PATH.read_bytes()
+    before = source_git_bytes()
     args = {
         "parent_commit": PARENT, "source_path": PATH,
         "original_bytes": before,
@@ -44,7 +53,7 @@ class FakeModel:
 
 class PrivateHybridSupplierTests(unittest.TestCase):
     def test_source_lineage_is_project_owned(self):
-        original = SOURCE_PATH.read_bytes()
+        original = source_git_bytes()
         self.assertEqual(git_blob(original), BASE_BLOB)
         self.assertEqual(len(PARENT), 40)
 
@@ -60,7 +69,7 @@ class PrivateHybridSupplierTests(unittest.TestCase):
     def test_proposal_is_deterministic(self):
         left, right = build(), build()
         self.assertEqual(left, right)
-        self.assertNotEqual(left["private_source"], SOURCE_PATH.read_bytes())
+        self.assertNotEqual(left["private_source"], source_git_bytes())
         self.assertEqual(left["candidate_sha256"], sha(left["private_source"]))
 
     def test_candidate_changes_only_opt_in_sequence_gate(self):
@@ -118,7 +127,7 @@ class PrivateHybridSupplierTests(unittest.TestCase):
                     build(**kwargs)
 
     def test_incomplete_seed_or_source_is_denied(self):
-        raw = SOURCE_PATH.read_bytes()
+        raw = source_git_bytes()
         for old in (b'    if mode == "all-write":', b"def forward_existing_hybrid("):
             broken = raw.replace(old, b"# deliberately removed")
             with self.subTest(old=old):
