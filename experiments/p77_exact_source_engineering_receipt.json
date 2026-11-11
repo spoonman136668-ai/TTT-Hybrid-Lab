@@ -1,0 +1,110 @@
+{
+  "schema": "ttt-hybrid.p77-exact-source-qualification-receipt.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_PASS_ISOLATED_IDENTITY_SIDE_CAR_NOT_SCIENTIFIC",
+  "parent": {
+    "pr": 187,
+    "head": "597b1bd8fba84e85c72d3a69a75f3baf754a7dee"
+  },
+  "freeze": {
+    "commit": "d01f9f4b7246ee88d10cb1d16ed8700b82cbc258",
+    "blob": "40b3f9e5df77c7a605794929996b6024e3f96590"
+  },
+  "source_git_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "experiments/p76_native_alignment_dev.py": "d4a9313a760d36a2929a823061ad61aa7098a5d4",
+    "experiments/p77_identity_bypass_dev.py": "2f41284e88f0e7e2ed4b16a526cab0c83ead87fb",
+    "tests/test_p77_identity_bypass_dev.py": "4d9b0d99909799d53353853041a28fd2c9b9725d",
+    "experiments/p77_identity_bypass_dev_result.json": "248b64897562d26cd75f75e804182f9e24dabe42",
+    "experiments/p77_independent_negative_completion.py": "bd5b24bbd22cf0d8a839c8841dea7ef559116868",
+    "experiments/p77_independent_negative_completion_result.json": "3ce700cbec58e1493cf70683c36166d09465ecae"
+  },
+  "local": {
+    "platform": "Linux CPU",
+    "python": "3.13",
+    "torch": "2.10.0+cpu",
+    "focused_regression": "49_OF_49_PASS",
+    "focused_seconds": 2.07,
+    "source_exact_match_to_git": true,
+    "study_seconds": 1.736974191999252,
+    "independent_negative_replay_seconds": 1.3861028289993556
+  },
+  "evidence": {
+    "source_seeds": {
+      "fit": 770111,
+      "val": 770113,
+      "ood_dev": 770117,
+      "negative": 770119
+    },
+    "model_seeds": [
+      770201,
+      770203,
+      770207
+    ],
+    "val_bypass_accuracy": [
+      1,
+      1,
+      1
+    ],
+    "ood_native_only_accuracy": [
+      0.1015625,
+      0.078125,
+      0.1875
+    ],
+    "ood_bypass_accuracy": [
+      1,
+      1,
+      1
+    ],
+    "ood_bypass_observed_value_mse": [
+      0,
+      0,
+      0
+    ],
+    "ood_bypass_decoded_native_value_mse": [
+      0.210164412856102,
+      0.2013787031173706,
+      0.21061384677886963
+    ],
+    "ood_zero_mse": 0.4011113941669464,
+    "raw_lookup_unbounded_history_mse": 0,
+    "raw_lookup_accuracy": 1,
+    "heldout_wrong_credit_errors": [
+      0.746429443359375,
+      0.7587828040122986,
+      0.7247858047485352
+    ],
+    "independent_negative_wrong_credit_errors": [
+      0.6381295323371887,
+      0.7043807506561279,
+      0.6893999576568604
+    ],
+    "model_replay_checkpoints_match": true,
+    "independent_negative_separate_cohort": true,
+    "initial_primary_receipt_used_ood_credit_shuffle": true,
+    "all_preregistered_controls_done_in_two_sequential_unmodified_runs": true,
+    "all_three_model_seeds_primary_pass": true
+  },
+  "limitations": {
+    "original_model_params_unchanged": true,
+    "original_hybrid_output_performance_tested": false,
+    "original_full_hybrid_training": "NOT_RUN",
+    "fixed_factual_state_bytes_extra": true,
+    "bypass_trainable_parameters": 513,
+    "native_only_parameters": 512,
+    "whole_process_compute_matched": false,
+    "strict_scientific_pass": false,
+    "independent_physical_source": false
+  },
+  "qualification": {
+    "Linux_local_focused": "PASS",
+    "full_final_SHA_Windows_Linux": "NOT_RUN",
+    "GPU": "NOT_RUN",
+    "G4_G5_G7": "UNVERIFIED",
+    "merge": "NONE",
+    "FORGE": "UNCHANGED",
+    "scheduled_tasks": "NONE",
+    "deployment": "NONE",
+    "science": "UNVERIFIED"
+  },
+  "next": "Test a bounded identity-preserving input encoder/TTT fast-weight path within a separately trained original four-block model, with capacity- and process-matched controls, fully qualified native GPU and independent scientific source. Do not promote external full-history raw lookup as model-internal learned memory."
+}
