@@ -1,0 +1,147 @@
+{
+  "schema": "ttt-hybrid.p75-postfreeze-fitval-screen-receipt.v1",
+  "status": "EARLY_SSM_COMPETENCE_FAIL_AND_GRU_INCOMPLETE_NO_SCIENCE_PASS",
+  "scope": "AUTHORED_SYNTHETIC_DEV_FIT_VAL_ONLY",
+  "freeze": {
+    "commit": "7e3cf0d2b47c8a88858fe50244c16b6940519c2a",
+    "blob": "599000f38a218ea2acc8187c1fbb306c4287cc99",
+    "source_frozen_before_implementation": true
+  },
+  "source": {
+    "p75_selector_blob": "c56485dc394260861ce48d7e4cb884ddf4b7a6ca",
+    "parent_p69_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "fit_n": 512,
+    "fit_seed": 975101,
+    "fit_digest_sha256": "aadab7833c4aa9c97d740809978adadf075b59abd14b231da7945bdf00a9212b",
+    "val_n": 192,
+    "val_seed": 975103,
+    "val_digest_sha256": "a152a8b49287a73615c53a9101ba8363a61c2a5fbf36f849387f9d18af44748a",
+    "fit_audit": {
+      "target_quartile_deviation": 0.011555999517440796,
+      "index_only_target_ba": 0.5038248747587204,
+      "index_only_changed_role_ba": 0.5060221254825592,
+      "query_changed_fraction": 0.494140625,
+      "exact_future_query_duplicate": false
+    },
+    "val_audit": {
+      "target_quartile_deviation": 0.006076395511627197,
+      "index_only_target_ba": 0.5043402761220932,
+      "index_only_changed_role_ba": 0.4869791716337204,
+      "query_changed_fraction": 0.4947916567325592,
+      "exact_future_query_duplicate": false
+    },
+    "frozen_shortcut_and_duplicate_gates": "PASS",
+    "ood_0_1_2_and_negative": "SEALED_AND_NOT_GENERATED_OR_SCORED",
+    "old_P69_fit_val_ood_reuse": false
+  },
+  "engineering": {
+    "model_source_blob": "197946f52c7a23fb4847628696dd71802bec4e30",
+    "model_test_blob": "b5f679a39158da99fd979996cd188886b85b316c",
+    "source_test_blob": "692d29bc326ab65a6dc026ebd68595eb071b738a",
+    "focused_tests": "PASS_57_OF_57_LOCAL_CPU",
+    "focused_seconds": 3.73,
+    "environment": "Linux 6.18.57, Python 3.13.5, PyTorch 2.10.0+cpu, pytest 9.0.2; one CPU thread for training",
+    "full_original_cross_platform_regression": "UNVERIFIED",
+    "pinned_project_toolchain": "NOT_MATCHED",
+    "build_gpu": "NOT_RUN",
+    "owner_runner_dispatch": "NONE",
+    "local_gru_resumer": "EXISTS_ONLY_IN_LOCAL_EVIDENCE_ARCHIVE_NOT_COMMITTED_AS_PROJECT_OWNER_TEST",
+    "local_model_checkpoints": "STATE_SAVED_LOCALLY_ONLY_NOT_PRODUCTION"
+  },
+  "observations": {
+    "seed": 975201,
+    "zero_validation_mse": 0.39337536692619324,
+    "required_25pct_better_mse": 0.29503152519464493,
+    "gru": {
+      "final_only": {
+        "observed_checkpoints": [
+          {
+            "step": 50,
+            "mse": 0.4005644619464874
+          },
+          {
+            "step": 100,
+            "mse": 0.4165019989013672
+          },
+          {
+            "step": 150,
+            "mse": 0.4356953203678131
+          }
+        ],
+        "best_mse": 0.4005644619464874,
+        "training_complete": false
+      },
+      "matched_prequential": {
+        "observed_checkpoints": [
+          {
+            "step": 50,
+            "mse": 0.3987133800983429
+          },
+          {
+            "step": 100,
+            "mse": 0.40694549679756165
+          }
+        ],
+        "best_mse": 0.3987133800983429,
+        "training_complete": false
+      },
+      "qualification": "UNVERIFIED_LONG_RUN_INTERRUPTED_AND_CHUNKING_INCOMPLETE",
+      "local_unqualified_monolith_timeout": "INFRASTRUCTURE_LIMIT_NO_MODEL_RESULT"
+    },
+    "ssm": {
+      "final_only": {
+        "steps": 250,
+        "best_mse": 0.4014642536640167,
+        "best_update": 50,
+        "converged": true,
+        "registered_stop": true,
+        "competent": false
+      },
+      "matched_prequential": {
+        "steps": 250,
+        "best_mse": 0.4005320370197296,
+        "best_update": 50,
+        "converged": true,
+        "registered_stop": true,
+        "competent": false
+      },
+      "qualification": "DEV_COMPETENCY_FAIL_BOTH_ARMS_SEED_975201",
+      "local_training_wall_seconds_excluding_generation": {
+        "final_only": 5.554590279999502,
+        "matched_prequential": 5.126127161999648
+      }
+    },
+    "posthoc_diagnostics_development_validation_only": {
+      "fixed_allwrite_256_float": {
+        "overall_mse": 0.10213923454284668,
+        "changed_mse": 0.10159426927566528,
+        "stable_mse": 0.10267295688390732
+      },
+      "ring_256_float": {
+        "overall_mse": 0.365521103143692,
+        "changed_mse": 0.36176300048828125,
+        "stable_mse": 0.36920166015625
+      },
+      "zero": {
+        "overall_mse": 0.3933753967285156,
+        "changed_mse": 0.38406264781951904,
+        "stable_mse": 0.40249601006507874
+      },
+      "interpretation": "The 256-float all-write matrix is a competent development diagnostic; the learned conventional GRU/SSM training remains unqualified. Because it was added after the P75 freeze, this fixed-allwrite comparison CANNOT be claimed as a registered P75 treatment or SCIENTIFIC_PASS.",
+      "new_ood_or_external_science": false
+    }
+  },
+  "fences": {
+    "main_unchanged": true,
+    "p69_positive_and_negative_results_preserved": true,
+    "no_model_promotion": true,
+    "no_forge_controller": true,
+    "no_scheduled_tasks": true,
+    "no_live_actuation": true,
+    "no_new_runner": true,
+    "no_paid_api": true,
+    "no_ood_first_use": true,
+    "no_merges": true
+  },
+  "next": "Stop extrapolating a P75 positive; preserve this negative, qualify any eventual full GRU via exact-source bounded resume, or pre-register a new memory-update mechanism comparison with directly represented 256-float fast weight baseline. Independently authorized science and full regression remain missing."
+}
