@@ -53,9 +53,17 @@ def test_disjoint_seed_families_and_source_sealed_receipt():
     assert len(set(p59.TRAIN_SEEDS+p59.VALID_SEEDS+p59.OOD_SEEDS))==256
     assert set(range(985100,985196)).isdisjoint(p59.TRAIN_SEEDS+p59.VALID_SEEDS+p59.OOD_SEEDS)
     data=json.loads((ROOT/'experiments/p59_goal_policy_readout_dev_receipt.json').read_text())
-    assert data['source_sha256']==EXPECTED
-    assert data['source_sizes']=={'training_trajectories':128,'training_completed_actions':10195,'validation_trajectories':32,'OOD_trajectories':96}
-    assert data['model_seeds']==[9511,9523,9531]
+    # P59 receipt has the frozen canonical nested schema; do not alter the
+    # consumed source/experiment receipt merely to satisfy an old flat key.
+    assert data['authored_experiment']['source_SHA256']=={
+        'train': EXPECTED['train_executed_trajectories'],
+        'validation': EXPECTED['validation_executed_trajectories'],
+        'OOD': EXPECTED['OOD_executed_trajectories']}
+    assert data['authored_experiment']['fit_executed_episodes']==128
+    assert data['authored_experiment']['fit_executed_actions']==10195
+    assert data['authored_experiment']['validation_episodes']==32
+    assert data['authored_experiment']['OOD_episodes']==96
+    assert [row['seed'] for row in data['per_seed']]==[9511,9523,9531]
 
 
 def test_exact_param_budget_and_reference_unchanged():
@@ -73,7 +81,8 @@ def test_query_contains_no_future_and_observation_only_after_completed_step():
     assert np.array_equal(q[:3],np.zeros((3,5),np.float32))
     assert np.array_equal(q[-2],one)
     assert q[-1,2:].tolist()==[0.,0.,0.]
-    assert np.array_equal(q[-1,:2],np.array([observed.next_sensor[0],observed.next_sensor[1]*100.]))
+    # Both expected and actual observations use the contract's float32 width.
+    assert np.array_equal(q[-1,:2],np.array([observed.next_sensor[0],observed.next_sensor[1]*100.],dtype=np.float32))
     with pytest.raises(ValueError,match='P59_FACTUAL_CAPACITY_OVERFLOW'):
         p59.feature([one]*5,sensor)
     src=inspect.getsource(p59.batch_rollout)
@@ -102,13 +111,17 @@ def test_cold_weights_unchanged_for_all_factory_classes():
 
 def test_frozen_outcomes_preserve_strong_GRU_and_imitation_only():
     data=json.loads((ROOT/'experiments/p59_goal_policy_readout_dev_receipt.json').read_text())
-    assert data['classification']=='AUTHORED_SUPERVISED_IMITATION_DEV_NOT_ACTION_CONSEQUENCE_LEARNING'
-    assert data['overall_dev_pass']
-    assert data['official_installed_gymnasium']=='NOT_AVAILABLE'
-    assert data['independent_science']=='NOT_RUN'
-    assert data['teacher']['OOD']['success']==1.0
-    assert all(row['frozen_per_seed_pass'] for row in data['results'])
-    assert all(row['arms']['GRU']['OOD']['success']==1.0 for row in data['results'])
-    assert [row['arms']['Hybrid']['OOD']['successes'] for row in data['results']]==[96,96,95]
-    assert all(all(v['cold_exact'] for v in row['arms'].values()) for row in data['results'])
-    assert all(all(v>0 for v in (row['arms'][name]['train_seconds'] for name in p59.ARMS)) for row in data['results'])
+    assert data['schema']=='ttt-hybrid.p59.goal-reaching-factual-imitation-readout-dev-receipt.v1'
+    assert data['classification']=='FROZEN_AUTHOR_GENERATED_IMITATION_DEV_PASS_NOT_CAUSAL_ACTION_CONSEQUENCE_SCIENCE'
+    assert data['frozen_gates']['overall']=='DEV_PASS_3_OF_3'
+    assert data['source_fidelity']['installed_official_gymnasium_runtime']=='NOT_AVAILABLE'
+    assert data['scientific_limits']['SCIENTIFIC_PASS']=='UNVERIFIED'
+    assert data['scientific_limits']['causal_action_consequence_learning'].startswith('NOT_TESTED')
+    assert data['teacher_controls']['unfamiliar_OOD']['successes']==96
+    assert all(data['frozen_gates'][k]=='PASS_3_OF_3' for k in
+        ('imitation_policy_goal_readout','OOD_success_vs_teacher_95pct',
+         'OOD_net_return_within_5','OOD_success_noninferior_vs_trained_GRU_and_MLP_5ppt'))
+    assert all(row['GRU']['OOD_goals']==96 for row in data['per_seed'])
+    assert [row['hybrid']['OOD_goals'] for row in data['per_seed']]==[96,96,95]
+    assert all(row[arm]['cold'] for row in data['per_seed'] for arm in ('hybrid','GRU','MLP'))
+    assert all(row[arm]['train_s']>0 for row in data['per_seed'] for arm in ('hybrid','GRU','MLP'))
