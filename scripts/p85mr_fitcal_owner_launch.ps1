@@ -1,6 +1,6 @@
-# P85-MR F1: invoke the already-authorized, ONE-SHOT FIT/CAL collection on
+# P85-MR F2: invoke the newly-authorized second ONE-SHOT FIT/CAL collection on
 # the EXISTING TTT-Hybrid Windows + Ubuntu WSL project runner.
-# Called ONLY by the exact branch-push first-use workflow after full
+# Called ONLY by F2 exact branch-push first-use workflow after full
 # Windows + WSL source regression. Never installs, clones, schedules, or retries.
 [CmdletBinding()]
 param(
@@ -24,8 +24,8 @@ $report = [ordered]@{
     status = 'PRE_EFFECT_BLOCKED'
 }
 try {
-    $expectedRef = 'refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111'
-    $expectedWorkflowRef = 'spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-fitcal-firstuse-once.yml@' + $expectedRef
+    $expectedRef = 'refs/heads/research/p85mr-f2-pinned-source-fitcal-once-20261111'
+    $expectedWorkflowRef = 'spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-f2-pinned-fitcal-once.yml@' + $expectedRef
     if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
         $env:GITHUB_REF -cne $expectedRef -or
         $env:GITHUB_WORKFLOW_REF -cne $expectedWorkflowRef -or
