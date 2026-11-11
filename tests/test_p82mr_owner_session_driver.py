@@ -14,8 +14,10 @@ from p79mr_toy_transfer_replay import toy_replay
 from p82mr_owner_session_driver import InMemoryToySession as FakeSession
 
 
-def run(session=None,**override):
-    if session is None:
+_DEFAULT_SESSION = object()
+
+def run(session=_DEFAULT_SESSION,**override):
+    if session is _DEFAULT_SESSION:
         session=FakeSession()
     args={
         "source_kind":"toy_engineering","split":"fit","episode_index":3,
