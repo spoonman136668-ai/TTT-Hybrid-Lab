@@ -1,0 +1,90 @@
+{
+  "schema": "ttt-hybrid.p79mr-external-causal-transfer-admission-freeze.v1",
+  "stage": "FROZEN_BEFORE_EXTERNAL_SOURCE_ADAPTER_IMPLEMENTATION_OR_FIRST_USE",
+  "purpose": "Implement a read-only, independently sourced action-consequence transfer and cold-retention intake boundary; do not originate, generate, score or first-use actual independent scientific data in this engineering gate.",
+  "parent": {
+    "pr": 192,
+    "head": "fd71612c033aa7c341cf98db2587795639873258",
+    "source": "experiments/p78mr_fitcal_val_dev_result.json",
+    "source_blob": "c180bfa8dab735000360ba2e87f51dbe42ec3d89",
+    "base_model": "experiments/p77_write_policy.py",
+    "base_model_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02"
+  },
+  "hypothesis": {
+    "transfer": "The P78-MR fixed three-parameter learned factual memory will generalize to independently witnessed new action-consequence environments, under same 256-float memory, no refit, no query/lookahead, against strongest properly calibrated and fully-trained conventional controls.",
+    "null": "The P78-MR authored synthetic advantage does not survive novel external causal sources, cold retention, regime changes, strong controls or whole-process compute.",
+    "criteria_reserved_for_separate_science": "No SCIENTIFIC_PASS threshold may be applied in this engineering gate; independent source admission, exact-source qualification, owner first-use, matched fully trained controls and preregistered external holdout required before science."
+  },
+  "source_contract": {
+    "schema": "ttt-hybrid.p79mr.trace.v1",
+    "source_kind_values": [
+      "toy_engineering",
+      "external_simulator",
+      "physical"
+    ],
+    "no_self_attested_independence": "source_kind and provenance metadata are DATA, not proof; external source remains UNVERIFIED until owner-controlled witness and admission",
+    "unit": "native 16-float unit-normalized executed action vector; realized 16-float finite effect vector, no posthoc learned projection or scale adjustment",
+    "event_fields": [
+      "event_id",
+      "action",
+      "effect",
+      "receipt_ref"
+    ],
+    "event_seq": "positive increasing contiguous event_id in each world; chronological actual execution",
+    "probe_fields": [
+      "probe_id",
+      "after_events",
+      "action",
+      "realized_effect",
+      "group",
+      "receipt_ref"
+    ],
+    "probe_semantics": "Probe action actually executed after its given factual event prefix; actual measured effect provided as evaluator target only, never used to update memory. For multi-probe challenge, each independent probe is evaluated at its declared historical prefix; do not implicitly write probe effect.",
+    "probe_groups": [
+      "changed",
+      "stable",
+      "unknown"
+    ],
+    "source_checksum": "SHA256 of canonical sorted-key compact JSON serialization of worlds; compare to caller-pinned manifest expected_sha256; immutable world/probe IDs and receipt refs, reject nonfinite, zero and malformed vectors, duplicate IDs, missing receipts, nonmonotonic boundaries",
+    "input_gate": "Pure schema/digest validation is allowed without scoring; EXTERNAL_SIMULATOR/PHYSICAL forward prediction and any metrics require separate project-owner first-use permission, not granted by this protocol.",
+    "test_scope": "Only small in-memory TOY_ENGINEERING fixtures; no external source, no paid API, no live actuation; no re-use of P69/P75/P76/P77/P78-MR original synthetic data."
+  },
+  "frozen_comparators": {
+    "learned": "p78mr selected non_directional3 static theta for exact model seeds 978201/978203/978207; source is Git blob c180bfa8dab735000360ba2e87f51dbe42ec3d89; do not tune theta or use external fit/cal.",
+    "fixed": "p78mr CAL-selected fixed rule eta=0.4; no external recalibration.",
+    "other_conventional": "Trained GRU/SSM and domain-appropriate controls required for any external superiority claim; unavailable control explicitly disqualifies independent acceptance.",
+    "capacity": "Exactly 16x16=256 persistent float state per world, static weights separately disclosed, no hidden episode cursor/role/time/adaptation state, no external raw history replay beyond evaluation harness."
+  },
+  "engineering_acceptance": [
+    "Exact parent blobs checked and model theta loaded only from frozen P78-MR receipt.",
+    "Source digest and split/world-id disjointness pass, malformed/no provenance/nonfinite vectors fail closed.",
+    "Only factual executed action/effect passed to memory writer; changing all probe effects, group labels, receipt refs or future events cannot alter prior predictions.",
+    "Every probe score is read-only, no update from target; explicit prefix cut and action query only.",
+    "Tensor-only cold state restored at arbitrary prefix reproduces continuous encoding bit-for-bit and same predictions.",
+    "Model predictions on synthetic toy do not constitute scientific performance data; external source predictions and scoring forbidden absent owner admission.",
+    "Exact-blob local focused tests plus mandatory full final-SHA original Windows and Linux regression/build separately; GitHub zero-step CI is infrastructure failure, not a passing test.",
+    "All new code/results/checkpoints/evidence stored in repo paths; no Library files, attachments or downloadable archive."
+  ],
+  "authority": {
+    "owner_first_use": "SEPARATELY_AUTHORIZED_REQUIRED",
+    "science_status": "NOT_STARTED",
+    "no_runner_or_workflow_dispatch": true,
+    "no_scheduler": true,
+    "no_new_controller": true,
+    "no_forge_change": true,
+    "no_other_research_lane_edits": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_paid_api": true,
+    "no_live_actuation": true,
+    "no_deployment": true
+  },
+  "scoring_plan_after_owner_first_use": {
+    "state_outcome": "final and time-indexed probe effect MSE stratified changed vs stable",
+    "retention": "cold restoration, interference loss, unchanged-role retention at long delays",
+    "adaptation": "changed causal relationship recovery conditional on observed corrective action count",
+    "uncertainty": "paired world-level bootstrap across independently witnessed source cohorts",
+    "compute": "train+calibration+transfer full wall/FLOPs/peak memory; no equal-compute inference from equal state capacity",
+    "decision": "Separate future preregistration and qualified admission; no testing of author-generated toy data as independent evidence."
+  }
+}

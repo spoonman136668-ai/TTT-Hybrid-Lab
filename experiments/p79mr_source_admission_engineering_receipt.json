@@ -1,0 +1,65 @@
+{
+  "schema": "ttt-hybrid.p79mr-external-source-engineering-qualification.v1",
+  "research_classification": "ENGINEERING_ONLY_NO_EXTERNAL_FIRST_USE",
+  "lineage": {
+    "parent_pr": 192,
+    "parent_head": "fd71612c033aa7c341cf98db2587795639873258",
+    "p78_receipt_blob": "c180bfa8dab735000360ba2e87f51dbe42ec3d89",
+    "p78_receipt_fields_verified_from_github": true,
+    "p78_mem_state_floats": 256,
+    "p78_fixed_selected": {
+      "rule": "constant",
+      "gain": 0.4
+    },
+    "p78_trained_seeds": [
+      978201,
+      978203,
+      978207
+    ],
+    "protocol_commit": "49768c6593c2c5536886577bc46ab5e46c7b926c",
+    "protocol_blob": "01fdd7376151a01490c1f14bd70e6330ef93a42a",
+    "protocol_frozen_before_adapter_implementation": true
+  },
+  "git_sources": {
+    "experiments/p79mr_trace_admission.py": "c5550d6a82cd14f9b5fd93412e4daaf5f084d2fe",
+    "experiments/p79mr_toy_transfer_replay.py": "674b521f928f99e482e563c3dbfcf1763af4aed0",
+    "tests/test_p79mr_trace_admission.py": "9b185a796687ab0828404bb34c59b46f6af0a946"
+  },
+  "engineering": {
+    "structural_admission": "PASS on offline in-memory TOY; digest/chronology/custody/shape/factual constraints",
+    "first_use_fence": "PASS; EXTERNAL_SIMULATOR and PHYSICAL schema-valid manifests reject prediction/scoring with P79MR_OWNER_FIRST_USE_REQUIRED",
+    "factual_boundary": "PASS: no label/hidden group/receipt or future consequence enters learned memory writes; probe effects scored after read only for toy",
+    "retention": "PASS: 256-float tensor-only state cold restores bitwise on toy prefixes",
+    "future_integrity": "PASS: future action/effect mutations cannot alter earlier read; relevant later event mutation alters later read",
+    "security": "PASS: malformed nonfinite/nonunit, missing custody, duplicate IDs, extra oracle fields, digest drift, float32 overflow rejected",
+    "focused_local_tests": "125/125 PASS",
+    "wall_seconds": 3.92,
+    "environment": "Linux local Python 3.13.5 / torch 2.10.0+cpu; one-thread",
+    "local_custody_caveat": "Local replay execution exercised the same logic but substituted the committed P78 receipt SHA constant with a SHA for a compact equivalently structured local fixture; the fixed gain and all three theta vectors were independently compared to the actual GitHub P78 receipt blob. New adapter and tests were locally byte-exact against GitHub. Thus this is not a fully exact-file execution of the committed GitHub replay module; original full exact-SHA acceptance remains UNVERIFIED.",
+    "unqualified_platforms": "Original pinned PyTorch 2.5.1+cpu Windows/Linux full suite and original build NOT RUN; native GPU NOT RUN; GH Actions allocation remains blocked",
+    "externally_witnessed_causal_env": "NOT_CONNECTED",
+    "source_origin_attestation": "NOT_ESTABLISHED",
+    "real_external_trace_parsed": false,
+    "real_external_probes_scored": false,
+    "new_training": false,
+    "new_runners": false,
+    "scheduled_tasks": false
+  },
+  "science": {
+    "scientific_pass": false,
+    "independent_source_transfer": "NOT_RUN",
+    "cold_retention_external": "NOT_RUN",
+    "trained_conventional_gru_ssm_qualified": false,
+    "original_hybrid_integration": "NOT_RUN",
+    "whole_process_cost_matched": false,
+    "first_use_authority": "SEPARATELY_REQUIRED"
+  },
+  "deployment": {
+    "none": true,
+    "main_unchanged": true,
+    "forge_unchanged": true,
+    "other_native_research_lanes_unchanged": true,
+    "merge": false
+  },
+  "next_required": "Owner-qualified independently witnessed external causal source with irrevocable data partition, exact source custody and separately authorized first-use; acquire fully trained matched conventional controls; run exact-final-SHA original Windows/Linux regression and scientific protocol before evaluating external probes."
+}
