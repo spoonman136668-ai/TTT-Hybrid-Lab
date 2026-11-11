@@ -66,7 +66,16 @@ try {
     # Never install dependencies or download sources. Probe only known,
     # narrowly scoped local checkouts, then verify exact git/blob custody
     # inside the Python collector BEFORE any real environment reset/do.
+    # The prior S28 source-only workflow checked out the same exact
+    # upstream Git commit in this dedicated runner's job workspace.
+    # Reuse it ONLY if still present and source SHA/blobs/remote are verified.
+    # A job-local path may be absent: no download, clone or automatic retry.
+    if (-not $linuxRoot.EndsWith('/p85mr-f1', [StringComparison]::Ordinal)) {
+        throw 'P85MR_F1_UNEXPECTED_CHECKOUT_LAYOUT'
+    }
+    $workspaceRoot = $linuxRoot.Substring(0, $linuxRoot.Length - '/p85mr-f1'.Length)
     $sourceCandidates = @(
+        "$workspaceRoot/s28-upstream-source",
         "/home/$who/.local/share/ttt-hybrid/Causal-Gymnasium",
         "/home/$who/.local/share/ttt-hybrid/causal-gymnasium",
         "/home/$who/Research/Causal-Gymnasium",
@@ -129,11 +138,12 @@ try {
         "RUNNER_ARCH=$env:RUNNER_ARCH",
         'P85MR_OWNER_EXECUTION=FIT_CAL_ONLY',
         'PYTHONDONTWRITEBYTECODE=1',
+        'PYTHONNOUSERSITE=1',
         'PYTHONHASHSEED=0',
         'CUDA_VISIBLE_DEVICES=-1'
     )
     $report.status = 'COLLECTOR_INVOKED'
-    & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 2550s /usr/bin/env @pass $py -I -B "$linuxRoot/experiments/p85mr_fitcal_owner_firstuse.py" --source-checkout $source --project-checkout $linuxRoot --approved-once
+    & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 2550s /usr/bin/env @pass $py -s -B "$linuxRoot/experiments/p85mr_fitcal_owner_firstuse.py" --source-checkout $source --project-checkout $linuxRoot --approved-once
     if ($LASTEXITCODE -ne 0) {
         throw 'OWNER_COLLECTOR_ABORTED_NO_REPLAY'
     }
