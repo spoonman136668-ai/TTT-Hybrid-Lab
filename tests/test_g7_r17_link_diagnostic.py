@@ -104,11 +104,31 @@ def test_host_shared_probe_with_mocked_compiler(monkeypatch, tmp_path, build_ok,
     from subprocess import CompletedProcess
     monkeypatch.setattr(subject, "ROOT", tmp_path)
     monkeypatch.setattr(old, "source_custody", lambda sha: None)
-    monkeypatch.setattr(old, "selected_compiler", lambda: ("/usr/bin/true", "gcc"))
+    # Fully simulate the Linux compiler/dpkg paths on every CI platform.
+    # Neither Windows nor Ubuntu needs a particular host binary/symlink.
+    class FakeTrustedCompiler:
+        def resolve(self, *, strict=False):
+            return self
+        def is_file(self):
+            return True
+        def read_bytes(self):
+            return b"g7-r17-inert-compiler-fixture"
+        def __str__(self):
+            return "/usr/bin/gcc"
+    original_path = Path
+    fake_compiler = FakeTrustedCompiler()
+    def fake_path(value):
+        if str(value) == "/usr/bin/gcc":
+            return fake_compiler
+        if str(value) == "/usr/bin/dpkg-query":
+            return types.SimpleNamespace(is_file=lambda: True)
+        return original_path(value)
+    monkeypatch.setattr(subject, "Path", fake_path)
+    monkeypatch.setattr(old, "selected_compiler", lambda: ("/usr/bin/gcc", "gcc"))
     def fake_probe(argv, *, input_text=None, timeout=15):
         if argv[0].endswith("dpkg-query"):
             return CompletedProcess(argv, 0, "install ok installed", "")
-        assert argv[0] == "/usr/bin/true"
+        assert argv[0] == "/usr/bin/gcc"
         assert input_text == subject.C_SOURCE
         if build_ok:
             Path(argv[-1]).write_bytes(b"fixed-inert-fixture")
