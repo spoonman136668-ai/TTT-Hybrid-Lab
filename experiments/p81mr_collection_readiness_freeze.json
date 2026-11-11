@@ -1,0 +1,99 @@
+{
+  "schema": "ttt-hybrid.p81mr-external-do-collection-readiness-freeze.v1",
+  "status": "PRE_IMPLEMENTATION_FROZEN_BEFORE_ANY_EXTERNAL_SIMULATOR_FIRST_USE",
+  "classification": "ENGINEERING_INTERFACE_AND_TOY_CONTRACT_ONLY",
+  "parent": {
+    "pr": 195,
+    "sha": "b5988c05e818804dd24a072248aa12b332bf5b40",
+    "source_freeze": "experiments/p80mr_causalgym_bridge_freeze.json",
+    "adapter": "experiments/p80mr_causalgym_trace_adapter.py",
+    "no_parent_rewrite": true
+  },
+  "upstream": {
+    "owner": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "module_path": "causal_gym/envs/cartpole_wind.py",
+    "module_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+    "pch_path": "causal_gym/core/pch.py",
+    "pch_blob": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+    "api": "CartPoleWindPCH.reset(seed) -> observation, info; do(lambda observation: forced_action) -> next_observation, reward, terminated, truncated, info; info['action'] reports applied action",
+    "dependency_policy": "No install/import/clone/download in this engineering stage, no upstream or real simulator call",
+    "provenance_caveat": "Repo SHA and self-declared info action are not tamper-proof witness receipts."
+  },
+  "collection_protocol": {
+    "source_schema": "ttt-hybrid.p80mr.cartpole-do-capture.v1",
+    "policy": "pure deterministic per-episode PRNG, uniformly chosen action 0/1 based on SHA256 namespace/split/episode/seed; action may depend only on episode seed and prior step index, not future outcome; action plan and seed fixed before source execution",
+    "namespace": "ttt-hybrid/p81mr/collection-prospective-v1",
+    "dev_fixture": "Only injected fictional Python environment with actual reset/do-compatible methods is allowed at this stage",
+    "allow_external_source": false,
+    "split_seed_bases": {
+      "fit": 811101,
+      "cal": 811103,
+      "dev_external": 811107,
+      "science_ood_0": 811109,
+      "science_ood_1": 811111,
+      "science_ood_2": 811113
+    },
+    "worlds_proposed": {
+      "fit": 128,
+      "cal": 64,
+      "dev_external": 64,
+      "science_ood_0": 64,
+      "science_ood_1": 64,
+      "science_ood_2": 64
+    },
+    "episode_seed_rule": "seed for episode-index = base + 10*index where index>=0; index and split logged; no seed retry or relabeling after observation",
+    "max_steps_per_episode": 96,
+    "expected_real_source": "CartPoleWindPCH only, task learning regime permits do, no rendering, no hidden wind observable to learner",
+    "start": "call reset exactly once per episode with declared seed; returned observation is first state_before",
+    "each_step": "choose predetermined 0/1 action, then call do(lambda obs: action) exactly once; log actual state_before and actual returned state_after/reward/terminal. Validate info['action'] int 0/1 and exactly requested; reject missing/mismatch. Ignore other info, including hidden wind or oracle outputs.",
+    "finish": "after terminated/truncated stop; if fewer than 2 true executed transitions reject that episode without synthetic padding or retry same seed; do not step after terminal",
+    "probe_rule": "probe_event_ids = [2,...,N] of true observed transitions; adapter maps each probe at k to state just before k, with its realized k outcome as evaluator-only target; no interpolation, counterfactual or assumed actions.",
+    "witness": "receipt_ref for every observed event generated from source_id/world_id/step_id plus an independent actual runner receipt when admitted; toy fixture receipts explicitly not independently authenticated",
+    "source_kind": "external_simulator for real data, retained as no-scoring by P79 until admission",
+    "partial_failure": "stop on error, return no completed scientific trace, do not replay uncertain-effect step or redrive an environment",
+    "no_train": "No model parameter training in this gate, no external transfer scoring or scientific first-use"
+  },
+  "future_science_plan": {
+    "preregister_before_first_use": "A separately project-owned immutable source/witness/seed/episode manifest plus baseline/cost/split protocol required before data birth",
+    "regime_design": "External experiment must specify heldout wind regimes and controlled intervention schedule before collection; this recorder does not change wind or hidden exogenous state",
+    "competing_models": [
+      "P78-MR frozen three-weight update",
+      "calibrated fixed eta=0.4",
+      "domain-appropriate fully trained 256-state GRU and SSM",
+      "zero predictor",
+      "action-conditioned domain dynamics baseline"
+    ],
+    "fairness": "Use identical actual executed (pre-state,action,next-state,reward) information and probes across arms. Historical 256-float model trained on synthetic continuous roles may fail on state/action dynamics, so contrast is transfer, not matched original representation.",
+    "channel_metrics": "four normalized state deltas, reward, termination, truncation separately; padded 16D MSE explicitly not scientific primary metric",
+    "retention": "independent cold-restore and interference tests after actual witnessed regime changes",
+    "admission": "Owner separately authorizes scientific first use and specific authorized runtime; until then no external data generation/evaluation, no GPU training or model integration",
+    "science_pass": false
+  },
+  "engineering_test_plan": [
+    "No upstream import, no real simulator or runner invocation; fake injected env only",
+    "Explicit denial before accessing env when source_kind is external_simulator/physical",
+    "Deterministic action stream under SHA-derived per-episode seed, no use of future data",
+    "Reset exactly once with pinned seed and exact do calls; no step after terminal, no counterfactual/see",
+    "Verify actual info['action'] equals requested; missing, bool or mismatch fail closed",
+    "Never copy info extras (including hidden wind), only observed actual next state/reward/flags",
+    "Do not fabricate transitions, pad short episodes or rerun uncertain effect",
+    "Every capture accepted unchanged by P80 adapter and P79 strict trace schema",
+    "Reproducible fictional fixture and rejection of malformed returned observations and wrong receipt",
+    "Original exact final SHA full G4 Windows/Linux tests, G5 and G7 CPU checks mandatory; GPU/native model science separately"
+  ],
+  "authority": {
+    "no_new_runner_or_workflow_dispatch": true,
+    "no_scheduled_tasks": true,
+    "no_controller_change": true,
+    "no_forge_admission": true,
+    "no_paid_api": true,
+    "no_live_actuation": true,
+    "no_external_source_execution": true,
+    "no_source_birth": true,
+    "no_external_scoring": true,
+    "no_merge": true,
+    "no_deploy": true,
+    "evidence_location": "GitHub repository, PR, GitHub Actions only"
+  }
+}
