@@ -1,0 +1,140 @@
+{
+  "FORGE": "UNCHANGED",
+  "OOD_generated": false,
+  "OOD_scored": false,
+  "all_gradient_controls": true,
+  "all_original_weights_unchanged": true,
+  "classification": "AUTHORED_DEV_RANDOM_CORE_FROZEN_REPRESENTATIONS_NOT_FULL_TRAINING_OR_SCIENCE",
+  "cross_platform_full_regression": "NOT_RUN",
+  "distinct_model_weight_sha256": true,
+  "model_rows": [
+    {
+      "addresses_competent": false,
+      "gradient": {
+        "mandatory_nonzero_finite": true,
+        "norms": {
+          "TTT_key": 0.048430461436510086,
+          "TTT_proj": 0.0869218036532402,
+          "TTT_query": 0.0665929764509201,
+          "TTT_value": 0.07440641522407532,
+          "attention_qkv": 0.24991439282894135,
+          "depth_router": 0.025684606283903122,
+          "head": 0.2917492687702179,
+          "ssm_delta": 0.021519234403967857,
+          "stem": 0.16554796695709229
+        },
+        "readout_loss": 0.45118796825408936
+      },
+      "model_weights_preserved": true,
+      "native_final_linearly_decodable": false,
+      "original_weights_sha256": "683a7c09605d32ec98269faed28ac5a7b54b7076dfc482beeb4f4478592928d2",
+      "seed": 740201,
+      "val_head_only_fit_ridge_mse": 0.40574008226394653,
+      "val_native_address_true_effect_mse": 0.7324820160865784,
+      "val_native_value_ridge_factual_effect_mse": 0.20844699442386627,
+      "val_original_native_prediction_mse": 0.46717777848243713,
+      "val_projected_key_query_hit_at_1": 0.0703125,
+      "val_raw_address_native_decoded_value_mse": 0.22176073491573334,
+      "value_linearly_decodable": true
+    },
+    {
+      "addresses_competent": false,
+      "gradient": {
+        "mandatory_nonzero_finite": true,
+        "norms": {
+          "TTT_key": 0.11212415993213654,
+          "TTT_proj": 0.14526061713695526,
+          "TTT_query": 0.10297731310129166,
+          "TTT_value": 0.13788549602031708,
+          "attention_qkv": 0.2720946967601776,
+          "depth_router": 0.0,
+          "head": 0.32968631386756897,
+          "ssm_delta": 0.032081760466098785,
+          "stem": 0.19318832457065582
+        },
+        "readout_loss": 0.4922223687171936
+      },
+      "model_weights_preserved": true,
+      "native_final_linearly_decodable": false,
+      "original_weights_sha256": "a55f23064a42e720801019c58021050a8a09ae4aab7bfd1916af07d0f88584b6",
+      "seed": 740203,
+      "val_head_only_fit_ridge_mse": 0.41557347774505615,
+      "val_native_address_true_effect_mse": 0.7863630652427673,
+      "val_native_value_ridge_factual_effect_mse": 0.21414895355701447,
+      "val_original_native_prediction_mse": 0.5330355167388916,
+      "val_projected_key_query_hit_at_1": 0.0234375,
+      "val_raw_address_native_decoded_value_mse": 0.21871519088745117,
+      "value_linearly_decodable": true
+    },
+    {
+      "addresses_competent": false,
+      "gradient": {
+        "mandatory_nonzero_finite": true,
+        "norms": {
+          "TTT_key": 0.07343007624149323,
+          "TTT_proj": 0.054775170981884,
+          "TTT_query": 0.0686551108956337,
+          "TTT_value": 0.048143599182367325,
+          "attention_qkv": 0.16161595284938812,
+          "depth_router": 0.00894563365727663,
+          "head": 0.18440471589565277,
+          "ssm_delta": 0.019380563870072365,
+          "stem": 0.1614343523979187
+        },
+        "readout_loss": 0.45939722657203674
+      },
+      "model_weights_preserved": true,
+      "native_final_linearly_decodable": false,
+      "original_weights_sha256": "00a1ecf3102e1305d02f8f202830bf87e4b79b54e8eb25cf996849cd05c0d161",
+      "seed": 740207,
+      "val_head_only_fit_ridge_mse": 0.4126428961753845,
+      "val_native_address_true_effect_mse": 0.6984657645225525,
+      "val_native_value_ridge_factual_effect_mse": 0.2225746363401413,
+      "val_original_native_prediction_mse": 0.4763506054878235,
+      "val_projected_key_query_hit_at_1": 0.109375,
+      "val_raw_address_native_decoded_value_mse": 0.2229909598827362,
+      "value_linearly_decodable": true
+    }
+  ],
+  "native_GPU": "NOT_RUN",
+  "native_weights_trained_for_this_task": false,
+  "oracle_linear_head_mse": 9.284317314950385e-09,
+  "original_model_unchanged": true,
+  "preregister_commit": "51b88ceb7e50bf5b8951035cdb9a54517ea90418",
+  "raw_control": {
+    "negative_clean_mse": 0.0,
+    "negative_wrong_credit_mse": 0.7378526329994202,
+    "raw_competence": true,
+    "val_hit_at_1": 1.0,
+    "val_mse": 0.0,
+    "wrong_credit_10x": true,
+    "zero_val_mse": 0.39050889015197754
+  },
+  "schema": "ttt-hybrid.p74-native-address-value-head-frozen-dev-result.v1",
+  "scientific_pass": false,
+  "seconds": 0.17204616500021075,
+  "source_audits": {
+    "fit": {
+      "max_quartile_departure": 0.026041626930236816,
+      "pass": true,
+      "position_balanced_accuracy": 0.5
+    },
+    "val": {
+      "max_quartile_departure": 0.03125,
+      "pass": true,
+      "position_balanced_accuracy": 0.5
+    }
+  },
+  "source_hashes": {
+    "fit": "6d19329f4d0d1e090d5342ba12b9c9ad2cf98254c9778f06c6d189fecf9043dd",
+    "negative": "1972fd7dff7fa916ed4ed4c8701b1608ad08abf73e6eabf92889be0ba85f2138",
+    "val": "3a82db08d6d90e50bfb89a4c6b5663fb70ed0be8504231b32fca4d88c038329a"
+  },
+  "source_seeds": {
+    "fit": 740111,
+    "negative": 740119,
+    "val": 740113
+  },
+  "status": "DEV_PROBE_COMPLETE_WITH_COMPARTMENT_METRICS",
+  "whole_process_compute_matched": false
+}
