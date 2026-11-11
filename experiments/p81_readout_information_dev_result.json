@@ -1,0 +1,287 @@
+{
+  "schema": "ttt-hybrid.p81-readout-ridge-mechanistic-dev-result.v1",
+  "classification": "AUTHORED_SYNTHETIC_DEV_RANDOM_FROZEN_HYBRID_NOT_SCIENTIFIC_EVIDENCE",
+  "original_code": "experiments/p81_readout_information_dev.py",
+  "source_blob": "80f136a3507cf53434695c1d083cb774d40857e9",
+  "tests": "tests/test_p81_readout_information_dev.py",
+  "tests_blob": "722bddc98df1db8b61ac5da0f48473334738dcfe",
+  "frozen_protocol_commit": "e4498783e9d7025a9e1d365b2773521565cfe02a",
+  "frozen_protocol_blob": "f4eda2b52fafcdcd1200eeb33c973aeec62e5306",
+  "original_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p78_bounded_raw_ttt.py": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba"
+  },
+  "execution_environment": {
+    "Python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "CPU_threads": 1,
+    "focused_tests": {
+      "passed": 10,
+      "failed": 0,
+      "seconds": 1.12
+    },
+    "study_wall_seconds": 0.1409770220000155
+  },
+  "source_seeds": {
+    "fit": 810111,
+    "val": 810113,
+    "negative": 810119,
+    "ood_reserved": 810117
+  },
+  "source_worlds": {
+    "fit": 192,
+    "val": 128,
+    "negative": 64
+  },
+  "source_sha256": {
+    "fit": "0740592529230cfba07e68bed3d5a3ea02d0d049c5422d20c956d0f51ecca422",
+    "val": "6fc7adb8a52b0b167ae05a72cd6a452859c71c0b6667602252e6759bc35f3565",
+    "negative": "23be251d5d90e9e879050ada2fa33864e1765d1bbf2ae2e0bff87c7256895356"
+  },
+  "source_audits": {
+    "fit": {
+      "pass": true,
+      "quartile_departure": 0.006944477558135986,
+      "position_only_balanced_accuracy": 0.5,
+      "future_effect_hidden": true,
+      "finite": true
+    },
+    "val": {
+      "pass": true,
+      "quartile_departure": 0.014322876930236816,
+      "position_only_balanced_accuracy": 0.5,
+      "future_effect_hidden": true,
+      "finite": true
+    },
+    "negative": {
+      "pass": true
+    }
+  },
+  "factual_state": {
+    "fast_state_float32_per_world": 256,
+    "confirmed_events": 24,
+    "cold_bitwise": true,
+    "read_before_write": true,
+    "caller_confirmed_historical_facts": true
+  },
+  "fixed_memory": {
+    "zero_mse": 0.4047349989414215,
+    "raw_fixed_mse": 0.06870545446872711
+  },
+  "negative_credit": {
+    "clean_raw_mse": 0.0609452947974205,
+    "wrong_credit_raw_mse": 0.48215603828430176,
+    "pass": true,
+    "query_and_target_unchanged": true
+  },
+  "rows": [
+    {
+      "seed": 810201,
+      "original_core_sha256": "86637fa064c5b4031711eb3ffe025833a1bab9f60c267e3f836430dbe6b2a61a",
+      "original_core_unchanged": true,
+      "original_native_prediction_mse": 0.5108846426010132,
+      "feature_readout": {
+        "raw_16": {
+          "mse": 0.055053599178791046,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "9e92989c7fb78aa9fb58a678d021c7d1bf0480a3cfcc1ee63677da34b34e81a5"
+        },
+        "native_context_16": {
+          "mse": 0.4404047727584839,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "f190eab3036eac7a7e7234fcedc4a40414e5bfd49236b892fe05cad762d80e1a"
+        },
+        "memory_projected_16": {
+          "mse": 0.055228352546691895,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "d47b403c35e6aaaa3f95ceba2018b6afe875e35dcdd89237348a3cd8da44c36c"
+        },
+        "memory_projected_after_depth_16": {
+          "mse": 0.13406041264533997,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "5772a20784799fa2556e5c0ceedb0989fb9613ce3bbafa5280411fc3d279c397"
+        },
+        "sum_pre_depth_16": {
+          "mse": 0.18844951689243317,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "4cccf91e95763c99c5b552c2430d167619872d2adb7d671cacd88c3c1dfeeef7"
+        },
+        "sum_post_depth_16": {
+          "mse": 0.20324747264385223,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "c09422d49ad8bc235014c5503bcfe732be1a367efae773dc0602f0e9fc47266d"
+        },
+        "concat_32": {
+          "mse": 0.0603867843747139,
+          "rank_fit": 32,
+          "feature_dim": 32,
+          "ridge_coefficients": 528,
+          "coefficient_sha256": "4c309694cabfc1c70369fe77a51eff18820d1c3480bc665f4c6896bb61d5f518"
+        }
+      },
+      "raw_ridge_competent": true,
+      "concat_oracle_competent": true,
+      "projection_decodable": true,
+      "depth_decodable": false,
+      "additive_fusion_bottleneck": true
+    },
+    {
+      "seed": 810203,
+      "original_core_sha256": "4992923049bb43f32c248993f014dbaea68f2e0ba18b8fc009b0fc32a73a4bb6",
+      "original_core_unchanged": true,
+      "original_native_prediction_mse": 0.44700735807418823,
+      "feature_readout": {
+        "raw_16": {
+          "mse": 0.055053599178791046,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "9e92989c7fb78aa9fb58a678d021c7d1bf0480a3cfcc1ee63677da34b34e81a5"
+        },
+        "native_context_16": {
+          "mse": 0.43108370900154114,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "fb67dea60f172878e9758995ab3bb6cf5382f94833ad178015bc20b0cb8ea78f"
+        },
+        "memory_projected_16": {
+          "mse": 0.05503836274147034,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "8cf7ae9567a9e571ca2885a3d34238670266ad8199c88efb2b0f4a4742f41a4c"
+        },
+        "memory_projected_after_depth_16": {
+          "mse": 0.09705351293087006,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "52496b6c521a493637010b0f04de280e1944dcc74fee4379a234b2a388eb3aba"
+        },
+        "sum_pre_depth_16": {
+          "mse": 0.21021020412445068,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "405467c54ccc77b40eef327c3cff205558507e65423bef1d301e5576a5bf4e86"
+        },
+        "sum_post_depth_16": {
+          "mse": 0.22109362483024597,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "a4008a2f029d8cad4c659c23e964d8d0c5184e4d9d7d336760005a58912a5bd2"
+        },
+        "concat_32": {
+          "mse": 0.060344211757183075,
+          "rank_fit": 32,
+          "feature_dim": 32,
+          "ridge_coefficients": 528,
+          "coefficient_sha256": "7cda9f7a3ca16b39d33ea3ffb50bee28d17e070e0f6b97c8e2825888e0f60bed"
+        }
+      },
+      "raw_ridge_competent": true,
+      "concat_oracle_competent": true,
+      "projection_decodable": true,
+      "depth_decodable": false,
+      "additive_fusion_bottleneck": true
+    },
+    {
+      "seed": 810207,
+      "original_core_sha256": "63294857fb0b7c65f460f2d0b6f403670c66e4748efe48be442c160113b6d028",
+      "original_core_unchanged": true,
+      "original_native_prediction_mse": 0.46327677369117737,
+      "feature_readout": {
+        "raw_16": {
+          "mse": 0.055053599178791046,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "9e92989c7fb78aa9fb58a678d021c7d1bf0480a3cfcc1ee63677da34b34e81a5"
+        },
+        "native_context_16": {
+          "mse": 0.4339843690395355,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "59fd6066c391922d6833d4ccbd3784f03b9d19b1e3270a95f2c02bee1bec1e45"
+        },
+        "memory_projected_16": {
+          "mse": 0.05560476332902908,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "c0942e9490e6a1216d465147ca5f44fde1e0ca0164b21c12d60b2ee378936aa4"
+        },
+        "memory_projected_after_depth_16": {
+          "mse": 0.1549980640411377,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "edff7ba426ed7fbb5fbce8f311a9091e6052a627892c3fa450ce3e7ef591739d"
+        },
+        "sum_pre_depth_16": {
+          "mse": 0.20238851010799408,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "9a267993abcaba74a1237763774df8288fe0d004849cbf10e22da63e019c56b0"
+        },
+        "sum_post_depth_16": {
+          "mse": 0.2162647545337677,
+          "rank_fit": 16,
+          "feature_dim": 16,
+          "ridge_coefficients": 272,
+          "coefficient_sha256": "30a49dac0a1339472308d25ea8cfb0bcf9a299f8bd5e7c3aedfa902fb4122877"
+        },
+        "concat_32": {
+          "mse": 0.05918751657009125,
+          "rank_fit": 32,
+          "feature_dim": 32,
+          "ridge_coefficients": 528,
+          "coefficient_sha256": "71c6e176a3631fca8b9b5957ab73942446e12a99b9e3be705d806a8ae4409ae5"
+        }
+      },
+      "raw_ridge_competent": true,
+      "concat_oracle_competent": true,
+      "projection_decodable": true,
+      "depth_decodable": false,
+      "additive_fusion_bottleneck": true
+    }
+  ],
+  "patterns": {
+    "projection_failure_3_of_3": false,
+    "depth_failure_3_of_3": true,
+    "additive_fusion_bottleneck_3_of_3": true
+  },
+  "status": "DEV_MECHANISTIC_DIAGNOSTIC_PASS_ONLY",
+  "OOD_generated": false,
+  "OOD_scored": false,
+  "original_hybrid_trained": false,
+  "original_hybrid_changed": false,
+  "whole_process_compute_matched": false,
+  "independent_science_first_use": false,
+  "SCIENTIFIC_PASS": false,
+  "mandatory_exact_SHA_Windows_Ubuntu": "NOT_YET_RUN",
+  "native_GPU": "NOT_RUN",
+  "FORGE": "UNCHANGED",
+  "main": "UNCHANGED",
+  "P80_MR": "UNCHANGED",
+  "P75": "UNCHANGED",
+  "merge": "NONE",
+  "deployment": "NONE",
+  "interpretation": "Under exact frozen randomly initialized original reference model features and FIT-only ridge, 16D TTT projection alone preserves information, but frozen depth and additive context fusion are bottlenecks for a 16D linear readout. 32D separate content/context readout recovers information with extra features/parameters. Not a trained-original-hybrid improvement claim."
+}
