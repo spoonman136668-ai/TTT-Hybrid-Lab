@@ -136,6 +136,7 @@ def test_negative_and_controlled_mode():
     with pytest.raises(ValueError,match='P75_UNKNOWN_MODE'):
         losses(model_from_p75_recipe('ssm',975201),f,q,y,'oracle')
 
+
 def test_new_model_seed_space_independent_and_no_global_rng_effect():
     state=torch.get_rng_state().clone()
     first=model_from_p75_recipe('gru',975201)
