@@ -1,0 +1,89 @@
+{
+  "schema": "ttt-hybrid.p74-frozen-blockwise-projection-ablations.v1",
+  "status": "PROSPECTIVE_FROZEN_BEFORE_ANY_P74_SOURCE_OR_MODEL_USE",
+  "classification": "AUTHORED_DEV_MECHANISTIC_DIAGNOSTIC_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "pr": 182,
+    "sha": "e471450d2bebbef97645d94b9212fd2a91997e15",
+    "p73_frozen_sha": "994dcd4ead1b2b176c5b612805e3a4aef78c1c7e",
+    "p73_result": "DEV_HYBRID_UNQUALIFIED_0_OF_6_UNSEEN_OOD_UNGENERATED"
+  },
+  "original_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p62_streaming_ttt.py": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "native_p64k_incremental_hybrid_stream.py": "89c3ef5819ac594ad687c67c579a559754109d4c",
+    "native_p71_gated_hybrid_stream.py": "e93ffe29806ac15705cbfd002c5725b9bc4b5e45",
+    "experiments/p73_raw_retrieval_diagnostic_dev.py": "33efe5ea2c9dedeb8199a82c70ecc1ce2a173f12"
+  },
+  "hypothesis": "Frozen original four-block reference representations may destroy or fail to address causal raw action/effect correspondences before the final readout; diagnose separate addressability, effect-value recoverability, and linear-readout accessibility without changing the original model.",
+  "source": {
+    "fit_seed": 740111,
+    "val_seed": 740113,
+    "negative_seed": 740119,
+    "worlds": {
+      "fit": 192,
+      "val": 128,
+      "negative": 64
+    },
+    "dim": 16,
+    "action_roles": 8,
+    "repetitions_per_target": 2,
+    "distractor_events": 8,
+    "stream_events": 24,
+    "generation": "Same P73-style general synthetic source family but fresh independent source seeds: per-world random orthogonal 16D target action keys, independent tanh 16D consequences, repeated targets twice and 8 singleton random distractor actions/effects, uniformly permuted factual order, a final executed simulated query on one target action. Input history is action16+observed effect16; query input is action16+zeros16; expected effect withheld until scoring.",
+    "locality": "All worlds FIT/VAL newly generated; never use P65-P73 consumed eval data or regenerate earlier source as novel. No OOD generation/scoring in P74.",
+    "audit": "For each FIT and VAL: 4-bin role deviation <=0.05; held-out index-only balanced accuracy <=0.55; no future query, role, or final outcome included in factual input; source SHA and exactly 24 factual events checked."
+  },
+  "models": {
+    "native_reference": "Exact unchanged model.HybridPilot(32,16,Configuration(width=16,heads=2,ssm=True,attention=True,ttt=True,depth=True)), all weights random seed [740201,740203,740207], eval() for frozen-feature probes.",
+    "core_seeds": [
+      740201,
+      740203,
+      740207
+    ],
+    "raw_nearest": "For each final action, normalize raw factual 16D keys; choose highest raw key cosine, return that historical actually observed 16D consequence. No relevance flags, labels, future effects or role at readout.",
+    "projected_address": "Run original frozen stem->diagonal SSM->causal attention over 24 factual events plus final query; collect factual normalized TTT key outputs, final normalized TTT query output; argmax projected cosine over histories, then output the historically observed consequence of chosen event. No evaluator role in decision.",
+    "values": "Use original frozen TTT tanh value projection from pre-TTT causal factual representation. FIT supervised linear ridge maps 16D native value features to their own actually observed factual consequences. VAL tests the decoder on held-out worlds; query retrieval with RAW keys and native-decoded values isolates value sufficiency.",
+    "native_readout": "For original model query, capture 16D post-depth representation at the last step with factual TTT writes and read-before-write final query. Freeze whole original core. FIT ridge maps 17D [representation,1] to observed final consequence; VAL measures whether a new linear readout can recover consequence without changing any other weights.",
+    "oracle_readout": "FIT/VAL ridge 17D [raw-nearest retrieved observed consequence,1] to true consequence, reporting linear head capacity when valid associative feature is provided; diagnostic only, not eligible baseline comparison.",
+    "negative_credit": "On negative worlds, shuffle historical observed effects independently from historical keys, leave final query true consequence unchanged; raw-nearest MSE must worsen at least 10x against unshuffled negative-world raw-nearest MSE.",
+    "gradient": "On a small FIT batch, original random model native query MSE backward; report gradient norms or None independently for stem, ssm.delta, attn.qkv, ttt.key, ttt.value, ttt.query, ttt.proj, depth.router, head. Require finite non-None gradients for stem, attention, TTT key/query/value and head; depth router None is admissible and reported, not silently scored PASS."
+  },
+  "training": {
+    "full_native_training": "NONE; P73 full-hybrid trained result remains a separate negative, no claim of this random probe measuring trained checkpoint.",
+    "ridge_formula": "Deterministic CPU float64 ridge (X^TX + 1e-2 I)^{-1}X^TY, final intercept unregularized; FIT-only, no validation-selected hyperparameters; widths 16+1 to outputs 16.",
+    "ridge_alpha": 0.01,
+    "torch_threads": 1,
+    "wall_budget_seconds": 120,
+    "distinct_core_init": "Hash exact model.state_dict weights; verify three different seeds; model parameters unchanged after probe",
+    "full_procedure": "One FIT+VAL pass per core initialization, no OOD or science source reuse."
+  },
+  "frozen_thresholds": {
+    "source_invalid": "Any leakage/position/preprocessing or SHA failure stops scoring and is DEV_FAIL_SOURCE.",
+    "raw_competent": "RAW-key nearest hit@1 >=0.99, and raw direct readout VAL MSE<=0.001; otherwise source baseline incompetent and block localization.",
+    "addressable": "Native projected TTT query-to-key top1 hit fraction>=0.70 AND VAL MSE with native address + raw historical values <=0.60*VAL zero-state error. Failing indicates native *untrained* address representation insufficient; not which learned block would repair it.",
+    "value_decodable": "Native TTT projected factual values followed by FIT-only ridge reconstruct heldout VAL factual effect MSE<=0.60*VAL zero-state MSE. This tests linear recoverability, not causal retention; if fails, value representation insufficient under fixed linear decoder.",
+    "readout_decodable": "FIT-only ridge on original full native query features achieves VAL MSE<=0.85*zero-state; failing means complete frozen native features insufficient for a linear readout, not proof head optimizer is defective.",
+    "oracle_head_control": "FIT-only ridge on correct raw retrieved consequences achieves VAL MSE<=0.01; otherwise protocol invalid.",
+    "causal_negative": "Shuffled wrong credit raw key readout MSE on negative worlds >=10*clean raw key readout MSE, requiring clean MSE<=1e-5; using max(clean,0.00001) as denominator avoids division by zero.",
+    "interpretation": "Only claim a compartment-specific DEV diagnostic where that control independently fails/passes. No P74 SCIENTIFIC_PASS, superior hybrid claim, or training-path root-cause assertion from frozen random core.",
+    "stop": "On fail report negative faithfully, no postresult edits to these source rules; unrecognized limits = UNVERIFIED."
+  },
+  "qualification": {
+    "local_focused": "NOT_RUN",
+    "mandatory_final_SHA_full_Linux_Windows": "NOT_RUN",
+    "G4_G5_G7": "NOT_RUN",
+    "native_GPU": "NOT_RUN",
+    "unseen_source_science": "NOT_RUN",
+    "FORGE": "UNCHANGED",
+    "merge": "NONE",
+    "deployment": "NONE"
+  },
+  "guardrails": [
+    "No original model or controller modification",
+    "No scheduler/runner/workflow dispatch",
+    "No paid API, no physical actuation",
+    "No model training or first-use protected experiment",
+    "No incompatible PR merging or promotion"
+  ]
+}
