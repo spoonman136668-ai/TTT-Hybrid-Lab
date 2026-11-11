@@ -1,0 +1,83 @@
+{
+  "schema": "ttt-hybrid.p85mr-t1-variable-length-fitcal-training-engine-freeze.v1",
+  "stage": "FROZEN_BEFORE_T1_IMPLEMENTATION_AND_BEFORE_EXTERNAL_FIRST_USE",
+  "classification": "ENGINEERING_TOY_ONLY_NO_EXTERNAL_SOURCE",
+  "parent": {
+    "pr": 204,
+    "commit": "2656f85cda414c2617a1dd5724c126f3ba860b26",
+    "p85_source_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+    "p85_protocol_blob": "85ae6d1eee3332ef55a653b678733e012cb57158",
+    "G4": "PASS",
+    "G5": "PASS",
+    "G7": "PASS"
+  },
+  "isolation": "Parallel P86 source-line PR #206 exists. This is P85-MR-T1, not P86; do not modify that independent research.",
+  "objective": "Finish reusable bounded FIT/CAL training algorithm for four P85 controls while exercising it only on invented in-memory toy episodes.",
+  "data": {
+    "schema": "list of independent episode dicts, EXACT action/effect float32 CPU tensors [T,16]; T in 2..96; no extra fields or oracle",
+    "actual_fit_worlds": 128,
+    "actual_cal_worlds": 64,
+    "source_status": "No independently admitted Causal-Gymnasium source currently available. No external generation, loading, training or scoring.",
+    "sampling": "Shared torch.Generator CPU seed 985299, sample 16 independent world indices with replacement per update, precompute index stream across all arms/seeds.",
+    "pad": "Right-pad each world to batch longest T with unit action sentinel [1,0...], zero effect, explicit valid t>=1 and t<T mask. Padded output cannot affect earlier valid predictions.",
+    "loss": "Masked physical delta MSE + .2*reward + .1*terminated + .1*truncated, never reward padding, never include first event with no prior history",
+    "cal": "CAL only, unweighted mean of per-world four-delta MSE on t>=1; zero comparator same; CAL never backprops"
+  },
+  "training": {
+    "kinds": [
+      "linear7",
+      "mlp7",
+      "gru256",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "sampler_seed": 985299,
+    "batch_size": 16,
+    "max_updates": 800,
+    "check_every": 50,
+    "early_min_updates": 400,
+    "patience": 6,
+    "plateau_spread": 0.005,
+    "optimizer": "AdamW",
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1,
+    "learning_rate": {
+      "linear7": 0.005,
+      "mlp7": 0.005,
+      "gru256": 0.001,
+      "ssm256": 0.001
+    },
+    "checkpoint": "Best CAL delta MSE; ties select earliest; deepcopy best weights and restore after run. Never use held-out DEV/OOD for selection.",
+    "competence": "Actual science CAL requires best delta MSE <=0.75*zero on ALL 3 seeds for ALL conventional arms, otherwise SCIENCE_CONTROL_FAIL and STOP before OOD.",
+    "compute": "One CPU thread, <=3 GiB peak RAM, <=3600s per full arm, report wall/params/source cost separately."
+  },
+  "verification": [
+    "Pre-source immutable protocol freeze committed first",
+    "Same sampler indices and index hash across kinds/seeds",
+    "Variable-length mask excludes padded histories and all first unprimed events",
+    "Padding/target mutation cannot alter earlier predictions or gradients",
+    "CAL metrics per-world length-balanced; training only FIT, CAL only for best checkpoint",
+    "Checkpoint selection obeys registered first-tie rule; exact restored trained state",
+    "No privileged labels, upstream simulator code import, external first-use, model/GPU dispatch or file IO",
+    "Toy mini-run of <=6 updates explicitly marked ENGINEERING_ONLY, protocol full 800-update NOT RUN",
+    "Original exact final SHA full G4 Windows/Ubuntu, G5 Win/Ubuntu, G7 Mamba2 CPU"
+  ],
+  "safety": {
+    "first_use_authorized": false,
+    "science_pass": false,
+    "no_external_source_birth": true,
+    "no_ood": true,
+    "no_runner": true,
+    "no_scheduler": true,
+    "no_merge": true,
+    "no_forge": true,
+    "no_main_change": true,
+    "no_deployment": true,
+    "no_paid_api": true,
+    "evidence": "GitHub repo/PR/Actions only"
+  }
+}
