@@ -36,6 +36,85 @@ def _start_result(result):
     return _obs_as_list(observation)
 
 
+class _ToyArrayLike:
+    def __init__(self,values):
+        self.values=list(values)
+    def tolist(self):
+        return list(self.values)
+
+
+class InMemoryToySession:
+    """Simple deterministic fake, never a real causal simulator."""
+    __slots__ = ("behavior", "limit", "arraylike", "reset_calls", "do_calls",
+                 "close_calls", "reset_seed", "state", "actions", "policy_calls",
+                 "closed")
+
+    def __init__(self, behavior="normal", *, limit=3, arraylike=False):
+        self.behavior=behavior
+        self.limit=limit
+        self.arraylike=arraylike
+        self.reset_calls=0
+        self.do_calls=0
+        self.close_calls=0
+        self.reset_seed=None
+        self.state=[0.0,0.0,0.0,0.0]
+        self.actions=[]
+        self.policy_calls=0
+        self.closed=False
+
+    def reset(self,*,seed):
+        self.reset_calls+=1
+        self.reset_seed=seed
+        if self.behavior=="reset_exception":
+            raise RuntimeError("injected reset unavailable")
+        if self.behavior=="bad_reset":
+            return self.state
+        return (_ToyArrayLike(self.state) if self.arraylike else list(self.state),
+                {"hidden_wind":999.0})
+
+    def do(self, policy):
+        self.do_calls+=1
+        if self.behavior=="uncertain_do":
+            raise RuntimeError("injected uncertain effect")
+        if self.behavior=="never_calls_policy":
+            action=0
+        else:
+            visible=list(self.state)
+            if self.behavior=="wrong_visible":
+                visible[0]+=0.02
+            action=policy(_ToyArrayLike(visible) if self.arraylike else visible)
+            self.policy_calls+=1
+            if self.behavior=="callback_twice":
+                policy(visible)
+                self.policy_calls+=1
+        self.actions.append(action)
+        if self.behavior=="wrong_info":
+            recorded=1-action
+        elif self.behavior=="no_info":
+            recorded=None
+        else:
+            recorded=action
+        next_state=[0.1*self.do_calls,
+                    0.02*self.do_calls,
+                    0.003*self.do_calls,
+                    0.005*self.do_calls]
+        self.state=list(next_state)
+        ended=(self.do_calls==self.limit)
+        info={"action":recorded,"secret_phase":"oracle","wind":555}
+        if self.behavior=="bad_return":
+            return (next_state,1.0,ended,False)
+        if self.behavior=="bad_reward":
+            reward=float("nan")
+        else:
+            reward=1.0
+        return (_ToyArrayLike(next_state) if self.arraylike else next_state,
+                reward,ended,False,info)
+
+    def close(self):
+        self.close_calls+=1
+        self.closed=True
+
+
 def drive_toy_session(*, source_kind, split, episode_index, source_id,
                       producer_id, custody_ref, world_id, session):
     """Inject a fake toy session, with real reset/do ordering but no real source.
@@ -56,7 +135,11 @@ def drive_toy_session(*, source_kind, split, episode_index, source_id,
     for name in (source_id, producer_id, custody_ref, world_id):
         _id(name)
 
-    if (session is None or not callable(getattr(session, "reset", None))
+    # Type identity is checked without touching the user-supplied instance.
+    # A caller-provided source_kind label cannot authorize arbitrary reset/do.
+    if type(session) is not InMemoryToySession:
+        raise PermissionError("P82MR_UNTRUSTED_SESSION_CLASS")
+    if (not callable(getattr(session, "reset", None))
             or not callable(getattr(session, "do", None))):
         raise ValueError("P82MR_BAD_FAKE_SESSION")
 
