@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.s28.offline-wind-source-adapter-feasibility.v1",
+  "parent_main_sha": "6df5aa3f0dd5a99867098166aeed5b0fc70b4ec2",
+  "upstream": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "commit": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "path": "causal_gym/envs/cartpole_wind.py",
+    "expected_classes": [
+      "CartPoleWindSCM",
+      "CartPoleWindPCH"
+    ],
+    "required_blobs": {
+      "causal_gym/envs/cartpole_wind.py": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "causal_gym/envs/__init__.py": "a36a43e2ccbca2c924db6b2852c70b5635bca181",
+      "causal_gym/core/__init__.py": "7affd0694b0f31dcc05e3d6b47a5eaf3d311e327",
+      "causal_gym/core/scm.py": "f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5",
+      "causal_gym/core/pch.py": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "causal_gym/core/task.py": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+      "causal_gym/core/types.py": "4a591d6ec18c0c8807885b698e7fe8086a35279e",
+      "causal_gym/core/policy_scope.py": "284b4a1ae031ef401d106fde603ba016e0d8136d",
+      "causal_gym/core/graph.py": "6be7da2fbd8a6d6df45d273d34c40b44f0fe6af6",
+      "setup.py": "31097c35f908e393bfd4763a298c1d5f4ab60600",
+      "LICENSE": "993e3a4922f003dced0fd061735697c850ea7205"
+    },
+    "license_status": "UNVERIFIED_MALFORMED_UPSTREAM_LICENSE_DO_NOT_VENDOR",
+    "recorded_license_marker": "@@ -154,49 +194,23 @@",
+    "package_entrypoint_imports_many_optional_environments": true,
+    "observed_upstream_imports": [
+      "numpy",
+      "gymnasium",
+      "causal_gym.core.SCM",
+      "causal_gym.core.PCH",
+      "causal_gym.core.Task",
+      "causal_gym.core.Graph"
+    ],
+    "upstream_setup_declares": [
+      "gymnasium[all]>=0.29.1",
+      "pygame>=2.5.2",
+      "multiprocess>=0.70.16",
+      "highway-env>=1.4.0",
+      "numpy>=1.21.0,<=1.26.4",
+      "matplotlib>=3.5,<3.10",
+      "pydash>=5.1.0",
+      "networkx>=2.6.3",
+      "toposort>=1.7",
+      "pydot>=1.4.2",
+      "box2d-py"
+    ]
+  },
+  "adapter": {
+    "data_interface": "ONLY_PREVIOUS_OBSERVATION_4_F32_FINITE_EXECUTED_DISCRETE_ACTION_0_OR_1_NEXT_OBSERVATION_4_F32_FINITE_REWARD_FINITE_TERMINATED_BOOL_TRUNCATED_BOOL",
+    "allowed_training_fields": [
+      "previous_observation",
+      "executed_action",
+      "next_observation",
+      "factual_reward",
+      "terminated",
+      "truncated"
+    ],
+    "never_forward": [
+      "current_wind",
+      "u_wind",
+      "sample_u",
+      "graph",
+      "causal_graph",
+      "counterfactual",
+      "ctf_do",
+      "hidden_state",
+      "next_action",
+      "future_target",
+      "oracle_label",
+      "policy_intuition",
+      "unrealized_reward"
+    ],
+    "no_simulator_construction": true,
+    "no_upstream_module_import": true,
+    "no_package_install": true,
+    "no_network_access_from_adapter": true,
+    "tests_use_synthetic_fixture_only": true,
+    "no_science_world_reset_or_step": true,
+    "no_protected_seed_use": true,
+    "can_execute_gym_environment": false
+  },
+  "qualification": {
+    "same_final_sha_complete_windows_wsl_regression": true,
+    "original_cuda_negative_controls": true,
+    "verify_upstream_exact_git_commit_and_required_git_blobs": true,
+    "upstream_source_read_only_checkout_allowed": true,
+    "dependency_probe_is_metadata_only": true,
+    "project_owned_runner_only": true,
+    "science_first_use_authorized": false,
+    "owned_sealed_science_source_registered": false,
+    "upstream_source_license_approved": false,
+    "trained_baselines_qualified": false,
+    "scientific_pass": false,
+    "new_runner_or_controller": false,
+    "deploy": false,
+    "merge": false
+  }
+}
