@@ -74,7 +74,12 @@ try {
         throw 'P85MR_F1_UNEXPECTED_CHECKOUT_LAYOUT'
     }
     $workspaceRoot = $linuxRoot.Substring(0, $linuxRoot.Length - '/p85mr-f1'.Length)
+    # Future separately authorized one-shot runs can materialize the exact
+    # upstream Git SHA through a credential-free pinned actions/checkout step
+    # in this SAME ephemeral job workspace, as S28 historically did.
+    # No public checkout or scientific job is triggered by this code change.
     $sourceCandidates = @(
+        "$workspaceRoot/p85mr-upstream-source",
         "$workspaceRoot/s28-upstream-source",
         "/home/$who/.local/share/ttt-hybrid/Causal-Gymnasium",
         "/home/$who/.local/share/ttt-hybrid/causal-gymnasium",
