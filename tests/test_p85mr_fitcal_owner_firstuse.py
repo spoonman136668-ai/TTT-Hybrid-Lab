@@ -11,7 +11,7 @@ sys.path.insert(0,str(EXPERIMENTS))
 
 from p85mr_fitcal_owner_firstuse import (
     SCOPE_BLOB, COHORTS, MAX_STEPS, MAX_ACTIONS,
-    locked_scope, locked_route, owner_context, observed_episode, collect_one_shot,
+    locked_scope, locked_route, locked_f2_route, owner_context, observed_episode, collect_one_shot,
     _state, blob, _put_new, _append_progress, DEPS, SOURCE_BLOBS,
 )
 from p84mr_partition_preflight import preflight_partition, proposed_seed, planned_discrete_action
@@ -97,14 +97,14 @@ def authorized_env():
         "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
         "GITHUB_ACTOR":"spoonman136668-ai",
         "GITHUB_EVENT_NAME":"push",
-        "GITHUB_REF":"refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111",
+        "GITHUB_REF":"refs/heads/research/p85mr-f2-pinned-source-fitcal-once-20261111",
         "GITHUB_RUN_ATTEMPT":"1",
         "GITHUB_RUN_NUMBER":"1",
         "RUNNER_NAME":"TTT-HYBRID-GPU-WIN",
         "RUNNER_OS":"Windows",
         "RUNNER_ARCH":"X64",
         "P85MR_OWNER_EXECUTION":"FIT_CAL_ONLY",
-        "GITHUB_WORKFLOW_REF":"spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-fitcal-firstuse-once.yml@refs/heads/research/p85mr-authorized-fitcal-firstuse-20261111",
+        "GITHUB_WORKFLOW_REF":"spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-f2-pinned-fitcal-once.yml@refs/heads/research/p85mr-f2-pinned-source-fitcal-once-20261111",
         "GITHUB_RUN_ID":"42999999111",
         "GITHUB_SHA":"a"*40,
     }
@@ -329,3 +329,20 @@ def test_correct_research_branch_is_only_one_shot_owner_source_event():
         altered.pop(key)
         with pytest.raises(PermissionError,match="P85F1_TRUSTED_OWNER_ROUTE_NOT_VERIFIED"):
             owner_context(altered)
+
+
+def test_f2_freeze_is_prospectively_scoped_and_original_attempt_unchanged():
+    f2=locked_f2_route()
+    assert f2["authority"]["first_attempt"]["run_id"] == 43018125691
+    assert f2["authority"]["first_attempt"]["scientific_source_effects"] == 0
+    assert f2["authority"]["first_attempt"]["firstuse_seeds_consumed"] == 0
+    assert f2["execution"]["github_run_number"] == 1
+    assert f2["execution"]["branch"] == "research/p85mr-f2-pinned-source-fitcal-once-20261111"
+    assert f2["execution"]["workflow"] == ".github/workflows/p85mr-f2-pinned-fitcal-once.yml"
+    assert f2["source"]["checkout_path"] == "p85mr-upstream-source"
+    assert f2["source"]["sha"] == "c94e9a4cd3641588b6b8507e71ccee5c27032bdf"
+    assert f2["execution"]["max_total_interventions"] == 18432
+    assert f2["execution"]["scope"] == "FIT128/CAL64; no DEV/OOD"
+    assert f2["provenance"]["scientific_pass"] is False
+    # Preserve the original F1 route as immutable prior use history.
+    assert locked_route()["execution"]["branch"] == "research/p85mr-authorized-fitcal-firstuse-20261111"
