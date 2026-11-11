@@ -1,0 +1,93 @@
+{
+  "schema": "ttt-hybrid.p87-original-native-continuous-causal-learning-falsifier-freeze.v1",
+  "stage": "FROZEN_BEFORE_P87_SOURCE_AND_TRAINING",
+  "authority": "USER_AUTHORIZED_OFFLINE_AUTHOR_SYNTHETIC_DEVELOPMENT_ONLY",
+  "parent": {
+    "PR": 206,
+    "sha": "e5a057c267352ea4f5515a3fae0a583110bf0651",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P86_source_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "P86_fixed_selected": {
+      "eta": 1,
+      "decay": 0.99
+    },
+    "P86_crossplatform": "G4/G5/G7_PASS"
+  },
+  "hypothesis": "Full end-to-end differentiable original four-block HybridPilot, not just frozen readout seam, can infer outcomes of truly unseen continuous actions and adapt to hidden within-episode causal mechanism shifts, attaining lower VAL error than the strongest P86-CAL-selected 256-float conventional fast-memory rule; equal-information fully trained GRU and diagonal-SSM comparisons must qualify before any heldout claims.",
+  "source": {
+    "generator": "Reuse P86 exact SHA256 keyed integer/causal_effect/basis algorithms with independent fresh P87 seed namespaces. All source tensors exact float32 dyadic and output byte SHA stable across CPU OS. No use of P86 FIT/CAL; P86 algorithm/library functions are fixed upstream source. 16D action, 16D consequence, rank4 world mapping, 48 executed actions with observed effects, an unannounced switch to fresh rank4 mapping after action24 in 50% of worlds, distinct unobserved query action49 withheld consequence.",
+    "seeds": {
+      "FIT": 870111,
+      "VAL": 870113,
+      "RESERVED_OOD": 870117,
+      "RESERVED_NEGATIVE": 870119
+    },
+    "worlds": {
+      "FIT": 384,
+      "VAL": 128,
+      "RESERVED_OOD": 128,
+      "RESERVED_NEGATIVE": 64
+    },
+    "audit": "FIT/VAL exact source SHA256, exactly half changed, all effects finite, no history-query exact repetition (cosine abs<.999), future query effect always all zeros, no changes/phase/role/index inputs provided. No OOD/NEG source birth unless all frozen VAL and baseline eligibility passes. Source seed bytes distinct from all prior consumed P65-P86 cohorts.",
+    "scientific_limit": "This remains an author-designed simulation, not externally witnessed physical causal experiment. P84-MR owns external CausalGym source first-use and is untouched."
+  },
+  "models": {
+    "seeds": [
+      870201,
+      870203,
+      870207
+    ],
+    "training_steps": 400,
+    "batch": 16,
+    "validation_every": 40,
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "weight_decay": 0.01,
+    "gradient_clip_norm": 1,
+    "indices_seed": 870299,
+    "threads": 1,
+    "CPU_wall_budget_seconds": 160,
+    "original": "Exact original model.py HybridPilot(input=32,output=16,width=16,heads=2,ssm=True,attention=True,ttt=True,depth=True), **ALL original 5297 weights trainable**. Feed exact 48 historical observed action/effect records then query(action,16zeros), supervised only final query consequence; original self-supervised TTT 16x16 fast-state updates causally through earlier events. No original model source edits or additional raw memory sidecar.",
+    "GRU": "Full learned baseline GRU input32/hidden16 (one layer) with 16D linear effect head. Feed all 48 historical observations and one withheld query; train all GRU/head parameters end-to-end. Persistent hidden state16 floats, explicitly less than 256 TTT state; record model params and compute. No oracle future outcomes.",
+    "SSM": "Full learned selective diagonal state-space conventional baseline using exact original SelectiveStateBlock(width16), stem Linear(32,16), and head Linear(16,16); all trainable. Feed 48 observed+1 query; recurrent carry16 floats, different from TTT256. No future labels, attention or fast-weight matrix.",
+    "fixed": "CAL-frozen P86 winning online 256-float conventional update eta=1.0,decay=.99, no trained parameters, no 48-event replay sidecar. Also exact original P78 eta=.5 decay1, zero and last24 OLS diagnostic (768 history floats + transient solve), latter NOT memory/compute matched.",
+    "fairness": "Every trained model uses identical FIT worlds, VAL worlds, sample index sequence, 400 update budget and loss (effect MSE) and three independent seed values. Distinct architectures cannot have identical parameter initialization or memory/compute, and fully original Hybrid has additional SSM16 and attention KV49*16 beyond its TTT fast-state256. Report all per-seed params, update/validation clock and total predictive state. Do not declare efficiency or capacity-matched superiority. Stopping at 400 steps without plateau means NOT fully trained/qualified."
+  },
+  "eligibility": {
+    "source_and_custody": "Exact P86 source/model byte hashes and distinct seed cohorts; source FIT/VAL audits, deterministic byte digest and bitwise P78 fast-state cold restoration; P86 winner eta1/decay.99 fixed for whole P87.",
+    "conventional": "P86-selected 256-state fixed on P87 VAL stable MSE<=.75*zero stable and changed<=.80*zero changed. Otherwise source not qualified and OOD withheld.",
+    "trained_baselines": "Each of all 3 GRU and all 3 SSM seeds must yield best VAL combined<=.75*zero VAL combined, selected best step<=360 (nonterminal) and last two VAL checkpoints <=1.10 best. If any fails, classify BASELINE_NOT_FULLY_QUALIFIED and stop before OOD; do not tune after results.",
+    "original": "Each of 3 full original Hybrid seeds must have best VAL combined<=.90*strongest of (CAL-frozen P86 256-state conventional, every qualified trained GRU/SSM per-seed) and best VAL changed<=.90*CAL-frozen fixed changed; best step<=360, last2 VAL<=1.10 best. All seeds required. Otherwise DEV_FAIL, no OOD.",
+    "science_next": "Only if all gates pass on VAL, materialize reserved 128-world OOD and independent 64 negative worlds once in code with frozen rules and no training/parameter selection; report paired 2000 bootstrap lower 95% gain over strongest baselines >0, cold restore and interference. Synthetic DEV_PASS is NOT scientific pass; external scientifically witnessed source owner must authorize separately.",
+    "stop": "No retuning training budget/schedules/seeds after VAL. On any nonfinite/custody/cost limit abort and preserve fail. Protected OOD/NEG not created before eligible.",
+    "acceptance": "No scientific PASS, no merge/promotion/deploy/Forge integration from mere regression or authored synthetic DEV results."
+  },
+  "reproduction": {
+    "python": "3.13",
+    "pytorch_cpu": "pinned CI 2.5.1+cpu, local 2.10.0+cpu",
+    "command": "python -m experiments.p87_native_causal_falsifier --receipt /tmp/p87-result.json",
+    "expected_full_final_sha_qualification": "G4 Ubuntu+Windows original regression, G5 authentic TTT CPU dual, G7 pinned Mamba CPU",
+    "GPU": "NOT_RUN"
+  },
+  "isolation": {
+    "no_P84_MR_changes": true,
+    "no_P85_changes": true,
+    "no_main_ref_edits": true,
+    "no_original_model_source_edits": true,
+    "no_FORGE": true,
+    "no_runner_changes": true,
+    "no_scheduled_tasks": true,
+    "no_paid_APIs": true,
+    "no_workflow_dispatch": true,
+    "no_merge": true,
+    "no_external_scientific_first_use": true
+  },
+  "status": {
+    "frozen": true,
+    "fit_val_created": false,
+    "trained": false,
+    "OOD_generated": false,
+    "negative_generated": false,
+    "scientific_pass": false
+  }
+}
