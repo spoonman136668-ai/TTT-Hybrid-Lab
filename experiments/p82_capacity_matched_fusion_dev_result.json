@@ -1,0 +1,357 @@
+{
+  "schema": "ttt-hybrid.p82-capacity-matched-original-fusion-onrepo-receipt.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_FAILED_FROZEN_CONVERGENCE_NOT_SCIENCE",
+  "scope": {
+    "parent_pr": 197,
+    "parent_sha": "8f7b2e55a9489ff9ee784b589e9af2c9b354f4ca",
+    "protocol_pre_source_commit": "f293e221013ed2b425abf6d8bae848f9b92bb36e",
+    "source": "experiments/p82_capacity_matched_fusion_dev.py",
+    "source_git_blob": "c44f77093db501502c3741fdcf70f606f2f202b7",
+    "tests": "tests/test_p82_capacity_matched_fusion_dev.py",
+    "tests_git_blob": "ffe9461776ab8ba00f8888f251dc7e9d671ea5ad"
+  },
+  "local": {
+    "os": "Linux",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused_tests": "10/10 PASS in 4.87 s",
+    "study_wall_seconds": 3.1097047969999494,
+    "local_original_result_sha256": "8520753564178ea34aa2a50a99e41aa1539b8557b25acf227a4dd8b09beb4101"
+  },
+  "reference_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p78_bounded_raw_ttt.py": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "experiments/p81_readout_information_dev.py": "80f136a3507cf53434695c1d083cb774d40857e9",
+    "experiments/p72_original_hybrid_transfer_dev.py": "83099a6fb0ae3f37aea2715ff8351caf5f5cd39e"
+  },
+  "source": {
+    "seeds": {
+      "fit": 820111,
+      "val": 820113,
+      "transfer_reserved": 820117,
+      "negative_reserved": 820119
+    },
+    "fit_worlds": 256,
+    "val_worlds": 128,
+    "events_per_world": 24,
+    "fit_sha256": "522f5abe69e5d01cb9454e1812f0d0d63ef26abd550649bfdf107169e0293b26",
+    "val_sha256": "4f3647ef9076fe1da00aa53aec3c2c0277bf5613ea6b04b41839b518ecd186a5",
+    "audits": {
+      "fit": {
+        "quartile_imbalance": 0.018229126930236816,
+        "position_balanced_accuracy": 0.5,
+        "pass": true
+      },
+      "val": {
+        "quartile_imbalance": 0.010416626930236816,
+        "position_balanced_accuracy": 0.5,
+        "pass": true
+      }
+    },
+    "sampler_sha256": "7665d6f9c18c53eee02dcbbb7205dba4656a99cadc57e4f71081ac8d378d51a1"
+  },
+  "training": {
+    "model_seeds": [
+      820201,
+      820203,
+      820207
+    ],
+    "arms": [
+      "corrected",
+      "original_raw_fusion",
+      "original_native_TTT",
+      "no_memory"
+    ],
+    "updates_per_arm": 300,
+    "total_updates": 3600,
+    "identical_core_initializations_within_each_seed": true,
+    "distinct_initializations_across_seeds": true,
+    "trainable_parameters_each": 544,
+    "persistent_ttt_floats_each": 256,
+    "bitwise_cold_restore": true,
+    "original_model_source_changed": false
+  },
+  "fixed_controls": {
+    "zero_mse": 0.40057888627052307,
+    "raw_fast_256_mse": 0.0709947943687439,
+    "frequency_256_mse": 0.13251297175884247,
+    "strongest_mse": 0.0709947943687439,
+    "both_competent": true,
+    "corrected_required_mse_at_most": 0.0674450546503067
+  },
+  "rows": [
+    {
+      "seed": 820201,
+      "init_sha256": "cadedca0e0a4835430680934786a2035e86fd60717ed4e07d45f81ea535c78f3",
+      "precompute_seconds": 0.02152677699996275,
+      "qualified": false,
+      "plateau_true": true,
+      "arms": {
+        "corrected": {
+          "best_validation_mse": 0.057899728417396545,
+          "best_step": 300,
+          "trained_weight_sha256": "00c3ddd8f87336a908b79065e3f8c33addbfa9923e20db9d0ae777c099e7ce3b",
+          "train_seconds": 0.19143943599988233,
+          "validation_30_step_trajectory": [
+            0.198055237531662,
+            0.11527325958013535,
+            0.08171387016773224,
+            0.08283428102731705,
+            0.08174484968185425,
+            0.07171733677387238,
+            0.060290735214948654,
+            0.05829954892396927,
+            0.05937296524643898,
+            0.057899728417396545
+          ]
+        },
+        "original_raw_fusion": {
+          "best_validation_mse": 0.07335814833641052,
+          "best_step": 300,
+          "trained_weight_sha256": "28859bcc857b240ee4640b0f3b2d7e0dbc22bef8295cc9d7ff71b6cbb0502f2e",
+          "train_seconds": 0.28349160199991275,
+          "validation_30_step_trajectory": [
+            0.24174714088439941,
+            0.16397421061992645,
+            0.12237291783094406,
+            0.10630922019481659,
+            0.09567355364561081,
+            0.08137165009975433,
+            0.07720717787742615,
+            0.07585303485393524,
+            0.0744650736451149,
+            0.07335814833641052
+          ]
+        },
+        "original_native_TTT": {
+          "best_validation_mse": 0.4060521125793457,
+          "best_step": 90,
+          "trained_weight_sha256": "0c7a25b7c4fec7473c6ae9970c9ef62641dba4007f20de4f56ced57f073e7105",
+          "train_seconds": 0.27823739300015404,
+          "validation_30_step_trajectory": [
+            0.4095631241798401,
+            0.4074179530143738,
+            0.4060521125793457,
+            0.413881778717041,
+            0.41692835092544556,
+            0.40951234102249146,
+            0.4164555072784424,
+            0.41834932565689087,
+            0.42075565457344055,
+            0.42136991024017334
+          ]
+        },
+        "no_memory": {
+          "best_validation_mse": 0.40317583084106445,
+          "best_step": 90,
+          "trained_weight_sha256": "72a9ca892da217468a9fe8361fe6ff6cf22af94caf79a5d57a3f324627a181fb",
+          "train_seconds": 0.2711221500001102,
+          "validation_30_step_trajectory": [
+            0.40935003757476807,
+            0.4043494462966919,
+            0.40317583084106445,
+            0.4087538421154022,
+            0.40817952156066895,
+            0.40363192558288574,
+            0.4058925211429596,
+            0.4077722132205963,
+            0.40979689359664917,
+            0.4125555157661438
+          ]
+        }
+      }
+    },
+    {
+      "seed": 820203,
+      "init_sha256": "bb5dc4f59b9be367799decfad86640cbff905c0b0810dd0ef36600ae9552b782",
+      "precompute_seconds": 0.02340631700008089,
+      "qualified": false,
+      "plateau_true": true,
+      "arms": {
+        "corrected": {
+          "best_validation_mse": 0.05764153599739075,
+          "best_step": 300,
+          "trained_weight_sha256": "4374e19acfc9111f75b1bf224cbec4c77e3d27a86cd4bfc0ac9af542530689ac",
+          "train_seconds": 0.16560762099993553,
+          "validation_30_step_trajectory": [
+            0.19957825541496277,
+            0.11511172354221344,
+            0.08152823150157928,
+            0.08354336023330688,
+            0.08057411015033722,
+            0.06629224121570587,
+            0.06013716384768486,
+            0.05849691107869148,
+            0.059507742524147034,
+            0.05764153599739075
+          ]
+        },
+        "original_raw_fusion": {
+          "best_validation_mse": 0.0743454247713089,
+          "best_step": 300,
+          "trained_weight_sha256": "210c63d6d8fee4f9d5a5a0cab58897ceed1d479798e56c31baeedb1fc07ecd87",
+          "train_seconds": 0.2889678660001209,
+          "validation_30_step_trajectory": [
+            0.25178974866867065,
+            0.17193208634853363,
+            0.1324380785226822,
+            0.11153347790241241,
+            0.10082483291625977,
+            0.0968530923128128,
+            0.09263969957828522,
+            0.08136206120252609,
+            0.07717307657003403,
+            0.0743454247713089
+          ]
+        },
+        "original_native_TTT": {
+          "best_validation_mse": 0.40655434131622314,
+          "best_step": 60,
+          "trained_weight_sha256": "260267cb96ef9c9d6a9c43a205291700c6b4f45468233e39aafdc520daf7d908",
+          "train_seconds": 0.25898956200012435,
+          "validation_30_step_trajectory": [
+            0.41257092356681824,
+            0.40655434131622314,
+            0.4075733423233032,
+            0.4109484553337097,
+            0.41354960203170776,
+            0.4117789566516876,
+            0.4146564304828644,
+            0.4193980395793915,
+            0.4217146039009094,
+            0.42497801780700684
+          ]
+        },
+        "no_memory": {
+          "best_validation_mse": 0.40243297815322876,
+          "best_step": 180,
+          "trained_weight_sha256": "5a6c914f0fcb6bc72ebbe67527080e0a13208ae334cb81fff13079900af0b959",
+          "train_seconds": 0.26643959700004416,
+          "validation_30_step_trajectory": [
+            0.4142686128616333,
+            0.4056127667427063,
+            0.4027664363384247,
+            0.406258761882782,
+            0.40713486075401306,
+            0.40243297815322876,
+            0.4033750593662262,
+            0.40678080916404724,
+            0.40611532330513,
+            0.40735843777656555
+          ]
+        }
+      }
+    },
+    {
+      "seed": 820207,
+      "init_sha256": "0d2e0d78ff16966e69bda14579acfd0d8f4dc0b49bbc0a0e2750566e7577ebdf",
+      "precompute_seconds": 0.01923074399996949,
+      "qualified": true,
+      "plateau_true": true,
+      "arms": {
+        "corrected": {
+          "best_validation_mse": 0.05671823024749756,
+          "best_step": 180,
+          "trained_weight_sha256": "2e42e66e238fbb4d60bc87ed4b9195a0923faad6077049de24a756f8fe8b7bda",
+          "train_seconds": 0.16636353400008375,
+          "validation_30_step_trajectory": [
+            0.18237993121147156,
+            0.10512106120586395,
+            0.07995506376028061,
+            0.0695279911160469,
+            0.05998949706554413,
+            0.05671823024749756,
+            0.06000343710184097,
+            0.05846114084124565,
+            0.05944270268082619,
+            0.057557858526706696
+          ]
+        },
+        "original_raw_fusion": {
+          "best_validation_mse": 0.07573046535253525,
+          "best_step": 300,
+          "trained_weight_sha256": "22e9e1eec49fc5ceedcf693485bbbd992cafb433b8dcd2f0b52027d819ca3925",
+          "train_seconds": 0.2728997159999835,
+          "validation_30_step_trajectory": [
+            0.22565177083015442,
+            0.15245145559310913,
+            0.11507213115692139,
+            0.10924060642719269,
+            0.09649206697940826,
+            0.08112797886133194,
+            0.0798429325222969,
+            0.07678896933794022,
+            0.07642391324043274,
+            0.07573046535253525
+          ]
+        },
+        "original_native_TTT": {
+          "best_validation_mse": 0.41142305731773376,
+          "best_step": 60,
+          "trained_weight_sha256": "45836a4ae2034af649b081a5fddfa6bad3eacaac6c2fab3486ee94fe3c44d2f0",
+          "train_seconds": 0.2685924459999569,
+          "validation_30_step_trajectory": [
+            0.41759419441223145,
+            0.41142305731773376,
+            0.4156973958015442,
+            0.41890302300453186,
+            0.4223237633705139,
+            0.42264324426651,
+            0.42735862731933594,
+            0.42747485637664795,
+            0.42849886417388916,
+            0.4333736002445221
+          ]
+        },
+        "no_memory": {
+          "best_validation_mse": 0.40893125534057617,
+          "best_step": 90,
+          "trained_weight_sha256": "cf8dd7ad7ff6146826f9715ae3d144d2fd19123e88b1869dfb8645d265561fb2",
+          "train_seconds": 0.27455915499990624,
+          "validation_30_step_trajectory": [
+            0.4179026484489441,
+            0.41045743227005005,
+            0.40893125534057617,
+            0.4129554033279419,
+            0.41410619020462036,
+            0.4111093580722809,
+            0.41498029232025146,
+            0.4131048619747162,
+            0.4155329167842865,
+            0.4160197079181671
+          ]
+        }
+      }
+    }
+  ],
+  "frozen_decision": {
+    "status": "DEV_FAIL_FROZEN_VAL_OR_CONVERGENCE",
+    "why": "2/3 corrected arms achieved best validation at update 300, violating best_step<300 despite all 3 improving on strongest fixed memory and original raw fusion",
+    "accepted_seeds": [
+      820207
+    ],
+    "rejected_seeds": [
+      820201,
+      820203
+    ],
+    "transfer_generated": false,
+    "transfer_scored": false,
+    "independent_negative_generated": false,
+    "sci_pass": false
+  },
+  "limits": {
+    "native_gpu": "NOT_RUN",
+    "whole_process_FLOPs_parity": "UNVERIFIED",
+    "fixed_baseline_omits_original_SSM_attention": true,
+    "full_backbone_training": "NOT_RUN",
+    "original_four_block_reference": "UNMODIFIED",
+    "independent_physical_first_use": "NOT_RUN",
+    "mandatory_final_sha_windows_linux": "PENDING",
+    "merge": "NONE",
+    "FORGE": "UNCHANGED",
+    "main": "UNCHANGED",
+    "other_research": "UNCHANGED"
+  },
+  "conclusion": "No preregistered P82 DEV PASS. A no-extra-parameter memory-priority depth fusion shows lower FIT-only matched VAL error in 3/3 vs original fusion and conventional raw direct fast memory; without predeclared checkpoint convergence for all three, transfer must remain untouched and no scientific gain is established."
+}
