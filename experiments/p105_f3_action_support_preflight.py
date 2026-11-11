@@ -88,16 +88,19 @@ def observational_support(capture: dict, *, expected_raw_sha256: str|None=None,
          capture["upstream_path"],capture["upstream_blob"]) !=
         (UPSTREAM_REPO,UPSTREAM_SHA,UPSTREAM_PATH,UPSTREAM_BLOB)):
         raise ValueError("P105_WRONG_EXTERNAL_SOURCE")
-    if (not isinstance(capture["source_id"],str) or
-        not capture["source_id"].startswith("p85mr-fit-") or
-        not isinstance(capture["producer_id"],str) or
-        not isinstance(capture["custody_ref"],str)):
+    if (capture["source_id"] != "p85mr-f3-fit-43073165842" or
+        capture["producer_id"] != "ttt-hybrid-f3-owner" or
+        capture["custody_ref"] != "ghrun:43073165842"):
         raise ValueError("P105_ONLY_CONSUMED_FIT_PERMITTED")
+    original_fit_sha = locked_protocol()["exact_parent"]["f3_fit_capture_sha256"]
+    original_authenticated = False
     if expected_raw_sha256 is not None:
-        if (not isinstance(original_bytes,bytes) or
-            hashlib.sha256(original_bytes).hexdigest()!=expected_raw_sha256 or
+        if (expected_raw_sha256 != original_fit_sha or
+            not isinstance(original_bytes,bytes) or
+            hashlib.sha256(original_bytes).hexdigest()!=original_fit_sha or
             json.loads(original_bytes)!=capture):
             raise ValueError("P105_CAPTURE_CONTENT_SHA_DRIFT")
+        original_authenticated = True
     elif original_bytes is not None:
         raise ValueError("P105_UNBOUND_RAW_CAPTURE")
     worlds=capture["worlds"]
@@ -154,7 +157,9 @@ def observational_support(capture: dict, *, expected_raw_sha256: str|None=None,
         "exact_state_with_both_actions":paired,
         "terminated":terminals,"truncated":truncations,
         "action_probability_field_logged":False,
-        "source_pinned_to_F3":True,
+        "source_pinned_to_F3":original_authenticated,
+        "original_F3_fit_capture_authenticated":original_authenticated,
+        "source_claims_F3_header_identity":True,
         "direct_offpolicy_counterfactual_effect_qualified":False,
         "native_hybrid_or_Aopt_gain_proven":False,
         "science_pass":False,
