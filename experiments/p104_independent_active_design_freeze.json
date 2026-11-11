@@ -1,0 +1,152 @@
+{
+  "schema": "ttt-hybrid.p104-fresh-active-design-replication.v1",
+  "status": "FROZEN_PROSPECTIVE_BEFORE_NEW_DATA_AND_IMPLEMENTATION",
+  "identity": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/p104-independent-information-acquisition-20261111",
+    "parent_pr": 228,
+    "parent_sha": "fcf260b966e8e6dd12a2dc1594103f5a5cc44725",
+    "p101_original_blob": "a4375102e64492f179826b8775855b63b1c315fd",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p86_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "distinct_parallel_tracks": [
+      "P100",
+      "P102",
+      "P103",
+      "P85MR-F3/F4/F5"
+    ]
+  },
+  "hypothesis": "Does the P101 unchanged maximum-posterior-variance intervention chooser reproduce >=15% better causal effect prediction than FIT-selected strongest passive policies in independently authored anisotropic worlds with entirely new hashing/map and action generators, and does it survive a stronger classical A-optimal experimental-design control? Isotropic/correlated families provide prospective specificity and a falsification check, not permission for cherry-picking.",
+  "source": {
+    "families": [
+      "isotropic",
+      "anisotropic",
+      "correlated"
+    ],
+    "seeds": {
+      "isotropic": {
+        "FIT": [
+          1040111,
+          1040113,
+          1040119
+        ],
+        "CAL": [
+          1040127,
+          1040131,
+          1040133
+        ]
+      },
+      "anisotropic": {
+        "FIT": [
+          1040211,
+          1040217,
+          1040223
+        ],
+        "CAL": [
+          1040227,
+          1040229,
+          1040233
+        ]
+      },
+      "correlated": {
+        "FIT": [
+          1040311,
+          1040317,
+          1040323
+        ],
+        "CAL": [
+          1040329,
+          1040331,
+          1040337
+        ]
+      },
+      "OOD_RESERVED": [
+        1040401,
+        1040403
+      ],
+      "NEGATIVE_RESERVED": [
+        1040501,
+        1040503
+      ]
+    },
+    "worlds_per_seed": {
+      "FIT": 18,
+      "CAL": 12
+    },
+    "world_tasks": 2,
+    "causal_dim": 16,
+    "rank": 4,
+    "generator": "Standalone P104 SHA256 four-byte keyed digest ('p104-validation-v1|seed|world|tag|i|j'); rank4 causal maps independently generated integer basis [-3,3] and V@U.T /256, no P101 world generator or P101 source seeds.",
+    "action_families": {
+      "isotropic": "integer [-96,96]/128 per coordinate, then unit normalize",
+      "anisotropic": "coordinate integer floor-divided by 2**(j%4), then unit normalize",
+      "correlated": "integer [-96,96] plus common batch latent integer times 2 across 4-coordinate blocks, then unit normalize"
+    },
+    "query_distribution": "same family mechanism as candidate actions but independent held-out query salts and no reuse",
+    "tasks_announced_to_all": true,
+    "interventions_per_task": 8,
+    "choices_per_intervention": 8,
+    "novel_queries_per_task": 12,
+    "information_boundary": "Actions generated and visible before choice, candidate picks one index, then only consequence M@k for that action is revealed, never hidden M or any unselected outcome. Read-only queries only after training.",
+    "no_external_firstuse": true,
+    "never_unseal_reserved": true
+  },
+  "model": {
+    "learner": "Exact immutable P101 original online RLS W16x16 + P16x16 float64, 512 per task, 1024 across two tasks, prior lambda=.5, updates only after confirmed selected consequence",
+    "candidate": "Exact P101 chooser maximum k^T P k; no new weights, new parameter tuning or CAL selection",
+    "controls": {
+      "passive": [
+        "hash_random",
+        "cyclic",
+        "max_norm"
+      ],
+      "model_aware": "a_opt: conventional query-covariance-weighted A-optimal one-step expected prediction risk reduction k.T@P@Sigma@P@k/(1+k.T@P@k); Sigma is a public fixed family distribution assumption, no evaluator held-out probes or latent map",
+      "negative": [
+        "zero predictor",
+        "wrong_action_credit",
+        "masked_NaN_no_update",
+        "oracle_map_not_passed_to_selector",
+        "Task0_state_cold_bitwise_after_Task1"
+      ],
+      "source_family_covariance": {
+        "isotropic": "I16",
+        "anisotropic": "diag(2**(-2*(j%4)))",
+        "correlated": "I16 + 4 * c c.T, c[j]=1 if j%4==0 else 0"
+      },
+      "selection": "Per family and paired seed, choose lowest FIT all-query mean squared error across all three passives; additionally report strongest FIT among all four conventional arms incl a_opt; never choose controls using CAL."
+    },
+    "source_info_match": "All arms see same current 8 action pool, same 16 selected outcome budget and equal RLS capacity. A-opt receives only publicly frozen family covariance assumption."
+  },
+  "acceptance": {
+    "primary_anisotropic_replication": "at least 2 of 3 CAL anisotropic seeds candidate all-task MSE / strongest FIT passive <=0.85, both Task0 cold and Task1 <=0.95, median all-task <=0.85",
+    "against_robust_classical": "in at least 2 of 3 anisotropic CAL seeds candidate ratio vs strongest FIT conventional including A-opt <=1.00, median <=1.00; requires primary replication also pass to assert robustness beyond traditional design",
+    "isotropic_correlated": "all three CAL seeds and medians reported, no full-universal success claim if family does not meet primary; indicate specificity",
+    "quality_all_families_reported": true,
+    "matched_action_effect_calls_per_world": 16,
+    "all_policies_identical_1024_float64_RLS": true,
+    "wrong_action_credit_MSE_ratio_min": 1.05,
+    "bitwise_cold_restore_required": true,
+    "heldout_queries_cannot_write": true,
+    "source_hash_18_cohorts_OS_equal": true,
+    "whole_process_CPU_candidate_ratio_vs_FIT_passive_max": 3,
+    "whole_process_CPU_candidate_ratio_vs_Aopt_max": 1.5,
+    "original_P101_candidate_identity": true,
+    "scientific_pass": false
+  },
+  "qualification": {
+    "complete_existing_G4_Windows_Ubuntu": true,
+    "original_G5_native_TTT_Windows_Ubuntu": true,
+    "existing_G7_pinned_Mamba2_Ubuntu": true,
+    "receipts": "existing full G4 pytest suite emits local_runs/p104_dev_result.json into original GitHub artifact; no second science execution or new workflow",
+    "no_CUDA": true,
+    "no_merge": true,
+    "no_external_real_source": true,
+    "no_original_weights_edit": true,
+    "no_F3_F5_first_use": true,
+    "no_FORGE_or_runner_change": true,
+    "no_schedules": true,
+    "no_paid_API": true,
+    "no_file_library_artifact": true
+  },
+  "falsification": "Any primary condition failing is DEV replication FAIL; report strong baseline separately. Never tune frozen cohorts after reading CAL; preserve null outcomes."
+}
