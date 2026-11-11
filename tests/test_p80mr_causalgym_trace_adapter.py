@@ -81,7 +81,7 @@ def test_fixed_state_action_embedding_is_unit_and_16d():
 
 def test_known_effects_and_actual_read_before_write_probes():
     capture = raw_capture()
-    x = adapt_capture(capture())
+    x = adapt_capture(capture)
     w = x["worlds"][0]
     assert [p["after_events"] for p in w["probes"]] == [1,2]
     for p in w["probes"]:
@@ -143,7 +143,9 @@ def test_malformed_or_unauthorized_capture_fails_closed(edit,code):
     elif edit == "step_skip":
         steps[1]["event_id"] = 7
     elif edit == "not_contiguous":
-        steps[1]["state_before"][0] = 0.2
+        # Make a distinct, inconsistent next-observation copy. In the toy
+        # setup state_after[i] aliases state_before[i+1] unless rebound.
+        steps[1]["state_before"] = [0.2] + steps[1]["state_before"][1:]
     elif edit == "nonfinite":
         steps[0]["state_after"][0] = float("nan")
     elif edit == "nonunit_reward":
