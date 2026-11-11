@@ -1,0 +1,44 @@
+{
+  "schema": "ttt-hybrid.p83mr-inmemory-only-toy-source-fence.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_ANY_EXTERNAL_SOURCE_FIRST_USE",
+  "parent": {
+    "pr": 198,
+    "head": "ecfbdeb8296ff09591bee1da18b449366c79d7aa",
+    "driver_blob": "ec3e147b922d069a8772145a378daa7cba197484",
+    "test_blob": "6ba0f418db4fcd2fbf98bc08df6e8ce00f3121b8"
+  },
+  "observed_unsafe_condition": "Previous driver treats source_kind='toy_engineering' caller-supplied string and any duck-typed session.reset/do object as sufficient; real simulator object mislabelled toy could execute. No actual real simulator was used. Documentation alone is not enforcement.",
+  "objective": "Fail closed BEFORE source object attribute access on all caller-supplied session types except an exact in-module deterministic in-memory fake fixture. No project-runner or owner authorization bypass. Preserve original toy regression semantics.",
+  "minimum_change": {
+    "allow_class": "InMemoryToySession",
+    "location": "experiments/p82mr_owner_session_driver.py",
+    "class_only": "type(session) is InMemoryToySession, not isinstance; reject subclass, duck-type, proxy or real object before inspecting instance",
+    "constructor": "Only in-memory deterministic observation/action fixtures, fixed bounded behavior enums and numeric state, no external imports, network, env creation, callbacks from outside or arbitrary methods",
+    "no_instance_method_override": "Use __slots__ to prevent accidental session.do attribute overriding; no mutable arbitrary callback injected",
+    "no_authorization_claim": "Python module import and type checks do NOT sandbox a malicious Python process; a privileged owner-controlled runtime remains essential for real first-use.",
+    "preserve": "Actual P82 protocol frozen seeds, 96 executed step max, no redo, one reset, P80/P79 schema, no oracle leakage, no model infer, no science.",
+    "deprecation": "Old external caller-injected FakeSession compatibility intentionally removed for safety; only internal fixture type allowed.",
+    "normal_source": "If source_kind is not toy, reject before any session access regardless of type",
+    "negative_controls": [
+      "duck-typed reset/do object rejected before attribute access or method calls",
+      "real-like CartPoleWindPCH proxy falsely labelled toy rejected",
+      "subclass of in-memory fixture rejected",
+      "object with __getattribute__ side effects rejected without effect",
+      "session do per-instance monkeypatch refused by __slots__",
+      "existing deterministic toy session outputs, no-replay, callback count, read-before-write tests still PASS",
+      "exact-new-sha full Windows/Linux pinned G4 regression, G5 native TTT Windows/Linux and G7 Ubuntu CPU needed"
+    ]
+  },
+  "authority": {
+    "first_use_authorized": false,
+    "real_external_source_execution": false,
+    "new_runner": false,
+    "scheduled_tasks": false,
+    "merge": false,
+    "forge_admission": false,
+    "main_mutation": false,
+    "paid_api": false,
+    "artifact_location": "Github repo/PR/Actions only",
+    "deployment": false
+  }
+}

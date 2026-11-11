@@ -11,83 +11,13 @@ from p80mr_causalgym_trace_adapter import adapt_capture
 from p79mr_toy_transfer_replay import toy_replay
 
 
-class ArrayLike:
-    def __init__(self,values):
-        self.values=list(values)
-    def tolist(self):
-        return list(self.values)
+from p82mr_owner_session_driver import InMemoryToySession as FakeSession
 
 
-class FakeSession:
-    """Simple deterministic fake, never a real causal simulator."""
-    def __init__(self, behavior="normal", *, limit=3, arraylike=False):
-        self.behavior=behavior
-        self.limit=limit
-        self.arraylike=arraylike
-        self.reset_calls=0
-        self.do_calls=0
-        self.close_calls=0
-        self.reset_seed=None
-        self.state=[0.0,0.0,0.0,0.0]
-        self.actions=[]
-        self.policy_calls=0
-        self.closed=False
+_DEFAULT_SESSION = object()
 
-    def reset(self,*,seed):
-        self.reset_calls+=1
-        self.reset_seed=seed
-        if self.behavior=="reset_exception":
-            raise RuntimeError("injected reset unavailable")
-        if self.behavior=="bad_reset":
-            return self.state
-        return (ArrayLike(self.state) if self.arraylike else list(self.state),
-                {"hidden_wind":999.0})
-
-    def do(self, policy):
-        self.do_calls+=1
-        if self.behavior=="uncertain_do":
-            raise RuntimeError("injected uncertain effect")
-        if self.behavior=="never_calls_policy":
-            action=0
-        else:
-            visible=list(self.state)
-            if self.behavior=="wrong_visible":
-                visible[0]+=0.02
-            action=policy(ArrayLike(visible) if self.arraylike else visible)
-            self.policy_calls+=1
-            if self.behavior=="callback_twice":
-                policy(visible)
-                self.policy_calls+=1
-        self.actions.append(action)
-        if self.behavior=="wrong_info":
-            recorded=1-action
-        elif self.behavior=="no_info":
-            recorded=None
-        else:
-            recorded=action
-        next_state=[0.1*self.do_calls,
-                    0.02*self.do_calls,
-                    0.003*self.do_calls,
-                    0.005*self.do_calls]
-        self.state=list(next_state)
-        ended=(self.do_calls==self.limit)
-        info={"action":recorded,"secret_phase":"oracle","wind":555}
-        if self.behavior=="bad_return":
-            return (next_state,1.0,ended,False)
-        if self.behavior=="bad_reward":
-            reward=float("nan")
-        else:
-            reward=1.0
-        return (ArrayLike(next_state) if self.arraylike else next_state,
-                reward,ended,False,info)
-
-    def close(self):
-        self.close_calls+=1
-        self.closed=True
-
-
-def run(session=None,**override):
-    if session is None:
+def run(session=_DEFAULT_SESSION,**override):
+    if session is _DEFAULT_SESSION:
         session=FakeSession()
     args={
         "source_kind":"toy_engineering","split":"fit","episode_index":3,
@@ -228,3 +158,49 @@ def test_code_never_imports_real_environment_or_makes_owner_calls():
                       "requests.","urllib","torch","if __name__",
                       "os.system","schedule.create","runner.dispatch"):
         assert forbidden not in code
+
+
+@pytest.mark.parametrize("label", ("toy_engineering",))
+def test_mislabelled_external_like_session_rejected_before_any_attribute_access(label):
+    class ExternalLike:
+        def __getattribute__(self, key):
+            raise AssertionError("P83MR_EXTERNAL_SOURCE_OBJECT_TOUCHED")
+    with pytest.raises(PermissionError, match="P82MR_UNTRUSTED_SESSION_CLASS"):
+        run(ExternalLike(), source_kind=label)
+
+
+def test_non_substitutable_source_even_if_it_implements_reset_do_methods():
+    class RealLike:
+        def __init__(self):
+            self.side_effect_calls = 0
+
+        def reset(self, *, seed):
+            self.side_effect_calls += 1
+            raise RuntimeError("SHOULD_NEVER_EXECUTE")
+
+        def do(self, policy):
+            self.side_effect_calls += 1
+            raise RuntimeError("SHOULD_NEVER_EXECUTE")
+    session = RealLike()
+    with pytest.raises(PermissionError, match="P82MR_UNTRUSTED_SESSION_CLASS"):
+        run(session, source_kind="toy_engineering")
+    assert session.side_effect_calls == 0
+
+
+def test_subclass_and_instance_method_replacement_denied():
+    class AttackSubclass(FakeSession):
+        def do(self, policy):
+            raise RuntimeError("SHOULD_NEVER_EXECUTE")
+    with pytest.raises(PermissionError, match="P82MR_UNTRUSTED_SESSION_CLASS"):
+        run(AttackSubclass(), source_kind="toy_engineering")
+    session = FakeSession()
+    with pytest.raises(AttributeError):
+        session.do = lambda policy: (_ for _ in ()).throw(
+            RuntimeError("SHOULD_NEVER_EXECUTE"))
+    assert run(session)["observed_events"] == 3
+
+
+def test_reject_null_and_all_non_fixture_builtin_objects():
+    for source in (None, object(), {}, {"reset": "fake", "do": "fake"}):
+        with pytest.raises(PermissionError, match="P82MR_UNTRUSTED_SESSION_CLASS"):
+            run(source, source_kind="toy_engineering")
