@@ -1,0 +1,388 @@
+{
+  "schema": "ttt-hybrid.p93-svd-free-online-factors-repo-result.v1",
+  "classification": "PROSPECTIVELY_FROZEN_AUTHOR_SYNTHETIC_DEV_FAIL_NOT_INDEPENDENT_SCIENCE",
+  "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "parent": {
+    "PR": 214,
+    "sha": "11935f1be9ba475ea8eb6d8240caea03cfe5c2ba",
+    "parent_qualification": "G4_WINDOWS_393_PASSED_1_SKIPPED_UBUNTU_392_PASSED_2_SKIPPED_G5_G7_PASS"
+  },
+  "freeze": {
+    "pre_source_commit": "0740cf629b1c775ff404851ded1411a41581258c",
+    "file": "experiments/p93_svd_free_incremental_frozen.json"
+  },
+  "custody": {
+    "source": "experiments/p93_svd_free_incremental_dev.py",
+    "source_git_blob": "82bd81addbde6c382026069fdd33e897f9b2d091",
+    "source_sha256": "445236220400e3d8394a3d876e385e0c97e59579fd35e91eebc3261a29d54149",
+    "tests": "tests/test_p93_svd_free_incremental_dev.py",
+    "tests_git_blob": "706df558b103c35aecc966f4b1c7ab8aa7015b64",
+    "parent_P92_source_blob": "09b18e9432e0808eb130084bb7be734cc8ab58a1",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "source": {
+    "A": {
+      "FIT": {
+        "seed": 930111,
+        "n": 96,
+        "changed": 48,
+        "sha256": "05e1a3020f81452159531f614694c1db3e833c71c18f5f96ee08c3ca4c962141"
+      },
+      "VAL": {
+        "seed": 930113,
+        "n": 64,
+        "changed": 32,
+        "sha256": "7edbfccc6801e144dfc0e24fc79eeb151955dbac5bee41c59f21832def5fc6dc"
+      }
+    },
+    "B": {
+      "FIT": {
+        "seed": 930121,
+        "n": 96,
+        "changed": 48,
+        "sha256": "ecd2c9dcdf3c2e3e7b470186554c97e0ddaae0521be69551fc1ae2778f8520a1"
+      },
+      "VAL": {
+        "seed": 930123,
+        "n": 64,
+        "changed": 32,
+        "sha256": "a021b71a347e9295decc033571c5fc6637473d04562b2c011c1554b57b55ec87"
+      }
+    },
+    "reserved": {
+      "OOD_seed": 930117,
+      "NEGATIVE_seed": 930119,
+      "generated": false
+    },
+    "audits": "All finite exact dyadic actions/effects, distinct final action, 50% hidden change t24, future query effect never used."
+  },
+  "FIT_grid": {
+    "columns_full": [
+      "eta",
+      "decay",
+      "A_fit_final_MSE",
+      "B_fit_final_MSE",
+      "mean"
+    ],
+    "full": [
+      [
+        0.5,
+        0.95,
+        0.004781872499734163,
+        0.005965541582554579,
+        0.005373707041144371
+      ],
+      [
+        0.5,
+        0.99,
+        0.0030156320426613092,
+        0.0036083098966628313,
+        0.0033119709696620703
+      ],
+      [
+        1,
+        0.95,
+        0.0031475417781621218,
+        0.00413100840523839,
+        0.003639275091700256
+      ],
+      [
+        1,
+        0.99,
+        0.002144837286323309,
+        0.0025397271383553743,
+        0.0023422822123393416
+      ],
+      [
+        1.5,
+        0.95,
+        0.0028805912006646395,
+        0.003838258096948266,
+        0.0033594246488064528
+      ],
+      [
+        1.5,
+        0.99,
+        0.0032157329842448235,
+        0.003804652951657772,
+        0.0035101929679512978
+      ]
+    ],
+    "selected_full": {
+      "eta": 1,
+      "decay": 0.99,
+      "mean_fit_MSE": 0.0023422822123393416
+    },
+    "columns_factor": [
+      "etaU_fast",
+      "etaV_fast",
+      "decay_fast",
+      "A_fit_final_MSE",
+      "B_fit_final_MSE",
+      "mean"
+    ],
+    "factors": [
+      [
+        0.1,
+        0.025,
+        0.95,
+        0.009665126912295818,
+        0.01172338891774416,
+        0.010694257915019989
+      ],
+      [
+        0.1,
+        0.025,
+        0.99,
+        0.008914205245673656,
+        0.010845028795301914,
+        0.009879617020487785
+      ],
+      [
+        0.1,
+        0.1,
+        0.95,
+        0.009547178633511066,
+        0.011595606803894043,
+        0.010571392718702555
+      ],
+      [
+        0.1,
+        0.1,
+        0.99,
+        0.008705942891538143,
+        0.010604345239698887,
+        0.009655144065618515
+      ],
+      [
+        0.35,
+        0.025,
+        0.95,
+        0.008322293870151043,
+        0.010280736722052097,
+        0.00930151529610157
+      ],
+      [
+        0.35,
+        0.025,
+        0.99,
+        0.0076580047607421875,
+        0.009077570401132107,
+        0.008367787580937147
+      ],
+      [
+        0.35,
+        0.1,
+        0.95,
+        0.007989197969436646,
+        0.009900890290737152,
+        0.008945044130086899
+      ],
+      [
+        0.35,
+        0.1,
+        0.99,
+        0.007330819498747587,
+        0.008647124283015728,
+        0.007988971890881658
+      ],
+      [
+        0.75,
+        0.025,
+        0.95,
+        0.007433201652020216,
+        0.009171654470264912,
+        0.008302428061142564
+      ],
+      [
+        0.75,
+        0.025,
+        0.99,
+        0.007600581273436546,
+        0.008557882159948349,
+        0.008079231716692448
+      ],
+      [
+        0.75,
+        0.1,
+        0.95,
+        0.007084174081683159,
+        0.008755233138799667,
+        0.007919703610241413
+      ],
+      [
+        0.75,
+        0.1,
+        0.99,
+        0.007256845477968454,
+        0.008100644685328007,
+        0.0076787450816482306
+      ]
+    ],
+    "selected_factor": {
+      "etaU_fast": 0.75,
+      "etaV_fast": 0.1,
+      "decay_fast": 0.99,
+      "etaU_slow": 0.1875,
+      "etaV_slow": 0.025,
+      "decay_slow": 0.999,
+      "mean_fit_MSE": 0.0076787450816482306
+    }
+  },
+  "VAL": {
+    "A": {
+      "zero": {
+        "combined": 0.013291249051690102,
+        "stable": 0.01077898871153593,
+        "changed": 0.015803510323166847,
+        "stable_late": 0.012260200455784798,
+        "change_early": 0.012349206954240799,
+        "change_late": 0.013180368579924107
+      },
+      "full_fixed_and_FIT_best": {
+        "combined": 0.0023860656656324863,
+        "stable": 0.0009550711256451905,
+        "changed": 0.0038170607294887304,
+        "stable_late": 0.001422636560164392,
+        "change_early": 0.01543983444571495,
+        "change_late": 0.005356219131499529
+      },
+      "dual_svd_free": {
+        "combined": 0.008139410056173801,
+        "stable": 0.006840218789875507,
+        "changed": 0.009438601322472095,
+        "stable_late": 0.007184297312051058,
+        "change_early": 0.013876469805836678,
+        "change_late": 0.009858507663011551
+      },
+      "single_fast_128_float": {
+        "combined": 0.009747963398694992,
+        "stable": 0.008698223158717155,
+        "changed": 0.010797703638672829,
+        "stable_late": 0.00927606038749218,
+        "change_early": 0.013848370005736351,
+        "change_late": 0.010925882495939732
+      },
+      "dual_fixed_V": {
+        "combined": 0.00871692132204771,
+        "stable": 0.0076615517027676105,
+        "changed": 0.009772292338311672,
+        "stable_late": 0.007752297446131706,
+        "change_early": 0.013805244117975235,
+        "change_late": 0.01012775395065546
+      },
+      "wrong_credit_shuffled_effect_MSE": 0.02228681929409504,
+      "wrong_credit_pass": true,
+      "cold_resume_bitwise": true,
+      "per_world_pred_float32": 256,
+      "quality_frozen_gates": {
+        "overall": false,
+        "stable": false,
+        "changed": false,
+        "dual_vs_single": true,
+        "dual_vs_fixedV": true
+      },
+      "CPU_median_49read_48write_ms": {
+        "full": 1.968145999853732,
+        "dual": 7.897382000010111,
+        "ratio": 4.012599675327453,
+        "maximum_ratio": 3,
+        "cost_pass": false
+      }
+    },
+    "B": {
+      "zero": {
+        "combined": 0.010608353652060032,
+        "stable": 0.010688337497413158,
+        "changed": 0.01052836887538433,
+        "stable_late": 0.011495387181639671,
+        "change_early": 0.011608592234551907,
+        "change_late": 0.012582417577505112
+      },
+      "full_fixed_and_FIT_best": {
+        "combined": 0.0020132933277636766,
+        "stable": 0.0009862052975222468,
+        "changed": 0.0030403812415897846,
+        "stable_late": 0.0013703957665711641,
+        "change_early": 0.015900155529379845,
+        "change_late": 0.00529594998806715
+      },
+      "dual_svd_free": {
+        "combined": 0.006434974260628223,
+        "stable": 0.006757075432687998,
+        "changed": 0.006112873088568449,
+        "stable_late": 0.006905066315084696,
+        "change_early": 0.013575512915849686,
+        "change_late": 0.009281471371650696
+      },
+      "single_fast_128_float": {
+        "combined": 0.008135837502777576,
+        "stable": 0.008476143702864647,
+        "changed": 0.007795532234013081,
+        "stable_late": 0.008968621492385864,
+        "change_early": 0.013353860005736351,
+        "change_late": 0.010387903079390526
+      },
+      "dual_fixed_V": {
+        "combined": 0.006951649207621813,
+        "stable": 0.007434660568833351,
+        "changed": 0.006468638777732849,
+        "stable_late": 0.007586060091853142,
+        "change_early": 0.013506217859685421,
+        "change_late": 0.009527947753667831
+      },
+      "wrong_credit_shuffled_effect_MSE": 0.016429880633950233,
+      "wrong_credit_pass": true,
+      "cold_resume_bitwise": true,
+      "per_world_pred_float32": 256,
+      "quality_frozen_gates": {
+        "overall": false,
+        "stable": false,
+        "changed": false,
+        "dual_vs_single": true,
+        "dual_vs_fixedV": true
+      },
+      "CPU_median_49read_48write_ms": {
+        "full": 1.934366000114096,
+        "dual": 7.706114000029629,
+        "ratio": 3.9837931392379176,
+        "maximum_ratio": 3,
+        "cost_pass": false
+      }
+    }
+  },
+  "engineering": {
+    "local_platform": "Linux",
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "focused": "10/10 PASS",
+    "focused_seconds": 5.66,
+    "study_seconds": 1.7293107430000418,
+    "original_complete_local_JSON_SHA256": "0e67a69e24020ba12cc5b3f6aec2a78d65904ffce751defa2c9523048b1710b1",
+    "benchmark": "one CPU thread, 5 warmups + 30 measured complete 49-event rollouts per family, median. CPU timings may vary across machines; absolute metrics here local.",
+    "full_Windows_Linux_final_candidate": "PENDING"
+  },
+  "decision": {
+    "status": "DEV_FAIL_QUALITY_AND_INDEPENDENT_COST_FAIL",
+    "implementation_status": "Full source and tests committed; no SVD in candidate factor update; 256-float per-world state and bitwise restore PASS.",
+    "quality": "Candidate MSE 3.41x A and 3.20x B versus strong conventional; both regimes worse. Two slots outperform 128-float fast-only and fixed-V ablations but are far from full W256 accuracy.",
+    "cost": "Local runtime factor vs full ~4.01x A and ~3.98x B exceeds frozen max 3x; previous P92 SVD design ~81-88x. Cross-experiment timings are indicative, not formal matched evidence.",
+    "scientific_pass": false,
+    "full_native_HybridPilot_training": false,
+    "independent_external_causal_source": false,
+    "whole_process_compute_or_memory_parity": false,
+    "OOD_generated": false,
+    "NEGATIVE_generated": false
+  },
+  "authority": {
+    "original_model_mutated": false,
+    "main_changed": false,
+    "FORGE_changed": false,
+    "P84_MR_changed": false,
+    "runner_or_schedule_changes": false,
+    "merge": false,
+    "deployment": false,
+    "paid_API": false
+  }
+}
