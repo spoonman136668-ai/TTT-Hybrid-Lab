@@ -38,15 +38,18 @@
     "model_source_blob": "197946f52c7a23fb4847628696dd71802bec4e30",
     "model_test_blob": "b5f679a39158da99fd979996cd188886b85b316c",
     "source_test_blob": "692d29bc326ab65a6dc026ebd68595eb071b738a",
-    "focused_tests": "PASS_57_OF_57_LOCAL_CPU",
-    "focused_seconds": 3.73,
+    "focused_tests": "PASS_60_OF_60_LOCAL_CPU",
+    "focused_seconds": 4.25,
     "environment": "Linux 6.18.57, Python 3.13.5, PyTorch 2.10.0+cpu, pytest 9.0.2; one CPU thread for training",
     "full_original_cross_platform_regression": "UNVERIFIED",
     "pinned_project_toolchain": "NOT_MATCHED",
     "build_gpu": "NOT_RUN",
     "owner_runner_dispatch": "NONE",
-    "local_gru_resumer": "EXISTS_ONLY_IN_LOCAL_EVIDENCE_ARCHIVE_NOT_COMMITTED_AS_PROJECT_OWNER_TEST",
-    "local_model_checkpoints": "STATE_SAVED_LOCALLY_ONLY_NOT_PRODUCTION"
+    "local_gru_resumer": "EXACT_LOCAL_TESTED_HARNESS_NOW_COMMITTED_AND_BLOB_VERIFIED",
+    "local_model_checkpoints": "SAVED_LOCALLY_2_EXACT_SOURCE_GRU_OPTIMIZER_STATES_NO_PRODUCTION",
+    "gru_resume_source_blob": "2c048bcd0fa83b4828464d2a014d0657ab342711",
+    "gru_resume_contract_test_blob": "1aaba072e649742e6d8869ad1e932f39bf9fb0e2",
+    "qualification_note": "Full original Windows/Linux regression, pinned CPU toolchain, full candidate build, GPU all unverified. Stacked PR is draft, unmerged."
   },
   "observations": {
     "seed": 975201,
