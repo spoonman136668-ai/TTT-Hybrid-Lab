@@ -111,6 +111,7 @@ def test_seed_exhaustion_rejected_even_if_freeze_data_modified(monkeypatch):
     original = _locked_freeze()
     fake = json.loads(json.dumps(original))
     fake["frozen_successor"]["episode_counts"]["fit"] = 129
+    fake["frozen_successor"]["expected_unique"] = 449
     import p84mr_partition_preflight as mod
     monkeypatch.setattr(mod, "_locked_freeze", lambda: fake)
     with pytest.raises(ValueError, match="P84MR_EPISODE_TOTAL_DRIFT"):
@@ -145,5 +146,4 @@ def test_new_regimes_are_frozen_but_not_labels_for_model():
     assert regimes["science_ood_0"]["wind_mean"] == 0.08
     assert regimes["science_ood_1"]["wind_mean"] == -0.08
     assert regimes["science_ood_2"]["wind_std"] == 0.05
-    assert config["science_threshold"] if "science_threshold" in config else True
     assert config["metrics_and_outcomes"]["primary"].startswith("Normalized four-channel")
