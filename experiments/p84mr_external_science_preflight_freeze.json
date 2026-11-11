@@ -1,0 +1,185 @@
+{
+  "schema": "ttt-hybrid.p84mr-disjoint-external-causal-science-preflight-freeze.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_AND_BEFORE_ANY_EXTERNAL_SOURCE_FIRST_USE",
+  "classification": "ENGINEERING_PREFLIGHT_ONLY_NO_SCIENCE_SOURCE_BIRTH",
+  "parent": {
+    "pr": 200,
+    "sha": "28f2b5293d99a4244e29d5f1b1bcf7fcd0e4cead",
+    "p83_fixture_only": true,
+    "prior_p81_freeze": "experiments/p81mr_collection_readiness_freeze.json",
+    "source_pin": {
+      "repo": "CausalAILab/Causal-Gymnasium",
+      "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+      "cartpole_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "PCH_blob": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "task_blob": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e"
+    }
+  },
+  "preexisting_protocol_negative_control": {
+    "previous_seed_rule": "seed=split_base+10*episode_index",
+    "previous_split_bases": {
+      "fit": 811101,
+      "cal": 811103,
+      "dev_external": 811107,
+      "science_ood_0": 811109,
+      "science_ood_1": 811111,
+      "science_ood_2": 811113
+    },
+    "previous_counts": {
+      "fit": 128,
+      "cal": 64,
+      "dev_external": 64,
+      "science_ood_0": 64,
+      "science_ood_1": 64,
+      "science_ood_2": 64
+    },
+    "observed_collision_pairs": [
+      {
+        "a": "fit",
+        "b": "science_ood_1",
+        "overlap": 64,
+        "example": 811111
+      },
+      {
+        "a": "cal",
+        "b": "science_ood_2",
+        "overlap": 63,
+        "example": 811113
+      }
+    ],
+    "old_total_seeds": 448,
+    "old_unique_seeds": 321,
+    "conclusion": "DO_NOT_USE_P81_SPLIT_SEEDS_FOR_EXTERNAL_SCIENCE_FIRST_USE; preserve historical immutable prior freeze, do not change or rewrite consumed source.",
+    "real_external_data_so_far": "NONE, so all successor seeds unconsumed"
+  },
+  "frozen_successor": {
+    "namespace": "ttt-hybrid/p84mr/independent-cartpolewind-source-v1",
+    "episode_counts": {
+      "fit": 128,
+      "cal": 64,
+      "dev_external": 64,
+      "science_ood_0": 64,
+      "science_ood_1": 64,
+      "science_ood_2": 64
+    },
+    "seed_bases": {
+      "fit": 1810000000,
+      "cal": 1810100000,
+      "dev_external": 1810200000,
+      "science_ood_0": 1810300000,
+      "science_ood_1": 1810400000,
+      "science_ood_2": 1810500000
+    },
+    "seed_rule": "episode_seed = seed_bases[split] + episode_index, integer 0<=index<episode_counts[split]",
+    "total": 448,
+    "expected_unique": 448,
+    "check": "Pairwise cross-split seed intersection=0 AND within-split uniqueness AND all 32-bit signed nonnegative seeds",
+    "action_rule": "action=SHA256(f'{namespace}/{split}/{episode_index}/{episode_seed}/{step}')[0] & 1, step=1..96, no observation/target-dependent policy selection",
+    "max_episode_steps": 96,
+    "no_retry": "Short episodes, source crashes and uncertain-effect sessions MUST be separately counted and never retried on same seed.",
+    "terminal_rule": "Stop on terminated/truncated or 96 actual steps; no synthetic padding.",
+    "manifest": "Write immutable prospective source-manifest and signed owner-witness provenance in repo before real first-use. Signed receipt is REQUIRED, self-reported IDs or seed checks not sufficient.",
+    "real_source_permission": "NOT_GRANTED by freeze, PR, CI or user phrase 'next gate'; separate project-owned narrowly scoped approval required before any env reset/do or data birth."
+  },
+  "upstream_regimes": {
+    "fit": {
+      "wind_mean": 0,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "cal": {
+      "wind_mean": 0,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "dev_external": {
+      "wind_mean": 0,
+      "wind_std": 0.03,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "science_ood_0": {
+      "wind_mean": 0.08,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "science_ood_1": {
+      "wind_mean": -0.08,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "science_ood_2": {
+      "wind_mean": 0,
+      "wind_std": 0.05,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "limitations": "These are across-episode held-out wind-regime shifts, NOT unobserved within-episode changepoints. Model does not receive regime/wind labels or hidden exogenous state. Intervention action information and observations must be exactly matched across arms."
+  },
+  "frozen_candidate_and_controls": {
+    "candidate": "P78-MR pretrained non_directional3 fixed theta for seeds 978201,978203,978207, from committed P78-MR receipt blob c180bfa8dab735000360ba2e87f51dbe42ec3d89; no re-training or external update of static theta.",
+    "fixed_registered": "P78-MR CAL-selected all-write eta=.4 (no external calibration)",
+    "controls_required": [
+      {
+        "arm": "strong_adaptive_fixed",
+        "plan": "At least P78 83 fixed predeclared gains, choose strongest on external CAL only, freeze before DEV and OOD"
+      },
+      {
+        "arm": "GRU-256",
+        "plan": "Fully train 256-dimensional persistent recurrent hidden state on FIT only, checkpoint select CAL only, same per-step factual inputs as candidate and same target labels"
+      },
+      {
+        "arm": "SSM-256",
+        "plan": "Fully train 256-dimensional persistent diagonal SSM state on FIT only, checkpoint select CAL only, same information/actions"
+      },
+      {
+        "arm": "action_conditioned_linear_dynamics",
+        "plan": "At most 256 persistent float state, trained on source FIT only; properly conditioned non-leaking state/action features"
+      },
+      {
+        "arm": "zero_predictor",
+        "plan": "Ablation reference; not the strongest control"
+      }
+    ],
+    "budget_policy": "Precommit conventional capacity, optimizer, update budget and stop rules separately before FIT first-use; require all baselines fully competent and independently qualified before OOD. Current protocol alone is NOT baseline qualification.",
+    "fairness": "Disclose full source-generation, training, CAL sweeps, selected checkpoints, memory size, model static weights, wall time, CPU/GPU compute, memory and external data consumption for each arm; memory state capacity alone does not equal whole-process resource parity."
+  },
+  "metrics_and_outcomes": {
+    "primary": "Normalized four-channel realized state-delta MSE, scaled by fixed [2.4,3.0,0.2095,3.5] and tanh transform as precommitted in P80; report per channel + aggregate; do not base acceptance on padded 16D MSE.",
+    "secondary": "Observed reward MSE, termination/truncation accuracy with class counts, read-before-write factual timeline, cold restored memory error, disjoint external episode seeds, effect of wind regime shifts.",
+    "measurement_unit": "Per-independent-world average, then across-world paired bootstrap of 5000 resamples, 95pct lower confidence bound on relative error reduction.",
+    "science_threshold": "On each of three OOD regimes and each of three candidate seeds, candidate primary per-world mean MSE <=0.90*best qualified conventional/fixed comparator, stable cold retention no worse than 1.05*, AND pooled paired bootstrap lower relative improvement >0.0; otherwise SCIENTIFIC_PASS=FALSE.",
+    "negative_controls": "Wrong action-credit and time-shifted consequence pairing must degrade vs correct pairing; null source effects and hidden wind labels must not leak into action context.",
+    "comparison_claims": "CartPoleWind uses a fixed 4D physical state and discrete action; P80 mapping is state-conditioned and padded; it is NOT the same 16D action-only synthetic task. No independent general intelligence, RSI or tokenless foundation claim from this evaluation."
+  },
+  "stop_rules": {
+    "source": "If source binary SHA mismatch, detached witness missing, duplicate episode seed, previous-source collision, missing raw transition provenance, unsupported task regime or unpredictable state-action execution, STOP before effectful first use.",
+    "training": "If fully trained conventional baselines not available, or whole-process cost not disclosed, STOP before independent OOD; preserve FIT/CAL/DEV negative results.",
+    "cohort": "No silent discard or replay of a short/failed/terminated episode; record denominator and reason and stop if >15pct have fewer than 2 events in any cohort; threshold fixed prior to source birth.",
+    "post_result": "No threshold selection or new metric after seeing dev or OOD data; failed criteria remain FAIL, not unverified success."
+  },
+  "execution_authority": {
+    "first_use_status": "NOT_AUTHORIZED",
+    "allowed_now": "Offline deterministic dry-run of seed schedule and schema/manifest validation only; no upstream import, simulation, source generation or inference.",
+    "required_before_first_use": [
+      "owner-native execution permissions verified",
+      "verified exact upstream source SHA/dependencies",
+      "separate explicit scientific first-use authorization",
+      "immutable witness and split manifest",
+      "fully frozen conventional control training plans",
+      "resource caps and stop criteria"
+    ],
+    "no_merge": true,
+    "no_main_change": true,
+    "no_runner_change": true,
+    "no_schedules": true,
+    "no_forge_integration": true,
+    "no_deployment": true,
+    "no_paid_API": true,
+    "receipts_location": "GitHub repo/PR/Actions only, not ChatGPT Library"
+  }
+}
