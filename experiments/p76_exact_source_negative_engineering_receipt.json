@@ -1,0 +1,87 @@
+{
+  "schema": "ttt-hybrid.p76-source-exact-engineering-qualification.v1",
+  "date": "2026-11-10",
+  "classification": "ISOLATED_LOCAL_CPU_FOCUSED_REGRESSION_NOT_CROSS_PLATFORM_FULL_OR_SCIENTIFIC_PASS",
+  "lineage": {
+    "base_pr": 183,
+    "base_sha": "5ea5d87253b030fa23041db020616dd09eb942c3",
+    "freeze_commit": "d0b658ec0dc935a57e729d5e2da0bb479075675f"
+  },
+  "exact_git_blobs": {
+    "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "native_p62_streaming_ttt.py": "776e63a0ff9474a860e87088718acb36637a7bec",
+    "native_p64k_incremental_hybrid_stream.py": "89c3ef5819ac594ad687c67c579a559754109d4c",
+    "native_p71_gated_hybrid_stream.py": "e93ffe29806ac15705cbfd002c5725b9bc4b5e45",
+    "experiments/p74_blockwise_address_value_readout.py": "372bf317ffcc0b2efc62af3357aaed014f09b145",
+    "experiments/p76_native_alignment_freeze.json": "396889c75e957e6b6a937e81f967b6c73f06c8d6",
+    "experiments/p76_native_alignment_dev.py": "d4a9313a760d36a2929a823061ad61aa7098a5d4",
+    "tests/test_p76_native_alignment_dev.py": "8f5ec4595f2c76a6096f33f2809e7d256dfffb2b",
+    "experiments/p76_native_alignment_dev_fail_result.json": "659bcfa05a588074acdcd0e708f8e07f1a0dd6a6"
+  },
+  "focus": {
+    "tests_pass": 40,
+    "tests_fail": 0,
+    "elapsed_seconds": 2.06,
+    "local_cpu": "Linux Python 3.13 PyTorch 2.10.0+cpu single thread",
+    "test_modules": [
+      "tests/test_native_p71_gated_hybrid_stream.py",
+      "tests/test_p72_original_hybrid_transfer_dev.py",
+      "tests/test_p73_raw_retrieval_diagnostic_dev.py",
+      "tests/test_p74_blockwise_address_value_readout.py",
+      "tests/test_p76_native_alignment_dev.py"
+    ]
+  },
+  "dev_screen": {
+    "source_hash_fit": "d7904c891e9bf57e3253eb56057d453d4dfaaecbb0ac4616df8e57becf1c4e13",
+    "source_hash_val": "796aad066c395e67c3a013a1cbf6947ef8b77c990e3b42490f73f9b325495484",
+    "train_model_initializations": 3,
+    "training_steps_each_native": 240,
+    "training_steps_each_raw": 240,
+    "zero_val_mse": 0.3871651887893677,
+    "eligibility_max_val_mse": 0.3290904104709625,
+    "eligibility_min_hit": 0.35,
+    "observed_val_native_mse": [
+      0.6095113158226013,
+      0.5644632577896118,
+      0.6053836941719055
+    ],
+    "observed_val_native_hit": [
+      0.2708333432674408,
+      0.2760416567325592,
+      0.2447916716337204
+    ],
+    "raw_learned_val_mse": [
+      0,
+      0,
+      0
+    ],
+    "status": "DEV_FAIL_NATIVE_VAL_QUALIFICATION",
+    "OOD_generated": false,
+    "OOD_scored": false,
+    "actual_scientific_pass": false,
+    "wall_seconds": 1.1995340209996357
+  },
+  "resources": {
+    "original_4block_core_trainable_parameters_original": "FROZEN_UNCHANGED",
+    "aligner_trainable_parameters": 512,
+    "history_per_world_persistent_floats_fit_val": 768,
+    "history_per_world_persistent_floats_ood_if_eligible": 1536,
+    "original_four_block_state_plus_history": "UNMEASURED",
+    "equal_process_flops": false,
+    "raw_control_capacity_matched_to_native_head": "YES_512_PARAMETER_PROJECTION_ONLY;_HISTORY_VALUES_RAW_AND_NATIVE_EQUALS_768",
+    "cpu_budget_seconds": 300
+  },
+  "qualification": {
+    "exact_source_readback": true,
+    "original_G4_G5_G7": "NOT_RUN",
+    "full_exact_final_sha_Windows_Linux": "NOT_RUN",
+    "native_GPU": "NOT_RUN",
+    "trained_original_hybrid": "NO",
+    "independent_external_source": "NO",
+    "scientific_pass": false,
+    "merge": "NONE",
+    "deployment": "NONE",
+    "FORGE": "UNCHANGED"
+  },
+  "note": "A trained 512-parameter key/query alignment overlay did not restore factual association on VAL for any independent frozen original core. Strong same-information raw-action retrieval succeeded. Do not claim OOD transfer or failure of the trained full model from this isolated frozen-representation probe. P75 other-lane PR #184 untouched."
+}
