@@ -1,0 +1,68 @@
+{
+  "schema": "ttt-hybrid.p89-causal-key-credit-alignment-dev-freeze.v1",
+  "stage": "FROZEN_BEFORE_ANY_P89_SOURCE_OR_MODEL_EVALUATION",
+  "parent": {
+    "PR": 210,
+    "SHA": "84073dda997d4ef431ee899418cc058046e08bfb",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "P86_source_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "P88_status": "DEV_FAIL_STRONG_W256; complete local source available but not on repo",
+    "P84_MR": "independent external source untouched"
+  },
+  "hypothesis": "The native TTT learns incompatible action keys from outcome-bearing fact embeddings and outcome-free query embeddings; raw action/effect coordinates may survive a simpler consistent key map. Frozen keys-only ablations isolate key/query mismatch, context mixing and FIT-only linear action recoverability without changing original weights.",
+  "sources": {
+    "seeds": {
+      "FIT": 890111,
+      "VAL": 890113,
+      "OOD_RESERVED": 890117
+    },
+    "worlds": {
+      "FIT": 128,
+      "VAL": 64,
+      "OOD_RESERVED": 64
+    },
+    "model_seeds": [
+      890201,
+      890203,
+      890207
+    ],
+    "source_generator": "Same P86 platform-independent SHA256/dyadic causal map with NEW seeds. 48 executed and observed continuous actions/effects (rank4 map, hidden change after 24 in half worlds), then unseen query action effect withheld. Build 97 Q,F alternating tokens. No future effects written, no exact query duplicates; FIT/VAL source SHA must match across platforms. Do not generate OOD."
+  },
+  "arms": {
+    "raw_direct": "P86 CAL-locked eta1 decay0.99 W16x16, normalized raw action keys and true observed effects.",
+    "stem_shared": "Use original frozen stem([action,0]) then original frozen ttt.query(ttt.norm) to encode both factual write keys and current query; true raw observed effects as values.",
+    "context_shared": "Use original frozen stem->SSM->causalAttention PRE-confirmation query representations and original ttt.query head for both factual keys and subsequent queries; true observed effects as values.",
+    "context_mismatched": "Use original frozen ttt.key on outcome-bearing confirmed fact embedding to write, and ttt.query on preceding action-only query embedding to read; true raw effects as values. Native key/query geometry, not a native value/readout replica.",
+    "ridge_recovered_action": "Fit only on FIT query embeddings a 272-coefficient L2 ridge alpha0.01 to raw normalized actions; on VAL derive keys for historical actions and final query, update same W256 with true effects. Extra supervised FIT parameters and compute, diagnostic not matched."
+  },
+  "controls": {
+    "frozen_random_original": "Unmodified original HybridPilot width16 all blocks, 3 independent frozen model seeds; original 5297 weights unchanged.",
+    "fast_memory": "Exactly 16x16=256 float32 per world. eta1 decay0.99, read-before-write; 48 confirmed effect updates, no unconfirmed write, original SSM/attention state costs separately disclosed.",
+    "metrics": "Final MSE stable, changed, combined; late t32-48 prequential MSE; wall CPU timing and exact source/model/coefficient hashes.",
+    "negative": "Predeclared wrong-credit control within VAL by rotating 48 historical effects while preserving true final answer; direct W256 wrong-credit MSE>=1.5x clean and >=0.01.",
+    "admission": "FIT/VAL source/cold/causal audits PASS, fixed raw MSE <=.8 zero in stable and changed, 3 distinct model initial SHAs, all finite.",
+    "future": "No heldout/negative source family creation; no scientific first-use."
+  },
+  "decisions": {
+    "mismatch": "In all 3 seeds, mismatched final MSE >=2x raw fixed and shared-context final MSE <=.85*mismatched; otherwise mismatch not established.",
+    "context": "In all 3 seeds shared-context final MSE >=1.5x stem-shared; otherwise context effect not established.",
+    "recoverability": "In all 3 seeds FIT-only ridge-recovered action final MSE <=1.20x fixed raw; if fail no evidence of linear action recovery.",
+    "status": "DEV_MECHANISTIC_DIAGNOSTIC_ONLY on admissible source and at least one all-seed signature. Else DEV_INCONCLUSIVE/NEGATIVE. Never SCIENTIFIC_PASS or evidence of full trained-model gains.",
+    "freeze": "No post-result threshold changes, no training extensions, no OOD consumption."
+  },
+  "authority": {
+    "additive_draft_PR": true,
+    "no_main_or_original_source_edits": true,
+    "no_FORGE": true,
+    "no_P84_MR": true,
+    "no_runners_or_schedulers": true,
+    "no_paid_API": true,
+    "no_merge": true,
+    "no_science_first_use": true
+  },
+  "status": {
+    "source_generated": false,
+    "run": false,
+    "scientific_pass": false
+  }
+}
