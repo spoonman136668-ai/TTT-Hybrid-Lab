@@ -1,0 +1,88 @@
+{
+  "schema": "ttt-hybrid.p78-bounded-raw-action-original-ttt-readout-dev-freeze.v1",
+  "state": "PROSPECTIVELY_FROZEN_BEFORE_P78_SOURCE_AND_EXECUTION",
+  "classification": "AUTHOR_SYNTHETIC_DEV_ONLY_NOT_INDEPENDENT_SCIENTIFIC_FIRSTUSE",
+  "lineage": {
+    "P77_PR": 189,
+    "P77_head": "57d6abfbea2cab48013de1bb31a217e8d5a65670",
+    "P77_result": "EXTERNAL_RAW_IDENTITY_SIDECAR_DEV_PASS_3_OF_3_NO_NATIVE_FULL_HYBRID_GAIN",
+    "source_blobs": {
+      "model.py": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+      "native_p62_streaming_ttt.py": "776e63a0ff9474a860e87088718acb36637a7bec",
+      "native_p64k_incremental_hybrid_stream.py": "89c3ef5819ac594ad687c67c579a559754109d4c",
+      "experiments/p77_identity_bypass_dev.py": "2f41284e88f0e7e2ed4b16a526cab0c83ead87fb"
+    }
+  },
+  "question": "Does a 256-float fast-weight update that reads the raw executed action/effect inside the existing original four-block TTT memory seam, with only the original TTT output projection and final readout trained, outperform the same randomly-initialized original native TTT fast state under matched episodes, while accounting for strong conventional memory baselines?",
+  "source": {
+    "seeds": {
+      "fit": 780111,
+      "val": 780113,
+      "ood_dev": 780117,
+      "negative": 780119
+    },
+    "n": {
+      "fit": 192,
+      "val": 96,
+      "ood_dev": 128,
+      "negative": 64
+    },
+    "dim": 16,
+    "facts": "8 target raw 16D orthogonal action keys each repeated twice with independent 16D tanh observed effects; 8 FIT/VAL or 32 OOD single-use randomly sampled normalized distractor actions and independently sampled effects; all factual histories shuffled per world, one final executed action query with its 16 future effect features zeros.",
+    "data_shape": "24 historical factual 32D events FIT/VAL; 48 factual events OOD. Final query 32D with zero effect. No role, future query, index, target label in factual updates.",
+    "audits": "FIT/VAL max quartet target position imbalance <=0.05 and held-out index-only balanced accuracy<=0.55; equal samples for paired models; source SHA over all historical facts, query, labels and hidden role audit.",
+    "unavailable": "No P65-P77 consumed cohort reuse, no external independently protected source, no novel physical action-consequence first-use."
+  },
+  "architecture": {
+    "core": "Exact original frozen HybridPilot(input_dim=32,output_dim=16,Configuration(width=16,heads=2,ssm=true,attention=true,ttt=true,depth=true)), seeds [780201,780203,780207], original weight blob unchanged in repo.",
+    "raw_internal": "For each confirmed factual event, take L2-normalized raw action16 key and observed raw effect16; update the original TTT 16x16 fast-weight state W := W+0.5*(observed-W@key)*key^T; no extra raw-action key/value cache. For final query, read W@normalize(raw action16); route through the ORIGINAL model.ttt.proj -> ORIGINAL model.depth -> ORIGINAL model.head using the original model's causal pre-TTT final latent residual. Extra trainable parameters: zero; train only the existing core.ttt.proj (16x16+bias) and core.head (16x16+bias) from equal seeds.",
+    "native_original": "Unchanged original TTT key/query/value projections on the exact same frozen pre-TTT original stem->SSM->attention representations; original fast-weight state and read-before-write; same original proj/depth/head trainable subset, all other core weights frozen, exact same initialization and updates/optimizer/samples.",
+    "no_memory": "Same frozen original pre-TTT final latent with zero fast read, same trainable subset/updates; diagnostic no factual fast state.",
+    "fixed_raw_fast": "Direct original-size 256-float raw fast-weight matrix read, zero additional trainable params; strong conventional control. Evaluate direct action-consequence error, not a trained hybrid output.",
+    "fixed_frequency": "256-float content-addressed 8-slot action key + effect cache from the immutable P72 code, compare direct error to strong conventional. Avoid extra hidden counters.",
+    "zero": "Zero effect predictor; baseline MSE.",
+    "wrong_credit": "On heldout independent negative worlds, wrong action-effect association from a deterministic within-world permutation, with query unchanged. Correct raw-internal readout must be measurably better."
+  },
+  "training": {
+    "seeds": [
+      780201,
+      780203,
+      780207
+    ],
+    "sample_seed": 780299,
+    "updates": 180,
+    "batch": 16,
+    "validate_each": 30,
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.01,
+    "gradient_clip": 1,
+    "CPU_threads": 1,
+    "max_wall_seconds": 150,
+    "core_freeze": "All original core weights except ttt.proj and head frozen. The same frozen backbone, same model initial weight SHA, same world samples and same training updates are used across raw-internal and native-original. Recompute original pre-TTT causal features once under no-grad; do not hide it as a trained original architecture. The original depth router remains frozen (its utilization is telemetry only).",
+    "checkpoint": "Select best checkpoint solely by validation MSE; freeze before OOD; no OOD hyperparameter decisions.",
+    "safeguards": "All features use only actually observed historical action/effect and final query action, no future effect. Read-before-write, exact cold bitwise restored matrix/predictions, confirmed-only historic writes, no hypothetical read commits, 256 float state, original model source unchanged and model parameter identity measured.",
+    "efficiency": "Record per-arm feature-creation, model training/VAL and inference times and trainable param counts; conventional cache omits original SSM attention state and is not same whole-process cost. Native original full streaming KV may grow linearly in episode length."
+  },
+  "competence": {
+    "validation_before_ood": "All FIT/VAL source audits, deterministic cold-state and original-blobs PASS. Strong fixed raw-fast and frequency baseline each <=0.75*zero VAL. For every three model seeds, raw-internal best VAL MSE <=0.70*zero VAL and <=0.80*paired native-original VAL MSE, and selected checkpoint step <180; all models finite, paired initial full-model hashes identical. On any failure stop without OOD generation or scoring.",
+    "ood_development": "Only after VAL competence, generate fresh single OOD_DEV and test raw-internal <=0.75*zero MSE, <=0.85*paired native-original, and paired 2000-bootstrap 95% lower improvement >0 for each seed. Correct raw-internal wrong-credit negative MSE >=1.4*clean when evaluated on independent negative cohort, and cold restore PASS.",
+    "strongest_control_rule": "Report direct error from fixed conventional raw-fast and 256-float frequency-cache on identical OOD. If raw-internal is worse than strongest conventional (or costs more), do not claim system superiority. These conventional arms are not identical trained architecture or full state-budget matched.",
+    "strict_dev": "Only DEV_PASS_BOUNDED_INTERNAL_REFERENCE if all validation, OOD, negative and custody controls pass; else DEV_FAIL and preserve negative. This is engineering development and cannot establish learning, novel causal transfer, or scientific advantage."
+  },
+  "qualification": {
+    "mandatory_final_SHA_full_Windows_Linux": "NOT_RUN",
+    "native_GPU": "NOT_RUN",
+    "G4_G5_G7": "NOT_RUN",
+    "independent_science": "NOT_ELIGIBLE",
+    "original_source": "UNCHANGED",
+    "main": "UNCHANGED",
+    "FORGE": "UNCHANGED",
+    "no_merge": true,
+    "no_scheduler": true,
+    "no_runner_mutation": true,
+    "no_workflow_dispatch": true,
+    "no_paid_API": true,
+    "no_physical_actuation": true
+  }
+}

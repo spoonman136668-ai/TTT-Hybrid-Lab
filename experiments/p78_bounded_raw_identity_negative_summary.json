@@ -1,0 +1,117 @@
+{
+  "schema": "ttt-hybrid.p78-bounded-fast-state-negative-result-git-summary.v1",
+  "classification": "AUTHORED_SYNTHETIC_DEV_NEGATIVE_NOT_SCIENTIFIC_PASS",
+  "freeze_commit": "b2a3a44b5f34ef8da493d7744ef36f101b8315b4",
+  "run_scope": "FIT_VAL_ONLY_STOP_BEFORE_NEW_OOD_OR_NEGATIVE",
+  "status": "DEV_FAIL_OR_UNQUALIFIED_VAL",
+  "requalification": "Original 10/10 focused and first study ran on untagged state. After adding policy-tag type isolation, 60/60 combined focused PASS; all 3 raw/native/no-memory best VAL MSEs and chosen checkpoint step bitwise identical on the consumed FIT/VAL cohort. Same outcome not recast as fresh science.",
+  "source_sha256": {
+    "fit": "9d2ba796eba5008616374ef1b3f6fff28f251916ec05ae14b1882e08885b574b",
+    "val": "191a239416e6a944d7b1f9b2844d8604b823ca4d9f9492ad0d6c9f425eab392f"
+  },
+  "source_controls": {
+    "fit": {
+      "quartile_imbalance": 0.018229126930236816,
+      "balanced_accuracy": 0.5,
+      "pass": true
+    },
+    "val": {
+      "quartile_imbalance": 0.03645831346511841,
+      "balanced_accuracy": 0.5,
+      "pass": true
+    }
+  },
+  "sampler_sha256": "9177a9e6b1d30c9c7efe436278360ddb0b752403c1c0539b957c00602724588d",
+  "validation": {
+    "zero": 0.3849058449268341,
+    "fixed_256_frequency_cache": 0.11595770716667175,
+    "fixed_256_raw_fast": 0.0653548315167427,
+    "strong_baselines_competent": true
+  },
+  "models": [
+    {
+      "seed": 780201,
+      "best_raw_internal": 0.0746319591999054,
+      "best_native": 0.3909592628479004,
+      "best_no_memory": 0.3852798044681549,
+      "raw_best_step": 180,
+      "native_best_step": 60,
+      "raw_val_trajectory_at_steps_30_60_90_120_150_180": [
+        0.2039119452238083,
+        0.14353764057159424,
+        0.10983260720968246,
+        0.09150155633687973,
+        0.08034678548574448,
+        0.0746319591999054
+      ],
+      "raw_checkpoint_sha256": "4b707a94f65e5f510b6b9bc11d34cab893e3c533dd3ab71ff39e45e4e6ad4081",
+      "eligible": false
+    },
+    {
+      "seed": 780203,
+      "best_raw_internal": 0.07950287312269211,
+      "best_native": 0.3958341181278229,
+      "best_no_memory": 0.3952564001083374,
+      "raw_best_step": 180,
+      "native_best_step": 60,
+      "raw_val_trajectory_at_steps_30_60_90_120_150_180": [
+        0.22859813272953033,
+        0.14501674473285675,
+        0.11216836422681808,
+        0.09654679149389267,
+        0.09055954217910767,
+        0.07950287312269211
+      ],
+      "raw_checkpoint_sha256": "1f4ccecf52fea8b2d1cf1e70364291544fb92100e42cd66296188ae1a9d2e3b5",
+      "eligible": false
+    },
+    {
+      "seed": 780207,
+      "best_raw_internal": 0.08978816866874695,
+      "best_native": 0.38856032490730286,
+      "best_no_memory": 0.3883415758609772,
+      "raw_best_step": 150,
+      "native_best_step": 60,
+      "raw_val_trajectory_at_steps_30_60_90_120_150_180": [
+        0.21883152425289154,
+        0.14355279505252838,
+        0.11487437039613724,
+        0.09737973660230637,
+        0.08978816866874695,
+        0.08999311923980713
+      ],
+      "raw_checkpoint_sha256": "52f631312254ad424da02ebbd10fc6cff199ba4538bd84ccaf3e02c089b34f69",
+      "eligible": true
+    }
+  ],
+  "preregistered_stop": "All three seeds must choose validation-best step <180; 780201/780203 choose 180; no OOD generated/scored.",
+  "memory_footprint": {
+    "fast_weight_float32": 256,
+    "trained_original_projection_and_head_parameters": 544,
+    "other_architecture": "original frozen SSM+causal attention+TTT projections+depth, original source unchanged; attention KV history and confirmed integer counters exist outside the isolated fast-matrix 256-float budget"
+  },
+  "local_cpu": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "full_study_s": 1.4557452150002064,
+    "focused_tests": 60,
+    "failed_focused_tests": 0,
+    "focused_s": 2.17
+  },
+  "exact_tested_blobs": {
+    "adapter": "db948c53bb1a28af5fe0e6a62ef71463db6d95ba",
+    "study": "02ea492f8a3b61bb37f53b933ade3e0334b6a379",
+    "tests": "9d44f48df242a36cd45da3a931406ec4ec9beebb",
+    "full_local_raw_result_sha256": "edee3ae77218a06c3ac6478986ff86668047857278ccafa71ea3bfb3ea12d577",
+    "initial_untagged_local_result_sha256": "333079ed32a11936289ef75259f283b5942d00bf6bcc8718415e60cb115535f8"
+  },
+  "first_use": false,
+  "OOD_generated": false,
+  "OOD_scored": false,
+  "scientific_pass": false,
+  "full_final_SHA_windows_linux_regression": "NOT_RUN",
+  "native_GPU": "NOT_RUN",
+  "FORGE": "UNCHANGED",
+  "main": "UNCHANGED",
+  "deployment": "NONE"
+}
