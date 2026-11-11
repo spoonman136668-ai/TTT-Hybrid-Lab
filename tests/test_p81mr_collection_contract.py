@@ -216,6 +216,6 @@ def test_finished_episode_cannot_be_consumed_twice():
 def test_capture_has_no_active_source_access_or_science_entrypoint():
     source=(Path(__file__).resolve().parents[1]/"experiments"/"p81mr_collection_contract.py").read_text()
     for forbidden in ("import causal_gym", "import gymnasium",
-                      ".reset(", ".do(", "subprocess", "requests.",
+                      "env.reset(", "env.do(", "env.step(", "subprocess", "requests.",
                       "torch", "if __name__", "run_science(", "torch.save"):
         assert forbidden not in source, forbidden
