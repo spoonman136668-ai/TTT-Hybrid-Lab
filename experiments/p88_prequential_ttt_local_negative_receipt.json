@@ -1,0 +1,336 @@
+{
+  "schema": "ttt-hybrid.p88-prequential-credit-local-negative-receipt.v1",
+  "stage": "LOCAL_FROZEN_DEV_FAIL_WITH_MONOLITH_TIMEOUT",
+  "source": {
+    "freeze_commit": "ae53cad541cfcc40335c8bf48936eb00753fee47",
+    "parent_pr": 208,
+    "parent_sha": "baa22719fc527346daa4bb214ea93aacb9311dd7",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "portable_p86_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "P87_source_blob": "18713cdd7c04f0c22ec33dad7d2f158b6fd59c24",
+    "new_fit_seed": 880111,
+    "new_val_seed": 880113,
+    "source_FIT_sha256": "2a96b1733cbcbcb2ba3ef1bd8cd48c16e29dd3d76ffe81285b3da6b641d1b060",
+    "source_VAL_sha256": "1d9f2d49585ba1490d8de710efb7441b9f332120d1379bbc1733ae437122d042",
+    "FIT_worlds": 256,
+    "VAL_worlds": 128,
+    "OOD_seed_reserved": 880117,
+    "negative_seed_reserved": 880119,
+    "source_development_file_git_blob_if_published": "6f0d2517acbc06f67a21e45d7240f494245a821d",
+    "source_development_file_sha256": "bab3e711ba9b090ca168ab60ebc02eb58ff6f780bb145a2aa714ebf23c2917e1"
+  },
+  "methods": {
+    "interleaving": "97 tokens: 48 (action16,0) queries followed by 48 confirmed (action16,observed-effect16) facts; final novel query; no query's future effect observable until its later fact token",
+    "loss": "query targets at t>=16, 33 labels; guarded_final_only uses t=48 only",
+    "arms": [
+      "original_HybridPilot_guarded_dense",
+      "original_HybridPilot_unguarded_dense",
+      "original_HybridPilot_guarded_final_only",
+      "GRU_dense",
+      "SSM_dense"
+    ],
+    "original_model_parameter_count": 5297,
+    "GRU_parameter_count": 2672,
+    "SSM_parameter_count": 1936,
+    "fast_TTT_state_float32": 256,
+    "training_steps_per_arm": 120,
+    "batch": 8,
+    "AdamW_lr": 0.002,
+    "weight_decay": 0.01,
+    "training_seed_index": 880299,
+    "all_training_updates": 1800
+  },
+  "controls": {
+    "zero": {
+      "final": 0.011099474504590034,
+      "late": 0.011456658132374287
+    },
+    "P86_CAL_locked_W256_eta1_decay099": {
+      "final": 0.00243106740526855,
+      "final_stable": 0.0009131404804065824,
+      "final_changed": 0.003948994446545839,
+      "late": 0.004063612315803766
+    },
+    "P78_original_eta05": {
+      "final": 0.003371549304574728,
+      "late": 0.004831621423363686
+    },
+    "future_effect_leakage_audit": "PASS",
+    "original_TTT_allwrites_adapter_exact_parity": "PASS",
+    "confirmed_only_write_mask": "PASS",
+    "P78_cold_restore": "PASS"
+  },
+  "execution": {
+    "local_python": "3.13.5",
+    "local_torch": "2.10.0+cpu",
+    "local_focused_tests": "12/12 PASS 3.89s",
+    "archive_self_contained_replay_local_test": "PASS 1/1 ~6.84s",
+    "individual_arm_shards": 15,
+    "sum_measured_training_seconds": 51.74408625199885,
+    "monolithic_attempts_timed_out": 2,
+    "monolithic_CPU_wall_qualified": false,
+    "original_detailed_result_sha256": "05bec77a40089f861cd11ba7712ed00d27a1f8bab9aa4f2956cef32b53ca83bb",
+    "original_detailed_result_bytes": 52869,
+    "original_replay_archive_sha256": "680cb86b7c7190005189582f0a1f5a051d0be0a570cc988d6b0a9929bfca",
+    "original_replay_archive_source_only_local": true
+  },
+  "rows": [
+    {
+      "seed": 880201,
+      "arm": "gru_dense",
+      "best_final_mse": 0.01135033,
+      "selected_step": 120,
+      "initial_sha256_prefix": "617df30ea018",
+      "checkpoint_sha256_prefix": "606db2509f32",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0169944,
+        0.0131184,
+        0.0120218,
+        0.0116579,
+        0.0114347,
+        0.0113503
+      ]
+    },
+    {
+      "seed": 880201,
+      "arm": "guarded_dense",
+      "best_final_mse": 0.01155115,
+      "selected_step": 120,
+      "initial_sha256_prefix": "cf82f5a1e347",
+      "checkpoint_sha256_prefix": "34be8401f217",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0156811,
+        0.0129639,
+        0.012224,
+        0.0117447,
+        0.0115655,
+        0.0115511
+      ]
+    },
+    {
+      "seed": 880201,
+      "arm": "guarded_final_only",
+      "best_final_mse": 0.01274082,
+      "selected_step": 100,
+      "initial_sha256_prefix": "cf82f5a1e347",
+      "checkpoint_sha256_prefix": "a28fc366c8ef",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0180375,
+        0.0150374,
+        0.0138553,
+        0.0134889,
+        0.0127408,
+        0.0130154
+      ]
+    },
+    {
+      "seed": 880201,
+      "arm": "ssm_dense",
+      "best_final_mse": 0.01136949,
+      "selected_step": 120,
+      "initial_sha256_prefix": "aa1209307055",
+      "checkpoint_sha256_prefix": "55cc5172d918",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0167734,
+        0.012864,
+        0.011971,
+        0.011627,
+        0.0114149,
+        0.0113695
+      ]
+    },
+    {
+      "seed": 880201,
+      "arm": "unguarded_dense",
+      "best_final_mse": 0.01156344,
+      "selected_step": 120,
+      "initial_sha256_prefix": "cf82f5a1e347",
+      "checkpoint_sha256_prefix": "8347f69346fd",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0158371,
+        0.0129592,
+        0.0122523,
+        0.0117645,
+        0.0116017,
+        0.0115634
+      ]
+    },
+    {
+      "seed": 880203,
+      "arm": "gru_dense",
+      "best_final_mse": 0.01132272,
+      "selected_step": 120,
+      "initial_sha256_prefix": "d11477cd4c28",
+      "checkpoint_sha256_prefix": "17f4f64db692",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0160264,
+        0.0126362,
+        0.0119285,
+        0.0115779,
+        0.0113951,
+        0.0113227
+      ]
+    },
+    {
+      "seed": 880203,
+      "arm": "guarded_dense",
+      "best_final_mse": 0.0114562,
+      "selected_step": 120,
+      "initial_sha256_prefix": "d73fdeb8fb05",
+      "checkpoint_sha256_prefix": "7ee07da2af8d",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.015556,
+        0.0128414,
+        0.0121026,
+        0.0117453,
+        0.0115503,
+        0.0114562
+      ]
+    },
+    {
+      "seed": 880203,
+      "arm": "guarded_final_only",
+      "best_final_mse": 0.0126247,
+      "selected_step": 120,
+      "initial_sha256_prefix": "d73fdeb8fb05",
+      "checkpoint_sha256_prefix": "3db8cbd4cdf2",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.017739,
+        0.0149749,
+        0.0141052,
+        0.0132681,
+        0.0128972,
+        0.0126247
+      ]
+    },
+    {
+      "seed": 880203,
+      "arm": "ssm_dense",
+      "best_final_mse": 0.01126527,
+      "selected_step": 120,
+      "initial_sha256_prefix": "9186ff0ed760",
+      "checkpoint_sha256_prefix": "4335357ca2c8",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0252719,
+        0.0131335,
+        0.0120312,
+        0.0115736,
+        0.0113261,
+        0.0112653
+      ]
+    },
+    {
+      "seed": 880203,
+      "arm": "unguarded_dense",
+      "best_final_mse": 0.01144071,
+      "selected_step": 120,
+      "initial_sha256_prefix": "d73fdeb8fb05",
+      "checkpoint_sha256_prefix": "ded37f5c2705",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0157093,
+        0.0128354,
+        0.0120825,
+        0.0117385,
+        0.01155,
+        0.0114407
+      ]
+    },
+    {
+      "seed": 880207,
+      "arm": "gru_dense",
+      "best_final_mse": 0.01125989,
+      "selected_step": 120,
+      "initial_sha256_prefix": "ea5f686a9715",
+      "checkpoint_sha256_prefix": "466c642f39fd",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0157177,
+        0.0126299,
+        0.011867,
+        0.0115242,
+        0.0113193,
+        0.0112599
+      ]
+    },
+    {
+      "seed": 880207,
+      "arm": "guarded_dense",
+      "best_final_mse": 0.01141845,
+      "selected_step": 120,
+      "initial_sha256_prefix": "199240442b80",
+      "checkpoint_sha256_prefix": "722b44aed0b6",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0209661,
+        0.0138268,
+        0.0122768,
+        0.011785,
+        0.0115571,
+        0.0114184
+      ]
+    },
+    {
+      "seed": 880207,
+      "arm": "guarded_final_only",
+      "best_final_mse": 0.01277089,
+      "selected_step": 120,
+      "initial_sha256_prefix": "199240442b80",
+      "checkpoint_sha256_prefix": "92d4c076e8e1",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0266232,
+        0.0171796,
+        0.0147495,
+        0.0134193,
+        0.0131771,
+        0.0127709
+      ]
+    },
+    {
+      "seed": 880207,
+      "arm": "ssm_dense",
+      "best_final_mse": 0.01138997,
+      "selected_step": 120,
+      "initial_sha256_prefix": "eebc7c666772",
+      "checkpoint_sha256_prefix": "7c05b03adef9",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0188022,
+        0.0129403,
+        0.0119244,
+        0.0116355,
+        0.0114512,
+        0.01139
+      ]
+    },
+    {
+      "seed": 880207,
+      "arm": "unguarded_dense",
+      "best_final_mse": 0.0114257,
+      "selected_step": 120,
+      "initial_sha256_prefix": "199240442b80",
+      "checkpoint_sha256_prefix": "f3b9beb5bf4e",
+      "validation_final_mse_steps_20_40_60_80_100_120": [
+        0.0207334,
+        0.0139123,
+        0.0123018,
+        0.0117974,
+        0.0115742,
+        0.0114257
+      ]
+    }
+  ],
+  "decision": {
+    "status": "DEV_FAIL_FROZEN_PREQUENTIAL_OR_STRONG_CONTROL_AND_UNQUALIFIED_MONOLITH",
+    "all_guarded_vs_unguarded_ratio_between": 0.9989,
+    "all_guarded_vs_P86_fixed_ratio_approximately": 4.7,
+    "all_better_than_strong_control": false,
+    "trained_GRU_SSM_competent": false,
+    "original_model_qualified": false,
+    "OOD_generated": false,
+    "negative_generated": false,
+    "scientific_pass": false,
+    "whole_process_compute_parity": false,
+    "full_original_architecture_modified": false,
+    "FORGE_changed": false,
+    "main_changed": false,
+    "merge": false
+  },
+  "important_limit": "Detailed 52,869-byte source-bound result and 3 executable development modules were generated in the local isolated sandbox; this on-repo summary preserves all 15 selected MSEs, 6 checkpoints each and SHA prefixes. Until the complete source archive is published and qualified on GitHub, this is a LOCAL_DEV result, not exact candidate crossplatform engineering/source regression for P88. Full monolithic run timed out twice; no successful end-to-end whole-run qualification."
+}

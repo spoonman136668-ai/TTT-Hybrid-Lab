@@ -1,0 +1,86 @@
+{
+  "schema": "ttt-hybrid.p88-prequential-confirmed-outcome-write-causal-credit-dev-freeze.v1",
+  "stage": "PRE_SOURCE_AND_PRE_TRAINING_IMMUTABLE",
+  "lineage": {
+    "parent_pr": 208,
+    "parent_sha": "baa22719fc527346daa4bb214ea93aacb9311dd7",
+    "original_model_py_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "p87_source_blob": "18713cdd7c04f0c22ec33dad7d2f158b6fd59c24",
+    "p86_portable_source_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "P87_full_training_result": "DEV_FAIL_ALL_NATIVE_HYBRID_GRU_SSM_VS_ZERO_AND_FIXED_256",
+    "parallel_P84_MR": "untouched external scientific first-use owner"
+  },
+  "hypothesis": "Native TTT writes on unknown-outcome action-query tokens pollute its fast state. Causal interleaved query->confirmed observation input with dense prequential consequence supervision plus mask to write ONLY on confirmed observation tokens should improve 16D held-final unseen-action and post-change late prequential effect errors over same model/inputs/loss with unguarded writes, and over confirmed-only final-loss supervised hybrid; all must face strongest P86-calibrated online 256-float conventional fixed learner.",
+  "source": {
+    "generator": "P86 pure SHA256-derived integer/dyadic rank4 causal action-effect map with independent P88 seed namespace. 48 executed historical interventions (action16, observed effect16); hidden rank4 map switches after event24 in 50% worlds; plus previously unseen final action49 and its withheld effect. Data Tensor shapes action/effects [N,49,16], change [N]. Paired input 97 tokens: [action0,zeros unknown effect], [action0, observed effect0], ... [action47,0],[action47,effect47],[action48,0]. Pair labels [effect0..effect48], supervised ONLY on query tokens 2*t with t>=16 and NO fact-token losses. Effect_t is introduced to stream strictly at later token 2*t+1. Original model source unchanged.",
+    "seeds": {
+      "FIT": 880111,
+      "VAL": 880113,
+      "RESERVED_OOD": 880117,
+      "RESERVED_NEGATIVE": 880119
+    },
+    "worlds": {
+      "FIT": 256,
+      "VAL": 128,
+      "RESERVED_OOD": 128,
+      "RESERVED_NEGATIVE": 64
+    },
+    "source_bytes": "Must be byte-identical across Ubuntu and Windows; assert SHA of FIT and VAL generated source on exact candidate commit, all effects dyadic, query effect zero, each new query unique under cosine abs<.999, regime counts exactly half. No prior P65–P87 consumed cohort reuse. OOD/NEG protected source constructors reject use.",
+    "no_leak": "At query index 2*t, mutation of the subsequent confirmation token 2*t+1 MUST NOT affect its prediction. At t+1 prediction, modifying the earlier confirmed effect MAY have influence; verify causality negative control. No oracle cause regime or current effect input."
+  },
+  "arms": {
+    "model_seeds": [
+      880201,
+      880203,
+      880207
+    ],
+    "guarded_dense": "Original full HybridPilot 5297 trainable parameters, unchanged original stem/SSM/causalAttn/native TTT params/depth/head. Additive research adapter implements EXACT original TTT fast key/query/value math; writes ONLY for odd-index confirmed-observation tokens (never speculative query). Same size W[16,16] =256 floats, plus original SSM/attention runtime memory. Full prequential supervised loss on query positions >=16.",
+    "unguarded_dense": "Same original reference model weights and same prequential supervision, but plain original TTT writes on BOTH unknown-outcome query and factual observation tokens, as reference TTTLinearMemory.forward. All else the same. Freeze seed/init/updates/index schedule.",
+    "guarded_final_only": "Same guarded original TTT and all original 5297 parameters; supervision ONLY final query at t48, same number of optimizer updates and samples, testing whether dense prequential targets improve credit assignment. Less observed supervision per update, disclose.",
+    "GRU_dense": "Existing original P87 GRU baseline 2672 parameters, inputs 97 same action-query/fact pairs, supervise every query t>=16, report 16-float recurrent hidden state, no 256-state claim.",
+    "SSM_dense": "Existing original P87 selective diagonal SSM 1936 parameters, inputs 97 same query/fact stream, supervise every query t>=16; recurrent state16, no memory parity claim.",
+    "fixed": "P86 CAL-selected original-size 256 float32 online memory eta1 decay.99; predict BEFORE writing each observed pair; report late prequential + final combined and stable/changed errors. Zero controls. P78 eta.5 fixed also report. No retuning on P88 VAL.",
+    "parity": "Ungated adapter when fact_mask=all True MUST match original model.ttt outputs for same source and same weights up to 1e-6. Guarded fast-state write count 48, unguarded original 97; compare full predictive costs."
+  },
+  "training": {
+    "steps": 120,
+    "batch": 8,
+    "check_every": 20,
+    "AdamW_lr": 0.002,
+    "AdamW_weight_decay": 0.01,
+    "gradient_clip": 1,
+    "CPU_threads": 1,
+    "max_cpu_seconds": 180,
+    "index_seed": 880299,
+    "same_indices_all_arms": true,
+    "no_annealing": true,
+    "train_loss": "Per-sample MSE averaged across 33 query slots t16..48 for dense, final t48 for guarded_final_only",
+    "selection": "VAL final-query MSE only; report late t32..48 prequential MSE separately, stable and changed final MSE, best checkpoint<=100 for nonterminal convergence and last two final VAL checkpoints<=1.10 best. Freeze seeds/thresholds/updates; no repeat/extension after result."
+  },
+  "gates": {
+    "admission": "All source/custody/causal-prefix, original TTT parity, 256 fast-state, P78 cold restore tests PASS; fixed W eta1 decay.99 VAL final combined <=.80*zero and stable<=.75*zero, changed<=.80*zero. If fail stop before training.",
+    "baseline": "GRU and SSM each 3 seeds must achieve best final VAL MSE <=.80*zero and best_step<=100, last2<=1.10 best. Otherwise no baseline-qualification claim.",
+    "mechanism": "Guarded dense ALL 3 seeds final VAL <=.85*unguarded dense paired, <=.85*guarded final-only, and <=.90*fixed W256; changed-world final <=.90*fixed changed; best checkpoint<=100 and last2<=1.10 best. If any miss => FAIL, no heldout or negative birth. Also ensure original fast-state confirmed-only and no extra memory, report measured total CPU time and params.",
+    "science": "Only qualifying FIT/VAL DEV would authorize separate owner-controlled held-out unfamiliar shift/negative first-use with paired bootstrap and cold retention; here OOD/NEG generation is always disabled, not an authorization for external scientific first-use. This remains author-synthetic science UNVERIFIED.",
+    "diagnosis": "If guarded improves unguarded but fails fixed strong, write pollution contributes but no competence. If no advantage, uncertain whether native key/value alignment or optimizer is bottleneck. No after-result retuning."
+  },
+  "authority": {
+    "create_only_additive_draft_files": true,
+    "no_original_source_edits": true,
+    "no_FORGE_or_runners": true,
+    "no_other_research_lanes": true,
+    "no_paid_APIs": true,
+    "no_scheduled_tasks": true,
+    "no_workflow_dispatch": true,
+    "no_merge_or_promotion": true,
+    "no_native_GPU_or_external_scientific_first_use": true
+  },
+  "status": {
+    "frozen": true,
+    "training_executed": false,
+    "OOD_generated": false,
+    "negative_generated": false,
+    "scientific_pass": false,
+    "mandatory_final_SHA_CI": "NOT_RUN"
+  }
+}
