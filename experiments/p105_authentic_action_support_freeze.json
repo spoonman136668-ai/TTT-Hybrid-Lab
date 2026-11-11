@@ -1,0 +1,101 @@
+{
+  "schema": "ttt-hybrid.p105-f3-support-feasibility-and-f6-design-preflight.v1",
+  "stage": "FROZEN_NON_EFFECTFUL_FEASIBILITY_ONLY_NOT_F6_FIRST_USE",
+  "exact_parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 224,
+    "sha": "4d5c49be278077fe3b0be80080d39128a153aa77",
+    "f5_dev_status": "DEV_FAIL_NATIVE_HYBRID_VS_TRAINED_SSM",
+    "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "f3_original_pr": 221,
+    "f3_exact_sha": "00b3f45f47660af4c1016c64b656160975982227",
+    "f3_original_artifact_id": 13878284321,
+    "f3_original_artifact_zip_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "f3_fit_capture_sha256": "b495d6c41fd54c6955fd83ead7569282146af45bc68b3a3dba2a63808e1d6f7b",
+    "f3_source_collector_blob": "f5deeed08624d4dbe878a58e6869c9c4bb062ae3",
+    "f3_legacy_adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "p104_frozen_dev_report_pr": 231,
+    "p104_exact_sha": "45a4783bb9f51cc3955773f68e6ae57758e8bbe1"
+  },
+  "observed_pre_freeze_data_classification": "RETROSPECTIVE_READONLY_CUSTODY_DIAGNOSTIC_NOT_PROSPECTIVE_SCIENCE",
+  "f3_fit_observation_only": {
+    "exact_worlds": 128,
+    "confirmed_transition_count": 2923,
+    "action_0": 1463,
+    "action_1": 1460,
+    "unique_exact_4D_state_before": 2923,
+    "duplicate_exact_state_count": 0,
+    "exact_state_with_both_actions_count": 0,
+    "capture_schema": "ttt-hybrid.p80mr.cartpole-do-capture.v1",
+    "action_domain": [
+      0,
+      1
+    ],
+    "historical_policy": "deterministic SHA256 hash of split/episode seed/step, never counterfactual access",
+    "logged_action_probability_field_present": false,
+    "source_terminal_count": 127,
+    "truncated_count": 1,
+    "no_nonfinite_observations": true,
+    "f3_cal_records_inspected_for_support_metrics": false
+  },
+  "authority": {
+    "scope": "Read-only historical FIT evidence + pure source-neutral offline eligibility guard; no actual external do/reset/fit/cal, no new source first-use",
+    "prohibited": [
+      "source simulator import",
+      "network or service calls",
+      "owner self-hosted workflow creation",
+      "external source first-use",
+      "replaying F1/F2/F3/F4/F5 attempts",
+      "OOD or NEGATIVE source birth",
+      "CAL retuning or CAL access",
+      "merging/promotion/deployment",
+      "original model/F3 source changes",
+      "new scheduler/runner/controller",
+      "paid API",
+      "ChatGPT File Library evidence"
+    ],
+    "new_owner_effect_execution_authorized": false,
+    "distinct_firstuse_requires_exact_separate_approval": true
+  },
+  "scientific_feasibility": {
+    "target": "True causal action choice in authentic 4D CartPoleWind LearningRegime.do",
+    "categorical_mismatch": "P104's eight 16D synthetic action candidates are not the external two-action CartPoleWind decision interface; actual 16D model key encodes pre-action 4D state and one-hot executed action",
+    "impossible_direct_replay_claim": "Legacy F3 FIT archive includes one factual effect per encountered state, no paired alternative effect at identical state and no propensities. Direct counterfactual scoring of another action selector from these traces must be refused.",
+    "permitted_inference": "A model-based estimate may be an exploratory assumption-dependent forecast, NOT a witnessed counterfactual effect or externally validated on-policy performance",
+    "safe_non_effectful_test": "Verify schema/custody, exact action domain, one outcome per action-state and missing overlap/propensity. Fail closed when asked to certify direct off-policy interventional improvement.",
+    "reference_context": "F5 native Hybrid trained on historical FIT/CAL was 3.95862 / 5.97127 / 5.47674 times worse than competent SSM; P104 geometric candidate did not beat A-optimal on anisotropic seeds."
+  },
+  "proposed_F6_future_protocol_only": {
+    "not_yet_authorized_or_executed": true,
+    "firstuse_requirement": "Freeze completely new FIT/CAL seeds and owner-specific one-shot source authority BEFORE any new reset/do; never reuse or replay F3 seeds/attempts",
+    "source_pinned": "CausalAILab/Causal-Gymnasium@c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "physics_task": "CartPoleWind LearningRegime.do, same four source blobs as F3",
+    "actual_action_pool": [
+      0,
+      1
+    ],
+    "fair_policy_set": [
+      "P101 maximum model-posterior-variance over two state-conditional action keys",
+      "A-optimal model-based experimental design over those same two keys with FIT-calibrated source covariance",
+      "FIT-selected strongest uniform-hash or balanced cyclic passive",
+      "qualified fully-trained SSM-based exploratory policy if separately defined and FIT-frozen"
+    ],
+    "fairness": "Equal action opportunities and actual selected-effect receipts per policy, each with independent same-seed simulator resets and explicit accounting for policy-dependent early termination; do not use unchosen effects or hidden maps; compare on common independently collected heldout evaluation episodes",
+    "independent_controls": "Fully train strong conventional predictors on each policy's same factual FIT data and compute; report matched source action, training, inference and end-to-end CPU costs, no oracle",
+    "outcomes": "Both actual external goal/reward consequences and held-out causal prediction MSE; preregister primary direction/threshold and seed repetition before data birth",
+    "future_cost": "Bound one-shot source resets/actions, world counts, max steps/wall and exact SHA/runner/WSL pins only after feasibility and operator firstuse approval",
+    "no_replay_on_unknown_effect": true,
+    "unread_external_ood_remains_sealed": true,
+    "no_SCIENTIFIC_PASS_from_ENG_or_DEV": true
+  },
+  "engineering": {
+    "test_only_static_synthetic_fixtures": true,
+    "code_must_have_no_import_of_external_simulator": true,
+    "source_report_contains_no_raw_F3_observations": true,
+    "candidate_final_full_G4_Windows_Ubuntu": true,
+    "final_native_G5_Windows_Ubuntu": true,
+    "final_pinned_G7_Ubuntu": true,
+    "no_new_workflows": true
+  },
+  "frozen_conclusion": "NO_GO_DIRECT_OFFLINE_P101_AOPT_INTERVENTION_COMPARISON_FROM_SPENT_F3; F6 future prospective on-policy trial not authorized or executed"
+}
