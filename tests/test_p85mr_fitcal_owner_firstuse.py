@@ -233,3 +233,73 @@ def test_source_dependencies_predeclared_and_not_installed_by_script():
     assert "env.do(policy)" in code  # The real function exists but was NOT called in these tests.
     assert "science_ood" not in code
     assert "subprocess.run(" in code  # Read-only git identity verification only.
+
+
+def test_durable_journal_orders_reset_intent_and_each_real_do_outcome():
+    events=[]
+    factory,objects=fake_factory(limit=3)
+    result=observed_episode(
+        factory,None,"fit",0,regime(),"journal-test",time.monotonic()+20,
+        journal=events.append)
+    assert len(result["transitions"])==3
+    assert [x["phase"] for x in events]==[
+        "episode_attempt","reset_attempt","reset_observed",
+        "action_attempt","action_observed",
+        "action_attempt","action_observed",
+        "action_attempt","action_observed"]
+    assert objects[0].reset_count==1
+    assert objects[0].do_count==3
+    assert objects[0].close_count==1
+    for index in (3,5,7):
+        assert events[index]["step"]==events[index+1]["step"]
+        assert events[index]["action"]==events[index+1]["action"]
+        assert events[index+1]["state_after"]==result["transitions"][(index-3)//2]["state_after"]
+
+
+def test_uncertain_effect_has_durable_attempt_without_false_observation_or_replay():
+    events=[]
+    factory,objects=fake_factory(behaviour="do_exception")
+    with pytest.raises(RuntimeError,match="unknown simulated outcome"):
+        observed_episode(factory,None,"fit",0,regime(),"journal-test",
+                         time.monotonic()+20,journal=events.append)
+    assert [entry["phase"] for entry in events]==[
+        "episode_attempt","reset_attempt","reset_observed","action_attempt"]
+    assert objects[0].do_count==1 and objects[0].close_count==1
+    assert not any(e["phase"]=="action_observed" for e in events)
+
+
+def test_failed_intent_fsync_aborts_before_any_do():
+    events=[]
+    factory,objects=fake_factory(limit=4)
+    def journal(event):
+        if event["phase"]=="action_attempt":
+            raise OSError("INTENT_DURABILITY_FAILED")
+        events.append(event)
+    with pytest.raises(OSError,match="INTENT_DURABILITY_FAILED"):
+        observed_episode(factory,None,"fit",0,regime(),"journal-test",
+                         time.monotonic()+20,journal=journal)
+    assert objects[0].reset_count==1
+    assert objects[0].do_count==0 and objects[0].close_count==1
+
+
+def test_failed_observed_fsync_aborts_without_replay():
+    events=[]
+    factory,objects=fake_factory(limit=4)
+    def journal(event):
+        if event["phase"]=="action_observed":
+            raise OSError("OUTCOME_DURABILITY_FAILED")
+        events.append(event)
+    with pytest.raises(OSError,match="OUTCOME_DURABILITY_FAILED"):
+        observed_episode(factory,None,"fit",0,regime(),"journal-test",
+                         time.monotonic()+20,journal=journal)
+    assert objects[0].reset_count==1
+    assert objects[0].do_count==1 and objects[0].close_count==1
+    assert events[-1]["phase"]=="action_attempt"
+
+
+def test_owner_execution_source_does_not_write_upstream_bytecode():
+    code=(EXPERIMENTS/"p85mr_fitcal_owner_firstuse.py").read_text()
+    assert "sys.dont_write_bytecode=True" in code
+    assert 'attempt/(cohort+".steps.ndjson")' in code
+    assert '"phase":"action_attempt"' in code
+    assert '"phase":"action_observed"' in code
