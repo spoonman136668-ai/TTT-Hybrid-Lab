@@ -116,7 +116,6 @@ def test_original_model_seeds_independent():
     assert p81.core_sha(p81.core(p81.CORE_SEEDS[0]))==hashes[0]
 
 
-
 def test_frozen_full_dev_diagnostic_reproduces_without_ood():
     receipt=p81.run()
     assert receipt['status']=='DEV_MECHANISTIC_DIAGNOSTIC_PASS_ONLY'
