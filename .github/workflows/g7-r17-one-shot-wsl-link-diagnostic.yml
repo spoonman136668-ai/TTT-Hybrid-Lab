@@ -1,0 +1,75 @@
+# G7-R17 is one MANUAL, guarded, private source-only diagnostic run.
+# This cannot run until independently protected main and qualified source acceptance.
+# No push/PR/schedule trigger, root, CUDA, training, package install or new runner.
+name: G7-R17 one-shot WSL host linker diagnostic
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ttt-hybrid-g7-r17-one-shot-link
+  cancel-in-progress: false
+
+jobs:
+  wsl-host-link:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/main' && github.ref_protected == true && github.event_name == 'workflow_dispatch' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 6
+    steps:
+      - name: Checkout only accepted protected-main source without credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+      - name: Admit exact runner and perform one unprivileged WSL C-link diagnosis
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+              $env:GITHUB_REF -cne 'refs/heads/main' -or
+              $env:GITHUB_REF_PROTECTED -cne 'true' -or
+              $env:GITHUB_EVENT_NAME -cne 'workflow_dispatch' -or
+              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+              $env:GITHUB_RUN_NUMBER -cne '1' -or
+              $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+              $env:RUNNER_OS -cne 'Windows' -or
+              $env:RUNNER_ARCH -cne 'X64' -or
+              $env:GITHUB_SHA -cnotmatch '^[a-f0-9]{40}$') {
+            throw 'G7_R17_OWNER_PROTECTED_MAIN_OR_RUNNER_DENIED'
+          }
+          $head = (& git -C $env:GITHUB_WORKSPACE rev-parse HEAD | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA) {
+            throw 'G7_R17_SOURCE_SHA_MISMATCH'
+          }
+          $dirty = (& git -C $env:GITHUB_WORKSPACE status --porcelain --untracked-files=all | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $dirty) {
+            throw 'G7_R17_DIRTY_SOURCE_REFUSED'
+          }
+          # Proven G7-R15/R16 WSL2 invocation, not a runner install or new owner.
+          $linuxRoot = (& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u "$env:GITHUB_WORKSPACE" | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or
+              $linuxRoot -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,220}$' -or
+              $linuxRoot.Contains('/../') -or $linuxRoot.Contains('//')) {
+            throw 'G7_R17_WSL_PROJECT_PATH_DENIED'
+          }
+          # Only fixed C-link/package diagnostics, no model/GPU/privileged commands.
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 80s /usr/bin/python3 -I -B "$linuxRoot/scripts/g7_r17_link_diagnostic.py" --expected-sha "$env:GITHUB_SHA" --receipt "$linuxRoot/local_runs/g7_r17_link_diagnostic.json"
+          if ($LASTEXITCODE -ne 0) {
+            throw 'G7_R17_LINK_DIAGNOSIS_NEGATIVE_OR_BLOCKED'
+          }
+          Write-Output 'G7_R17_HOST_LINK_DIAGNOSIS=PASS_NO_GPU'
+      - name: Retain only the sanitized private WSL diagnosis
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-g7-r17-link-${{ github.sha }}-${{ github.run_id }}
+          path: local_runs/g7_r17_link_diagnostic.json
+          if-no-files-found: warn
+          retention-days: 30
