@@ -1,0 +1,96 @@
+{
+  "schema": "ttt-hybrid.p96-diagonal-precision-dev-freeze.v1",
+  "purpose": "Falsify whether causal, confirmed-only per-action-dimension precision learning improves rank-four 16D action-effect adaptation over an exact strong W256 fast-memory baseline on stable and hidden-switch worlds, without an unacceptable memory/CPU cost.",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "sha": "f9712ebb3195f889d7c4187363ba80aa592c7ef9",
+    "pr": 217,
+    "p86_git_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+    "p94_git_blob": "378167499362173023b02a44e1b9ffb7a1eeba42",
+    "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "prior_negative": {
+    "p95_pr": 218,
+    "p95_candidate": "48d296e397c4fc314a452e9c6b38bf56867438d2",
+    "p95_verdict": "FAIL_quality_and_cost_no_promote"
+  },
+  "family_definitions": {
+    "A": "P86-like original isotropic dyadic integer actions, t=48 confirmed 16D action/effect events and final novel withheld query, half worlds hidden regime change after t=24; SHA256-hashed deterministic generator",
+    "B": "Same independent dyadic source and hidden shift, but coordinate j action integer a[j] is divided via integer // (2 ** (j % 4)) BEFORE both emitting action and computing causal_effect; no observational or oracle regime labels supplied to mechanism"
+  },
+  "seeds": {
+    "A_FIT": 960111,
+    "A_CAL": 960113,
+    "B_FIT": 960211,
+    "B_CAL": 960213,
+    "OOD_RESERVED": 960117,
+    "NEGATIVE_RESERVED": 960119
+  },
+  "worlds_per_family": {
+    "FIT": 256,
+    "CAL": 128
+  },
+  "source_policy": "All FIT/CAL source births strictly after this frozen protocol commit; distinct P95 consumed cohorts not reused; prohibit creating OOD/NEGATIVE during this gate; record platform source SHA256 after first generation but never alter the frozen protocol/thresholds.",
+  "episode": {
+    "observed_fact_count": 48,
+    "withheld_query_index": 48,
+    "width": 16,
+    "half_worlds_changed": true,
+    "switch_after_event": 24
+  },
+  "experimental": {
+    "memory": "W16x16 float32 online causal weights plus 16-feature diagonal precision float32 (272 learned persistent floats); optional int confirmed count disclosed",
+    "initialized": "W=0; feature energy c_j=0",
+    "recurrence": "For each confirmed (a,y), k=a/(||a||_2+epsilon) via torch.nn.functional.normalize; e=y-W@k; c=.99*c+k^2; g=k/sqrt(c+1e-4); g=g/(k*g).sum; W=.99*W + e outer g. Unconfirmed input must leave W and c bitwise unchanged. Query reads W@normalize(a) and never writes.",
+    "no_trainable_model_weights": true,
+    "training": "Only online confirmed action/consequence fitting; no offline model training or external first use."
+  },
+  "controls": [
+    "P86 W256 eta=1 decay=.99 exact",
+    "P86 W256 FIT-chosen 9-point eta[.5,1,1.5]×decay[.95,.99,1.0] conventional training-free controller selected by FIT only",
+    "W256 plus 16 inert allocated floats (272-float matched-capacity control)",
+    "zero predictor",
+    "wrong-credit rotated effects",
+    "source admission and missing/unconfirmed NaN negative",
+    "cold restoration bitwise check"
+  ],
+  "rules": {
+    "fixed_no_tuning": "Preconditioner formula, 1e-4 epsilon, eta=1, decay=.99 and all thresholds frozen before generating any source",
+    "baseline_selection": "Choose conventional eta/decay on FIT combined MSE separately per family only, evaluate on CAL unchanged",
+    "no_future_leak": true,
+    "no_regime_oracle": true,
+    "cross_platform_source_sha_required": true,
+    "no_first_use": true
+  },
+  "prospective_dev_acceptance": {
+    "all_two_families_required": true,
+    "A_combined_MSE_max_ratio_vs_best_FIT_selected_W256": 1.02,
+    "A_stable_MSE_max_ratio_vs_best_FIT_selected_W256": 1.05,
+    "B_combined_MSE_max_ratio_vs_best_FIT_selected_W256": 0.9,
+    "B_stable_MSE_max_ratio_vs_best_FIT_selected_W256": 0.95,
+    "B_changed_MSE_max_ratio_vs_best_FIT_selected_W256": 0.9,
+    "wrong_credit_mse_min_ratio_vs_correct": 1.05,
+    "whole_episode_median_CPU_ratio_max_vs_W256": 3,
+    "cold_restore_bitwise_required": true,
+    "evidence_level": "DEV only: even passing CAL is not an independent scientific pass"
+  },
+  "implementation_constraints": {
+    "additive_files_only": true,
+    "preserve_original_model": true,
+    "preserve_p86_p94": true,
+    "no_main_merge": true,
+    "no_gpu_execution": true,
+    "no_forge_changes": true,
+    "no_workflow_changes": true,
+    "no_runner_changes": true,
+    "no_scheduler_changes": true,
+    "no_paid_api": true,
+    "no_file_library_artifacts": true
+  },
+  "mandatory_final_regression": [
+    "G4 original full Windows+Ubuntu CPU",
+    "G5 pinned native TTT Windows+Ubuntu CPU",
+    "G7 pinned Mamba2 Ubuntu CPU"
+  ],
+  "evaluation": "Report all numerical metrics and platform timings in existing repo G4 artifact, including genuine negative outcomes; never reinterpret green engineering CI as scientific success."
+}
