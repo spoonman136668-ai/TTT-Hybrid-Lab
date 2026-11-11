@@ -4,7 +4,7 @@
   "original_code": "experiments/p81_readout_information_dev.py",
   "source_blob": "80f136a3507cf53434695c1d083cb774d40857e9",
   "tests": "tests/test_p81_readout_information_dev.py",
-  "tests_blob": "722bddc98df1db8b61ac5da0f48473334738dcfe",
+  "tests_blob": "ee7657a0199047cda3e5a5ce749cfb0217ce6a57",
   "frozen_protocol_commit": "e4498783e9d7025a9e1d365b2773521565cfe02a",
   "frozen_protocol_blob": "f4eda2b52fafcdcd1200eeb33c973aeec62e5306",
   "original_blobs": {
@@ -16,9 +16,9 @@
     "torch": "2.10.0+cpu",
     "CPU_threads": 1,
     "focused_tests": {
-      "passed": 10,
+      "passed": 11,
       "failed": 0,
-      "seconds": 1.12
+      "seconds": 1.87
     },
     "study_wall_seconds": 0.1409770220000155
   },
@@ -283,5 +283,6 @@
   "P75": "UNCHANGED",
   "merge": "NONE",
   "deployment": "NONE",
-  "interpretation": "Under exact frozen randomly initialized original reference model features and FIT-only ridge, 16D TTT projection alone preserves information, but frozen depth and additive context fusion are bottlenecks for a 16D linear readout. 32D separate content/context readout recovers information with extra features/parameters. Not a trained-original-hybrid improvement claim."
+  "interpretation": "Under exact frozen randomly initialized original reference model features and FIT-only ridge, 16D TTT projection alone preserves information, but frozen depth and additive context fusion are bottlenecks for a 16D linear readout. 32D separate content/context readout recovers information with extra features/parameters. Not a trained-original-hybrid improvement claim.",
+  "exact_source_and_tests_reproducible_locally": true
 }
