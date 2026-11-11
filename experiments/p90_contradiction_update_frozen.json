@@ -1,0 +1,56 @@
+{
+  "schema": "ttt-hybrid.p90-contradiction-conditioned-256-float-factual-update-frozen.v1",
+  "stage": "PROSPECTIVE_BEFORE_ANY_P90_FIT_VAL_DATA_OR_TRAINING",
+  "parent_pr": 211,
+  "parent_sha": "8087acf6f5c485295b97ccebec18f0b4d7b4355a",
+  "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+  "reference_source_git_blob": "008492665ee9090db5791963f2e2336ea283ee62",
+  "hypothesis": "A FIT-trained per-event contradiction-conditioned online 256-float fast-weight update predicts unseen 16D continuous action consequences and adapts to hidden causal shifts better than the CAL-locked fixed conventional 256-state update, a FIT-trained constant 2-parameter controller and an equally parameterized observation-norm gate.",
+  "seeds": {
+    "FIT": 900111,
+    "VAL": 900113,
+    "OOD_RESERVED": 900117,
+    "NEGATIVE_RESERVED": 900119,
+    "model": [
+      900201,
+      900203,
+      900207
+    ],
+    "sampler": 900299
+  },
+  "worlds": {
+    "FIT": 256,
+    "VAL": 128,
+    "OOD_RESERVED": 128,
+    "NEGATIVE_RESERVED": 64
+  },
+  "generation": "Use P86 pure SHA256 indexed integer/dyadic rank4 causal map in fresh P90 seed namespace. Each world 49 new independently selected continuous actions (first48 actually executed observed outcomes, withheld final49 effect), hidden switch to second independent causal map after event24 for exactly 50% of worlds. Source FIT and VAL SHA256 must match exact bytes on Ubuntu and Windows. No OOD/negative cohort generated.",
+  "state": "Per-world W[16,16] 256 float32 persistent state only. Read W@normalized(action) before each factual write; for first48 observed actual actions, residual = observed_effect - prediction; no future/unknown effect written. Global FIT-trained scalar weights separate from per-world fast state; original HybridPilot and FORGE unchanged.",
+  "frozen_arms": {
+    "fixed": "Original P86 CAL-locked eta1, decay.99 W update; zero trained parameters.",
+    "constant": "2 trained global scalar logits, eta=2*sigmoid(logit_eta); decay=1-.2*sigmoid(logit_forget), global across time/worlds.",
+    "observation": "4 global trained logits; eta=2*sigmoid(b_eta+s_eta*f), decay=1-.2*sigmoid(b_forget+s_forget*f); f=RMS(observed_effect)/(RMS(observed_effect)+.1). Matched to contradiction params/steps.",
+    "contradiction": "Same 4 trainable logits and update, f=RMS(observed_effect-prediction)/(RMS(observed_effect-prediction)+.1); use neither oracle switch timing nor future outcomes."
+  },
+  "training": {
+    "steps": 80,
+    "batch": 16,
+    "validate_every": 10,
+    "AdamW_learning_rate": 0.05,
+    "weight_decay": 0,
+    "grad_clip": 1,
+    "CPU_threads": 1,
+    "total_cpu_seconds_budget": 150,
+    "sampler_seed": 900299,
+    "initialization": "Within each seed, identical logit biases for constant/observation/contradiction; slopes initially 0 so all start same effective eta/decay. Independent original seed on each of three model runs. Same FIT batch indices per arm.",
+    "objective": "FIT mean MSE at prequential queries t32..48, supervised effect only; selected checkpoint by VAL FINAL query MSE, reports stable/changed/late MSE, per-seed 8-point trajectory. No retrospective tuning."
+  },
+  "controls": "Source byte sha and original P86 blob; exact W256 fixed parity with P86 CAL-locked rule; full fixed baseline VAL stable and changed each <=.8x zero; bitwise cold restore; VAL-only within-history wrong-credit shuffled historical effects must increase W256 final MSE >=1.5x, >=.01. All models finite and no extra per-world state. If any controls fail => STOP.",
+  "frozen_acceptance": "All 3 FIT-trained constant arms must have final VAL <=.90x zero, best selected step<80 and final 2 checkpoints within 5% of best; else CONVENTIONAL_NOT_QUALIFIED. For each of 3 model seeds contradiction VAL FINAL <=.90x fixed P86, <=.90x trained constant, <=.95x equal-parameter observed-norm, changed<=.90x fixed changed, stable<=1.10x fixed stable, best selected step<80, last2<=1.05x best. All 3 required; otherwise DEV_FAIL. No OOD/negative source even on pass.",
+  "scientific_boundary": "Author synthetic DEV only. 256 float persistent fast state vs global trained controller parameters, no whole-process FLOP parity or native Hybrid model training, no authentic physical actions, external first use, cold unfamiliar transfer, RSI, or SCIENTIFIC_PASS. Separate P84-MR owns CausalGym.",
+  "authority": "Additive draft PR and bounded offline synthetic CPU allowed. No original model, FORGE, main, P84-MR, runner, scheduler, queue, merge, GPU or paid API mutations.",
+  "frozen": true,
+  "source_created": false,
+  "OOD_generated": false,
+  "scientific_pass": false
+}
