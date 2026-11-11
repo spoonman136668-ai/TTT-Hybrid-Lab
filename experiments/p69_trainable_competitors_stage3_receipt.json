@@ -1,0 +1,104 @@
+{
+  "schema": "ttt-hybrid.p69-trainable-competitor-stage3-engineering-receipt.v1",
+  "classification": "LOCAL_ENGINEERING_ONLY_NOT_MODEL_COMPETENCY_OR_SCIENTIFIC_FIRST_USE",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "pr": 177,
+  "frozen_protocol": {
+    "commit": "02c88c4f58579fa0fa3bdeda3236e4589b04bc2c",
+    "blob": "0ac933ed1af921fecf0746f7f78109e9564bff82"
+  },
+  "baseline_recipe": {
+    "commit": "b74fe1a7f06b93d27a3d826b2ecd6ba102507b7e",
+    "blob": "11904a09e176fec2b7866dd93038ef54967b7169",
+    "stage": "COMMITTED_BEFORE_COMPETITOR_IMPLEMENTATION"
+  },
+  "source": {
+    "path": "experiments/p69_trainable_competitors.py",
+    "git_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa",
+    "sha256": "2f23058f552fe28566be7de2aceeae6bfd25a1e96684b846339204932dbd7feb"
+  },
+  "tests": {
+    "path": "tests/test_p69_trainable_competitors.py",
+    "git_blob": "7eee12ca8b6333939b4b5546547b66a38f64500d",
+    "sha256": "a816a5981358e604569c865816a23b0261a541fd5a44115ef02401a76364f9cd"
+  },
+  "models": {
+    "learned_gate": {
+      "static_params": 4,
+      "persistent_state_floats_per_world": 256,
+      "seed_count": 3
+    },
+    "gru": {
+      "static_params": 227856,
+      "persistent_state_floats_per_world": 256,
+      "seed_count": 3
+    },
+    "ssm": {
+      "static_params": 13328,
+      "persistent_state_floats_per_world": 256,
+      "seed_count": 3
+    },
+    "training_recipe": {
+      "source": "FIT/VAL only; not executed",
+      "model_seeds": [
+        981201,
+        981203,
+        981207
+      ],
+      "max_updates_per_arm": 600,
+      "batch_size": 32,
+      "training_index_seed": 981299,
+      "val_checkpoint_interval": 50,
+      "grad_clip_norm": 1
+    }
+  },
+  "local_engineering": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "pytest": "9.0.2",
+    "new_focused_tests": "PASS_19_OF_19",
+    "new_test_wall_s": 2.98,
+    "combined_existing_ring_and_new_focused_tests": "PASS_26_OF_26",
+    "combined_wall_s": 3.16,
+    "source_and_tests_git_blob_match_local_exact": true,
+    "tests_cover": [
+      "256-float persistent state for all three arms",
+      "independent model initialization seeds",
+      "finite nonzero gradients",
+      "historical factual-only inputs and rejection of future-query/oracle fields",
+      "reference exact residual TTT equation",
+      "bitwise gate cold restore",
+      "GRU/SSM chunk-restore numerical equality",
+      "frozen training-index deterministic seed and bounded updates",
+      "competency false until validation evidence",
+      "no training or OOD side effects on import",
+      "one toy optimizer step per trainable arm"
+    ],
+    "first_attempt_local_combined_tests": "COLLECTION_ERROR_ONLY because ring test was invoked outside repository-style tests/experiments directory; resolved by copying unchanged exact source/test blobs into local repo-style directory and rerunning; no model test failure",
+    "source_facts_author_generated_toy_only": true,
+    "p69_fit_training": "NOT_RUN",
+    "p69_val_model_eligibility": "NOT_RUN",
+    "p69_ood_generated": "NOT_RUN",
+    "p69_ood_scored": "NOT_RUN",
+    "p68_consumed_source_reused": false,
+    "full_original_windows_linux_regression": "UNVERIFIED",
+    "cpu_gpu_build": "UNVERIFIED",
+    "model_convergence": "UNVERIFIED",
+    "full_compute_and_peak_ram_parity": "UNVERIFIED",
+    "scientific_pass": false,
+    "engineering_acceptance": "FOCUSED_PASS_ONLY"
+  },
+  "guardrails": {
+    "source_or_first_use_authority": "PROJECT_OWNER_SEPARATELY_AUTHORIZED_ONLY",
+    "main_unchanged": true,
+    "original_hybrid_unchanged": true,
+    "no_scheduled_task": true,
+    "no_workflow_dispatch": true,
+    "no_runner_allocation": true,
+    "no_accepted_ref_promotion": true,
+    "no_merge": true,
+    "no_forge_integration": true,
+    "no_paid_api": true
+  },
+  "next": "Full final-head focused/source tests on project runner where permitted, original Windows/Linux regression and trained FIT/VAL model competency only through separately authorized owner; no P69 held-out scoring before qualification."
+}

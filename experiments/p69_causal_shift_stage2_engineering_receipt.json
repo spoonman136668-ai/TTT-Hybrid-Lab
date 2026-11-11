@@ -1,0 +1,85 @@
+{
+  "schema": "ttt-hybrid.p69-causal-shift-source-stage2-local-engineering-receipt.v1",
+  "classification": "LOCAL_AUTHOR_CPU_ENGINEERING_NOT_SCIENTIFIC_FIRST_USE",
+  "freeze": {
+    "commit": "02c88c4f58579fa0fa3bdeda3236e4589b04bc2c",
+    "blob": "0ac933ed1af921fecf0746f7f78109e9564bff82",
+    "path": "experiments/p69_causal_shift_prospective_dev_freeze.json"
+  },
+  "implementation": {
+    "source": "experiments/p69_causal_shift_source.py",
+    "source_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "source_sha256": "d3b6cc458b4d9d2cf2abcb034729e15687356f8d891a95343d1f9ee5b1ab00f3",
+    "tests": "tests/test_p69_causal_shift_source.py",
+    "tests_blob": "6856aa98113af883431969899f0dd3d234fcc2ba",
+    "tests_sha256": "8bf91b1aab706a93329377f765d7989973da60576d742e05cdc0cfc70cd8697f",
+    "ring_comparator_blob": "bf12bd3525230ecf58ecc43837f67fdf23578f35",
+    "source_generation": {
+      "per_world_seed": "sha256(ttt-hybrid/p69/frozen-v1/SPLIT_SEED/WORLD_INDEX) first 128 bits",
+      "fixed_numeric_shape": "96 factual executed 16D actions and 96 measured 16D effects; 8 target causal roles; 4 changed roles; query after all facts",
+      "independent_action_basis": "scalar deterministic Gram-Schmidt orthonormalization",
+      "hidden_change_point": "uniform integer 40..56",
+      "factual_only_view": [
+        "action",
+        "effect"
+      ],
+      "future_query_and_private_labels_hidden_from_writer": true,
+      "no_generated_ood_in_this_gate": true
+    }
+  },
+  "validation": {
+    "environment": "local isolated Linux; Python 3.13.5, PyTorch 2.10.0+cpu, pytest 9.0.2; single sequential test process",
+    "command": "python -m pytest -q tests/test_p69_ring_cache.py tests/test_p69_causal_shift_source.py",
+    "focused_results": "PASS_16_OF_16",
+    "latest_wall_seconds": 2.61,
+    "local_source_and_test_bytes_match_git_blobs": true,
+    "fit": {
+      "worlds": 512,
+      "aggregate_world_digest_sha256": "afe51d73efc451f3db3ea4f30cf268e46e0aa33b1460dea449e6342ec81848fd",
+      "source_balance": {
+        "quartile_max_deviation": 0.00439453125,
+        "index_only_target_balanced_accuracy": 0.50927734375,
+        "index_only_changed_role_balanced_accuracy_conditioned_on_target": 0.5047200471162796,
+        "future_query_exact_duplicate": false,
+        "query_changed_fraction": 0.494140625
+      },
+      "registered_index_leakage_and_query_duplicate_gates": "PASS"
+    },
+    "val": {
+      "worlds": 192,
+      "aggregate_world_digest_sha256": "91b9e357f7f07ee0e1fc6e5c39395a6851998f54e86a39ac91e55e1e11d714dc",
+      "source_balance": {
+        "quartile_max_deviation": 0.0036892294883728027,
+        "index_only_target_balanced_accuracy": 0.5006510317325592,
+        "index_only_changed_role_balanced_accuracy_conditioned_on_target": 0.5147569477558136,
+        "future_query_exact_duplicate": false,
+        "query_changed_fraction": 0.5520833134651184
+      },
+      "registered_index_leakage_and_query_duplicate_gates": "PASS"
+    },
+    "nuance": "A previous unconditional changed-role index audit always predicted negative because distractors dominated; corrected before this receipt by conditioning on target events. Neither change altered generated worlds; all holdout cohorts remain ungenerated. The cohort-query 50/50 target is random sampling, not forced exact empirical balance. Aggregate world digest is sha256 of concatenated binary 32-byte per-world digests in index order.",
+    "P68_ood_source_reused": false,
+    "p69_ood_cohorts_generated": false,
+    "source_split_science_data_scored": false,
+    "model_fit_val_training": "NOT_RUN",
+    "model_hyperparameter_selection": "NOT_RUN",
+    "p69_ood_outcome_scoring": "NOT_RUN",
+    "independently_authenticated_physical_first_use": "NOT_RUN",
+    "final_head_full_linux_windows_original_regression": "UNVERIFIED",
+    "cpu_gpu_original_hybrid_build": "UNVERIFIED",
+    "engineering_final_acceptance": "UNVERIFIED",
+    "scientific_pass": false
+  },
+  "authority": {
+    "dev_implementation_only": true,
+    "project_owner_scientific_first_use_not_granted_by_this_commit": true,
+    "no_new_runner": true,
+    "no_workflow_dispatch": true,
+    "no_scheduled_task": true,
+    "no_forge_integration": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "no_paid_api": true
+  },
+  "next_gate": "Build frozen GRU/SSM and equal-state baseline competency preflight, then exact-source full regression before any P69 OOD scoring; independent scientific first-use requires separate project-owned admission."
+}
