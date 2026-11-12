@@ -1,0 +1,108 @@
+{
+  "schema": "ttt-hybrid.f8r2-retrospective-f7-linear-baseline.v1",
+  "classification": "RETROSPECTIVE_ALREADY_SPENT_F7_FIT_DEVELOPMENT_ONLY",
+  "freeze_commit": "4c4b8923ef80a35d15eae26110e9f6afe672ae70",
+  "source_custody": {
+    "run_id": 43195349254,
+    "owner_f7_source_artifact_id": 13933156808,
+    "source_zip_sha256": "5480c0a8d2e518f9c0c9e3e011e3dfa9d3019fb720d10641c02bb36b5023f0ef",
+    "capture_sha256": "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4",
+    "owner_training_run_id": 43198869594,
+    "trained_artifact_id": 13933684690,
+    "trained_zip_sha256": "9ef1eb672f965a88bb6098e1fbbc44490d42c8440a69abe2a840a19a1d160d38",
+    "already_consumed_worlds": 128,
+    "observed_effects": 12288,
+    "new_external_effects": 0
+  },
+  "split": {
+    "train_worlds": 80,
+    "lambda_fitdev_worlds": 16,
+    "old_F7_holdout_worlds": 32,
+    "scored_events_per_world": 95,
+    "linear_train_events": 7600,
+    "old_holdout_events": 3040,
+    "holdout_already_consumed_by_F7": true
+  },
+  "metric": "original P80 four tanh-normalized physical delta MSE (no reward or padding); mean over scored t=2..96 per episode, then equal-world mean",
+  "frozen_fit": {
+    "features": "P80 current normalized [1, tanh(state_before/scales), one-hot actually executed action]; forbidden current effect and future labels",
+    "ridge_grid": [
+      0,
+      1e-10,
+      1e-8,
+      0.000001,
+      0.0001,
+      0.01,
+      1
+    ],
+    "selection": "minimum FITdev error; after selection refit first96; evaluate old32 once",
+    "solver": "float64 world-weighted Gram ridge; lambda0 SVD least squares on Gram with rcond1e-12",
+    "negative": "relabel chosen actions in train only using seed1823999, physical targets unchanged"
+  },
+  "results": {
+    "state5": {
+      "parameters": 20,
+      "lambda": 0,
+      "spent_F7_holdout_MSE": 0.0016248871761404614,
+      "coeff_sha256": "7cf9ff2da04925a576dc0f76d9d9b55a516a8c8401a5adea9bd30c939a15814a"
+    },
+    "action3": {
+      "parameters": 12,
+      "lambda": 0,
+      "spent_F7_holdout_MSE": 0.00009308954747304712,
+      "coeff_sha256": "70031400559746b230d0092d4aa840ad368df0704f6a900f0c3ab0f4adf1288f"
+    },
+    "linear7": {
+      "parameters": 28,
+      "lambda": 0,
+      "spent_F7_holdout_MSE": 0.0000027510204527871957,
+      "coeff_sha256": "9e240c15670abc4b713e05ad10ad10e1b63af44f6c69c4958d15c40a73c6db23"
+    },
+    "quadratic35": {
+      "parameters": 140,
+      "lambda": 1e-8,
+      "spent_F7_holdout_MSE": 0.0000027441133476852674,
+      "coeff_sha256": "053f574d94d76654d0cb22114aab7b5986eecad66108f2c96514d6ef73137976"
+    },
+    "original_best_SSM": {
+      "parameters": 13328,
+      "model_seed": 985207,
+      "spent_F7_holdout_MSE": 0.0000033410481,
+      "source": "original F7 run #43198869594 on same spent FIT-heldout world32"
+    },
+    "original_native_Hybrid": {
+      "parameters": 5297,
+      "mean_three_seed_holdout_MSE": 0.0000083490254
+    },
+    "zero_control": {
+      "old_F7_holdout_MSE": 0.0029312397237876106
+    },
+    "wrong_credit": {
+      "training_action_label_shuffle_seed": 1823999,
+      "heldout_MSE": 0.001636802418392792,
+      "ratio_wrong_to_correct_linear7": 594.980097924923,
+      "physical_effect_labels_left_unchanged": true,
+      "true_counterfactuals_not_observed": true
+    }
+  },
+  "decisions": {
+    "primary_linear_or_quadratic_10pct_better_than_strongest_prior_SSM": true,
+    "linear7_vs_best_SSM_ratio": 0.8234004331716134,
+    "linear7_improvement_vs_SSM_pct": 17.659956682838654,
+    "quadratic_vs_best_SSM_ratio": 0.8213330863704917,
+    "action_label_predictive_vs_state_only": true,
+    "scientific_pass": false
+  },
+  "local_reference": {
+    "python": "3.13.5",
+    "numpy": "host environment",
+    "single_core": "OPENBLAS_NUM_THREADS=1",
+    "analysis_wall_seconds": 0.26911614700111386,
+    "peak_RSS_MiB": 114.40234375,
+    "classification": "local exact-archive NumPy baseline, separate from committed exact CLI CI"
+  },
+  "engineering_boundary": "New code has source-neutral tests; GitHub CI does not have archived F7 artifact ZIPs. The committed evaluator exact archive end-to-end is unverified unless separately executed with same ZIPs.",
+  "science_boundary": "F7 FIT32 holdout already consumed to select original F7 models, no unseen test; source and policy easy (all 128 worlds 96-step survival, reward1). Conventional SSM had a different 800-update training pipeline; compare total fitting costs and static parameters before any efficiency superiority claim.",
+  "deployment": "NONE",
+  "new_firstuse": false
+}
