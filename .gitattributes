@@ -1,0 +1,3 @@
+# Preserve original source bytes for hash-gated research across Windows and Linux.
+# This prevents CRLF checkout conversion; it does not alter the source blob.
+experiments/p69_causal_shift_source.py -text
