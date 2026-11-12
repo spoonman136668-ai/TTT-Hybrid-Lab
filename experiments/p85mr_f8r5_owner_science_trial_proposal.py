@@ -77,6 +77,58 @@ def session_seed(partition: str, index: int, *, profile_index=None, policy=None)
     return worlds["seed_base"] + index
 
 
+
+F8R14_FREEZE = Path(__file__).with_name("p85mr_f8r14_action_rng_freeze.json")
+F8R14_FREEZE_BLOB = "0b1bf0b35b044bc69a1548269ad6f319c40d9546"
+F8R14_DOMAIN = "ttt-hybrid:f8r14:fixed_seed_random:action:v1"
+
+
+def fixed_seed_random_contract() -> dict:
+    """Immutable source-neutral action-RNG contract; no owner execution grant."""
+    raw = F8R14_FREEZE.read_bytes()
+    actual = hashlib.sha1(
+        b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+    ).hexdigest()
+    if actual != F8R14_FREEZE_BLOB:
+        raise ValueError("F8R14_FROZEN_ACTION_RNG_DRIFT")
+    f = json.loads(raw)
+    scope = f["scope"]
+    authority = f["authority"]
+    if (f["schema"] != "ttt-hybrid.f8r14-calibration-action-rng-isolation.v1"
+        or f["stage"] != "FROZEN_BEFORE_R14_IMPLEMENTATION_AND_TEST"
+        or f["classification"] != "SOURCE_NEUTRAL_DEV_ONLY"
+        or f["parent"]["parent_head_sha"] != "208931e399020f7176e3c09d1552ccfe2a35b8ff"
+        or f["parent"]["original_f8r5_science_proposal_blob"] != FREEZE_BLOB
+        or scope["policy"] != "fixed_seed_random"
+        or scope["action_domain"] != F8R14_DOMAIN
+        or scope["calibration_profile_count"] != 3
+        or scope["episodes_per_profile"] != 8
+        or scope["max_step_count"] != 96
+        or scope["environment_rng_independent"] is not True
+        or scope["prefix_stateless"] is not True
+        or scope["call_order_independent"] is not True
+        or any(value is not False for value in authority.values())):
+        raise ValueError("F8R14_ACTION_RNG_SCOPE_OR_OWNER_DRIFT")
+    return f
+
+
+def fixed_seed_random_action(profile_index: int, episode_index: int,
+                             step_index: int) -> int:
+    """Pure, stateless proposed calibration action; never reads simulator RNG.
+
+    Index is ZERO-BASED and is the actual factual selected-action step.
+    Calling this for a hypothetical action does not reveal its outcome.
+    """
+    fixed_seed_random_contract()
+    if type(step_index) is not int or not 0 <= step_index < 96:
+        raise ValueError("F8R14_UNREGISTERED_ACTION_STEP")
+    seed = session_seed("difficulty_calibration", episode_index,
+                        profile_index=profile_index, policy="fixed_seed_random")
+    message = (F8R14_DOMAIN.encode("ascii") + b"\0"
+               + seed.to_bytes(8, "big") + step_index.to_bytes(2, "big"))
+    return hashlib.sha256(message).digest()[0] & 1
+
+
 def proposed_seed_receipt():
     f = locked()
     calibrated = [

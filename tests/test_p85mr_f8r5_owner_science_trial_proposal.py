@@ -134,3 +134,49 @@ def test_module_has_no_original_source_or_owner_execution_path():
                       "torch.load(", "requests.get(", "urlopen(",
                       "start_task(", "optimizer.step("):
         assert forbidden not in source
+
+
+
+def test_f8r14_random_action_contract_is_frozen_and_no_firstuse():
+    contract = r5.fixed_seed_random_contract()
+    assert contract["classification"] == "SOURCE_NEUTRAL_DEV_ONLY"
+    assert contract["scope"]["environment_rng_independent"] is True
+    assert contract["scope"]["unpaired_calibration_world_seeds"] is True
+    assert contract["authority"]["owner_firstuse"] is False
+    assert contract["authority"]["scientific_pass"] is False
+    assert r5.proposed_seed_receipt()["new_effects_executed"] == 0
+
+
+def test_f8r14_stateless_random_action_vectors_and_scope():
+    for case in r5.fixed_seed_random_contract()["golden_test_vectors"]:
+        actual = r5.fixed_seed_random_action(
+            case["profile_index"], case["episode_index"], case["step_index"])
+        assert type(actual) is int and actual == case["expected_action"]
+    sequences = {}
+    for profile in range(3):
+        for episode in range(8):
+            sequence = tuple(r5.fixed_seed_random_action(profile, episode, step)
+                             for step in range(96))
+            assert set(sequence) == {0, 1}
+            sequences[(profile, episode)] = sequence
+    assert len(sequences) == 24
+    assert len(set(sequences.values())) == 24
+    for (profile, episode), sequence in sequences.items():
+        assert sequence == tuple(
+            r5.fixed_seed_random_action(profile, episode, step)
+            for step in reversed(range(96)))[::-1]
+    for profile, episode, step in (
+        (0, 0, -1), (0, 0, 96), (0, 0, True),
+        (3, 0, 0), (0, 8, 0), (True, 0, 0),
+        (0, False, 0)):
+        with pytest.raises(ValueError, match="F8R"):
+            r5.fixed_seed_random_action(profile, episode, step)
+
+
+def test_f8r14_action_helper_does_not_touch_environment_or_firstuse():
+    helper = inspect.getsource(r5.fixed_seed_random_action)
+    for forbidden in ("np_random", "env.action(", "env.do(",
+                      "env.reset(", "causal_gym", "random.seed(",
+                      "ctf_do(", "GITHUB_TOKEN", "workflow_dispatch("):
+        assert forbidden not in helper
+    assert r5.fixed_seed_random_contract()["authority"]["external_source_effects"] is False
