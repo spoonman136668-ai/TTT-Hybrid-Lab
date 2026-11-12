@@ -11,7 +11,7 @@
     "r20_freeze_git_blob": "8a181c6fd71c9dc6d4c4d640396d19920eb74175",
     "r19_source_git_blob": "5f4418436f592672d5acf1e1444e15e561a77755",
     "baseline_source_git_blob": "evidence_read_at_fixed_SHA_before_implementation",
-    "r21_repro_trace_code_sha": "verify_before_code"
+    "r21_repro_trace_code_sha": "6a6f801e83798c21e625325eee2da3f817e326fa"
   },
   "hypothesis": "Under identical factual FIT histories and same return-focused training objective, does the native Hybrid yield a reliable improvement in model-selected causal A-action after independently varying and longer B observations than trained GRU256, SSM256 and MLP7?",
   "science_boundary": "Development only; does not use original CausalGym first-use; fixed budget not convergence proof, unequal architecture sizes, and synthetic law not independent source science",
