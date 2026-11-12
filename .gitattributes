@@ -1,0 +1,3 @@
+# Preserve the exact frozen P69 generator blob across Windows/Linux checkouts.
+# Disabling text conversion does not alter the committed source bytes.
+experiments/p69_causal_shift_source.py -text

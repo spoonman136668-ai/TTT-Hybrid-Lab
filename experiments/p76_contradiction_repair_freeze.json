@@ -1,0 +1,124 @@
+{
+  "schema": "ttt-hybrid.p76-contradiction-memory-repair-dev-prereg.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_P76_SOURCE_BIRTH_OR_MODEL_IMPLEMENTATION",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "base_ref": {
+    "p75_pr": 184,
+    "head": "85eab928e719aa31224e30588e4328c09c9382da",
+    "p69_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b"
+  },
+  "hypothesis": "An explicitly contradiction-aware trainable factual fast-weight write gate will adapt faster after hidden causal interventions while retaining stable action-effect relationships, using no more than the fixed all-write 256-float fast-state baseline.",
+  "null": "No reproducible changed-role MSE improvement over the strongest eligible fixed method without unacceptable stable-role degradation.",
+  "data": {
+    "generator": "Exact frozen P69 nonstationary synthetic causal-shift generation logic, source code immutable; P76 split seeds and namespace disjoint from P69 P70 P75.",
+    "seeds": {
+      "fit": 976101,
+      "val": 976103,
+      "ood_dev_0": 976107,
+      "ood_dev_1": 976109,
+      "ood_dev_2": 976111,
+      "negative": 976113,
+      "model": [
+        976201,
+        976203,
+        976207
+      ],
+      "sample": 976299,
+      "bootstrap": 976401,
+      "wrong_credit": [
+        976221,
+        976223,
+        976227
+      ]
+    },
+    "sizes": {
+      "fit": 512,
+      "val": 192,
+      "ood_dev_0": 192,
+      "ood_dev_1": 192,
+      "ood_dev_2": 192,
+      "negative": 96
+    },
+    "inputs": "Only historical actually executed unit-normalized action 16D and actually observed effect 16D; query action provided only after writes and final consequence exclusively as scoring/training target.",
+    "private_audits": "Role identity, hidden change-point, changed vs stable query are evaluator labels for stratified metrics, never model inputs.",
+    "sealed_ood": "OOD cohorts inaccessible from development source selector and not generated/scored until separately project-owned admission; P68/P70 consumed OOD and P69/P75 FIT/VAL and P75 OOD sources not used.",
+    "frozen_disjointness": "Hash ordered world fields, disjoint FIT/VAL source seed namespace, no query duplicate, index-only shortcut <=0.55, target quartile imbalance <=.05; seed changes prohibited after source birth."
+  },
+  "state_budget": {
+    "fast_memory": "For every arm W is 16x16 = exactly 256 persistent float scalars per world, no hidden cursor, replayed history or extra per-world gradient state.",
+    "candidate_trainable_parameters": 5,
+    "comparator_trainable_parameters": 0,
+    "process_compute": "Measure total training/eval process wall, peak RAM, parameter counts and realized write operations separately; no equal-compute claim from 256-state parity alone."
+  },
+  "frozen_arms": [
+    {
+      "id": "all_write_eta_0.5",
+      "type": "fixed",
+      "mechanism": "W+=0.5*(y-Wa) outer a",
+      "state_floats": 256
+    },
+    {
+      "id": "all_write_eta_1.0",
+      "type": "fixed",
+      "mechanism": "W+=1.0*(y-Wa) outer a",
+      "state_floats": 256
+    },
+    {
+      "id": "fixed_contradiction_repair",
+      "type": "fixed",
+      "mechanism": "W+=(0.5 + 0.5 * I(cos(Wa,y)<0 && ||Wa||/ (||y||+1e-6)>0.30))*(y-Wa) outer a",
+      "state_floats": 256
+    },
+    {
+      "id": "learned_contradiction_repair",
+      "type": "learned",
+      "mechanism": "W+=sigmoid(theta dot [1, log(MSE(y-Wa)+1e-6), log(mean((Wa)^2)+1e-6), cosine(Wa,y), ReLU(-cosine(Wa,y))*clamp(||Wa||/(||y||+1e-6),0,1)])*(y-Wa) outer a",
+      "state_floats": 256,
+      "theta_parameters": 5,
+      "initialization": "theta_i uniform(-0.05,0.05) with seeded CPU generator for each seed, independent per seed"
+    }
+  ],
+  "training": {
+    "model_seeds": [
+      976201,
+      976203,
+      976207
+    ],
+    "samples_seed": 976299,
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "batch_size": 32,
+    "updates": 240,
+    "validation_every": 40,
+    "checkpoint_selection": "min total validation query MSE; no role-label-weighted training, select solely on total validation error",
+    "initialization": "seeded independent theta vectors; identical FIT indices across seeds",
+    "early_stop": "No premature nonconvergence claims; all 240 updates required unless nonfinite, custody or resource stop.",
+    "resource_budget": {
+      "max_cpu_seconds": 3600,
+      "threads": 1,
+      "max_ram_gib": 3
+    },
+    "validation_competence": "Every learned seed total VAL MSE <=0.75*zero reference, and finite complete 240-update fit, before any OOD scoring.",
+    "validation_signal": "Against the best fixed control selected by total VAL MSE, changed-role VAL MSE improvement >=15% in each of three seeds, stable-role VAL MSE <=1.05*best_fixed_stable_mse. Any failure means strict P76 VAL FAIL; no OOD scoring.",
+    "negative_controls": "Exactly matched all-write and fast-write stream and error, wrong-action-credit must make >=1.2x learned gate MSE using an independent locked action permutation, random gate matched to learned FIT write rate only; local negative engineering tests before scoring."
+  },
+  "science_gate": {
+    "development_ood": "After FIT/VAL competency, source integrity, all negative controls, exact-source full original Linux/Windows regression and project-owned separate authority, 3 new independent authored OOD-DEV cohorts, candidate improvement >=10% against strongest fixed eligible baseline on each of 3 seeds x3 cohorts, and stable-role error <=1.05 baseline, positive paired 5000-world-bootstrap 95% lower bound.",
+    "independent_science": "No SCIENTIFIC_PASS from authored synthetic data alone. Requires qualified independent factual action-consequence first use, separately fully-trained conventional controls with matched actions/information and compute, cold retention and novel transfer.",
+    "failures": "Preserve all negative and nonconvergent outputs; do not tune thresholds based on consumed holdout. Any missing whole-platform regression or source admission prevents research promotion."
+  },
+  "engineering": {
+    "pre_source": "Freeze this file before new implementation/source code; append no post-result threshold changes to frozen protocol.",
+    "focused_tests": "State budget, nonfinite/malformed/future-label rejection, read before write, no privileged labels, cold restore bitwise, definite contradiction response versus no contradiction, deterministic init, independent model seeds, finite gradients and negative action-credit.",
+    "original_ci": "Mandatory exact-final-SHA Windows/Ubuntu full original G4/G5/G7 and build only via approved native route; 0-step GitHub-hosted jobs are INFRA UNVERIFIED.",
+    "no_manual_runner_dispatch": true,
+    "no_scheduled_tasks": true,
+    "no_forge_changes": true,
+    "no_main_changes": true,
+    "no_merge": true,
+    "no_paid_api": true,
+    "no_deployment": true
+  }
+}
