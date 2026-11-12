@@ -70,10 +70,7 @@ def freeze():
         or f["fixture_contract"]["worlds_per_arm"]!=48
         or f["fixture_contract"]["max_steps"]!=MAX_STEPS
         or f["fixture_contract"]["minimum_frozen_SSM_updates"]!=UPDATES_MIN
-        or f["fixture_contract"]["maximum_frozen_SSM_updates"]!=UPDATES_MAX
-        or f["science"]["owner_firstuse_authorized"] if False else False):
-        # The final conditional deliberately avoids relying on a missing
-        # optional field; all authoritative no-first-use booleans below.
+        or f["fixture_contract"]["maximum_frozen_SSM_updates"]!=UPDATES_MAX):
         raise ValueError("P109_FROZEN_CONTRACT_DRIFT")
     if (f["science"]["authentic_F6_effects"]!=0
         or f["science"]["scientific_pass"] is not False
