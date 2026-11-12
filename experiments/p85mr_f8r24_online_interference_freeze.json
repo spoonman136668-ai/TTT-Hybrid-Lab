@@ -17,7 +17,7 @@
     "unseen_B_law": "y=0.23*tanh(1.9*s)+0.18*b*(2*a-1)+0.09*b*c*a, two independently crossed b,c in {-1,+1}",
     "halfway_interference": "B sign b flips after step 8 with explicit state reset 0; c remains unchanged; same B history for matched ±A",
     "B_steps": 16,
-    "B_selected_action": "behavior(s) XOR int((seed+5*t+int(b==1)+int(c==1))%3==0)",
+    "B_selected_action": "behavior(s) XOR int((seed+5*t)%3==0); no hidden b/c used by behavior policy",
     "A_signs": [
       -1,
       1
@@ -52,14 +52,15 @@
     "B_train_factual_effects": 1024,
     "B_holdout_factual_episodes": 32,
     "B_holdout_factual_effects": 512,
-    "A_score_before_first_return_factual_effects": 96,
     "A_score_decisions_per_condition_per_model": 192,
     "A_probe_observed_then_B_factual_then_A_first_action": true,
     "B_only_adaptation_strips_early_A_probe": true,
     "matched_B_within_A_sign_pair": true,
     "hidden_b_c_zA_never_model_features": true,
     "B_train_seeds_independent_of_A_score": true,
-    "original_CausalGym_source_firstuse": false
+    "original_CausalGym_source_firstuse": false,
+    "A_score_episodes_before_first_return": 96,
+    "A_score_observed_factual_effects": 1632
   },
   "models": {
     "arms": [
