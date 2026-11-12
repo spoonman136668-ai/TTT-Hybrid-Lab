@@ -1,0 +1,88 @@
+{
+  "schema": "ttt-hybrid.f8r14-calibration-action-rng-isolation.v1",
+  "stage": "FROZEN_BEFORE_R14_IMPLEMENTATION_AND_TEST",
+  "classification": "SOURCE_NEUTRAL_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "parent_head_sha": "208931e399020f7176e3c09d1552ccfe2a35b8ff",
+    "original_f8r5_source_blob": "6ebb878e69b05c79a4ed22540176b61b9fcb326c",
+    "original_f8r5_test_blob": "b85afe908744ec282a72871ffd86f439c72453f6",
+    "original_f8r5_science_proposal_blob": "50cf2ff33f62d6ea6a25a7c789921838826d0094",
+    "read_only_first_hazard_comment_id": 6832569677,
+    "original_cartpole_source": "CausalAILab/Causal-Gymnasium@c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "original_cartpole_source_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa"
+  },
+  "problem": "Original CartPoleWindSCM draws wind from self.np_random, while default env.action() draws random actions from the same generator. This can alter exogenous wind draws when the default action RNG is consumed.",
+  "scope": {
+    "policy": "fixed_seed_random",
+    "calibration_profile_count": 3,
+    "episodes_per_profile": 8,
+    "max_step_count": 96,
+    "source_session_seed_formula": "1824000000 + 1000*profile_index + 100*policy_index + episode_index; fixed_seed_random is policy_index 1",
+    "action_domain": "ttt-hybrid:f8r14:fixed_seed_random:action:v1",
+    "algorithm": "SHA256(ASCII(action_domain) || byte(0) || uint64_be(calibration_session_seed) || uint16_be(step_index))",
+    "action_selection": "least significant bit of first SHA256 byte, yielding integer 0 or 1",
+    "prefix_stateless": true,
+    "environment_rng_independent": true,
+    "call_order_independent": true,
+    "profile_selection_thresholds_unchanged": true,
+    "existing_trial_cohorts_unchanged": true,
+    "no_exogenous_wind_in_model_features": true,
+    "unpaired_calibration_world_seeds": true,
+    "never_relabel_original_calibration_as_paired": true
+  },
+  "golden_test_vectors": [
+    {
+      "profile_index": 0,
+      "episode_index": 0,
+      "step_index": 0,
+      "expected_action": 0
+    },
+    {
+      "profile_index": 0,
+      "episode_index": 0,
+      "step_index": 1,
+      "expected_action": 0
+    },
+    {
+      "profile_index": 0,
+      "episode_index": 0,
+      "step_index": 2,
+      "expected_action": 0
+    },
+    {
+      "profile_index": 1,
+      "episode_index": 3,
+      "step_index": 0,
+      "expected_action": 1
+    },
+    {
+      "profile_index": 2,
+      "episode_index": 7,
+      "step_index": 95,
+      "expected_action": 1
+    }
+  ],
+  "authority": {
+    "owner_firstuse": false,
+    "external_source_effects": false,
+    "external_simulator_import": false,
+    "owner_dispatch": false,
+    "new_workflow": false,
+    "scheduler": false,
+    "model_training": false,
+    "original_F7_replay": false,
+    "CAL_OOD_unseal": false,
+    "merge": false,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "tests": [
+    "frozen contract hash and owner denial",
+    "cross-platform golden action vectors",
+    "all 48 registered policy sequences have 96 deterministic binary actions",
+    "order independence and all invalid scope denied",
+    "source-only module does not import simulator, consume environmental RNG, or execute a real effect"
+  ]
+}
