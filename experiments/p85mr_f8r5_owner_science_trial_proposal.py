@@ -48,7 +48,7 @@ def locked():
         or proposal["proposed_sealed_worlds"]["unfamiliar_family_reserved_not_defined"]["worlds"] != 0
         or any(value is not False for k, value in a.items()
                if k != "allowed_now")
-        or proposal["historical_exclusion"]["reuse_any_F7_worlds"] is not False
+        or proposal["historical_exclusion"]["reuse_any_F7_world"] is not False
         or proposal["historical_exclusion"]["prior_F7_native_science_pass"] is not False):
         raise ValueError("F8R5_SOURCE_OR_OWNER_SCOPE_DRIFT")
     return proposal
