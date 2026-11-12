@@ -91,7 +91,7 @@
     "allow_only_fixture_receipts": true,
     "unconfirmed_intent_blocks_replay": true,
     "wrong_action_model_and_terminal_denied": true,
-    "no_admission_to_source": false,
+    "no_admission_to_source": true,
     "never_assert_native_WSL_owner_verified": true
   },
   "authority": {
