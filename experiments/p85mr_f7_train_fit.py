@@ -344,6 +344,27 @@ def _train_arm(kind,seed,train,val,indices,output,global_start):
 def run(*,source,source_summary,output,receipt):
     owner=_owner()
     train,holdout,source_meta=audit_capture(source,source_summary,owner)
+    return train_admitted_fit(train=train,holdout=holdout,
+                             source_meta=source_meta,owner=owner,
+                             output=output,receipt=receipt)
+
+
+def train_admitted_fit(*,train,holdout,source_meta,owner,output,receipt):
+    """Unchanged frozen F7 optimizer/selection; caller must admit source first.
+
+    The existing one-shot source runner calls run(), which enforces its
+    original owner. A distinct training-only owner gate may call this seam
+    ONLY after authentic immutable F7 previous-run journal verification.
+    No simulator code, source constructor, source action, or effect exists here.
+    """
+    if (not isinstance(source_meta,dict)
+        or source_meta.get("source_worlds")!=128
+        or source_meta.get("authentic_source_actions")!=12288
+        or source_meta.get("source_capture_sha256")!=
+           "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4"
+        or source_meta.get("native_owner_journal_audit") is not True
+        or len(train)!=96 or len(holdout)!=32):
+        raise PermissionError("F7_TRAIN_UNQUALIFIED_OR_NONAUTHENTIC_FIT_SOURCE")
     outdir=Path(output)
     outdir.mkdir(mode=0o700,parents=True,exist_ok=False)
     result_path=Path(receipt)
