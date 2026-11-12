@@ -133,8 +133,10 @@ def diagnostic_on_fabricated_calibration(rows):
             or row["prospective_seed"] != seed
             or type(row["terminated"]) is not bool
             or type(row["truncated"]) is not bool
-            or row["terminated"] == row["truncated"]
-            or (steps < 96 and not row["terminated"])
+            # CartPoleWindSCM.step forcibly sets truncated=True at its
+            # horizon, even when physics independently terminates there.
+            # A simultaneous terminal+truncation at step 96 is legitimate.
+            or (steps < 96 and (not row["terminated"] or row["truncated"]))
             or (steps == 96 and not row["truncated"])
             or seed in seen):
             raise ValueError("F8R5_INVALID_FABRICATED_ROW")

@@ -67,7 +67,7 @@ def test_unauthenticated_nonfactual_and_replayed_fixtures_denied():
                    {"prospective_seed": rows[0]["prospective_seed"]+1},
                    {"steps": 0}, {"steps": 97},
                    {"steps": float("nan")}, {"steps": True},
-                   {"terminated": True, "truncated": True},
+                   {"terminated": False, "truncated": False},
                    {"episode_index": True}):
         corrupted = [dict(row) for row in rows]
         corrupted[0].update(change)
@@ -79,6 +79,23 @@ def test_unauthenticated_nonfactual_and_replayed_fixtures_denied():
     duplicate[1] = dict(duplicate[0])
     with pytest.raises(ValueError, match="F8R5_INVALID_FABRICATED_ROW"):
         r5.diagnostic_on_fabricated_calibration(duplicate)
+
+
+def test_original_source_dual_termination_and_truncation_at_exact_horizon():
+    # Pinned CartPoleWindSCM.step sets truncated=True at step 96 even if
+    # underlying CartPole physics also sets terminated=True.
+    rows = fabricated_panel()
+    exact = next(i for i, row in enumerate(rows) if row["steps"] == 96)
+    rows[exact] = dict(rows[exact], terminated=True, truncated=True)
+    admitted = r5.diagnostic_on_fabricated_calibration(rows)
+    assert admitted["first_qualifying_profile_index"] == 1
+    assert admitted["original_source_actions"] == 0
+    assert admitted["firstuse_authorized"] is False
+    # The same dual flags before the horizon are not valid.
+    early = next(i for i, row in enumerate(rows) if row["steps"] < 96)
+    rows[early] = dict(rows[early], terminated=True, truncated=True)
+    with pytest.raises(ValueError, match="F8R5_INVALID_FABRICATED_ROW"):
+        r5.diagnostic_on_fabricated_calibration(rows)
 
 
 def test_reserved_calibration_fit_selection_test_seeds_strictly_disjoint():
