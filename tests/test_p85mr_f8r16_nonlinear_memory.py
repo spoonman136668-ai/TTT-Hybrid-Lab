@@ -39,7 +39,9 @@ def test_positive_causal_autocorrelation_fixture_detects_past_error():
     x,y=fixture(correlated=True)
     report=v.evaluate_spent_arrays(x,y)
     assert report["new_original_source_effects"] == 0
-    assert report["fabricated_test_worlds"] == 32\n    assert report["already_inspected_test_worlds"] == 0\n    assert report["classification"] == "FABRICATED_DEV_ONLY"
+    assert report["fabricated_test_worlds"] == 32
+    assert report["already_inspected_test_worlds"] == 0
+    assert report["classification"] == "FABRICATED_DEV_ONLY"
     assert report["independent_scientific_pass"] is False
     arm=report["arms"]["quadratic35"]
     assert arm["base_parameters"] == 140
