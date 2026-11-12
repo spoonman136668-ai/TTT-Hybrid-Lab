@@ -1,0 +1,132 @@
+{
+  "schema": "ttt-hybrid.f8r17-native-persistent-aba-development.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_AND_NUMERICAL_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NATIVE_TRAINED_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "sha": "3373068410eaf604bba0e74bd0ae5c62930e3803",
+    "tree_sha": "f4e476db5a0c6607d38fd39d2503705ae3daf4fb",
+    "original_f8r5_native_policy_blob": "9ac9fc17d6f82d6bf2dc7b05458939d5bdb6ea92",
+    "original_f8r3_world_blob": "9a7077ece06dfbc685232bbc606b0c2dd33a7895",
+    "original_hybrid_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "With persistent per-step causal regimes A→B→A, can a native HybridPilot using only actually selected action histories and prior observed effects recover useful A behavior after B and select lower-regret actions than the strongest trained conventional SSM256 or linear7 under the same factual FIT examples and model update budget?",
+  "world": {
+    "origin": "F8-R3 pre-existing author-generated mathematical recurrence y(s,a,z)=0.5*s+0.3*z*(a-int(s>=0)); no external CausalGym imports or F7 replay",
+    "regimes": [
+      "A",
+      "B",
+      "A"
+    ],
+    "hidden_sign_initial": "index even +1, odd -1",
+    "hidden_sign_trajectory": "z[t]=initial for t<switch1 or t>=switch2; -initial otherwise",
+    "worlds": {
+      "fit": 24,
+      "diagnostic": 12,
+      "test": 12
+    },
+    "seed_base": {
+      "fit": 19350000,
+      "diagnostic": 19360000,
+      "test": 19370000
+    },
+    "steps_per_world": 12,
+    "switch_times": {
+      "fit": [
+        4,
+        8
+      ],
+      "diagnostic": [
+        4,
+        8
+      ],
+      "test": [
+        3,
+        7
+      ]
+    },
+    "initial_state": "0.42*sin(seed*0.013)+0.19*cos(seed*0.021)",
+    "factual_action": "at steps 0,switch1,switch2 take off-policy action 1-int(s>=0); other steps take int(s>=0) XOR int((seed+7*step)%3==0)",
+    "physical_state": "[s,0,0,0] with four continuous state scalars",
+    "reward": "1-min(1,(s_next-.2)^2)",
+    "training_observations": "P80 normalized 16D factual public-state/action key + 16D observed-effect vector; model sees only effects at times strictly BEFORE predicted action",
+    "no_hidden_regime_input": true,
+    "no_unchosen_effect_or_future_label": true,
+    "no_f7_external_data": true
+  },
+  "models": {
+    "arms": [
+      "bypass_hard",
+      "bypass_surrogate",
+      "linear7",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "max_updates_each": 96,
+    "mini_batch_worlds": 8,
+    "optimizer": "AdamW",
+    "native_lr": 0.002,
+    "conventional_lr": 0.001,
+    "weight_decay": 0.01,
+    "clip_grad_norm": 1,
+    "sampling_seed": 985299,
+    "shared_minibatch_indices": true,
+    "total_model_fits": 12,
+    "total_optimizer_updates": 1152,
+    "checkpoint": "final update 96; diagnostic measured not used for tuning",
+    "source_neutral_cpu": true,
+    "no_GPU_or_native_owner_dispatch": true
+  },
+  "outcome": {
+    "primary": "mean one-step model-selected action regret after return to latent regime A on 12 unfamiliar scheduled-score worlds, goal +0.2 if world index even else -0.2; evaluator scores realized synthetic chosen action and two-action oracle AFTER choice",
+    "decision": "predict both action effects at next t=12 from entire 12-step already factual history; model chooses min goal-squared predicted next state; tie action0; inverse tanh clamp [-.98,.98], scale2.4",
+    "candidate": "bypass_surrogate",
+    "baseline_selection": "strongest score-world mean action-regret among six fixed trained conventional seed instances (3 linear7, 3 SSM256), selected for conservative DEV comparison only, not scientific tuning",
+    "threshold": "candidate achieves >=10% relative less mean regret than strongest fixed conventional comparator in >=2/3 seeds; paired 12-world bootstrap 2.5th percentile baseline-regret minus candidate-regret > 0",
+    "score_worlds": 12,
+    "world_cluster_bootstrap": 10000,
+    "bootstrap_seed": 19379999,
+    "retention_condition": "cold restored same candidate checkpoint exactly reproduces A-return predictions; no assertion that this demonstrates unseen real retention",
+    "support": "masked causal prequential physical delta MSE in initial A/B/returned A, and delayed-one-effect negative readout; preserve all nulls",
+    "controls": "same original factual trajectories/actions for all models, extra model parameters and measured training/inference wall costs reported, conventional baseline fit is bounded not independently convergence certified",
+    "possible_noncompetence": "If trained conventional baselines not converged or no discriminating action goal, label inconclusive; never reclassify as scientific PASS",
+    "no_train_test_leak": true,
+    "no_score_tuning": true
+  },
+  "authority": {
+    "external_source_firstuse": false,
+    "spent_f7_replay": false,
+    "original_external_effects": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "owner_dispatch": false,
+    "live_GPU": false,
+    "sealed_F8_CAL_OOD": false,
+    "merge": false,
+    "promotion": false,
+    "independent_scientific_pass": false,
+    "deployment": false
+  },
+  "qualification": {
+    "freeze_before_training": true,
+    "complete_exact_sha_G4_windows_ubuntu": true,
+    "complete_exact_sha_G5_windows_ubuntu": true,
+    "complete_exact_sha_G7_ubuntu": true,
+    "no_duplicated_regression": true,
+    "tests": [
+      "full phase receipt and no source effects",
+      "all four arms each trained across 3 seeds, exact update budgets",
+      "causal-mask future-current-effect negative control",
+      "cold model restore parity",
+      "unfamiliar switch timing on synthetic test only",
+      "bootstrap clustering worlds not model-seeds",
+      "document and retain no-go regardless of outcome"
+    ]
+  }
+}
