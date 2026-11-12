@@ -12,7 +12,7 @@ torch.set_num_threads(1)
 
 def test_freeze_pin_and_unqualified_source_denial():
     f=x.locked()
-    assert f["stage"]=="FROZEN_BEFORE_CODE_AND_NUMERIC_RESULTS"
+    assert f["stage"]=="FROZEN_BEFORE_IMPLEMENTATION_AND_NUMERIC_RESULTS"
     assert f["model"]["total_optimizer_updates"]==6912
     assert f["authority"]["original_external_source_firstuse"] is False
     assert f["authority"]["new_workflow"] is False
