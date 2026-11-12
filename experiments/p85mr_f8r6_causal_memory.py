@@ -159,7 +159,8 @@ def infer(experts,probe_state,selected_action,observed_effect):
 
 
 def plan(experts,belief,s,goal):
-    if (len(belief)!=2 or not math.isfinite(float(goal))
+    if (len(belief)!=len(experts) or len(experts) not in (1,2)
+        or not math.isfinite(float(goal))
         or any(not math.isfinite(float(v)) or v<0 for v in belief)
         or not math.isclose(sum(belief),1.,abs_tol=1e-10)):
         raise ValueError("F8R6_INVALID_COLD_PLANNER_BELIEF")
