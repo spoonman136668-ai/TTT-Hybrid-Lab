@@ -222,7 +222,7 @@ class DevCustodyJournal:
             "reserved_effects": HORIZON,
             "status": "ATTEMPTED_NO_REPLAY",
         } or not isinstance(row.get("run_id"), str) or
-                not row["run_id"].startswith("DEV-RUN-")):
+                row["run_id"] != self._global_attempt["run_id"]):
             raise ValueError("F8R7_INVALID_OR_TAMPERED_CLAIM")
         return row
 
@@ -320,6 +320,11 @@ class DevCustodyJournal:
                 if not p.name.endswith(".json"):
                     raise ValueError("F8R7_UNEXPECTED_CLAIM_FILE")
                 claim, _ = _read_exact(p)
+                claimed_id = claim.get("session_identity")
+                if (type(claimed_id) is not str or claimed_id not in self.plan
+                        or p.name != self._claim_path(claimed_id).name):
+                    raise ValueError("F8R8_UNEXPECTED_CLAIM_PATH")
+                self._read_claim(claimed_id)
                 if claim["phase"] == prior:
                     actual.add(claim["session_identity"])
             if actual != expected:
@@ -331,6 +336,9 @@ class DevCustodyJournal:
                     raise PermissionError("F8R7_PRIOR_PHASE_UNKNOWN_OR_ABORTED")
 
     def claim(self, identity: str) -> dict:
+        self._verify_global_attempt()
+        if not self._writer:
+            raise PermissionError("F8R8_GLOBAL_ATTEMPT_IS_READ_ONLY")
         row = self.plan.get(identity)
         if row is None:
             raise ValueError("F8R7_UNREGISTERED_SESSION")
@@ -355,7 +363,8 @@ class DevCustodyJournal:
     def append(self, identity: str, kind: str, *, step: int | None = None,
                action: int | None = None, effect_sha256: str | None = None,
                outcome: str | None = None) -> dict:
-        if identity not in self._live:
+        self._verify_global_attempt()
+        if not self._writer or identity not in self._live:
             raise PermissionError("F8R7_RESTART_OR_UNCLAIMED_SESSION_NO_REPLAY")
         if kind not in EVENT_TYPES:
             raise ValueError("F8R7_UNREGISTERED_EVENT")
@@ -385,6 +394,7 @@ class DevCustodyJournal:
 
     def recover_readonly(self, identity: str) -> dict:
         """Never grants a resumption token, even for an apparently clean file."""
+        self._verify_global_attempt()
         row = self._read_claim(identity)
         events = self._records(identity)
         count = sum(v["kind"] == "action_intent" for v in events)
@@ -399,6 +409,9 @@ class DevCustodyJournal:
             "may_resume": False, "source_effects_executed": 0,
             "owner_admitted": False, "scientific_pass": False,
             "parent_directory_fsync_qualified": os.name != "nt",
+            "global_attempt_reopen_is_read_only": True,
+            "current_object_has_global_writer": self._writer,
+            "global_attempt_run_id": self._global_attempt["run_id"],
         }
 
 
