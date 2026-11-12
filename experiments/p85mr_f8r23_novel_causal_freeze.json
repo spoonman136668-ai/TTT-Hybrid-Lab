@@ -1,0 +1,135 @@
+{
+  "schema": "ttt-hybrid.f8r23-new-physics-interference-cold-memory-dev.v1",
+  "status": "FROZEN_BEFORE_NEW_IMPLEMENTATION_AND_NUMERIC_RESULTS",
+  "classification": "SOURCE_NEUTRAL_PROSPECTIVE_DEVELOPMENT_NOT_SCIENTIFIC_ACCEPTANCE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head": "3172595b954f0770176e0848ab537460df79bd91",
+    "tree": "6114d7adc81f7474ad2293c0ba870697c4aa679f",
+    "r22_freeze_blob": "c7c5cd9bb3e3590a58ccff92439c763305659651",
+    "r22_source_blob": "57e5977555f3c0afee7a987a4aee80be994cc082",
+    "r21_source_blob": "6a6f801e83798c21e625325eee2da3f817e326fa"
+  },
+  "question": "Can native Hybrid learn from original factual A probe, retain that information across independently contradicted B regimes, and transfer without further training to a different action-consequence equation that changes both actions' effects?",
+  "world": {
+    "FIT_source": "unchanged frozen R22 synthetic FIT 256 episodes /2560 factual effects, R3 original law, same 384 updates",
+    "test_cases": [
+      {
+        "name": "nonlinear_opposing_actions",
+        "B_groups": 12,
+        "group_seed_base": 19810000,
+        "steps_B": 16,
+        "world_law": "new y=0.31*tanh(1.7*s)+0.24*z*(2*a-1), for A and B and return; state0 before return",
+        "positive_action1_has_nonzero_effect": true,
+        "fixed_action_best_mean_regret": 0.096,
+        "interference": false
+      },
+      {
+        "name": "two_B_regime_interference",
+        "B_groups": 12,
+        "group_seed_base": 19820000,
+        "steps_B": 16,
+        "world_law": "original y=.5*s+.3*z*(a-int(s>=0)) everywhere; B sign flips at t8 with explicit state reset0",
+        "positive_action1_has_nonzero_effect": false,
+        "fixed_action_best_mean_regret": 0.015,
+        "interference": true
+      }
+    ],
+    "source_neutral_new_seeds": true,
+    "A_signs": [
+      -1,
+      1
+    ],
+    "first_B_signs": [
+      -1,
+      1
+    ],
+    "goals": [
+      -0.2,
+      0.2
+    ],
+    "early_A_probe_state": 0.2,
+    "early_A_selected_action": 0,
+    "B_action_rule": "behavior(s) XOR int((group_seed+5*t+int(zB==1))%3==0)",
+    "B_reset_state": 0,
+    "return_A_reset_state": 0,
+    "paired_A_signs_identical_B_action_and_effect_history": true,
+    "before_first_return_A_effect": true,
+    "no_hidden_A_B_group_seed_as_model_features": true,
+    "no_score_training_or_checkpoint_selection": true,
+    "panel_episodes_per_law": 48,
+    "selected_decisions_per_model_per_law": 96,
+    "no_third_party_effects_or_original_F7_data": true
+  },
+  "models": {
+    "arms": [
+      "native_focus20",
+      "gru_focus20",
+      "ssm_focus20"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "total_fits": 9,
+    "updates_each": 384,
+    "batch_worlds": 8,
+    "total_optimizer_updates": 3456,
+    "sampler_seed": 985299,
+    "loss": "identical frozen R22 objective for each arm; 20x return focus",
+    "AdamW": true,
+    "checkpoint": "fixed update384, no DEV retuning",
+    "same_original_R22_FIT_indices_and_targets": true,
+    "same_cold_restored_checkpoint_for_both_novel_panels": true,
+    "checkpoint_test_no_overwrite": true,
+    "conventional_convergence_independently_qualified": false
+  },
+  "controls": {
+    "early_A_ridge_from_original_R22_FIT_only": true,
+    "early_A_ridge_no_hidden_regime_or_counterfactual_labels": true,
+    "recent_B_ridge_from_original_R22_FIT_only": true,
+    "fixed_action0_and1": true,
+    "score_oracle_evaluator_only": true,
+    "no_A_probe_ablation": true,
+    "B_pair_identical_A_plus_minus": true,
+    "cold_restore_replay_exact_action_parity": true,
+    "run_all_9_arms_seeds_and_report_any_negative": true
+  },
+  "thresholds": {
+    "native_development_win_if_min_seeds": 2,
+    "improvement_vs_best_historyfree_each_panel_min_fraction": 0.1,
+    "probe_erasure_penalty_both_panels_min_absolute": 0.01,
+    "nonlinear_novel_contrast_pairs_at_least": 12,
+    "interference_contrast_pairs_at_least": 12,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 19829999,
+    "paired_2p5_lower_improvement_gt_zero": true,
+    "show_best_DEV_selected_GRU_SSM_and_ridge_even_if_better": true,
+    "cannot_claim_scientific_pass_over_zero_regret_ridge": true,
+    "scientific_pass": false
+  },
+  "authority": {
+    "original_source_firstuse": false,
+    "F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_scheduler": false,
+    "owner_dispatch": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "scientific_pass": false
+  },
+  "qualifications": {
+    "full_G4_Ubuntu_Windows": true,
+    "G5_Ubuntu_Windows": true,
+    "G7_Ubuntu": true,
+    "no_redundant_manual_CI": true,
+    "scientific_firstuse_not_qualified": true,
+    "retain_positive_and_negative_in_GitHub_receipts": true
+  }
+}
