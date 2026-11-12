@@ -63,7 +63,7 @@ def locked() -> dict:
         or tuple(tr["seeds"]) != SEEDS
         or tr["updates_per_model"] != UPDATES
         or tr["episodes_per_batch"] != BATCH
-        or tr["total_model_fits"] != 15
+        or tr["total_models"] != 15
         or tr["total_optimizer_updates"] != 1920
         or tr["shared_sampler_seed"] != 985299
         or tr["native_lr"] != .002 or tr["conventional_lr"] != .001
