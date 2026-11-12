@@ -1,0 +1,97 @@
+{
+  "schema": "ttt-hybrid.f8r9-readonly-wsl-custody-storage-admission.v1",
+  "stage": "FROZEN_BEFORE_R9_CODE_OR_TEST",
+  "classification": "STATIC_AND_READONLY_DIAGNOSTIC_NOT_PRODUCTION_OWNER_AUTHORITY",
+  "base": {
+    "pr": 236,
+    "head_sha": "a6d801df471c41c6970b1397e5f547373db7b232",
+    "tree_sha": "b8e14531f135959db559a23cd5843fb3c50e113d",
+    "owner_route_path": ".github/workflows/p85mr-f2-pinned-fitcal-once.yml",
+    "owner_route_blob": "17f80a483eaad4c6942c593df8d8312d82b32c9d",
+    "owner_collector_path": "experiments/p85mr_fitcal_owner_firstuse.py",
+    "owner_collector_blob": "f5deeed08624d4dbe878a58e6869c9c4bb062ae3",
+    "r8_code_blob": "283e60ce8b4d7198bc39009b91424e2fd32602ba",
+    "r8_source_freeze_blob": "37c285ff776b71a1455f0ebe0379cd7ac945c1ff",
+    "r6_budget_blob": "59475472a4c316fa04a3510e4138a872abc88a91"
+  },
+  "historical_owner_route": {
+    "project": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "runner_labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "wsl_distro": "Ubuntu-24.04",
+    "wsl_uid": 1000,
+    "project_path_source": "GITHUB_WORKSPACE checkout via wslpath, must match ^/mnt/[a-z]/...",
+    "owner_attempt_path": "project/evidence/p85mr_fitcal_firstuse/ONCE",
+    "qualification": "historical one-shot owner path NOT demonstrated Linux-native ext4; no retrofit or replay permitted"
+  },
+  "candidate_storage": {
+    "home_prefix": "/home/{owner}/.local/share/ttt-hybrid/f8-custody",
+    "authorized_uid": 1000,
+    "fs_type": "ext4",
+    "journal_exact_path": "must remain existing, private, symlink-free native Linux WSL owner home",
+    "minimum_mode": "0700 exact private on journal root",
+    "path_denied_prefixes": [
+      "/mnt",
+      "/media",
+      "/run",
+      "/tmp",
+      "/var/tmp",
+      "/dev",
+      "/proc",
+      "/sys"
+    ],
+    "fs_denied": [
+      "9p",
+      "drvfs",
+      "fuse",
+      "fuseblk",
+      "overlay",
+      "tmpfs",
+      "nfs",
+      "cifs",
+      "vfat",
+      "ntfs"
+    ],
+    "path_mount_resolution": "exact longest matching mountinfo mount point, decode octal escaped path names; reject ambiguous or unsupported relative/traversal paths",
+    "no_write": true,
+    "read_only_stat_check": true,
+    "owner_route_external_attestation_still_required": true,
+    "fsync_file_and_parent_separately_qualification_required": true
+  },
+  "proposed_tests": [
+    "original owner script and workflow Git blob pinned",
+    "original /mnt path and project-evidence derivation proven",
+    "mountinfo ext4 candidate accepted only as path classification",
+    "longest mount selection and nested drvfs bind mount denied",
+    "symlink or group/world writable directory denied",
+    "wrong UID, Windows host, non WSL kernel denied in runtime probe",
+    "malformed, duplicate ambiguous or escaped mountinfo denied",
+    "zero writes, no mkdir, no owner dispatch/first-use even on candidate path",
+    "exact candidate final G4 Windows/Ubuntu, G5 Windows/Ubuntu, G7 Ubuntu"
+  ],
+  "authority": {
+    "source_firstuse": false,
+    "source_reset_or_do": false,
+    "owner_runner_execution": false,
+    "workflow_additions": false,
+    "new_schedulers": false,
+    "new_controllers": false,
+    "move_prior_receipts": false,
+    "replay_prior_data": false,
+    "owner_dir_creation": false,
+    "merge": false,
+    "deployment": false,
+    "scientific_pass": false
+  },
+  "expected_outcome": {
+    "engineering": "static owner storage gap diagnosed, offline checks can PASS",
+    "deployment": "NONE",
+    "science": "NOT_RUN",
+    "runtime_owner_acceptance": "UNVERIFIED"
+  }
+}
