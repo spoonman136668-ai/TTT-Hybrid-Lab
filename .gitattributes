@@ -3,3 +3,4 @@
 experiments/p69_causal_shift_source.py -text
 experiments/p77_write_policy.py -text
 experiments/p78mr_fitcal_val_dev_result.json -text
+experiments/p78mr_r2_noise_shift_freeze.json -text
