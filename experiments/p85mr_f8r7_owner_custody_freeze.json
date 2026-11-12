@@ -1,0 +1,88 @@
+{
+  "schema": "ttt-hybrid.f8r7-owner-native-custody-candidate.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_TEST_RESULTS",
+  "classification": "SOURCE_NEUTRAL_DEV_ONLY_NO_FIRSTUSE_ADMISSION",
+  "parent": {
+    "existing_pr": 236,
+    "head_sha": "3fb069035725ecce3c06a26a1137c4e1a9845789",
+    "tree_sha": "d816fed71de3c0b9a0edb5d4f84abc0fe999487a"
+  },
+  "scope": {
+    "project": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "budget_freeze_path": "experiments/p85mr_f8r6_full_action_budget_freeze.json",
+    "budget_git_blob": "59475472a4c316fa04a3510e4138a872abc88a91",
+    "proposed_budget_code_git_blob": "48cfb7462590627f3c32033e8005489921554a02",
+    "owner_precedent": "experiments/p85mr_fitcal_owner_firstuse.py",
+    "owner_precedent_git_blob": "f5deeed08624d4dbe878a58e6869c9c4bb062ae3",
+    "external_source_sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "external_source_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa"
+  },
+  "proposed_limits": {
+    "sessions": 480,
+    "real_source_max_effects": 46080,
+    "episode_max_actions": 96,
+    "phase_counts": {
+      "calibration": 48,
+      "fit": 64,
+      "selector": 16,
+      "test": 352
+    },
+    "phase_actions": {
+      "calibration": 4608,
+      "fit": 6144,
+      "selector": 1536,
+      "test": 33792
+    },
+    "model_selected_test_paired_worlds": 16,
+    "model_selected_policy_instances": 22,
+    "test_unexecuted_predictions_ceiling": 67584,
+    "duplicate_session_denied": true
+  },
+  "custody_candidate": {
+    "root": "caller-provided EMPTY local temp directory only in tests; no real owner integration",
+    "immutable_single_session_claim": "atomic create-exclusive marker file, fsync file and parent directory; collision permanent",
+    "identity": "exact F8R6 proposed session id + committed source SHA + development run id + attempt 1; run id test-only is NOT GitHub-verified",
+    "reservation": "full 96 selected-effect ceiling consumed at session claim; no partial release, unknown result permanent consumed",
+    "phase": "only calibration claims enter isolated dev ledger; later phase needs valid separately owner verified phase transition; no fake completion authorizes original source",
+    "event_order": "claim then one constructor_intent then one reset_intent then action_intents 1..96; each event fsynced before any hypothetical action; observed receipt optional after action intent; no stepping after unresolved action",
+    "test_hypothetical_prediction": "each trial selected action at most two speculative model queries; count separately from real outcomes; never turn a hypothetical into a sourced observation",
+    "recovery": "read-only recovery marks every attempted claim/intent as consumed; no replay, no overwrites, no torn record acceptance",
+    "chain": "per-session numbered event records are create-exclusive files; hashes link consecutive records; failed or absent writes fail closed",
+    "security_limits": "local crash/accidental replay detection ONLY; not tamper-proof against deletion, cross-host split-brain or non-owner filesystem; requires separate trusted owner/ACL/signed custody",
+    "authority": "Module is NOT wired to runner, source, workflow, engine, live source; prohibit issuing real tokens, external API calls, real source do/reset, or operational admission"
+  },
+  "engineering_tests": [
+    "preregistered exact 480 identities and 46080 action ceiling",
+    "test-only claim of 96 effects at first create, duplicate refused",
+    "attempt2/run substitution and source drift denied",
+    "cold reload cannot unclaim unknown actions",
+    "reset and constructor intent are durable before active observation",
+    "lost effect journal unresolved cannot progress",
+    "wrong receipt and out-of-order next action refused",
+    "two separate model queries max per chosen test action",
+    "torn/corrupt disk record denies read",
+    "failpoint fsync/append no retry",
+    "full exact-candidate CPU qualification Windows+Ubuntu G4; native TTT G5 both; Mamba G7 Ubuntu"
+  ],
+  "authority": {
+    "real_source_firstuse": false,
+    "external_effects": 0,
+    "simulator_construct_reset_do": false,
+    "owner_runner_execution": false,
+    "owner_workflow": false,
+    "new_workflow": false,
+    "scheduler": false,
+    "model_training": false,
+    "new_F7_effects": false,
+    "sealed_data": false,
+    "merge": false,
+    "promotion": false,
+    "FORGE_change": false,
+    "science_pass": false
+  },
+  "status": {
+    "engineering": "PENDING_FINAL_QUALIFICATION",
+    "scientific": "NOT_RUN",
+    "deployment": "NONE"
+  }
+}
