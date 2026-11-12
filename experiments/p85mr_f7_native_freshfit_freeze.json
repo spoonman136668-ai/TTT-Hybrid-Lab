@@ -1,0 +1,142 @@
+{
+  "schema": "ttt-hybrid.f7-native-credit-bypass-fresh-fit-firstuse.v1",
+  "stage": "PREIMPLEMENTATION_OPERATOR_AUTHORIZED_FIT_ONLY_NOT_EXECUTED",
+  "scope": {
+    "operator_authorization": "2026-11-12 immediate reply 'i authorize' to specified new-source native Hybrid experiment; does not approve F6 policy five-arm fork",
+    "scientific_objective": "Does restoring raw public executed-action identity at the original four-block Hybrid readout improve real causal-dynamics prediction relative to identical original Hybrid and fully trained conventional SSM?",
+    "external_source": "CausalAILab/Causal-Gymnasium",
+    "external_sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "source_blobs": {
+      "causal_gym/envs/cartpole_wind.py": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "causal_gym/core/pch.py": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "causal_gym/core/task.py": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+      "causal_gym/core/scm.py": "f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5"
+    },
+    "model_file": "model.py",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "f5_original_sha": "4d5c49be278077fe3b0be80080d39128a153aa77",
+    "historic_F3_source": 43073165842,
+    "historic_F5_owner_run": 43082928387,
+    "prior_F3_F4_F5_spent": true,
+    "no_F3_data_reuse_or_original_workflow_replay": true,
+    "new_seed_base": 1821000000,
+    "new_fit_worlds": 128,
+    "train_world_indices": "0..95",
+    "validation_world_indices": "96..127",
+    "future_CAL_reserved_seed_base": 1821100000,
+    "future_OOD_reserved_seed_base": 1821200000,
+    "future_NEGATIVE_reserved_seed_base": 1821300000,
+    "CAL_OOD_NEGATIVE_NOT_AUTHORIZED": true,
+    "source_max_episode_horizon": 96,
+    "first_use_max_sessions": 128,
+    "first_use_max_factual_actions": 12288,
+    "source_policy": "int(state[2]+0.5*state[3]>0) XOR int((seed + step*7)%8==0) fixed deterministic exploration on current public state",
+    "action_domain": [
+      0,
+      1
+    ],
+    "initial_conditions": {
+      "wind_mean": 0,
+      "wind_std": 0.01,
+      "init_theta_mean": 0,
+      "init_theta_std": 0
+    },
+    "budget_source_wall_s": 2400,
+    "budget_training_wall_s": 7200,
+    "no_simulator_from_PR_CI": true
+  },
+  "frozen_development": {
+    "arms": [
+      "original_four_block_HybridPilot",
+      "original_four_block_with_16D_raw_action_key_bypass",
+      "original_256state_SSM"
+    ],
+    "model_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "all_train_from_scratch": true,
+    "full_same_source_data": true,
+    "same_training_action_opportunities": true,
+    "fit_train_worlds": 96,
+    "fit_validation_worlds": 32,
+    "training_steps_per_seed": 800,
+    "batch_size": 16,
+    "sampler_seed": 985299,
+    "optimizer": "AdamW",
+    "lr_by_arm": {
+      "original_four_block_HybridPilot": 0.002,
+      "original_four_block_with_16D_raw_action_key_bypass": 0.002,
+      "original_256state_SSM": 0.001
+    },
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "checkpoint_steps": 50,
+    "start_selection_only_at_step": 50,
+    "model_checkpoint_format": "safe NPZ nonpickle",
+    "loss": "masked physical-delta MSE (four P80 normalized channels) plus .2 reward +.1 terminated +.1 truncated; exclude first event and padded 9",
+    "prediction": "only current state-action key plus prior confirmed selected effects at time t, never y_t or an unchosen effect",
+    "bypass": "add exactly one 16->16 zero-initialized linear readout on raw public action key after original four-block output, original four blocks unchanged",
+    "strongest_baseline": "fully trained 256-state SSM using exact same FIT training events, 800 updates; zero predictor additional diagnostic",
+    "selection": "min mean MSE across exactly 32 FIT heldout worlds; seed-specific, not independently sealed",
+    "primary_DEV_success": "bypass <=0.90x original and <=0.90x trained SSM on >=2 of 3 seeds; trained SSM <=0.75x zero predictor for all seeds",
+    "negative_controls": [
+      "wrong historical effect placement",
+      "current-target oracle injection",
+      "missing action receipts",
+      "duplicate worlds",
+      "finite outputs and gradients",
+      "cold checkpoint revalidation",
+      "effect on chosen action only",
+      "no external simulator in tests",
+      "early terminal world retained"
+    ],
+    "scientific_acceptance": "NOT_POSSIBLE_FROM_FIT_HELDOUT; independent CAL requires later separately approved first-use, no posthoc tuning",
+    "no_capacity_parity_claim": true,
+    "report_training_and_whole_process_cpu_cost": true
+  },
+  "owner": {
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "WSL": "Ubuntu-24.04",
+    "uid": 1000,
+    "source_runtime": "p85mr-causalgym-cpu311-r3",
+    "training_runtime": "g7-s25-cpu311-r1",
+    "native_posix_ext4_receipt_root_required": true,
+    "native_fsync_file_and_parent_dir_required": true,
+    "exclusive_owner_attempt_before_source_import": true,
+    "exclusive_session_and_each_action_intent_before_do": true,
+    "no_uncertain_effect_replay": true,
+    "verify_exact_clean_candidate_sha_and_upstream_blobs": true,
+    "verify_G4_Win_Ubuntu_G5_Win_Ubuntu_G7_Ubuntu_exact_final_head_before_source": true,
+    "verify_on_owner_Win_WSL_full_regression_before_source": true,
+    "one_shot_push_only_run_number_1_attempt_1": true,
+    "explicit_owner_precondition_failure_no_source": true,
+    "source_actor": "spoonman136668-ai",
+    "source_branch": "research/p85mr-f7-native-raw-bypass-freshfit-20261112",
+    "checkpoint_and_artifacts_only_Github": true,
+    "do_not_store_evidence_in_library": true,
+    "owner_runtime_now_verified": false
+  },
+  "authority": {
+    "approve_only_F7_FIT_new_source": true,
+    "approve_F6_A5": false,
+    "approve_F6_B4": false,
+    "approve_F7_CAL": false,
+    "approve_F7_OOD": false,
+    "approve_F7_NEGATIVE": false,
+    "approve_main_merge": false,
+    "authorize_new_scheduled_task": false,
+    "allow_original_source_edit": false,
+    "allow_paid_API": false,
+    "science_effects_started": false,
+    "scientific_pass": false,
+    "deploy": false
+  }
+}
