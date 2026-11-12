@@ -1,0 +1,90 @@
+{
+  "schema": "ttt-hybrid.p116-f6-native-ssm-causal-action-readout.v1",
+  "stage": "FROZEN_PREIMPLEMENTATION_SOURCE_NEUTRAL_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 233,
+    "sha": "2de9ac5546398c50a63f78a6841c1c1158dfb20d",
+    "prior_P115_blob": "66efbd48afe9bb1b7e591c397638669826fcff98",
+    "prior_P114_blob": "deaa70f86ea96c4849f03301f98548f92e4d89a7",
+    "original_P85_F4_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+    "original_P69_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa",
+    "original_P80_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72"
+  },
+  "hypothesis": "Original SSM256 read(state_after_only_confirmed_past, two public P80 state-action keys) can deterministically choose one legal next action without current or unchosen outcome leakage, with result parity against native P75 before-write prequential prediction.",
+  "model": {
+    "original": "p69_trainable_competitors.DiagonalContinuousSSM",
+    "history_state_floats": 256,
+    "query_shape": [
+      2,
+      16
+    ],
+    "observation_state_shape": [
+      4
+    ],
+    "prediction_shape": [
+      2,
+      16
+    ],
+    "active_prediction_channels": 7,
+    "unused_padding_channels": 9,
+    "physical_scales": [
+      2.4,
+      3,
+      0.2095,
+      3.5
+    ],
+    "goal_weights": [
+      0.1,
+      0.05,
+      3,
+      0.25
+    ],
+    "prediction_clip": 0.98,
+    "inverse_tanh_interpretation": "raw estimated normalized displacement clipped before inverse tanh; model output is not factual effect",
+    "fixed_tie_action": 0
+  },
+  "input": {
+    "only_sealed_fictional_chosen_action_prefix": true,
+    "receipt_prefix": "fixture:",
+    "validate_hash_and_step_chain": true,
+    "confirmed_terminal_blocks_next_query": true,
+    "empty_prefix_allowed": true,
+    "history_steps_max": 95,
+    "current_state_must_match_last_after": true,
+    "only_public_current_state_action_and_prior_executed_effects": true,
+    "unobserved_candidate_effect_denied": true,
+    "model_must_be_CPU_float32_eval": true
+  },
+  "tests": {
+    "repeat_fixed_seed_determinism": true,
+    "native_prequential_parity": true,
+    "model_weight_sensitive_two_action_choice": true,
+    "normalized_scoring_equivalence": true,
+    "unknown_action_and_nan_denial": true,
+    "broken_history_or_fake_receipt_denial": true,
+    "terminal_and_padding_negatives": true,
+    "no_external_source_firstuse": true,
+    "full_G4_G5_G7_exact_head": true
+  },
+  "classification": {
+    "fit_fabricated_only": true,
+    "live_owner_checkpoint_qualified": false,
+    "model_training_claim": false,
+    "original_simulator_steps": 0,
+    "source_firstuse_authorized": false,
+    "protocol_fork_selected": false,
+    "owner_WSL_fsnyc_qualified": false,
+    "cal_ood_unopened": true,
+    "science_pass": false,
+    "merge": false,
+    "deployment": false
+  },
+  "execution": {
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_api": false,
+    "original_source_model_edits": false
+  }
+}
