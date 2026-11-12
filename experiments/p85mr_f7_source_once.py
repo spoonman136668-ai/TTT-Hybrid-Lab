@@ -102,7 +102,7 @@ def _owner(environ):
         or sys.version_info[:2]!=(3,11)
         or "microsoft" not in os.uname().release.lower()):
         raise PermissionError("F7_NOT_OWNER_WSL_LINUX")
-    who=os.environ.get("USER","")
+    who=Path.home().name
     correct=f"/home/{who}/.local/share/ttt-hybrid/p85mr-causalgym-cpu311-r3/venv/bin/python"
     if (not re.fullmatch(r"[a-z_][a-z0-9_-]{0,31}",who)
         or Path(sys.executable).resolve()!=Path(correct).resolve()):
@@ -147,7 +147,21 @@ def _native_root():
         raise PermissionError("F7_NATIVE_EXT4_ROOT_MISSING")
     # WSL ext4 VHD: fail closed on Windows-mounted or overlay persistence.
     mounts=Path("/proc/self/mountinfo").read_text(encoding="utf-8")
-    if " - ext4 " not in mounts:
+    matches=[]
+    for line in mounts.splitlines():
+        if " - " not in line:
+            continue
+        left,right=line.split(" - ",1)
+        parts=left.split()
+        meta=right.split()
+        if len(parts)<5 or not meta:
+            continue
+        mount_point=parts[4].replace("\\040"," ")
+        target=str(root.resolve())
+        if (target==mount_point or
+            target.startswith(mount_point.rstrip("/")+"/")):
+            matches.append((len(mount_point),meta[0]))
+    if not matches or max(matches)[1]!="ext4":
         raise PermissionError("F7_NATIVE_EXT4_NOT_FOUND")
     _fsync_dir(root)
     return root
