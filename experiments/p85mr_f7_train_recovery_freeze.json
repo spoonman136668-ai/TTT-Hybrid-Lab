@@ -76,7 +76,7 @@
     "operator_F7_fit_approval_already_given": true,
     "only_training_from_consumed_F7_source": true,
     "new_external_firstuse": false,
-    "no_CAL_or_OOD": false,
+    "no_CAL_or_OOD": true,
     "new_workflow_is_single_use_not_scheduler": true,
     "no_runner_or_controller_created": true,
     "no_paid_api": true,

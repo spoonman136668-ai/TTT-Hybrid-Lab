@@ -17,6 +17,7 @@ def test_recovery_protocol_original_source_spent_and_frozen():
     assert x["recovery"]["no_upstream_checkout"] is True
     assert x["science"]["fit_dev_only"] is True
     assert not x["authority"]["new_external_firstuse"]
+    assert x["authority"]["no_CAL_or_OOD"] is True
     assert x["science"]["scientific_PASS_possible"] is False
     with pytest.raises(PermissionError,match="F7_RECOVERY_NOT_UNIQUE_TRAINING_OWNER"):
         recovery.owner({})

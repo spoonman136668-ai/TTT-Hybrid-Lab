@@ -23,7 +23,7 @@ sys.path.insert(0,str(ROOT/"experiments"))
 from experiments import p85mr_f7_protocol as cfg
 from experiments import p85mr_f7_train_fit as trainer
 
-FREEZE_BLOB="d69f6305b78c4ab53ce66b074e62542facfce27b"
+FREEZE_BLOB="fb0538ec47e2bcb3862915049979299318a2dd20"
 PARENT_SHA="e683462e328d4db795b56c3dd70f841a951fcbe1"
 BRANCH="research/p85mr-f7-native-raw-bypass-freshfit-20261112"
 WORKFLOW=".github/workflows/p85mr-f7-fit-training-recovery-once.yml"
@@ -62,6 +62,7 @@ def locked():
         or c["no_upstream_checkout"] is not True
         or c["no_new_simulator_import_reset_do"] is not True
         or c["workflow"]!=WORKFLOW
+        or freeze["authority"]["no_CAL_or_OOD"] is not True
         or freeze["authority"]["new_external_firstuse"] is not False
         or freeze["science"]["scientific_PASS_possible"] is not False):
         raise ValueError("F7_RECOVERY_SCOPE_OR_AUTHORITY_DRIFT")
