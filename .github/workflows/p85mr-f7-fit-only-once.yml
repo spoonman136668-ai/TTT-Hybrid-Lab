@@ -1,0 +1,269 @@
+# F7 exactly-once operator-authorized fresh FIT source + native model comparison.
+# Historical F3/F5 one-shot effects/runner routes are consumed; NEVER replay.
+# No workflow_dispatch, pull_request execution, cron, rerun, or external source in CI.
+name: P85MR-F7 owner one-shot native fresh FIT and three-arm DEV
+on:
+  push:
+    branches:
+      - research/p85mr-f7-native-raw-bypass-freshfit-20261112
+    paths:
+      - .github/workflows/p85mr-f7-fit-only-once.yml
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ttt-hybrid-p85mr-f7-exclusive-firstuse
+  cancel-in-progress: false
+
+jobs:
+  f7-native-one-shot:
+    if: ${{ github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.ref == 'refs/heads/research/p85mr-f7-native-raw-bypass-freshfit-20261112' && github.event_name == 'push' && github.actor == 'spoonman136668-ai' && github.run_number == 1 && github.run_attempt == 1 }}
+    runs-on: [self-hosted, Windows, X64, ttt-hybrid-gpu-isolated]
+    timeout-minutes: 185
+    steps:
+      - name: Checkout only exact F7 owner revision; do not retain credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.sha }}
+          path: p85mr-f7
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+          fetch-depth: 1
+
+      - name: Ephemeral pinned upstream source checkout, no extra credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          repository: CausalAILab/Causal-Gymnasium
+          ref: c94e9a4cd3641588b6b8507e71ccee5c27032bdf
+          path: p85mr-upstream-f7
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+          fetch-depth: 1
+
+      - name: Admit one owner, exact clean source, original model and immutable scope
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $ref='refs/heads/research/p85mr-f7-native-raw-bypass-freshfit-20261112'
+          $wf='spoonman136668-ai/TTT-Hybrid-Lab/.github/workflows/p85mr-f7-fit-only-once.yml@'+$ref
+          if ($env:GITHUB_REPOSITORY -cne 'spoonman136668-ai/TTT-Hybrid-Lab' -or
+              $env:GITHUB_ACTOR -cne 'spoonman136668-ai' -or
+              $env:GITHUB_REF -cne $ref -or $env:GITHUB_WORKFLOW_REF -cne $wf -or
+              $env:GITHUB_RUN_NUMBER -cne '1' -or $env:GITHUB_RUN_ATTEMPT -cne '1' -or
+              $env:GITHUB_EVENT_NAME -cne 'push' -or
+              $env:RUNNER_NAME -cne 'TTT-HYBRID-GPU-WIN' -or
+              $env:RUNNER_OS -cne 'Windows' -or $env:RUNNER_ARCH -cne 'X64' -or
+              $env:GITHUB_SHA -cnotmatch '^[0-9a-f]{40}$') {
+            throw 'F7_WRONG_OWNER_ROUTE_OR_REPLAY'
+          }
+          $p=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f7'
+          $up=Join-Path $env:GITHUB_WORKSPACE 'p85mr-upstream-f7'
+          $head=(& git -C $p rev-parse HEAD | Out-String).Trim()
+          $dirty=(& git -C $p status --porcelain --untracked-files=all | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $head -cne $env:GITHUB_SHA -or $dirty) {throw 'F7_PROJECT_CUSTODY_FAIL'}
+          $upsha=(& git -C $up rev-parse HEAD | Out-String).Trim()
+          $updirty=(& git -C $up status --porcelain --untracked-files=all | Out-String).Trim()
+          $origin=(& git -C $up remote get-url origin | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $upsha -cne 'c94e9a4cd3641588b6b8507e71ccee5c27032bdf' -or
+              $updirty -or $origin -cnotin @('https://github.com/CausalAILab/Causal-Gymnasium',
+               'https://github.com/CausalAILab/Causal-Gymnasium.git')){throw 'F7_UPSTREAM_GIT_CUSTODY_FAIL'}
+          $blobs=@{
+            'causal_gym/envs/cartpole_wind.py'='d65a6a31941709dc9201259d80dd4ebbcf48b4fa'
+            'causal_gym/core/pch.py'='ff37780c6b791877c70583b8d5f699be7fcd8817'
+            'causal_gym/core/task.py'='668262f3f5c88fa2865b08ef10bbf96b09a3b73e'
+            'causal_gym/core/scm.py'='f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5'
+          }
+          foreach($rel in $blobs.Keys){
+            $got=(& git -C $up hash-object -- $rel | Out-String).Trim()
+            if($LASTEXITCODE -ne 0 -or $got -cne $blobs[$rel]){throw ('F7_ORIGINAL_UPSTREAM_BLOB_DRIFT:'+ $rel)}
+          }
+          $freeze=(& git -C $p hash-object -- experiments/p85mr_f7_native_freshfit_freeze.json | Out-String).Trim()
+          $model=(& git -C $p hash-object -- model.py | Out-String).Trim()
+          if ($LASTEXITCODE -ne 0 -or $freeze -cne '31c6107766389b73a228c36cb2bfa2e1a0de1f24' -or
+              $model -cne '5d9ea57b827aa1796548447868fa5ee14c251b49') {
+            throw 'F7_IMMUTABLE_NEW_SOURCE_OR_ORIGINAL_NATIVE_DRIFT'
+          }
+          Write-Output 'F7_PROJECT_UPSTREAM_OWNER_PRE_EFFECT_CUSTODY=PASS'
+
+      - name: Wait for all three original exact-final-SHA PR engineering workflows
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        env:
+          F7_GITHUB_READ_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference='Stop'
+          $h=@{Authorization=('Bearer '+$env:F7_GITHUB_READ_TOKEN);Accept='application/vnd.github+json';'X-GitHub-Api-Version'='2022-11-28'}
+          $u='https://api.github.com/repos/spoonman136668-ai/TTT-Hybrid-Lab/actions/runs?head_sha='+$env:GITHUB_SHA+'&per_page=100'
+          $need=@('G4 CPU qualification','G5 authentic TTT CPU','G7 pinned Mamba2 CPU import')
+          $approved=$false
+          for($n=0;$n -lt 60;$n++){
+            $res=Invoke-RestMethod -Uri $u -Method Get -Headers $h -TimeoutSec 30
+            $allPass=$true
+            foreach($key in $need){
+              $found=@($res.workflow_runs | Where-Object {
+                $_.name -ceq $key -and $_.head_sha -ceq $env:GITHUB_SHA -and
+                $_.event -ceq 'pull_request'
+              })
+              if($found.Count -ne 1){$allPass=$false;continue}
+              if($found[0].status -ceq 'completed' -and $found[0].conclusion -cne 'success'){
+                throw ('F7_EXACT_FINAL_SHA_ENGINEERING_CI_FAIL:'+ $key)
+              }
+              if($found[0].status -cne 'completed'){$allPass=$false}
+            }
+            if($allPass){$approved=$true;break}
+            Start-Sleep -Seconds 15
+          }
+          if(-not $approved){throw 'F7_FINAL_SHA_CI_NOT_QUALIFIED_NO_SOURCE_ATTEMPT'}
+          Write-Output ('F7_EXACT_FULL_G4_G5_G7_QUALIFIED='+$env:GITHUB_SHA)
+
+      - name: Full original Windows CPU regression and admission negative on owner
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $root=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f7'
+          $py=Join-Path $env:RUNNER_WORKSPACE '_g7_s25_cpu311_r1\venv\Scripts\python.exe'
+          if(-not(Test-Path -LiteralPath $py -PathType Leaf)){throw 'F7_OWNER_PINNED_WINDOWS_PYTHON_MISSING'}
+          $env:EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA
+          $env:CUDA_VISIBLE_DEVICES='-1'
+          $env:PYTHONHASHSEED='0'
+          $env:PYTHONDONTWRITEBYTECODE='1'
+          $receipt=Join-Path $root 'local_runs\p85mr_f7_windows_cpu.json'
+          & $py -I -B (Join-Path $root 'scripts\qualify_cpu.py') --receipt $receipt
+          if($LASTEXITCODE -ne 0){throw 'F7_OWNER_FULL_WINDOWS_REGRESSION_FAIL'}
+          $q=Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or
+             $q.checkout_identity.pass -ne $true -or $q.negative_control.pass -ne $true -or
+             $q.tests.exit_code -ne 0){throw 'F7_OWNER_WINDOWS_NEGATIVE_SHA_FAIL'}
+
+      - name: Full original WSL CPU regression before any first use
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $p=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f7'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $p | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $uid=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -u | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $uid -cne '1000' -or
+             $who -cnotmatch '^[A-Za-z_][A-Za-z0-9_-]{0,32}$' -or
+             $linux -cnotmatch '^/mnt/[a-z]/[a-zA-Z0-9._/-]{1,260}$'){
+            throw 'F7_UNQUALIFIED_OWNER_WSL_USER_OR_PATH'
+          }
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $envVars=@("EXPECTED_CANDIDATE_SHA=$env:GITHUB_SHA",
+             'CUDA_VISIBLE_DEVICES=-1','PYTHONHASHSEED=0','PYTHONDONTWRITEBYTECODE=1','PYTHONNOUSERSITE=1')
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=10s 720s /usr/bin/env @envVars $py -I -B "$linux/scripts/qualify_cpu.py" --receipt "$linux/local_runs/p85mr_f7_wsl_cpu.json"
+          if($LASTEXITCODE -ne 0){throw 'F7_OWNER_FULL_WSL_REGRESSION_FAIL'}
+          $receipt=Join-Path $p 'local_runs\p85mr_f7_wsl_cpu.json'
+          $q=Get-Content -LiteralPath $receipt -Raw | ConvertFrom-Json
+          if($q.status -cne 'PASS_CPU_ENGINEERING_ONLY' -or $q.revision -cne $env:GITHUB_SHA -or
+             $q.checkout_identity.pass -ne $true -or $q.negative_control.pass -ne $true -or
+             $q.tests.exit_code -ne 0){throw 'F7_OWNER_WSL_NEGATIVE_SHA_FAIL'}
+          Write-Output 'F7_EXACT_HEAD_NATIVE_WSL_REGRESSION=PASS_BEFORE_SOURCE'
+
+      - name: Verify original source Python, upstream blobs, exclusive native ext4 fsync WITHOUT simulator import
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $project=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f7'
+          $upstream=Join-Path $env:GITHUB_WORKSPACE 'p85mr-upstream-f7'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $project | Out-String).Trim()
+          $source=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $upstream | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $py="/home/$who/.local/share/ttt-hybrid/p85mr-causalgym-cpu311-r3/venv/bin/python"
+          $envVars=@(
+             "GITHUB_REPOSITORY=$env:GITHUB_REPOSITORY","GITHUB_ACTOR=$env:GITHUB_ACTOR",
+             "GITHUB_EVENT_NAME=$env:GITHUB_EVENT_NAME","GITHUB_REF=$env:GITHUB_REF",
+             "GITHUB_WORKFLOW_REF=$env:GITHUB_WORKFLOW_REF","GITHUB_RUN_NUMBER=$env:GITHUB_RUN_NUMBER",
+             "GITHUB_RUN_ATTEMPT=$env:GITHUB_RUN_ATTEMPT","GITHUB_RUN_ID=$env:GITHUB_RUN_ID",
+             "GITHUB_SHA=$env:GITHUB_SHA","RUNNER_NAME=$env:RUNNER_NAME",
+             "RUNNER_OS=$env:RUNNER_OS","RUNNER_ARCH=$env:RUNNER_ARCH",
+             'P85MR_F7_FIT_SOURCE_ONLY=1','CUDA_VISIBLE_DEVICES=-1',
+             'PYTHONHASHSEED=0','PYTHONDONTWRITEBYTECODE=1','PYTHONNOUSERSITE=1',
+             "F7_PROJECT=$linux","F7_UPSTREAM=$source"
+          )
+          $pythonProbe="import os,sys;from pathlib import Path;sys.path.insert(0,os.environ['F7_PROJECT']);sys.path.insert(0,os.environ['F7_PROJECT']+'/experiments');from experiments import p85mr_f7_source_once as m;owner=m._owner(os.environ);m._preflight(Path(os.environ['F7_PROJECT']),Path(os.environ['F7_UPSTREAM']),owner);m._native_root();print('F7_OWNER_SOURCE_WSL_EXT4_FSYNC_PASS_NO_EFFECT')"
+          $result=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout 90s /usr/bin/env @envVars $py -I -B -c $pythonProbe | Out-String).Trim()
+          if($LASTEXITCODE -ne 0 -or $result -cnotmatch 'F7_OWNER_SOURCE_WSL_EXT4_FSYNC_PASS_NO_EFFECT'){
+            throw 'F7_SOURCE_RUNTIME_OR_NATIVE_EXT4_PREFLIGHT_FAILED_NO_EFFECT'
+          }
+          Write-Output 'F7_PRE_FIRSTUSE_OWNER_CUSTODY=PASS'
+
+      - name: First and only authorized original CartPoleWind F7 FIT128 source attempt
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $p=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f7'
+          $u=Join-Path $env:GITHUB_WORKSPACE 'p85mr-upstream-f7'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $p | Out-String).Trim()
+          $source=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $u | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $py="/home/$who/.local/share/ttt-hybrid/p85mr-causalgym-cpu311-r3/venv/bin/python"
+          $envVars=@(
+             "GITHUB_REPOSITORY=$env:GITHUB_REPOSITORY","GITHUB_ACTOR=$env:GITHUB_ACTOR",
+             "GITHUB_EVENT_NAME=$env:GITHUB_EVENT_NAME","GITHUB_REF=$env:GITHUB_REF",
+             "GITHUB_WORKFLOW_REF=$env:GITHUB_WORKFLOW_REF","GITHUB_RUN_NUMBER=$env:GITHUB_RUN_NUMBER",
+             "GITHUB_RUN_ATTEMPT=$env:GITHUB_RUN_ATTEMPT","GITHUB_RUN_ID=$env:GITHUB_RUN_ID",
+             "GITHUB_SHA=$env:GITHUB_SHA","RUNNER_NAME=$env:RUNNER_NAME",
+             "RUNNER_OS=$env:RUNNER_OS","RUNNER_ARCH=$env:RUNNER_ARCH",
+             'P85MR_F7_FIT_SOURCE_ONLY=1','CUDA_VISIBLE_DEVICES=-1',
+             'PYTHONHASHSEED=0','PYTHONDONTWRITEBYTECODE=1','PYTHONNOUSERSITE=1'
+          )
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=15s 2550s /usr/bin/env @envVars $py -I -B "$linux/experiments/p85mr_f7_source_once.py" --project $linux --upstream $source
+          if($LASTEXITCODE -ne 0){throw 'F7_OWNER_SOURCE_ATTEMPT_ABORTED_NO_REPLAY'}
+          $report=Join-Path $p 'local_runs\p85mr_f7_owner_source.json'
+          $body=Get-Content -LiteralPath $report -Raw | ConvertFrom-Json
+          if($body.result.status -cne 'F7_128_FIT_SOURCE_COLLECTED_DEV_NOT_SCIENCE_PASS' -or
+              $body.result.owner.sha -cne $env:GITHUB_SHA -or
+              $body.result.owner.run_id -cne $env:GITHUB_RUN_ID -or
+              $body.result.source_sessions -ne 128 -or
+              $body.result.source_effects -gt 12288 -or
+              $body.result.CAL_OOD_NEGATIVE_created -ne $false -or
+              $body.result.scientific_pass -ne $false){
+            throw 'F7_OWNER_SOURCE_RECEIPT_NOT_ADMITTED_NO_REPLAY'
+          }
+          Write-Output 'F7_NEW_FIT_SOURCE_COLLECTED_GENUINE_ACTIONS_NO_CAL'
+
+      - name: Train three original-source native models with FIT-only 96/32 split and checkpoint custody
+        shell: powershell -NoProfile -NonInteractive -ExecutionPolicy Bypass -File {0}
+        run: |
+          $ErrorActionPreference='Stop'
+          $p=Join-Path $env:GITHUB_WORKSPACE 'p85mr-f7'
+          $linux=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/wslpath -u $p | Out-String).Trim()
+          $who=(& wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/id -un | Out-String).Trim()
+          $py="/home/$who/.local/share/ttt-hybrid/g7-s25-cpu311-r1/venv/bin/python"
+          $envVars=@(
+             "GITHUB_REPOSITORY=$env:GITHUB_REPOSITORY","GITHUB_ACTOR=$env:GITHUB_ACTOR",
+             "GITHUB_EVENT_NAME=$env:GITHUB_EVENT_NAME","GITHUB_REF=$env:GITHUB_REF",
+             "GITHUB_WORKFLOW_REF=$env:GITHUB_WORKFLOW_REF","GITHUB_RUN_NUMBER=$env:GITHUB_RUN_NUMBER",
+             "GITHUB_RUN_ATTEMPT=$env:GITHUB_RUN_ATTEMPT","GITHUB_RUN_ID=$env:GITHUB_RUN_ID",
+             "GITHUB_SHA=$env:GITHUB_SHA","RUNNER_NAME=$env:RUNNER_NAME",
+             "RUNNER_OS=$env:RUNNER_OS","RUNNER_ARCH=$env:RUNNER_ARCH",
+             'P85MR_F7_FIT_TRAIN_ONLY=1','CUDA_VISIBLE_DEVICES=-1',
+             'PYTHONHASHSEED=0','PYTHONDONTWRITEBYTECODE=1','PYTHONNOUSERSITE=1'
+          )
+          & wsl.exe --distribution Ubuntu-24.04 --exec /usr/bin/timeout --signal=TERM --kill-after=30s 7350s /usr/bin/env @envVars $py -I -B "$linux/experiments/p85mr_f7_train_fit.py" --source "$linux/local_runs/p85mr_f7_fit_capture.json" --source-summary "$linux/local_runs/p85mr_f7_owner_source.json" --models "$linux/local_runs/p85mr_f7_models" --receipt "$linux/local_runs/p85mr_f7_fit_train_result.json"
+          if($LASTEXITCODE -ne 0){throw 'F7_FIT_NATIVE_TRAIN_OR_CHECKPOINT_DENIED_NO_CAL'}
+          $q=Get-Content -LiteralPath (Join-Path $p 'local_runs\p85mr_f7_fit_train_result.json') -Raw | ConvertFrom-Json
+          if($q.status -cne 'F7_FIT_DEV_TEST_COMPLETED_CAL_NOT_TOUCHED' -or
+             $q.owner.sha -cne $env:GITHUB_SHA -or $q.owner.run_id -cne $env:GITHUB_RUN_ID -or
+             $q.results.Count -ne 9 -or $q.new_CAL_OOD_NEGATIVE -ne $false -or
+             $q.scientific_pass -ne $false -or $q.deployment -ne $false){
+            throw 'F7_QUALIFIED_FIT_TRAINING_RECEIPT_MISSING_NO_CAL'
+          }
+          Write-Output 'F7_AUTHENTIC_FIT_THREE_ARM_DEV_COMPLETED_NOT_SCIENTIFIC_PASS'
+
+      - name: Preserve only exact GitHub-source and original trained artifact receipts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: p85mr-f7-owner-fit-once-${{ github.sha }}-${{ github.run_id }}
+          path: |
+            p85mr-f7/local_runs/p85mr_f7_*.json
+            p85mr-f7/local_runs/p85mr_f7_models/*.npz
+          retention-days: 30
+          if-no-files-found: warn
