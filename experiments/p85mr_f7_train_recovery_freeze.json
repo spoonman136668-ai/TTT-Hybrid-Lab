@@ -1,0 +1,87 @@
+{
+  "schema": "ttt-hybrid.f7-one-shot-training-only-source-recovery.v1",
+  "stage": "FROZEN_PREIMPLEMENTATION_FIRSTUSE_CONSUMED_NO_NEW_EXTERNAL_SOURCE",
+  "parent": {
+    "exact_sha": "e683462e328d4db795b56c3dd70f841a951fcbe1",
+    "pr": 234,
+    "prior_gradient_fix_blob": "e5879e7c33c00dcabfcbd5a232041e4e4cace942",
+    "original_f7_source_freeze_blob": "31c6107766389b73a228c36cb2bfa2e1a0de1f24"
+  },
+  "original_collection": {
+    "owner_run": 43195349254,
+    "sha": "57ff8520e0f2c94c913e35a2aa19c6162843f3e3",
+    "artifact_id": 13933156808,
+    "artifact_zip_sha256": "5480c0a8d2e518f9c0c9e3e011e3dfa9d3019fb720d10641c02bb36b5023f0ef",
+    "source_capture_sha256": "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4",
+    "source_summary_sha256": "bc31da3abf0a0367f8e3f49985cb6d1d0e9f0e6da7c38c97cfc6c1646ec08ece",
+    "source_FIT_worlds": 128,
+    "source_actions_consumed": 12288,
+    "all_96_steps": 128,
+    "all_early_termination": false,
+    "CAL_OOD_NEGATIVE_unopened": true,
+    "never_retry_source": true
+  },
+  "recovery": {
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "WSL": "Ubuntu-24.04",
+    "uid": 1000,
+    "runtime": "g7-s25-cpu311-r1",
+    "source_of_truth": "native previous F7 ext4 O_EXCL first-use journal, checked independently against downloaded GitHub artifact digest",
+    "no_native_journal_edits": true,
+    "no_source_api_import_constructor_reset_do": true,
+    "no_upstream_checkout": true,
+    "one_shot_only": true,
+    "attempt_number": 1,
+    "run_number": 1,
+    "branch": "research/p85mr-f7-native-raw-bypass-freshfit-20261112",
+    "workflow": ".github/workflows/p85mr-f7-fit-training-recovery-once.yml",
+    "owner_read_only_verified_before_training": true,
+    "source_summary_original_owner_not_rewritten": true,
+    "require_exact_G4_G5_G7_final_head": true,
+    "require_exact_native_owner_WinWSL_full_regression": true,
+    "write_new_training_receipts_to_unique_workflow_artifact": true,
+    "one_shot_no_replay_after_uncertain_result": true,
+    "no_rerun_existing_firstuse": true
+  },
+  "science": {
+    "train_worlds": 96,
+    "heldout_FIT_worlds": 32,
+    "arms": [
+      "original_four_block_HybridPilot",
+      "original_four_block_with_16D_raw_action_key_bypass",
+      "original_256state_SSM"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "updates_each": 800,
+    "training_max_s": 7200,
+    "none_of_original_F3_F4_F5_data_reused": true,
+    "same_loss_optimizer_sampling_and_thresholds": true,
+    "positive_gate": "bypass <= .9 original and <= .9 SSM on >=2/3 seeds; SSM <=.75 zero all seeds",
+    "preserve_nulls": true,
+    "scientific_PASS_possible": false,
+    "fit_dev_only": true,
+    "CAL_unopened": true
+  },
+  "authority": {
+    "operator_F7_fit_approval_already_given": true,
+    "only_training_from_consumed_F7_source": true,
+    "new_external_firstuse": false,
+    "no_CAL_or_OOD": true,
+    "new_workflow_is_single_use_not_scheduler": true,
+    "no_runner_or_controller_created": true,
+    "no_paid_api": true,
+    "deploy": false,
+    "merge": false
+  },
+  "reason": "The original F7 owner source FIRSTUSE and immutable FIT capture PASS; training abort before any trained checkpoint due falsely requiring nonnull grads on unused hard-routed original depth. Resume only safe no-effect training with identical science protocol and custody rather than rerun simulator."
+}

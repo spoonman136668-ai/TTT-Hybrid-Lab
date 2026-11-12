@@ -1,0 +1,71 @@
+{
+  "schema": "ttt-hybrid.f7-existing-frozen-fit-gradient-repair.v1",
+  "stage": "FROZEN_BEFORE_REPAIR_NO_NEW_SOURCE_FIRSTUSE",
+  "checkpoint": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 234,
+    "source_sha": "57ff8520e0f2c94c913e35a2aa19c6162843f3e3",
+    "one_shot_run_id": 43195349254,
+    "job_id": 131104762136,
+    "source_artifact_id": 13933156808,
+    "artifact_zip_sha256": "5480c0a8d2e518f9c0c9e3e011e3dfa9d3019fb720d10641c02bb36b5023f0ef",
+    "capture_sha256": "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4",
+    "original_F7_frozen_blob": "31c6107766389b73a228c36cb2bfa2e1a0de1f24"
+  },
+  "first_use": {
+    "worlds": 128,
+    "effects": 12288,
+    "session_seed_min": 1821000000,
+    "session_seed_max": 1821000127,
+    "early_terminations": 0,
+    "truncated_at_96": 128,
+    "status": "CONSUMED_FULL_FIT_DO_NOT_REPLAY",
+    "owner_native_storage_preflight": "PASS",
+    "github_artifact_custody": "PASS",
+    "new_source_firstuse": false,
+    "CAL_OOD_NEGATIVE_effects": 0
+  },
+  "failure": {
+    "classification": "TRAINER_GRADIENT_CHECK_FALSE_REJECTION",
+    "line": "experiments/p85mr_f7_train_fit.py:237-239",
+    "error": "F7_UNQUALIFIED_REAL_MODEL_GRADIENT",
+    "first_arm": "original_four_block_HybridPilot",
+    "completed_model_training_receipts": 0,
+    "root_cause_hypothesis": "Hard-threshold original native CausalDepthRouter uses no FFN/router computation when no tokens pass gate, so PyTorch returns None gradient for inactive depth parameters; trainer incorrectly requires non-None on all model params",
+    "requires_proof": "Inspect absent parameter names against frozen depth prefix and last_utilization==0; forbid any other absent, any nonfinite, all-zero or absent core gradients"
+  },
+  "repair_scope": {
+    "allow_correct_gradient_admission_without_changing_architecture_or_loss": true,
+    "dormant_depth_grad_none_only_when_utilization_zero": true,
+    "core_stem_head_require_nonzero_finite": true,
+    "bypass_raw_key_require_nonzero_finite": true,
+    "original_SSM_all_parameters_require_finite_gradients": true,
+    "all_existing_positive_controls_and_negative_controls": true,
+    "no_training_seeds_split_objective_thresholds_updates_changes": true,
+    "frozen_original_model_no_edit": true,
+    "full_exact_G4_WinUbuntu_G5_WinUbuntu_G7_Ubuntu": true
+  },
+  "next_execution": {
+    "training_only_on_archived_immutable_F7_FIT_data": true,
+    "restore_source_from_exact_artifact": true,
+    "verify_digest_and_original_owner_native_receipts": true,
+    "separate_owner_training_route_required": true,
+    "never_replay_firstuse_workflow": true,
+    "no_new_simulator_import_reset_do": true,
+    "no_new_source_sessions": true,
+    "no_replay_uncertain_effect": true,
+    "owner_workflow_not_authorized_by_engineering_patch": true,
+    "CAL_OOD_not_authorized": true,
+    "qualified_model_training_not_yet_done": true
+  },
+  "science": {
+    "fit_development_only": true,
+    "primary_metric": "FIT heldout 32 world physical normalized delta MSE; compare original, raw-key bypass, full trained SSM across three precommitted seeds",
+    "all_worlds_survive_full_horizon": true,
+    "reward_constant": true,
+    "survival_metric_saturated": true,
+    "science_pass": false,
+    "deployment": false,
+    "merge": false
+  }
+}
