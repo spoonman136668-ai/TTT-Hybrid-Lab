@@ -39,7 +39,7 @@ def test_positive_causal_autocorrelation_fixture_detects_past_error():
     x,y=fixture(correlated=True)
     report=v.evaluate_spent_arrays(x,y)
     assert report["new_original_source_effects"] == 0
-    assert report["already_inspected_test_worlds"] == 32
+    assert report["fabricated_test_worlds"] == 32\n    assert report["already_inspected_test_worlds"] == 0\n    assert report["classification"] == "FABRICATED_DEV_ONLY"
     assert report["independent_scientific_pass"] is False
     arm=report["arms"]["quadratic35"]
     assert arm["base_parameters"] == 140
@@ -90,3 +90,23 @@ def test_source_module_is_not_new_simulator_or_runner():
                       "optimizer.step("):
         assert forbidden not in source
     assert v.locked()["native_owner_requirements"]["runner_dispatch"] is False
+
+def test_retained_actual_spent_f7_nonparametric_negative_result():
+    import json
+    evidence_path = Path(__file__).resolve().parents[1] / (
+        "experiments/p85mr_f8r16_nonlinear_memory_result.json")
+    evidence = json.loads(evidence_path.read_bytes())
+    assert evidence["freeze_committed_before_result"] == (
+        "01d948760a05b9a5401ea9b761abc7bc47caf50e")
+    assert evidence["original_f7_source_zip_sha256"] == v.r2.F7_ZIP
+    assert evidence["original_f7_training_zip_sha256"] == v.r2.F7_TRAIN_ZIP
+    assert evidence["new_external_source_actions"] == 0
+    assert evidence["independent_scientific_pass"] is False
+    quadratic = evidence["arms"]["quadratic35"]
+    assert quadratic["baseline_coefficient_sha256"] == (
+        "053f574d94d76654d0cb22114aab7b5986eecad66108f2c96514d6ef73137976")
+    assert quadratic["baseline_mse"] == pytest.approx(2.7441133476852674e-6,abs=1e-16)
+    assert quadratic["relative_memory_gain"] < 0
+    assert quadratic["bootstrap_lower_absolute_gain"] < 0
+    assert quadratic["bootstrap_upper_absolute_gain"] > 0
+    assert quadratic["frozen_10pct_memory_criterion_pass"] is False
