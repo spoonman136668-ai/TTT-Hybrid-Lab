@@ -29,7 +29,7 @@
       "world_minus_optimal_action": 1
     },
     "comparison": "same logged observations, two worlds, one learned predictor, shared deterministic action-selection rule",
-    "all_numbers_are_illustrative": false
+    "synthetic_analytical_world_only_no_empirical_measurement": true
   },
   "stop_conditions": [
     "any non-identical logged outcomes",
