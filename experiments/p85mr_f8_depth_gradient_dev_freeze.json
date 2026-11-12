@@ -1,0 +1,57 @@
+{
+  "schema": "ttt-hybrid.f8.depth-gradient-mechanism-development.v1",
+  "stage": "PREIMPLEMENTATION_DEV_ONLY_NO_SCIENCE_FIRSTUSE",
+  "ancestor_f7_head": "21c8df5b00e7b83a10b37f9b9ca3b3b9de362b5e",
+  "original_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+  "original_f7_frozen_science_blob": "31c6107766389b73a228c36cb2bfa2e1a0de1f24",
+  "f7_observed_negative": {
+    "firstuse_run": 43195349254,
+    "trained_recovery_run": 43198869594,
+    "authentic_effects_consumed": 12288,
+    "worlds": 128,
+    "episode_cap": 96,
+    "native_vs_ssm_dev_wins": "0/3",
+    "original_router_dormant_fraction_approx": 0.9885,
+    "f7_scientific_pass": false
+  },
+  "question": "Can an inactive-token surrogate provide gradients to the original CausalDepthRouter without changing its hard forward result, and distinguish that from always-active and no-depth ablations?",
+  "development_only": {
+    "use_original_native_HybridPilot_unchanged": true,
+    "arms": [
+      "original_hard_depth",
+      "inactive_surrogate_depth",
+      "always_active_depth",
+      "no_depth"
+    ],
+    "mechanism": "soft surrogate uses (hard-p).detach()+p, tests exact same forward at all-inactive while gradients reach router, always-active depth FFN learns; no source data",
+    "negatives": [
+      "all-inactive original hard router has no gradient",
+      "inactive surrogate router has finite nonzero gradient at same forward",
+      "inactive surrogate FFN receives no training update until activation",
+      "always-active depth FFN receives finite gradient",
+      "unmodified native model shape and parameter-count receipts",
+      "no authority or external source access"
+    ],
+    "no_simulator_import_or_original_effects": true,
+    "original_firstuse_after_F7_constrained": false
+  },
+  "separate_scientific_f8": {
+    "frozen_source_cohort": false,
+    "selected_difficulty": false,
+    "trained_strongest_and_capacity_matched_SSM": false,
+    "matched_new_source_rights": false,
+    "cal_or_ood_firstuse_approved": false,
+    "requires_independent_owner_firstuse_approval": true,
+    "requirement": "new non-saturated FIT task with predeclared difficulty calibration and strong fitted baselines, equal matched source opportunities, cold retention, A->B->A interference, zero-shot transfer, full-process cost, no F7 holdout reuse"
+  },
+  "scope_guards": {
+    "preserve_F7_firstuse_and_its_results": true,
+    "do_not_rerun_or_retune_F7": true,
+    "do_not_change_original_model_py": true,
+    "no_controller_or_scheduler": true,
+    "no_workflow_changes": true,
+    "no_source_runner_action": true,
+    "no_merge_or_deployment_authorized": true,
+    "no_published_scientific_advantage_claim": true
+  }
+}
