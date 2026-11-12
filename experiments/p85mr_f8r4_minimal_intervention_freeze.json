@@ -1,0 +1,46 @@
+{
+  "schema": "ttt-hybrid.f8r4.minimal-intervention-identification-dev.v1",
+  "classification": "PRECOMMITTED_SYNTHETIC_CAUSAL_INFORMATION_VALUE_TEST_NOT_EXTERNAL_F8",
+  "source_parent": "3cf6f1b18e727a340ce07e927231fc62ee6accbb",
+  "reuse_exact_R3_world_family": "ttt-hybrid.f8r3.counterpolicy-identifiability-dev.v1",
+  "hypothesis": "One actively selected off-policy action with its genuine synthetic outcome resolves the two-world ambiguity that one equally budgeted logged-policy action cannot; a one-bit cold-restored belief transfers to a different state under the same known dynamics family.",
+  "conditions": {
+    "world_signs": [
+      -1,
+      1
+    ],
+    "prior": "uniform, mechanism sign hidden from the learner",
+    "query_state": 0.2,
+    "query_action": 0,
+    "passive_control_action": 1,
+    "query_budget_per_arm": 1,
+    "observation": "one actual synthetic_effect(state, selected_action, hidden_world_sign); sign never supplied to update",
+    "transfer_state": -0.2,
+    "transfer_goal": 0.2,
+    "loss": "squared error against goal after chosen action",
+    "models": "two analytically known possibilities; infer sign only from observed chosen action and actual outcome; not a trained Hybrid model",
+    "memory": "exactly one bit of world identity retained across cold export/import",
+    "thresholds": {
+      "logged_policy_cannot_identify": true,
+      "actively_probed_both_signs_identified": true,
+      "observed_query_outcomes_separation": 0.6,
+      "active_transfer_goal_action_accuracy": "2/2",
+      "passive_transfer_goal_action_accuracy": "1/2",
+      "cold_recovery_accuracy": "2/2",
+      "invalid_or_inconsistent_observation_rejected": true
+    }
+  },
+  "boundaries": {
+    "no_real_CausalGymnasium_import_or_reset_or_do": true,
+    "no_original_F7_firstuse_or_any_replay": true,
+    "no_new_external_actions": true,
+    "no_owner_runner_or_local_GPU": true,
+    "no_controller_queue_scheduler_workflow_mutations": true,
+    "no_new_training_or_model_performance_claim": true,
+    "not_an_unfamiliar_dynamics_transfer_test": true,
+    "not_computationally_matched_Hybrid_v_linear": true,
+    "no_sci_first_use_or_merge_approval": true,
+    "must_preserve_retrospective_linear_F7_advantage_and_fail_native_science": true
+  },
+  "qualification": "exact candidate G4 Windows+Ubuntu full mandatory final regression, G5 native CPU both, G7 pinned Mamba2 Linux; engineering vs science separate"
+}
