@@ -30,7 +30,7 @@ def test_original_source_and_10pct_threshold_cannot_be_overridden():
     assert f["thresholds"]["bootstrap_seed"] == 1825990128
     assert f["source"]["original_effects_already_consumed"] == 12288
     assert f["source"]["new_source_effects"] == 0
-    assert f["native_owner_requirements"]["firstuse"] is False
+    assert f["controls"]["no_new_external_interventions"] is True
     with pytest.raises(PermissionError, match="NOT_AUTHORIZED"):
         v.refuse_original_firstuse()
 
@@ -91,7 +91,7 @@ def test_source_module_is_not_new_simulator_or_runner():
                       "requests.get(", "urlopen(", "torch.save(",
                       "optimizer.step("):
         assert forbidden not in source
-    assert v.locked()["native_owner_requirements"]["runner_dispatch"] is False
+    assert v.locked()["controls"]["no_owner_workflow"] is True
 
 def test_retained_actual_spent_f7_nonparametric_negative_result():
     import json

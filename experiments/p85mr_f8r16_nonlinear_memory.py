@@ -60,7 +60,8 @@ def locked() -> dict:
                 "relative MSE gain for quadratic35+lag1 vs quadratic35 at least 10%"
             or f["thresholds"]["bootstrap_seed"] != SEED
             or f["controls"]["independent_scientific_pass"] is not False
-            or f["native_owner_requirements"]["firstuse"] is not False):
+            or f["controls"]["no_new_external_interventions"] is not True
+            or f["controls"]["no_owner_workflow"] is not True):
         raise ValueError("F8R16_SOURCE_OR_FIRSTUSE_SCOPE_DRIFT")
     return f
 
