@@ -27,7 +27,7 @@ def synthetic_world(seed):
 
 def test_f7_research_scope_is_new_and_frozen_before_source():
     x=p7.frozen()
-    assert x["scope"]["historic_F3_F4_F5_spent"]
+    assert x["scope"]["prior_F3_F4_F5_spent"]
     assert not x["authority"]["approve_F7_CAL"]
     assert not x["authority"]["approve_F6_A5"]
     assert p7.seed(0)==1821000000
