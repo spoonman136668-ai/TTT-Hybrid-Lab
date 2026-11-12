@@ -213,6 +213,51 @@ def _zero_baseline(worlds):
     return math.fsum(accum)/len(accum)
 
 
+def qualified_gradients(kind,model):
+    """Accept genuinely dormant original hard-depth router; never hide failed learning.
+
+    The original CausalDepthRouter intentionally evaluates no FFN when its
+    hard threshold routes zero tokens. In that case ONLY its depth parameters
+    may lack an autograd path. All reachable gradients must remain finite,
+    the stem/head and non-depth native blocks must receive learning signal,
+    and a conventional SSM must have no missing gradients.
+    """
+    if kind not in cfg.ARMS:
+        raise ValueError("F7_UNKNOWN_FROZEN_GRADIENT_ARM")
+    missing=[];connected={}
+    for name,param in model.named_parameters():
+        if not param.requires_grad:
+            raise ValueError("F7_FROZEN_MODEL_PARAM_NOT_TRAINABLE")
+        grad=param.grad
+        if grad is None:
+            missing.append(name)
+            continue
+        if grad.shape!=param.shape or not bool(torch.isfinite(grad).all()):
+            raise ValueError("F7_NONFINITE_OR_WRONG_SHAPE_GRADIENT")
+        connected[name]=bool((grad!=0).any())
+    if not connected or not any(connected.values()):
+        raise ValueError("F7_NO_REAL_MODEL_GRADIENT")
+    if kind==candidate.K_SSM:
+        if missing:
+            raise ValueError("F7_UNEXPECTED_SSM_DISCONNECTED_GRADIENT")
+        return {"dormant_depth_count":0,"connected":len(connected)}
+    prefix="depth." if kind==candidate.K_NATIVE else "original.depth."
+    depth=model.depth if kind==candidate.K_NATIVE else model.original.depth
+    if missing and (float(depth.last_utilization)!=0.0 or
+                    any(not name.startswith(prefix) for name in missing)):
+        raise ValueError("F7_UNQUALIFIED_NONDEPTH_MODEL_GRADIENT")
+    core="" if kind==candidate.K_NATIVE else "original."
+    for component in ("stem.","ssm.","attn.","ttt.","head."):
+        if not any(name.startswith(core+component) and has_grad
+                   for name,has_grad in connected.items()):
+            raise ValueError("F7_CORE_LEARNING_GRADIENT_MISSING_"+component)
+    if kind==candidate.K_BYPASS and not any(
+            name.startswith("raw_key.") and has_grad
+            for name,has_grad in connected.items()):
+        raise ValueError("F7_RAW_ACTION_KEY_NOT_TRAINABLE")
+    return {"dormant_depth_count":len(missing),"connected":len(connected)}
+
+
 def _train_arm(kind,seed,train,val,indices,output,global_start):
     model=candidate.model_from_arm(kind,seed).cpu()
     started=time.monotonic()
@@ -221,6 +266,7 @@ def _train_arm(kind,seed,train,val,indices,output,global_start):
         model.parameters(),lr=.001 if kind==candidate.K_SSM else .002,
         weight_decay=.01)
     best=float("inf");best_state=None;best_step=None;trace=[]
+    dormant_depth_updates=0
     for step in range(1,801):
         if time.monotonic()-global_start>MAX_SECONDS:
             raise TimeoutError("F7_FIT_OWNER_GLOBAL_TRAINING_BUDGET")
@@ -234,9 +280,9 @@ def _train_arm(kind,seed,train,val,indices,output,global_start):
         if not bool(torch.isfinite(loss)):
             raise ValueError("F7_INVALID_REAL_FIT_LOSS")
         loss.backward()
-        if not all(p.grad is not None and bool(torch.isfinite(p.grad).all())
-                   for p in model.parameters()):
-            raise ValueError("F7_UNQUALIFIED_REAL_MODEL_GRADIENT")
+        gradient_receipt=qualified_gradients(kind,model)
+        if gradient_receipt["dormant_depth_count"]:
+            dormant_depth_updates+=1
         torch.nn.utils.clip_grad_norm_(model.parameters(),1.)
         optimizer.step()
         if step%50==0:
@@ -281,6 +327,7 @@ def _train_arm(kind,seed,train,val,indices,output,global_start):
         "selected_weights":f5.hash_weights(model),
         "selected_checkpoint_update":best_step,
         "updates_executed":800,
+        "dormant_original_depth_updates":dormant_depth_updates,
         "FIT_holdout_delta_MSE":chosen,
         "wrong_credit_FIT_holdout_MSE":negative,
         "checkpoints":trace,

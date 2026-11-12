@@ -88,3 +88,44 @@ def test_f7_denies_wrong_worlds_model_seed_and_forged_current_effect():
                        "dispatch_workflow(","subprocess.run(","requests.get(",
                        "torch.load("):
         assert prohibited not in source
+
+
+def test_f7_real_gradient_admission_allows_only_hard_inactive_native_depth():
+    from experiments import p85mr_f7_train_fit as trainer
+    batch,valid=f7.f4._padded([synthetic_world(0),synthetic_world(1)])
+    for arm in (f7.K_NATIVE,f7.K_BYPASS):
+        model=f7.model_from_arm(arm,985201)
+        depth=model.depth if arm==f7.K_NATIVE else model.original.depth
+        with torch.no_grad():
+            depth.router.weight.zero_()
+            depth.router.bias.fill_(-100.)
+        model.train()
+        model.zero_grad(set_to_none=True)
+        f7.loss_for_arm(arm,model,batch,valid).backward()
+        assert depth.last_utilization==0.
+        receipt=trainer.qualified_gradients(arm,model)
+        assert receipt["dormant_depth_count"]>0
+        prefix="depth." if arm==f7.K_NATIVE else "original.depth."
+        assert all(n.startswith(prefix) for n,p in model.named_parameters()
+                   if p.grad is None)
+        # Failing an essential model connection must not be mistaken for sparsity.
+        stem=model.stem if arm==f7.K_NATIVE else model.original.stem
+        stem.weight.grad=None
+        with pytest.raises(ValueError,match="F7_UNQUALIFIED_NONDEPTH_MODEL_GRADIENT"):
+            trainer.qualified_gradients(arm,model)
+        stem.weight.grad=torch.full_like(stem.weight,float("inf"))
+        with pytest.raises(ValueError,match="F7_NONFINITE_OR_WRONG_SHAPE_GRADIENT"):
+            trainer.qualified_gradients(arm,model)
+
+
+def test_f7_conventional_ssm_and_missing_native_core_cannot_fake_gradient():
+    from experiments import p85mr_f7_train_fit as trainer
+    batch,valid=f7.f4._padded([synthetic_world(0),synthetic_world(1)])
+    ssm=f7.model_from_arm(f7.K_SSM,985201).train()
+    ssm.zero_grad(set_to_none=True)
+    f7.loss_for_arm(f7.K_SSM,ssm,batch,valid).backward()
+    assert trainer.qualified_gradients(f7.K_SSM,ssm)["dormant_depth_count"]==0
+    first_param=next(iter(ssm.parameters()))
+    first_param.grad=None
+    with pytest.raises(ValueError,match="F7_UNEXPECTED_SSM_DISCONNECTED_GRADIENT"):
+        trainer.qualified_gradients(f7.K_SSM,ssm)
