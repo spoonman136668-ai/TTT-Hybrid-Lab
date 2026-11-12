@@ -1,0 +1,9 @@
+# Preserve original source bytes for hash-gated research across Windows and Linux.
+# This prevents CRLF checkout conversion; it does not alter the source blob.
+experiments/p69_causal_shift_source.py -text
+experiments/p77_write_policy.py -text
+experiments/p78mr_fitcal_val_dev_result.json -text
+experiments/p78mr_r2_noise_shift_freeze.json -text
+experiments/p78mr_r3_f3_transfer_freeze.json -text
+experiments/p78mr_r4_frozen_ssm_residual_freeze.json -text
+experiments/p78mr_r5_consumed_fit_training_freeze.json -text

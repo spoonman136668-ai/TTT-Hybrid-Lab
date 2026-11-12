@@ -1,0 +1,169 @@
+{
+  "schema": "ttt-hybrid.p78mr-r5-consumed-fit-training-result.v1",
+  "classification": "RETROSPECTIVE_DEV_ALREADY_CONSUMED_F3_SOURCE",
+  "protocol_freeze_commit": "234772ba52140800497ddd6b6eb16bf0f3f05e40",
+  "protocol_freeze_blob": "51429265c6ec40d757709bac7b6e9d53f78c9b8d",
+  "source": {
+    "original_f3_owner_run_id": 43073165842,
+    "artifact_id": 13878284321,
+    "archive_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "original_f4_control_run_id": 43080774054,
+    "artifact_id_f4": 13883054583,
+    "archive_sha256_f4": "ac93a3616619bf4376023e18cfc2ab32757a1a89715fbc02394164682c0159b5",
+    "ssm_checkpoint_sha256": "c6af43defa91f8cf308845d72e9b6acf15008761d88d3ede054029affcce4cc5",
+    "fit_worlds": 128,
+    "train_worlds": 96,
+    "fitdev_worlds": 32,
+    "cal_worlds": 64,
+    "fit_actual_effects": 2923,
+    "cal_actual_effects": 1524,
+    "no_external_source_generation": true
+  },
+  "method": {
+    "learned_parameters": 3,
+    "fast_world_state_floats": 256,
+    "trained_ssm_frozen_world_state_floats": 256,
+    "total_memory_per_world": 512,
+    "optimizer": "AdamW lr .01 wd .01 clip 1",
+    "steps_each_seed": 240,
+    "batch": 16,
+    "seeds": [
+      979501,
+      979503,
+      979507
+    ],
+    "sampler_seed": 979599,
+    "sampler_sha256": "03897962e6b8a96252f373bcae87ecd8543ac3a18c9a105950953715ba9b08a9",
+    "selection": "FITdev min at steps [40,80,120,160,200,240]; CAL after all selections"
+  },
+  "baselines": {
+    "original_ssm_source_receipt_CAL": 0.000012177126073709132,
+    "original_ssm_replayed_CAL": 0.000012177128155599348,
+    "fixed_grid": [
+      0.05,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      1
+    ],
+    "fixed_fitdev_mses": [
+      0.000011747054486477282,
+      0.000011592738701438066,
+      0.000011337724572513252,
+      0.000011090332918683998,
+      0.000010883642971748486,
+      0.000010740827747213189,
+      0.000010673905308067333,
+      0.0000106920997495763,
+      0.000010806023055920377,
+      0.00001138464176619891
+    ],
+    "fit_selected_eta": 0.6,
+    "fit_selected_eta_CAL": 0.000010462704267411027,
+    "original_fixed_eta_0p4_CAL": 0.000010662873137334827
+  },
+  "models": [
+    {
+      "seed": 979501,
+      "checkpoint_step": 80,
+      "selected_theta": [
+        -0.01287800632417202,
+        -0.2500104308128357,
+        0.2904329001903534
+      ],
+      "fitdev_mse": 0.000010347812349209562,
+      "CAL_mse": 0.000010381560059613548,
+      "ratio_vs_ssm": 0.8525458488206719,
+      "ratio_vs_fit_fixed": 0.9922444326319894,
+      "frozen_primary_pass": false,
+      "training_wall_seconds_local": 3.07873535500039,
+      "checkpoint_fitdev_mse": [
+        0.000010549217,
+        0.000010347812349209562,
+        0.000010349555,
+        0.000010371373,
+        0.000010360351,
+        0.000010359367
+      ]
+    },
+    {
+      "seed": 979503,
+      "checkpoint_step": 80,
+      "selected_theta": [
+        0.021612096577882767,
+        -0.24853907525539398,
+        0.2934392988681793
+      ],
+      "fitdev_mse": 0.000010346767339797225,
+      "CAL_mse": 0.000010382666914665606,
+      "ratio_vs_ssm": 0.852636745051533,
+      "ratio_vs_fit_fixed": 0.9923502231641279,
+      "frozen_primary_pass": false,
+      "training_wall_seconds_local": 3.1037473950000276,
+      "checkpoint_fitdev_mse": [
+        0.00001054503,
+        0.000010346767339797225,
+        0.000010349047,
+        0.000010370977,
+        0.000010360122,
+        0.000010359187
+      ]
+    },
+    {
+      "seed": 979507,
+      "checkpoint_step": 120,
+      "selected_theta": [
+        -0.016248714178800583,
+        -0.24228404462337494,
+        0.31396484375
+      ],
+      "fitdev_mse": 0.000010349363947170787,
+      "CAL_mse": 0.000010397929145256057,
+      "ratio_vs_ssm": 0.8538900972701703,
+      "ratio_vs_fit_fixed": 0.99380895029627,
+      "frozen_primary_pass": false,
+      "training_wall_seconds_local": 3.152009192999685,
+      "checkpoint_fitdev_mse": [
+        0.000010566317,
+        0.000010350966,
+        0.000010349363947170787,
+        0.000010371748,
+        0.000010360169,
+        0.000010359077
+      ]
+    }
+  ],
+  "primary": "ALL THREE SEEDS must beat 0.95x baseline and 0.95x FIT-selected fixed",
+  "primary_result": "RETROSPECTIVE_DEV_FAIL_ALL_3_LEARNED_VS_STRONG_FIXED",
+  "local_execution": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "threads": 1,
+    "all_training_updates": 720,
+    "full_end_to_end_wall_seconds": 9.611209236999457,
+    "peak_rss_mib": 320.125,
+    "execution_type": "faithful independent local equation replay of original F3/F4; not exact committed GitHub R5 CLI",
+    "scientific_acceptance": false
+  },
+  "constraints": {
+    "first_use_replayed": false,
+    "new_external_actions": 0,
+    "OOD_accessed": false,
+    "new_runner": false,
+    "workflow_edit": false,
+    "FORGE_change": false,
+    "merge": false,
+    "science_pass": false,
+    "deployment": "NONE"
+  },
+  "limits": [
+    "F3 FIT/CAL historically used by F4/F5; not independent OOD",
+    "Original trained SSM trained task-specifically before R5; state counts not matched to fresh 512-state SSM/GRU",
+    "Original exact GitHub R5 CLI not yet executed end-to-end with archives; G4 engineering uses synthetic fixtures only"
+  ]
+}

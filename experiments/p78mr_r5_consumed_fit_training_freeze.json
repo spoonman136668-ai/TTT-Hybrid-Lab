@@ -1,0 +1,126 @@
+{
+  "schema": "ttt-hybrid.p78mr-r5-consumed-F3-FIT-trainable-residual-v1",
+  "stage": "PRECOMMIT_BEFORE_ANY_R5_TRAINING_OR_CAL_SCORING",
+  "classification": "RETROSPECTIVE_DEVELOPMENT_ONLY; ALL_F3_FIT_CAL_PREVIOUSLY_CONSUMED; NEVER SCIENTIFIC_PASS",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 192,
+    "head": "62638461a63b00e96d9ffdf68d34b07d23354f83",
+    "tree": "70ec78db416be94dd16b5a2155fc3fb79bfd5597"
+  },
+  "source": {
+    "original_owner_run": 43073165842,
+    "archive_id": 13878284321,
+    "zip_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "fit_capture_sha256": "b495d6c41fd54c6955fd83ead7569282146af45bc68b3a3dba2a63808e1d6f7b",
+    "cal_capture_sha256": "15bcbe25b492ad095fca35ee37ec97d0d141c9beb9899549a30558659ded3aef",
+    "fit_worlds": 128,
+    "cal_worlds": 64,
+    "fit_event_count": 2923,
+    "cal_event_count": 1524,
+    "fitting_only_existing_fit": true,
+    "cal_scored_once_after_selection": true,
+    "new_external_actions": false,
+    "ood_scored": false
+  },
+  "base_model": {
+    "original": "F4R1 trained source-preserved P69 DiagonalContinuousSSM, 256-float state",
+    "run": 43080774054,
+    "artifact_id": 13883054583,
+    "archive_sha256": "ac93a3616619bf4376023e18cfc2ab32757a1a89715fbc02394164682c0159b5",
+    "checkpoint": "p85mr_f4_models/ssm256-985203.npz",
+    "checkpoint_sha256": "c6af43defa91f8cf308845d72e9b6acf15008761d88d3ede054029affcce4cc5",
+    "cal_delta_mse": 0.000012177126073709132,
+    "frozen_parameters": true
+  },
+  "design": {
+    "original_p77_equation_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02",
+    "factual_key": "P80 normalized 16D state+executed-action vector",
+    "observed_effect": "P80 seven bounded effect features and 9 zero targets",
+    "fast_state": "16x16 float32 factual residual matrix W, zero at each world start, 256-float persistent alongside frozen 256-float SSM =512",
+    "prediction": "original SSM readout + W@current_action BEFORE y[t]",
+    "write": "after y[t] observed, target residual = y[t]-SSM_readout, delta = target-(W@current_action), W += sigmoid(theta[0]+theta[1]*log(mean(delta^2)+1e-6)+theta[2]*log(mean((W@a)^2)+1e-6))*outer(delta,action)",
+    "model_static_trainable_theta": 3,
+    "training_only_theta": true,
+    "world_state_floats": 512,
+    "original_base_state_floats": 256
+  },
+  "frozen_fit": {
+    "split": "original FIT world positions 0..95 train and 96..127 checkpoint-select; no new source or regenerated interventions",
+    "train_world_count": 96,
+    "fitdev_world_count": 32,
+    "seeds": [
+      979501,
+      979503,
+      979507
+    ],
+    "theta_initialization": "torch CPU Generator(seed) uniform(-0.05,+0.05) per component; each independent",
+    "sampler": "torch CPU Generator seed=979599; randint(96) minibatch 16 for 240 updates; same indices all arms/seeds",
+    "optimizer": "AdamW theta only lr=0.01 weight_decay=0.01, gradient clip L2<=1.0",
+    "updates": 240,
+    "batch": 16,
+    "eval_interval": 40,
+    "checkpoint": "smallest FITdev four-physical-channel prequential MSE at 40,80,120,160,200,240; tie earlier step",
+    "metrics": "per-world average mean over four normalized physical delta squared errors from event 2 onward, then equal-world average",
+    "cal_policy": "no CAL evaluation or model/grid choice until all learned checkpoints and best fixed gain selected from FITdev"
+  },
+  "controls": {
+    "base": "same frozen source-trained SSM256 no W",
+    "fixed_grid": [
+      0.05,
+      0.1,
+      0.2,
+      0.3,
+      0.4,
+      0.5,
+      0.6,
+      0.7,
+      0.8,
+      1
+    ],
+    "fixed_grid_selection": "min FITdev 32-world loss; tie first in grid; no CAL selection",
+    "fixed_0p4": "original R4 non-learned overlay eta=0.4",
+    "transferred_p78": "original three pretrained P78 theta seeds 978201,978203,978207; scores already consumed; optional historical context only, not for new selection",
+    "state_capacity": "base 256; all overlays 512; no claim matched to new fully trained SSM512 or MLP/GRU512"
+  },
+  "preregistered_primary": "ALL 3 new trainable theta seeds must score on spent F3 CAL <=0.95 times FIT-selected fixed gain CAL and <=0.95 times original 256 SSM CAL, otherwise R5 retrospective DEV FAIL; no SCIENTIFIC_PASS possible",
+  "negatives": [
+    "original frozen SSM exact numeric parity with F4 CAL",
+    "all source archive and checkpoint SHA256 checks",
+    "no label in same-step readout",
+    "wrong-action credit affects residual and base state",
+    "both persistent states cold-restore and no source reset",
+    "only 3 trainable theta; original SSM parameters remain frozen",
+    "zero/NaN/shape and unit mismatch rejection",
+    "cross-platform exact candidate G4/G5/G7 full final",
+    "no model/policy change after inspecting CAL"
+  ],
+  "resources": {
+    "cpu_only": true,
+    "gpu": false,
+    "max_updates_per_seed": 240,
+    "max_wall_seconds_local": 1200,
+    "max_peak_rss_mib": 3072,
+    "do_not_modify_workflow": true,
+    "local_train_trace_and_result_in_git_repo": true
+  },
+  "authority": {
+    "owner_first_use": false,
+    "external_simulator_reset_do": false,
+    "new_science_source": false,
+    "protected_ood": false,
+    "paid_apis": false,
+    "new_controller": false,
+    "scheduler": false,
+    "new_runner": false,
+    "workflows_modified": false,
+    "merge": false,
+    "FORGE_integration": false,
+    "promotion": false
+  },
+  "verdict": {
+    "engineering": "UNVERIFIED until full final exact SHA dual platform",
+    "science": "NOT_RUN_INDEPENDENT",
+    "deployment": "NONE"
+  }
+}

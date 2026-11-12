@@ -1,0 +1,72 @@
+{
+  "schema": "ttt-hybrid.p78mr-r4-frozen-ssm-residual-local-evidence.v1",
+  "classification": "RETROSPECTIVE_ALREADY_CONSUMED_F3_CAL_DEV_ONLY",
+  "freeze_commit": "9a30de699ef204ed1a6587ac5851a00f1122fc0d",
+  "freeze_git_blob": "e29997529ad87560ea8a2caacfb4152ae8c1da50",
+  "f3_source_artifact": {
+    "id": 13878284321,
+    "sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "worlds": 64,
+    "actual_events": 1524,
+    "prewrite_scored_events": 1460
+  },
+  "trained_original_baseline": {
+    "kind": "DiagonalContinuousSSM",
+    "seed": 985203,
+    "trained_f4_source_artifact_id": 13883054583,
+    "archive_sha256": "ac93a3616619bf4376023e18cfc2ab32757a1a89715fbc02394164682c0159b5",
+    "checkpoint_sha256": "c6af43defa91f8cf308845d72e9b6acf15008761d88d3ede054029affcce4cc5",
+    "original_reported_cal_mse": 0.000012177126073709132,
+    "local_equation_replay_cal_mse": 0.00001217712831799899,
+    "absolute_difference": 2.244289858e-12
+  },
+  "local_reference": {
+    "python": "3.13.5",
+    "torch": "2.10.0+cpu",
+    "cpu_threads": 1,
+    "source": "/mnt/data/p78mr_r4_local_reference.py (independent equation implementation not exact committed module)",
+    "quality_metric": "four nonpadded normalized physical delta MSE; mean over each world's t>=2 error, then equal-world mean",
+    "mean_equal_world_mse": {
+      "ssm": 0.00001217712831799899,
+      "fixed0p4": 0.000010662872849843935,
+      "p78_978201": 0.000011371450462243517,
+      "p78_978203": 0.000011374622622032995,
+      "p78_978207": 0.000011368747018406355
+    },
+    "ratios": {
+      "fixed_to_ssm": 0.8756475723494811,
+      "learned_seed201_to_ssm": 0.9338367934774406,
+      "learned_seed203_to_ssm": 0.9340972949443415,
+      "learned_seed207_to_ssm": 0.9336147835119905,
+      "learned_seed201_to_fixed": 1.066452786446755,
+      "learned_seed203_to_fixed": 1.0667502822374437,
+      "learned_seed207_to_fixed": 1.066199248411065
+    },
+    "frozen_primary_all3": "FAIL",
+    "wall_seconds_local": 0.30787244099974487,
+    "peak_rss_mib": 257.20703125,
+    "cost_note": "precomputed base shared by arms, model-read vs residual-update timing diagnostic only; not matched full research cost"
+  },
+  "state": {
+    "base_ssm256": 256,
+    "overlay_fast256": 256,
+    "combined512": 512,
+    "unaugmented_ssm256": 256,
+    "capacity_not_matched": true,
+    "all_coefficients_frozen": true
+  },
+  "limits": [
+    "Original CAL already used for F4 checkpoint selection",
+    "New residual architecture does not have independent unfamiliar-world evidence",
+    "Original source owner F3 single-use never replayed",
+    "Numerical source evaluation independently implemented locally; original final-SHA repo evaluator requires own exact-artifact original execution separate from ordinary G4 source-neutral tests",
+    "No GPU or owner science acceptance"
+  ],
+  "scientific_pass": false,
+  "source_effects_created": 0,
+  "training_updates": 0,
+  "original_first_use_replayed": false,
+  "ood_opened": false,
+  "merge": false,
+  "deployment": "NONE"
+}

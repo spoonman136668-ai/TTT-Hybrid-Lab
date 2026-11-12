@@ -1,0 +1,67 @@
+{
+  "schema": "ttt-hybrid.p78mr-r3-spent-real-F3-cal-retrospective-local-result.v1",
+  "classification": "RETROSPECTIVE_DEVELOPMENT_ON_PREVIOUSLY_CONSUMED_EXTERNAL_F3_CAL",
+  "protocol_freeze_commit": "2c0a7f8a3d98af31ef2457c0447f954c41ffae0c",
+  "protocol_freeze_blob": "5cf6d46eb0d99c9835bcaffc9e70425d4b73248e",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "owner_run": 43073165842,
+    "f3_artifact_id": 13878284321,
+    "archive_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "cal_capture_sha256": "15bcbe25b492ad095fca35ee37ec97d0d141c9beb9899549a30558659ded3aef",
+    "fit_capture_sha256": "b495d6c41fd54c6955fd83ead7569282146af45bc68b3a3dba2a63808e1d6f7b",
+    "worlds": 64,
+    "factual_effects": 1524,
+    "scored_event_probe_count": 1460
+  },
+  "control": {
+    "f4_owner_run": 43080774054,
+    "f4_artifact_id": 13883054583,
+    "archive_sha256": "ac93a3616619bf4376023e18cfc2ab32757a1a89715fbc02394164682c0159b5",
+    "receipt_sha256": "0ce28fcf2976d4a97e922998dbc8696e483db1cfbf1a01bfdd5cb77052ecc56d",
+    "trained_ssm_by_seed": {
+      "985201": 0.00001328794543553613,
+      "985203": 0.000012177126073709132,
+      "985207": 0.000012313318364931547
+    },
+    "strongest_trained_ssm": 0.000012177126073709132
+  },
+  "evaluation": "P80 exact mathematical 16D state-action context and tanh-normalized 16D outcome; read before effect write; mean of 4 normalized state-delta squared errors, per episode/world t>=2, 64 equal-world weights; 3 original P78 saved three-weight checkpoints UNCHANGED, 0.4 fixed gain and zero predictor",
+  "toolchain": "local Python 3.11+ CPU PyTorch 2.10.0+cpu, single CPU thread; source-independent direct mathematical replay; final submitted source CLI itself not yet proven against archive under original SHA CI",
+  "source_validation": "original F3 ZIP/capture exact SHA256, observed cohort sizes, complete F4 trained source result ZIP/receipt exact SHA256, original original P80 conversion and P77 learned-rule equation inspected; zero baseline matches recorded F4 zero MSE to ~4e-11",
+  "mean_equal_world_four_delta_mse": {
+    "fixed_0p4": 0.001224234973,
+    "zero": 0.00466479525,
+    "learned_978201": 0.0008635126274,
+    "learned_978203": 0.0008617387238,
+    "learned_978207": 0.0008648230408
+  },
+  "comparisons": [
+    {
+      "p78_seed": 978201,
+      "vs_fixed_ratio": 0.705349,
+      "vs_strongest_ssm_ratio": 70.913,
+      "dev_margin_pass": false
+    },
+    {
+      "p78_seed": 978203,
+      "vs_fixed_ratio": 0.7039,
+      "vs_strongest_ssm_ratio": 70.767,
+      "dev_margin_pass": false
+    },
+    {
+      "p78_seed": 978207,
+      "vs_fixed_ratio": 0.706419,
+      "vs_strongest_ssm_ratio": 71.02,
+      "dev_margin_pass": false
+    }
+  ],
+  "frozen_primary_result": "RETROSPECTIVE_F3_CAL_FAIL_VS_TRAINED_SSM_3_OF_3",
+  "local_read_only_effects_created": 0,
+  "local_models_trained": 0,
+  "original_F3_owner_first_use_replayed": false,
+  "independent_holdout_opened": false,
+  "scientific_pass": false,
+  "deployment": "NONE",
+  "limitations": "F3 CAL already used for F4/F5 selection; F4 fully trained on task-specific F3 FIT and checkpoint selected on CAL, P78 theta trained on different synthetic source; not matched training compute, no unseen source. This is not SCIENTIFIC_PASS. In-repo source replay still requires separate exact-original archive validation, distinct from GitHub CPU regression which has no private archive."
+}

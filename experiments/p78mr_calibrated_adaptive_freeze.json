@@ -1,0 +1,183 @@
+{
+  "schema": "ttt-hybrid.p78mr-adaptive-controller-fit-cal-val-freeze.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEV_NOT_SCIENCE",
+  "status": "PRE_SOURCE_AND_TRAINING_FROZEN",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "PR": 190,
+    "sha": "4ef7e003a09f07e85f2ab744dae5020b01365f0d",
+    "p77_model_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02",
+    "p69_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "p77_fit_val": "CONSUMED_EXCLUDED",
+    "p77_ood": "NOT_USED_EXCLUDED"
+  },
+  "question": "Does simpler 3- or 4-parameter learned write gain outperform strong calibrated nonlearned adaptive update strategies on an independently seeded nonstationary causal-memory DEV source at exactly 256 persistent floats per world?",
+  "hypotheses": {
+    "primary": "Three-parameter magnitude-only learned controller improves VAL query MSE by >=10% against best of all fixed adaptive/constant comparators, for each of 3 independent seeds, while stable-role error <=1.05x best fixed stable and changed-role error <=0.9x best fixed changed.",
+    "direction": "Four-parameter cosine gain improves changed-role VAL error >=10% vs otherwise identical three-parameter controller and stable error <=1.05x three-parameter in all three seeds.",
+    "null": "A properly calibrated fixed rule is as good or better than learned on fresh VAL; no directional contribution at the preregistered effect threshold."
+  },
+  "source": {
+    "generator": "P69 original 16D, 8 target roles, 4 hidden changes, 96 facts per world, 16x16 factual memory; parent generator Git blob pinned and loaded into independent private module, seed material distinct.",
+    "namespace": "ttt-hybrid/p78mr/tri-split-v1",
+    "seeds": {
+      "fit": 978101,
+      "cal": 978103,
+      "val": 978109,
+      "ood_0": 978107,
+      "ood_1": 978111,
+      "ood_2": 978113,
+      "negative": 978117,
+      "model": [
+        978201,
+        978203,
+        978207
+      ],
+      "sample": 978299,
+      "bootstrap": 978401
+    },
+    "worlds": {
+      "fit": 512,
+      "cal": 192,
+      "val": 192,
+      "ood_0": 192,
+      "ood_1": 192,
+      "ood_2": 192,
+      "negative": 96
+    },
+    "learners_only_factual_events": true,
+    "final_query_only_after_history": true,
+    "no_oracle_role_or_phase": true,
+    "consumed_old_data": "Do not use P68/P70/P69/P75/P76/P77 authored heldout or FIT/VAL for selection. New VAL may be scored exactly once after all models and all fixed control selection frozen on FIT/CAL. New OOD/negative cohort selection strictly not admitted.",
+    "audits": "FIT/CAL source-birth SHA256 aggregate per-world worlds, index target BA <=.55 and changed-role BA on target<=.55, target quartile deviation<=.05, no exact future query in historical keys; no score if failed."
+  },
+  "model": {
+    "persistent_floats": 256,
+    "scalar_state": "16x16 fast weight matrix, no extra per-world statistic/age/role/index state",
+    "input": "exact executed action then consequence, read before updating, no future query, no hidden change role",
+    "trained": [
+      {
+        "id": "non_directional3",
+        "trainable_static": 3,
+        "features": "bias,log(mean(error^2)+1e-6),log(mean(prediction^2)+1e-6)",
+        "gain": "sigmoid(dot(theta, features))"
+      },
+      {
+        "id": "cosine4",
+        "trainable_static": 4,
+        "features": "same 3 plus cos(prediction,observed)",
+        "gain": "sigmoid(dot(theta,features))"
+      }
+    ],
+    "trained_from": "P77 model Git blob exact, newly seeded theta override on new branch; exact source no P77 parameter reuse.",
+    "frozen_controls": [
+      {
+        "id": "constant",
+        "etas": [
+          0.05,
+          0.1,
+          0.2,
+          0.3,
+          0.4,
+          0.5,
+          0.6,
+          0.7,
+          0.8,
+          1
+        ],
+        "selection": "lowest CAL total MSE"
+      },
+      {
+        "id": "piecewise_direction",
+        "description": "gain=hi if cosine(prediction,observed)<threshold else lo",
+        "lo": [
+          0.1,
+          0.3,
+          0.5
+        ],
+        "hi": [
+          0.5,
+          0.75,
+          1
+        ],
+        "threshold": [
+          -0.25,
+          0,
+          0.25,
+          0.5
+        ],
+        "selection": "lowest CAL total MSE, tie lexicographic"
+      },
+      {
+        "id": "piecewise_residual",
+        "description": "gain=hi if mean((observed-prediction)^2)>threshold else lo",
+        "lo": [
+          0.1,
+          0.3,
+          0.5
+        ],
+        "hi": [
+          0.5,
+          0.75,
+          1
+        ],
+        "threshold": [
+          0.02,
+          0.1,
+          0.25,
+          0.5
+        ],
+        "selection": "lowest CAL total MSE, tie lexicographic"
+      },
+      {
+        "id": "P77_fixed_contradiction",
+        "description": "exact P77 control fixed 0.5 or 1 based on cosine<0 and prediction/observation norm>.30"
+      }
+    ],
+    "comparative_fairness": "All fixed rule thresholds/learning rates selected solely on CAL, candidate checkpoints selected solely on CAL; report fixed grid search total compute and model FIT training total compute, distinct parameter counts; no full equal-compute claim from equal memory capacity."
+  },
+  "training": {
+    "seeds": [
+      978201,
+      978203,
+      978207
+    ],
+    "initialization": "new generator per seed theta_i uniform(-.05,.05), 3 and 4 models share initial 3 coordinates",
+    "fit_seed": 978101,
+    "sampler_seed": 978299,
+    "batch": 32,
+    "steps": 240,
+    "eval_every": 40,
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.01,
+    "grad_clip": 1,
+    "checkpoints": "select lowest CAL total MSE, no VAL during training or fixed tuning",
+    "early_stop": "none before step 240 except nonfinite/authority/resource breach",
+    "cpu_threads": 1,
+    "max_wall_seconds_per_seed": 300,
+    "max_peak_ram_gib": 3,
+    "validation_first_use": "Engineering developer tri-split VAL score after FIT/CAL freeze only; not independent SCIENTIFIC_PASS; no project owner scientific first use granted."
+  },
+  "success": {
+    "prerequisites": "FIT/CAL source audits pass, complete 240 updates each arm all 3 seeds, valid 256 floats each, exact tensor-only cold restoration, bitwise paired initialization, fixed controls fully calibrated before VAL, no future data leaks; otherwise engineering DEV FAIL",
+    "primary": "Each seed non_directional3 total VAL MSE <=0.9* best fixed competitor total MSE, changed <=0.9*best_fixed changed, stable <=1.05*best_fixed stable. All 3 to call primary DEV PASS.",
+    "secondary": "Each seed cosine4 changed VAL MSE<=0.9* non_directional3 changed VAL MSE and stable<=1.05 * non_directional3 stable; otherwise direction NECESSITY FAIL.",
+    "negative": "Wrong-action-credit sentinel on tiny engineering toy; no OOD wrong-credit cohort before independent first use",
+    "no_selective_success": true,
+    "heldout": "No OOD generate/score or independent scientific first use, even on a DEV result. Requires owner admission and original exact-SHA full regression Windows/Linux, strong conventional matched-info/compute baselines and source qualification.",
+    "scientific_pass": false
+  },
+  "engineering": {
+    "separate_additive_branch": true,
+    "no_existing_lane_edit": true,
+    "full_regression_required_for_acceptance": true,
+    "original_g4_g5_g7_runners_zero_steps_are_infra_not_test": true,
+    "no_auto_schedule": true,
+    "no_run_dispatch": true,
+    "no_merge": true,
+    "no_forge_controller": true,
+    "no_deployment": true,
+    "no_paid_api": true
+  }
+}
