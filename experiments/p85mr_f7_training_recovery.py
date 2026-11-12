@@ -60,7 +60,7 @@ def locked():
         or a["never_retry_source"] is not True
         or c["one_shot_only"] is not True
         or c["no_upstream_checkout"] is not True
-        or c["no_new_simulator_import_reset_do"] is not True
+        or c["no_source_api_import_constructor_reset_do"] is not True
         or c["workflow"]!=WORKFLOW
         or freeze["authority"]["no_CAL_or_OOD"] is not True
         or freeze["authority"]["new_external_firstuse"] is not False
