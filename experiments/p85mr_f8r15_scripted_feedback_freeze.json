@@ -1,0 +1,82 @@
+{
+  "schema": "ttt-hybrid.f8r15-scripted-feedback-dev.v1",
+  "stage": "FROZEN_BEFORE_F8R15_IMPLEMENTATION_AND_TEST",
+  "classification": "SOURCE_NEUTRAL_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "sha": "eb60c6803db725d4b941ca95937cee08db949bae",
+    "tree": "10c3d599d28fa63dd386fb068f9990a9e68f6b59",
+    "current_f8r5_policy_blob": "6ba4ceb5a3b222a03e84139869b838a18cc409e1",
+    "current_f8r5_test_blob": "d550e5220b7e165d1a899d254bf91e38737f5dac",
+    "r5_proposal_blob": "50cf2ff33f62d6ea6a25a7c789921838826d0094",
+    "original_f7_protocol_blob": "e50596dbf9117f3d24170c8d285be045e192a008",
+    "original_f7_protocol_path": "experiments/p85mr_f7_protocol.py",
+    "random_policy_freeze_blob": "0b1bf0b35b044bc69a1548269ad6f319c40d9546"
+  },
+  "question": "Pin the unimplemented frozen_scripted_feedback calibration action from the existing F7 balancing sign rule, without consuming original F8 effects or altering random-policy environment RNG.",
+  "frozen_policy": {
+    "name": "frozen_scripted_feedback",
+    "input": "four observable physical state scalars [cart_pos, cart_vel, pole_angle, pole_ang_vel], no hidden wind",
+    "deterministic_rule": "return int(pole_angle + 0.5 * pole_ang_vel > 0.0)",
+    "f7_origin": "F7 historical factual_policy used the same balanced term then XORed with exploratory flips; this F8 scripted nonexploratory arm uses the balanced term only",
+    "action_zero_on_tie": true,
+    "step_index_zero_based_min": 0,
+    "step_index_zero_based_max": 95,
+    "profile_index_min": 0,
+    "profile_index_max": 2,
+    "episode_index_min": 0,
+    "episode_index_max": 7,
+    "require_registered_session_seed": true,
+    "strict_public_state_shape_4": true,
+    "finite_real_scalar_types_only": true,
+    "no_current_or_future_effect": true,
+    "no_hidden_wind_or_unexecuted_counterfactual": true,
+    "direct_source_policy_adapter": false,
+    "does_not_change_original_r5_frozen_profile_selection": true,
+    "random_policy_unchanged": true,
+    "calibration_48_sessions_budget_unchanged": true,
+    "previously_consumed_f7_excluded": true,
+    "no_new_calibration_first_use": true
+  },
+  "checks": {
+    "examples": [
+      {
+        "angle": 0.1,
+        "angular_velocity": 0,
+        "action": 1
+      },
+      {
+        "angle": -0.1,
+        "angular_velocity": 0,
+        "action": 0
+      },
+      {
+        "angle": 0.05,
+        "angular_velocity": -0.1,
+        "action": 0
+      },
+      {
+        "angle": 0.05,
+        "angular_velocity": 0.01,
+        "action": 1
+      }
+    ],
+    "reject_invalid_step_profile_episode_state": true,
+    "owner_effects_must_remain_zero": true
+  },
+  "authority": {
+    "owner_firstuse": false,
+    "simulator_import": false,
+    "external_reset_do": false,
+    "runner_dispatch": false,
+    "new_workflow": false,
+    "scheduler": false,
+    "model_training": false,
+    "original_f7_replay": false,
+    "unseal_cal_ood": false,
+    "merge": false,
+    "scientific_pass": false,
+    "deployment": false
+  }
+}
