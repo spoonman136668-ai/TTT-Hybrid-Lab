@@ -119,7 +119,7 @@ def validate_prospective_plan(f: dict) -> dict:
         or f["learning"]["future_CAL"].startswith("Only if distinct owner authorization") is not True):
         raise ValueError("P110_SSM_TRAINING_SPLIT_DRIFT")
     a=f["acceptance"]
-    if (a["scientific_pass"] is not False or
+    if (a.get("scientific_pass",False) is not False or
         a["status"]!="PROSPECTIVE_NOT_EXECUTED" or
         f["owner_integrity"]["FIT_owner_approval"]!="REQUIRED_SEPARATELY"
         or f["owner_integrity"]["CAL_owner_approval"]!="REQUIRED_SEPARATELY_AFTER_FIT"
