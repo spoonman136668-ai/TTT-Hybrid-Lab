@@ -3,12 +3,12 @@ from __future__ import annotations
 
 from dataclasses import replace
 import json
+import math
 from pathlib import Path
 
 import pytest
 import torch
 
-from experiments import p80mr_causalgym_trace_adapter as p80
 from experiments import p106_f6_source_neutral_policies as p106
 from experiments import p107_f6_owner_readiness as p107
 from experiments import p108_f6_confirmed_rls_fixture as p108
@@ -81,7 +81,10 @@ def test_p108_full_spectrum_SPD_rejects_invisible_corruption():
 def test_p108_exact_public_P80_preaction_key_and_no_oracle():
     for before in ((0.,0.,0.,0.),(.3,-.14,.07,1.2)):
         for action in (0,1):
-            expected=torch.tensor(p80._action_key(before,action),dtype=torch.float64)
+            values=[1.]+[math.tanh(x/scale) for x,scale in zip(before,p106.SCALES)]
+            values += [float(action==0),float(action==1)]+[0.]*9
+            denom=math.sqrt(math.fsum(x*x for x in values))
+            expected=torch.tensor([v/denom for v in values],dtype=torch.float64)
             assert torch.equal(p108._key(before,action),expected)
     with pytest.raises(ValueError,match="P108_ONLY_AUTHENTIC_BINARY_ACTIONS"):
         p108._key((0.,0.,0.,0.),2)
@@ -110,9 +113,11 @@ def test_p108_only_confirmed_selected_action_updates_exact_P101_RLS(tmp_path):
     after=(.08,-.06,.009,.06)
     reward=.7
     receipt=_receipt(ledger,session,prop,after,reward)
-    factual=torch.tensor(p80._observed_effect(before,after,reward,False,False),
-                         dtype=torch.float64)
-    key=torch.tensor(p80._action_key(before,prop.action),dtype=torch.float64)
+    deltas=[a-b for b,a in zip(before,after)]
+    expected_effect=[math.tanh(d/scale) for d,scale in zip(deltas,p106.SCALES)]
+    expected_effect += [math.tanh(reward),0.,0.]+[0.]*9
+    factual=torch.tensor(expected_effect,dtype=torch.float64)
+    key=torch.tensor(p106.action_key(before,prop.action),dtype=torch.float64)
     g=model.P@key
     den=1.+key@g
     expectedW=model.W+torch.outer(factual-model.W@key,g)/den
