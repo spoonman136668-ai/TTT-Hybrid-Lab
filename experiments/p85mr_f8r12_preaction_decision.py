@@ -44,7 +44,8 @@ def locked() -> dict:
             or f["schema"] != PROTOCOL
             or f["stage"] !=
                 "FROZEN_BEFORE_IMPLEMENTATION_OR_F8_NEW_EFFECTS"
-            or f["classification"] != DEV
+            or f["classification"] !=
+                "FABRICATED_DEV_ONLY_NOT_ORIGINAL_OWNER_EVIDENCE"
             or f["parent"]["r11_trace_evaluator_blob"] != R11_BLOB
             or f["parent"]["r5_owner_proposal_blob"] != R5_BLOB
             or f["decision"]["trace_event_extension"] !=
