@@ -1,0 +1,137 @@
+{
+  "schema": "ttt-hybrid.p106-f6-source-neutral-voi-policy-readiness-freeze.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_POLICY_SOURCE_CODE; ENGINEERING_ONLY; NO_NEW_EXTERNAL_SOURCE_FIRST_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 232,
+    "sha": "955d032ac21b71b9d5e02061ae9727600205d569",
+    "p105_frozen_blob": "cd1bb40fd74df9d693067798fa5360a0cb205cbb",
+    "p105_source_preflight_blob": "ab1bcb17da2e4eade5b0422e627cedb7b41da544",
+    "f3_pr": 221,
+    "f3_sha": "00b3f45f47660af4c1016c64b656160975982227",
+    "f5_pr": 224,
+    "f5_sha": "4d5c49be278077fe3b0be80080d39128a153aa77",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "intent": "Qualify a zero-effect source-neutral two-action VOI decision kernel and an immutable draft for FUTURE new on-policy external source first-use; do not create a runner workflow, simulator effect, or scientific outcome now",
+  "authority": {
+    "fresh_F6_external_first_use_authorized": false,
+    "approval_required": "Separate explicit F6 on-policy first-use scope with named owner, exact SHA, new seeds/sessions, budgets and first-run witness. The historical F3 one-shot is spent and cannot be replayed.",
+    "owner_runner_label": "ttt-hybrid-gpu-isolated",
+    "runner_name": "TTT-HYBRID-GPU-WIN",
+    "wsl": "Ubuntu-24.04",
+    "execution_os": "Windows owner invoking WSL UID1000 with Python3.11 exact qualified runtime",
+    "never_use_GH_hosted_for_effects": true,
+    "no_new_scheduler": true,
+    "no_controller_change": true,
+    "no_merge": true,
+    "no_paid_api": true,
+    "original_model_no_edit": true
+  },
+  "source": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "upstream_blobs": {
+      "causal_gym/envs/cartpole_wind.py": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "causal_gym/core/pch.py": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "causal_gym/core/task.py": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+      "causal_gym/core/scm.py": "f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5"
+    },
+    "api": "source CartPoleWindPCH; Task(LearningRegime.do); env.reset(seed); env.do(policy), executed action 0/1, factual after state [x,x_dot,theta,theta_dot], reward, terminated/truncated",
+    "prior_F3_fit_cal_seeds_consumed": true,
+    "source_firstuse_now": false,
+    "source_custody_license_note": "Upstream checkout may be used only ephemerally in separately authorized source owner, never vendor source or redistribute code"
+  },
+  "predeclared_future_cohorts": {
+    "namespace": "ttt-hybrid/p106-f6-new-policy-worlds-v1",
+    "FIT": {
+      "base": 1820000000,
+      "blocks": 3,
+      "worlds_per_block": 16
+    },
+    "CAL": {
+      "base": 1820100000,
+      "blocks": 3,
+      "worlds_per_block": 16
+    },
+    "OOD_RESERVED": {
+      "base": 1820200000,
+      "blocks": 3,
+      "worlds_per_block": 16
+    },
+    "negative_RESERVED": {
+      "base": 1820300000,
+      "blocks": 3,
+      "worlds_per_block": 16
+    },
+    "seed_rule": "base + 1000*block + index, block 0..2 and index 0..15; ensure zero overlap F3, OOD never generated",
+    "policies": [
+      "guarded_voi",
+      "a_opt",
+      "greedy_goal",
+      "physical_balance"
+    ],
+    "max_steps_per_episode": 96,
+    "maximum_sessions_if_authorized": 384,
+    "maximum_factual_actions_if_authorized": 36864,
+    "session_identity": "world seed can intentionally be common across policies but each (split,block,index,policy) is independent new source session and must have fsynced BEFORE_EFFECT attempt; no unknown-effect replay",
+    "paired_caveat": "same episode seed does NOT assure identical exogenous noise sequence or valid same-state counterfactuals for diverging policies",
+    "already_collected_events_never_replayed": true
+  },
+  "model_and_observability": {
+    "key": "Pure P80 preaction 4D state and desired discrete action encode into 16D normalized [1,tanh(x/2.4),tanh(xdot/3),tanh(theta/0.2095),tanh(thetadot/3.5),one_hot_action0,one_hot_action1,zeros9]",
+    "label": "16D P80 observed effect tanh normalized state delta4+reward+terminated+truncated+zeros9, never before action",
+    "learner_for_future": "Identical source-neutral 16x16 causal RLS W and 16x16 P per policy, lambda 0.5, only real confirmed labels after do; capacity 512 floats per model. Model itself not trained by this engineering-only PR",
+    "action_candidates": [
+      0,
+      1
+    ],
+    "outcomes_for_unselected_action": "UNOBSERVED; NEVER CONSTRUCT",
+    "source_policies": "observations before do only; no hidden simulator wind, targets, F3 future, or CAL and OOD leaks",
+    "observation_goal": "stabilize physical [x,x_dot,theta,theta_dot] using fixed positive weights [0.1,0.05,3,0.25] and raw state scales [2.4,3,0.2095,3.5]"
+  },
+  "selector": {
+    "a_opt": "Select action whose modeled expected information reduction k^T P Sigma P k / (1+k^T P k) is maximum; Sigma diagonal of public feature prevalence approximations from preregistered fixed [1,1,1,1,1,2,2,0,0,0,0,0,0,0,0,0], no heldout data",
+    "greedy_goal": "Select action minimizing predicted one-step 4D physical stability penalty from W @ pre-action key, map first-four normalized output through clipped atanh to raw state deltas; compare two candidates",
+    "physical_balance": "Select action1 if theta+0.5*theta_dot>0 else action0, no learned model consulted",
+    "guarded_voi": "If A-opt candidate differs from greedy_goal, and predicted cost of A-opt is at most (1+epsilon) times greedy's predicted goal cost, choose A-opt; otherwise choose greedy. Tie-first deterministic",
+    "epsilon_grid_FIT_only": [
+      0.05,
+      0.15,
+      0.3
+    ],
+    "cal_frozen_epsilon_only": true,
+    "policy_order": [
+      "guarded_voi",
+      "a_opt",
+      "greedy_goal",
+      "physical_balance"
+    ],
+    "no_optimization_on_reserved_or_f3_CAL": true
+  },
+  "future_science_proposal": {
+    "classification": "PROPOSED, NOT AUTHORISED, NOT RUN",
+    "primary": "World-mean actual source episode survival steps (higher better) against FIT-selected best of A-opt, greedy goal, physical-balance, preserve all terminal/truncated and short worlds",
+    "secondary": "Physical state stability loss per observed step, realized reward; per-arm source call count/time, cost, action+receipt trace, cold retention for model checkpoint",
+    "threshold": "At least 2 of 3 independent CAL seed blocks: candidate survival >=1.10x FIT-selected strongest baseline AND stability loss <=0.95x; prospective paired bootstrap 5000 resamples pooled lower CI relative survival gain >0; no post hoc tuning",
+    "best_control_selection": "FIT only by highest survival and then lowest stability loss, frozen before CAL; strongest conventional must be competent and training/compute-qualified; all arms same max observation allowance and model capacity",
+    "wrong_credit": "negative delayed action-outcome label matching, must worsen heldout factual prediction error; only on records that have genuinely occurred, no manufactured alternate outcomes",
+    "cold_retention": "bitwise model state+readout before and after unrelated task only when separate task is admitted",
+    "risk": "physical balance control may be strong; if all methods fail competence on FIT, no CAL or OOD science claim",
+    "source_firstuse_gate": "Reverify authorization, owner custody, exact frozen experiment SHA, F3 historical source hash, ledger session uniqueness, original G4/G5/G7, native Windows/WSL preflight and all mandatory controls BEFORE env import or constructor"
+  },
+  "tests": {
+    "allowed": "pure source-neutral fixture-only deterministic decision kernels, source schedule uniqueness, strict state/vector/precision eligibility, zero oracle, no upstream import or real source resets/do",
+    "disallowed": "ever download/import/run pinned Causal-Gymnasium or create FIT/CAL/SCIENCE source in PR CI",
+    "qualification": "Existing original G4 full Windows+Ubuntu exact SHA, G5 native TTT both OS, G7 pinned Mamba2 Ubuntu; no new workflows"
+  },
+  "outcome": {
+    "engineering_preparation_status": "NOT_YET_QUALIFIED",
+    "scientific_pass": false,
+    "external_source_executed": false,
+    "deployment": false,
+    "merge": false,
+    "no_new_automation": true,
+    "evidence_location": "GitHub PR comments and existing workflow artifacts only"
+  }
+}

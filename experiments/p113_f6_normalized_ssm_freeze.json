@@ -1,0 +1,98 @@
+{
+  "schema": "ttt-hybrid.p113-f6-p80-f4-normalized-complete-trace-fixture.v1",
+  "stage": "FREEZE_PRE_CODE_FIXTURE_ONLY_NO_F6_SOURCE_FIRST_USE",
+  "source": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 233,
+    "branch": "research/p106-f6-source-neutral-policy-readiness-20261111",
+    "parent_sha": "d7c13bd08ea37d067443d366702916a2e493e1c2",
+    "p112_freeze_blob": "76f46135a8f134e1d638615aafad2d1d8f5805c3",
+    "p112_source_blob": "b54952c626a8a4227bd6b2e7ecb7c3d4165b41f7",
+    "p111_freeze_blob": "fef0bf267904de982916f25acf2c77c2582691ee",
+    "p80_source_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "p85_f4_dynamics_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "problem": "P112 scored raw physical deltas from one fabricated event/world, while original F4 predicts 16D padded P80 tanh-normalized action effects with 7 active channels and a before-write prequential loss excluding first event; naive native SSM competence inference is invalid.",
+  "physical": {
+    "state_dim": 4,
+    "scales": [
+      2.4,
+      3,
+      0.2095,
+      3.5
+    ],
+    "action_domain": [
+      0,
+      1
+    ],
+    "P80_key_dim": 16,
+    "P80_observed_channels": 7,
+    "padding_channels": 9,
+    "effect": "channels0:3=tanh((after_i-before_i)/scale_i); c4=tanh(observed_reward); c5=float(terminated); c6=float(truncated); c7:15=0",
+    "source_step": "Only realized do() action effect after persisted intent, never counterfactual",
+    "prediction": "Original F4 recurrent SSM prequential tensor [...,16] with seven meaningful effect channels; nine padding TARGET channels are zero but forecast padding channels may be nonzero and are excluded from loss; the source F4 model has an unconstrained 16D readout head.",
+    "component_weights": {
+      "deltas": 1,
+      "reward": 0.2,
+      "terminated": 0.1,
+      "truncated": 0.1
+    },
+    "baseline": "all-zero predictions over same seven active normalized channels",
+    "posthistory": "F4 excludes the first event per world for loss; score all other actually observed events (not 8 one-step world shortcuts)",
+    "observation_target": "exact P80 normalized seven channel effect, not raw physical delta"
+  },
+  "fixture_protocol": {
+    "training_worlds": 24,
+    "validation_worlds": 8,
+    "training_source": "P112 24 FIT physical_balance world receipts only",
+    "validation_source": "FIT block1 indices8..15, complete consecutive factual fixture trace with >=2 and <=96 steps/world",
+    "val_world_selector": "eight disjoint worlds each with exact event ids, contiguous before/after state, terminal only last; end must be terminal or truncated; early-terminated worlds included",
+    "predictions": "One sealed finite 16D vector per factual event per all three SSM seeds, including unconstrained prediction pad; same publicly selected current action, predicted before event outcome; synthetic fixture values not native model readouts.",
+    "checkpoint": "three fake immutable checkpoint byte hashes, source pinned F4 kind ssm256, seed, TRAIN receipts SHA, prediction receipt SHA, exact 24/8 provenance and 800 declared optimizer steps (not training proof)",
+    "selection": "lowest F4 weighted normalized seven-channel prequential objective on validation, tie seed, report normalized physical MSE ratio to zero and all metrics",
+    "limits": "no more source sessions than proposed A5; no new simulator calls; current fixture cannot claim owner authentication, trained SSM or scientific pass",
+    "selection_bias": "same eight FIT worlds used to choose SSM seed and measure development competence; not independent science",
+    "no_raw_vs_normalized_numeric_inference": "Check exact output shape, source units declaration, use normalized factual targets; a numeric prediction might be misdeclared units, so only real model provenance can prove native readout units"
+  },
+  "negative_controls": [
+    "raw 4D predictions",
+    "wrong prediction units",
+    "changed checkpoint or forecast digest",
+    "oracle/counterfactual extra fields",
+    "wrong action domain",
+    "NaN/Inf effect",
+    "wrong reward or term channels",
+    "nonzero padded target",
+    "broken transition chain",
+    "after-termination events",
+    "missing event or missing world",
+    "CAL world or train-val overlap",
+    "short-world discard",
+    "missing seed",
+    "unsealed original first-use",
+    "owner scheduler or source import"
+  ],
+  "controls": {
+    "original_p80_and_f4_unchanged": true,
+    "original_p112_unchanged": true,
+    "owner_protocol_A5_not_selected": true,
+    "P110_owner_revision_not_approved": true,
+    "real_F6_firstuse_authorized": false,
+    "real_F6_effects": 0,
+    "trained_SSM_checkpoint_qualified": false,
+    "CAL_OOD_NEGATIVE_unopened": true,
+    "mandatory_G4_win_ubuntu": true,
+    "mandatory_G5_win_ubuntu": true,
+    "mandatory_G7_ubuntu": true,
+    "no_new_workflows": true,
+    "no_runner_dispatch": true,
+    "no_scheduled_task": true,
+    "no_paid_API": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "original_p69_readout_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa"
+  },
+  "classification": "ENGINEERING_FIXTURE_ONLY_NOT_NATIVE_SSM_COMPETENCE",
+  "source_note": "Initial protocol freeze committed at b9940a685f029ace99b4cf869232efa4a760d28a is superseded before any implementation because original P69 SSM head returns unconstrained 16D readouts; do NOT impose zero forecast padding. This revised freeze is authoritative before source creation."
+}

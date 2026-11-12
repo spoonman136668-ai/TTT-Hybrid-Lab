@@ -1,0 +1,123 @@
+{
+  "schema": "ttt-hybrid.p115-f6-protocol-collision-and-posix-custody-rehearsal.v1",
+  "stage": "FROZEN_BEFORE_IMPL_SOURCE_NEUTRAL_NO_F6_FIRST_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 233,
+    "exact_head": "5523c445140bb6feefcdcc0535d905194d8374a9",
+    "p107_owner_blob": "95c5d4fe840287c1c86aacd54b6eadd60f2e0d0f",
+    "p110_five_arm_blob": "05e7ae9486f9183a15ab2b69e2647ce59d2fcf7e",
+    "p111_fit16_blob": "fef0bf267904de982916f25acf2c77c2582691ee",
+    "p112_holdout_blob": "76f46135a8f134e1d638615aafad2d1d8f5805c3",
+    "p114_optimizer_blob": "deaa70f86ea96c4849f03301f98548f92e4d89a7"
+  },
+  "competing": {
+    "P106_A4": {
+      "freeze_blob": "3a2cee9454edf2e2f9937e35492d618e30f79de0",
+      "FIT_seed_base": 1820000000,
+      "FIT_worlds": 48,
+      "arms": [
+        "guarded_voi",
+        "a_opt",
+        "greedy_goal",
+        "physical_balance"
+      ],
+      "sessions": 192,
+      "cap_actions": 18432
+    },
+    "P106_B4": {
+      "freeze_blob": "42db0228c1c4561333058a3b9d849b8c3db1183c",
+      "FIT_seed_bases": [
+        1811000000,
+        1811010000,
+        1811020000
+      ],
+      "FIT_worlds": 96,
+      "arms": [
+        "max_variance",
+        "a_opt",
+        "hash_passive",
+        "cyclic"
+      ],
+      "sessions": 384,
+      "cap_actions": 36864
+    },
+    "P110_A5_P112_REVISION": {
+      "freeze_blob": "05e7ae9486f9183a15ab2b69e2647ce59d2fcf7e",
+      "FIT_seed_base": 1820000000,
+      "FIT_worlds": 48,
+      "arms": [
+        "guarded_voi",
+        "a_opt",
+        "greedy_goal",
+        "physical_balance",
+        "ssm256_model_based"
+      ],
+      "sessions": 240,
+      "cap_actions": 23040
+    }
+  },
+  "proposed_only": {
+    "protocol": "P110_A5_WITH_P112_24TRAIN_8VAL_AND_P111_16_SELECTION",
+    "FIT_block0_16": "physical_balance on SSM arm, other arms on-policy",
+    "FIT_block1_train_8": "physical_balance on SSM arm; plus other arms on-policy",
+    "FIT_block1_model_selection_8": "physical_balance on SSM arm; exclusive from SSM parameter training",
+    "FIT_block2_16": "FROZEN selected SSM (chosen on block1 validation) plus all four other on-policy arms",
+    "SSM_three_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "SSM_updates_per_seed": 800,
+    "model_select": "8 heldout block1 worlds, no gradient on heldout",
+    "strong_control_select": "16 FIT block2 policy worlds, never CAL",
+    "max_steps": 96,
+    "proposed_FIT_sessions": 240,
+    "proposed_FIT_actions": 23040,
+    "future_CAL_sessions": 240,
+    "future_CAL_actions": 23040,
+    "authorize_extra_sessions": false,
+    "original_P110_P112_unchanged": true,
+    "requires_new_owner_scope": true,
+    "not_authorized_revision": true
+  },
+  "custody_rehearsal": {
+    "fixture_only": true,
+    "linux_posix_directory_fsync_required": true,
+    "Windows_no_posix_directory_fsync_assertion": true,
+    "fsync_file_and_parent_dir": true,
+    "claim_unique_session_no_replay": true,
+    "persist_intent_before_fixture_outcome": true,
+    "allow_only_fixture_receipts": true,
+    "unconfirmed_intent_blocks_replay": true,
+    "wrong_action_model_and_terminal_denied": true,
+    "no_admission_to_source": true,
+    "never_assert_native_WSL_owner_verified": true
+  },
+  "authority": {
+    "protocol_fork_selected": false,
+    "F6_FIT_source_firstuse_authorized": false,
+    "CAL_source_firstuse_authorized": false,
+    "OOD_or_negative_firstuse_authorized": false,
+    "owner_wsl_native_custody_qualified": false,
+    "owner_ssm_source_trained": false,
+    "owner_runners_dispatched": false,
+    "new_workflow": false,
+    "merge": false,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "restrictions": {
+    "no_external_simulator_import": true,
+    "no_real_reset_or_do": true,
+    "no_existing_F3_replay": true,
+    "no_source_steps": true,
+    "no_nonfixture_receipts": true,
+    "no_mutate_existing_freezes": true,
+    "no_native_original_model_edit": true,
+    "no_paid_api": true,
+    "no_controller_scheduler_change": true,
+    "exact_G4_G5_G7_final_regression": true
+  },
+  "goal": "Produce machine-verified conflict report and POSIX O_EXCL/file+dir-fsync fixture-only crash/replay rehearsal; not source owner readiness or protocol authorization"
+}

@@ -1,0 +1,167 @@
+{
+  "schema": "ttt-hybrid.p110-f6-five-arm-prospective-release-candidate.v1",
+  "stage": "FROZEN_PRE_EFFECT_PROPOSAL_NOT_OWNER_AUTHORITY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 233,
+    "source_head": "79623cf0f8c5696bdabea9998194f59bd3890b85",
+    "branch": "research/p106-f6-source-neutral-policy-readiness-20261111",
+    "freeze_P106A_blob": "3a2cee9454edf2e2f9937e35492d618e30f79de0",
+    "freeze_P106B_blob": "42db0228c1c4561333058a3b9d849b8c3db1183c",
+    "freeze_P109_blob": "293b022bc0d8a430a0aba44908d9d8eba4fbb36b",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "F3_sealed_prior": true
+  },
+  "governance": {
+    "recommended_design": "P106_A+SSM_5_ARM_ONLY",
+    "status": "RECOMMENDATION_ONLY_PENDING_OWNER_SOURCE_APPROVAL",
+    "alternative_B_retained_unmodified": "research/p106-f6-binary-policy-preflight-20261111",
+    "replace_prior_four_arm_effect_budget": true,
+    "no_source_effects_granted": true,
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "wsl": "Ubuntu-24.04",
+    "native_owner_file_fsync_qualified": false,
+    "owner_SSM_trained": false,
+    "FIT_firstuse_approved": false,
+    "CAL_firstuse_approved": false,
+    "OOD_firstuse_approved": false,
+    "no_owner_or_controller_dispatch": true,
+    "no_new_workflows": true,
+    "no_scheduler": true,
+    "no_paid_API": true,
+    "no_merge": true
+  },
+  "upstream": {
+    "source_repo": "CausalAILab/Causal-Gymnasium",
+    "source_commit": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "source_blobs": {
+      "causal_gym/envs/cartpole_wind.py": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+      "causal_gym/core/pch.py": "ff37780c6b791877c70583b8d5f699be7fcd8817",
+      "causal_gym/core/task.py": "668262f3f5c88fa2865b08ef10bbf96b09a3b73e",
+      "causal_gym/core/scm.py": "f66f2638c797cfeaf0e96d4e13c06d4fabc2c8d5"
+    },
+    "constructor": "CartPoleWindPCH(max_episode_steps=96, task=Task(LearningRegime.do),wind_mean=0,wind_std=.01,init_theta_mean=0,init_theta_std=0)",
+    "actions": [
+      0,
+      1
+    ],
+    "observation_dim": 4,
+    "action_effect_only_after_committed_do": true,
+    "source_imports_in_CI": false,
+    "original_F3_spent_no_reuse": true
+  },
+  "experiment": {
+    "objective": "Can on-policy guarded VOI improve actual CartPoleWind survival and stability versus the strongest competent FIT-selected A-opt, goal-directed greedy, physical balance and fully trained SSM dynamics control?",
+    "policy_order": [
+      "guarded_voi",
+      "a_opt",
+      "greedy_goal",
+      "physical_balance",
+      "ssm256_model_based"
+    ],
+    "conventional": [
+      "a_opt",
+      "greedy_goal",
+      "physical_balance",
+      "ssm256_model_based"
+    ],
+    "candidate": "guarded_voi",
+    "fixed_epsilon": 0.15,
+    "tuning_epsilon_on_spent_CAL_or_external_FIT": false,
+    "episode_steps_max": 96,
+    "episode_opportunities_same_across_policies": true,
+    "split_seeds": {
+      "FIT_base": 1820000000,
+      "CAL_base": 1820100000,
+      "OOD_RESERVED_base": 1820200000,
+      "NEGATIVE_RESERVED_base": 1820300000
+    },
+    "seed_rule": "base + block*1000 + world_index; block 0..2, index 0..15",
+    "blocks_per_split": 3,
+    "worlds_per_block": 16,
+    "splits_planned": [
+      "FIT",
+      "CAL"
+    ],
+    "policy_sessions_per_split": 240,
+    "source_max_actions_per_split": 23040,
+    "full_trial_max_sessions": 480,
+    "full_trial_max_effect_actions": 46080,
+    "first_use_FIT_only_max_sessions": 240,
+    "first_use_FIT_only_max_effects": 23040,
+    "real_world_splits_not_generated": true,
+    "protected_OOD_and_NEGATIVE_no_generation": true
+  },
+  "learning": {
+    "learner_candidate_and_simple_controls": "P108 strict confirmed-action RLS on 16D P80 factual action/effect, 512 float64 W/P state, same source observations",
+    "SSM_control": {
+      "arch": "Original P85MR F4 ssm256",
+      "original_source_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+      "seed_list": [
+        985201,
+        985203,
+        985207
+      ],
+      "optimizer": "AdamW",
+      "updates_per_seed": 800,
+      "validation": "source-free training-budget/manifest qualification before real training; only actual owner-trained checkpoint qualifies real F6",
+      "FIT_train_blocks": [
+        0,
+        1
+      ],
+      "FIT_selection_block": 2,
+      "collect_train_action_policy": "physical_balance for SSM arm on FIT blocks 0-1; those 32 sessions are already counted in SSM arm; choose exactly one observed action each step, never extra outcomes",
+      "FIT_selection_policy": "trained ssm256_model_based on FIT block2 new on-policy sessions, no influence of CAL",
+      "SSM_action_rule": "Choose legal action minimizing one-step predicted normalized physical tracking penalty, using learned model, not true alternate action effect",
+      "checkpoints": "three seed training receipts use only SSM-arm FIT train data; checkpoint chosen FIT block2, never CAL, no pickle, source SHA and optimizer evidence",
+      "policy_capability": "SSM state/capacity differs from RLS and is reported, not falsely described as matched model capacity",
+      "cost": "record per arm training, all model inference, source constructor/reset/do/receipts/fsync, wall and peak RSS; no synthetic F3 replay"
+    },
+    "FIT_selection": "All arms evaluated on the 16 source worlds in FIT block2; strongest conventional selected by highest factual survival, then lowest mean physical stability cost, then frozen conventional order. Training/scoring on CAL forbidden.",
+    "future_CAL": "Only if distinct owner authorization is granted and actual FIT incumbent trained/qualified, source receipts complete and no unresolved session; select exactly one strongest conventional from FIT and keep all five policies in CAL for transparent comparisons."
+  },
+  "acceptance": {
+    "status": "PROSPECTIVE_NOT_EXECUTED",
+    "primary": "Survival steps/world, intention-to-treat with every episode included and early terminations not excluded",
+    "secondary": "Normalized physical stability cost and factual cumulative reward",
+    "thresholds": "On >=2/3 prospectively frozen CAL blocks, guarded VOI mean survival >=1.10 x strongest FIT-selected conventional AND normalized physical cost <=0.95 x same; 5000-bootstrap pooled seeded paired-world lower 95pct confidence bound for survival gain >0; no posthoc tuning.",
+    "controls": "Wrong-action-credit offline negative, full cold checkpoint readback, valid option restriction, no speculative unchosen effects, cost and training receipts, no CAL-based model/seed selection",
+    "competence": "FIT selected strongest conventional mean survival >=24/96 and authentic fully trained SSM manifest qualified; otherwise stop before CAL",
+    "failure": "Preserve negative/null, no more new CAL/OOD, do not retune",
+    "paired_noise_caveat": "Identical world seed across policy-specific env sessions does not imply identical exogenous noise or same-state counterfactual outcome; report differences and confidence intervals with caveat",
+    "science_pass": false
+  },
+  "owner_integrity": {
+    "preeffect": "Exact selected candidate freeze and owner-run SHA, source license/blobs/environment/Python, owner runner state, native WSL POSIX dir-fsync readback, exclusive attempt receipts + model-state hash must be verified; GitHub-hosted CI must never import upstream environment",
+    "session_unique": "(plan_sha, split,block,index,policy), O_EXCL claim before any first-use, no replay of uncertain-effect source steps or sessions",
+    "do_cap": "Stop at frozen split maximum, even if episodes are short. Never top up short episodes or discard terminal sessions.",
+    "FIT_owner_approval": "REQUIRED_SEPARATELY",
+    "CAL_owner_approval": "REQUIRED_SEPARATELY_AFTER_FIT",
+    "OOD": "NOT_AUTHORIZED",
+    "attempt_replay": "FAIL_CLOSED",
+    "owner_native_preflight": "NOT_VERIFIED",
+    "no_live_runner_execution_this_PR": true
+  },
+  "qualification": {
+    "G4_full_windows_and_ubuntu": true,
+    "G5_original_native_both": true,
+    "G7_pinned_ubuntu": true,
+    "no_new_workflows": true,
+    "no_controller_runner_edits": true,
+    "only_GitHub_repo_receipts": true,
+    "source_free_tests_only": true
+  },
+  "classification": {
+    "engineering_preparation": "PROPOSED_NOT_QUALIFIED",
+    "authentic_external_source": "NOT_RUN",
+    "trained_real_SSM": "NOT_RUN",
+    "scientific_pass": false,
+    "deployment": false
+  }
+}
