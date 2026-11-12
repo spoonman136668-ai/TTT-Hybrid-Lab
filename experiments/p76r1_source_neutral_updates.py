@@ -81,16 +81,26 @@ class SourceNeutralUpdate(nn.Module):
             if self.method == "fixed":
                 gain = a.new_full((b,), self.eta)
             else:
-                cosine = F.cosine_similarity(prediction, observed, dim=-1, eps=1e-6)
-                confidence = prediction.norm(dim=-1) / (observed.norm(dim=-1) + 1e-6)
-                features = torch.stack((
-                    torch.ones_like(cosine),
-                    torch.log(residual.square().mean(-1) + 1e-6),
-                    torch.log(prediction.square().mean(-1) + 1e-6),
-                    cosine,
-                    torch.relu(-cosine) * confidence.clamp(0, 1),
-                ), dim=-1)
-                gain = torch.sigmoid(features[:, FEATURES[self.method]] @ self.theta)
+                if self.method in ("full5", "no_contradiction4", "direction2"):
+                    cosine = F.cosine_similarity(prediction, observed, dim=-1, eps=1e-6)
+                if self.method in ("full5", "no_contradiction4", "magnitude3"):
+                    resid_energy = torch.log(residual.square().mean(-1) + 1e-6)
+                    pred_energy = torch.log(prediction.square().mean(-1) + 1e-6)
+                if self.method == "full5":
+                    confidence = prediction.norm(dim=-1) / (observed.norm(dim=-1) + 1e-6)
+                    features = torch.stack((
+                        torch.ones_like(cosine), resid_energy, pred_energy, cosine,
+                        torch.relu(-cosine) * confidence.clamp(0, 1),
+                    ), dim=-1)
+                elif self.method == "no_contradiction4":
+                    features = torch.stack((torch.ones_like(cosine),
+                                           resid_energy, pred_energy, cosine), dim=-1)
+                elif self.method == "direction2":
+                    features = torch.stack((torch.ones_like(cosine), cosine), dim=-1)
+                else:
+                    features = torch.stack((torch.ones_like(resid_energy),
+                                           resid_energy, pred_energy), dim=-1)
+                gain = torch.sigmoid(features @ self.theta)
             w = w + gain[:, None, None] * residual[:, :, None] * key[:, None, :]
         if not bool(torch.isfinite(w).all()):
             raise ValueError("P76R1_NONFINITE_MEMORY")
