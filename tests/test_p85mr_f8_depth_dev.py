@@ -18,7 +18,9 @@ def _inactive(depth):
 
 def test_inactive_original_is_identical_but_cannot_update_router():
     torch.manual_seed(41)
-    x = torch.randn(2, 5, 16)
+    # An entirely skipped hard branch is the identity; give the input its
+    # own graph, so backward can verify missing ROUTER grads (not fail).
+    x = torch.randn(2, 5, 16, requires_grad=True)
     old = CausalDepthRouter(16)
     _inactive(old)
     got = old(x)
