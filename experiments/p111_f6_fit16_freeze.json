@@ -1,0 +1,123 @@
+{
+  "schema": "ttt-hybrid.p111-f6-heldout16-strong-control-preflight.v1",
+  "stage": "PROSPECTIVE_FROZEN_SOURCE_NEUTRAL_PRE_EFFECT_ENGINEERING_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 233,
+    "exact_precode_sha": "72e8c56b084903327085daa88bb21cf147cdf16b",
+    "branch": "research/p106-f6-source-neutral-policy-readiness-20261111",
+    "p110_protocol_git_blob": "05e7ae9486f9183a15ab2b69e2647ce59d2fcf7e",
+    "p110_validator_git_blob": "5692e4f28f604d94f0bebb7a9388afcc89a61091",
+    "p109_prior_selector_git_blob": "3926bc0f0e647c5627ce627ba1ee0a02a58689e6",
+    "p109_freeze_git_blob": "293b022bc0d8a430a0aba44908d9d8eba4fbb36b",
+    "p108_confirmed_RLS_git_blob": "30353758463a80a9ab0568aab4cebadfe8926609",
+    "F4_conventional_source_git_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+    "native_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "problem": "P109 FIT selector requires 48 worlds/arm and synthetic SSM; P110 reserves block2 only 16 heldout worlds/arm and seeks strong trained SSM. Using P109 48-world selector on P110 block2 would be invalid; no changed original sources allowed.",
+  "static_interface": {
+    "FIT_selection_split": "FIT",
+    "FIT_selection_block": 2,
+    "worlds_per_arm": 16,
+    "incumbent_arms": [
+      "a_opt",
+      "greedy_goal",
+      "physical_balance",
+      "ssm256_model_based"
+    ],
+    "candidate_arm": "guarded_voi",
+    "actual_action_domain": [
+      0,
+      1
+    ],
+    "episode_horizon": 96,
+    "FIT_seed_base": 1820000000,
+    "seed_step_rule": "base+2000+index",
+    "selection": "Best of four conventional arms by mean observed survival on exactly 16 FIT block2 worlds; tie by lower mean physical loss, then frozen order",
+    "competence_min_survival_steps": 24,
+    "strong_SSM_required": true,
+    "explicit_source_receipt_policy": "Synthetic fixtures use fixture: hashes only, never a GitHub owner action or source first-use permit",
+    "equal_episodes_not_equal_action_counts": true,
+    "invalid_lookahead": "A chosen SSM checkpoint cannot be selected *after* observing its own FIT block2 on-policy rewards and then retrospectively claim the same FIT block2 evaluation independently validates the choice. Report fitting/selection exposure and require a genuine precommitted checkpoint or separately specified cross-fit."
+  },
+  "synthetic_checkpoint_guard": {
+    "seed_list": [
+      985201,
+      985203,
+      985207
+    ],
+    "all_seed_receipts_required": true,
+    "model_kind": "ssm256",
+    "source_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+    "train_worlds": 32,
+    "train_blocks": [
+      0,
+      1
+    ],
+    "optimizer": "AdamW",
+    "updates_per_seed": 800,
+    "train_data_only": true,
+    "preheldout_lock_required": true,
+    "competence_diagnostic_source": "TRAIN_ONLY_CROSS_FIT",
+    "prediction_MSE_max_ratio_to_zero": 0.75,
+    "zero_predictor_denominator_positive": true,
+    "checkpoint_file_type": "fixture-bytes-only",
+    "qualified_trained_model_claim": false,
+    "seed_choice_rule": "Choose lowest validated TRAIN-only cross-fit MSE among three complete seeds, fixed before any FIT block2 policy receipt; this is an illustrative safer alternative to P110's proposal to select the SSM checkpoint on the same FIT block2 worlds",
+    "plan_conflict": "THIS RULE REQUIRES EXPLICIT AMENDMENT OF FROZEN P110 OWNER PROTOCOL; NOT AN APPROVED SUBSTITUTE"
+  },
+  "denials": [
+    "missing incumbent",
+    "missing seed checkpoint",
+    "unknown seed",
+    "bad checkpoint hash",
+    "CAL/OOD/train split in heldout",
+    "wrong block or world",
+    "one extra world",
+    "missing early terminated episode",
+    "wrong action count",
+    "NaN/negative wall/reward/stability",
+    "fabricated unchosen outcomes",
+    "policy winner changed after CAL",
+    "SSM selected on FIT block2 outcome",
+    "unqualified SSM prediction error",
+    "source/owner/runner workflow call",
+    "external source attempt",
+    "cross-world RLS policy drift"
+  ],
+  "future_owner_gaps": {
+    "real_F6_firstuse_approved": false,
+    "real_F6_FIT_ledger_authenticated": false,
+    "real_F6_SSM_trained_and_cold_readback": false,
+    "real_F6_SSM_prediction_competence": false,
+    "real_F6_FIT_block2_selector_qualified": false,
+    "dual_F6_frozen_protocol_resolved": false,
+    "real_F6_CAL_firstuse_approved": false,
+    "source_owner_WSL_receipt_durability_proven": false,
+    "model_count_and_journal_crossworld_lifecycle_qualified": false,
+    "target": "Explicit A5 owner-scoped prospective revision before any F6 source construction; fixture checks grant no execution"
+  },
+  "engineering": {
+    "only_mock_fixtures": true,
+    "no_source_simulator_import": true,
+    "no_training_or_optimizer_steps": true,
+    "no_owner_dispatch": true,
+    "no_model_original_edit": true,
+    "no_new_workflow_or_scheduled_task": true,
+    "no_paid_API": true,
+    "no_effect_source_firstuse": true,
+    "no_library_evidence": true,
+    "mandatory_G4_full_Win_Ubuntu": true,
+    "mandatory_G5_native_Win_Ubuntu": true,
+    "mandatory_G7_pinned_Ubuntu": true
+  },
+  "classification": {
+    "engineering_preflight_at_freeze": "NOT_YET_TESTED",
+    "scientific_pass": false,
+    "real_F6_effects": 0,
+    "trained_real_SSM": false,
+    "owner_F6_authorized": false,
+    "merge": false,
+    "deployment": false
+  }
+}
