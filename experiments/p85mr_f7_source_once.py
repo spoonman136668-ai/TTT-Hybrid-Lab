@@ -51,6 +51,15 @@ def _fsync_dir(path):
     finally:os.close(fd)
 
 
+def _export_immutable(path,obj):
+    """Artifact copy on Windows-mounted checkout, NOT durable source journal."""
+    raw=_canon(obj)
+    fd=os.open(path,os.O_WRONLY|os.O_CREAT|os.O_EXCL,0o600)
+    with os.fdopen(fd,"wb") as stream:
+        stream.write(raw);stream.flush();os.fsync(stream.fileno())
+    return hashlib.sha256(raw).hexdigest()
+
+
 def _exclusive(path,obj):
     raw=_canon(obj)
     flags=os.O_WRONLY|os.O_CREAT|os.O_EXCL|os.O_NOFOLLOW
@@ -285,12 +294,12 @@ def collect(*,project_root,source_root,environ=None):
         # Safe artifact export, after durable source work; never a replay path.
         export=project/"local_runs"/"p85mr_f7_owner_source.json"
         export.parent.mkdir(parents=True,exist_ok=True)
-        _exclusive(export,{
+        _export_immutable(export,{
             "owner":owner,"result":result,"native_ext4_receipt":str(claim),
             "external_actions":effect_count,
         })
         exported=project/"local_runs"/"p85mr_f7_fit_capture.json"
-        _exclusive(exported,capture)
+        _export_immutable(exported,capture)
         if hashlib.sha256(exported.read_bytes()).hexdigest()!=capture_sha:
             raise ValueError("F7_EXPORTED_CAPTURE_HASH_DRIFT")
         return result
