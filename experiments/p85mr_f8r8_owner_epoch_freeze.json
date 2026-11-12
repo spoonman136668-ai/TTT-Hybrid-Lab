@@ -1,0 +1,59 @@
+{
+  "schema": "ttt-hybrid.f8r8-global-dev-owner-attempt-exclusivity.v1",
+  "stage": "FROZEN_BEFORE_GLOBAL_OWNER_ATTEMPT_IMPLEMENTATION_AND_TEST",
+  "scope": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head_sha": "71ad1a0ab033272ce639f908619fbe06b0b3f2ef",
+    "tree_sha": "e34572a4d0b73d68ca27867c19ef55dfe3cf2684",
+    "previous_R7_source_blob": "e11868c2570c1c79ad6f23c149dd17d0dca85970",
+    "previous_R7_tests_blob": "1842d93c5eba87d594b113553cb450ad59c9dc54",
+    "R7_protocol_blob": "2928e7ae034d198c74513d2d7d30fadc1e7f08c4",
+    "R6_budget_blob": "59475472a4c316fa04a3510e4138a872abc88a91",
+    "prior_source_owner_blob": "f5deeed08624d4dbe878a58e6869c9c4bb062ae3"
+  },
+  "vulnerability": "R7 exclusive session claims prevent duplicate identity but allow separate development processes to own different session claims within same directory; owner-exclusive scientific custody would require a single journal-level write attempt",
+  "design": {
+    "root_marker": "DEV_ATTEMPT.json",
+    "root_marker_schema": "ttt-hybrid.f8r8-global-dev-attempt.v1",
+    "create": "O_CREAT|O_EXCL|O_WRONLY with durable file fsync and POSIX parent dir fsync when possible; marker never deleted or rewritten",
+    "before_session": "claim marker before any individual session claim, no source effects",
+    "cold_open": "if marker preexists, parse canonical bytes and check schema/run/scope identity; reopen always READ_ONLY even same run; never grants new claim or append",
+    "concurrency": "two concurrent journal initializations for same directory permit at most one write owner; loser is read-only; no multi-process write sharing",
+    "cross_run": "different DEV-RUN id can inspect status only, cannot mutate",
+    "claim_consistency": "claim.run_id must equal marker.run_id; unknown claim filename or malformed contents fail closed when advancing phase",
+    "crash": "failed marker fsync may leave an irreversible used marker; subsequent open must not write; corrupted marker fails closed",
+    "platform": "POSIX file+directory fsync test; Windows file fsync only and explicitly not production owner directory guarantee",
+    "claim_budget": "original 480 sessions and 46080 max fictional effects, 96 reserved per claim, first-use always denied"
+  },
+  "negative_tests": [
+    "sequential same-run cold reopening read-only",
+    "different-run cannot claim new session",
+    "two concurrent owners different intended sessions at same temp directory exactly one writer",
+    "fault-injected fsync during owner marker makes all future mutation impossible",
+    "forged claim run-id cannot pass audit",
+    "fabricated source receipts never imply authority",
+    "unqualified owner route always raises"
+  ],
+  "limits": {
+    "real_source_effects": 0,
+    "owner_execution": false,
+    "workflow_mutations": false,
+    "scheduler": false,
+    "external_import": false,
+    "protected_OOD": false,
+    "independent_scientific_pass": false,
+    "merge": false,
+    "accepted_ref": false,
+    "Windows_parent_directory_fsync_qualified": false
+  },
+  "qualification": {
+    "exact_SHA_full_G4_Windows_Ubuntu": true,
+    "G5_original_TTT_both": true,
+    "G7_pinned_Mamba_Ubuntu": true,
+    "firstuse_execution": false,
+    "owner_natively_integrated": false,
+    "science": "NOT_RUN",
+    "deployment": "NONE"
+  }
+}
