@@ -20,6 +20,9 @@ HERE = Path(__file__).resolve().parent
 FREEZE = HERE / "p85mr_f8r7_owner_custody_freeze.json"
 FREEZE_BLOB = "2928e7ae034d198c74513d2d7d30fadc1e7f08c4"
 BUDGET_BLOB = "59475472a4c316fa04a3510e4138a872abc88a91"
+R8_FREEZE = HERE / "p85mr_f8r8_owner_epoch_freeze.json"
+R8_FREEZE_BLOB = "37c285ff776b71a1455f0ebe0379cd7ac945c1ff"
+ATTEMPT_FILE = "DEV_ATTEMPT.json"
 SCHEMA = "ttt-hybrid.f8r7-owner-native-custody-candidate.v1"
 PROTOTYPE = "FABRICATED_DEV_ONLY"
 PHASES = ("calibration", "fit", "selector", "test")
@@ -68,6 +71,27 @@ def locked() -> dict:
             or data["authority"]["science_pass"] is not False):
         raise ValueError("F8R7_SCOPE_OR_AUTHORITY_DRIFT")
     return data
+
+
+def r8_locked() -> dict:
+    """Only the bounded DEV ledger can acquire a root marker."""
+    locked()
+    raw = R8_FREEZE.read_bytes()
+    if _git_blob(raw) != R8_FREEZE_BLOB:
+        raise ValueError("F8R8_FROZEN_OWNER_SCOPE_DRIFT")
+    f = json.loads(raw)
+    if (f["schema"] != "ttt-hybrid.f8r8-global-dev-owner-attempt-exclusivity.v1"
+            or f["stage"] !=
+                "FROZEN_BEFORE_GLOBAL_OWNER_ATTEMPT_IMPLEMENTATION_AND_TEST"
+            or f["scope"]["previous_R7_source_blob"] !=
+                "e11868c2570c1c79ad6f23c149dd17d0dca85970"
+            or f["scope"]["R6_budget_blob"] != BUDGET_BLOB
+            or f["design"]["root_marker"] != ATTEMPT_FILE
+            or f["limits"]["real_source_effects"] != 0
+            or f["limits"]["owner_execution"] is not False
+            or f["limits"]["independent_scientific_pass"] is not False):
+        raise ValueError("F8R8_SCOPE_OR_AUTHORITY_DRIFT")
+    return f
 
 
 def _directory(path: Path) -> None:
@@ -134,7 +158,7 @@ class DevCustodyJournal:
 
     def __init__(self, root: Path, *, run_id: str = "DEV-RUN-1",
                  attempt: int = 1, classification: str = PROTOTYPE):
-        locked()
+        r8_locked()
         if (classification != PROTOTYPE or type(attempt) is not int or
                 attempt != 1 or type(run_id) is not str or
                 re.fullmatch(r"DEV-RUN-[1-9][0-9]{0,9}", run_id) is None):
@@ -153,6 +177,32 @@ class DevCustodyJournal:
         self.run_id = run_id
         self.attempt = attempt
         self._live: set[str] = set()  # never serialized; crash forbids resumption
+        # Global single-writer DEV attempt is irrevocable even after crash.
+        proposal = {
+            "schema": "ttt-hybrid.f8r8-global-dev-attempt.v1",
+            "classification": PROTOTYPE, "run_id": run_id, "attempt": 1,
+            "source_sha": r6.locked()["original_source"]["sha"],
+            "r6_budget_blob": BUDGET_BLOB,
+            "status": "GLOBAL_DEV_ATTEMPTED_NO_REPLAY",
+        }
+        try:
+            _exclusive(self.root / ATTEMPT_FILE, proposal)
+            self._writer = True
+            self._global_attempt = proposal
+        except FileExistsError:
+            prior, _ = _read_exact(self.root / ATTEMPT_FILE)
+            if (prior != dict(proposal, run_id=prior.get("run_id"))
+                    or type(prior.get("run_id")) is not str
+                    or re.fullmatch(r"DEV-RUN-[1-9][0-9]{0,9}",
+                                    prior["run_id"]) is None):
+                raise ValueError("F8R8_INVALID_EXISTING_GLOBAL_ATTEMPT")
+            self._writer = False
+            self._global_attempt = prior
+
+    def _verify_global_attempt(self) -> None:
+        record, _ = _read_exact(self.root / ATTEMPT_FILE)
+        if record != self._global_attempt:
+            raise ValueError("F8R8_GLOBAL_ATTEMPT_DRIFT")
 
     def _claim_path(self, identity: str) -> Path:
         return self.claims / (_key(identity) + ".json")
