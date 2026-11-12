@@ -1,0 +1,81 @@
+{
+  "schema": "ttt-hybrid.f8r16-spent-f7-nonlinear-vs-residual-memory.v1",
+  "stage": "FROZEN_BEFORE_R16_ACTUAL_NUMERICAL_RESULT",
+  "classification": "ALREADY_SPENT_F7_RETROSPECTIVE_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "sha": "87ed6a4e541fa38c7e2066efad13c91460774062",
+    "tree_sha": "6cab2b671aea487c6f0d366f30237c5406ebaea1",
+    "r2_source_blob": "7b22ceac71709e9b06512a405265d7f81545346d",
+    "r14_result_blob": "3ff04988f51d07ed2c58f3dcdc8335f86beacf17",
+    "source_upstream_commit": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "source_upstream_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa"
+  },
+  "source": {
+    "original_F7_owner_run_id": 43195349254,
+    "source_archive_sha256": "5480c0a8d2e518f9c0c9e3e011e3dfa9d3019fb720d10641c02bb36b5023f0ef",
+    "training_archive_sha256": "9ef1eb672f965a88bb6098e1fbbc44490d42c8440a69abe2a840a19a1d160d38",
+    "capture_sha256": "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4",
+    "worlds": 128,
+    "original_effects_already_consumed": 12288,
+    "new_source_effects": 0
+  },
+  "hypothesis": "The apparent tiny benefit of previous-factual-residual memory with linear7 may reflect deterministic model misspecification rather than persistent latent wind, since original CartPoleWindSCM samples new exogenous wind after each step.",
+  "split": {
+    "training_worlds": 80,
+    "lambda_selector_worlds": 16,
+    "old_evaluated_test_worlds": 32,
+    "events_per_world": 95,
+    "world_partition": "index0..79 train, 80..95 select, 96..127 already used test; not an independent prospective holdout"
+  },
+  "arms": {
+    "original_linear7": "7D normalized [bias, tanh4(state/scales), one_hot2(actual action)] => 28 coefficients",
+    "linear_plus_memory": "original linear7 + 4x4 previous factual residual correction (44 total)",
+    "quadratic35": "same original R2 features(x,quadratic35) = 7 linear + 28 upper products => 140 coefficients",
+    "quadratic_plus_memory": "quadratic35 + 4x4 previous factual residual correction (156 total)",
+    "quadratic_delay8_negative": "quadratic35 + same memory weights but residual[t-8] instead of immediate residual[t-1]"
+  },
+  "fitting": {
+    "ridge_grid": [
+      0,
+      1e-10,
+      1e-8,
+      0.000001,
+      0.0001,
+      0.01,
+      1
+    ],
+    "baseline_and_memory_lambda_selected_only_from_indices": "80..95",
+    "refit_on": "0..95",
+    "score_on": "96..127 only",
+    "residual_from": "actual chosen action after physical effect was observed; reset to zero at world start",
+    "latent_wind_not_observed": true,
+    "no_effect_target_t_until_effect_observed": true
+  },
+  "thresholds": {
+    "primary": "relative MSE gain for quadratic35+lag1 vs quadratic35 at least 10%",
+    "paired_world_bootstrap_10000": true,
+    "bootstrap_seed": 1825990128,
+    "bootstrap_world_clusters": 32,
+    "lower_2p5_gain_gt0": true,
+    "lag1_mse_lower_than_lag8_negative": true,
+    "no_after_result_tuning": true,
+    "report_baselines": "original 28-linear, original 44-linear memory, 140 quadratic, 156 quadratic memory and lag8 negative"
+  },
+  "controls": {
+    "no_new_external_interventions": true,
+    "no_replay_spent_F7": true,
+    "no_sealed_F8_source": true,
+    "no_extra_worlds": true,
+    "no_project_model_training_or_GPU": true,
+    "no_owner_workflow": true,
+    "no_new_scheduled_tasks": true,
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "engineering": "exact final SHA G4 full Windows+Ubuntu, G5 original Windows+Ubuntu, G7 original Ubuntu; data source checked with SHA256",
+    "science": "RETROSPECTIVE_F7_ONLY, no independent scientific pass",
+    "deployment": "NONE"
+  }
+}
