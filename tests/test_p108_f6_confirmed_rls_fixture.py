@@ -171,18 +171,18 @@ def test_p108_unknown_effect_quarantine_terminal_and_state_chain(tmp_path):
     ledger2=p107.FixtureLedger(tmp_path)
     with pytest.raises(PermissionError,match="P108_UNKNOWN_EFFECT_REPLAY_DENIED"):
         p108.confirm_fixture(ledger2,session,model,prop,outcome_sha256="0"*64)
-    different=ledger2.claim("FIT",0,1,"cyclic")
+    different=ledger2.claim("FIT",0,1,"physical_balance")
     pre=(0.,0.,.03,.0)
-    proposal=p108.propose(ledger2,different,p108.initial(),"cyclic",pre,0)
+    proposal=p108.propose(ledger2,different,p108.initial(),"physical_balance",pre,0)
     result=ledger2.confirm_fixture(different,0,proposal.intent_sha256,proposal.action,
                                (.1,0.,.02,0.),.4,False,False,"fixture:fact")
     nextmodel=p108.confirm_fixture(ledger2,different,p108.initial(),proposal,
                                    outcome_sha256=result["outcome_sha256"])
     with pytest.raises(PermissionError,match="P108_STATE_OR_TERMINAL_CHAIN_DRIFT"):
-        p108.propose(ledger2,different,nextmodel,"cyclic",(999.,0,0,0),1)
+        p108.propose(ledger2,different,nextmodel,"physical_balance",(999.,0,0,0),1)
     # Exact physical-state chaining allows a new action after the first
     # actual *fixture* outcome, never before.
-    follow=p108.propose(ledger2,different,nextmodel,"cyclic",(.1,0.,.02,0.),1)
+    follow=p108.propose(ledger2,different,nextmodel,"physical_balance",(.1,0.,.02,0.),1)
     assert follow.step==1
 
 
