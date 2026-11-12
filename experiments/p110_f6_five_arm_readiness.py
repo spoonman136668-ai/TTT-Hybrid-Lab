@@ -123,7 +123,7 @@ def validate_prospective_plan(f: dict) -> dict:
         a["status"]!="PROSPECTIVE_NOT_EXECUTED" or
         f["owner_integrity"]["FIT_owner_approval"]!="REQUIRED_SEPARATELY"
         or f["owner_integrity"]["CAL_owner_approval"]!="REQUIRED_SEPARATELY_AFTER_FIT"
-        or f["owner_integrity"]["native_owner_preflight"]!="NOT_VERIFIED"
+        or f["owner_integrity"]["owner_native_preflight"]!="NOT_VERIFIED"
         or f["classification"]["authentic_external_source"]!="NOT_RUN"
         or f["classification"]["trained_real_SSM"]!="NOT_RUN"
         or f["classification"]["scientific_pass"] is not False):
