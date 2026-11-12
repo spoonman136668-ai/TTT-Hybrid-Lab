@@ -61,6 +61,7 @@ def test_atomic_claim_reserves_96_effects_and_prevents_replay(tmp_path):
     assert result["reserved_factual_effects"] == 96
     assert result["source_effects_executed"] == 0
     assert not result["may_resume"]
+    assert result["parent_directory_fsync_qualified"] is (__import__("os").name != "nt")
     with pytest.raises(FileExistsError):
         journal.claim(identity)
     # Even another development run cannot reclaim source identity.

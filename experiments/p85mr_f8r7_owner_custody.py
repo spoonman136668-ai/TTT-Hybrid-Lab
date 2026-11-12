@@ -77,7 +77,12 @@ def _directory(path: Path) -> None:
             raise ValueError("F8R7_UNTRUSTED_JOURNAL_DIRECTORY")
     else:
         path.mkdir(mode=0o700)
-    # fsync directory metadata on OSs supporting directory file descriptors.
+    # Project owner scientific execution uses WSL/ext4, where parent fsync
+    # exists. Native Windows development tests have file fsync + exclusive
+    # creation but cannot qualify parent-directory durability with os.open.
+    # Never represent that fallback as native owner custody acceptance.
+    if os.name == "nt":
+        return
     fd = os.open(path, os.O_RDONLY)
     try:
         os.fsync(fd)
@@ -343,6 +348,7 @@ class DevCustodyJournal:
             "unknown_or_aborted_consumes_reservation": True,
             "may_resume": False, "source_effects_executed": 0,
             "owner_admitted": False, "scientific_pass": False,
+            "parent_directory_fsync_qualified": os.name != "nt",
         }
 
 
