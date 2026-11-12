@@ -1,0 +1,49 @@
+{
+  "schema": "ttt-hybrid.p76r1-source-neutral-update-qualification.v1",
+  "stage": "SOURCE_NEUTRAL_ENGINEERING_FREEZE_BEFORE_R1_IMPLEMENTATION; NOT A SCIENCE OR SOURCE_FIRST_USE PERMIT",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "existing_pr": 188,
+  "existing_parent_sha": "c8beaa3465954a5d9e08d2350e3bb3eee1db6214",
+  "preserve_original": {
+    "p76_frozen_protocol_blob": "89df37558235de7a0a3d71bfc7d5f28ed80fa7cd",
+    "p76_memory_code_blob": "39614148c5a5428c50a9b84493b379902c4d9190",
+    "p76_result_blob": "7ca3a68d2280b8aeea38f422e52db116f4b047a1",
+    "p76_fit_val_consumed": true,
+    "p76_ood_reserved": true,
+    "prior_val_metrics_never_reranked": true
+  },
+  "interface": {
+    "schema": "p76.action-effect16.v1",
+    "input": "batch x time x 16 float32 unit-normalized factual action and observed same-step effect; nothing else",
+    "read": "separate withheld batch x16 query vector, no query-effect write",
+    "memory": "exactly 16x16 float32 causal state/world, cold-restorable",
+    "reject": "f4.tanh7.v1 and all other mismatched source semantics, nonfinite tensors, non-unit action, future labels, corrupt state"
+  },
+  "proposed_arms_only": {
+    "full5": "original P76 five-feature learned update (exact bitwise parity target)",
+    "no_contradiction4": "features [bias,log residual MSE,log prediction MSE,cosine], explicit contradiction feature deleted BEFORE future training",
+    "direction2": "bias and cosine only",
+    "magnitude3": "bias and two log-error magnitudes only",
+    "fixed": "predeclared FIT-only selectable gains [0.2,0.35,0.5,0.65,0.8,1.0]"
+  },
+  "qualification": "Source-neutral fictional microfixtures only: original full5 bitwise state/read parity, eta0.5/eta1 fixed parity, cold split, factual wrong-credit sensitivity, future-outcome isolation, gradient finiteness, precise static/fast state accounting, schema and invalid-input negatives. Do not run prior FIT/VAL or new simulator or train candidates.",
+  "future_science": "Separate prospective freeze required: fresh disjoint source seeds, strongest FIT-selected fixed and fully trained conventional controls, independent TRAIN/FIT/CAL/OOD, capacity/compute budgets, >2 seed worlds, stable/changed/A-B-A, proper seven-channel normalized F4 unit adapter, calibrated negative/retention, first-use custodial authorization. No threshold from P76 consumed VAL.",
+  "authority": {
+    "fresh_source_first_use": false,
+    "run_native_owner": false,
+    "run_gpu": false,
+    "update_original_model": false,
+    "merge": false,
+    "promote": false,
+    "scheduler": false,
+    "paid_api": false,
+    "forge_change": false,
+    "main_change": false,
+    "evidence_only_in_github": true
+  },
+  "outcome": {
+    "engineering_until_exact_source_ci": "UNVERIFIED",
+    "scientific": "NOT_RUN",
+    "deployment": "NONE"
+  }
+}
