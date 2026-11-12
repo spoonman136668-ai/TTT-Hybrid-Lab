@@ -78,7 +78,7 @@ def test_p110_authority_and_precise_first_use_prohibitions():
         ("governance","status","APPROVED","P110_OWNER_NOT_AUTHORIZED_OR_FORK_DRIFT"),
         ("acceptance","scientific_pass",True,"P110_OWNER_OR_SCIENTIFIC_BOUNDARY_VIOLATION"),
         ("classification","authentic_external_source","RUN","P110_OWNER_OR_SCIENTIFIC_BOUNDARY_VIOLATION"),
-        ("owner_integrity","native_owner_preflight","PASS","P110_OWNER_OR_SCIENTIFIC_BOUNDARY_VIOLATION"),
+        ("owner_integrity","owner_native_preflight","PASS","P110_OWNER_OR_SCIENTIFIC_BOUNDARY_VIOLATION"),
     ):
         p=plan()
         p[section][key]=value
