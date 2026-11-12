@@ -135,33 +135,41 @@ def _score_one(x: np.ndarray, y: np.ndarray, arm: str) -> dict:
     }
 
 
-def evaluate_spent_arrays(x: np.ndarray, y: np.ndarray) -> dict:
+def _evaluate_arrays(x: np.ndarray, y: np.ndarray,
+                     *, verified_spent_archive: bool) -> dict:
     locked()
     r14.validate(x, y)
     started = time.perf_counter()
     a = {name: _score_one(x, y, name) for name in ARMS}
-    prior = json.loads(R14_RESULT.read_bytes())
-    if (abs(a["linear7"]["baseline_old_F7_mse"]
-                - prior["baseline_heldout_mse"]) > 1e-13
-            or abs(a["linear7"]["memory_old_F7_mse"]
-                - prior["memory_heldout_mse"]) > 1e-13
-            or a["quadratic35"]["baseline_coefficient_sha256"] !=
-                "053f574d94d76654d0cb22114aab7b5986eecad66108f2c96514d6ef73137976"
-            or abs(a["quadratic35"]["baseline_old_F7_mse"]
-                   - 2.7441133476852674e-6) > 1e-13):
-        raise ValueError("F8R16_R2_OR_R14_ORIGINAL_NUMERICAL_PARITY_DRIFT")
+    # Synthetic tests NEVER claim custody of the real F7 record. Only the
+    # R2 SHA-pinned ZIP reader may invoke original historical parity checks.
+    if verified_spent_archive:
+        prior = json.loads(R14_RESULT.read_bytes())
+        if (abs(a["linear7"]["baseline_old_F7_mse"]
+                    - prior["baseline_heldout_mse"]) > 1e-13
+                or abs(a["linear7"]["memory_old_F7_mse"]
+                    - prior["memory_heldout_mse"]) > 1e-13
+                or a["quadratic35"]["baseline_coefficient_sha256"] !=
+                    "053f574d94d76654d0cb22114aab7b5986eecad66108f2c96514d6ef73137976"
+                or abs(a["quadratic35"]["baseline_old_F7_mse"]
+                       - 2.7441133476852674e-6) > 1e-13):
+            raise ValueError("F8R16_R2_OR_R14_ORIGINAL_NUMERICAL_PARITY_DRIFT")
     return {
         "schema": SCHEMA,
-        "classification": "ALREADY_SPENT_F7_RETROSPECTIVE_ONLY",
-        "already_consumed_worlds": 128, "fit_worlds": 80,
-        "selector_worlds": 16, "already_inspected_test_worlds": WORLDS_TEST,
-        "original_factual_test_effects": WORLDS_TEST * 95,
+        "classification": ("ALREADY_SPENT_F7_RETROSPECTIVE_ONLY"
+                           if verified_spent_archive else "FABRICATED_DEV_ONLY"),
+        "already_consumed_worlds": (128 if verified_spent_archive else 0),
+        "fit_worlds": 80, "selector_worlds": 16,
+        "already_inspected_test_worlds": (WORLDS_TEST if verified_spent_archive else 0),
+        "fabricated_test_worlds": (0 if verified_spent_archive else WORLDS_TEST),
+        "original_factual_test_effects": (WORLDS_TEST * 95
+                                         if verified_spent_archive else 0),
         "new_original_source_effects": 0,
         "original_source_firstuse_authorized": False,
         "independent_scientific_pass": False,
         "arms": a,
-        "source_zip_sha256": r2.F7_ZIP,
-        "training_zip_sha256": r2.F7_TRAIN_ZIP,
+        "source_zip_sha256": r2.F7_ZIP if verified_spent_archive else None,
+        "training_zip_sha256": r2.F7_TRAIN_ZIP if verified_spent_archive else None,
         "bootstrap_worlds": WORLDS_TEST,
         "bootstrap_resamples": BOOTSTRAPS,
         "bootstrap_seed": SEED,
@@ -169,10 +177,17 @@ def evaluate_spent_arrays(x: np.ndarray, y: np.ndarray) -> dict:
     }
 
 
+def evaluate_spent_arrays(x: np.ndarray, y: np.ndarray) -> dict:
+    """Only accepts fabricated development arrays; cannot grant original custody."""
+    return _evaluate_arrays(x, y, verified_spent_archive=False)
+
+
 def evaluate_spent_archives(f7_zip: Path, trained_zip: Path) -> dict:
-    # Reuse R2 exact trusted original GitHub artifact and receipt reader.
+    """Only original F7 prior-used ZIPs can establish retrospective source."""
     x, y, _ = r2.read_spent(f7_zip, trained_zip)
-    return evaluate_spent_arrays(x.astype(np.float64), y.astype(np.float64))
+    return _evaluate_arrays(
+        x.astype(np.float64), y.astype(np.float64),
+        verified_spent_archive=True)
 
 
 def refuse_original_firstuse(*_args, **_kwargs):
