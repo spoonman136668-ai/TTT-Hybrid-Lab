@@ -6,3 +6,4 @@ experiments/p78mr_fitcal_val_dev_result.json -text
 experiments/p78mr_r2_noise_shift_freeze.json -text
 experiments/p78mr_r3_f3_transfer_freeze.json -text
 experiments/p78mr_r4_frozen_ssm_residual_freeze.json -text
+experiments/p78mr_r5_consumed_fit_training_freeze.json -text
