@@ -74,11 +74,11 @@
     "original_simulator_steps": 0,
     "source_firstuse_authorized": false,
     "protocol_fork_selected": false,
-    "owner_WSL_fsnyc_qualified": false,
     "cal_ood_unopened": true,
     "science_pass": false,
     "merge": false,
-    "deployment": false
+    "deployment": false,
+    "owner_WSL_fsync_qualified": false
   },
   "execution": {
     "new_workflow": false,
