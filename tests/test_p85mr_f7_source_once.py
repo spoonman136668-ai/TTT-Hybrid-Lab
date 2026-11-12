@@ -48,3 +48,64 @@ def test_f7_source_is_not_imported_or_started_in_default_test_suite():
     assert "def collect(" in body
     assert "def _owner(" in body
     assert "EXCLUSIVE_ROOT=" in body
+
+def test_f7_original_source_driver_immutable_intent_then_outcome_on_fake_world(tmp_path):
+    """Mock environment only: does not import, reset, or act in original source."""
+    if os.name!="posix":
+        pytest.skip("exact POSIX directory-fsync and write-once only")
+    closed=[]
+    class FakeEnv:
+        def __init__(self):
+            self.i=0
+            self.state=[0.,0.,0.,0.]
+        def reset(self,seed):
+            assert seed==f7.cfg.SEED_BASE
+            return self.state[:],{}
+        def do(self,policy):
+            action=policy(self.state[:])
+            assert action in (0,1)
+            self.i+=1
+            self.state=[.01*self.i,0.,.001*self.i,0.]
+            return self.state[:],1.0,self.i==2,False,{"action":action}
+        def close(self):
+            closed.append(True)
+    def factory(**kwargs):
+        assert kwargs["max_episode_steps"]==96
+        return FakeEnv()
+    owner={"run_id":"1234567","sha":"f"*40}
+    import time
+    world=f7._one_episode(factory,None,0,owner,tmp_path,time.monotonic()+30)
+    assert len(world["transitions"])==2
+    assert closed==[True]
+    path=tmp_path/f"fit-000-{f7.cfg.SEED_BASE}"
+    assert (path/"001.intent.json").is_file()
+    assert (path/"001.outcome.json").is_file()
+    assert (path/"002.intent.json").is_file()
+    assert (path/"002.outcome.json").is_file()
+    assert (path/"world.json").is_file()
+    with pytest.raises(FileExistsError):
+        f7._one_episode(factory,None,0,owner,tmp_path,time.monotonic()+30)
+
+
+def test_f7_unknown_effect_is_quarantined_and_session_cannot_replay(tmp_path):
+    if os.name!="posix":
+        pytest.skip("POSIX only")
+    import time
+    class UnknownEffect:
+        def reset(self,seed):
+            return [0.,0.,0.,0.],{}
+        def do(self,policy):
+            policy([0.,0.,0.,0.])
+            raise RuntimeError("UNKNOWN_EFFECT")
+        def close(self):
+            pass
+    def factory(**kwargs):
+        return UnknownEffect()
+    owner={"run_id":"1234567","sha":"f"*40}
+    with pytest.raises(RuntimeError,match="UNKNOWN_EFFECT"):
+        f7._one_episode(factory,None,0,owner,tmp_path,time.monotonic()+30)
+    path=tmp_path/f"fit-000-{f7.cfg.SEED_BASE}"
+    assert (path/"001.intent.json").is_file()
+    assert not (path/"001.outcome.json").exists()
+    with pytest.raises(FileExistsError):
+        f7._one_episode(factory,None,0,owner,tmp_path,time.monotonic()+30)
