@@ -81,25 +81,27 @@ class GradientCapableDepth(CausalDepthRouter):
             or not bool(torch.isfinite(x).all())
         ):
             raise ValueError("F8_INVALID_NATIVE_DEPTH_STATE")
-        z = self.norm(x)
-        if self.mode == "always_on":
+        if self.mode == "surrogate_hard_forward":
+            # Preserve EXACT original hard forward, including its selected
+            # sparse matrix-multiply shape. Add a second, dense path whose
+            # values cancel but whose gradient reaches inactive router/FFN.
+            # This has an explicit COMPUTE cost; no speed or science claim.
+            reference = super().forward(x)
+            z = self.norm(x)
+            p = torch.sigmoid(self.router(z))
+            soft = p * self.ffn(z)
+            result = reference + (soft - soft.detach())
+        elif self.mode == "always_on":
             self.last_utilization = 1.0
-            result = x + self.ffn(z)
-        else:
+            result = x + self.ffn(self.norm(x))
+        elif self.mode == "soft_dense":
+            z = self.norm(x)
             p = torch.sigmoid(self.router(z))
             hard = (p >= 0.5).to(x.dtype)
             self.last_utilization = float(hard.mean().detach().cpu())
-            routed = self.ffn(z)
-            if self.mode == "soft_dense":
-                result = x + p * routed
-            elif self.mode == "surrogate_hard_forward":
-                soft = p * routed
-                # The identical soft term cancels in FORWARD values.
-                # Unlike hard*FFN alone, its gradient reaches inactive
-                # router and FFN parameters. No oracle/current effect.
-                result = x + hard * routed + (soft - soft.detach())
-            else:
-                raise ValueError("F8_UNKNOWN_DEPTH_MODE")
+            result = x + p * self.ffn(z)
+        else:
+            raise ValueError("F8_UNKNOWN_DEPTH_MODE")
         if not bool(torch.isfinite(result).all()):
             raise ValueError("F8_NONFINITE_NATIVE_READOUT")
         return result
