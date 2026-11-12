@@ -80,6 +80,7 @@ def _facts_before(history,state4):
             raise ValueError("P116_INVALID_TERMINATION")
         if event["terminated"] or event["truncated"]:
             raise PermissionError("P116_AFTER_TERMINAL_NO_NEXT_ACTION")
+        p113._real(event["reward"],"P113_BAD_REALIZED_REWARD")
         if event["receipt_ref"]!="fixture:"+p113._sha({
               key:value for key,value in event.items()
               if key!="receipt_ref"}):
