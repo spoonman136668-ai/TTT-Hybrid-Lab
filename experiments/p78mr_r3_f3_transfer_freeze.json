@@ -1,0 +1,77 @@
+{
+  "schema": "ttt-hybrid.p78mr-r3-retrospective-f3-cal-transfer-v1",
+  "classification": "ALREADY_CONSUMED_EXTERNAL_F3_CAL_RETROSPECTIVE_DEV_ONLY_NOT_FIRST_USE",
+  "parent": {
+    "existing_pr": 192,
+    "head_sha": "f947a4a8af66b2309897157d354f4dbb2cfeaff0",
+    "tree_sha": "5a38d4b87de5de8cef092230d68208051443352b",
+    "model_receipt_blob": "c180bfa8dab735000360ba2e87f51dbe42ec3d89",
+    "model_equation_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02"
+  },
+  "source": {
+    "reuse_only": true,
+    "upstream": "CausalAILab/Causal-Gymnasium@c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "archive_artifact_id": 13878284321,
+    "zip_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "owner_run_id": 43073165842,
+    "source_commit": "00b3f45f47660af4c1016c64b656160975982227",
+    "source_capture_cal_sha256": "15bcbe25b492ad095fca35ee37ec97d0d141c9beb9899549a30558659ded3aef",
+    "cal_worlds": 64,
+    "cal_actual_events": 1524,
+    "fit_worlds": 128,
+    "fit_actual_events": 2923,
+    "original_total_observed_effects": 4447,
+    "never_generate_new_source": true,
+    "external_independent_witness": "NOT_ESTABLISHED"
+  },
+  "evaluation": {
+    "input": "P80 normalized factual 16D state-action context at recorded pre-state and executed do action, L2 normalized; not action-only source",
+    "outcome": "P80 tanh of four physical deltas / [2.4,3.0,0.2095,3.5], reward tanh, terminated, truncated, padding nine zeros",
+    "mask": "Per world skip first factual event; predict BEFORE incorporating the current observed outcome. Equal weight per episode/world; physical delta MSE only four normalized channels. No padded 16D MSE.",
+    "arms": "Frozen original P78 non_directional3 theta from three seeds 978201/203/207; P78 CAL-selected eta=0.4, zero-output reference; reported trained F4R1 SSM seeds 985201/203/207 matched original CAL64/source/mask",
+    "no_training": true,
+    "no_parameter_updates": true,
+    "no_post_result_selection": true,
+    "trained_ssm_cal_delta_mse": [
+      0.00001328794543553613,
+      0.000012177126073709132,
+      0.000012313318364931547
+    ],
+    "sss_checkpoint_fingerprint": [
+      "9ff9bbad4d545780cf1d5c6108075b2720aa51032ba3c2c70773abf6a6e2cec4",
+      "c6af43defa91f8cf308845d72e9b6acf15008761d88d3ede054029affcce4cc5",
+      "0836105936aba355ad08102075209828f748040d85d50a827648d6166ea64c45"
+    ],
+    "ssm_result_source": "original F4R1 owner #43080774054; published F5 protocol F4 SHA as quoted",
+    "metrics": "all 64 world MSE and event counts, aggregate equal-world mean, fixed ratio, trained SSM ratio, zero baseline, wrong-credit zero/future negative, cold restoration; full process CPU cost not matched"
+  },
+  "freeze_tests": {
+    "primary": "For each P78 seed, original pre-trained learned update achieves <=0.9x existing trained F4 SSM delta MSE; AND <=0.9x frozen eta=.4 under identical F3 CAL. Otherwise FAIL for that seed, all3 required.",
+    "negative": "Deterministic wrong-action or zero future effects cannot improve by leaking current target; inspect raw probe chronology.",
+    "quality_guard": "If source blobs, archive digest, exact worlds, effect counts, normalization or mask drift, fail before scoring; never re-run original F3 collector or F4 trainer.",
+    "risk": "F3 CAL has already been used by F4/F5 and P78 toy design was reviewed; THIS IS RETROSPECTIVE EXPLORATION, NOT SCIENTIFIC UNSEEN TEST even if criterion passes."
+  },
+  "authority": {
+    "scope": "read-only analysis of already consumed/source witnessed GitHub archive and already trained SSM metrics",
+    "original_first_use": "SPENT_AND_PROHIBITED_REPLAY",
+    "new_effects": false,
+    "training": false,
+    "GPU": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "scheduled_task": false,
+    "merge": false,
+    "promote": false,
+    "FORGE_change": false,
+    "controller_change": false,
+    "OOD": false,
+    "external_ood": false
+  },
+  "report": {
+    "engineering": "UNVERIFIED_UNTIL_EXACT_SHA_REGRESSION",
+    "scientific": "RETROSPECTIVE_DEV_ONLY_NO_PASS",
+    "deployment": "NONE",
+    "store_evidence": "existing GitHub PR/Actions; not ChatGPT Library"
+  }
+}
