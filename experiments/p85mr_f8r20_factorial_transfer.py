@@ -70,7 +70,7 @@ def locked() -> dict:
             or p["sha"] != "c460ffd06a6a69d141de00d04c1982ef7f0a319b"
             or p["r18_source_blob"] != R18_BLOB
             or p["r19_focus_source_blob"] != R19_FOCUS_BLOB
-            or p["original_r3_blob"] != "9a7077ece06dfbc685232bbc606b0c2dd33a7895"
+            or p["r19_focus_freeze_blob"] != "3a6e96789b81d51ca41c429198d47229368271f5"
             or w["group_count"] != {k: v[1] for k, v in GROUPS.items()}
             or w["seed_base"] != {k: v[0] for k, v in GROUPS.items()}
             or w["FIT_B_steps"] != 8 or w["DEV_B_steps"] != 8
