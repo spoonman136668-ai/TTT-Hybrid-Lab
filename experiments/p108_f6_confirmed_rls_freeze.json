@@ -1,0 +1,66 @@
+{
+  "schema": "ttt-hybrid.p108-confirmed-factual-rls-fixture-contract.v1",
+  "stage": "FROZEN_SOURCE_FREE_ENGINEERING_BEFORE_IMPLEMENTATION_NO_NEW_FIRSTUSE",
+  "source_identity": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "canonical_pr": 233,
+    "parent_head": "4704a7a7c0beec44c5ca4e4fe86ed3f55703fe7d",
+    "branch": "research/p106-f6-source-neutral-policy-readiness-20261111",
+    "p107_frozen_blob": "95c5d4fe840287c1c86aacd54b6eadd60f2e0d0f",
+    "p107_source_blob": "0ea2cc00b5a7d86bfaa2a10e3a1585560748e504",
+    "p106_policy_blob": "e7899e53cb48e6961fcbedf8216efc26a35c39e4",
+    "p80_adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "problem": "P106 chose from a 2-action projection but did not inspect full PSD 16x16 and accepted externally supplied W/P without a confirm-first state update; P107 fixture journal bound physical action to outcome but no original causal learner. P108 joins these with strict zero-effect engineering only.",
+  "source_neutral_policy_contract": {
+    "prior": "W=zeros16x16, P=2I16, float64, 512 learning-state floats per task",
+    "p80_action_key": "exact P80 state4 and action 0/1 normalized 16D transform",
+    "p80_effect": "exact P80 factual state_after-state_before, observed reward, terminal and truncated encoded to 16D; never unselected effect",
+    "p106_policy_unchanged": "call P106 source-neutral policy only after FULL 16x16 SPD check; no new policies or beta retune",
+    "p107_fixture_ledger_unchanged": "claim/intend/confirm_fixture generated solely in temporary test fixture root; intent O_EXCL before fixture outcome; fixed target outcome not available to chooser",
+    "propose": "No actual effect. Caller records proposal with SHA of model state, public pre-state, legal chosen action, original P107 fixture intent SHA, session+step. No access to hidden oracle or unchosen outcome.",
+    "confirm": "Verify original persisted P107 fixture action-intent/outcome canonical payload, matching session/step/state/action/intent SHA, fixture receipt and outcome SHA; fail closed on missing/tampered/unknown/terminal receipt. Compute only selected original P80 factual effect and exactly P101 RLS g=P*k, den=1+k^T g, W+=outer(effect-Wk,g)/den, P-=outer(g,g)/den, after confirmation; immutable model counts and SHA journal.",
+    "full_SPD": "Symmetric float64 P with eigenvalues min>=1e-10 (stricter than local candidate kT P k>=0); reject a P[7,7]=-1 eigenmode invisible to P80 legal action keys, as well as nonfinite, nonsymmetric, wrong shape, zero and singular P; both pre- and post-update",
+    "model_hash": "SHA256 W/P bytes, integer factual_count and chained confirmed-journal SHA; no secret authority token",
+    "cold": "Snapshot W/P and journal bitwise and read-only query before and after another independent fixture task; do not silently reset or contaminate learned state",
+    "duplicate": "A spent proposal/intent/outcome must not be accepted twice; model-count/hash and immutable ledger step enforce no replay",
+    "no_strong_control_claim": "This verifies RLS interface and numerical guards only, NOT actual SSM training or competent A-opt goal reward; separately qualify strong conventional SSM FIT for external trial."
+  },
+  "negative_controls": [
+    "unconfirmed-effect denied",
+    "wrong executed action rejected",
+    "different public before-state denied",
+    "tampered fixture outcome digest denied",
+    "missing fixture outcome denied",
+    "uncommitted action denied",
+    "external source receipt rejected",
+    "posterior P[7,7]=-1 invisible to both physical action keys rejected",
+    "nonfinite/NaN label denied",
+    "duplicate confirmed receipt denied",
+    "terminal session blocked",
+    "cross-task cold restore exact",
+    "no external imports or runner dispatch"
+  ],
+  "qualification": {
+    "tests": "additive source-neutral fixture tests with no F3 historical source birth",
+    "mandatory_G4_Windows_Ubuntu": true,
+    "mandatory_G5_native_Windows_Ubuntu": true,
+    "mandatory_G7_pinned_Ubuntu": true,
+    "no_new_workflow": true,
+    "no_new_runner_or_scheduler": true,
+    "no_paid_api": true,
+    "no_external_firstuse": true,
+    "no_reuse_F3_CAL": true
+  },
+  "science": {
+    "scientific_pass": false,
+    "external_F6_effects": 0,
+    "OOD_NEGATIVE_unopened": true,
+    "source_protocol_fork_unresolved": true,
+    "trained_SSM_control_unverified": true,
+    "owner_firstuse_authorized": false,
+    "device_or_deployment_changed": false
+  },
+  "decision": "ENGINEERING_ONLY; after pass, mandatory firstuse selection, owner-scoped exact F6 approval, native custody, trained strong controls, real factual source comparison and independent science still separate."
+}
