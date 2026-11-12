@@ -31,7 +31,7 @@
     "padding_channels": 9,
     "effect": "channels0:3=tanh((after_i-before_i)/scale_i); c4=tanh(observed_reward); c5=float(terminated); c6=float(truncated); c7:15=0",
     "source_step": "Only realized do() action effect after persisted intent, never counterfactual",
-    "prediction": "Original F4 prequential (before-write) tensor [...,16] padded 9 zeros; forecast cannot read same-step action consequence",
+    "prediction": "Original F4 recurrent SSM prequential tensor [...,16] with seven meaningful effect channels; nine padding TARGET channels are zero but forecast padding channels may be nonzero and are excluded from loss; the source F4 model has an unconstrained 16D readout head.",
     "component_weights": {
       "deltas": 1,
       "reward": 0.2,
@@ -48,7 +48,7 @@
     "training_source": "P112 24 FIT physical_balance world receipts only",
     "validation_source": "FIT block1 indices8..15, complete consecutive factual fixture trace with >=2 and <=96 steps/world",
     "val_world_selector": "eight disjoint worlds each with exact event ids, contiguous before/after state, terminal only last; end must be terminal or truncated; early-terminated worlds included",
-    "predictions": "one sealed 16D padded vector per event for each of all three SSM seeds, same publicly selected current action, predicted before observing event outcome; synthetic fixture values are not native model readouts",
+    "predictions": "One sealed finite 16D vector per factual event per all three SSM seeds, including unconstrained prediction pad; same publicly selected current action, predicted before event outcome; synthetic fixture values not native model readouts.",
     "checkpoint": "three fake immutable checkpoint byte hashes, source pinned F4 kind ssm256, seed, TRAIN receipts SHA, prediction receipt SHA, exact 24/8 provenance and 800 declared optimizer steps (not training proof)",
     "selection": "lowest F4 weighted normalized seven-channel prequential objective on validation, tie seed, report normalized physical MSE ratio to zero and all metrics",
     "limits": "no more source sessions than proposed A5; no new simulator calls; current fixture cannot claim owner authentication, trained SSM or scientific pass",
@@ -90,7 +90,9 @@
     "no_scheduled_task": true,
     "no_paid_API": true,
     "no_merge": true,
-    "no_deployment": true
+    "no_deployment": true,
+    "original_p69_readout_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa"
   },
-  "classification": "ENGINEERING_FIXTURE_ONLY_NOT_NATIVE_SSM_COMPETENCE"
+  "classification": "ENGINEERING_FIXTURE_ONLY_NOT_NATIVE_SSM_COMPETENCE",
+  "source_note": "Initial protocol freeze committed at b9940a685f029ace99b4cf869232efa4a760d28a is superseded before any implementation because original P69 SSM head returns unconstrained 16D readouts; do NOT impose zero forecast padding. This revised freeze is authoritative before source creation."
 }
