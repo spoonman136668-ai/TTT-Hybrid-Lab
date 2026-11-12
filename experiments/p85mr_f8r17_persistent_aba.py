@@ -42,8 +42,7 @@ def locked():
     if (f["schema"] != SCHEMA
             or f["classification"] != "SOURCE_NEUTRAL_NATIVE_TRAINED_DEV_ONLY"
             or f["stage"] != "FROZEN_BEFORE_IMPLEMENTATION_AND_NUMERICAL_RESULTS"
-            or f["parent"]["sha"] != "3373068410eaf604bba0e74bd0ae5c62930e3803"
-            or f["parent"]["original_f8r3_world_blob"] != r3.locked()["source_parent"] if False else False):
+            or f["parent"]["sha"] != "3373068410eaf604bba0e74bd0ae5c62930e3803"):
         raise ValueError("F8R17_PROTOCOL_IDENTITY_DRIFT")
     if (f["parent"]["original_f8r3_world_blob"] !=
             "9a7077ece06dfbc685232bbc606b0c2dd33a7895"
