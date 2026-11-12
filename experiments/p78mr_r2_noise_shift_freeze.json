@@ -1,0 +1,75 @@
+{
+  "schema": "ttt-hybrid.p78mr-r2-fixed-weights-noise-vs-reversal.v1",
+  "stage": "FROZEN_BEFORE_TOY_DIAGNOSTIC_IMPLEMENTATION_OR_OBSERVATION",
+  "source_class": "HAND_AUTHORED_DETERMINISTIC_TOY_ONLY_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "existing_pr": 192,
+    "head": "2a6c0659122c2771eafd11daa81b7cb921463d31",
+    "tree": "6982ac0827c2be12c8f8592b03a1221da2f6d203"
+  },
+  "immutable_references": {
+    "trained_p78_receipt_path": "experiments/p78mr_fitcal_val_dev_result.json",
+    "trained_p78_receipt_git_blob": "c180bfa8dab735000360ba2e87f51dbe42ec3d89",
+    "original_policy_path": "experiments/p77_write_policy.py",
+    "original_policy_git_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02"
+  },
+  "controls": {
+    "learned": "Non-directional3 P78 selected theta copied EXACTLY from consumed TRAIN/FIT/CAL result; seeds [978201,978203,978207]; no further training, retuning, checkpoint or selection",
+    "fixed": "P78 CAL-preselected fixed gain eta=0.4; unchanged comparator",
+    "per_world": "Exactly one 16x16=256-float causal fast memory. Zero carry initially; read before each actually observed effect update; no extra role or event index in model.",
+    "budget": "Toy-only full episode wall timing may be reported but not matched science cost"
+  },
+  "frozen_fixture": {
+    "vector_dim": 16,
+    "action": "unit basis e_0",
+    "observed_effect": "magnitude 2 in basis e_0, all remaining components zero",
+    "common_prefix": "32 confirmed events, all action=e0, effect=+2e0",
+    "first_disruption": "One confirmed event, action=e0, effect=-2e0",
+    "corruption": "12 subsequent confirmed events action=e0, effect=+2e0",
+    "genuine_reversal": "12 subsequent confirmed events action=e0, effect=-2e0",
+    "no_disruption_control": "45 confirmed events action=e0, effect=+2e0",
+    "precise_episode_lengths": {
+      "common_prefix": 32,
+      "first_disruption": 1,
+      "continuation": 12,
+      "total": 45
+    },
+    "withheld_queries": "Only e0 readouts before events, no observed future-effect access to active model",
+    "all_scenarios_share_identical_prefix": true
+  },
+  "output_metrics": {
+    "primary": "Squared scalar error on the sole active physical e0 effect channel before each observed update; report raw predictions and update gains for every event, not diluted padded 16D MSE",
+    "timepoints": "After the first disruption, and after 1,2,4,8,12 confirmed continuation events; both scenarios per seed/arm",
+    "shock_protection": "Absolute pre-query error versus +2 target immediately after single -2 corruption; learned <= fixed to pass",
+    "reversal_speed": "Mean next-4 observed-reversal prequential errors and post-12 absolute error versus -2; learned <= fixed for both to pass",
+    "joint_decision": "H_NOISE and H_SHIFT must both pass for all 3 frozen seeds; any fail = TOY_JOINT_FAIL; this criterion has no scientific promotion authority",
+    "no_control_preference": "No threshold or source rewritten after seeing values; preserve all 3 seeds, paths and metrics"
+  },
+  "engineering_negatives": [
+    "bitwise cold split-vs-one-shot (32+1+12)",
+    "learned states share prefix across shock and reversal before diverging",
+    "future effects withheld from current prediction",
+    "confirmed wrong-action writes change state",
+    "no source, data loader, P78 FIT/CAL/VAL generator, upstream CausalGym or run dispatch",
+    "original policy/receipt Git blob digest rejection on drift",
+    "nonfinite results fail-closed"
+  ],
+  "authority": {
+    "permitted": "Implement source-neutral audit and tests on existing P78-MR draft; automatic existing G4/G5/G7 CPU only",
+    "new_factual_first_use": false,
+    "existing_consumed_P78_VAL_reuse": false,
+    "protected_OOD_access": false,
+    "training": false,
+    "GPU": false,
+    "MERGE": false,
+    "FORGE_change": false,
+    "workflow_edit": false,
+    "scheduler": false,
+    "live_actuation": false
+  },
+  "qualification": {
+    "engineering": "full exact candidate SHA original G4 Windows+Ubuntu, G5 Windows+Ubuntu, G7 Ubuntu",
+    "scientific": "NOT_RUN_INDEPENDENT",
+    "deployment": "NONE"
+  }
+}
