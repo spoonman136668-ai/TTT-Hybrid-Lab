@@ -1,0 +1,131 @@
+{
+  "schema": "ttt-hybrid.p107-owner-firstuse-readiness-contract-freeze.v1",
+  "status": "PRE_SOURCE_FREEZE_ENGINEERING_ONLY_NOT_OWNER_EXECUTION",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 233,
+    "sha": "9368dd4015b7e9151ff525f88d5a64e831f1713b",
+    "p106_protocol_commit": "389bf0a3c6e023309d63a5d01a7f353ed0ffe0ec",
+    "p106_protocol_blob": "3a2cee9454edf2e2f9937e35492d618e30f79de0",
+    "p106_source_blob": "UNVERIFIED_BIND_NEXT",
+    "p105_sha": "955d032ac21b71b9d5e02061ae9727600205d569",
+    "p105_protocol_blob": "cd1bb40fd74df9d693067798fa5360a0cb205cbb"
+  },
+  "dual_protocol_conflict": {
+    "status": "UNRESOLVED_NO_F6_ACTIVATION",
+    "first": {
+      "branch": "research/p106-f6-source-neutral-policy-readiness-20261111",
+      "sha": "9368dd4015b7e9151ff525f88d5a64e831f1713b",
+      "freeze_blob": "3a2cee9454edf2e2f9937e35492d618e30f79de0",
+      "FIT": [
+        1820000000,
+        1820002015
+      ],
+      "CAL": [
+        1820100000,
+        1820102015
+      ],
+      "policy_arms": [
+        "guarded_voi",
+        "a_opt",
+        "greedy_goal",
+        "physical_balance"
+      ],
+      "cohorts_each_split": 48
+    },
+    "other": {
+      "branch": "research/p106-f6-binary-policy-preflight-20261111",
+      "sha": "b4014b6a0d57defabc0fcd94eef86b2b967c7c41",
+      "freeze_blob": "42db0228c1c4561333058a3b9d849b8c3db1183c",
+      "FIT_seed_bases": [
+        1811000000,
+        1811010000,
+        1811020000
+      ],
+      "CAL_seed_bases": [
+        1811100000,
+        1811110000,
+        1811120000
+      ],
+      "policy_arms": [
+        "max_variance",
+        "a_opt",
+        "hash_passive",
+        "cyclic"
+      ],
+      "cohorts_each_split": "FIT3x32, CAL3x16"
+    },
+    "must_not_implicitly_pick_one": true,
+    "selection_needs_owner_scope": "Owner must specify exactly one final protocol identity/seed source before any effect first-use. No conflicting simultaneous source sessions."
+  },
+  "source": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "model": "CartPoleWindPCH",
+    "action_domain": [
+      0,
+      1
+    ],
+    "obs_dim": 4,
+    "origin": "historical F3 FIT/CAL spent; new F6 source never created"
+  },
+  "owner": {
+    "runner": "TTT-HYBRID-GPU-WIN",
+    "labels": [
+      "self-hosted",
+      "Windows",
+      "X64",
+      "ttt-hybrid-gpu-isolated"
+    ],
+    "wsl": "Ubuntu-24.04",
+    "uid": 1000,
+    "run_owner_scoped_authorization": "REQUIRED_NOT_GRANTED",
+    "match_runner_state_live": "UNVERIFIED",
+    "match_install_sha": "UNVERIFIED",
+    "match_python_pins": "UNVERIFIED",
+    "match_source_blobs": "UNVERIFIED",
+    "match_full_G4_G5_G7_exact_candidate": "REQUIRED",
+    "owner_approval_token": "ABSENT",
+    "external_do_never_on_GitHub_hosted": true,
+    "attempted_irreversible_action_no_replay": true
+  },
+  "immutable_effect_receipt_contract": {
+    "pre_firstuse": "Validate exact protocol SHA + runner+source+owner+receipts+budgets+first-use approval before any upstream import/reset/constructor",
+    "session_key": "(plan_sha, split, block, world_index, policy) unique, one source session per policy/seed; no retry on uncertainty",
+    "intent_before_effect": "Write separate O_EXCL intent for each action with exact step, model, state4, chosen binary action and ledger hash; flush/fsync; owner-side directory persistence on WSL must be verified. Only after confirmed durable intent may trusted external source execute action.",
+    "effect_after_source": "Append immutable O_EXCL factual outcome with chosen action, post4 state, reward, termination/truncation, per-action receipt and source run id, fsync; update RLS only after same-action confirmed outcome",
+    "crash_or_unknown": "A durable attempt without immutable factual outcome blocks retry of that action or source session, including after process restart; operator must reconcile read-only; no uncertain effect replay or speculative rollback",
+    "terminal": "Once terminated/truncated, no further steps",
+    "cal_before_fit": "Deny CAL until all FIT controls trained, strongest baseline selected FIT-only and pinned; do not use CAL or OOD in parameter selection",
+    "double_ledger": "No external effects from pure test ledger, all simulated receipts must carry fixture: prefix; source receipts are rejected until separately qualified adapter"
+  },
+  "conventional_control_qualification": {
+    "arms": [
+      "a_opt",
+      "greedy_goal",
+      "physical_balance"
+    ],
+    "strong_fully_trained_control": "Independently train and source-qualify conventional SSM predictor and policy on each FIT stream with matched action/outcome/compute and early term reporting; this firstuse cannot do so without actual source",
+    "minimum_FIT_baseline_competence": "Prospective first check: strongest conventional (including SSM if admitted) mean survival >=24/96 and truthful no-discard 48 FIT episodes; below => no CAL",
+    "FIT_selection": "Within same prospective protocol, calculate mean realized survival over all 3x16 FIT worlds per arm. Highest wins; tie lower mean physical stability cost, then fixed arm order. Source receipts must be authenticated before scientific use.",
+    "CAL_admission": "Missing FIT/SSM qualification and unresolved protocol fork keep CAL denied. Synthetic fixture can test algorithm but cannot certify competence or first-use authority.",
+    "evaluation": "predeclared 3 CAL blocks, independent policy sessions, world equal, source early termination retained, 95% paired bootstrap only if true source and independent owner, no synthetic counterfactuals"
+  },
+  "future_science": {
+    "status": "NOT_RUN_NOT_AUTHORIZED",
+    "F6_effect_attempts": 0,
+    "scientific_pass": false,
+    "OOD_unopened": true,
+    "source_owner_dispatch": false,
+    "main_merge": false,
+    "deployment": false
+  },
+  "tests": {
+    "scope": "pure on-host synthetic fixed-typed fixtures, filesystem O_EXCL/fsync ordering on temporary test directory, injected unknown effect crash simulation, source authorization/refusal, FIT selection shape/competence tests; no external imports/real actions",
+    "full_G4_Windows_Ubuntu": true,
+    "full_G5_both": true,
+    "G7_Ubuntu": true,
+    "no_new_workflows": true,
+    "repo_only_evidence": true
+  }
+}
