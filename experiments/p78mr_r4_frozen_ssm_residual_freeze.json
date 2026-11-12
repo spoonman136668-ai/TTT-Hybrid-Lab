@@ -1,0 +1,74 @@
+{
+  "schema": "ttt-hybrid.p78mr-r4-trained-ssm-residual-memory-retro-v1",
+  "classification": "PRE-SCORE-FROZEN_RETROSPECTIVE_CONSUMED_F3_CAL_ONLY_NOT_SCIENCE",
+  "parent": {
+    "pr": 192,
+    "sha": "bac45db5ce156d05bf82f3463b9a874138cf7972",
+    "tree": "307083d49a4a017d6fd248b0e430f464967e8855"
+  },
+  "source": {
+    "f3_original_owner_run": 43073165842,
+    "artifact_id": 13878284321,
+    "zip_sha256": "a04697bdfba1eb93548244329f4f76fb807489aa7766f4a343de897a56caceb5",
+    "cal_capture_sha256": "15bcbe25b492ad095fca35ee37ec97d0d141c9beb9899549a30558659ded3aef",
+    "cal_worlds": 64,
+    "cal_actual_do_events": 1524,
+    "source_split": "already consumed F3 CAL ONLY; 64 equal-weight worlds and pre-write events starting t=2; no new split",
+    "original_P80_state_action_context": true
+  },
+  "trained_dynamics": {
+    "original_p69_SSM_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa",
+    "architecture": "DiagonalContinuousSSM 256-float recurrent hidden state, learned 33→256 input projection, 272→16 head",
+    "f4_owner_run": 43080774054,
+    "artifact_id": 13883054583,
+    "zip_sha256": "ac93a3616619bf4376023e18cfc2ab32757a1a89715fbc02394164682c0159b5",
+    "original_F4_receipt_sha256": "0ce28fcf2976d4a97e922998dbc8696e483db1cfbf1a01bfdd5cb77052ecc56d",
+    "ssm_checkpoint": "ssm256-985203.npz",
+    "checkpoint_sha256": "c6af43defa91f8cf308845d72e9b6acf15008761d88d3ede054029affcce4cc5",
+    "original_CAL_delta_MSE": 0.000012177126073709132,
+    "all_weights_frozen": true,
+    "no_finetune": true,
+    "no_checkpoint_selection": true
+  },
+  "p78_memory": {
+    "original_write_policy_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02",
+    "learned_coefficient_result_blob": "c180bfa8dab735000360ba2e87f51dbe42ec3d89",
+    "frozen_model_seeds": [
+      978201,
+      978203,
+      978207
+    ],
+    "state_floats": 256,
+    "global_trainable_parameters_but_frozen": 3,
+    "reference_fixed_eta": 0.4
+  },
+  "hypothesis": {
+    "mechanism": "add a learned/fixed factual residual memory W (16x16) on TOP OF frozen SSM read-before-write prediction. Before observing y[t], ssm_hat=original SSM head([ssm_state,a[t]]) and residual_hat=W@a[t], final_hat=ssm_hat+residual_hat. After y[t] is observed, write residual_target=y[t]-ssm_hat using original three-coefficient P78 or selected fixed eta=.4 update; then advance original SSM state with original [a[t],y[t],1] event. No y[t] in current readout.",
+    "state_budget": "ssm256 plus residual256 = 512 floats/world; compare against unchanged trained SSM256 and SSM256+inert256 control; static parameters SSM unchanged and original frozen 3 scalar P78 coefficients. Never claim matched capacity to unaugmented SSM.",
+    "evaluation": "mean per-world per-step squared error on four P80 normalized physical delta channels, excluding event 1 and all 9 padded outputs; 64 CAL worlds, all recorded actual actions",
+    "primary": "every one of 3 original P78 seeds must yield <=0.90x frozen trained SSM MSE AND <=0.95x fixed-residual overlay MSE. Any miss FAIL.",
+    "cost": "median CPU episode inference+write time for residual <=3x plain frozen SSM when measured same machine no reload; report whole replay wall and RSS, not qualified matched science",
+    "negatives": "wrong-action credit harms changed residual estimate; original SSM numerical parity without residual; mid-episode cold restore of BOTH 256-float states; first-effect future target cannot change before-write predicted result; no parameter update; no source birth; fail invalid mixed units and nonfinite state"
+  },
+  "authority": {
+    "replay_only_prior_spent_CAL": true,
+    "new_external_do": false,
+    "new_source": false,
+    "first_use": false,
+    "GPU": false,
+    "model_train": false,
+    "ssm_retrain": false,
+    "OOD": false,
+    "scheduler": false,
+    "workflow_edit": false,
+    "new_runner": false,
+    "FORGE": false,
+    "merge": false,
+    "unsealed_science": false
+  },
+  "qualification": {
+    "engineering": "existing original SHA G4 Win+Ubuntu full, G5 native both, G7 Ubuntu; source-only toys and exact archive read-back",
+    "scientific": "RETROSPECTIVE_NO_SCIENTIFIC_PASS",
+    "deployment": "NONE"
+  }
+}
