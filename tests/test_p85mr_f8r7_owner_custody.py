@@ -66,7 +66,8 @@ def test_atomic_claim_reserves_96_effects_and_prevents_replay(tmp_path):
         journal.claim(identity)
     # Even another development run cannot reclaim source identity.
     second = j.DevCustodyJournal(tmp_path, run_id="DEV-RUN-2")
-    with pytest.raises(FileExistsError):
+    assert second.recover_readonly(identity)["global_attempt_reopen_is_read_only"]
+    with pytest.raises(PermissionError, match="GLOBAL_ATTEMPT"):
         second.claim(identity)
     with pytest.raises(PermissionError, match="RESTART"):
         second.append(identity, "constructor_intent")
@@ -170,3 +171,68 @@ def test_source_neutral_no_actions_and_no_owner_authority():
                        "urlopen(", "GH_TOKEN"):
         assert disallowed not in source
     assert j.locked()["authority"]["external_effects"] == 0
+
+def test_global_marker_enforces_one_writer_across_different_sessions(tmp_path):
+    from concurrent.futures import ThreadPoolExecutor
+    (tmp_path / "claims").mkdir()
+    (tmp_path / "events").mkdir()
+    rows = j.r6.planned_sessions()
+    def contender(n):
+        try:
+            obj = j.DevCustodyJournal(tmp_path, run_id=f"DEV-RUN-{n}")
+            obj.claim(rows[n-1]["identity"])
+            return "writer"
+        except (PermissionError, ValueError) as exc:
+            assert any(k in str(exc) for k in (
+                "GLOBAL_ATTEMPT", "TORN_OR", "INVALID_EXISTING_GLOBAL"))
+            return "denied"
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        outcomes = list(pool.map(contender, (1, 2)))
+    assert sorted(outcomes) == ["denied", "writer"]
+    # Any restart, including same DEV run label, must not claim another id.
+    cold = j.DevCustodyJournal(tmp_path)
+    with pytest.raises(PermissionError, match="GLOBAL_ATTEMPT"):
+        cold.claim(rows[2]["identity"])
+    assert cold._writer is False
+
+
+def test_global_marker_survives_post_fsync_crash_fault(tmp_path, monkeypatch):
+    original = j._exclusive
+    def injected_after_durable_marker(path, record):
+        original(path, record)
+        if path.name == j.ATTEMPT_FILE:
+            raise OSError("INJECTED_AFTER_MARKER_FSYNC")
+    with monkeypatch.context() as scoped:
+        scoped.setattr(j, "_exclusive", injected_after_durable_marker)
+        with pytest.raises(OSError, match="INJECTED_AFTER"):
+            j.DevCustodyJournal(tmp_path)
+    assert (tmp_path / j.ATTEMPT_FILE).exists()
+    reopened = j.DevCustodyJournal(tmp_path)
+    with pytest.raises(PermissionError, match="GLOBAL_ATTEMPT"):
+        reopened.claim(first()["identity"])
+
+
+def test_forged_session_run_and_global_marker_tamper_fail_closed(tmp_path):
+    obj = j.DevCustodyJournal(tmp_path)
+    identity = first()["identity"]
+    obj.claim(identity)
+    claim_file = obj._claim_path(identity)
+    row = json.loads(claim_file.read_bytes())
+    row["run_id"] = "DEV-RUN-99"
+    claim_file.write_text(json.dumps(
+        row, sort_keys=True, separators=(",", ":")) + "\n")
+    with pytest.raises(ValueError, match="INVALID_OR_TAMPERED"):
+        obj.recover_readonly(identity)
+    (tmp_path / j.ATTEMPT_FILE).write_bytes(b"{torn")
+    with pytest.raises(ValueError, match="TORN_OR"):
+        obj.claim(j.r6.planned_sessions()[1]["identity"])
+    with pytest.raises(ValueError, match="TORN_OR"):
+        j.DevCustodyJournal(tmp_path)
+
+
+def test_f8r8_freeze_precedes_code_and_denies_owner_execution():
+    f = j.r8_locked()
+    assert f["design"]["root_marker"] == j.ATTEMPT_FILE
+    assert f["limits"]["real_source_effects"] == 0
+    assert f["limits"]["owner_execution"] is False
+    assert f["limits"]["independent_scientific_pass"] is False
