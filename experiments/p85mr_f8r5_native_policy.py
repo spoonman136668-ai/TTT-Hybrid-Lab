@@ -20,7 +20,7 @@ from experiments import p85mr_f8r3_counterpolicy_identifiability as r3
 from experiments import p85mr_f5_native_vs_controls as f5
 from experiments import p85mr_f7_native_candidate as f7
 from experiments import p85mr_f4_train_controls as f4
-from experiments.p85mr_dynamics_baselines import new_baseline,prequential as baseline_predict
+from p85mr_dynamics_baselines import new_baseline,prequential as baseline_predict
 from p80mr_causalgym_trace_adapter import _action_key,_observed_effect
 
 ROOT=Path(__file__).resolve().parents[1]
