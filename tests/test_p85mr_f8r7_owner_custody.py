@@ -219,8 +219,8 @@ def test_forged_session_run_and_global_marker_tamper_fail_closed(tmp_path):
     claim_file = obj._claim_path(identity)
     row = json.loads(claim_file.read_bytes())
     row["run_id"] = "DEV-RUN-99"
-    claim_file.write_text(json.dumps(
-        row, sort_keys=True, separators=(",", ":")) + "\n")
+    claim_file.write_bytes((json.dumps(
+        row, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8"))
     with pytest.raises(ValueError, match="INVALID_OR_TAMPERED"):
         obj.recover_readonly(identity)
     (tmp_path / j.ATTEMPT_FILE).write_bytes(b"{torn")
