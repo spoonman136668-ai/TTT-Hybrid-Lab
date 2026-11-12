@@ -9,11 +9,11 @@ from __future__ import annotations
 from dataclasses import dataclass
 import hashlib
 import json
+import math
 from pathlib import Path
 
 import torch
 
-from experiments import p80mr_causalgym_trace_adapter as p80
 from experiments import p106_f6_source_neutral_policies as p106
 from experiments import p107_f6_owner_readiness as p107
 
@@ -109,7 +109,7 @@ def _key(before,action):
     if type(action) is not int or action not in (0,1):
         raise ValueError("P108_ONLY_AUTHENTIC_BINARY_ACTIONS")
     state=p107._state4(before)
-    return torch.tensor(p80._action_key(state,action),dtype=torch.float64)
+    return torch.tensor(p106.action_key(state,action),dtype=torch.float64)
 
 
 def _seal(proposal):
@@ -197,10 +197,15 @@ def confirm_fixture(ledger,session,model,proposal,*,outcome_sha256):
         raise ValueError("P108_UNAUTHENTICATED_FIXTURE_OUTCOME")
     state_after=p107._state4(outcome["state_after"])
     reward=p107._finite(outcome["reward"])
-    effect=torch.tensor(
-        p80._observed_effect(proposal.before,state_after,reward,
-                            outcome["terminated"],outcome["truncated"]),
-        dtype=torch.float64)
+    # Exact P80 normalized factual delta/reward/terminal encoding, copied
+    # as pure math from its pinned source blob. Do not import legacy adapter:
+    # that module uses a top-level p79mr import unavailable to G4 pytest.
+    deltas=[b-a for a,b in zip(proposal.before,state_after)]
+    vec=[math.tanh(d/scale) for d,scale in zip(deltas,p106.SCALES)]
+    vec += [math.tanh(reward),
+            float(outcome["terminated"]),float(outcome["truncated"])]
+    vec += [0.]*9
+    effect=torch.tensor(vec,dtype=torch.float64)
     k=_key(proposal.before,proposal.action)
     g=model.P@k
     denom=1.+k@g
