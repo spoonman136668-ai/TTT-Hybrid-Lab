@@ -1,0 +1,192 @@
+{
+  "schema": "ttt-hybrid.p77-directional-memory-frozen-FITVAL-falsification-receipt.v1",
+  "classification": "AUTHOR_SYNTHETIC_DEVELOPMENT_ONLY",
+  "status": "DEV_VAL_FAIL_CONTRADICTION_AND_DIRECTION_EFFECT_SIZE_ALL_THREE_SEEDS",
+  "preregistration": {
+    "commit": "f1a186e00d1efaf68cbaa190cdb013eb7962d690",
+    "git_blob": "76d0fb6e1bdc93f8cc9e0a7d1639eea3d49d84f1",
+    "stage": "BEFORE_P77_DATA_OR_MODEL_IMPLEMENTATION"
+  },
+  "parent": {
+    "pr": 188,
+    "sha": "c8beaa3465954a5d9e08d2350e3bb3eee1db6214",
+    "other_p76_pr": 187,
+    "other_p76_status": "UNCHANGED_DEV_FAIL"
+  },
+  "sources": {
+    "parent_p69_generator_blob": "51d4c4f16e18e1fb8265a92eee3d5f70b860893b",
+    "p77_factual_source_blob": "4d3476e165bf19315366a2535c4fd7018422cf4b",
+    "p77_policy_blob": "01051609f9af5b7d6932b5de7d30cfe7526d4e02",
+    "p77_train_script_blob": "1b2b9cffbff3394b397c3fc7cf8f3ff238b7b5f6",
+    "p77_test_blob": "a68013f5eba440c1474328658682ca6f6ccbaee9",
+    "fit_seed": 977101,
+    "val_seed": 977103,
+    "fit_worlds": 512,
+    "val_worlds": 192,
+    "fit_worlds_sha256": "6973b67198490372c8d1246663e83ac076fa78900481689d459614527ec1dcbd",
+    "val_worlds_sha256": "fa06a73435b7e2f7f7689172a5a9a7dd91fc4dd34c6c970ed0370c2b298c8890",
+    "fit_quartile_max_deviation": 0.010986328125,
+    "val_quartile_max_deviation": 0.012152791023254395,
+    "fit_target_index_balanced_accuracy": 0.5090332180261612,
+    "val_target_index_balanced_accuracy": 0.5047743022441864,
+    "fit_changed_index_balanced_accuracy": 0.4986165314912796,
+    "val_changed_index_balanced_accuracy": 0.4965277761220932,
+    "query_exact_duplicate": false,
+    "ood_dev_cohorts": "NOT_GENERATED_NOT_SCORED",
+    "negative_holdout": "NOT_GENERATED_NOT_SCORED",
+    "p68_p70_consumed_holdout": "EXCLUDED",
+    "p69_p75_consumed_fit_val": "EXCLUDED"
+  },
+  "design": {
+    "same_factual_actions_and_outcomes": true,
+    "same_optimizer_sampler_sha256": "5c5976ea7776e83f43afa3db8017cd92b1ad6d8f2860423a2b1888619145b7fe",
+    "optimizer": "AdamW lr=.01 weight_decay=.01 grad clip1",
+    "train_updates_per_arm_seed": 240,
+    "train_batch": 32,
+    "checkpoint_every": 40,
+    "best_selection": "MIN_TOTAL_VAL_MSE_ONLY",
+    "fast_state_floats_per_world": 256,
+    "learned_arms": [
+      "full5",
+      "cosine4",
+      "non_directional3",
+      "p70_four_param"
+    ],
+    "fixed_arms": "validation-calibrated grid [.05,.1,.2,.3,.4,.5,.6,.7,.8,1.0] and fixed contradiction repair",
+    "static_params": {
+      "full5": 5,
+      "cosine4": 4,
+      "non_directional3": 3,
+      "p70_four_param": 4
+    },
+    "strongest_fixed_eta": 0.4,
+    "fixed_mse": {
+      "total": 0.09849254041910172,
+      "changed": 0.10908714681863785,
+      "stable": 0.08397400379180908
+    }
+  },
+  "seeds": [
+    {
+      "seed": 977201,
+      "full5": {
+        "total": 0.04571130871772766,
+        "changed": 0.056913599371910095,
+        "stable": 0.030360022559762
+      },
+      "cosine4": {
+        "total": 0.045539069920778275,
+        "changed": 0.056907735764980316,
+        "stable": 0.02995978109538555
+      },
+      "non_directional3": {
+        "total": 0.04722120240330696,
+        "changed": 0.05869700387120247,
+        "stable": 0.0314951166510582
+      },
+      "p70_four_param": {
+        "total": 0.0678551122546196,
+        "changed": 0.08863425254821777,
+        "stable": 0.03938000276684761
+      },
+      "raw_receipt_sha256": "24dddeaeab97b17f8c8b33d9f664d4e391dadd616c454d3c0743050fa19cf69e",
+      "wall_seconds": 37.582436709999456
+    },
+    {
+      "seed": 977203,
+      "full5": {
+        "total": 0.04572119936347008,
+        "changed": 0.05692710354924202,
+        "stable": 0.030364958569407463
+      },
+      "cosine4": {
+        "total": 0.045494306832551956,
+        "changed": 0.05684603005647659,
+        "stable": 0.029938247054815292
+      },
+      "non_directional3": {
+        "total": 0.047166984528303146,
+        "changed": 0.05861200392246246,
+        "stable": 0.031483061611652374
+      },
+      "p70_four_param": {
+        "total": 0.06784386932849884,
+        "changed": 0.088504858314991,
+        "stable": 0.03953065350651741
+      },
+      "raw_receipt_sha256": "7f3108f3137f465275854f05cd0121210b35bfe9f96d4a52cd9f5153f6864f90",
+      "wall_seconds": 37.1
+    },
+    {
+      "seed": 977207,
+      "full5": {
+        "total": 0.04596686735749245,
+        "changed": 0.05733145400881767,
+        "stable": 0.030393170192837715
+      },
+      "cosine4": {
+        "total": 0.04572630301117897,
+        "changed": 0.057225555181503296,
+        "stable": 0.02996806986629963
+      },
+      "non_directional3": {
+        "total": 0.04772411286830902,
+        "changed": 0.059569746255874634,
+        "stable": 0.03149120882153511
+      },
+      "p70_four_param": {
+        "total": 0.06820621341466904,
+        "changed": 0.08893654495477676,
+        "stable": 0.039797961711883545
+      },
+      "raw_receipt_sha256": "78a9aef68f44ad29e8ffe6f8d3c751c053cd0a83a27903ce41d6a56c6a8b6f2b",
+      "wall_seconds": 56.43
+    }
+  ],
+  "registered_outcome": {
+    "learned_full_vs_calibrated_fixed": "PASS 3/3",
+    "full_vs_p70_style": "PASS 3/3",
+    "cosine_direction_10pct_changed_gain_vs_no_direction": "FAIL 0/3",
+    "explicit_contradiction_5pct_changed_gain_vs_cosine_only": "FAIL 0/3",
+    "strict_mechanistic_dev": "FAIL",
+    "cold_state_restoration": "PASS all four learned arms in all three seeds",
+    "distinct_per_mode_seed_initializations": "PASS",
+    "independent_source_and_index_audits": "PASS",
+    "false_claims_forbidden": [
+      "contradiction feature necessary",
+      "direction feature gain>=10%",
+      "independent real-world learning",
+      "full original Hybrid qualified"
+    ]
+  },
+  "engineering": {
+    "focused_new": "12/12 PASS",
+    "focused_existing_plus_new": "92/92 PASS 3.76s",
+    "exact_blob_readback": "PASS P77 model/source/test/train script",
+    "fully_pinned_original_windows_linux_regression": "UNVERIFIED",
+    "original_g4_g5_g7": "UNVERIFIED, prior runs zero steps",
+    "native_gpu": "NOT_RUN",
+    "train_iterations": 2880,
+    "three_run_wall_seconds": 131.11,
+    "max_peak_rss_mib": 328.375,
+    "end_to_end_resource_cost_matched": false,
+    "local_toolchain": "Python 3.13.5 Torch 2.10.0+cpu; pinned 2.5.1+cpu original G4 not qualified"
+  },
+  "science": {
+    "holdout_scored": false,
+    "independent_first_use": false,
+    "science_pass": false
+  },
+  "deployment": {
+    "merged": false,
+    "main_changed": false,
+    "forge_changed": false,
+    "runner_dispatched": false,
+    "scheduled_task": false,
+    "paid_api": false
+  },
+  "evidence": {
+    "local_evidence_zip_sha256": "dd12232908f3a3733ba76af50e9271255fe5f1743966faea0f514cbaa59061dd",
+    "local_summary_receipt_sha256": "3c3869e2a4f98b00b00f54fe5fb10e5953d1681091953df4dd07c56e49a956c4"
+  }
+}
