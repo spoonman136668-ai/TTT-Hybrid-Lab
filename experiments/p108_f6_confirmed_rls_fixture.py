@@ -151,7 +151,7 @@ def propose(ledger,session,model,policy,before,step,*,epsilon=.05):
                     unsealed.intent_sha256,_seal(unsealed))
 
 
-def confirm_fixture(ledger,session,model,proposal):
+def confirm_fixture(ledger,session,model,proposal,*,outcome_sha256):
     """Only an already-persisted, matching P107 fixture result can update RLS.
 
     The caller supplies NO outcome, effect or hidden oracle. No external
@@ -187,6 +187,8 @@ def confirm_fixture(ledger,session,model,proposal):
         or outcome.get("step")!=proposal.step
         or outcome.get("action")!=proposal.action
         or outcome.get("intent_sha256")!=proposal.intent_sha256
+        or not isinstance(outcome_sha256,str) or len(outcome_sha256)!=64
+        or p107._sha(outcome)!=outcome_sha256
         or outcome.get("external_do_executed") is not False
         or not isinstance(outcome.get("receipt_ref"),str)
         or not outcome["receipt_ref"].startswith("fixture:")
