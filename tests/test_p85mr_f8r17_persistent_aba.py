@@ -51,7 +51,7 @@ def test_native_and_conventional_current_effect_strict_causal_mask():
         model=x.r5.model_for(arm,985201).cpu().eval()
         pred=x.predictions(arm,model,ep)
         tampered={**ep,"effect":ep["effect"].clone()}
-        tampered["effect"][6:]=2.5
+        tampered["effect"][6:,:7] = 0.5
         again=x.predictions(arm,model,tampered)
         assert torch.allclose(pred[:6],again[:6],atol=1e-6,rtol=0)
         assert torch.isfinite(again).all()
