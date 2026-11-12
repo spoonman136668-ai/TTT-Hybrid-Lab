@@ -129,6 +129,58 @@ def fixed_seed_random_action(profile_index: int, episode_index: int,
     return hashlib.sha256(message).digest()[0] & 1
 
 
+
+F8R15_FREEZE = Path(__file__).with_name("p85mr_f8r15_scripted_feedback_freeze.json")
+F8R15_FREEZE_BLOB = "532d76b4402eafc67c099feca26aa5decc0a6072"
+
+
+def frozen_scripted_feedback_contract() -> dict:
+    """Prospective source-neutral scripted policy; owner source effects denied."""
+    raw = F8R15_FREEZE.read_bytes()
+    blob = hashlib.sha1(
+        b"blob " + str(len(raw)).encode("ascii") + b"\0" + raw
+    ).hexdigest()
+    if blob != F8R15_FREEZE_BLOB:
+        raise ValueError("F8R15_FROZEN_SCRIPTED_POLICY_DRIFT")
+    f = json.loads(raw)
+    p = f["frozen_policy"]
+    if (f["schema"] != "ttt-hybrid.f8r15-scripted-feedback-dev.v1"
+            or f["stage"] != "FROZEN_BEFORE_F8R15_IMPLEMENTATION_AND_TEST"
+            or f["classification"] != "SOURCE_NEUTRAL_DEV_ONLY"
+            or f["parent"]["sha"] != "eb60c6803db725d4b941ca95937cee08db949bae"
+            or f["parent"]["r5_proposal_blob"] != FREEZE_BLOB
+            or f["parent"]["random_policy_freeze_blob"] != F8R14_FREEZE_BLOB
+            or p["name"] != CALIBRATION_POLICIES[0]
+            or p["deterministic_rule"] !=
+                "return int(pole_angle + 0.5 * pole_ang_vel > 0.0)"
+            or p["action_zero_on_tie"] is not True
+            or p["step_index_zero_based_max"] != 95
+            or p["direct_source_policy_adapter"] is not False
+            or any(value is not False for value in f["authority"].values())):
+        raise ValueError("F8R15_SCRIPTED_SCOPE_OR_AUTHORITY_DRIFT")
+    return f
+
+
+def frozen_scripted_feedback_action(profile_index: int, episode_index: int,
+                                    step_index: int, state: list | tuple) -> int:
+    """Select the F7 balancing *sign* from current public 4D state only.
+
+    F7's XOR exploratory flips are intentionally excluded; the prospective
+    F8 calibration scripted control is a deterministic feedback comparator.
+    Accept Python four-vector of public observables, not source wind.
+    """
+    frozen_scripted_feedback_contract()
+    session_seed("difficulty_calibration", episode_index,
+                 profile_index=profile_index, policy="frozen_scripted_feedback")
+    if type(step_index) is not int or not 0 <= step_index < 96:
+        raise ValueError("F8R15_UNREGISTERED_SCRIPTED_STEP")
+    if (type(state) not in (tuple, list) or len(state) != 4
+            or any(type(v) not in (float, int) or not math.isfinite(v)
+                   for v in state)):
+        raise ValueError("F8R15_INVALID_PUBLIC_4D_STATE")
+    return int(state[2] + 0.5 * state[3] > 0.0)
+
+
 def proposed_seed_receipt():
     f = locked()
     calibrated = [

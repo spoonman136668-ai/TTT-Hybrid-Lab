@@ -180,3 +180,57 @@ def test_f8r14_action_helper_does_not_touch_environment_or_firstuse():
                       "ctf_do(", "GITHUB_TOKEN", "workflow_dispatch("):
         assert forbidden not in helper
     assert r5.fixed_seed_random_contract()["authority"]["external_source_effects"] is False
+
+
+
+def test_f8r15_scripted_feedback_frozen_and_owner_denied():
+    f = r5.frozen_scripted_feedback_contract()
+    assert f["stage"] == "FROZEN_BEFORE_F8R15_IMPLEMENTATION_AND_TEST"
+    assert f["authority"]["owner_firstuse"] is False
+    assert f["authority"]["scientific_pass"] is False
+    assert f["frozen_policy"]["random_policy_unchanged"] is True
+    assert r5.proposed_seed_receipt()["new_effects_executed"] == 0
+
+
+@pytest.mark.parametrize("state,expected", [
+    ([0., 0., 0.1, 0.], 1),
+    ([0., 0., -0.1, 0.], 0),
+    ([0., 0., 0.05, -0.1], 0),
+    ([0., 0., 0.05, 0.01], 1),
+    ([1.5, -99., 0., 0.], 0),
+    ([0., 99., 0., 0.001], 1),
+])
+def test_f8r15_scripted_balancing_sign_uses_only_public_pole(state, expected):
+    assert r5.frozen_scripted_feedback_action(0, 0, 0, state) == expected
+    assert r5.frozen_scripted_feedback_action(2, 7, 95, state) == expected
+    assert r5.frozen_scripted_feedback_action(1, 3, 42, tuple(state)) == expected
+
+
+@pytest.mark.parametrize("profile,episode,step,state", [
+    (3, 0, 0, [0., 0., 0., 0.]),
+    (0, 8, 0, [0., 0., 0., 0.]),
+    (True, 0, 0, [0., 0., 0., 0.]),
+    (0, False, 0, [0., 0., 0., 0.]),
+    (0, 0, -1, [0., 0., 0., 0.]),
+    (0, 0, 96, [0., 0., 0., 0.]),
+    (0, 0, True, [0., 0., 0., 0.]),
+    (0, 0, 0, [0., 0., 0.]),
+    (0, 0, 0, [0., 0., 0., 0., 0.]),
+    (0, 0, 0, [0., 0., True, 0.]),
+    (0, 0, 0, [0., 0., float("nan"), 0.]),
+    (0, 0, 0, [0., 0., float("inf"), 0.]),
+    (0, 0, 0, "0,0,0,0"),
+])
+def test_f8r15_invalid_scope_or_state_denied(profile,episode,step,state):
+    with pytest.raises(ValueError,match="F8R"):
+        r5.frozen_scripted_feedback_action(profile,episode,step,state)
+
+
+def test_f8r15_scripted_policy_has_no_wind_or_owner_source_effect():
+    code = inspect.getsource(r5.frozen_scripted_feedback_action)
+    for forbidden in ("np_random", "env.action(", "env.reset(", "env.do(",
+                      "ctf_do(", "causal_gym", "current_wind",
+                      "subprocess.run(", "workflow_dispatch("):
+        assert forbidden not in code
+    assert r5.frozen_scripted_feedback_action(
+        0, 0, 3, [10., 20., 0.1, -0.01]) == 1
