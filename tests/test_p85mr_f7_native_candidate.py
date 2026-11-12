@@ -16,6 +16,7 @@ def synthetic_world(seed):
     a[:,1]=.5
     a[:,5]=torch.tensor([1.,0.,1.,0.,1.])
     a[:,6]=1.-a[:,5]
+    a=a/a.norm(dim=-1,keepdim=True)  # exact P80 unit-norm state/action key
     e=torch.zeros(5,16)
     e[:,0]=torch.arange(5)*.004
     e[:,2]=torch.tensor([.002,.003,.004,.005,.006])
