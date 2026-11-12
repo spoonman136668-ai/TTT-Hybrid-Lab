@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 import torch
 
-from experiments.p69_trainable_competitors import DiagonalContinuousSSM
+from p69_trainable_competitors import DiagonalContinuousSSM
 from experiments.p75_prequential_baselines import before_write_predictions
 from experiments.p77_write_policy import WritePolicy
 from experiments.p78mr_r4_ssm_residual import (
