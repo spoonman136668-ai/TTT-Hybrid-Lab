@@ -1,0 +1,66 @@
+{
+  "schema": "ttt-hybrid.p114-f6-source-neutral-native-optimizer-smoke.v1",
+  "stage": "PREIMPLEMENTATION_FREEZE_SYNTHETIC_ONLY_NO_EXTERNAL_SOURCE",
+  "parent": {
+    "pr": 233,
+    "exact_sha": "8827d31c77110daa17530626dc9281bc2c600a91",
+    "main_at_freeze": "d2ede7bc2bc0f16aeeedc315681b21d7af6ec439"
+  },
+  "source": {
+    "kind": "FICTIONAL_ONLY",
+    "original_p85_f4_blob": "aa7f6c34a68ee3118f0fe9e44659aa3dec5524bd",
+    "original_p69_blob": "ad0d3712e4eff289ee1ab782820e4c3fc80a95aa",
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_external_source_used": false,
+    "prior_F3_artifact_reused": false
+  },
+  "toy": {
+    "training_worlds": 24,
+    "validation_worlds": 8,
+    "training_world_ids": "FIT block0 indices0..15 plus FIT block1 indices0..7",
+    "validation_world_ids": "FIT block1 indices8..15",
+    "facts_per_world": 3,
+    "original_P80_active_effect_channels": 7,
+    "original_P80_padded_channels": 9,
+    "model": "ssm256",
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "updates_per_seed_smoke": 8,
+    "full_future_owner_training_updates_not_executed": 800,
+    "gradient_clipping_norm": 1,
+    "torch_cpu_only": true,
+    "trained_on_validation_data": false,
+    "checkpoint_format": "NPZ_no_pickle_in_memory",
+    "validation_for_science": false
+  },
+  "engineering": {
+    "assert_nonzero_gradients": true,
+    "assert_parameters_changed": true,
+    "assert_finite_postupdate_training_and_validation": true,
+    "assert_cold_checkpoint_readback_parity": true,
+    "assert_same_seed_training_determinism": true,
+    "assert_original_prequential_before_write": true,
+    "assert_no_CAL_OOD_or_other_real_source": true,
+    "full_original_G4_G5_G7_regression_required": true
+  },
+  "authority": {
+    "external_F6_first_use_authorized": false,
+    "owner_WSL_GPU_used": false,
+    "runner_dispatched": false,
+    "owner_source_sessions": 0,
+    "source_effects": 0,
+    "real_SSM_F6_training": false,
+    "protocol_P106A_B_resolved": false,
+    "P110_A5_owner_approved": false,
+    "new_workflow": false,
+    "merge_authorized_by_this_freeze": false,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "interpretation": "Prove original native model parameters can be changed and restored using fully fabricated factual trajectories; no evidence of causal source learning, generalization, trained conventional parity or F6 competence. Do not use this as an F6 owner qualification."
+}
