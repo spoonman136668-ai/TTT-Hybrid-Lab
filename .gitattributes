@@ -2,3 +2,4 @@
 # Windows autocrlf must not rewrite Python or JSON source/receipt bytes.
 *.py text eol=lf
 *.json text eol=lf
+.github/workflows/p85mr-f2-pinned-fitcal-once.yml text eol=lf
