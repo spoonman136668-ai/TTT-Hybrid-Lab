@@ -84,7 +84,8 @@ def _owner():
     torch.use_deterministic_algorithms(True)
     if os.environ.get("CUDA_VISIBLE_DEVICES")!="-1":
         raise PermissionError("F7_TRAIN_CPU_ONLY")
-    return {"run_id":run,"sha":sha,"runner":"TTT-HYBRID-GPU-WIN"}
+    return {"run_id":run,"sha":sha,"actor":"spoonman136668-ai",
+            "runner":"TTT-HYBRID-GPU-WIN","frozen_blob":cfg.FREEZE_BLOB}
 
 
 def audit_capture(source,source_summary,owner):
