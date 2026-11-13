@@ -431,7 +431,7 @@ def run()->dict:
 def retain_ci_receipt(data:dict)->None:
     if os.environ.get("GITHUB_ACTIONS")!="true":
         return
-    path=ROOT/"local_runs/p85mr_f8r26_active_intervention_dev.json"
+    path=ROOT/"local_runs/p85mr_f8r27_active_intervention_dev.json"
     path.parent.mkdir(exist_ok=True)
     if path.exists():
         raise FileExistsError("F8R27_RECEIPT_OVERWRITE_DENIED")

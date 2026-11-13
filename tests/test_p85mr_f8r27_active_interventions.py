@@ -12,6 +12,7 @@ def test_precommitted_source_owner_deny_and_no_future_data():
     f=x.locked()
     assert f["stage"]=="FROZEN_BEFORE_LINKED_R27_CODE_OR_RESULTS"
     assert f["training"]["total_optimizer_updates"]==1152
+    assert "p85mr_f8r27_active_intervention_dev.json" in inspect.getsource(x.retain_ci_receipt)
     assert f["authority"]["original_external_firstuse"] is False
     assert f["scoring"]["independent_scientific_pass"] is False
     with pytest.raises(PermissionError,match="FIRSTUSE_NOT_AUTHORIZED"):
