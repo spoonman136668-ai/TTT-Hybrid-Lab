@@ -44,7 +44,7 @@ def test_last_return_effect_mask_never_influences_preaction_predictions():
     with torch.no_grad():
         first=model(a,e)
         changed=e.clone()
-        changed[:,-1,:]=torch.randn_like(changed[:,-1,:])*3.
+        changed[:,-1,0]=.8  # Preserve mandatory P80 zero padding; poison only observed channel.
         second=model(a,changed)
     assert first.shape==(4,)
     assert torch.allclose(first,second,atol=0.,rtol=0.)
