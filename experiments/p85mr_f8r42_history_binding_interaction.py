@@ -240,17 +240,9 @@ def factual_batch(fit, labels, ids):
 
 
 def _regret(w, action):
-    """Evaluate the same final-state goal cost used by factual FIT labels.
-
-    Earlier R42 receipts scored only the physical *change* against the goal;
-    they remain immutable historical evidence, not valid factual-goal regret.
-    """
-    if action not in (0, 1):
-        raise ValueError("F8R42_INVALID_RETURN_ACTION")
-    state = w["return_state"]
-    costs = [(state + r41._law(state, c, w["public_context"],
+    costs = [(r41._law(w["return_state"], c, w["public_context"],
               w["q_evaluator_only"]*w["gate_evaluator_only"],
-              w["panel"]) - w["goal"])**2 for c in (0, 1)]
+              w["panel"])-w["goal"])**2 for c in (0, 1)]
     return max(0., costs[action] - min(costs))
 
 
