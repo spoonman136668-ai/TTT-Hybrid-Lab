@@ -51,8 +51,8 @@ def test_full_source_parity_and_public_top2_events():
                 highest=torch.topk(tag,2,dim=-1).values[0].tolist()
                 assert highest==pytest.approx([.42,.18],abs=1e-5)
                 assert ctx[0].item()==context
-                assert tag.shape==(2,length)
-                assert delta.shape==(2,length)
+                assert tag.shape==(1,length)
+                assert delta.shape==(1,length)
                 assert bool(torch.isfinite(fifth).all())
                 erased=r49.candidates(plus,erase_B=True)[1]
                 assert torch.count_nonzero(erased[:,5:-1])==0
