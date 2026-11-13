@@ -273,6 +273,44 @@ def components(a,e,offset):
         ).round().long()
     return tag,delta,fifth,ctx,observed
 
+class R49LongHistoryFactualMemory(r34.FactualMemory):
+    """R49-local length adapter; preserves R34's unmodified shared contract.
+
+    Only time dimension changes: 12 selected CAL B observations give 18
+    records, and 32 OOD B observations give 38. Full selected observations,
+    original trainable R34 memory, readout and underlying Native backbone
+    are retained without downsampling, clipping, altered labels or weights.
+    """
+
+    def forward(self, actions, effects, *, ablate_backbone=False):
+        if actions.ndim != 3 or actions.shape[-1] != 16 or (
+            effects.shape != actions.shape):
+            raise ValueError("F8R49_NATIVE_INVALID_ACTION_EFFECT")
+        if actions.shape[1] in (14, 22):
+            return super().forward(
+                actions, effects, ablate_backbone=ablate_backbone)
+        if actions.shape[1] not in (18, 38):
+            raise ValueError("F8R49_NATIVE_UNREGISTERED_HISTORY_LENGTH")
+        record = torch.cat(
+            (actions[:, :-1, :], effects[:, :-1, :]), dim=-1)
+        _, memory = self.memory(record)
+        context = memory[-1]
+        if self.backbone is None or ablate_backbone:
+            native_signal = torch.zeros(
+                (actions.shape[0], 1), dtype=actions.dtype,
+                device=actions.device)
+        else:
+            pred = r34.b._predict(
+                self.base_arm, self.backbone,
+                {"action": actions, "effect": effects})
+            if pred.shape != effects.shape:
+                raise ValueError("F8R49_NATIVE_PREACTION_SHAPE")
+            native_signal = pred[:, -1, 0:1]
+        return self.readout(torch.cat(
+            (context, actions[:, -1, :], native_signal),
+            dim=-1)).squeeze(-1)
+
+
 class Policy(nn.Module):
     def __init__(self,arm,seed,offset):
         super().__init__()
@@ -287,7 +325,7 @@ class Policy(nn.Module):
             self.slope=nn.Parameter(torch.tensor(0.,dtype=torch.float32))
         self.gain=nn.Parameter(torch.tensor(3.+(seed-985201)*.01))
         if arm=="event_context_native":
-            self.native=r34.FactualMemory("native_factual_memory",seed)
+            self.native=R49LongHistoryFactualMemory("native_factual_memory",seed)
             self.native_gain=nn.Parameter(torch.tensor(0.))
         if arm=="gru_context_control":
             with torch.random.fork_rng(devices=[]):
