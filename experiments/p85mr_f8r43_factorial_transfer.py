@@ -7,6 +7,7 @@ No hidden evaluator variable or unselected consequence enters learner inputs.
 from __future__ import annotations
 
 import copy
+from functools import lru_cache
 import hashlib
 import json
 import math
@@ -320,16 +321,22 @@ def _batch(facts, labels, ids):
             torch.tensor([labels[i] for i in ids], dtype=torch.long))
 
 
-def score(model, panel, *, erase_b=False, erase_fifth=False,
-          swap_b=False, zero_gate=False, zero_backbone=False,
-          zero_binder=False, zero_salience=False):
+@lru_cache(maxsize=32)
+def _scoring_inputs(panel, erase_b=False, erase_fifth=False, swap_b=False):
+    """Only immutable source-neutral selected factual observations; no labels."""
     if panel not in PANELS:
         raise ValueError("F8R43_UNREGISTERED_SCORE_PANEL")
     ww = worlds(panel)
     paired = [candidates(w, erase_b=erase_b,
                          erase_fifth=erase_fifth, swap_b=swap_b) for w in ww]
-    a = torch.cat([p[0] for p in paired])
-    e = torch.cat([p[1] for p in paired])
+    return (ww, torch.cat([p[0] for p in paired]),
+            torch.cat([p[1] for p in paired]))
+
+
+def score(model, panel, *, erase_b=False, erase_fifth=False,
+          swap_b=False, zero_gate=False, zero_backbone=False,
+          zero_binder=False, zero_salience=False):
+    ww, a, e = _scoring_inputs(panel, erase_b, erase_fifth, swap_b)
     model.eval()
     with torch.no_grad():
         logits = model(a, e, zero_gate=zero_gate,
@@ -396,8 +403,10 @@ def train_arm(arm, seed, binder, facts, labels, draws):
         raise ValueError("F8R43_FROZEN_BINDER_CHANGED")
     panel_results = {panel: {"active": score(model, panel)}
                      for panel in PANELS}
-    # Frozen causal ablations on every panel, not just selected winners.
-    for panel in PANELS:
+    # All eight cells receive active causal scores; mechanistic ablations
+    # are evaluated on the preregistered hardest cell to avoid repeated
+    # expensive scoring unrelated to the frozen transfer falsifier.
+    for panel in (HARD,):
         for name, kwargs in (
             ("erase_B", {"erase_b": True}),
             ("swap_B", {"swap_b": True}),
@@ -421,6 +430,49 @@ def train_arm(arm, seed, binder, facts, labels, draws):
             "wall_seconds": time.perf_counter() - t0,
             "checkpoints": checkpoints,
             "panels": panel_results, "cold_restored": True}
+
+
+def _control_feature(w):
+    """Only public state/context and physically selected B/fifth observations."""
+    a, e = candidates(w)
+    s = w["return_state"]     # public candidate action key, not an evaluator label
+    context = w["public_context"]
+    fifth = r31._physical_delta(e[0, 4, 0])
+    b_peak = r42._observed_b_peak(e[0])
+    interaction = fifth * b_peak
+    return [1., s, float(context), fifth, b_peak,
+            interaction, s * interaction, s*s * interaction]
+
+
+def observational_control(facts, labels):
+    """FIT-only ridge-calibrated conventional diagnostic, no generator marker."""
+    fit_worlds = worlds("fit")
+    if len(fit_worlds) != len(labels) or len(labels) != 384:
+        raise ValueError("F8R43_BAD_OBSERVATIONAL_CALIBRATION")
+    features = torch.tensor([_control_feature(w)
+        for w in fit_worlds[:TRAIN_PAIRS]], dtype=torch.float64)
+    targets = torch.tensor([1. if y else -1.
+        for y in labels[:TRAIN_PAIRS]], dtype=torch.float64)
+    eye = torch.eye(features.shape[1], dtype=torch.float64)
+    params = torch.linalg.solve(
+        features.T @ features + .001 * eye, features.T @ targets)
+    result = {}
+    for panel in PANELS:
+        ww = worlds(panel)
+        x = torch.tensor([_control_feature(w) for w in ww],
+                         dtype=torch.float64)
+        choices = (x @ params > 0).long().tolist()
+        regret = [_regret(w, choice) for w, choice in zip(ww, choices)]
+        result[panel] = {
+            "choices": choices, "mean_regret": statistics.fmean(regret),
+            "gate_pair_flips": sum(choices[i] != choices[i+1]
+                                   for i in range(0, len(choices), 2)),
+            "pergroup_regret": [statistics.fmean(regret[8*g:8*g+8])
+                                for g in range(GROUPS)]}
+    return {"fit_only_ridge_coefficients": params.tolist(),
+            "panels": result,
+            "oracle_metadata_used": False,
+            "calibration_fit_worlds": TRAIN_PAIRS}
 
 
 def _lower_paired_gain(salience, recurrent):
@@ -528,6 +580,7 @@ def run():
         0, TRAIN_PAIRS, (STEPS, BATCH), generator=generator).tolist()
     models = [train_arm(arm, seed, binders[seed], facts, labels, draws)
               for arm, seed in ARMS]
+    observed_control = observational_control(facts, labels)
     judgment = judge(models, freeze)
     return {"schema": SCHEMA, "freeze_blob": FREEZE_BLOB,
             "parent": PARENT, "factual_fit_episodes": len(facts),
@@ -535,7 +588,8 @@ def run():
             "factored_panels": list(PANELS),
             "original_binder_replay_updates": len(SEEDS) * 512,
             "new_neural_updates": len(ARMS) * STEPS,
-            "models": models, "judgment": judgment,
+            "models": models, "observational_control": observed_control,
+            "judgment": judgment,
             "synthetic_development_only": True,
             "independent_scientific_pass": False,
             "external_scientific_first_use": False,
