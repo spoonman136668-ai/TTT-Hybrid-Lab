@@ -1,0 +1,176 @@
+{
+  "schema": "ttt-hybrid.f8r45-balanced-decoy-selection-freeze.v1",
+  "stage": "FROZEN_BEFORE_NEW_R45_IMPLEMENTATION_OR_SOURCE_BIRTH",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_BALANCED_CAUSAL_SELECTION_DEV_ONLY",
+  "lineage": {
+    "parent_pr": 239,
+    "parent_sha": "76de3d4950b5cb3125ab7908f482665daf86e691",
+    "prior_r44_freeze_blob": "049aafcb2846aa95d1e3f1cd5c5e464b9d2c71b1",
+    "prior_science": "R44_NO_GO_0_OF_2; DECISION_PARITY_FAIL_517_OF_12032",
+    "prior_result_consumed": true,
+    "no_reuse_as_new_science": true
+  },
+  "hypothesis": {
+    "primary": "A learned content-selective reader must use an observable B record tag to distinguish a causal signal from an equal-and-opposite selected distractor impulse when the position-blind pooled B observation is identical for opposite latent gates.",
+    "secondary": "The mechanism should generalize from 8-step to 16-step factual histories with randomized cue/distractor positions and physical-dynamics shift, using only selected observations; compare independent seeded GRU and content-only controls.",
+    "native_specific": "An independent Native backbone advantage must survive backbone removal and strongest fully trained matched conventional control; otherwise claim only an ordinary learned conditional selection mechanism."
+  },
+  "source": {
+    "new_salts": {
+      "fit": 21910000,
+      "cal": 21920000,
+      "ood": 21930000
+    },
+    "cohorts": {
+      "fit": {
+        "groups": 48,
+        "history_steps": 8,
+        "paired_worlds": 384,
+        "train_pairs": 256,
+        "heldout_pairs": 128,
+        "selected_factual_returns": 768
+      },
+      "cal": {
+        "groups": 16,
+        "history_steps": 8,
+        "paired_worlds": 128
+      },
+      "ood": {
+        "groups": 16,
+        "history_steps": 16,
+        "paired_worlds": 128
+      }
+    },
+    "identification": {
+      "cue_observed_state": 0.42,
+      "decoy_observed_state": 0.18,
+      "nuisance_observed_state": 0,
+      "cue_delta": "0.24*hidden_gate",
+      "decoy_delta": "-0.24*hidden_gate",
+      "nuisance_delta": "round(0.006*sin((SALT[panel]+group)*0.137+t*0.271)+0.004*((t+group)%4-1.5),8)",
+      "cue_decoy_position": "Two distinct positions drawn by hash of panel/group/salt; identical across matched opposite-gate worlds; not exposed as model metadata.",
+      "physical_observation": "_record(observed_state, selected_action, observed_state+selected_delta, context), retaining correct encoded difference semantics",
+      "uniform_raw_B_action_mean_equal_for_opposite_gates": true,
+      "uniform_raw_B_effect_mean_equal_for_opposite_gates": true,
+      "raw_mean_nuisance_independent_of_gate": true,
+      "no_single_index_shortcut": true,
+      "selected_public_cue": "B selected key encodes role state 0.42, not the latent gate. Competing selected decoy role state 0.18 also visible."
+    },
+    "early_fifth": "Use separate genuinely selected R43 quartic fifth probe to identify q sign, with no hidden q access in model/loss; OOD uses R41 cubic return.",
+    "factual_loss": "Train by actual separately selected physical return consequence; (decoded following state - goal)^2, no unselected action outcome in learner.",
+    "balanced_labels": "Both context and q-sign and latent-gate signs present in equal numbers per group",
+    "negative_admission": "External original F7, consumed R42/R43/R44 source, panel ID, generator group, hidden gate, q label, chosen or unchosen evaluation outcome cannot reach learner."
+  },
+  "methods": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      {
+        "name": "native_selective",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "summary": "Genuinely learned B-key content attention and value readout, gated by frozen binder contrast and Native preaction signal without action bypass"
+      },
+      {
+        "name": "history_only_selective",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "summary": "Same content-selective architecture without Native"
+      },
+      {
+        "name": "native_uniform",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "summary": "Same Native and readout with fixed uniform B weights; never receives selected position metadata"
+      },
+      {
+        "name": "gru_conventional",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "summary": "Fully trained GRU with B history and selected fifth, same FIT data and training updates"
+      }
+    ],
+    "reference": "Explicit observable-state tag selector from actually selected B key; positive information-feasibility control, not proof of neural learning.",
+    "binder": "Replay original R38 factual binder on qualified original FIT only, frozen and fingerprint-verified, full replay compute included; no original F7 external source first-use.",
+    "training": {
+      "optimizer": "AdamW lr=.001 weight_decay=.01 clip_norm=1",
+      "updates_per_arm": 256,
+      "paired_factual_worlds_per_update": 16,
+      "train_pairs": 256,
+      "heldout_pairs": 128,
+      "sample_seed": 21949999,
+      "checkpoints": [
+        128,
+        256
+      ],
+      "matched_information": true,
+      "whole_process_compute_capacity": "Report measured CPU wall, trainable params, gradient norm, replay cost; no strict superiority unless matched compute/capacity established.",
+      "no_postscore_tuning": true
+    },
+    "controls": [
+      "B selected effect erasure",
+      "cue-role observation tag erasure",
+      "B opposite-gate swap",
+      "fifth measurement erasure",
+      "uniform B pooling",
+      "zero Native backbone",
+      "zero trainable B selector",
+      "zero frozen binder contrast",
+      "cold restore",
+      "blocked evaluator-only gate and cue index",
+      "same input mean for opposite gate"
+    ],
+    "output": "8 trained instances with paired CAL/OOD action vectors, acceptance factors and provenance; all failed results retained."
+  },
+  "prospective_score": {
+    "both_original_seeds_required": true,
+    "minimum_heldout_fit_accuracy": 0.95,
+    "maximum_cal_regret_each": 0.12,
+    "maximum_ood_regret_each": 0.12,
+    "minimum_cal_gate_pair_flips": 56,
+    "minimum_ood_gate_pair_flips": 56,
+    "minimum_regret_penalty_uniform_pool": 0.12,
+    "minimum_regret_penalty_B_erasure": 0.12,
+    "minimum_regret_penalty_cue_tag_erasure": 0.12,
+    "minimum_regret_penalty_fifth_erasure": 0.12,
+    "minimum_advantage_over_native_uniform": 0.12,
+    "minimum_advantage_over_strongest_fully_trained_conventional": 0.05,
+    "native_backbone_ablation_penalty": 0.08,
+    "bootstrap": {
+      "draws": 10000,
+      "seed": 21969999,
+      "lower_95_gain_vs_strongest_gt": 0
+    },
+    "if_uniform_pool_succeeds": "Treat as possible information leakage or nonlinear conditional computation, inspect observed means and do not claim learned selective weighting.",
+    "if_native_not_necessary": "Credit selective contextual memory only; do not claim Native-specific AGI gain.",
+    "if_either_seed_no_fit": "Optimization failure, no transfer pass even if one OOD score appears good.",
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "mandatory": "Exact SHA G4 full Windows/Ubuntu, G5 native TTT Windows/Ubuntu, G7 pinned Mamba2 Ubuntu, original artifacts/sha checks, per-decision cross-OS parity and rejection controls",
+    "claim_boundary": "Engineering PASS != scientific PASS, all source-neutral tasks DEV only; independent original-world external first use separately authorized."
+  },
+  "authority": {
+    "external_original_firstuse": false,
+    "spent_F7_replay": false,
+    "spent_R44_source_as_new_science": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_controller": false,
+    "paid_API": false,
+    "GPU_firstuse": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
