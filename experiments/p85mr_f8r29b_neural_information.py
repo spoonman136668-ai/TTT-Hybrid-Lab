@@ -296,7 +296,10 @@ def train(arm: str, seed: int, fit: list[dict],
         batch = _batch(fit, ix)
         model.train()
         optimizer.zero_grad(set_to_none=True)
-        pred = _predict(arm, model, batch)
+        # The P69/P85 predictor admits exactly factual action/effect keys.
+        # Realized return targets are loss labels, never historical model input.
+        pred = _predict(arm, model, {"action": batch["action"],
+                                      "effect": batch["effect"]})
         if pred.shape != batch["effect"].shape:
             raise ValueError("F8R29B_TRAIN_PREDICTION_SHAPE")
         target = (batch["direct_target"] if arm == "native_direct_value"
