@@ -1,0 +1,229 @@
+{
+  "schema": "ttt-hybrid.f8r44-gradient-gate-attribution-freeze.v1",
+  "stage": "FROZEN_BEFORE_R44_IMPLEMENTATION_SOURCE_BIRTH_OR_TRAINING",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_DEV_MECHANISM_ONLY",
+  "lineage": {
+    "parent_pr": 238,
+    "parent_sha": "f0715002a05cfce170ab7352db84e58361c4a09b",
+    "parent_r43_freeze_git_blob": "65ea25ecf1112b44f897f47641f0b9671043d2c2",
+    "prior_frozen_verdict": "R43_NATIVE_SALIENCE_NO_GO_0_OF_2; REPRODUCIBILITY_FAIL_260_OF_19200",
+    "prior_results_consumed": true,
+    "prior_frozen_scores_not_reused_for_new_acceptance": true
+  },
+  "hypothesis": {
+    "primary": "The R43 learned reader is not decision-critical because the fusion routes through native features and one seed remains at chance-level heldout FIT accuracy; a contrast-centered, content-only B gate with no native-only bypass can learn to identify the intervening B signal under fresh sources and increase two-seed factual-to-OOD transfer.",
+    "null": "Improvements disappear when matched learned conventional controls, compute budget, B erasure, position permutation and constant/untrained salience controls are included; no Native-specific mechanism evidenced.",
+    "mechanism_diagnostic": "Quantify per-step attention, reader, Native backbone and fusion gradient norms, gate saturation and sensitivity to selected B perturbation on the untouched training stream before interpreting a fitted policy as a learned causal selector."
+  },
+  "source": {
+    "independent_from_R42_R43_evaluation": true,
+    "salts": {
+      "fit": 21810000,
+      "cal": 21820000,
+      "ood": 21830000
+    },
+    "fit": {
+      "groups": 48,
+      "train_groups": 32,
+      "heldout_groups": 16,
+      "history_length": 8,
+      "marker_positions": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "public_contexts": [
+        0,
+        1
+      ],
+      "physics": "unchanged R43 quartic actual selected-return effects",
+      "q_signs": [
+        -1,
+        1
+      ],
+      "B_gate_signs": [
+        -1,
+        1
+      ],
+      "paired_worlds": 384,
+      "train_pairs": 256,
+      "heldout_pairs": 128,
+      "selected_return_factual_episodes": 768
+    },
+    "cal": {
+      "groups": 16,
+      "history_length": 8,
+      "marker_positions": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "physics": "quartic",
+      "worlds": 128
+    },
+    "ood": {
+      "groups": 16,
+      "history_length": 16,
+      "marker_positions": [
+        5,
+        6,
+        7
+      ],
+      "physics": "cubic",
+      "worlds": 128
+    },
+    "B_effect": "selected B measurements only, one signed salience marker 0.24*hidden_gate, noise identical to preregistered R43 functional form but independent salts",
+    "fifth": "selected fifth probe and early history physically generated using original R43 formulas with no hidden-label/model leaks",
+    "return_goal": "minimize (observed post-action final state - 1.0)^2; _record encodes following-before; never add starting state to already decoded physical following state",
+    "factual_data_policy": "Generate alternative action effects in separate actually selected matched worlds; never reveal unseen alternate effect or evaluator-only gate/q, source marker, panel ID to model.",
+    "freshness": "Unique R44 groups and salts, no replay of R42/R43 FIT, DEV, OOD, or original F7 spent first-use",
+    "split": "FIT/CAL/OOD disjoint; no CAL/OOD fitting; repeated re-evaluation after score forbidden"
+  },
+  "methods": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "binder": "Only original qualified R38 factual-pretrained binder per seed; exact replay fingerprints verified; frozen weights and full replay cost reported",
+    "arms": [
+      {
+        "name": "r43_additive_native_salience",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Identical R43 trainable architecture from scratch on fresh R44 FIT"
+      },
+      {
+        "name": "multiplicative_native_content_gate",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Learned content-only B contrast gate explicitly multiplies independently trained native candidate contrast; no native-only action bias"
+      },
+      {
+        "name": "multiplicative_history_only_content_gate",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Same learned B gate and contrast without Native; equal observable information"
+      },
+      {
+        "name": "gru_conventional",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Fully trained GRU factual-pair control with same FIT and budget"
+      },
+      {
+        "name": "ssm_conventional",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Fully trained SSM factual-pair control with same FIT and budget"
+      }
+    ],
+    "gate_design": "Trainable per-step content score and value projection of 16-d selected B action/effect (32-d input), softmax pooling independent of absolute position, centered learned gate sign; pair-wise factual return CE; compute native influence without enabling native-only override of B causal gate",
+    "match_conditions": "All neural arms share original FIT pairs, draws, factual information, 256 AdamW updates, 16 paired worlds/update, two starting original seeds, heldout FIT checkpoint without selection; report actual parameter-count, forward FLOPs, CPU/GPU wall-clock, model+controls/full-process compute. If unmatched, strict superiority remains UNVERIFIED.",
+    "training": {
+      "updates_each": 256,
+      "pairs_per_update": 16,
+      "sample_seed": 21849999,
+      "optimizer": "AdamW(lr=.001,weight_decay=.01),clip=1",
+      "checkpoints": [
+        1,
+        32,
+        64,
+        128,
+        192,
+        256
+      ],
+      "no_sweep_or_postscore_seed_change": true
+    },
+    "diagnostics": {
+      "gradients_every": [
+        1,
+        32,
+        64,
+        128,
+        192,
+        256
+      ],
+      "record": [
+        "per-layer finite nonzero grad norm",
+        "salience concentration/entropy",
+        "gate saturation fraction",
+        "B-effect perturbation response",
+        "Native gradient norm",
+        "factual FIT CE",
+        "heldout FIT choice accuracy"
+      ],
+      "no_eval_for_training_telemetry": true
+    },
+    "controls": [
+      "erase actual selected B marker without privileged marker lookup by using observable extremum",
+      "swap observed B between matched opposite-gate worlds",
+      "shuffle selected B observations, order only",
+      "replace learned selector with constant uniform pooling",
+      "zero learned salience value",
+      "zero trained Native backbone",
+      "zero frozen binder contrast",
+      "zero/constant gate",
+      "cold full-model restore",
+      "no evaluator metadata access",
+      "no same-source original replay"
+    ],
+    "reference": "FIT-only observable-peak deterministic diagnostic; report as programmatic control, never as trained neural mechanism"
+  },
+  "frozen_score": {
+    "primary": "Both seeds meet every acceptance term on OOD, with qualification on an untouched CAL and cross-OS exact action parity",
+    "minimum_heldout_fit_accuracy": 0.95,
+    "max_ood_regret_each_seed": 0.12,
+    "minimum_ood_gate_flips_each_seed": 56,
+    "minimum_ood_regret_gain_vs_same_seed_r43_additive": 0.1,
+    "minimum_ood_regret_penalty_erase_B_each_seed": 0.12,
+    "minimum_ood_regret_penalty_zero_content_gate_each_seed": 0.12,
+    "minimum_ood_regret_penalty_uniform_pool_each_seed": 0.12,
+    "minimum_ood_regret_penalty_zero_native_backbone_each_seed": 0.08,
+    "minimum_gain_vs_best_fully_trained_conventional_each_seed": 0.05,
+    "bootstrap": {
+      "group_resamples": 10000,
+      "seed": 21869999,
+      "lower_95_gain_gt": 0
+    },
+    "cross_os": {
+      "categorical_decisions_must_match_all": true,
+      "source_sha_same": true,
+      "weight_hash_equivalence_not_assumed": true
+    },
+    "strong_science_requires": "Matched total compute/capacity and independently owned sealed original source qualification; source-neutral synthetic cannot be SCIENTIFIC_PASS",
+    "if_nofit": "When either seed fails heldout FIT >=.95, classify optimization failure before interpreting transfer",
+    "if_no_salience_necessity": "If uniform/zero salience ablations fail to hurt decisions, label Native-only bypass/correlate; no learned-selector gain",
+    "if_no_native_gain": "If conventional wins or Native ablation fails, credit learned gating if it works but not Native-specific improvement",
+    "stopping": "No seed substitution, threshold or loss retuning or reuse of consumed CAL/OOD; retain full failures, negatives and near misses",
+    "independent_scientific_pass": false
+  },
+  "engineering": {
+    "qualification": "Exact-source full G4 Windows+Ubuntu; G5 original TTT Windows+Ubuntu; G7 pinned Mamba-2 Ubuntu; negative controls and cold restore; cross-OS original artifacts and action parity are required after last code change",
+    "no_shortened_final_regression": true
+  },
+  "authority": {
+    "external_original_firstuse": false,
+    "spent_F7_replay": false,
+    "replay_R43_scored_sources": false,
+    "new_controller": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "paid_API": false,
+    "GPU_firstuse": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
