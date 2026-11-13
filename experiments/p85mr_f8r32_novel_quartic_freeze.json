@@ -1,0 +1,181 @@
+{
+  "schema": "ttt-hybrid.f8r32-novel-quartic-intervention.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_UNSEEN_QUARTIC_CAUSAL_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "784f068d9db28778556101c8471c66d589e65a6e",
+    "r31_freeze_blob": "d14dcad1a36bb472dc3b3b70b94f9e1b1b4ad1e0",
+    "r29b_source_blob": "56bfbc8749f4ad41881eea89a215bc6d3d386894"
+  },
+  "hypothesis": "On a prospectively new quartic causal-response law, genuinely trained native Hybrid dynamics with factual selected effects can exploit an active fifth intervention and select a better return action than matched fixed probes and its own erasure. A factorial factual-only conditional estimator and trained GRU/SSM are controls; no R29/R31 score tuning.",
+  "law": {
+    "early_states": [
+      -0.15,
+      0.15
+    ],
+    "early_actions": [
+      0,
+      1
+    ],
+    "early_factual_count": 4,
+    "baseline": "0.25*s-0.08+0.05*sin(3*s)",
+    "latent_effect": "3.5*q*(s^4-0.15^4) if action equals public context; zero otherwise",
+    "early_zero_curvature_tolerance": 1e-14,
+    "fifth_state": 0.42,
+    "return_state": {
+      "dev": 0.78,
+      "ood": 0.72
+    },
+    "public_goal": 1,
+    "hidden_q_abs": {
+      "fit": [
+        0.7,
+        1,
+        1.2
+      ],
+      "dev": 1,
+      "ood": 0.85
+    },
+    "hidden_q_signs": [
+      -1,
+      1
+    ],
+    "public_contexts": [
+      0,
+      1
+    ],
+    "B_noise": "round(0.031*sin((group+47)*.23+t*.51)+.017*(t%3)-.02,8) independent of q, context, return, fifth action",
+    "B_steps": {
+      "fit": 8,
+      "dev": 8,
+      "ood": 16
+    },
+    "independent_groups": {
+      "fit": 64,
+      "dev": 12,
+      "ood": 12
+    },
+    "fit_group_seed_base": 20640000,
+    "score_group_seed_base": {
+      "dev": 20650000,
+      "ood": 20660000
+    },
+    "actual_fifth_probe_policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "selected_effect_only": true,
+    "return_oracle_evaluator_only": true
+  },
+  "train": {
+    "fit_group_train": 48,
+    "fit_group_validation": 16,
+    "fit_episodes_per_group": 48,
+    "fit_episodes_total": 3072,
+    "train_episodes": 2304,
+    "validation_episodes": 768,
+    "same_selected_factual_return_label_all_arms": true,
+    "model_arms": [
+      "native_dynamics",
+      "native_direct_value",
+      "gru_dynamics",
+      "ssm_dynamics"
+    ],
+    "native_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "other_arm_seeds": [
+      985201
+    ],
+    "native_instances": 3,
+    "conventional_instances": 3,
+    "checkpoints": [
+      128,
+      256
+    ],
+    "final_updates_each": 256,
+    "total_final_updates": 1536,
+    "batch_size": 8,
+    "model_factory": "reuse R29B original native/GRU/SSM and P80 action/effect encoding",
+    "optimizer": "AdamW unchanged R29B, native .002, conventional .001, weight decay .01, clip1",
+    "direct_value_scale": 0.1,
+    "matched_updates_examples_actions": true,
+    "capacity_FLOPs_matched": false,
+    "convergence_independent_qualified": false,
+    "never_reuse_R29_R31_fitted_weights": true
+  },
+  "conventional": {
+    "estimator": "factual-only double-precision ridge with public return key ratios, selected fifth normalized factual effect, quartic state feature and action-context gating; no hidden q, unselected future or evaluator labels",
+    "features": [
+      "intercept",
+      "state",
+      "sin(3*state)",
+      "active_return",
+      "active_return_times_state^4",
+      "active_return_times_observed_probe_delta_if_matching",
+      "active_return_times_observed_probe_delta_if_matching_times_state^4"
+    ],
+    "ridge_lambda": 0.00001,
+    "risk_buckets": [
+      "safe",
+      "informed",
+      "uncertain"
+    ],
+    "residual_variance_fit_only": true,
+    "fit_validation_required": true,
+    "no_learned_ORACLE_or_hidden_q_feature": true
+  },
+  "score": {
+    "panels": [
+      "dev",
+      "ood"
+    ],
+    "worlds_per_panel": 48,
+    "group_clusters": 12,
+    "report_four_probe_policies": true,
+    "regret": "actual selected first return squared-goal-error minus evaluator-only hindsight optimum",
+    "return_action_chosen_before_its_effect": true,
+    "report_native_seed_results_all": true,
+    "report_native_vs_gru_ssm_and_factual_ridge": true,
+    "report_erasure_decisions": true,
+    "report_B_interference_8_vs_16": true,
+    "report_original_R29B_negative_and_R31_positive_unmodified": true,
+    "analytical_known_law_oracle_only_as_evaluator_upper_bound": true,
+    "pair_bootstrap_draws": 10000,
+    "pair_bootstrap_seed": 20679999,
+    "development_native_win_both_panels_at_least": 2,
+    "development_native_active_vs_best_fixed_gain_min": 0.01,
+    "development_native_erasure_regret_increase_min": 0.01,
+    "development_native_bootstrap_lower_gt": 0,
+    "fit_validation_and_loss_plateau_reported": true,
+    "independent_scientific_pass": false
+  },
+  "qualify": {
+    "original_G4_full_Windows_Ubuntu": true,
+    "original_G5_Windows_Ubuntu": true,
+    "original_G7_Ubuntu": true,
+    "original_source_negative": true,
+    "exact_SHA": true,
+    "final_crossplatform_decision_parity_required": true,
+    "no_final_full_regression_omission": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
