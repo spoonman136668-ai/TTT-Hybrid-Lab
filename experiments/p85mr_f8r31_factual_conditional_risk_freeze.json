@@ -69,7 +69,14 @@
     "fit_normal_equation_gradient_max": 0.000001,
     "coefficient_l2_diff_24_vs_48_max": 0.01,
     "report_full_fit_validation_MSE_and_convergence": true,
-    "independent_scientific_pass": false
+    "independent_scientific_pass": false,
+    "comparison_rules": {
+      "risk_aware_mean_regret_max": "active_information policy separately per panel",
+      "risk_aware_gain_over_mean_only_min": "mean of all four prospective policy mean-regrets per panel; frozen before any implementation or result",
+      "risk_aware_gain_over_r30_ridge_min": "active_information policy per panel",
+      "fifth_erasure_penalty_min": "active_information policy per panel",
+      "paired_group_bootstrap_lower": "R30 ridge active-information per-group regret minus risk-aware active-information per-group regret, 12-group paired resampling; 2.5th percentile"
+    }
   },
   "interpretation": {
     "successful_baseline": "conditional factual prediction and calibrated risk can solve this synthetic information-value task; NOT neural Hybrid improvement, unseen-mechanism generalization or evidence of novel intelligence",
