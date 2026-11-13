@@ -1,0 +1,210 @@
+{
+  "schema": "ttt-hybrid.f8r47-cue-key-contrast-freeze.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_SOURCE_BIRTH_AND_ANY_RESULT",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_FACTUAL_MECHANISM_DEV_ONLY",
+  "parent": {
+    "pr": 241,
+    "sha": "13186fcbf2010a89315c6d3e9b72f1d6915dbb64",
+    "source_scored_R46": true,
+    "prior_R46_result": "0/2 Native seeds accepted; both-OS 7680/7680 decisions match; Native backbone ablation 0; all prior world salts spent"
+  },
+  "purpose": "Smallest fresh-source falsifier of whether a two-parameter learnable public-key B attention selector can recover a causal sign interaction from actual selected fifth/B consequences, where a diffuse learned reader and Native backbone were unnecessary or underoptimized in R46.",
+  "hypothesis": {
+    "positive": "A content-only learnable selector over OBSERVED public B action-key role states, initialized at uniform weighting and trained using factual return-derived pair labels, learns to prefer cue-tag observations above equal-and-opposite distractor observations, enabling cold long-history and cubic-law transfer with both original seeds.",
+    "null": "The selector remains uniform or FIT-heldout/OOD underperforms, its cue/tag/fifth erasures fail to hurt it, or trained history-only/GRU controls equal or exceed it under the frozen comparison.",
+    "native_specific": "A separately trained Native-augmented readout must show improvement on a matched data/information budget with positive backbone ablation before any Native-specific attribution; default no claim."
+  },
+  "source": {
+    "salts": {
+      "fit": 22110000,
+      "cal": 22120000,
+      "ood": 22130000
+    },
+    "panels": {
+      "fit": {
+        "groups": 24,
+        "steps": 8
+      },
+      "cal": {
+        "groups": 8,
+        "steps": 8
+      },
+      "ood": {
+        "groups": 8,
+        "steps": 16
+      }
+    },
+    "fit_groups_training": 16,
+    "fit_groups_heldout": 8,
+    "train_pairs": 128,
+    "heldout_pairs": 64,
+    "fit_worlds": 192,
+    "fit_physically_selected_returns": 384,
+    "cal_worlds": 64,
+    "ood_worlds": 64,
+    "paired_factors": {
+      "context": [
+        0,
+        1
+      ],
+      "fifth_q_sign": [
+        -1,
+        1
+      ],
+      "B_gate": [
+        -1,
+        1
+      ]
+    },
+    "public_cue_tag": 0.42,
+    "public_decoy_tag": 0.18,
+    "selected_B_cue_delta": "+0.24*gate",
+    "selected_B_decoy_delta": "-0.24*gate",
+    "selected_B_nuisance": "0.006*sin((salt+group)*.137+t*.271)+0.004*((t+group)%4-1.5) rounded to 8 decimal places",
+    "positions": "SHA256 of F8-R47/panel/group/salt; distinct positions; not learner-accessible metadata",
+    "selected_B_encoding": "Each selected B record uses _record(state_tag, selected_action, state_tag+measured_delta, context); mask auxiliary reward effect[4]=0 for every B record to prevent gate leakage",
+    "fifth": "Actually selected PROBE=0.42 action=context; effect[0] is normalized actual after-before physical delta from original R32 law with q_sign, not unselected oracle effect",
+    "return_state": "0.61 or 0.73 based on group parity",
+    "return_law": {
+      "fit_cal": "original R32 quartic",
+      "ood": "original R41 cubic"
+    },
+    "return_goal": "(decoded observed post-action return state - 1.0)^2; no initial state added twice",
+    "FIT_only_probe_baseline": "Estimate mean decoded selected fifth AFTER state on 16 FIT training groups, balanced sign and gate; no simulator law constant embedded in trained learner",
+    "positive_feasibility": "Observable-tag deterministic selected physical consequence reference must achieve 0 error on all frozen cohorts or stop before learning",
+    "full_16_channel_pair_means_identical": true,
+    "hidden_metadata_forbidden": [
+      "q_evaluator_only",
+      "gate_evaluator_only",
+      "group",
+      "panel",
+      "cue_index",
+      "decoy_index",
+      "unselected_return_outcome"
+    ],
+    "prior_source_reuse_forbidden": [
+      "F7",
+      "R42",
+      "R43",
+      "R44",
+      "R45",
+      "R46"
+    ]
+  },
+  "methods": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      {
+        "name": "learned_key_contrast",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "init": "scalar attention slope=0 (uniform); trainable positive readout gain; softmax over decoded PUBLIC B tag values; factual label CE"
+      },
+      {
+        "name": "uniform_key_control",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "init": "same output/calibration and readout-gain parameter, fixed zero attention slope; no privileged cue tag"
+      },
+      {
+        "name": "GRU_factual_control",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "init": "independently initialized GRU over same public tag/effect B sequence; q from same selected fifth and FIT offset; trainable output"
+      },
+      {
+        "name": "Native_augmented_key",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "init": "learned key selector plus actual R34 Native factual-memory on same raw selected a/e; trainable Native fusion; no Native-specific claim without positive ablation"
+      }
+    ],
+    "train_updates_each": 256,
+    "batch_pairs": 16,
+    "sample_seed": 22149999,
+    "optimizer": "AdamW(lr=0.02 for scalar key+gain, lr=0.001 for Native/GRU weights, weight_decay=0.0, grad clipping=1); single frozen schedule, no post-CAL/OOD tuning",
+    "checkpoint_steps": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "same_factual_information_and_action_pairs": true,
+    "only_real_selected_episode_outcomes": true,
+    "source_split_disjoint": true,
+    "selection_mechanism": "Attn weights softmax(slope * decoded selected public B key state); signed weighted B selected-delta sensor; multiply by FIT-centered decoded fifth selected following-state signal and map to public context action cost. No hidden evaluator labels or generator position.",
+    "comparison_controls": [
+      "zero selected B effect",
+      "erase public cue role state tag",
+      "swap opposite-gate B selected records",
+      "erase selected fifth effect",
+      "force uniform attention",
+      "zero Native actual backbone",
+      "zero GRU/attention readout",
+      "cold restore",
+      "mean-feature paired parity",
+      "blocked external source first use"
+    ],
+    "gradient_diagnostic": [
+      "slope init 0",
+      "nonzero attention-slope gradient on FIT",
+      "finite gradients",
+      "attn slope trajectory",
+      "CE and heldout FIT accuracy",
+      "signed cue-minus-decoy attention ratio"
+    ],
+    "compute": "Report full-process cost, CPU wall, trainable params, optimizer steps; unmatched capacity or compute invalidates strict Native/GRU superiority."
+  },
+  "frozen_dev_score": {
+    "learned_key_two_seeds_required": true,
+    "min_heldout_FIT_accuracy": 0.95,
+    "max_cal_regret": 0.12,
+    "max_ood_regret": 0.12,
+    "min_cal_gate_pair_flips": 28,
+    "min_ood_gate_pair_flips": 28,
+    "min_ood_regret_penalty_B_erasure": 0.12,
+    "min_ood_regret_penalty_cue_tag_erasure": 0.12,
+    "min_ood_regret_penalty_fifth_erasure": 0.12,
+    "min_ood_regret_penalty_uniform": 0.12,
+    "min_ood_regret_gain_vs_uniform_control": 0.12,
+    "bootstrap": {
+      "draws": 10000,
+      "seed": 22169999,
+      "lower_95_gain_vs_uniform_gt": 0
+    },
+    "min_final_learned_attention_slope": 1,
+    "requires_reference_feasibility_on_all_frozen_cohorts": true,
+    "requires_full_cross_OS_decision_vector_parity": true,
+    "native_backbone_necessity_for_any_Native_specific_claim": "OOD regret penalty >=0.08 vs own trained Native readout, plus stronger conventional gain and compute matched",
+    "if_reference_fails": "SOURCE_INVALID_STOP",
+    "if_two_seed_failure": "NO_GO preserve all scores, no retune or revisit spent OOD",
+    "if_conventional_equal_or_better": "Only basic learned mechanism, no Native-specific or broader superiority claim",
+    "independent_scientific_pass": false
+  },
+  "qualification": "Exact-final SHA full G4 Windows+Ubuntu (all prior tests unchanged), G5 Native TTT both OS, G7 pinned Mamba-2 Ubuntu, original artifacts hash-verified and 100% categorical action parity.",
+  "authority": {
+    "new_controller": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "paid_API": false,
+    "external_original_first_use": false,
+    "spent_prior_original_or_scored_source": false,
+    "GPU_first_use": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
