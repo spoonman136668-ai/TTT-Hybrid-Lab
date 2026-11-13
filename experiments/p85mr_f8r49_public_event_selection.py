@@ -392,6 +392,19 @@ def score(model,panel,*,erase_B=False,erase_tag=False,
                                   for i in range(0,len(choices),2))}
 
 
+def productive_gradient(grads):
+    """An exact zero-gradient batch is valid for a negative control, not learning.
+
+    Reject all nonfinite gradients regardless of arm, and retain a separate
+    count of optimizer steps with an actual nonzero derivative.
+    """
+    if any(g is not None and not bool(torch.isfinite(g).all())
+           for g in grads):
+        raise ValueError("F8R49_NONFINITE_GRADIENT")
+    return any(g is not None and bool(torch.any(g!=0))
+               for g in grads)
+
+
 def train_arm(arm,seed,offset,records,labels,draws):
     model=Policy(arm,seed,offset)
     param_groups=[]
@@ -401,6 +414,9 @@ def train_arm(arm,seed,offset,records,labels,draws):
             param_groups.append({"params":[p],"lr":lr})
     opt=torch.optim.AdamW(param_groups,weight_decay=0.)
     traces=[]
+    productive_steps=0
+    zero_gradient_steps=0
+    main_context_slope_ever=[False,False]
     start=time.perf_counter()
     for step,indices in enumerate(draws,1):
         a,e,y=batch(records,labels,indices)
@@ -411,12 +427,19 @@ def train_arm(arm,seed,offset,records,labels,draws):
             raise ValueError("F8R49_NONFINITE_LOSS")
         loss.backward()
         grads=[p.grad for p in model.parameters() if p.requires_grad]
-        if (not any(g is not None and bool(torch.any(g!=0)) for g in grads)
-            or any(g is not None and not bool(torch.isfinite(g).all()) for g in grads)):
-            raise ValueError("F8R49_NO_VALID_REAL_GRADIENT")
+        productive=productive_gradient(grads)
+        productive_steps+=int(productive)
+        zero_gradient_steps+=int(not productive)
+        # An exactly uniform negative control has equal-and-opposite selected
+        # B consequences. Its readout receives no usable gradient; this
+        # predictable null MUST be reported, not a regression failure or a
+        # falsely advertised learned optimizer update.
         g0=(model.slopes.grad.detach().tolist()
             if hasattr(model,"slopes") and model.slopes.grad is not None
             else None)
+        if arm=="event_context_selector" and g0 is not None:
+            for i in (0,1):
+                main_context_slope_ever[i] |= (g0[i] != 0)
         torch.nn.utils.clip_grad_norm_(
             [p for p in model.parameters() if p.requires_grad],1.)
         opt.step()
@@ -429,6 +452,9 @@ def train_arm(arm,seed,offset,records,labels,draws):
                            "global_slope":float(model.slope.detach())
                              if hasattr(model,"slope") else None,
                            "context_slope_gradients":g0})
+    if arm=="event_context_selector" and (
+        productive_steps==0 or not all(main_context_slope_ever)):
+        raise ValueError("F8R49_PRIMARY_SELECTOR_NEVER_RECEIVED_REAL_CONTEXT_GRADIENT")
     results={p:{"active":score(model,p)} for p in PANELS}
     for name,kwargs in (
         ("erase_B",{"erase_B":True}),
@@ -448,6 +474,10 @@ def train_arm(arm,seed,offset,records,labels,draws):
             for p in PANELS)):
         raise ValueError("F8R49_COLD_RESTORE_FAILED")
     return {"arm":arm,"seed":seed,"actual_updates":UPDATES,
+            "productive_gradient_steps":productive_steps,
+            "zero_gradient_steps":zero_gradient_steps,
+            "context_slopes_received_gradient":main_context_slope_ever
+              if arm=="event_context_selector" else None,
             "trainable_parameters":sum(x.numel() for x in model.parameters()
                                        if x.requires_grad),
             "train_seconds":time.perf_counter()-start,
