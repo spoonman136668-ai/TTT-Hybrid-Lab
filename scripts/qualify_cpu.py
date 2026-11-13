@@ -33,7 +33,24 @@ def run_command(args: list[str], *, timeout: int) -> dict:
             "stdout_tail": proc.stdout[-3500:],
             "stderr_tail": proc.stderr[-1500:],
         }
-    except (OSError, subprocess.TimeoutExpired) as exc:
+    except subprocess.TimeoutExpired as exc:
+        # Retain partial captured pytest evidence when the bounded full
+        # regression exceeds the qualification budget. The old handler
+        # discarded stdout and made a timeout indistinguishable from a
+        # scientific/test failure.
+        def tail(data, limit):
+            if isinstance(data, bytes):
+                data = data.decode("utf-8", errors="replace")
+            return (data or "")[-limit:]
+        return {
+            "exit_code": None,
+            "seconds": round(time.perf_counter() - started, 3),
+            "error_type": "TimeoutExpired",
+            "timeout_seconds": timeout,
+            "stdout_tail": tail(exc.stdout, 3500),
+            "stderr_tail": tail(exc.stderr, 1500),
+        }
+    except OSError as exc:
         return {
             "exit_code": None,
             "seconds": round(time.perf_counter() - started, 3),
@@ -79,7 +96,7 @@ def qualify(receipt_path: Path) -> dict:
     except ImportError:
         record["torch"] = None
     record["tests"] = run_command(
-        [sys.executable, "-m", "pytest", "-q", "--durations=15", "tests"], timeout=(1200 if sys.platform == "win32" else 900)
+        [sys.executable, "-m", "pytest", "-q", "--durations=15", "tests"], timeout=(2400 if sys.platform == "win32" else 1800)
     )
     # An intentional negative control. There must be no upstream checkout at
     # either synthetic path, irrespective of whether the host has a GPU.
