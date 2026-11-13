@@ -1,0 +1,199 @@
+{
+  "schema": "ttt-hybrid.f8r48-contextual-cue-role-switch-freeze.v1",
+  "stage": "FROZEN_BEFORE_R48_SOURCE_BIRTH_TRAINING_OR_SCORING",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_CONTEXTUAL_CAUSAL_SELECTION_DEV_ONLY",
+  "parent": {
+    "pr": 242,
+    "head": "e629ffd9e44d118251739ec4cbc9b33512333c3f",
+    "frozen_r47_mechanism": "two-seed simple learned-key DEV PASS on synthetic; no Native backbone gain; independent scientific PASS false"
+  },
+  "hypothesis": {
+    "primary": "An actually trained content selector can condition the public B role/tag preference on an independently observed public context, choosing the high-tag causal record for context 0 but the low-tag causal record for context 1, where a single global learned positive or negative tag slope cannot solve both.",
+    "disambiguator": "Positive source-only control must decode fifth after-state against FIT-only baseline, distinguish opposite signed B causal effects by public context-dependent tag role, and select return action without evaluator-only metadata.",
+    "native": "Compare Native-augmented contextual head with same train/observation budget, but require positive Native ablation gain and compute matched before asserting Native-specific improvements.",
+    "null": "If either original seed fails FIT/CAL/OOD, context-specific selector is unnecessary under ablation, or conventional controls dominate, reject frozen claim without tuning spent score cohorts."
+  },
+  "source": {
+    "salts": {
+      "fit": 22210000,
+      "cal": 22220000,
+      "ood": 22230000
+    },
+    "cohorts": {
+      "fit": {
+        "groups": 24,
+        "B_length": 8,
+        "train_groups": 16,
+        "heldout_groups": 8,
+        "paired_worlds": 192,
+        "selected_factual_returns": 384
+      },
+      "cal": {
+        "groups": 8,
+        "B_length": 8,
+        "paired_worlds": 64
+      },
+      "ood": {
+        "groups": 8,
+        "B_length": 16,
+        "paired_worlds": 64
+      }
+    },
+    "factors": {
+      "public_context": [
+        0,
+        1
+      ],
+      "fifth_hidden_q_sign": [
+        -1,
+        1
+      ],
+      "B_hidden_gate": [
+        -1,
+        1
+      ]
+    },
+    "cue_role_mapping": "context 0: cue observed tag state 0.42, decoy observed tag state 0.18; context 1: cue observed tag state 0.18, decoy observed tag state 0.42. No public metadata identifies cue or role beyond selected action keys, selected measured effects and context.",
+    "selected_B_delta": "cue +amplitude*gate, decoy -amplitude*gate; remaining selected nuisance depends only on panel, group and time and is independent of gate",
+    "amplitude_by_panel": {
+      "fit": 0.24,
+      "cal": 0.2,
+      "ood": 0.16
+    },
+    "nuisance_by_panel": {
+      "fit": 0.006,
+      "cal": 0.006,
+      "ood": 0.012
+    },
+    "nuisance_formula": "round(panel_nuisance * sin((salt+group)*.137 + step*.271) + .004*((step+group)%4-1.5), 8)",
+    "positions": "SHA256-derived distinct positions per (panel,group) shared across both contexts and gate signs; no generator index supplied to learner",
+    "public_record": "Use R29B selected _record(state_tag, selected_action, state_tag+delta, public_context), then mask B effect[4]=0. Do not alter physical effect[0] or action key.",
+    "source_parity": "Opposite gates with matched (panel,group,context,q_sign) must have identical entire 16-channel public B mean and action-key mean; their individual selected B effects must differ.",
+    "fifth": "Only actually selected probe 0.42 action=public_context outcome via original R32 quartic with q sign. Decode measured after=before+inverse(normalized selected physical delta).",
+    "fit_offset": "Calibrate zero-q fifth after-state exclusively from first 16 balanced FIT-group selected factual probe measurements, no hidden q/gate labels or CAL/OOD data.",
+    "return": "R32 quartic original for FIT/CAL and R41 cubic original for OOD, return state 0.61 or 0.73 by group parity; physical regret=(after-1.0)^2, no double-adding state.",
+    "forbidden_to_model": [
+      "group id",
+      "panel/split id",
+      "hidden gate",
+      "hidden q sign",
+      "private cue/decoy index",
+      "unselected return outcome"
+    ],
+    "prior_scored_source_reuse": false
+  },
+  "methods": {
+    "original_seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      {
+        "name": "context_key_selector",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Two differentiable slopes selected by actual public context 0/1, initialized 0/0; a trained gain; softmax over actually observed tag action keys and selected B physical effects."
+      },
+      {
+        "name": "global_key_selector",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "One global trainable tag slope shared across contexts, same FIT-only fifth calibration, trainable gain, identical selected factual training."
+      },
+      {
+        "name": "uniform_key_selector",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Both role slopes fixed at 0, trainable gain only; same selected observations."
+      },
+      {
+        "name": "context_key_native",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Context-dependent learned selector plus truly trainable Native R34 factual-memory backbone and fusion; no Native-specific claim without ablation."
+      },
+      {
+        "name": "gru_context_control",
+        "seeds": [
+          985201,
+          985207
+        ],
+        "description": "Independent fully trainable GRU over same selected public B tag/effect sequence with public context explicitly read to choose causal action, FIT-only probe calibration, same optimizer-update budget."
+      }
+    ],
+    "train_updates_each": 256,
+    "selected_factual_pairs_per_step": 16,
+    "sample_seed": 22249999,
+    "optimizer": "AdamW, lr=.02 on slopes/readout gain, lr=.001 on GRU/Native, weight_decay=0, clip_norm=1; all arms same 256 updates and factual paired data",
+    "checkpoints": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "frozen_ablation_panels": [
+      "erase B",
+      "erase public B role tag",
+      "erase fifth",
+      "swap opposite-gate B",
+      "force uniform",
+      "force context 0 slope on both contexts",
+      "zero Native",
+      "zero trained readout",
+      "cold restore"
+    ],
+    "diagnostic": "Record slope at checkpoints for both contexts, initial true gradients for both slopes, CE/heldout, trainable parameters, full-process CPU cost, categorical action vectors with context subgroup.",
+    "equal_observable_information": true,
+    "whole_process_compute_capacity_qualification": "Report parameter/CPU/updates; superiority vs much larger GRU/Native cannot be declared as capacity-matched without separate proof."
+  },
+  "frozen_dev_score": {
+    "both_original_seeds": true,
+    "min_FIT_heldout_accuracy": 0.95,
+    "max_CAL_mean_regret": 0.12,
+    "max_OOD_mean_regret": 0.12,
+    "max_each_context_OOD_regret": 0.12,
+    "min_CAL_gate_flips": 28,
+    "min_OOD_gate_flips": 28,
+    "min_ood_penalty_B_erasure": 0.12,
+    "min_ood_penalty_tag_erasure": 0.12,
+    "min_ood_penalty_fifth_erasure": 0.12,
+    "min_ood_penalty_uniform": 0.12,
+    "min_ood_penalty_context_slope_erasure": 0.12,
+    "min_ood_gain_vs_best_single_global_slope": 0.12,
+    "min_learned_context_0_slope": 1,
+    "max_learned_context_1_slope": -1,
+    "bootstrap": {
+      "seed": 22269999,
+      "draws": 10000,
+      "lower_95_gain_vs_global_positive": true
+    },
+    "source_feasibility_reference_zero_mistakes": true,
+    "action_level_cross_os_parity_required": true,
+    "independent_scientific_pass": false,
+    "if_fail": "Keep all original scores and negative outcomes, no post-evaluation retune or source reuse.",
+    "attribution": "Passing context selector demonstrates only conditional factual-key learning on synthetic distribution; native-only attribution separately requires positive zero-Native ablation and matching strong controls."
+  },
+  "qualification": "Exact SHA: full G4 unchanged Windows+Ubuntu, G5 actual TTT CPU both, G7 pinned Mamba2 Ubuntu, original ZIP+JSON hashes, full categorical cross-OS decision parity.",
+  "authority": {
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "paid_api": false,
+    "original_external_first_use": false,
+    "previously_scored_original_source_first_use": false,
+    "GPU_training": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
