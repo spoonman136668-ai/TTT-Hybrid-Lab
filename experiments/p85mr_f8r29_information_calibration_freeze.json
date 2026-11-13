@@ -1,0 +1,119 @@
+{
+  "schema": "ttt-hybrid.f8r29-active-information-calibration.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_NUMERIC_RESULT",
+  "classification": "SOURCE_NEUTRAL_ANALYTIC_CAUSAL_INFORMATION_DEV_CALIBRATION_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head": "98fead8094f1bdacae418ccc4d54800c561bf827",
+    "tree": "7f800d076171780f86f279a86417a5e017c4325d",
+    "r28_source_blob": "07ca35d7eebff3f5a3df94f8b00e72ead60467f7",
+    "r28_freeze_blob": "0ab949d433a4405435aa72612a17f28859ce2315"
+  },
+  "question": "First establish a genuinely discriminating fifth-action information-value task, before training the Hybrid again. Does a public-context-conditioned factual probe demonstrably beat equally budgeted fixed/random probes, with held-out sign and context balance and positive paired-cluster uncertainty? This calibrates the TASK only, not the native Hybrid.",
+  "design": {
+    "law": "after(s,a,context,q) = 0.4*s - 0.03 + (a==context ? (5/3)*q*(s*s-0.04) : 0)",
+    "context": "uncertain_action in {0,1}, public before the fifth probe; q sign hidden until its selected physical effect",
+    "q_signs": [
+      -1,
+      1
+    ],
+    "q_abs_by_panel": {
+      "dev": 1,
+      "ood": 0.9
+    },
+    "early_factual_probes": [
+      [
+        -0.2,
+        0
+      ],
+      [
+        0.2,
+        0
+      ],
+      [
+        -0.2,
+        1
+      ],
+      [
+        0.2,
+        1
+      ]
+    ],
+    "fifth_probe_state": 0.4,
+    "return_state_by_panel": {
+      "dev": 0.7,
+      "ood": 0.65
+    },
+    "return_goal": 1,
+    "worlds_per_panel": 48,
+    "groups_per_panel": 12,
+    "cross_each_group": "2 public uncertain-action contexts x 2 independent hidden q signs, with group-specific unrelated factual B histories",
+    "known_mathematical_prior": "Bayesian comparator knows this hypothesis class, prior equally likely q signs and public context, not hidden true sign",
+    "pre_probe_early_effects_identical_across_q": true,
+    "physical_outcomes_only_selected_action_visible": true,
+    "fifth_probe_chosen_before_its_outcome": true,
+    "return_choice_before_its_outcome": true,
+    "counterfactual_returns_evaluator_only": true,
+    "B_steps_by_panel": {
+      "dev": 8,
+      "ood": 16
+    },
+    "B_history_identical_within_group": true,
+    "B_history_independent_of_q_and_context": true,
+    "OOD_new_seeds_not_R28": true
+  },
+  "policies": {
+    "variants": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "adaptive": "fifth action = public uncertain_action; after observing actual selected fifth effect infer q sign for that selected action, choose minimum squared goal error against known safe action",
+    "fixed": "fifth action0 or action1 regardless of context",
+    "random": "SHA256 deterministic fifth probe of public panel/group/context only, never hidden q",
+    "uninformed": "without valid fifth effect, choose the Bayes minimum expected squared loss over equal q-sign prior",
+    "same_budget": "four factual early A effects, exactly one selected factual fifth A effect and identical unrelated B effects for every policy"
+  },
+  "score": {
+    "unit": "mean first-return squared-goal-error regret vs evaluator-only hindsight optimal action (lower better)",
+    "bootstrap": "paired resampling of 12 groups, two contexts and both q signs retained per sampled cluster",
+    "draws": 10000,
+    "seed": 20459999,
+    "active_mean_regret_max": 1e-10,
+    "active_vs_best_fixed_absolute_gain_min": 0.08,
+    "active_vs_best_fixed_bootstrap_lower_2p5_gt": 0.05,
+    "fifth_effect_erasure_regret_increase_min": 0.08,
+    "both_DEV_and_OOD_required": true,
+    "pass_label": "ANALYTIC_TASK_CALIBRATION_ONLY",
+    "independent_scientific_pass": false
+  },
+  "next_neural_gate": {
+    "frozen_separately_before_any_training": true,
+    "require_train_convergence": true,
+    "require_strong_memory_aware_conventional_control": true,
+    "compare": "native learned dynamics + planner vs native direct action selection vs fully converged GRU/SSM or explicit estimator with same selected factual info and measured total compute",
+    "tests": [
+      "cold retention",
+      "B-phase interference",
+      "true held-out transfer",
+      "negative controls",
+      "cross-platform determinism"
+    ],
+    "no_R28_reused_as_unseen": true
+  },
+  "authority": {
+    "original_external_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_cal_ood": false,
+    "GPU_firstuse": false,
+    "owner_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "merge": false,
+    "deployment": false
+  }
+}

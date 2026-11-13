@@ -1,0 +1,179 @@
+{
+  "schema": "ttt-hybrid.f8r20-factorial-long-B-transfer-dev.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_AND_NUMERIC_RESULTS",
+  "classification": "SOURCE_NEUTRAL_AUTHOR_GENERATED_DEVELOPMENT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "sha": "c460ffd06a6a69d141de00d04c1982ef7f0a319b",
+    "tree_sha": "41fe1822f9d21670c72cefb23b46254fcdf9428a",
+    "r18_source_blob": "affdbf248d114cad5a012cfc07c60308a525665f",
+    "r19_focus_source_blob": "5f4418436f592672d5acf1e1444e15e561a77755",
+    "r19_focus_freeze_blob": "3a6e96789b81d51ca41c429198d47229368271f5",
+    "r19_outcome": "FOCUSED_NATIVE_PARTIAL_1_OF_3"
+  },
+  "hypothesis": "Does causal memory retention and model-selected action advantage under full A×B×actual-return-action FIT survive 8-to-12-step unseen B and frozen 384-update, matched factual training across uniform, return-focused, return-only native and conventional arms?",
+  "synthetic_world": {
+    "physical_law": "original F8-R3 author synthetic y(s,a,z)=0.5*s+0.3*z*(a-int(s>=0))",
+    "probe_state": 0.2,
+    "probe_action": 0,
+    "one_actual_probe_effect_per_world": true,
+    "B_state_reset": 0,
+    "return_A_state_reset": 0,
+    "B_independent_of_A": true,
+    "matched_B_observations_for_A_pairs": true,
+    "FIT_B_steps": 8,
+    "DEV_B_steps": 8,
+    "ID_B_steps": 8,
+    "OOD_B_steps": 12,
+    "group_count": {
+      "fit": 24,
+      "dev": 8,
+      "id": 12,
+      "ood": 12
+    },
+    "seed_base": {
+      "fit": 19610000,
+      "dev": 19620000,
+      "id": 19630000,
+      "ood": 19640000
+    },
+    "A_signs": [
+      -1,
+      1
+    ],
+    "B_signs": [
+      -1,
+      1
+    ],
+    "fit_return_actions": [
+      0,
+      1
+    ],
+    "goals": [
+      -0.2,
+      0.2
+    ],
+    "B_action_rule": "behavior(s) XOR int((group_seed+5*step+(zB==+1))%3==0)",
+    "full_factorial_FIT_each_A_B_return_action_cell": true,
+    "FIT_sessions": 192,
+    "DEV_sessions": 32,
+    "ID_sessions": 48,
+    "OOD_sessions": 48,
+    "FIT_factual_effects": 1920,
+    "scoring_before_first_return_A_effect": true,
+    "hidden_sign_seed_group_not_input_to_models": true,
+    "no_counterfactual_training_labels_within_session": true,
+    "no_score_or_spent_F7_data_training": true,
+    "no_original_source_execution": true
+  },
+  "model": {
+    "arms": [
+      "native_uniform",
+      "native_return_focus",
+      "native_return_only",
+      "linear_return_only",
+      "mlp_return_only",
+      "ssm_return_only"
+    ],
+    "underlying": [
+      "bypass_surrogate",
+      "bypass_surrogate",
+      "bypass_surrogate",
+      "linear7",
+      "mlp7",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "total_fits": 18,
+    "optimizer": "AdamW",
+    "updates_each": 384,
+    "batch_worlds": 8,
+    "total_optimizer_updates": 6912,
+    "sampler_seed": 985299,
+    "lr_native": 0.002,
+    "lr_conventional": 0.001,
+    "weight_decay": 0.01,
+    "clip_grad_norm": 1,
+    "objective": "uniform=existing physical, focus=existing physical+20xreturn factual delta, return_only=last factual return delta MSE channels0..3",
+    "checkpoints": [
+      128,
+      256,
+      384
+    ],
+    "selector": "fixed final update384; diagnostic DEV checkpoints never used to select scored test model",
+    "shared_FIT_and_minibatch_order_all_arms": true,
+    "params_and_wallclock_reported": true,
+    "conventional_independently_converged": false
+  },
+  "score": {
+    "goals_crossed_independent_of_A_and_B": true,
+    "candidate": "native_return_focus",
+    "primary": "both ID 8 B and OOD 12 B mean model-selected first-return A regret versus DEV-selected conventional and historyfree controls",
+    "conventional_selector": "best DEV final checkpoint regret among 3 conventional arms times 3 seeds",
+    "known_history_free_best_mean_regret": 0.015,
+    "analytic_early_A_memory_oracle": 0,
+    "reference": "min(DEV-selected conventional TEST regret,best fixed history-free TEST regret) separately ID/OOD",
+    "thresholds": {
+      "ID_and_OOD_fractional_regret_reduction_min": 0.1,
+      "seed_wins_min": 2,
+      "paired_bootstrap_2p5_absolute_gain_gt": 0,
+      "early_A_probe_masked_absolute_regret_increase_min": 0.003,
+      "OOD_action_contrast_A_sign_pairs_gt": 0
+    },
+    "bootstrap_group_counts": {
+      "id": 12,
+      "ood": 12
+    },
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 19649999,
+    "fixed_controls": [
+      "always0",
+      "always1",
+      "goal_positive",
+      "goal_negative"
+    ],
+    "ablations": [
+      "native_uniform",
+      "native_return_only",
+      "early_A_effect_erasure",
+      "identical_B_recent_only"
+    ],
+    "cold_restore_exact_action_parity": true,
+    "independent_sci_pass": false
+  },
+  "stop": {
+    "freeze_or_source_drift": true,
+    "unregistered_seeds_groups_actions": true,
+    "nonfinite_training_score": true,
+    "current_effect_leak": true,
+    "B_pair_mismatch": true,
+    "external_effect_attempt": true,
+    "training_budget_violation": true
+  },
+  "authority": {
+    "original_external_source_firstuse": false,
+    "F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "owner_dispatch": false,
+    "GPU_firstuse": false,
+    "merge": false,
+    "promotion": false,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "qualification": {
+    "full_final_G4_windows_ubuntu": true,
+    "G5_windows_ubuntu": true,
+    "G7_ubuntu": true,
+    "no_duplicated_CI": true,
+    "retain_negative_results": true
+  }
+}

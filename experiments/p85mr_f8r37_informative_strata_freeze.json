@@ -1,0 +1,165 @@
+{
+  "schema": "ttt-hybrid.f8r37-informative-stratified-contrast.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_CAUSAL_INFORMATION_IDENTIFIABILITY_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "c3fbd1c1ca5bbe474ad2d7f2e9c8d3cbd6c262f9",
+    "r36_freeze_blob": "4c6d4904cf57f9269917ba092b6fd2f537433276",
+    "r36_source_blob": "11ea6284669501f79b73a2e03d1a5c5cf3791f27",
+    "r35_source_blob": "72af6335094bd1a2f472fc0d5d7ac9d9dff16ed8",
+    "r33_source_blob": "d43638da45e91f51008b9674fbd7ccacde8c36ef",
+    "r36_science": "0_OF_3_NATIVE_RAW_EXPLICIT_NO_GO"
+  },
+  "hypothesis": "Class-balanced factual decision supervision mixes unidentifiable hidden-sign examples with identifiable examples. Restricting training to actually observed informative fifth interventions may permit raw neural choice learning; giving an explicit observed-effect×public-return-action interaction may separate information identifiability from neural feature-learning. No hidden q/counterfactual return is supplied to a model.",
+  "factual_source": {
+    "generator": "existing R33, not modified",
+    "fit_factual_episodes": 3072,
+    "fit_groups_train": 48,
+    "fit_groups_validation": 16,
+    "train_pair_full_count": 1152,
+    "train_pair_informative_count": 576,
+    "train_pair_noninformative_count": 576,
+    "informative_pair_selection": "from factual public fifth-action/context key, match selected fifth action==public context",
+    "train_informative_class0": 288,
+    "train_informative_class1": 288,
+    "heldout_pair_full_count": 384,
+    "heldout_pair_informative_count": 192,
+    "fully_selected_factual_return_pair_labels": true,
+    "unselected_return_effect_evaluator_only": true,
+    "preaction_return_effect_masked": true,
+    "model_no_hidden_q_sign": true,
+    "balanced_sampler_updates_not_unique_groups": true
+  },
+  "arms": {
+    "raw_mixed": [
+      985201,
+      985203,
+      985207
+    ],
+    "raw_informative": [
+      985201,
+      985203,
+      985207
+    ],
+    "gated_mixed": [
+      985201,
+      985203,
+      985207
+    ],
+    "gated_informative": [
+      985201,
+      985203,
+      985207
+    ],
+    "gated_informative_shuffled": [
+      985201
+    ],
+    "total_models": 13,
+    "raw": "Unchanged R35 48D P80 raw fifth action/effect and candidate return key MLP",
+    "gated": "Same R35 48D raw P80 plus 4 public factual features: fifth==context, return==context, joint indicator, joint*(inverse-normalized actual fifth physical displacement minus FIT-only safe/noninformative fifth baseline). Never pass generator q/sign, learned coefficient or return effect",
+    "gated_offset": "FIT selected observed noninformative fifth consequences only, no score/heldout values",
+    "shuffled_negative": "For training sampled informative pair i (public context c, fifth=c), replace only actual fifth-effect tensor with a selected fifth-effect tensor from a deterministic preregistered SHUFFLE of all 576 informative FIT pairs of the same context c, using seed 21149998. This is drawn from a different independently factual selected trajectory, not always the opposite q sign. The shuffled donor pairing must have near-zero original-versus-donor signed q association (abs phi <=0.10 over all training informative pairs), measured by the synthetic data generator for negative-control audit only, not fed to any model. Return cost target remains original independently factual pair. This deliberately produces inconsistent composite NEGATIVE CONTROL examples, never valid positive factual trajectories.",
+    "cross_architecture_capacity_FLOPs_matched": false,
+    "native_training_in_this_gate": false
+  },
+  "training": {
+    "optimizer": "AdamW lr 0.002, weight_decay 0.01, gradient_norm_clip 1",
+    "updates_each": 512,
+    "total_optimizer_steps": 6656,
+    "pairs_per_update": 16,
+    "training_factual_examples_per_update": 32,
+    "sampler_seed": 21149999,
+    "same_sampling_keys_for_all_models": "one uniform int list on 0..1151 per update. mixed uses direct, informative maps modulo 576 into sorted informative FIT indices; shuffled same informative index as gated_informative",
+    "loss": "cross entropy -candidate logits over the two separately selected factual return action outcomes, lower factual squared-goal cost wins",
+    "checkpoints": [
+      128,
+      256,
+      512
+    ],
+    "heldout_validation": "192 identifiable FIT validation pairs and 192 noninformative FIT pairs reported separately, never optimized",
+    "no_checkpoint_selection": true,
+    "cold_restore": true,
+    "gradients_finite_nonzero": true,
+    "shuffled_donor_seed": 21149998,
+    "shuffled_donor_max_abs_sign_phi": 0.1,
+    "shuffled_donor_constraint": "Donor context and fifth action match recipient; deterministic balanced context-within permutation, no signature leakage to learner."
+  },
+  "evaluation": {
+    "panels": [
+      "dev",
+      "ood"
+    ],
+    "groups_per_panel": 16,
+    "worlds_each": 64,
+    "dev": {
+      "return_state_even_odd": [
+        0.61,
+        0.69
+      ],
+      "q_abs": 1,
+      "B_length": 8,
+      "salt": 21150000
+    },
+    "ood": {
+      "return_state_even_odd": [
+        0.55,
+        0.77
+      ],
+      "q_abs": 0.88,
+      "B_length": 16,
+      "salt": 21160000
+    },
+    "policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "random_probe_namespace": "f8r37",
+    "same_known_quartic_law": true,
+    "entirely_new_B_salt_and_public_return_states_and_q_magnitude": true,
+    "score_on_unchosen_outcome_evaluator_only": true,
+    "eraser": "erase only actual selected fifth effect, preserve selected fifth action and nuisance B",
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 21179999
+  },
+  "frozen_judgment": {
+    "positive_model": "gated_informative",
+    "seed_wins_both_panels_at_least": 2,
+    "each_panel_active_regret_max": 0.08,
+    "each_panel_sign_pair_decision_flips_min": 30,
+    "each_panel_erasure_regret_penalty_min": 0.16,
+    "each_panel_active_vs_best_fixed_regret_gain_min": 0.14,
+    "each_panel_paired_bootstrap_lower_vs_fixed_gt": 0,
+    "each_panel_gain_over_gated_mixed_same_seed_min": 0,
+    "shuffled_control_sign_flips_max": 0,
+    "shuffled_control_regret_min": 0.24,
+    "raw_informative_success_report_separately": true,
+    "raw_mixed_success_report_separately": true,
+    "gated_mixed_success_report_separately": true,
+    "do_not_relabel_development_as_science": true,
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "existing_G4_full_windows_ubuntu": true,
+    "existing_G5_windows_ubuntu": true,
+    "existing_G7_ubuntu": true,
+    "source_admission_negative_controls": true,
+    "exact_final_SHA": true,
+    "original_artifacts_crossplatform_action_vector_comparison": true
+  },
+  "authority": {
+    "external_firstuse": false,
+    "spent_F7_replay": false,
+    "paid_API": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}

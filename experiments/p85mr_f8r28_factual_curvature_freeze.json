@@ -1,0 +1,192 @@
+{
+  "schema": "ttt-hybrid.f8r28-factual-curvature-intervention-transfer.v1",
+  "stage": "FROZEN_PRE_IMPLEMENTATION_AND_NUMERIC_OUTCOME",
+  "classification": "SOURCE_NEUTRAL_TRAINED_ACTIVE_CAUSAL_TRANSFER_DEVELOPMENT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head": "a4913f86921d6758770098fcf7a688bf48cb6806",
+    "tree": "124c6b608cda12374835a6e29535360627eb3f23",
+    "r27_source_blob": "270f61969f8a1c7c6174cd3492d6169cd2f3a514",
+    "r27_freeze_blob": "237aa9f50aaaab9232caaa9a93e3ab67a755becf",
+    "r25_source_blob": "ef488956741b339eb68c786432c48fefb6526165"
+  },
+  "question": "Does genuinely training native Hybrid on factual nonlinear action-specific q consequences, including one selected fifth intervention, make it use that intervention to beat same-budget fixed/random controls under fresh heldout curvature and off-grid values? Test against conventional GRU/SSM and strong factual-only Bayesian memory.",
+  "world": {
+    "law": "after=.4*s+b[action]+k[action]*s+q[action]*(s*s-.04)",
+    "four_early_factual_probes": [
+      [
+        -0.2,
+        0
+      ],
+      [
+        0.2,
+        0
+      ],
+      [
+        -0.2,
+        1
+      ],
+      [
+        0.2,
+        1
+      ]
+    ],
+    "fifth_factual_probe": {
+      "state": 0.7,
+      "actions": [
+        0,
+        1
+      ],
+      "must_be_observed_before_return": true
+    },
+    "q_train": [
+      -0.55,
+      0.55
+    ],
+    "q_ID": [
+      -0.55,
+      0.55
+    ],
+    "q_OOD": [
+      -0.45,
+      0.45
+    ],
+    "b_values": [
+      -0.3,
+      -0.1,
+      0.1,
+      0.3
+    ],
+    "k_values": [
+      -0.25,
+      0.25
+    ],
+    "source_FIT": "R25 original 256 factorial factual FIT base rows, crossed independently with both q0 q1, both selected fifth actions and both first-return public states; no q labels fed to model",
+    "FIT_source_base_sessions": 256,
+    "FIT_per_base_expansions": 16,
+    "FIT_sessions": 4096,
+    "FIT_factual_actions_each": 14,
+    "FIT_expected_effects": 57344,
+    "FIT_return_states": [
+      -0.7,
+      0.7
+    ],
+    "FIT_return_action": "already selected actual factual return action from original R25 FIT row (one factual effect only)",
+    "B_source": "original factual R25 independent B of length8, never uses q",
+    "panels": [
+      "dev",
+      "id",
+      "ood"
+    ],
+    "seeds": {
+      "dev": 20320000,
+      "id": 20330000,
+      "ood": 20340000
+    },
+    "groups_each": 12,
+    "action_swapped_twins_each": 12,
+    "B_steps": {
+      "dev": 8,
+      "id": 8,
+      "ood": 16
+    },
+    "OOD_B_sign_flip_at_8": true,
+    "goals": [
+      -0.2,
+      0.2
+    ],
+    "target_states": [
+      -0.7,
+      0.7
+    ],
+    "policies": [
+      "active_information",
+      "fixed_action0",
+      "fixed_action1",
+      "seeded_random"
+    ],
+    "factual_fifth_action_effect_measured_only_for_selected_action": true,
+    "same_five_factual_probe_and_B_budget_for_all_policies": true,
+    "oracle_counterfactual_outcomes_evaluator_only": true,
+    "new_panels_independent_original_R27_ID_OOD": true,
+    "no_original_external_effects": true
+  },
+  "training": {
+    "arms": [
+      "native_focus20",
+      "gru_focus20",
+      "ssm_focus20"
+    ],
+    "seeds_native": [
+      985201,
+      985203,
+      985207
+    ],
+    "seeds_conventional": [
+      985201
+    ],
+    "actual_fit_models": 5,
+    "updates_each": 384,
+    "total_optimizer_updates": 1920,
+    "batch": 8,
+    "sampler_seed": 20319999,
+    "AdamW": true,
+    "lr_native": 0.002,
+    "lr_conventional": 0.001,
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "objective": "same physically masked factual prequential loss as R25 +20x last genuinely selected return factual effect channels0..3, length14; no q labels, oracle, score or hypothetical alternate label training",
+    "checkpoint": "fixed update384, no score-driven checkpoint selection",
+    "conventional_convergence_independently_qualified": false,
+    "capacity_and_walltime_not_equal": true
+  },
+  "controls": {
+    "four_probe_prior_only_active_Bayes": "precommitted original R27 strong scripted action-identification and prior, factual fifth consequence only",
+    "strongest_fixed_probe0_and1_and_seeded_random": true,
+    "early_A_probe_erasure": true,
+    "fifth_factual_effect_erasure": true,
+    "original_R27_untrained_on_curvature_result_is_historical_context_only": true,
+    "cold_reloaded_checkpoint_action_parity": true,
+    "goal_public_before_probe": true,
+    "scoring_no_return_effect_before_first_action": true,
+    "paired_B_identical_within_swapped_A_twins": true,
+    "retain_all_failed_seeds": true
+  },
+  "score": {
+    "native_min_seed_wins_both_ID_OOD": 2,
+    "native_active_vs_best_fixed_gain_min_absolute": 0.005,
+    "native_fifth_probe_erasure_penalty_min": 0.005,
+    "paired_bootstrap_group_clusters": 12,
+    "paired_bootstrap_draws": 10000,
+    "paired_bootstrap_seed": 20349999,
+    "bootstrap_lower_2p5_gain_gt": 0,
+    "dev_selected_strong_conventional_report_even_if_better": true,
+    "fixed_and_random_and_scripted_metrics_report_even_if_better": true,
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "original_external_firstuse": false,
+    "spent_F7_effect_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "owner_dispatch": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_scheduler": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "scientific_pass": false
+  },
+  "qualify": {
+    "existing_G4_full_Ubuntu_Windows": true,
+    "existing_G5_native_Ubuntu_Windows": true,
+    "existing_G7_Ubuntu": true,
+    "source_admission_negative_controls": true,
+    "no_manual_duplicate_workflow": true,
+    "Windows_existing_timeout_seconds": 900,
+    "no_regression_skips": true
+  }
+}

@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.f8r6-unsupervised-two-regime-active-probe.v1",
+  "stage": "FROZEN_BEFORE_ANY_R6_IMPLEMENTATION_TEST_OR_NUMERIC_SCORING",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head_sha": "90570bd0f7fa13af3898001ad612ed13f255b64e",
+    "F8_R3_effect_code_sha": "9a7077ece06dfbc685232bbc606b0c2dd33a7895",
+    "F8_R5_training_code_sha": "9ac9fc17d6f82d6bf2dc7b05458939d5bdb6ea92",
+    "R5_original_science_no_go_comment": 6823164427,
+    "F7_spent_original_source_run": 43195349254
+  },
+  "claim_to_falsify": "A 2-component action-conditioned linear dynamical memory, learned without world_sign labels solely from prior executed actions and their observed effects, can identify the new active mechanism with ONE executed informative probe and choose better subsequent goal-directed actions than equally probing a single-regime ridge model, passive two-regime mixture, and fixed action policy, with exact cold restore. This is a toy conventional CONTROL, not Hybrid improvement or external science.",
+  "world": {
+    "type": "deterministic author-mathematical family of F8-R3; no original CartPoleWind source",
+    "equation": "y(s,a,sign)=0.5*s+0.3*sign*(a-int(s>=0))",
+    "executed_action_domain": [
+      0,
+      1
+    ],
+    "state_range": [
+      -1,
+      1
+    ],
+    "fit_worlds": 24,
+    "fit_seed_base": 19260000,
+    "fit_actions_per_world": 12,
+    "fit_initial": "0.45*sin(seed*.031)+0.21*cos(seed*.017)",
+    "fit_policy": "step0: opposite sign-feedback policy; later: deterministic exploring 0 or 1 using seed and t, without hidden sign",
+    "fit_hidden_sign_balanced": "sign determined by world index parity for SOURCE ONLY and withheld from learner",
+    "fit_hidden_sign_not_passed_to_any_fit_or_inference_api": true,
+    "score_probe_state": 0.2,
+    "score_goals_states_PCG64_seed": 19277777,
+    "score_pairs_per_sign": 48,
+    "score_hidden_signs": [
+      -1,
+      1
+    ],
+    "score_actions_per_evaluation": 2,
+    "score_intervention_budget_per_policy": "one factual probe followed by one factual chosen action; no access to unchosen effects before action",
+    "holdout_not_unfamiliar_mechanism": true
+  },
+  "models": {
+    "two_expert": "per-world ridge fit from 12 observed (s,a,y) effects using X=(s,a-behavior(s)); learn two clusters by sorting fitted action coefficient, 12 worlds each; cluster means provide two trained experts; never use world sign label",
+    "single_expert": "one pooled ridge fit on all same fit worlds, no world label or posterior",
+    "two_expert_passive": "same learned two experts and same one probe budget, but probe uses logged behavior action at state0.2",
+    "fixed_action0": "same probe budget but always choose 0 for subsequent goal action",
+    "oracle": "post-choice evaluator-only best of two realized effects; never used for model fitting, probing, or choosing",
+    "ridge_lambda": 1e-8,
+    "coefficient_order": "sort per-world action coefficient ascending, first12 low, last12 high",
+    "no_posthoc_selection": true
+  },
+  "metrics": {
+    "primary": "paired mean goal-squared regret vs oracle on two signs x 48 fixed state-goal pairs",
+    "secondary": [
+      "source-neutral fit coefficient hashes",
+      "intervention identification 0/1",
+      "probe factual actions per arm",
+      "action decision accuracy",
+      "wrong-credit shuffled training negative",
+      "exact JSON cold restored coefficients and belief",
+      "training/inference wall time",
+      "static float state bytes"
+    ],
+    "precommitted_dev_pass": "trained active two-expert regret <=0.1 * single_expert regret AND <=0.1 * two_expert_passive regret AND <=0.1 * fixed_action0 regret, with nonzero regrets for all three controls, AND postprobe expert identification 96/96, AND wrong-credit shuffle weakens fit by >= 5x, AND cold restore exact",
+    "no_postresult_threshold_change": true,
+    "independent_scientific_pass": false
+  },
+  "negative_controls": {
+    "future_current_effect_not_used": true,
+    "probe_inference_requires_only_selected_action_actual_effect": true,
+    "wrong_credit_action_labels_shuffled_fit_only_seed": 19279999,
+    "synthetic_generator_must_have_24_worlds_with_12_events_each": true,
+    "fit_world_sign_labels_never_used_for_learning": true,
+    "never_claim_true_source_counterfactuals": true,
+    "full_frozen_code_and_admission_negative_tests": true
+  },
+  "authority": {
+    "external_source_effects": 0,
+    "external_source_import": false,
+    "F7_firstuse_or_train_replay": false,
+    "new_F8_CausalGymnasium_firstuse": false,
+    "owner_runner_dispatch": false,
+    "real_CAL_OOD": false,
+    "no_new_workflow_or_scheduler": true,
+    "no_paid_api": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_deployment": true,
+    "scientific_pass": false
+  },
+  "qualifications": {
+    "mandatory_exact_head_full_G4_Windows_and_Ubuntu": true,
+    "G5_original_native_TTT_both": true,
+    "G7_pinned_Mamba_Ubuntu": true,
+    "store_results_in_existing_GitHub_artifact_receipts": true,
+    "do_not_merge_without_qualification": true
+  },
+  "limitations": "An author-synthetic toy on a known two-sign linear world cannot establish transferable learning, actual environmental intervention success, general intelligence, autonomous RSI or improvement of original Hybrid neural architecture. Retain failures or unexpected negative outcomes."
+}

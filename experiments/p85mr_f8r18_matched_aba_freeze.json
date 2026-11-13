@@ -1,0 +1,145 @@
+{
+  "schema": "ttt-hybrid.f8r18-identified-matched-aba-native-development.v1",
+  "stage": "FROZEN_BEFORE_CODE_TRAINING_RESULTS",
+  "classification": "SOURCE_NEUTRAL_TRAINED_NATIVE_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "head": "28f2999821975762b114b375a338adec3e9fa324",
+    "tree_sha": "76c7c3193e22b4b17d930e756e8f8e6256998b12",
+    "f8r17_result_head": "28f2999821975762b114b375a338adec3e9fa324",
+    "original_f8r3_blob": "9a7077ece06dfbc685232bbc606b0c2dd33a7895",
+    "original_f8r5_native_blob": "9ac9fc17d6f82d6bf2dc7b05458939d5bdb6ea92",
+    "original_hybrid_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "Can a genuinely trained native Hybrid retain early factual causal identity A through an independently varying B regime, selecting correct first return-A action before observing any new A consequence, versus converged conventional and fixed/short-memory controls?",
+  "old_falsifier": "R17 current A identity was recoverable from last three postreturn effects and goal correlated with A sign, so it could not test long A memory",
+  "world": {
+    "mathematical_source": "frozen F8-R3 y=.5*s+.3*z*(a-int(s>=0)); NO original simulator API",
+    "group_counts": {
+      "fit": 32,
+      "dev": 12,
+      "score": 16
+    },
+    "group_seed_base": {
+      "fit": 19450000,
+      "dev": 19460000,
+      "score": 19470000
+    },
+    "per_group_signs": [
+      -1,
+      1
+    ],
+    "B_sign": "independent of A sign and same for matched pair; B sign = +1 when pair_index even, else -1",
+    "A_probe": {
+      "initial_state": 0.2,
+      "selected_action": 0,
+      "one_factual_effect_each_pair_world": true
+    },
+    "B_phase": {
+      "reset_public_state_to_zero": true,
+      "steps": 8,
+      "source_hidden_sign_unchanged_within_B": true,
+      "same_factual_actions_and_effects_within_pair": true,
+      "actions": "behavior(s) XOR int((group_seed+7*j)%3==0)"
+    },
+    "first_return_A": {
+      "reset_public_state_to_zero": true,
+      "no_factual_return_A_effect_in_dev_or_score_before_action": true,
+      "selected_fit_return_action": "pair_index parity (0 or 1), independent of A sign",
+      "score_queries": [
+        0,
+        1
+      ],
+      "goals": [
+        -0.2,
+        0.2
+      ],
+      "evaluator_only_after_choice": "two-action oracle and executed selected synthetic action; model never receives unchosen effect"
+    },
+    "per_world_p80_key": "state_before4 and selected action normalized 16D",
+    "per_world_p80_effect": "delta/reward/termination normalized observed 16D, padding9 zeros",
+    "no_regime_labels_in_model": true,
+    "no_counterfactual_training_labels": true,
+    "test_goal_crossed_with_A_and_B": true,
+    "score_pair_group_is_resampling_unit": true,
+    "no_original_F7_or_F8_source": true
+  },
+  "training": {
+    "arms": [
+      "bypass_hard",
+      "bypass_surrogate",
+      "linear7",
+      "mlp7",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "fit_episodes": 64,
+    "episodes_per_batch": 8,
+    "optimizer": "AdamW",
+    "updates_per_model": 128,
+    "total_models": 15,
+    "total_optimizer_updates": 1920,
+    "shared_sampler_seed": 985299,
+    "native_lr": 0.002,
+    "conventional_lr": 0.001,
+    "weight_decay": 0.01,
+    "grad_clip_norm": 1,
+    "no_test_training_or_model_selection": true,
+    "selected_checkpoint": "last update 128; dev for conventional comparator choice only",
+    "fixed_compute_budget_not_proof_of_convergence": true
+  },
+  "score": {
+    "primary": "mean selected synthetic one-step squared-goal regret to 2-action evaluator-only oracle, 16 matched B groups x2 A signs x2 independently crossed goals =64 choices",
+    "return_state": 0,
+    "baseline_selection": "best DEV mean regret from 9 conventional model-seed instances linear7 mlp7 ssm256 (no TEST selection)",
+    "fixed_action_controls": [
+      0,
+      1
+    ],
+    "goal_only_controls": [
+      "int(goal>0)",
+      "int(goal<0)"
+    ],
+    "no_A_history_bound": "best goal-wise fixed action across balanced matched A worlds, expected regret0.015 each goal; same B history and same target cannot identify which A has returned",
+    "A_memory_oracle": "from early factual A probe; evaluator only, 0 regret",
+    "candidate": "bypass_surrogate",
+    "success": "candidate TEST mean regret at least 10pct below min(DEV-selected conventional test regret, best prereg fixed action goal-only control TEST mean) in at least 2/3 native seeds AND 16-paired-cluster bootstrap 2.5pct regret advantage >0, strong conventional independently converged, and source-independent replication",
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 19479999,
+      "unit": "16 matched B-pair groups; each includes both A signs and both goals"
+    },
+    "zero_memory_negative": "remove initial A factual effect before hypothetical query and check same-pair counteraction contrasts",
+    "cold_restore": "identical predictions/choices after reinitializing and loading each actually trained checkpoint",
+    "convergence_status": "unverified; bounded 128-update controls are not called independently converged",
+    "no_test_score_based_checkpoint_or_threshold_tuning": true,
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "external_source_firstuse": false,
+    "spent_F7_replay": false,
+    "new_original_F8_effects": false,
+    "gpu_owner_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "sealed_CAL_OOD": false,
+    "merge": false,
+    "promotion": false,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "qualification": {
+    "full_G4_linux_windows": true,
+    "G5_linux_windows": true,
+    "G7_ubuntu": true,
+    "fixed_before_training": true,
+    "retain_all_nulls": true,
+    "gate_positive_only_if_real_independent_science": false
+  }
+}

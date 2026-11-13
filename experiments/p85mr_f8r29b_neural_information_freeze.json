@@ -1,0 +1,142 @@
+{
+  "schema": "ttt-hybrid.f8r29b-neural-information-uptake.v1",
+  "stage": "FROZEN_BEFORE_LINKED_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NEURAL_INFORMATION_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head": "bc220a22495c2b4c718e3737c616f783e4f1f28a",
+    "r29_source_blob": "fc0082cecb697ef09065b4290c550c29eb979fe7",
+    "r29_calibration_freeze_blob": "4666d7afd6b418d8637faaa880644d9465ac2f9e"
+  },
+  "hypothesis": "Actual selected fifth-effect observation should lower heldout return-action regret for neural Hybrid dynamics+planning relative to the same model with that factual observation erased; compare equally budgeted fixed/random probes and trained native-direct, GRU, SSM factual-result learning; preserve scripted analytical comparator as strongest upper bound.",
+  "design": {
+    "task": "R29 exact known analytical public-context-dependent action law, with no hidden q fed to learners",
+    "fit_source": "new independently generated synthetic FIT groups; never use registered R29 DEV/OOD groups or original F7/CausalGym",
+    "fit_groups": 64,
+    "fit_contexts": [
+      0,
+      1
+    ],
+    "fit_q_signs": [
+      -1,
+      1
+    ],
+    "fit_q_abs": [
+      0.75,
+      1,
+      1.15
+    ],
+    "fit_probe_actions": "both selected factual fifth actions crossed per public context, not hidden q",
+    "fit_return_actions": [
+      0,
+      1
+    ],
+    "fit_return_goal": 1,
+    "fit_b_steps": 8,
+    "fit_group_seed_base": 20460000,
+    "fit_sampler_seed": 20469999,
+    "evaluation_panels": [
+      "dev",
+      "ood"
+    ],
+    "evaluation_groups": 12,
+    "evaluation_from": "R29 new analytic calibration generator; heldout B histories and q sign crossed, no score training",
+    "B_steps": {
+      "dev": 8,
+      "ood": 16
+    },
+    "OOD_q_abs": 0.9,
+    "new_data_only_selected_factual_effects": true,
+    "score_no_return_effect_before_choice": true,
+    "public_context_and_goal_given": true,
+    "hidden_sign_to_model": false,
+    "input_encoding": "original 16D action key and physical observed-effect vectors; public context and goal in auxiliary state channels; final candidate effect strictly zero-masked",
+    "fifth_probe_state": 0.4,
+    "return_states": {
+      "dev": 0.7,
+      "ood": 0.65
+    },
+    "erasure": "zero only the selected factual fifth effect, preserve selected fifth action, B and early facts",
+    "negative_controls": [
+      "zero fifth observation",
+      "fixed action0 fifth probe",
+      "fixed action1 fifth probe",
+      "seeded random fifth probe",
+      "cold-restored model",
+      "invalid action/refusal of external source"
+    ],
+    "matched_group_cluster": "12 groups × public context 0/1 × hidden sign -/+; deterministic paired group bootstrap"
+  },
+  "train": {
+    "arms": [
+      "native_dynamics",
+      "native_direct_value",
+      "gru_dynamics",
+      "ssm_dynamics"
+    ],
+    "seeds_native_dynamics": [
+      985201,
+      985203,
+      985207
+    ],
+    "seeds_other": [
+      985201
+    ],
+    "model_instances": 6,
+    "updates_each": 128,
+    "total_updates": 768,
+    "batch_size": 8,
+    "adamw_native_lr": 0.002,
+    "adamw_conventional_lr": 0.001,
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "objective": "selected factual final return only; dynamics predicts physically observed normalized displacement; direct predicts scaled realized squared-goal error from selected return, not oracle labels; same sampled FIT rows for all",
+    "no_unselected_return_training": true,
+    "no_hidden_q_sign_training": true,
+    "fixed_checkpoint": true,
+    "conventional_convergence_independently_qualified": false,
+    "capacity_or_FLOPS_matched": false,
+    "same_per_arm_updates_and_sample_budget": true
+  },
+  "score": {
+    "regret": "actual selected first-return squared-goal-error minus hindsight optimal; oracle for post-action scoring only",
+    "frozen_ID_OOD_seed_wins_at_least": 2,
+    "native_dev_active_gain_vs_best_fixed_min": 0.01,
+    "native_dev_information_erasure_penalty_min": 0.01,
+    "native_dev_pair_bootstrap_2p5_lower_gt": 0,
+    "native_ood_active_gain_vs_best_fixed_min": 0.01,
+    "native_ood_information_erasure_penalty_min": 0.01,
+    "native_ood_pair_bootstrap_2p5_lower_gt": 0,
+    "bootstrap_seed": 20479999,
+    "bootstrap_draws": 10000,
+    "compare_explicit_planner": true,
+    "compare_direct_and_GRU_SSM_even_if_better": true,
+    "report_all_models_failures": true,
+    "conventional_independent_qualification_required_before_scientific_pass": true,
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "original_external_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "owner_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  },
+  "qualification": {
+    "existing_G4_full_Windows_Ubuntu": true,
+    "existing_G5_native_Windows_Ubuntu": true,
+    "existing_G7_pinned_Mamba2_Ubuntu": true,
+    "original_source_admission_negative_controls": true,
+    "no_skip_full_final_regression": true,
+    "prefer_existing_CI_trigger": true
+  }
+}

@@ -1,0 +1,158 @@
+{
+  "schema": "ttt-hybrid.f8r5-native-trained-active-toy-policy.v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_OR_AUTHOR_TOY_EVALUATION",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "source_sha": "d1b24351ed8f3c9c8fd233d75dc0ad120a3c91cb",
+    "R3_freeze_blob": "1727345ae8cd953699ab1a30b67f35b391642298",
+    "R3_source_blob": "9a7077ece06dfbc685232bbc606b0c2dd33a7895",
+    "R4_freeze_blob": "be252064e283ed038e31336fb170fcb2c4e0a473",
+    "R4_source_spent_firstuse_original": 43195349254,
+    "F7_train_original": 43198869594,
+    "original_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "Can a fully trained original native four-block Hybrid with gradient-capable depth and/or raw-action bypass actually use a past selected counterpolicy action's factual consequence to choose better later actions than equally trained conventional linear7 or SSM256 on unseen state/goal probes in a known synthetic two-world family? Correct depth gradient access alone does not guarantee better policy.",
+  "source": {
+    "source_type": "AUTHOR_GENERATED_R3_MATHEMATICAL_ENV_ONLY",
+    "world_equation": "y(s,a,world_sign)=0.5*s + 0.3*world_sign*(a-(s>=0))",
+    "world_signs": [
+      -1,
+      1
+    ],
+    "train_worlds": 24,
+    "fit_dev_worlds": 12,
+    "score_worlds": 12,
+    "world_episode_actions": 12,
+    "train_seed_base": 19140000,
+    "fit_dev_seed_base": 19160000,
+    "score_seed_base": 19180000,
+    "sign_assignment": "alternating index parity; 50/50 each split",
+    "initial_state": "0.42*sin(seed*.013)+.19*cos(seed*.021)",
+    "action_policy": "first step forced 1-behavior(s), then deterministic episode-seeded 0/1 exploration, each observed actual outcome used only after selection",
+    "physical_state4": "[s,0,0,0]",
+    "reward": "1-min(1,(next_state-.2)^2)",
+    "terminal": "last step only",
+    "P80_action_key": "state_before4 and actually selected action, L2 normalized 16D",
+    "P80_effect": "tanh((state_after-before)/[2.4,3,.2095,3.5]), tanh(reward), terminated,truncated, 9 zeros",
+    "world_state_transition": "s_next=world_effect",
+    "source_actions_original_CausalGymnasium": 0,
+    "original_F7_FIT_not_read": true
+  },
+  "models": {
+    "arms": [
+      "native_hard",
+      "native_surrogate",
+      "bypass_hard",
+      "bypass_surrogate",
+      "linear7",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "initial_original_native_weights": "exact frozen F5 original seed",
+    "lr_native": 0.002,
+    "lr_linear": 0.001,
+    "lr_ssm": 0.001,
+    "weight_decay": 0.01,
+    "batch_size": 8,
+    "updates_each": 96,
+    "optimizer": "AdamW",
+    "clip_norm": 1,
+    "sampler_seed": 985299,
+    "checkpoint": "fixed update96 (no FITdev checkpoint selection); FITdev scored only diagnostically",
+    "force_off_router_initially": false,
+    "number_models": 18,
+    "maximum_model_updates": 1728,
+    "deterministic_cpu": true,
+    "torch_threads": 1,
+    "author_synthetic_only": true
+  },
+  "evaluation": {
+    "probe_state": 0.2,
+    "probe_action": 0,
+    "one_factual_probe_effect_per_policy_world": true,
+    "score_states": [
+      -0.8,
+      -0.6,
+      -0.4,
+      -0.2,
+      0,
+      0.2,
+      0.4,
+      0.6,
+      0.8
+    ],
+    "score_goals": [
+      -0.2,
+      0,
+      0.2
+    ],
+    "two_world_signs": [
+      -1,
+      1
+    ],
+    "model_input": "2-event causal prefix factual_probe + hypothetical current action, current effect masked; model predicts current effect WITHOUT committing hypothetical",
+    "planner": "enumerate only two legal actions, score predicted next-state against common target, deterministic action0 ties; then evaluator executes chosen math action and computes regret to two-action oracle",
+    "target_delta_first": "arctanh(clamp(pred_effect0,-.98,.98))*2.4",
+    "primary": "mean selected-action squared-goal regret relative to evaluator-only oracle across 2 signs x 9 states x3 goals",
+    "secondary": [
+      "physical four-delta prequential MSE on separate author-toy score worlds",
+      "FITdev MSE diagnostic only",
+      "training total CPU wall seconds",
+      "inference total CPU wall seconds",
+      "gradient dormancy fraction",
+      "parameter count",
+      "world identity one-bit ideal control",
+      "cold parameter restore score identity",
+      "training objective wrong-credit negative"
+    ],
+    "genuine_external_unknown_transfer": false
+  },
+  "preregistered_decision": {
+    "native_surrogate_bypass_wins_vs_both_linear7_and_ssm256": "mean action regret <=0.90*min(linear7,ssm256) in >=2/3 seeds AND improves over native hard+bypass",
+    "strong_controls_competence": "one-bit ideal policy exact 0 regret, at least one trained classical has regret <= always-action0 by >=0.1 fraction; if not, outcome non-discriminating",
+    "run_and_report_if_fail": true,
+    "no_post_result_tuning": true,
+    "retention": "identical predictions and choices after fresh model reload; separate episode resets",
+    "seed_reproducibility": "same construction and sampler across arms",
+    "paired_action_budget": true,
+    "full_compute_cost_report": true,
+    "classification": "SOURCE_NEUTRAL_DEV_ONLY_NO_SCIENCE_PASS"
+  },
+  "admission": {
+    "original_r3_hypothesis_code_hash": "9a7077ece06dfbc685232bbc606b0c2dd33a7895",
+    "original_model_code_hash": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "no_future_outcome_leak": true,
+    "no_training_on_score_worlds": true,
+    "finite_gradients_and_scores": true,
+    "wrong_action_credit_must_change_prediction": true,
+    "no_architecture_fusion_edit": true,
+    "all_existing_regression_mandatory": true
+  },
+  "authority": {
+    "no_original_external_firstuse": true,
+    "no_external_simulator_import_reset_do": true,
+    "no_spent_F7_source_replay": true,
+    "no_firstuse_approval_inferred": true,
+    "no_CAL_OOD_firstuse": true,
+    "no_new_workflow": true,
+    "no_new_runner_or_controller": true,
+    "no_scheduled_task": true,
+    "no_paid_api": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_deployment": true,
+    "independent_scientific_PASS": false
+  },
+  "qualification": {
+    "exact_SHA_G4_full_windows_linux": true,
+    "exact_SHA_G5_native_windows_linux": true,
+    "exact_SHA_G7_pinned_mamba": true,
+    "receipts": "GitHub G4 job logs and on-repo PR comment, not ChatGPT Library"
+  },
+  "stop": "Reject if owner/branch drift, source contract drift, unknown action, future effect leakage, invalid matrix, nonfinite gradients, missing model parity or CI failure; preserve null outcomes. No new real scientific first-use."
+}

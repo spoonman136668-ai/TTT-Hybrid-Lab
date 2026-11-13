@@ -1,0 +1,175 @@
+{
+  "schema": "ttt-hybrid.f8r33-probe-calibration-v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_NUMERIC_RESULTS",
+  "classification": "SOURCE_NEUTRAL_FACTUAL_CALIBRATION_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "8f0b42075784509fe0616e8c3a3577ac38e5947d",
+    "r32_freeze_blob": "38f4bc3bd5fd12ab50ed9b6c6420a585b255ed73",
+    "r32_source_blob": "9bc604e47d4bb531601bdfa925268266cffe387c",
+    "r31_source_blob": "d0c07b6e399c9bd978ff2c67bc93eb64797e017d"
+  },
+  "hypothesis": "R32 factual 7-feature model is insufficient because it omits the informed-interaction intercept and uses an uncentered selected fifth physical effect; FIT-only corrected linear causal interactions and uncertainty can recover intervention-dependent action decisions without hindsight labels. Factual-only model result is not evidence of neural improvement.",
+  "task": {
+    "source": "R32 preexisting quartic action-conditioned law, no external/hidden source",
+    "fit_groups": 64,
+    "fit_groups_training": "0..47",
+    "fit_groups_validation": "48..63",
+    "contexts": [
+      0,
+      1
+    ],
+    "signs": [
+      -1,
+      1
+    ],
+    "fit_q_abs": [
+      0.7,
+      1,
+      1.2
+    ],
+    "fifth_actions": [
+      0,
+      1
+    ],
+    "factual_returns": [
+      0,
+      1
+    ],
+    "return_state_by_group_mod4": [
+      0.54,
+      0.62,
+      0.7,
+      0.78
+    ],
+    "fit_episodes_per_group": 48,
+    "fit_episodes": 3072,
+    "fit_training_episodes": 2304,
+    "fit_validation_episodes": 768,
+    "early_states": [
+      -0.15,
+      0.15
+    ],
+    "early_selected_count": 4,
+    "fifth_probe_state": 0.42,
+    "goal": 1,
+    "fit_B_length": 8,
+    "independent_B_salts": {
+      "fit": 20730000,
+      "dev": 20740000,
+      "ood": 20750000
+    },
+    "score_groups_per_panel": 12,
+    "score_worlds_per_panel": 48,
+    "dev": {
+      "return_states_even_odd": [
+        0.6,
+        0.7
+      ],
+      "q_abs": 1.1,
+      "B_length": 8
+    },
+    "ood": {
+      "return_states_even_odd": [
+        0.58,
+        0.74
+      ],
+      "q_abs": 0.9,
+      "B_length": 16
+    },
+    "policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "random_probe_seed_namespace": "f8r33",
+    "one_actual_selected_fifth_effect_only": true,
+    "unknown_return_effect_mask_zero": true,
+    "unchosen_return_effect_only_evaluator": true
+  },
+  "methods": {
+    "legacy": "unchanged R32 seven-feature factual-only ridge, retrained on R33 FIT",
+    "indicator": "9-feature ridge with informed intercept + quartic state interactions, raw factual probe delta; FIT only",
+    "centered": "same 9-feature ridge with baseline-subtracted selected factual fifth delta; baseline estimated only using factual non-informative fifth probes in R33 FIT; no analytic baseline constant or hidden q",
+    "features": [
+      "intercept",
+      "public_return_state",
+      "sin(3*public_return_state)",
+      "return_matches_public_context",
+      "return_matches_context_times_quartic_curvature",
+      "informative_indicator",
+      "informative_indicator_times_quartic_curvature",
+      "informative_times_factual_fifth_delta",
+      "informative_times_factual_fifth_delta_times_quartic_curvature"
+    ],
+    "fixed_curvature_reference": 0.15,
+    "ridge_lambda": 0.00001,
+    "loss_label": "P80 observed normalized actual selected return physical displacement decoded in FIT only",
+    "buckets": [
+      "safe",
+      "informed",
+      "uncertain"
+    ],
+    "uncertainty": "FIT-only per-bucket squared residuals; never evaluator or heldout validation fitted",
+    "variance_ablation": "set fitted residual uncertainty to zero when scoring centered mean-only",
+    "fifth_erasure": "set exactly selected fifth effect tensor to all zeros before prediction; leave actual selected action and nuisance stream unchanged",
+    "fit_groups_curve": [
+      12,
+      24,
+      48
+    ],
+    "cold_restore": "serialize float64 coefficients and FIT-only risk buckets, compare all choices",
+    "zero_neural_updates": true,
+    "existing_neural_R32_negative_preserved": true
+  },
+  "precommitted_score": {
+    "panels": [
+      "dev",
+      "ood"
+    ],
+    "score_no_training_on_dev_ood": true,
+    "baseline_mean_regret_centered_active_max_each": 0.06,
+    "improvement_centered_over_legacy_active_min_each": 0.08,
+    "erasure_regret_penalty_centered_active_min_each": 0.08,
+    "active_gain_over_best_fixed_min_each": 0.05,
+    "paired_group_bootstrap_centered_over_legacy_lower_2p5_gt": 0,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20769999,
+    "fit_normal_equation_gradient_abs_max": 0.00001,
+    "fit_heldout_validation_mse_report": true,
+    "curve_coeff_L2_diff_24_48_max": 0.1,
+    "indicator_vs_centered_exploratory_no_threshold": true,
+    "mean_only_risk_ablation_report": true,
+    "report_all_48_action_vectors_each_arm_policy": true,
+    "independent_scientific_pass": false
+  },
+  "interpretation": {
+    "positive": "Handcrafted factual-only interactions and FIT-estimated centering or informative indicator can solve a heldout synthetic task. Not a neural causal representation, novel mechanism, open-world AGI, or scientific admission.",
+    "null": "Preserve failure; inspect FIT validation vs decision-risk calibration without tuning same score labels.",
+    "limits": "Same R32 quartic law with new return state ranges and q magnitudes; no independent mechanism holdout; no qualified neural/GRU/SSM convergence or capacity-matched FLOPs."
+  },
+  "qualification": {
+    "existing_G4_Windows_Ubuntu_full": true,
+    "existing_G5_Windows_Ubuntu": true,
+    "existing_G7_Ubuntu": true,
+    "source_firstuse_negative_controls": true,
+    "final_SHA_exact": true,
+    "source_custody_pr_236": true,
+    "compare_original_ci_artifacts_crossplatform": true,
+    "retain_raw_negative_outcomes": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "controller_change": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "paid_API": false
+  }
+}

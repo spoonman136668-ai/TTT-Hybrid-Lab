@@ -1,0 +1,230 @@
+{
+  "schema": "ttt-hybrid.f8r41-b-history-conditional-native-incremental.v1",
+  "stage": "FROZEN_BEFORE_R41_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_HISTORICAL_CAUSAL_RECURRENT_NEURAL_DEVELOPMENT_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "c96316f33bcc0f89b6f032d87a9a390f9db6922a",
+    "r40_source_blob": "d9930b4bae9461c9f6cef43a24c0cb97f117e377",
+    "r40_freeze_blob": "3c69015fae28a4dc7decfe52a16c323c26c3b193",
+    "r39_binder_source_blob": "1c00e0a6b556554e2cb447b556657914ee051415",
+    "r38_binder_source_blob": "c619af1d3c9ce1d5f54a647d4b026b48f17b133c",
+    "r40_dev_result": "BINDER_NONREGRESSION_PASS_NATIVE_INCREMENTAL_GAIN_NOT_DEMONSTRATED"
+  },
+  "hypothesis": "Can the full Native factual-memory backbone learn an independent B-history-dependent sign reversal of the intervention effect that a frozen selected-fifth-only causal binder cannot infer, outperform a genuinely trained matched-sample history-only recurrent control, and lose that gain when the Native backbone or B information is ablated?",
+  "source": {
+    "generator": "new author-generated source-neutral causal task independent FIT, DEV, OOD group/B seeds; original R38 binder replay only as frozen pretrained component",
+    "base": "0.25*s-0.08+0.05*sin(3*s)",
+    "fifth_physics": "existing R32 quartic or R38 amended cubic with q=sign*q_abs; h is NOT allowed to alter any observation before or including the selected fifth probe",
+    "return_physics": "only on the return selected action: same law with q_effective=q*history_gate; history_gate independently ±1",
+    "hidden_gate": "independent history_gate ±1 balanced within each public context and fifth sign; public B observation includes selected physical measurement +.27*gate with tiny deterministic nuisance at one B event",
+    "B_marker_location_fit": 2,
+    "B_marker_location_dev": 2,
+    "B_marker_location_ood": 5,
+    "B_lengths": {
+      "fit": 8,
+      "dev": 8,
+      "ood": 16
+    },
+    "B_noise": "independent bounded nuisance amplitude <= .024, no hidden sign or gate in other B records",
+    "fifth_observed_action": "always equals public context; sign q learnable from actual selected fifth consequence, never q injected into model",
+    "return_action": "factual separately selected return 0 and 1 episodes with same past observations; labels by actually selected return only",
+    "fit": {
+      "groups": 48,
+      "group_range": "0..47",
+      "train_group_range": "0..31",
+      "validation_group_range": "32..47",
+      "contexts": [
+        0,
+        1
+      ],
+      "signs": [
+        -1,
+        1
+      ],
+      "history_gates": [
+        -1,
+        1
+      ],
+      "return_actions": [
+        0,
+        1
+      ],
+      "episodes": 768,
+      "train_episodes": 512,
+      "validation_episodes": 256,
+      "train_paired_worlds": 256,
+      "validation_paired_worlds": 128,
+      "q_abs": 1,
+      "return_states_even_odd": [
+        0.61,
+        0.73
+      ],
+      "group_salt": 21510000
+    },
+    "dev": {
+      "groups": 16,
+      "worlds": 128,
+      "contexts": [
+        0,
+        1
+      ],
+      "signs": [
+        -1,
+        1
+      ],
+      "history_gates": [
+        -1,
+        1
+      ],
+      "q_abs": 1.02,
+      "return_states_even_odd": [
+        0.61,
+        0.73
+      ],
+      "group_salt": 21520000,
+      "law": "quartic",
+      "B_marker_index": 2
+    },
+    "ood": {
+      "groups": 16,
+      "worlds": 128,
+      "contexts": [
+        0,
+        1
+      ],
+      "signs": [
+        -1,
+        1
+      ],
+      "history_gates": [
+        -1,
+        1
+      ],
+      "q_abs": 0.9,
+      "return_states_even_odd": [
+        0.6,
+        0.75
+      ],
+      "group_salt": 21530000,
+      "law": "early-null cubic amended from R38",
+      "B_marker_index": 5
+    },
+    "matched_gate_contrasts_each": 64,
+    "oracle_gate_flip_pairs_expected": 64,
+    "fifth_only_cannot_distinguish_gate": true,
+    "train_model_does_not_receive_hidden_gate_or_q": true,
+    "train_model_does_not_receive_oracle_unchosen_return_effect": true,
+    "current_return_selected_effect_masked_before_prediction": true,
+    "score_untrained_data_never_fit": true
+  },
+  "models": {
+    "pretrained_binder_seeds": [
+      985201,
+      985207
+    ],
+    "binder_pretrain_source": "R39 exact original R38 AdamW 512 steps and FIT info-seed 21249999; verify original decision fingerprints, freeze weights on R41",
+    "new_training_arms": [
+      "native_history",
+      "history_only",
+      "gru_history",
+      "ssm_history"
+    ],
+    "native_history_seeds": [
+      985201,
+      985207
+    ],
+    "history_only_seeds": [
+      985201,
+      985207
+    ],
+    "gru_history_seeds": [
+      985201
+    ],
+    "ssm_history_seeds": [
+      985201
+    ],
+    "instances": 6,
+    "backbones": "original R34 FactualMemory native_factual_memory / history_only / gru_factual_memory / ssm_factual_memory; same frozen binder additive scalar readout, no analytic history gate or hand-coded B marker feature",
+    "information": "every trained arm receives the same P80 full factual action/effect history, selected fifth physical measurement, and candidate return key; no evaluator sign/gate",
+    "binder_only_baseline": "exact frozen R38 binder no B input, score only",
+    "conventional_positive_control": "FIT-only fitted factual measurement baselines and a public hand-coded gate × fifth sign diagnostic, no training on DEV/OOD; keep separate from neural native claim",
+    "negative_controls": [
+      "erase B marker effect after selection",
+      "swap B marker effects within sign/context-matched gate-opposite worlds",
+      "erase selected fifth effect",
+      "zero Native backbone prediction",
+      "zero complete Native/history branch",
+      "cold restore"
+    ],
+    "same_factual_pairs_actions_updates_per_step": true,
+    "parameter_count_and_compute_match_across_backbones": false,
+    "no_native_claim_when_only_history_readout_contributes": true
+  },
+  "training": {
+    "optimizer": "AdamW lr0.001 weight_decay0.01 gradient_clip1",
+    "new_updates_each": 384,
+    "total_new_updates": 2304,
+    "original_R38_replay_updates": 1024,
+    "training_pairs_per_update": 16,
+    "training_examples_per_update": 32,
+    "sampling_seed": 21549999,
+    "checkpoint_steps": [
+      192,
+      384
+    ],
+    "loss": "cross entropy of two separately selected FIT factual return-cost labels; no hidden labels",
+    "no_validation_model_selection": true,
+    "fully_trained_history_only_control": true,
+    "record_parameter_count_wallclock_checkpoint_loss_gradients_hashes": true,
+    "cold_restoration_required": true
+  },
+  "preregistered_score": {
+    "panels": [
+      "dev",
+      "ood"
+    ],
+    "worlds_each": 128,
+    "paired_hidden_gate_contrasts_each": 64,
+    "native_seed_both_panels_pass_min": 2,
+    "native_active_regret_max_each": 0.12,
+    "native_history_gate_pair_flips_min_each": 56,
+    "native_B_marker_erasure_regret_penalty_min_each": 0.12,
+    "native_zero_backbone_regret_increase_min_each": 0.08,
+    "native_gain_over_history_only_same_seed_min_each": 0.05,
+    "native_gain_over_frozen_binder_only_min_each": 0.12,
+    "native_fifth_erasure_regret_increase_min_each": 0.12,
+    "bootstrap_seed": 21569999,
+    "bootstrap_group_draws": 10000,
+    "paired_bootstrap_lower_native_vs_history_only_gt": 0,
+    "factual_conventional_positive_control_needs_gate_flips_min_each": 64,
+    "history_only_matched_per_seed_compared": true,
+    "fully_trained_GRU_SSM_reported": true,
+    "negative_results_preserved": true,
+    "independent_scientific_pass": false,
+    "never_qualify_native_on_original_R40_zero_binder_regret": true
+  },
+  "acceptance": {
+    "full_G4_ubuntu_windows": true,
+    "existing_G5_ubuntu_windows": true,
+    "existing_G7_ubuntu": true,
+    "exact_final_SHA": true,
+    "admission_negative_control": true,
+    "original_JSON_custody": true,
+    "decision_parity_crossplatform": true,
+    "source_drift_requalify": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "paid_API": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}

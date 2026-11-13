@@ -1,0 +1,87 @@
+{
+  "schema": "ttt-hybrid.f8r14-retrospective-residual-memory-qualification.v1",
+  "stage": "FROZEN_BEFORE_F8R14_RETROSPECTIVE_NUMERICAL_RESULT",
+  "classification": "ALREADY_CONSUMED_F7_FIT_RETROSPECTIVE_DEV_ONLY",
+  "scope": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "parent_sha": "208931e399020f7176e3c09d1552ccfe2a35b8ff",
+    "tree_sha": "39d5761acb84ba23a070aeaec5e0bd68aa000132",
+    "f8r2_source_code_blob": "7b22ceac71709e9b06512a405265d7f81545346d",
+    "f8r2_previous_result_blob": "e3629fcd476d1076c33f71765e3bda2a4e6bb300",
+    "original_F7_firstuse_run": "43195349254",
+    "original_F7_archive_sha256": "5480c0a8d2e518f9c0c9e3e011e3dfa9d3019fb720d10641c02bb36b5023f0ef",
+    "original_capture_sha256": "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4",
+    "original_upstream": "CausalAILab/Causal-Gymnasium@c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "original_F7_128_worlds_96_steps_per_world": true
+  },
+  "question": "Does adding only the immediately previous observed physical residual causally improve next-factual-effect prediction versus F8-R2's 28-coefficient fully observed linear7 baseline on the same already-consumed F7 worlds, or is F7 effectively Markov for this limited comparison?",
+  "data": {
+    "source": "previously consumed F7 factual 128 x 96 no source replay",
+    "predictable_events_per_world": 95,
+    "cohort": "80 FIT, 16 FIT-selector, 32 old FIT-holdout (already used, NOT fresh generalization)",
+    "x": "P80 normalized 7D state/action key for factual events 2..96",
+    "y": "P80 4D tanh normalized physical deltas for exactly the corresponding factual effects",
+    "crossworld_state_reset": true,
+    "no_hidden_wind_access": true
+  },
+  "fitting": {
+    "baseline": "same F8-R2 float64 normal equation ridge selection on fit80, select lambda on old16 selector; refit linear7 on first96, no use of last32 during fitting",
+    "ridge_lambdas": [
+      0,
+      1e-10,
+      1e-8,
+      0.000001,
+      0.0001,
+      0.01,
+      1
+    ],
+    "memory": "augment frozen 28-parameter linear7 predictor with 4x4 signed first-order last-factual-residual correction; no memory at first included event in world; residual from time t-1 strictly after actual chosen action; never y[t] at t",
+    "memory_training": "fit delta correction on 80 fit worlds using baseline fit80 residual at t>=1; choose ridge lambda using 16 fit-selector worlds, with their past factual residuals available; refit both baseline linear and memory correction on first96; evaluate only last32 existing old holdout",
+    "memory_params": 16,
+    "baseline_params": 28,
+    "combined_params": 44,
+    "objective": "mean square error of 4 normalized factual delta channels per world with exactly 95 events",
+    "negative": "shift prior residual by +7 across *within-world* history; preserve marginal values but destroy immediately preceding action-residual alignment; negative uses learned correction weights unmodified",
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 1825990027,
+      "clusters": 32,
+      "level": 0.025,
+      "world_cluster_not_event": true
+    },
+    "positive_criterion": {
+      "relative_improvement_mean_MSE_at_least": 0.1,
+      "paired_world_bootstrap_lower_2p5_gain_positive": true,
+      "correctly_aligned_lag_better_than_shift7_negative": true
+    },
+    "numeric_guard": "all finite, shape and source receipt/episode identity locked by existing F8-R2 read_spent"
+  },
+  "provenance": {
+    "original_source_firstuse_consumed": true,
+    "original_source_do_allowed": false,
+    "new_source_firstuse": false,
+    "external_source_replay": false,
+    "model_training_type": "authorized source-neutral closed-form retrospective linear fit only",
+    "original_neural_weights_not_loaded": true,
+    "not_sufficient_to_prove_generalization_or_action_policy_gain": true,
+    "not_a_prospectively_independent_test": true
+  },
+  "qualification": {
+    "engineering": "full original G4 on exact final SHA on Windows/Ubuntu, G5 Windows/Ubuntu, G7 Ubuntu, negative controls",
+    "scientific": "RETROSPECTIVE_DIAGNOSTIC_ONLY_NO_INDEPENDENT_SCIENTIFIC_PASS",
+    "positive_and_negative_alike_retained": true
+  },
+  "authority": {
+    "new_CartPoleWind_source_actions": false,
+    "source_import": false,
+    "owner_firstuse": false,
+    "runner_dispatch": false,
+    "workflow_creation": false,
+    "scheduler": false,
+    "merge": false,
+    "promotion": false,
+    "original_scientific_pass": false,
+    "deployment": false
+  }
+}

@@ -1,0 +1,114 @@
+{
+  "schema": "ttt-hybrid.f8r2-retrospective-f7-factual-linear-dynamics.v1",
+  "stage": "FROZEN_BEFORE_R2_LINEAR_FIT_OR_HELDOUT_RESCORING",
+  "classification": "RETROSPECTIVE_DEVELOPMENT_ON_PREVIOUSLY_CONSUMED_F7_FIT_ONLY_NOT_INDEPENDENT",
+  "parent": {
+    "existing_F8_PR": 236,
+    "head_sha": "580c19e031924ff3b904801a42fc057fd9184473",
+    "tree_sha": "aa2763561192489491c926a604e03c2c49ff37b5",
+    "upstream_F7_PR": 234,
+    "upstream_sha": "21c8df5b00e7b83a10b37f9b9ca3b3b9de362b5e"
+  },
+  "source": {
+    "run_id": 43195349254,
+    "artifact_id": 13933156808,
+    "zip_sha256": "5480c0a8d2e518f9c0c9e3e011e3dfa9d3019fb720d10641c02bb36b5023f0ef",
+    "capture_sha256": "7df8e2a2dc276cb90fbcac91619083dec7911453d5af10d2ccbdcfd45e5007d4",
+    "original_F7_training_recovery_run": 43198869594,
+    "training_receipt_artifact_id": 13933684690,
+    "trained_archive_sha256": "9ef1eb672f965a88bb6098e1fbbc44490d42c8440a69abe2a840a19a1d160d38",
+    "original_worlds": 128,
+    "original_actions": 12288,
+    "world_steps": 96,
+    "all_reward_one": true,
+    "all_survived_to_time_limit": true,
+    "consumed_cohorts": true,
+    "new_external_actions": 0
+  },
+  "split": {
+    "fit_train_worlds": "indices 0..79 (80 worlds)",
+    "fit_select_worlds": "indices 80..95 (16 worlds)",
+    "original_F7_spent_holdout": "indices 96..127 (32 worlds); previously used by F7; not independent",
+    "holdout_once_after_ALL_ridge_lambda_selection": true
+  },
+  "encoding": {
+    "original_P80_adapter_blob": "24eb0e050e90466bd42e3626e419fbac08c94c72",
+    "source": "actual state_before4 and executed_action0or1, never state_after or reward in features",
+    "base_key": "[1, tanh(pre_i/scale_i), one-hot action0/1] / sqrt(sum squares); scales=[2.4,3.0,.2095,3.5]; first seven of original P80 16D key",
+    "targets": "first 4 P80 tanh((state_after_i-state_before_i)/scale_i) normalized physical deltas; no reward and no padding",
+    "event_mask": "event_ids 2..96 inclusive per world; no future effect in key; 95 scored steps",
+    "fixed_action": "not an interactive policy, no true counterfactual or test-time action"
+  },
+  "arms": {
+    "linear7": "all 7 base features -> 4 delta targets, 28 scalar weights",
+    "state5": "first 5 base features (bias+state) -> 4, 20 weights",
+    "action3": "[feature0,feature5,feature6] ->4, 12 weights",
+    "quadratic35": "7 linear + all 28 upper triangular pairwise products i<=j; 35 -> 4, 140 weights",
+    "shuffled_action": "fixed seed 1823999 shuffles action labels in original FIT train ONLY; uses original correct pre-state and observed target; same training/selection/test split; compares false action-credit"
+  },
+  "training": {
+    "solver": "weighted ridge normal equations in float64, no gradient training",
+    "ridge_grid": [
+      0,
+      1e-10,
+      1e-8,
+      0.000001,
+      0.0001,
+      0.01,
+      1
+    ],
+    "selection": "minimum 16-world original-FITdev MSE; tie smallest lambda; fit on all first 96 worlds after selection; no heldout selection",
+    "linear_pred": "X@W, no output clamp/tanh; same supervised targets",
+    "regularization": "lambda * I including constant; weights for each training action record 1/events_in_world",
+    "numerics": "float64 least squares; fail on nonfinite or rank/conditioning unsupported"
+  },
+  "controls": {
+    "zero": "predict four zeros",
+    "prior_F7_SSM_original_3_seed_MSE": [
+      0.000003533895,
+      0.0000049913427,
+      0.0000033410481
+    ],
+    "strongest_prior_SSM_mse": 0.0000033410481,
+    "prior_native_original_mean_mse": 0.0000083490254,
+    "prior_bypass_mean_mse": 0.0000061461474
+  },
+  "preregistered_metrics": {
+    "primary": "best selected quadratic35 and linear7 each compared to original strongest three-seed trained F7 SSM on previously consumed FIT holdout; baseline_win if either <=0.9x SSM",
+    "secondary": "linear7 vs state5 prediction MSE; >=10% improvement indicates action label predictive under observed policy, not unobserved causal effect",
+    "negative": "shuffled action FIT baseline should underperform correct action key; equality or no difference means observational action credit not established",
+    "resource": "diagnostic fit + evaluation in <=60s CPU; report full RSS / wall and parameter counts; not matched model training cost",
+    "acceptance": "Even if baseline_win, only retrospective DEV observation; SCIENTIFIC_PASS always false."
+  },
+  "negative_controls": [
+    "original ZIP and source capture SHA256 admission before evaluation",
+    "original source IDs, event receipts, event order, nonfinite and 128x96 count, terminal status and source pins",
+    "strict train/selector/heldout world disjointness",
+    "not using state_after/reward/future outcome as model input",
+    "action-shuffle control does NOT alter physical outcome label",
+    "no state-changing simulator calls; no owner runner or workflow edits",
+    "all fitted weights closed-form solely on already consumed FIT train",
+    "if baseline wins, do not infer independent transfer; compare original 3-seed training cost caveats"
+  ],
+  "authority": {
+    "new_source_first_use": false,
+    "original_F7_owner_replay": false,
+    "unseen_F8_CAL_OOD": false,
+    "F8_native_depth_training": false,
+    "only_spent_F7_source_readonly": true,
+    "closed_form_baseline_on_spent_source": true,
+    "new_runner": false,
+    "workflow_modified": false,
+    "scheduler": false,
+    "paid_api": false,
+    "merge": false,
+    "FORGE_change": false,
+    "controller_change": false,
+    "promotion": false
+  },
+  "qualification": {
+    "engineering": "exact final SHA full native G4 Win/Ubuntu, G5 both, G7 Ubuntu; no new source workflow",
+    "science": "RETROSPECTIVE_ONLY_NOT_INDEPENDENT",
+    "deployment": "NONE"
+  }
+}

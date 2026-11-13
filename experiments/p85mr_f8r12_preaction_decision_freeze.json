@@ -1,0 +1,78 @@
+{
+  "schema": "ttt-hybrid.f8r12-preaction-control-decision-dev.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_F8_NEW_EFFECTS",
+  "classification": "FABRICATED_DEV_ONLY_NOT_ORIGINAL_OWNER_EVIDENCE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "parent_head_sha": "df2dcdd2bb00c9d8365fd947134ddca2fc0248cf",
+    "parent_tree_sha": "8865b1a3335e796ec53c5847d61abab74e51aa8f",
+    "r11_trace_evaluator_blob": "84aff1fec69bbd068b02c1e89ed3c891256163ce",
+    "r11_freeze_blob": "3aad48e4562395d6ddee21e8b054465fc38a3221",
+    "r10_evaluator_blob": "2f6be7a5d75f8ae5ddbf7e340a342c6d413b2095",
+    "r5_owner_proposal_blob": "50cf2ff33f62d6ea6a25a7c789921838826d0094"
+  },
+  "question": "Does a model-controlled factual action match its own two recorded pre-action predictions under the frozen one-step planner, or could arbitrary claimed actions appear as model intelligence?",
+  "decision": {
+    "policy_type": "trained model: one preaction prediction for action0 and one for action1; scripted fixed control: no model predictions",
+    "trace_event_extension": "exactly one extra event field 'pre_action_predictions', list of two exact dictionaries for trained policies, or empty list for fixed scripted policy",
+    "prediction_keys": [
+      "hypothetical_action",
+      "query_state_before",
+      "predicted_state_after"
+    ],
+    "action_order": [
+      0,
+      1
+    ],
+    "query_state": "must be exact finite 4-vector identical to event.state_before (pre-action input), no real future physical state can be used as query_state_before",
+    "predicted_after": "finite 4-vector hypothetical only, never an observed effect",
+    "cost_formula": "abs(predicted_after[2])/0.2095 + 0.1*abs(predicted_after[3])/3.5 (one-step, lower better)",
+    "chosen_action": "deterministic argmin(cost0,cost1); exact equality breaks toward 0 (no post-hoc epsilon)",
+    "recorded_action": "event.intent_selected_action and event.selected_action must equal computed argmin; original R11 additionally verifies continuity, termination, penalty, factual action and query-count",
+    "scripted_control": "no predictions required; original R11 verifies no model-query entries; scripted chosen action cannot be inferred from this model planner",
+    "owner_evidence_limit": "predictions are self-reported synthetic pre-action-looking arrays; no signed checkpoint inference, verified query timestamp or genuine model identity established",
+    "historical": "source is original F8-R11 additive synthetic-only gate; no original F7 replay",
+    "whole_panel": "same 22 policy instances×16 paired worlds = 352 source-neutral sessions, 16 independent world clusters; delegate objective to untouched R11/R10",
+    "denials": [
+      "action not minimal predicted physical cost",
+      "wrong tie-break action",
+      "reversed or duplicate hypothetical action order",
+      "prediction not based on current state before action",
+      "nonfinite imaginary outcome",
+      "extra prediction containing source actual effect or receipt fields",
+      "mismatched R11 declared hypothetical actions",
+      "training seed claims cannot make actual owner receipts admissible",
+      "model selected action cannot be inferred from just recorded executed action"
+    ]
+  },
+  "scoring": {
+    "no_change_to_frozen_R11_post_state_96_step_loss": true,
+    "no_change_to_early_termination_penalty_2": true,
+    "no_change_to_R10_10k_world_cluster_bootstrap": true
+  },
+  "tests": [
+    "positive matched fabricated model choices and fixed scripted baseline",
+    "wrong chosen action despite truthful predicted ordering denied",
+    "tie picks 0 and wrong tie action denied",
+    "query on state_after or altered state fails",
+    "forged actual owner receipt denied by original R11",
+    "all 352 fabricated traces pass R12-to-R11-to-R10 when choices consistent",
+    "wrong prediction count/order/key/booleans/NaN fail",
+    "unmatched model predictions in one trace fail whole panel",
+    "no source import/reset/do, new workflow, original first-use or model training"
+  ],
+  "authority": {
+    "new_source_effects": false,
+    "owner_firstuse": false,
+    "model_runner": false,
+    "model_training": false,
+    "owner_workflow": false,
+    "scheduler": false,
+    "protected_CAL_OOD": false,
+    "merge": false,
+    "promotion": false,
+    "science_pass": false,
+    "deployment": false
+  }
+}

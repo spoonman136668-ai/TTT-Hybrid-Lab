@@ -1,0 +1,53 @@
+{
+  "schema": "ttt-hybrid.f8r3.counterpolicy-identifiability-dev.v1",
+  "classification": "SOURCE_NEUTRAL_LOGGED_POLICY_NONIDENTIFIABILITY_NEGATIVE_CONTROL",
+  "original_f8_pr": 236,
+  "predecessor_head": "311a0db437a5e003aedac410b4e211d575db0056",
+  "evidence": {
+    "original_f7_genuine_source_run": 43195349254,
+    "original_f7_actions_consumed": 12288,
+    "retrospective_R2_linear_MSE": 0.0000027510204527871957,
+    "retrospective_R2_strongest_SSM_MSE": 0.0000033410481,
+    "retrospective_benefit_pct": 17.659956682838654,
+    "old_F7_holdout_consumed": true,
+    "source_interventions_new": 0
+  },
+  "preset": {
+    "n_states": 101,
+    "states": "exact grid -1..1 inclusive in increments 0.02",
+    "behavior_policy": "choose 1 iff s>=0 else 0",
+    "common_logged_dynamics": "0.5*s",
+    "two_indistinguishable_structural_worlds": "y=g(s)+sign*0.3*(a-behavior(s)), sign in {+1,-1}",
+    "hidden_counterpolicy": "a=1-behavior(s)",
+    "intended_equal_observational_error": 0,
+    "target_counterpolicy_gap": 0.6,
+    "minimum_unavoidable_mse_per_counterpolicy_state": 0.09,
+    "planner_example": {
+      "state": 0.2,
+      "target_outcome": -0.2,
+      "world_plus_optimal_action": 0,
+      "world_minus_optimal_action": 1
+    },
+    "comparison": "same logged observations, two worlds, one learned predictor, shared deterministic action-selection rule",
+    "synthetic_analytical_world_only_no_empirical_measurement": true
+  },
+  "stop_conditions": [
+    "any non-identical logged outcomes",
+    "any unintentionally shared counterpolicy outcomes",
+    "counterpolicy minimax lower bound not met",
+    "planner produces identical optimal action at frozen probe",
+    "any original source import or side effect",
+    "any change to F7 or F8 earlier result/threshold"
+  ],
+  "scope": {
+    "synthetic_mathematical_construction_only": true,
+    "no_original_simulator_import_reset_step_do": true,
+    "no_new_source_firstuse": true,
+    "no_F7_data_reevaluation": true,
+    "no_original_models_training": true,
+    "no_owner_runner": true,
+    "no_scheduled_task_workflow_or_paid_API": true,
+    "no_independent_scientific_PASS": true,
+    "no_merge_authority": true
+  }
+}

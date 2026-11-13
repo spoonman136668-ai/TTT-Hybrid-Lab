@@ -1,0 +1,77 @@
+{
+  "schema": "ttt-hybrid.f8r11-factual-trace-scoring-dev.v1",
+  "stage": "FROZEN_BEFORE_R11_IMPLEMENTATION_TESTS_OR_ORIGINAL_SOURCE_ACCESS",
+  "classification": "FABRICATED_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "head_sha": "a09e5ab87d1b9768fd6c60fbb8bddedd11791f1d",
+    "tree_sha": "6f51cac880d9508dee9f63c98e0367b00591a3c6",
+    "r10_evaluator_blob": "2f6be7a5d75f8ae5ddbf7e340a342c6d413b2095",
+    "r10_protocol_blob": "b473cc9021f7cd8662ef62edc4609e405e800bfd",
+    "r5_owner_proposal_blob": "50cf2ff33f62d6ea6a25a7c789921838826d0094",
+    "r6_global_source_budget_blob": "59475472a4c316fa04a3510e4138a872abc88a91"
+  },
+  "question": "Prevent self-reported precomputed stability means, early-survival penalty omissions, duplicate steps, and wrong selected-action credit from silently passing F8 R10 fabricated scientific gate.",
+  "metric": {
+    "original_R5_metric": "mean over 96 horizon of abs(pole_angle)/0.2095 + 0.1*abs(pole_angular_velocity)/3.5; missing step after early termination assigned penalty2.0",
+    "time_index": "score the observed post-selected-action physical state_after on each actually executed step; a proposed prospective interpretation requiring separate owner science qualification, not a claim R5 empirically specifies state selection",
+    "state_order": [
+      "cart_position",
+      "cart_velocity",
+      "pole_angle",
+      "pole_angular_velocity"
+    ],
+    "angle_index": 2,
+    "angular_velocity_index": 3,
+    "angle_scale": 0.2095,
+    "angular_velocity_scale": 3.5,
+    "angular_velocity_coefficient": 0.1,
+    "horizon_steps": 96,
+    "missing_step_penalty": 2,
+    "mean_cost": "(sum over t=1..observed_steps of abs(state_after[t][2])/0.2095 + .1*abs(state_after[t][3])/3.5 + 2*(96-observed_steps)) /96",
+    "episode_term": "first 1..95 terminal requires terminated=true and truncated=false on last observed effect; event96 truncated=true; simultaneously terminated=true and truncated=true only valid at event96; no following effects",
+    "state_continuity_abs": 1e-9,
+    "real_validity": "exact int/float finite (exclude bool) for every physical state element and reward; don't infer original source authority from submitted traces",
+    "effects": "one current chosen action (exact int 0 or1) and factual post-state per step; current target unseen at action-selection time, no unselected action after-state",
+    "hypothetical_action_queries": "for trained policy instances require exactly ordered [0,1] before each selected action; for fixed scripted control [] only; never count predictions as physical observations",
+    "admission": "all 22 registered arm+seed policy instances ×16 paired worlds, no extra/missing worlds, 352 sessions max, 33792 action cap, 67584 query cap; re-use exact R10 admission and forbid F8 owner receipts",
+    "trial_metric_binding": "derive mean_stability_cost and selected_actions / survival_steps from observed synthetic steps, never accept caller-supplied aggregated cost",
+    "zero_real_effects": true
+  },
+  "negatives": [
+    "fabricated incorrectly low reported summary cannot be supplied",
+    "early terminal n<96 without penalty cannot be passed",
+    "invalid step96 truncation and simultaneous step<96 trunc+term denied",
+    "step gap, duplicate, out-of-order, effect after terminal denied",
+    "wrong action type/negative action denied",
+    "mismatched factual state continuity denied",
+    "non-finite physics values denied",
+    "early missing selected effect claimed as completed denied",
+    "three or duplicate hypothetical action queries denied",
+    "scoring world0 as separate new world for other model seed denied",
+    "real source receipts explicitly rejected",
+    "hypothetical downstream R10 bootstrap 16-world logic re-used only; never SCIENTIFIC_PASS"
+  ],
+  "engineering": {
+    "exact_sha_full_G4_Windows_Ubuntu": true,
+    "G5_Windows_Ubuntu": true,
+    "G7_Ubuntu": true,
+    "do_not_replay_existing_CI": true
+  },
+  "authority": {
+    "external_effects": false,
+    "owner_first_use": false,
+    "source_reset_or_do": false,
+    "train_models": false,
+    "first_use_CAL_or_OOD": false,
+    "runner_action": false,
+    "workflow_addition": false,
+    "scheduler": false,
+    "merge": false,
+    "promotion": false,
+    "FORGE_modification": false,
+    "scientific_pass": false,
+    "deployment": false
+  }
+}

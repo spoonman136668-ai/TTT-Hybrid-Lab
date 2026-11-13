@@ -1,0 +1,169 @@
+{
+  "schema": "ttt-hybrid.f8r22-matched-objective-recurrent.v1",
+  "status": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_AUTHOR_GENERATED_DEVELOPMENT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "sha": "dbed2b1bca5a07d74634929b8ec1d84efc21da77",
+    "tree_sha": "34cb83fb79852c0c24f68a32b570e6a649f7a015",
+    "r20_source_git_blob": "78700dabd9b4301318148b4536e9df21c64d2617",
+    "r20_freeze_git_blob": "8a181c6fd71c9dc6d4c4d640396d19920eb74175",
+    "r19_source_git_blob": "5f4418436f592672d5acf1e1444e15e561a77755",
+    "baseline_source_git_blob": "evidence_read_at_fixed_SHA_before_implementation",
+    "r21_repro_trace_code_sha": "6a6f801e83798c21e625325eee2da3f817e326fa"
+  },
+  "hypothesis": "Under identical factual FIT histories and same return-focused training objective, does the native Hybrid yield a reliable improvement in model-selected causal A-action after independently varying and longer B observations than trained GRU256, SSM256 and MLP7?",
+  "science_boundary": "Development only; does not use original CausalGym first-use; fixed budget not convergence proof, unequal architecture sizes, and synthetic law not independent source science",
+  "worlds": {
+    "source": "original R20's author-generated R3 recurrence y(s,a,z)=.5*s+.3*z*(a-int(s>=0)); with new seed ranges only",
+    "seed_bases": {
+      "fit": 19710000,
+      "dev": 19720000,
+      "id": 19730000,
+      "ood": 19740000
+    },
+    "matched_B_groups": {
+      "fit": 32,
+      "dev": 8,
+      "id": 12,
+      "ood": 12
+    },
+    "B_steps": {
+      "fit": 8,
+      "dev": 8,
+      "id": 8,
+      "ood": 16
+    },
+    "A_signs": [
+      -1,
+      1
+    ],
+    "B_signs": [
+      -1,
+      1
+    ],
+    "FIT_actual_return_actions": [
+      0,
+      1
+    ],
+    "A_probe_state": 0.2,
+    "A_probe_actual_selected_action": 0,
+    "B_anchor_state": 0,
+    "return_A_anchor_state": 0,
+    "B_action_rule": "behavior(s) XOR int((seed+5*t+(zB==+1))%3==0)",
+    "complete_crossed_fit": true,
+    "FIT_episodes": 256,
+    "FIT_selected_effects": 2560,
+    "TEST_ID_episodes": 48,
+    "TEST_OOD_episodes": 48,
+    "independent_crossed_goal": [
+      -0.2,
+      0.2
+    ],
+    "observable_to_models": "only prior factual selected action/observed effects; no hidden signs/unchosen return effects, masked current effect",
+    "negative_probes": "erase early factual A effect without altering B or current state; late-three-B-only FIT ridge",
+    "original_external_effects": 0
+  },
+  "models": {
+    "arms": [
+      "native_focus20",
+      "native_uniform",
+      "native_returnonly",
+      "gru_focus20",
+      "ssm_focus20",
+      "mlp_focus20"
+    ],
+    "underlying": [
+      "bypass_surrogate",
+      "bypass_surrogate",
+      "bypass_surrogate",
+      "gru256",
+      "ssm256",
+      "mlp7"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "model_count": 18,
+    "optimizer": "AdamW",
+    "learning_rates": {
+      "native": 0.002,
+      "conventional": 0.001
+    },
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "updates_per_model": 384,
+    "total_optimizer_updates": 6912,
+    "batch_worlds": 8,
+    "sampler_seed": 985299,
+    "shared_minibatch_indices": true,
+    "evaluation_checkpoints": [
+      96,
+      192,
+      288,
+      384
+    ],
+    "fixed_scored_checkpoint": 384,
+    "objectives": {
+      "focused": "original masked physical multi-component objective PLUS 20x factual selected return delta MSE channels0:4",
+      "uniform": "original masked physical multi-component objective",
+      "returnonly": "factual selected return physical delta MSE channels0:4 only"
+    },
+    "same_focused_objective_native_GRU_SSM_MLP": true,
+    "no_train_score_leak": true,
+    "no_checkpoint_selection_by_test": true,
+    "unequal_parameter_compute_record": true,
+    "conventional_convergence_qualified": false
+  },
+  "controls": {
+    "fixed_action0": true,
+    "fixed_action1": true,
+    "goal_only": true,
+    "analytical_earlyA_memory_oracle": true,
+    "FIT_only_explicit_earlyA_ridge": true,
+    "FIT_only_late3_B_ridge": true,
+    "no_A_probe_ablation": true,
+    "cold_restore_exact_action_parity": true
+  },
+  "score": {
+    "primary": "lower mean 1-step model-selected return A squared-goal regret on 12 matched B groups at ID8 AND new OOD16",
+    "historyfree_best_regret": 0.015,
+    "learned_earlyA_ridge_criterion_below": 0.001,
+    "candidate": "native_focus20",
+    "conventional_selection": "best DEV final 384-checkpoint mean regret among 9 GRU/SSM/MLP model seed instances (never TEST)",
+    "seed_gate": "at least 2 of 3 candidate native seeds achieve both ID8 and OOD16 mean regret<=0.0135 AND <=DEV-selected strongest conventional corresponding TEST regret minus0.001 AND 2.5% paired group bootstrap lower gain over min(best fixed,DEV selected conventional)>0 AND erased-A regret increases by >=0.005 AND  A-sign action contrasts>=24/48 on OOD",
+    "paired_bootstrap_world_groups": 12,
+    "bootstrap_resamples": 10000,
+    "bootstrap_seed": 19749999,
+    "require_2of3_on_both_Windows_and_Ubuntu_for_DEV_PASS": true,
+    "cross_platform_bitwise_weights_not_required_but_reported": true,
+    "no_postscore_tuning": true,
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "F7_source_replay": false,
+    "sealed_CAL_OOD": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "owner_dispatch": false,
+    "paid_API": false,
+    "original_GPU_firstuse": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "scientific_pass": false
+  },
+  "qualification": {
+    "G4_Ubuntu_Windows_exact_head": true,
+    "G5_Ubuntu_Windows_exact_head": true,
+    "G7_Ubuntu_exact_head": true,
+    "strict_negative_controls": true,
+    "no_duplicate_runner_workflows": true,
+    "retain_all_negative": true
+  }
+}

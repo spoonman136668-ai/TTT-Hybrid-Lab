@@ -1,0 +1,128 @@
+{
+  "schema": "ttt-hybrid.f8-native-depth-gradient-mechanism-freeze.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_ENGINEERING_AND_AUTHOR_SYNTHETIC_DEV_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_F7_pr": 234,
+    "exact_F7_sha": "21c8df5b00e7b83a10b37f9b9ca3b3b9de362b5e",
+    "original_F7_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "F7_FIT_firstuse_consumed_run": 43195349254,
+    "F7_FIT_training_success_run": 43198869594,
+    "F7_frozen_original_blob": "31c6107766389b73a228c36cb2bfa2e1a0de1f24",
+    "F7_original_native_candidate_blob": "d369a582a84c6a6393a248ffb7a580420ef8dc88",
+    "F7_fit_negative_verdict_comment": 6821226309,
+    "branch": "research/p85mr-f8-depth-activation-mechanism-20261112"
+  },
+  "hypothesis": "Original four-block HybridPilot's hard CausalDepthRouter drops all depth-router and FFN learning signals if no tokens cross p>=0.5; a hard-forward soft-backward dense gradient surrogate can restore both while preserving exact reference forward behavior before any learned updates. This is a mechanism/engineering hypothesis, not a claim of improved authentic-world learning.",
+  "study": {
+    "mode_order": [
+      "hard_original",
+      "surrogate_hard_forward",
+      "soft_dense",
+      "always_on"
+    ],
+    "model_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "action_identity_arms": [
+      "original_four_block_HybridPilot",
+      "original_four_block_with_16D_raw_action_key_bypass"
+    ],
+    "independent_original_trained_SSM256": "retain for future predeclared true source comparison, not run in this source-neutral gate",
+    "same_initial_weights_seed": true,
+    "identical_static_parameter_count_within_bypass_status": true,
+    "original_model_source_unchanged": true,
+    "identical_forward_to_reference_at_initial_weights_for_surrogate": true,
+    "surrogate_formula": "x + hard_mask*ffn(norm(x)) + (p*ffn(norm(x)) - stop_gradient(p*ffn(norm(x))))",
+    "surrogate_compute_note": "Dense FFN on inactive tokens adds compute; same parameter count is NOT same FLOPs or latency",
+    "soft_formula": "x + sigmoid(router(norm(x)))*ffn(norm(x))",
+    "always_formula": "x + ffn(norm(x))",
+    "fixed_threshold": 0.5,
+    "inactive_probe_router_bias": -0.25,
+    "inactive_probe_router_weights": 0,
+    "training_epoch_limit_this_gate": 0,
+    "source_neutral_batched_fixture_only": true,
+    "causal_current_action_is_public": true,
+    "only_past_executed_effect_in_factual_inputs": true
+  },
+  "prospective_mechanism_gates": {
+    "all_three_seeds": true,
+    "hard_depth_param_gradients_absent_when_all_tokens_off": true,
+    "surrogate_forward_reference_all_off_and_all_on_exact": true,
+    "surrogate_gradients_router_and_ffn_finite_nonzero_at_inactive_probe": true,
+    "soft_gradients_router_and_ffn_finite_nonzero_at_inactive_probe": true,
+    "always_on_ffn_gradient_finite_nonzero": true,
+    "original_and_variant_parameter_names_and_shapes_identical": true,
+    "original_and_variant_parameter_sha256_identical_before_training": true,
+    "confirmed_current_effect_and_future_effect_cannot_change_previous_predictions": true,
+    "exact_cold_restore_predictions": true,
+    "malformed_nan_and_unregistered_seed_mode_rejected": true,
+    "no_source_firstuse_gate_released": true
+  },
+  "future_F8_external_trial_PROPOSED_ONLY": {
+    "status": "NOT_AUTHORIZED_NOT_FROZEN_FOR_FIRSTUSE",
+    "candidate_original_source": "CausalAILab/Causal-Gymnasium@c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "F7_easy_case": {
+      "wind_std": 0.01,
+      "init_theta_std": 0,
+      "horizon": 96,
+      "observed_survived": 128,
+      "observed_worlds": 128,
+      "reward_saturated": true
+    },
+    "candidate_harder_settings_unverified": {
+      "wind_std": 0.03,
+      "init_theta_std": 0.06,
+      "max_episode_steps": 96
+    },
+    "proposal_separate_unseen_fit_base": 1823000000,
+    "proposal_separate_cal_base": 1823200000,
+    "never_use_F7_32_holdout_as_unseen": true,
+    "prospective_stop_if_candidate_worlds_non_discriminating": true,
+    "minimum_early_failures_before_final_source": "not set; requires prior independent study approval",
+    "strength_controls": [
+      "full trained SSM256",
+      "capacity/compute matched conventional SSM",
+      "original hard depth",
+      "surrogate",
+      "soft",
+      "always on",
+      "raw key bypass",
+      "joint depth+raw key"
+    ],
+    "primary_endpoint": "real action-conditional physical cost and survival with competent trained conventional control",
+    "secondary": "prequential four-delta MSE, whole process time/compute, cold retention and novel transfer",
+    "never_claim_counterfactual_of_unselected_action": true,
+    "firstuse_scoped_approval": false,
+    "CAL_OOD_approval": false,
+    "scientific_pass": false
+  },
+  "authority": {
+    "existing_F7_source_spent": true,
+    "existing_F7_recovery_spent": true,
+    "F8_owner_runner_dispatch": false,
+    "F8_real_simulator_effects": 0,
+    "F8_real_source_import": false,
+    "F8_authentic_source_training": false,
+    "F8_CAL_OOD_training": false,
+    "original_F7_checkpoint_untouched": true,
+    "no_new_workflow_or_scheduler": true,
+    "no_paid_API": true,
+    "no_controller_change": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_deployment": true,
+    "scientific_PASS": false
+  },
+  "qualification": {
+    "existing_original_G4_final_both_platforms": true,
+    "existing_original_G5_final_both_platforms": true,
+    "existing_original_G7_pinned": true,
+    "new_F8_exact_head_full_G4_both_required": true,
+    "new_F8_exact_head_G5_both_required": true,
+    "new_F8_exact_head_G7_required": true
+  },
+  "note": "Preserve F7 0/3 NO-GO and the unmerged F7 PR as frozen historical experiment; F8 is a distinct source-neutral research question. Never infer a causal survival gain from simulator-free gradient tests."
+}

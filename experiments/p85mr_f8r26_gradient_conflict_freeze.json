@@ -1,0 +1,185 @@
+{
+  "schema": "ttt-hybrid.f8r26-factual-gradient-conflict.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_AND_R26_NUMERICAL_RESULTS",
+  "classification": "AUTHOR_GENERATED_SOURCE_NEUTRAL_DEVELOPMENT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "head": "582483c38516aaeb88e737345be0ee2d4b52528d",
+    "tree": "e0e971fa0dd30ec50d7d14f54a86b455ed53225f",
+    "r25_code_blob": "ef488956741b339eb68c786432c48fefb6526165",
+    "r25_freeze_blob": "3821a5599f544e61a27ce3a3804142d4a030e6f5",
+    "r24_code_blob": "3fb48eab94ba333f4433bfc163bfabc5e1db9477"
+  },
+  "hypothesis": "If later B gradients conflict with gradients for retained factual multi-parameter A observations, projecting those B gradients away from antagonistic A directions will preserve genuinely learned A action choices while still improving novel B prediction.",
+  "world": {
+    "A_law": "R25 after(s,a)=.4*s+b[a]+k[a]*s; 4 actually observed action-specific A probes at s ±.2",
+    "B_law": "after=.29*tanh(1.2*s)+.15*b*(2*a-1)+.08*b*c*a; independent binary b,c",
+    "B_policy": "R3 public behavior(s) XOR int((split_seed+7*t)%3==0) no hidden sign in selected behavior",
+    "B_regime": "16 factual steps, public state reset at t8 and b sign reversed for t>=8; independent c unchanged",
+    "cohorts": {
+      "B_FIT": {
+        "seed_base": 20110000,
+        "groups": 16,
+        "bc_combinations": 4,
+        "episodes": 64,
+        "selected_effects": 1024
+      },
+      "B_HOLD": {
+        "seed_base": 20120000,
+        "groups": 8,
+        "bc_combinations": 4,
+        "episodes": 32,
+        "selected_effects": 512
+      },
+      "A_SCORE": {
+        "seed_base": 20130000,
+        "groups": 16,
+        "twins": 2,
+        "episodes": 32,
+        "factual_effects": 640
+      }
+    },
+    "A_score_parameters": {
+      "b0": [
+        -0.34,
+        -0.14,
+        0.06,
+        0.26
+      ],
+      "b1": [
+        0.34,
+        0.14,
+        -0.06,
+        -0.26
+      ],
+      "k0": [
+        -0.22,
+        0.22
+      ],
+      "k1": [
+        0.22,
+        -0.22
+      ]
+    },
+    "score_return_public_states": [
+      -0.15,
+      0.15
+    ],
+    "score_goals": [
+      -0.2,
+      0.2
+    ],
+    "A_twins": "swap entire action0/action1 mechanisms while keeping all 16 B actions and effects identical; early four observed A probes the only differentiator",
+    "A_score_actions_per_model_condition": 128,
+    "actual_score_return_effects_prechoice": 0,
+    "A_fit_replay": "original 256 completely factual R25 FIT sessions for *all* conditions; no new original scientific first-use",
+    "hidden_signs_latents_and_unchosen_consequences_learner_visible": false,
+    "original_external_firstuse": false,
+    "F7_spent_effect_replay": false
+  },
+  "training": {
+    "models": [
+      {
+        "arm": "native_focus20",
+        "seed": 985201
+      },
+      {
+        "arm": "native_focus20",
+        "seed": 985203
+      },
+      {
+        "arm": "native_focus20",
+        "seed": 985207
+      },
+      {
+        "arm": "gru_focus20",
+        "seed": 985201
+      },
+      {
+        "arm": "ssm_focus20",
+        "seed": 985201
+      }
+    ],
+    "trained_models": 5,
+    "pretrained_updates_each": 384,
+    "pretrained_updates_total": 1920,
+    "pretrain_existing_R25_factual_source": true,
+    "pretrain_same_R25_objective": true,
+    "pretrain_batch_seed": 985299,
+    "pretrain_batch_size": 8,
+    "conditions": [
+      "no_update",
+      "plain_B_update",
+      "orthogonal_B_update"
+    ],
+    "B_updates_each_adaptive_condition": 24,
+    "B_updates_total": 240,
+    "B_optimizer": "AdamW",
+    "B_lr": 0.0005,
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "B_batch_size": 8,
+    "A_replay_batch_size": 8,
+    "B_sampler_seed": 20119999,
+    "A_sampler_seed": 20118888,
+    "A_replay_gradient": "R25 full masked factual physical objective plus20x chosen factual return physical loss on originally observed FIT episodes",
+    "B_gradient": "R24 factual masked physical delta squared error on genuinely selected B action/effect only",
+    "compute_match": "Plain B and projection each compute BOTH B and A gradient every update on identical fixed batches; plain intentionally discards A gradient, orthogonal removes negative B dot A component; 24 optimizer updates each",
+    "projection": "if dot(gB,gA)<0, replace gB with gB-(dot(gB,gA)/||gA||^2)gA; denominator must be positive finite; no original gradients adjusted after scoring",
+    "A_loss_grad_has_no_hidden_score_labels": true,
+    "same_A_pretrained_weights_all_conditions": true,
+    "cold_reload_exact_score_actions": true,
+    "no_score_checkpoint_selection": true,
+    "conventional_independently_convergence_qualified": false
+  },
+  "controls": {
+    "no_update_same_checkpoint": true,
+    "plain_compute_matched_B_update": true,
+    "orthogonal_B_update": true,
+    "GRU_and_SSM_one_seed_each_same_method": true,
+    "unadapted_R25_four_probe_explicit_system_identification": true,
+    "fixed_action0_fixed_action1": true,
+    "probe_erasure_no_A": true,
+    "B_holdout_factual_physical_prediction_before_after": true,
+    "sampled_grad_conflicts_and_projection_counts": true,
+    "wallclock_training_and_forward_accounting": true
+  },
+  "evaluation": {
+    "primary": "first-return selected action squared-goal regret after B observation; lower better",
+    "score_clusters": 16,
+    "bootstrap_samples": 10000,
+    "bootstrap_seed": 20139999,
+    "native_seed_threshold": 2,
+    "frozen_pass_per_seed": "projected B-holdout MSE <=.95*no-update B-holdout MSE AND projected A mean regret<=.75*best fixed-action A regret AND projected A mean regret <= no-update A mean regret+.01 AND projected A mean regret <= plain A mean regret-.01 AND paired 16-cluster bootstrap 2.5% plain-minus-projected improvement > 0 AND projected gradient used at least once AND all cold-restored scores exactly match",
+    "report_both_A_retain_and_B_learning": true,
+    "report_relative_and_absolute_regret_all_5_models_all_3_conditions": true,
+    "report_explicit_four_probe_oracle_control_even_if_better": true,
+    "no_score_tuning": true,
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "original_F8_external_firstuse": false,
+    "original_CAL_OOD": false,
+    "F7_spent_effect_replay": false,
+    "owner_runner_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_API": false,
+    "GPU_science_firstuse": false,
+    "merge": false,
+    "model_promotion": false,
+    "deployment": false,
+    "scientific_pass": false
+  },
+  "qualification": {
+    "final_exact_SHA_G4_full_Ubuntu_Windows": true,
+    "final_G5_Ubuntu_Windows": true,
+    "final_G7_Ubuntu": true,
+    "source_admission_negative_controls": true,
+    "stop_on_source_or_protocol_drift": true,
+    "no_manual_duplicate_CI": true,
+    "retain_failure_outcomes": true
+  }
+}

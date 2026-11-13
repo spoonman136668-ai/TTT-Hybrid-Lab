@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.f8r31-factual-conditional-risk.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_FIT_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_FACTUAL_ONLY_CAUSAL_ESTIMATOR_DEV",
+  "parent": {
+    "pr": 236,
+    "head": "3c06a637df37f4d9bdb4192a2f4a4fb81fbd8f3f",
+    "r29b_source_blob": "56bfbc8749f4ad41881eea89a215bc6d3d386894",
+    "r30_source_blob": "0c12d49272fec4666e9b9b7e5bfd7b897a9eb08f",
+    "r30_freeze_blob": "c13f32fc0a0671808d1e5d1ab0ae1b05f43badb8"
+  },
+  "hypothesis": "A factual-only estimator explicitly conditioned on public action/context, actual selected fifth effect and estimated residual uncertainty will recover better return decisions than matched mean-only readout and the R30 ridge, while the same estimator with selected fifth observation erased loses the gain.",
+  "design": {
+    "training_source": "R29B independently generated synthetic FIT episodes only; one actually selected factual final return outcome per episode; no unselected return labels, no R29 DEV/OOD score feedback",
+    "fit_groups_total": 64,
+    "fit_groups_training": "group 0..47",
+    "fit_groups_heldout_validation": "group 48..63",
+    "learning_curve_train_groups": [
+      12,
+      24,
+      48
+    ],
+    "fit_episode_structure": "each group crosses context0/1, hidden sign +/- as generator-only, q magnitudes .75/1/1.15, selected fifth0/1, observed return0/1",
+    "observable_inputs": [
+      "P80 normalized 16D factual return action key",
+      "P80 normalized 16D selected fifth action key",
+      "P80 factual selected fifth physical effect (zero-mask if missing)"
+    ],
+    "features_order": [
+      "constant",
+      "public_return_state",
+      "selected_return_matches_public_context",
+      "probe_matches_context_and_measured_and_selected_return_matches_context",
+      "previous_feature_times_actual_fifth_delta"
+    ],
+    "state_decode": "P80 action-key normalization, ratio feature1/feature0 inverse tanh with pinned STATE_SCALES[0]=2.4; context ratio feature2/feature0 inverse tanh with STATE_SCALES[1]=3.0; action ids from feature5/6",
+    "effect_decode": "P80 observed-effect feature0 inverse tanh with scale 2.4; selected fifth actual effect is prior observed input; never apply oracle or unchosen future effect",
+    "fit_label": "selected factual return physical displacement (decoded from original physical_target), NOT hidden q or hindsight value",
+    "estimator": "fixed lambda=0.00001 closed-form float64 ridge, regularization all coefficients except intercept",
+    "uncertainty": "estimate residual squared error separately for safe return, informative matching probe+return, and uncertain matching return with no informative fifth effect, from factual selected FIT rows only",
+    "score": "preaction squared distance of predicted returned physical state to public goal, plus factual FIT residual variance if risk-aware; mean-only same coefficients with variance zero",
+    "controls": [
+      "same model with variance disabled",
+      "same model with selected fifth physical effect erased",
+      "R30 original factual-only 37-feature ridge",
+      "R29 known-law analytic calibration is upper bound only"
+    ],
+    "learning_budget": "no new neural training; 3 closed-form fit sizes and one FIT-only validation; no match-capacity/neural convergence claim",
+    "evaluation_panels": [
+      "dev",
+      "ood"
+    ],
+    "worlds_per_panel": 48,
+    "seed_group_count": 12,
+    "only_evaluator_can_compute_unselected_return_effect": true,
+    "cross_platform_decision_vector_parity_required": true,
+    "cold_restore_of_fit_weights_required": true,
+    "negative_source_admission_required": true
+  },
+  "precommitted_development_thresholds": {
+    "score_variant_train_groups": 48,
+    "mean_regret_risk_aware_max_both_panels": 0.05,
+    "risk_aware_gain_over_mean_only_min_both_panels": 0.05,
+    "risk_aware_gain_over_r30_ridge_min_both_panels": 0.1,
+    "fifth_erasure_penalty_min_both_panels": 0.1,
+    "paired_group_bootstrap_lower_gt": 0,
+    "bootstrap_seed": 20489999,
+    "bootstrap_draws": 10000,
+    "fit_normal_equation_gradient_max": 0.000001,
+    "coefficient_l2_diff_24_vs_48_max": 0.01,
+    "report_full_fit_validation_MSE_and_convergence": true,
+    "independent_scientific_pass": false,
+    "comparison_rules": {
+      "risk_aware_mean_regret_max": "active_information policy separately per panel",
+      "risk_aware_gain_over_mean_only_min": "mean of all four prospective policy mean-regrets per panel; frozen before any implementation or result",
+      "risk_aware_gain_over_r30_ridge_min": "active_information policy per panel",
+      "fifth_erasure_penalty_min": "active_information policy per panel",
+      "paired_group_bootstrap_lower": "R30 ridge active-information per-group regret minus risk-aware active-information per-group regret, 12-group paired resampling; 2.5th percentile"
+    }
+  },
+  "interpretation": {
+    "successful_baseline": "conditional factual prediction and calibrated risk can solve this synthetic information-value task; NOT neural Hybrid improvement, unseen-mechanism generalization or evidence of novel intelligence",
+    "failed_baseline": "information/representation or outcome-risk model insufficient even with explicit factual feature prior; preserve negative and diagnose",
+    "limits": "closed-form convergence is independent only for this fixed linear estimator; GRU/SSM/neural convergence and matched FLOPs still unqualified"
+  },
+  "authority": {
+    "external_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "owner_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  },
+  "qualification": {
+    "existing_G4_full_Windows_Ubuntu": true,
+    "existing_G5_native_Windows_Ubuntu": true,
+    "existing_G7_pinned_Mamba2_Ubuntu": true,
+    "source_admission_negative_controls": true,
+    "keep_draft_unmerged": true,
+    "require_original_artifact_cross_platform_score_comparison": true
+  }
+}

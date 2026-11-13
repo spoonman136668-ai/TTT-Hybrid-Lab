@@ -1,0 +1,40 @@
+{
+  "schema": "ttt-hybrid.f8r38-pretrain-cubic-null-early-amendment.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_ANY_R38_TRAINING_OR_RESULTS",
+  "parent": {
+    "R38_freeze_commit": "ab2df970aaabd1180a90e33dc6347fd6834b2a8c",
+    "R38_freeze_blob": "3ca539e10cdf81e287d003453deaaba9ac33555d"
+  },
+  "reason": "The initially frozen cubic shift s^3-0.15^3 does not vanish at the early factual state -0.15, revealing hidden mechanism sign before the fifth probe, invalidating the intended fifth-erasure transfer control. Fix the score-only law before source implementation/training.",
+  "original_score_law": "baseline(s)+2.7*q*(s^3-0.15^3) if selected action==context",
+  "score_only_novel_law": "baseline(s)+2.7*q*s*(s^2-0.15^2) if selected action==context",
+  "baseline": "0.25*s-0.08+0.05*sin(3*s)",
+  "proof": {
+    "at_early_minus_0p15_shift": 0,
+    "at_early_plus_0p15_shift": 0,
+    "fifth_state": 0.42,
+    "fifth_shift_per_unit_q": 0.1745226,
+    "score_return_states": [
+      0.61,
+      0.73
+    ],
+    "novel_positive_negative_sign_flip_pairs": 32,
+    "ideal_active_regret": 0,
+    "ideal_fixed_probe_regret": 0.1740891624047264,
+    "erased_safe_regret": 0.3481783248094528,
+    "min_abs_return_cost_margin": 0.6809015155238636
+  },
+  "unchanged": "All original freeze, study arms, budget, datasets, train labels, independent B, seed, score thresholds and DEV/OOD quartic physics remain unchanged. This amendment is prospective and source-bound, not post-outcome tuning.",
+  "source_must_require_amendment_blob": true,
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}

@@ -1,0 +1,138 @@
+{
+  "schema": "ttt-hybrid.f8r6-full-original-physical-source-budget.v1",
+  "status": "FROZEN_PROPOSAL_NOT_APPROVED_FOR_ANY_ORIGINAL_SOURCE_FIRSTUSE",
+  "predecessor": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "sha": "90570bd0f7fa13af3898001ad612ed13f255b64e",
+    "original_F7_sha": "21c8df5b00e7b83a10b37f9b9ca3b3b9de362b5e",
+    "original_F7_effects_consumed": 12288,
+    "original_F8_f8r5_owner_proposal_blob": "50cf2ff33f62d6ea6a25a7c789921838826d0094"
+  },
+  "question": "Set an auditable upper bound on every prospective original CartPoleWind reset and selected-action effect across calibration, FIT, selection and seven model arm plus scripted sealed-test evaluations.",
+  "original_source": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "cartpole_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+    "owner": "TTT-HYBRID-GPU-WIN",
+    "runtime": "p85mr-causalgym-cpu311-r3",
+    "max_steps_per_session": 96
+  },
+  "calibration": {
+    "profiles": 3,
+    "policies": 2,
+    "worlds_each": 8,
+    "seed_base": 1824000000,
+    "max_sessions": 48,
+    "max_selected_action_effects": 4608
+  },
+  "common_fit": {
+    "worlds": 64,
+    "seed_base": 1824100000,
+    "max_sessions": 64,
+    "max_selected_action_effects": 6144,
+    "source_policy": "predeclared factual scripted exploratory policy, never model-selected",
+    "same_once_only_captured_factual_actions_shared_by_models": true
+  },
+  "fit_selector": {
+    "worlds": 16,
+    "seed_base": 1824200000,
+    "max_sessions": 16,
+    "max_selected_action_effects": 1536,
+    "source_policy": "same frozen factual scripted exploratory policy; may select checkpoints, never sealed-test"
+  },
+  "test": {
+    "worlds": 16,
+    "seed_base": 1824300000,
+    "trained_arms": [
+      "original_hard_depth_HybridPilot",
+      "F8_surrogate_hard_forward_native",
+      "28_coefficient_linear7_ridge",
+      "140_coefficient_quadratic35_ridge",
+      "fully_trained_256_state_SSM",
+      "capacity_matched_conventional_SSM",
+      "trained_conventional_behavior_policy"
+    ],
+    "training_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "scripted_control": "frozen_handwritten_feedback_policy",
+    "trained_arm_instances": 21,
+    "scripted_control_instances": 1,
+    "total_policy_instances": 22,
+    "max_selected_action_effects_per_instance": 1536,
+    "max_sessions": 352,
+    "max_selected_action_effects": 33792,
+    "paired_world_seed_policy": "the same 16 initial world seeds deliberately repeated across all 22 evaluation policies in independent claimed sessions; NOT 352 independent worlds",
+    "trial_session_identity": "phase+policy_arm+training_seed_or_fixed+world_index+original_source_SHA+workflow_run_ID; unique exclusive fsynced",
+    "two_hypothetical_model_predictions_per_selected_action_MAX": 67584,
+    "max_actual_effects_per_test_world_per_arm": 96,
+    "no_adaptive_learning_or_hyperparameter_updates_after_sealed_test_starts": true,
+    "statistical_unit": "16 paired physical world-seed clusters, NOT 352 policy sessions or 3x16 synthetic independent draws",
+    "paired_world_bootstrap": {
+      "resamples": 10000,
+      "seed": 1824990000,
+      "cluster_by_world_index": true
+    },
+    "note": "16 paired worlds may be underpowered for a 10% gain; scientific acceptance requires preregistered power analysis and approved expansion, not posthoc tuning"
+  },
+  "global": {
+    "max_original_source_constructor_calls": 480,
+    "max_original_source_resets": 480,
+    "max_actual_selected_action_effects": 46080,
+    "max_reported_world_seed_groups": 144,
+    "each_actual_action_has_durable_intent_before_do": true,
+    "any_unknown_effect_nonreplayable": true,
+    "model_prediction_of_unchosen_action_is_NOT_factual_effect": true,
+    "no_sealed_test_effect_until_FIT_models_frozen_and_qualified": true,
+    "no_F7_original_effects_replayed": true
+  },
+  "phase_first_use": {
+    "calibration": {
+      "approved": false
+    },
+    "fit": {
+      "approved": false
+    },
+    "fit_selector": {
+      "approved": false
+    },
+    "sealed_model_selected_test": {
+      "approved": false
+    },
+    "independent_transfer_or_OOD": {
+      "approved": false
+    },
+    "owner_workflow_exists_for_F8": {
+      "approved": false
+    },
+    "original_owner_custody_acceptance": {
+      "approved": false
+    }
+  },
+  "unresolved_science_requirements": [
+    "source first-use per-phase owner approval requires explicit identity and immutable F8 original effect custody",
+    "calibration must meet frozen non-saturation criteria; if none qualify stop with negative",
+    "capacity-matched SSM count and actual compute cost not frozen",
+    "fully trained baseline convergence and policy planner exact physics costs not independently accepted",
+    "16-world paired test may lack power to detect a ten percent benefit",
+    "new unfamiliar-family and A-B-A interference source protocols undefined and not covered",
+    "synthetic F8-R5 0/3 negative persists; no trained model superiority in real physical world"
+  ],
+  "denials": {
+    "no_external_source_import_reset_do": true,
+    "no_F7_source_replay": true,
+    "no_mutation_of_runner_or_scheduled_task": true,
+    "no_new_workflow": true,
+    "no_calibration_first_use_approved": true,
+    "no_FIT_first_use_approved": true,
+    "no_sealed_test_first_use_approved": true,
+    "no_OOD_first_use_approved": true,
+    "no_paid_api": true,
+    "no_merge": true,
+    "no_deployment": true,
+    "science_pass": false
+  }
+}

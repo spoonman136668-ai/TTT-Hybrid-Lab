@@ -1,0 +1,102 @@
+{
+  "schema": "ttt-hybrid.f8r21-source-neutral-cpu-repro-trace.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_TRACE_CODE_AND_RESULTS",
+  "classification": "ENGINEERING_DIAGNOSTIC_NOT_SCIENTIFIC_EXPERIMENT",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "sha": "2f13dfa663634e926e29aa2c6c94845ca8efb7e7",
+    "tree": "e683596f332865a767aa3a4d5f9ad15afc24518b",
+    "r20_source_blob": "78700dabd9b4301318148b4536e9df21c64d2617",
+    "r20_freeze_blob": "8a181c6fd71c9dc6d4c4d640396d19920eb74175",
+    "r19_source_blob": "5f4418436f592672d5acf1e1444e15e561a77755",
+    "model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49"
+  },
+  "hypothesis": "Unchanged R20 Ubuntu runs with same initialized weights but diverging trained hashes have an early observable numerical divergence; canonical dyadic initial tensors distinguish RNG-dependent initialization from forward/backward/optimizer float arithmetic.",
+  "prior_evidence": {
+    "ubuntu_two_runs": [
+      43315834993,
+      43316540662
+    ],
+    "ubuntu_artifacts": [
+      13988865682,
+      13989296047
+    ],
+    "windows_artifact": 13988736772,
+    "identical_initial_Ubuntu_models": 18,
+    "identical_final_Ubuntu_models": 0,
+    "identical_initial_Windows_vs_Ubuntu_models": 0,
+    "frozen_R20_DEV_pass_seeds": 3,
+    "interpretation": "prior read-only observational evidence, no prespecified result for new traces"
+  },
+  "fixed_protocol": {
+    "source": "Only existing F8-R20 author-generated synthetic FIT and already pinned original R20 model; no third-party simulator API",
+    "original_seeded_mode": "existing R20 seed/model constructor, unchanged",
+    "canonical_dyadic_mode": "for each floating trainable weight tensor, sequential element i value = ((i + SHA256(name)[0])%17-8)/128.0; exact binary-rational, independent of OS RNG",
+    "modes": [
+      "original_seeded",
+      "canonical_dyadic"
+    ],
+    "arms": [
+      "native_return_focus",
+      "linear_return_only"
+    ],
+    "seeds": [
+      985201,
+      985203
+    ],
+    "replicas_per_case": 2,
+    "update_steps": 8,
+    "record_after_steps": [
+      0,
+      1,
+      8
+    ],
+    "batch_size": 8,
+    "sampler_seed": 985299,
+    "shared_fit_groups": 24,
+    "optimizer": "AdamW unchanged R20 learning rate, weight_decay 0.01, clip_grad_norm 1",
+    "objective": "unchanged R20 selected factual return effect objective per underlying arm",
+    "trace_fields": [
+      "sha256 of sorted state_dict per stage",
+      "sha256 of each tensor in state_dict per stage",
+      "sha256 of first-step unmasked forward predictions",
+      "sha256 of first-step physical loss tensor",
+      "sha256 of first-step parameter gradients before clip",
+      "first-step loss float64 decimal representation",
+      "sha256 of minibatch indices and physical observed inputs",
+      "torch build and cpu capability flags and platform no secrets"
+    ],
+    "same_host_two_replicas_must_match": true,
+    "no_inference_mutation_of_original_R20_model_weights": true,
+    "no_training_for_scientific_gain": true,
+    "do_not_assert_crossplatform_bitwise_parity_without_evidence": true,
+    "record_failures_without_inventing_result": true
+  },
+  "stop": {
+    "source_blob_or_freeze_drift": true,
+    "unregistered_seeds_arms_modes": true,
+    "no_native_optimizer_gradient": true,
+    "nonfinite_loss_or_gradients": true,
+    "non_identical_canonical_weight_tensor_on_same_host": true,
+    "external_effect_attempt": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "owner_GPU_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "merge": false,
+    "scientific_pass": false,
+    "promotion": false,
+    "deployment": false
+  },
+  "qualification": {
+    "run_with_existing_G4_ubuntu_windows": true,
+    "independent_full_G4_ubuntu_windows_required": true,
+    "existing_G5_ubuntu_windows_and_G7_ubuntu_required": true,
+    "acceptance_is_diagnostic_only": true
+  }
+}

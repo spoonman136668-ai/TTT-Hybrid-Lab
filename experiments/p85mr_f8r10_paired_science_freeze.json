@@ -1,0 +1,113 @@
+{
+  "schema": "ttt-hybrid.f8r10-paired-world-scientific-power-admission-dev.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_OR_F8_SCIENTIFIC_SOURCE_FIRST_USE",
+  "classification": "SOURCE_NEUTRAL_DEVELOPMENT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "sha": "9b914810d4b2c8c3dd75864757745bb39d3fe6bb",
+    "tree_sha": "b031959512974c3397bf33c472f8dca04f78b439"
+  },
+  "source": {
+    "original_external_repo": "CausalAILab/Causal-Gymnasium",
+    "original_sha": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "r6_budget_git_blob": "59475472a4c316fa04a3510e4138a872abc88a91",
+    "r5_trial_git_blob": "50cf2ff33f62d6ea6a25a7c789921838826d0094",
+    "sealed_test_firstuse_approved": false,
+    "no_historical_F7_replay": true
+  },
+  "test_plan": {
+    "paired_worlds": 16,
+    "world_seed_base": 1824300000,
+    "models_per_world": 22,
+    "trained_arms": [
+      "original_hard_depth_HybridPilot",
+      "F8_surrogate_hard_forward_native",
+      "28_coefficient_linear7_ridge",
+      "140_coefficient_quadratic35_ridge",
+      "fully_trained_256_state_SSM",
+      "capacity_matched_conventional_SSM",
+      "trained_conventional_behavior_policy"
+    ],
+    "model_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "scripted_control": "frozen_handwritten_feedback_policy",
+    "model_control_instances": 16,
+    "candidate_instances": 6,
+    "physical_trial_sessions": 352,
+    "max_trial_selected_actions": 33792,
+    "max_trial_model_queries": 67584,
+    "max_horizon": 96,
+    "unit_of_inference": "16 paired world-seed clusters, never 352 independent sessions",
+    "all_arm_worlds_complete": true,
+    "no_early_effect_replay": true
+  },
+  "frozen_primary": {
+    "outcome": "mean physical stability cost with early-stop penalty2 as already defined by R5; lower better",
+    "candidate_arms": [
+      "original_hard_depth_HybridPilot",
+      "F8_surrogate_hard_forward_native"
+    ],
+    "baseline_pool": [
+      "28_coefficient_linear7_ridge",
+      "140_coefficient_quadratic35_ridge",
+      "fully_trained_256_state_SSM",
+      "capacity_matched_conventional_SSM",
+      "trained_conventional_behavior_policy",
+      "frozen_handwritten_feedback_policy"
+    ],
+    "strongest_control": "best mean-cost among the 16 already-fixed conventional instances on the same 16 paired worlds; selection set frozen in advance, no learning/tuning from test; resample baseline selection per bootstrap draw",
+    "seed_gate": "at least two of three candidate seeds improve mean stability >=10pct relative to strongest comparator and paired world bootstrap lower MSE gain >0 and no mean survival degradation",
+    "bootstrap": {
+      "resamples": 10000,
+      "seed": 1824990000,
+      "resample_unit": "world_index only; cluster all seeds and arms together",
+      "lower_percentile": 2.5,
+      "upper_percentile": 97.5,
+      "one_sided_positive_difference": true
+    },
+    "early_stop_signal": "source calibration must have separately passed R5 frozen non-saturation requirements before any sealed source; that source admission is not implemented here",
+    "no_pseudoreplication": true,
+    "compute_report": "all 352 trial sessions and 16 independent paired worlds, each actual chosen effect and up to two strictly hypothetical queries; total process CPU/GPU/memory/external effects later required",
+    "capacity_parity": "not inferred from number of world sessions; separately trained strongest conventional baselines and per-model compute matching needed"
+  },
+  "qualification": {
+    "engineering": "source-neutral fabricated-fixture replay only plus exact final G4 Windows/Ubuntu G5 Windows/Ubuntu G7 Ubuntu",
+    "scientific": "NEVER SCIENTIFIC_PASS_FROM_THIS_MODULE",
+    "future_native_receipts": "not accepted or parsed by this module; owner runtime independently required"
+  },
+  "negatives": [
+    "duplicate policy-world synthetic receipt",
+    "missing one of 352 sessions",
+    "all outcomes marked synthetic-only",
+    "NaN or negative stability",
+    "wrong world-seed or mismatched cross-policy unit",
+    "pseudo-replication treating 352 observations as independent",
+    "model selected counterpolicy with >2 hypothetical queries per chosen action",
+    "unknown or zero unqualified effect action",
+    "survival below strongest competent baseline fails",
+    "large mean gain with negative paired-bootstrap lower bound fails",
+    "unapproved external owner receipt cannot be treated as source",
+    "source first-use never dispatched, no workflow/runner/queue edits"
+  ],
+  "permissions": {
+    "new_original_external_effects": false,
+    "owner_firstuse": false,
+    "calibration": false,
+    "FIT": false,
+    "sealed_test": false,
+    "unfamiliar_OOD": false,
+    "F8_runner_execution": false,
+    "new_workflow": false,
+    "scheduler": false,
+    "paid_api": false,
+    "merge": false,
+    "promotion": false,
+    "FORGE": false,
+    "scientific_pass": false,
+    "deployment": false
+  }
+}

@@ -1,0 +1,83 @@
+{
+  "schema": "ttt-hybrid.f8r30-counterfactual-diagnostic.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_DIAGNOSTIC_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "sha": "dfb2176f04e661372aa8d250b1fafc154f6f552f",
+    "r29b_freeze_blob": "50629c2aee9aa0744cd2524c265b1dca30d107d5"
+  },
+  "hypothesis": "R29B constant-action collapse can be localized to factual physical prediction error versus action-conditional readout/decision, without changing training data or treating evaluator-only counterfactuals as learning labels.",
+  "design": {
+    "reuse_r29b_fit_and_frozen_training": true,
+    "arms": [
+      "native_dynamics",
+      "native_direct_value",
+      "gru_dynamics",
+      "ssm_dynamics"
+    ],
+    "seeds_native": [
+      985201,
+      985203,
+      985207
+    ],
+    "seeds_other": [
+      985201
+    ],
+    "updates_per_model": 128,
+    "eval_panels": [
+      "dev",
+      "ood"
+    ],
+    "eval_policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "score_worlds_per_panel": 48,
+    "score_both_return_actions_evaluator_only": true,
+    "training_only_selected_factual_return": true,
+    "unselected_action_effect_never_enters_training": true,
+    "measurement_erasure_diagnostic": true,
+    "decision_score_before_return_effect": true,
+    "additional_fit_estimator": "fit-only ridge regression on factual action/state/context and actual observed return displacement; no evaluator-only data in fit",
+    "conventional_convergence_qualified": false
+  },
+  "metrics": {
+    "per_arm_panel_action_physical_effect_mse": true,
+    "per_arm_panel_action_value_mse": true,
+    "per_arm_panel_choice_accuracy_vs_oracle": true,
+    "per_arm_panel_action_gap_correlation": true,
+    "per_arm_panel_observation_erasure_decision_changes": true,
+    "per_arm_panel_prediction_variability": true,
+    "report_constant_action_collapse": true,
+    "report_all_seeds_and_controls": true,
+    "training_wall_time_and_parameter_count": true,
+    "diagnostic_only_no_scientific_pass": true
+  },
+  "interpretation": {
+    "low_action_prediction_error_high_decision_regret": "readout or objective conversion suspect",
+    "high_action_prediction_error": "learning representation, training or conditional prediction suspect",
+    "negligible_observation_response": "information ingestion or readout suspect",
+    "single_budget_not_converged": "do not infer architecture incapacity"
+  },
+  "qualification": {
+    "focused_tests_then_full_exact_sha_G4_Windows_Ubuntu_G5_Windows_Ubuntu_G7_Ubuntu": true,
+    "original_source_negative_controls": true,
+    "independent_baseline_convergence_before_scientific_pass": true
+  },
+  "authority": {
+    "external_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "paid_API": false
+  }
+}

@@ -1,0 +1,170 @@
+{
+  "schema": "ttt-hybrid.f8r19-balanced-factual-return-credit-dev.v1",
+  "stage": "PRECOMMITTED_BEFORE_CODE_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NATIVE_TRAINING_DEVELOPMENT_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "existing_pr": 236,
+    "sha": "81fa6bf3c6d224e0c03d7b5b64dae91056a3ca7e",
+    "tree": "cd833112cb36d20f2cd45b1991154aa6465ba84d",
+    "r18_implementation_blob": "affdbf248d114cad5a012cfc07c60308a525665f",
+    "r18_freeze_blob": "2b82e54e5be7f515fd75fc659b2074b4e42db270",
+    "original_r3_source_blob": "9a7077ece06dfbc685232bbc606b0c2dd33a7895",
+    "original_r5_native_source_blob": "9ac9fc17d6f82d6bf2dc7b05458939d5bdb6ea92"
+  },
+  "issue": "Original R18 FIT return action = group%2 and B sign = +1 if even group else -1, leaving missing B×return-action support and no reliable causal action credit.",
+  "hypothesis": "With fully crossed factual B sign × A sign × selected return action support, can targeted return-A prediction credit make native Hybrid retrieve early factual A identity across eight indistinguishable B effects and choose the correct action before any return-A outcome? Fully trained conventional readout proves task identification from same observed FIT data.",
+  "source": {
+    "classification": "AUTHOR_GENERATED_F8R3_RECURRENCE_NOT_EXTERNAL",
+    "equation": "y(s,a,z)=.5*s+.3*z*(a-int(s>=0))",
+    "cohorts": {
+      "fit": {
+        "group_seed_base": 19550000,
+        "pair_groups": 32,
+        "worlds_per_group": 4
+      },
+      "dev": {
+        "group_seed_base": 19560000,
+        "pair_groups": 12,
+        "worlds_per_group": 2
+      },
+      "score": {
+        "group_seed_base": 19570000,
+        "pair_groups": 16,
+        "worlds_per_group": 2
+      }
+    },
+    "initial_A_probe": {
+      "state": 0.2,
+      "selected_action": 0,
+      "actual_effect_before_B": true
+    },
+    "B": {
+      "state_anchor_reset": 0,
+      "steps": 8,
+      "sign": "even group +1, odd group -1; no A-sign linkage",
+      "action": "int(s>=0) XOR int((group_seed+7*step)%3==0)",
+      "identical_across_A_pair": true
+    },
+    "return_A": {
+      "state_anchor_reset": 0,
+      "actions_FIT": [
+        0,
+        1
+      ],
+      "balanced_four_way_FIT": true,
+      "action0_informative": true,
+      "action1_noninformative": true,
+      "factual_effect_FIT_only_for_selected_action": true,
+      "no_dev_score_return_effect_before_decision": true,
+      "cross_both_goals": [
+        -0.2,
+        0.2
+      ]
+    },
+    "FIT_counts": "32 groups ×2 A signs ×2 observed return-action arms=128 actual factual episodes; 32 examples per B×selected-return-action cell, each has both A signs",
+    "model_causal_input": "P80 factual action/effect; current effect masked, only earlier chosen outcomes visible; no hidden sign, oracle, counterfactual label",
+    "no_F7_replay": true,
+    "no_external_import_or_firstuse": true,
+    "test_seed_ranges_new_vs_R18": true
+  },
+  "training": {
+    "arms": [
+      "native_uniform",
+      "native_return_focus",
+      "linear_return_focus",
+      "mlp_return_focus",
+      "ssm_return_focus"
+    ],
+    "underlying_models": [
+      "bypass_surrogate",
+      "bypass_surrogate",
+      "linear7",
+      "mlp7",
+      "ssm256"
+    ],
+    "seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "fit_episodes": 128,
+    "fixed_updates_per_model": 160,
+    "shared_batch_size_episodes": 8,
+    "total_models": 15,
+    "total_optimizer_updates": 2400,
+    "sampler_seed": 985299,
+    "optimizer": "AdamW",
+    "native_lr": 0.002,
+    "conventional_lr": 0.001,
+    "weight_decay": 0.01,
+    "clip_norm": 1,
+    "return_FIT_weight_focused": 20,
+    "native_uniform_weight_focused": 0,
+    "loss_formula": "existing native or conventional factual physical loss + focus_weight*mean_squared_normalized_physical_delta_at_factual_selected_return_step9",
+    "current_effect_not_in_forward": true,
+    "update_checkpoints": [
+      80,
+      160
+    ],
+    "checkpoint_selected": "always fixed final step160; never pick by DEV or SCORE",
+    "no_score_training": true,
+    "same_factual_FIT_and_minibatch_order_for_every_model": true,
+    "training_convergence_independently_qualified": false
+  },
+  "learned_memory_control": {
+    "kind": "two-coefficient ridge on factual early-A physical delta to factual action0 return delta, independently learned action1 return mean from observed action1",
+    "ridge_lambda": 1e-9,
+    "source": "FIT episodes only, exact selected return-action labels, no hidden regime/target from evaluator",
+    "prediction": "action0: fitted [intercept, earlyA physical delta] ; action1: FIT mean observed physical return delta for action1",
+    "no_training_on_heldout": true,
+    "no_unnatural_oracle_labels": true,
+    "diagnostic_not_parameter_or_compute_matched": true
+  },
+  "evaluation": {
+    "score_pairs": 16,
+    "decisions_per_model": 64,
+    "pair_unit": "one group contains both A signs and both crossed goals",
+    "bootstrap_samples": 10000,
+    "bootstrap_seed": 19579999,
+    "primary": "mean one-step model-selected factual action regret vs evaluator-only post-action two-action best; lower better",
+    "sign_contrast": "count matched A− vs A+ first-return action contrasts at identical B and goal (max 32)",
+    "firstA_erase": "replace only early factual A effect with zero before querying; positive mechanism should lose useful A information",
+    "controls": [
+      "fixed0",
+      "fixed1",
+      "goal_positive",
+      "goal_negative",
+      "learned_FIT_only_2coefficient_A_memory",
+      "native_uniform",
+      "independently_DEV_selected_focused_conventional"
+    ],
+    "conventional_dev_selection": "best 1 of 9 conventional instances on separate DEV only, no testing-driven selection",
+    "pass_candidate": "in at least 2 of 3 native-return-focus seeds, mean score regret <=.90*strongest history-free control 0.015 AND <= DEV-selected conventional score+1e-4 AND >=24/32 A contrast pairs AND erased-A regret exceeds intact by >=.005 AND paired 16-group bootstrap 2.5% positive over history-free control; FIT-only memory control demonstrates <.001 average regret",
+    "no_test_score_threshold_tuning": true,
+    "outcome_must_report_all_15_models": true,
+    "scientific_pass": false,
+    "independence_note": "even a native dev PASS is NOT original external scientific PASS; controls remain bounded update budget and unequal parameter/compute"
+  },
+  "authority": {
+    "original_F8_external_firstuse": false,
+    "spent_F7_replay": false,
+    "original_CAL_OOD": false,
+    "runner_dispatch": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_api": false,
+    "merge": false,
+    "promotion": false,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "acceptance": {
+    "exact_G4_Windows_and_Ubuntu": true,
+    "G5_Windows_and_Ubuntu": true,
+    "G7_Ubuntu": true,
+    "negative_controls": true,
+    "no_firstuse": true
+  }
+}

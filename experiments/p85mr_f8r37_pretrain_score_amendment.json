@@ -1,0 +1,42 @@
+{
+  "schema": "ttt-hybrid.f8r37-pretrain-ood-gain-amendment.v1",
+  "stage": "FROZEN_BEFORE_R37_IMPLEMENTATION_TRAINING_OR_RESULTS",
+  "classification": "SOURCE_NEUTRAL_MATHEMATICAL_SCORE_FEASIBILITY_CORRECTION",
+  "parent": {
+    "pr": 236,
+    "base_freeze_commit": "7c4778f1be8ee0e4a34d72672aa96e6e42fd55b3",
+    "base_freeze_blob": "87216d66fb5ac4193b1b4ddccf95d316277ad710",
+    "original_R37_parent": "c3fbd1c1ca5bbe474ad2d7f2e9c8d3cbd6c262f9"
+  },
+  "reason": "Frozen 0.14 per-panel gain threshold exceeds ideal active minus optimal fixed-probe OOD oracle gain 0.1365108906549915. Without a pre-result correction, a perfect active and optimal fixed comparator fails. Preserve original score receipt and change one OOD threshold only.",
+  "calculation": {
+    "law": "R32 existing quartic physical law",
+    "score_worlds_each": 64,
+    "ideal_active_regret_dev": 0,
+    "ideal_active_regret_ood": 0,
+    "optimal_fixed_regret_dev": 0.1695596671692321,
+    "optimal_fixed_regret_ood": 0.1365108906549915,
+    "erased_safe_regret_dev": 0.3391193343384642,
+    "erased_safe_regret_ood": 0.273021781309983,
+    "ideal_hidden_sign_action_flips_each": 32
+  },
+  "score_override": {
+    "original_field": "frozen_judgment.each_panel_active_vs_best_fixed_regret_gain_min",
+    "original_value": 0.14,
+    "dev_min": 0.14,
+    "ood_min": 0.12
+  },
+  "unchanged": "All physics, FIT data, model arms, optimizer budget, seeds, bootstrap, sign pairs, erasure criterion and other score thresholds in original R37 freeze remain unchanged. Main R36 NO-GO preserved.",
+  "source_must_require_this_blob": true,
+  "authority": {
+    "external_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}

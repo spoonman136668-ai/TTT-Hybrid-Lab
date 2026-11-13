@@ -1,0 +1,148 @@
+{
+  "schema": "ttt-hybrid.f8r39-binding-channel-necessity-and-transfer.v1",
+  "stage": "FROZEN_BEFORE_R39_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_FROZEN_R38_MECHANISTIC_ABLATION_AND_SYNTHETIC_TRANSFER_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "99a2fa617ece5529534b977f198f4e7d7d9c69f4",
+    "r38_source_blob": "c619af1d3c9ce1d5f54a647d4b026b48f17b133c",
+    "r38_freeze_blob": "3ca539e10cdf81e287d003453deaaba9ac33555d",
+    "r38_pretrain_amendment_blob": "33917d31d63c491312702a4a77c7838f1012dc7c",
+    "r38_native": "NO_GO",
+    "r38_factorized_binder_development": "PASS_2_OF_3_QUARTIC_AND_SYNTHETIC_CUBIC"
+  },
+  "hypotheses": [
+    "Does the learned 16-dimensional triadic-product channel actually cause the two successful R38 binder models' decisions? Ablate only that channel after training while retaining additive f/r/o and pretrained readout weights.",
+    "Do the exact already frozen R38 binder training seeds, optimizer and selected factual training pairs generalize to TWO additional prospectively specified author-synthetic law families, without FIT updates or result-dependent threshold selection?"
+  ],
+  "immutable_training": {
+    "reuse": "R38 exact source training: raw TrainableBinding factorized, seeds 985201,985203,985207; same R33 factual selected-return FIT and R37 informative subset, R38 sampler seed 21249999, 512 AdamW steps, batch 16 paired factual returns; no changes to loss, optimizer or architecture",
+    "train_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "updates_per_seed": 512,
+    "total_replayed_updates": 1536,
+    "pair_batch": 16,
+    "train_fit_pairs": 576,
+    "heldout_fit_pairs": 192,
+    "optimizer": "AdamW lr0.002 wd0.01 gradient_clip1",
+    "implementation": "replicate R38 optimizer program exactly and verify R38 precommitted known action-regret result per seed on each original panel before new score. Never import model weight hash as a cross-platform equality assertion.",
+    "factual_inputs": "only actual selected fifth action/effect and candidate return key; no hidden q, no unselected return effect, no holdout score fitting",
+    "not_independent_training_replication": true,
+    "no_original_F7_replay": true
+  },
+  "mechanism_attribution": {
+    "ablation": "zero ONLY f*r*o 16D latent channels immediately before value head; preserve identical f/r/o 48D learned embeddings, bias, all readout weights, no retraining",
+    "compare": "full model vs frozen zero-product ablation for each seed across R38 quartic dev and ood, R38 synthetic cubic and two new law panels",
+    "control": "same source model in normal forward must equal recomputed explicit triadic forward within tolerance 1e-6, no effect of current return physical outcome",
+    "positive_quartic_seed_reference": [
+      985201,
+      985207
+    ],
+    "must_report_categorical_decision_vectors": true,
+    "must_report_regret_and_hidden_sign_flips": true,
+    "must_report_classification_loss_no_retraining": true
+  },
+  "new_synthetic_transfer": {
+    "groups": 16,
+    "worlds_each": 64,
+    "contexts": [
+      0,
+      1
+    ],
+    "signs": [
+      -1,
+      1
+    ],
+    "score_seeds": {
+      "oscillatory_even": 21350000,
+      "nonlinear_odd": 21360000
+    },
+    "fit_changed": false,
+    "baseline": "0.25*s-0.08+0.05*sin(3*s)",
+    "law_oscillatory_even": "baseline+2.9*q*(s*s-.15*.15)*(.75+.5*cos(2*s)) when action==context",
+    "law_nonlinear_odd": "baseline+2.2*q*s*(s*s-.15*.15)*(1.25-.25*sin(6*s)) when action==context",
+    "early_state_pair": [
+      -0.15,
+      0.15
+    ],
+    "early_q_null": true,
+    "selected_fifth_state": 0.42,
+    "states": {
+      "oscillatory_even": [
+        0.63,
+        0.71
+      ],
+      "nonlinear_odd": [
+        0.55,
+        0.79
+      ]
+    },
+    "q_magnitude": {
+      "oscillatory_even": 1,
+      "nonlinear_odd": 0.86
+    },
+    "history_lengths": {
+      "oscillatory_even": 8,
+      "nonlinear_odd": 16
+    },
+    "nuisance_B": "independent deterministic group-salted action/measurement stream; no hidden sign dependence",
+    "public_probe_policy": "fifth action matches observed public context, never use q to select probe",
+    "oracle_audit": {
+      "oscillatory_even": {
+        "hidden_sign_flips": 32,
+        "minimum_action_cost_margin": 0.6543783508656249,
+        "ideal_active_regret": 0,
+        "ideal_fixed_probe_regret": 0.17611960822930428,
+        "erased_safe_regret": 0.35223921645860856
+      },
+      "nonlinear_odd": {
+        "hidden_sign_flips": 32,
+        "minimum_action_cost_margin": 0.46740838514781924,
+        "ideal_active_regret": 0,
+        "ideal_fixed_probe_regret": 0.1246250881550055,
+        "erased_safe_regret": 0.249250176310011
+      }
+    },
+    "source_neutral_not_external_scientific_firstuse": true
+  },
+  "frozen_judgment": {
+    "mechanism_product_necessary_seeds_min": 2,
+    "mechanism_original_dev_ood_full_regret_max_each": 0.12,
+    "mechanism_original_dev_ood_full_sign_pair_flips_min_each": 28,
+    "mechanism_original_dev_ood_zero_product_regret_increase_min_each": 0.1,
+    "mechanism_original_dev_ood_zero_product_sign_flip_drop_min_each": 16,
+    "transfer_both_new_laws_seed_success_min": 2,
+    "transfer_new_law_active_regret_max_each": 0.12,
+    "transfer_new_law_sign_pair_flips_min_each": 28,
+    "transfer_new_law_fifth_erasure_regret_penalty_min_each": 0.12,
+    "transfer_training_updates_allowed": 0,
+    "report_all_64_case_choices": true,
+    "independent_scientific_pass": false,
+    "do_not_infer_native_hybrid_improvement": true
+  },
+  "qualification": {
+    "full_existing_G4_Windows_Ubuntu": true,
+    "existing_G5_Windows_Ubuntu": true,
+    "existing_G7_Ubuntu": true,
+    "full_final_sha": true,
+    "original_G4_science_artifacts": true,
+    "crossplatform_action_parity": true,
+    "source_negative_controls": true
+  },
+  "authority": {
+    "external_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}

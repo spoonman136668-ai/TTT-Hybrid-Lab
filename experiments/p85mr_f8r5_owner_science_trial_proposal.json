@@ -1,0 +1,168 @@
+{
+  "schema": "ttt-hybrid.f8r5-owner-science-trial-proposal.v1",
+  "stage": "UNAPPROVED_SOURCE_NEUTRAL_PROSPECTIVE_CONTRACT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "source_sha": "d1b24351ed8f3c9c8fd233d75dc0ad120a3c91cb",
+    "base_F7_sha": "21c8df5b00e7b83a10b37f9b9ca3b3b9de362b5e"
+  },
+  "objective": "Falsify that repaired Hybrid hard-depth learning improves REAL action selection, physical stability, cold retention and compute over fully trained conventional and smallest adequate controls on unseen challenging source.",
+  "original_immutable_source": {
+    "repo": "CausalAILab/Causal-Gymnasium",
+    "commit": "c94e9a4cd3641588b6b8507e71ccee5c27032bdf",
+    "cartpole_wind_blob": "d65a6a31941709dc9201259d80dd4ebbcf48b4fa",
+    "source_runtime": "p85mr-causalgym-cpu311-r3",
+    "owner": "TTT-HYBRID-GPU-WIN"
+  },
+  "historical_exclusion": {
+    "F7_FIT_run": 43195349254,
+    "F7_training_run": 43198869594,
+    "prior_F7_worlds": 128,
+    "spent_F7_actions": 12288,
+    "reuse_any_F7_world": false,
+    "prior_SSM256_best_F7_MSE": 0.0000033410481,
+    "prior_linear7_F7_MSE": 0.0000027510204527871957,
+    "prior_linear7_RETROSPECTIVE_only": true,
+    "prior_F7_native_science_pass": false
+  },
+  "difficulty_calibration": {
+    "stage": "SEPARATE_SCOPE_FIRST_USE_REQUIRED_NOT_APPROVED",
+    "candidate_wind_std_init_theta_std": [
+      [
+        0.02,
+        0.04
+      ],
+      [
+        0.03,
+        0.06
+      ],
+      [
+        0.06,
+        0.1
+      ]
+    ],
+    "policies": [
+      "frozen_scripted_feedback",
+      "fixed_seed_random"
+    ],
+    "worlds_per_candidate_policy": 8,
+    "total_max_sessions": 48,
+    "max_episode_actions": 96,
+    "max_physical_actions": 4608,
+    "seed_base": 1824000000,
+    "seed_formula": "1824000000 + profile_index*1000 + policy_index*100 + episode_index",
+    "deterministic_selection": "first candidate in listed order satisfying every admission constraint; if none, STOP_NO_DISCRIMINATING_TASK, never tune on sealed worlds",
+    "minimum_admission": {
+      "scripted_early_terminated_min": 2,
+      "scripted_early_terminated_max": 6,
+      "random_early_terminated_min": 5,
+      "scripted_mean_survival_advantage_over_random_steps": 12,
+      "scripted_survival_sample_std_min_steps": 8
+    },
+    "no_trial_from_calibration_data": true,
+    "no_source_actions_until_original_owner_scoped_approval": true
+  },
+  "proposed_sealed_worlds": {
+    "fit": {
+      "seed_base": 1824100000,
+      "worlds": 64
+    },
+    "fit_selector": {
+      "seed_base": 1824200000,
+      "worlds": 16
+    },
+    "never_tune_on_test": {
+      "seed_base": 1824300000,
+      "worlds": 16
+    },
+    "unfamiliar_family_reserved_not_defined": {
+      "seed_base": 1824400000,
+      "worlds": 0,
+      "requires_new_source_protocol": true
+    },
+    "no_seed_overlap_with_F7_or_each_other": true,
+    "CAL_and_OOD_firstuse_approved": false
+  },
+  "strongest_controls": [
+    "original_hard_depth_HybridPilot",
+    "F8_surrogate_hard_forward_native",
+    "28_coefficient_linear7_dynamics_fitted_from_new_FIT_only",
+    "fully_trained_256_state_SSM",
+    "capacity_matched_conventional_SSM",
+    "frozen_handwritten_feedback_policy",
+    "trained_conventional_behavior_policy_from_same_FIT_only"
+  ],
+  "ablations_not_independent_main_arms": [
+    "soft_dense",
+    "always_on",
+    "no_depth",
+    "raw_action_key_bypass"
+  ],
+  "fitting": {
+    "same_FIT_real_selected_action_observations_for_all_predictive_models": true,
+    "same_tuning_worlds_and_data_access": true,
+    "do_not_consume_unexecuted_action_effects": true,
+    "three_model_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "optimizer": "AdamW for neural arms; closed-form float64 ridge with FITselector-only lambda selection for linear",
+    "convergence": "declare best FITselector checkpoint with full training curves; up to 1600 optimizer steps per neural seed; record if exhausted; no retuning on sealed test",
+    "full_training_vs_800_step_F7_not_directly_comparable": true,
+    "no_current_effect_target_input": true,
+    "no_future_oracle_input": true
+  },
+  "policy_trial": {
+    "stage": "SEPARATE_OWNER_AUTHORITY_REQUIRED_NOT_APPROVED",
+    "max_horizon": 96,
+    "shared_action_planner": "1-step evaluate exactly actions 0 and 1 using each trained action-conditioned dynamics model; minimum frozen expected physical stability cost; tie choose 0; no unexecuted effect observation",
+    "test_episode_policy_actions_are_real_external_effects": true,
+    "matched_action_and_model_query_budgets": true,
+    "separate_reset_for_each_model_and_world_seed_exposure_with_exact_receipts": true,
+    "full_process_wall_cpu_gpu_rss_and_consumed_effects": true,
+    "stability_cost": "mean over horizon96 of abs(pole_angle)/0.2095 + 0.1*abs(pole_angular_velocity)/3.5, with each missing step after early termination assigned penalty 2.0",
+    "primary": "mean per-world stability cost; lower better, 3-seed normalized relative difference to strongest fully trained conventional/policy baseline",
+    "primary_science_thresholds": {
+      "all_models_train_to_prespecified_convergence_or_record_failure": true,
+      "mean_relative_cost_improvement_min": 0.1,
+      "improve_in_at_least_two_of_three_seeds": true,
+      "prespecified_world_paired_bootstrap_lower_gain_gt_zero": true,
+      "no_survival_degradation_to_best_conventional": true,
+      "no_unsupported_cross_family_transfer_claim": true
+    },
+    "cold_retention": "export all parameter+optimizer state under exact source pin, cold restore and recompute frozen FIT selector predictions before test (max_abs_diff <= 1e-6)",
+    "interference": "separate authorized A->B->A protocol with isolated B worlds; test A retention not inferred from same-family state shift",
+    "unfamiliar_family_transfer": "UNDEFINED_NOT_APPROVED_EXCLUDED_FROM_SCIENTIFIC_PASS",
+    "no_sealed_test_before_final_training_and_owner_approval": true,
+    "no_postresult_tuning": true
+  },
+  "stop_conditions": [
+    "any failed original source Git/blob/runtime/owner pin or missing signed authorization",
+    "any consumed F7 source or seed reused",
+    "any unsafely replayed source effect or unknown effect outcome",
+    "any calibration criterion not satisfied across all three frozen profiles",
+    "any overlapping owner claim or unverified source session identity",
+    "any trained baseline unqualified or unequal information/action budgets",
+    "any sealed evaluation leaked to training",
+    "any budget exceeded; record failure, do not silently expand"
+  ],
+  "authority": {
+    "source_FirstUse": false,
+    "calibration_FirstUse": false,
+    "FIT_FirstUse": false,
+    "model_selected_action_FirstUse": false,
+    "heldout_FirstUse": false,
+    "OOD_FirstUse": false,
+    "new_owner_workflow": false,
+    "new_scheduled_task": false,
+    "original_F7_replay": false,
+    "main_merge": false,
+    "pr_promotion": false,
+    "paid_API": false,
+    "model_intelligence_accepted": false,
+    "scientific_pass": false,
+    "allowed_now": "write source-neutral proposed contract and synthetic guard tests only"
+  }
+}
