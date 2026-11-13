@@ -45,7 +45,7 @@
     "nuisance": "0.006*sin((salt+group)*.137+t*.271)+0.004*((t+group)%4-1.5), rounded 8 dp",
     "cue_decoy_positions": "distinct SHA-256-derived positions per split and group, never model-visible",
     "B_encoding": "_record(tag, selected_action, tag+delta, context), mask reward effect[4]=0 in all B records; selected physical delta effect[0] and observable public key remain",
-    "fifth": "_record(.42, context, after(.42,context,context,q), context). Only actually selected fifth effect enters learner; center decoded following against FIT-estimated no-q physical baseline; no hidden q input.",
+    "fifth": "Each selected probe action equals public context. The resulting-state q offset is identifiable from FIT-balanced selected fifth outcomes with opposite unknown q signs; do not require an unperformed or unauthorized nonmatching fifth action.",
     "return_law": {
       "fit_cal": "R32 quartic with state 0.61/0.73",
       "ood": "R41 cubic with state 0.61/0.73"
@@ -74,10 +74,12 @@
       "decoy_index",
       "unselected_return",
       "future_effect"
-    ]
+    ],
+    "FIT_probe_baseline_constraint": "Only the selected 256 FIT-world input histories of TRAIN (24 groups) are permitted to estimate baseline; frozen midpoint of observed fifth resulting states must be independent of gate and group. Training and heldout receive the same scalar without using hidden labels.",
+    "initial_freeze_technical_clarification": "This clarification before implementation removes an impossible nonmatching-probe-control assumption from the first prereg draft. Original freeze ancestor retained; current JSON Git blob governs."
   },
   "methods": {
-    "FIT_only_probe_calibration": "Estimate no-q fifth-probe following-state offset solely from selected FIT observed controls (nonmatch selected probe arm) or a separate set of actually selected control returns; no generator baseline constant hardcoded into neural policy. Test exact resulting-state decode and sign discrimination on FIT heldout before scored CAL/OOD.",
+    "FIT_only_probe_calibration": "Compute the no-q fifth-probe following-state offset by averaging actually selected FIT factual fifth-probe measurements across the balanced q=+1/-1 cohort. Only the decoded resulting states (probe_state + encoded selected delta) enter this fit-only calibration; no hidden q sign, generator baseline constant, evaluation metadata or CAL/OOD observations. Freeze the scalar before training or any CAL/OOD score.",
     "observational_ceiling": "Fixed deterministic public cue-tag extractor plus FIT-only probe-offset estimator applied to selected fifth and B observed effects; bound feasibility, never label this trained neural learning.",
     "mechanism_arms": [
       "calibrated_content_native",
