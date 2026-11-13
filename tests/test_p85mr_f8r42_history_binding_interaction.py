@@ -78,3 +78,31 @@ def test_frozen_factual_native_and_strong_controls_no_science_promotion():
     for p in r42.PANELS:
         assert len(receipt["positive_diagnostic"][p]["choices"]) == 128
     r42.retain_ci_receipt(receipt)
+
+
+
+def test_positive_control_uses_only_observed_B_history_not_oracle_marker(monkeypatch):
+    fit, _ = r42.factual_fit()
+    for panel in r42.PANELS:
+        panel_worlds = r42.worlds(panel)
+        observed = {id(w): r42.candidates(w) for w in panel_worlds}
+        for w in panel_worlds:
+            measured = r42._observed_b_peak(observed[id(w)][1][0])
+            expected = w["b_history"][r42.marker(panel, w["group"])][1]
+            assert measured == pytest.approx(expected, abs=2e-6)
+        with monkeypatch.context() as patch:
+            patch.setattr(r42, "worlds", lambda requested, panel=panel, panel_worlds=panel_worlds:
+                          panel_worlds if requested == panel else
+                          pytest.fail("unexpected diagnostic panel"))
+            patch.setattr(r42, "candidates", lambda w, observed=observed: observed[id(w)])
+            patch.setattr(r42, "marker", lambda *_args, **_kwargs:
+                          pytest.fail("held-out oracle marker lookup"))
+            diagnostic = r42.positive_control(fit, panel)
+        assert diagnostic["mean_regret"] == pytest.approx(0.0, abs=1e-12)
+        assert diagnostic["history_gate_pair_flips"] == 64
+    with pytest.raises(ValueError, match="INVALID_OBSERVED_B_HISTORY"):
+        r42._observed_b_peak(torch.zeros(5, 16))
+    broken = torch.zeros(14, 16)
+    broken[5, 0] = float("nan")
+    with pytest.raises(ValueError, match="NONFINITE_OBSERVED_B_HISTORY"):
+        r42._observed_b_peak(broken)

@@ -339,6 +339,18 @@ def train_arm(arm, seed, binder, fit, labels, draws):
             "cold_restore": True}
 
 
+def _observed_b_peak(effect_history):
+    """Read the strongest actually selected B measurement, never generator metadata."""
+    if (effect_history.ndim != 2 or effect_history.shape[-1] != 16 or
+        effect_history.shape[0] not in (14, 22)):
+        raise ValueError("F8R42_INVALID_OBSERVED_B_HISTORY")
+    observed_b = effect_history[5:-1, 0]
+    if not bool(torch.isfinite(observed_b).all()):
+        raise ValueError("F8R42_NONFINITE_OBSERVED_B_HISTORY")
+    peak = int(torch.argmax(torch.abs(observed_b)))
+    return r31._physical_delta(observed_b[peak])
+
+
 def positive_control(fit, panel):
     fifth_offsets = [r31._physical_delta(fit[2*i]["effect"][4, 0])
                      for i in range(TRAIN_PAIRS)]
@@ -348,7 +360,7 @@ def positive_control(fit, panel):
     for w in ww:
         a, e = candidates(w)
         fifth = r31._physical_delta(e[0, 4, 0]) - offset
-        h = r31._physical_delta(e[0, 5+marker(panel, w["group"]), 0])
+        h = _observed_b_peak(e[0])
         c = w["public_context"]
         choices.append(c if fifth*h > 0 else 1-c)
     regrets = [_regret(w, c) for w,c in zip(ww,choices)]
