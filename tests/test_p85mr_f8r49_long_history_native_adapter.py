@@ -28,9 +28,14 @@ def test_r49_native_long_history_keeps_all_observations_and_gradients():
             result=model(a,e,zero_native=ablate)
             assert result.shape==(1,2)
             assert bool(torch.isfinite(result).all())
-        out=model(a,e)
-        loss=out.square().sum()
-        loss.backward()
+        # With Native fusion initialized at zero, the parent readout
+        # intentionally blocks Native weight gradients until its fusion
+        # gain learns. Check the adapter's own differentiability directly
+        # without altering training initialization or frozen protocol.
+        model.zero_grad(set_to_none=True)
+        native_values=model.native(a,e)
+        assert native_values.shape==(2,)
+        native_values.square().sum().backward()
         grads=[p.grad for p in model.native.parameters()]
         assert any(g is not None and bool(torch.isfinite(g).all())
                    and bool(torch.any(g!=0)) for g in grads)
