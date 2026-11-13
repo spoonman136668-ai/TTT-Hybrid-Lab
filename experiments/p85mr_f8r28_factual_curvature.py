@@ -146,7 +146,7 @@ def fit_audit(rows:list[dict])->dict:
             or not bool(torch.isfinite(e["effect"]).all())):
             raise ValueError("F8R28_INVALID_FIT_SEQUENCE")
         key=(*e["b_evaluator_only"],*e["k_evaluator_only"],
-             *e["q_evaluator_only"],e["selected_fifth"],
+             e["z_B_evaluator_only"],*e["q_evaluator_only"],e["selected_fifth"],
              e["return_state"],e["selected_return"])
         cells.add(key)
     if len(cells)!=4096:
