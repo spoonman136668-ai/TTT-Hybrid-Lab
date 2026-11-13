@@ -34,6 +34,12 @@ def test_new_quartic_identifiability_and_action_consequence_barriers():
                 assert lo["b_history"]==hi["b_history"]
                 assert lo["q_evaluator_only"]==-hi["q_evaluator_only"]
                 assert x.evaluator_regret(lo,c) != x.evaluator_regret(hi,c)
+    # Score nuisance clusters are independent from FIT and each other.
+    fit_B=x.B_history(20640000,8)
+    assert fit_B!=worlds[0]["b_history"]
+    assert x.B_history(20650000,8)!=x.B_history(20660000,16)[:8]
+    with pytest.raises(ValueError,match="INVALID_B_STREAM"):
+        x.B_history(48,8)
     with pytest.raises(ValueError,match="INVALID_PHYSICS"):
         x.after(.3,2,0,1.)
 

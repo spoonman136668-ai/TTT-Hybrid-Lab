@@ -96,7 +96,10 @@ def after(state,action,context,q):
 
 
 def B_history(group,n):
-    if type(group) is not int or not 0<=group<64 or n not in (8,16):
+    fit=20640000<=group<20640064 and n==8
+    dev=20650000<=group<20650012 and n==8
+    ood=20660000<=group<20660012 and n==16
+    if type(group) is not int or not (fit or dev or ood):
         raise ValueError("F8R32_INVALID_B_STREAM")
     return tuple((t%2,round(.031*math.sin((group+47)*.23+t*.51)
                              +.017*(t%3)-.02,8)) for t in range(n))
@@ -110,7 +113,7 @@ def _fit_episode(group,context,sign,mag,fifth,ret):
     q=sign*mag  # generator only; never a model-visible label.
     rec=[b._record(s,a,after(s,a,context,q),context) for s,a in EARLY]
     rec.append(b._record(PROBE,fifth,after(PROBE,fifth,context,q),context))
-    rec.extend(b._record(0.,a,y,context) for a,y in B_history(group,8))
+    rec.extend(b._record(0.,a,y,context) for a,y in B_history(20640000+group,8))
     actual_return=after(RETURN["dev"],ret,context,q)
     rec.append(b._record(RETURN["dev"],ret,actual_return,context))
     actions=torch.stack([r[0] for r in rec])
@@ -138,7 +141,7 @@ def world(panel,group,context,sign):
     return {"panel":panel,"group":group,"public_context":context,
             "q_evaluator_only":sign*QABS[panel],
             "return_state":RETURN[panel],"goal":GOAL,
-            "b_history":B_history(group+48,BSTEPS[panel])}
+            "b_history":B_history((20650000 if panel=="dev" else 20660000)+group,BSTEPS[panel])}
 
 
 def worlds(panel):
