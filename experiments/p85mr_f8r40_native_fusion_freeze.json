@@ -1,0 +1,133 @@
+{
+  "schema": "ttt-hybrid.f8r40-frozen-binder-native-fusion-isolation.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_AND_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NATIVE_FUSION_NONREGRESSION_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "sha": "7fb94ecc43bf9ee0ab98f2647f35c86e15096386",
+    "r39_freeze_blob": "f9f406ce6c0b49a71ab7d2d9b46857583d0502d0",
+    "r39_source_blob": "1c00e0a6b556554e2cb447b556657914ee051415",
+    "r38_source_blob": "c619af1d3c9ce1d5f54a647d4b026b48f17b133c",
+    "r39_mechanism": "TRAINED_BINDER_NECESSITY_PASS_2_OF_3",
+    "r39_native": "STILL_NO_GO"
+  },
+  "hypotheses": {
+    "preservation": "A separately frozen R38 binder plus zero-initialized bounded residual Native branch can preserve the already learned 32/32 sign-sensitive decisions across all five qualified synthetic panels while training 256 factual native updates.",
+    "interference": "A naive unbounded sum of identical frozen binder and Native branches may disturb those decisions; compare against identical Native initialization and factual data.",
+    "no_gain_claim": "Original five panels have zero binder regret, so an independent Native *improvement* is mathematically unobservable. Nonregression does not demonstrate Native improvement, learning generality, independent scientific transfer or autonomy."
+  },
+  "source_and_authority": {
+    "reuse_existing_r39_replay_exact": true,
+    "r39_train_seeds": [
+      985201,
+      985207
+    ],
+    "pretrain_steps_per_seed": 512,
+    "pretrain_optimizer": "R39 exact R38 AdamW, FIT informative pairs, sampler 21249999",
+    "binder_weights_frozen_for_fusion": true,
+    "original_factual_fit_source": "R33 3072 episodes, 1152 train pairs 576 informative, 384 heldout",
+    "unchosen_return_effect_evaluator_only": true,
+    "model_hidden_q_sign_never_training": true,
+    "current_return_effect_zero_mask": true,
+    "external_first_use": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "paid_API": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  },
+  "fusion_arms": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "naive_sum",
+      "zero_gated_residual"
+    ],
+    "model_instances": 4,
+    "native_base": "R34 FactualMemory native_factual_memory source, full trainable existing Native backbone/history/readout",
+    "naive": "frozen binder predicted selected return cost + Native FactualMemory predicted selected return cost, no gating",
+    "zero_gated": "frozen binder score + 0.10*tanh(trainable_alpha)*Native FactualMemory score, alpha initialized exactly zero before any training; binder frozen",
+    "same_native_initial_weight_hash_by_seed_required": true,
+    "zero_gated_initial_exact_binder_scores_required": true,
+    "zero_native_ablation_exact_binder_scores_required": true,
+    "no_native_only_counterfactual_evaluation_claim": true,
+    "cross_arm_capacity_not_perfect_due_gate_scalar": true
+  },
+  "training": {
+    "native_residual_updates_each": 256,
+    "total_native_residual_optimizer_updates": 1024,
+    "total_binder_pretraining_replay_updates": 1024,
+    "train_pairs_per_step": 16,
+    "sampler_seed": 21449999,
+    "optimizer": "AdamW lr0.001 weight_decay0.01, clip_grad_norm1",
+    "loss": "balanced CE from two independently actually selected return outcomes, binder frozen",
+    "checkpoint_steps": [
+      128,
+      256
+    ],
+    "heldout_factual_pairs": 192,
+    "selected_factual_info_actions_only": true,
+    "no_result_conditioned_checkpoint_selection": true,
+    "cold_restore_required": true,
+    "record_frozen_binder_hash_before_after": true,
+    "record_native_initial_final_hash": true,
+    "record_train_walltime": true
+  },
+  "evaluation": {
+    "panels": [
+      "dev",
+      "ood",
+      "synthetic_cubic_transfer",
+      "oscillatory_even",
+      "nonlinear_odd"
+    ],
+    "original_R38_panels": [
+      "dev",
+      "ood",
+      "synthetic_cubic_transfer"
+    ],
+    "new_R39_panels": [
+      "oscillatory_even",
+      "nonlinear_odd"
+    ],
+    "worlds_each": 64,
+    "policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "score_eraser": "erase selected fifth measurement only",
+    "score_zero_native": "return exact frozen standalone binder score",
+    "all_unchosen_return_scoring_evaluator_only": true,
+    "new_law_training_updates": 0,
+    "source_neutral_same_known_context_and_action_encoding": true
+  },
+  "frozen_judgment": {
+    "nonregression_pass_requires_seeds": 2,
+    "each_seed_panel_active_regret_max": 0,
+    "each_seed_panel_hidden_sign_flips_min": 32,
+    "each_seed_panel_binder_action_vector_identity": true,
+    "each_seed_panel_erased_measurement_regret_penalty_min": 0.12,
+    "each_seed_panel_zero_native_action_identity": true,
+    "naive_failure_not_required_for_frozen_success": true,
+    "report_both_naive_and_gated_every_policy": true,
+    "report_training_loss_and_native_weights_change": true,
+    "report_any_native_additional_gain_as_unverified_on_zero_regret_panel": true,
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "exact_final_SHA_full_G4_Windows_Ubuntu": true,
+    "existing_G5_Windows_Ubuntu": true,
+    "existing_G7_Ubuntu": true,
+    "original_source_negative_controls": true,
+    "crossplatform_original_artifact_comparison": true
+  }
+}
