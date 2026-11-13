@@ -432,16 +432,22 @@ def train_arm(arm, seed, binder, facts, labels, draws):
             "panels": panel_results, "cold_restored": True}
 
 
-def _control_feature(w):
-    """Only public state/context and physically selected B/fifth observations."""
-    a, e = candidates(w)
-    s = w["return_state"]     # public candidate action key, not an evaluator label
-    context = w["public_context"]
+def _control_feature_from_observations(a, e, state, context):
+    """Operate on public state/context and selected factual measurements only."""
+    if (a.shape != e.shape or a.ndim != 3 or a.shape[0] != 2 or
+        a.shape[-1] != 16 or a.shape[1] not in (14, 22)):
+        raise ValueError("F8R43_BAD_CONTROL_OBSERVATIONS")
     fifth = r31._physical_delta(e[0, 4, 0])
     b_peak = r42._observed_b_peak(e[0])
     interaction = fifth * b_peak
-    return [1., s, float(context), fifth, b_peak,
-            interaction, s * interaction, s*s * interaction]
+    return [1., float(state), float(context), fifth, b_peak,
+            interaction, state * interaction, state*state * interaction]
+
+
+def _control_feature(w):
+    a, e = candidates(w)
+    return _control_feature_from_observations(
+        a, e, w["return_state"], w["public_context"])
 
 
 def observational_control(facts, labels):
@@ -540,7 +546,31 @@ def judge(rows, freeze):
             and penalty >= threshold["min_regret_penalty_erase_B"]
             and zero_salience >= threshold["min_regret_penalty_zero_salience"]
             and lower > threshold["paired_bootstrap_lower_gain_gt"])
+        conventional_rows = [
+            row for row in rows
+            if row["arm"] in ("history_only_recurrent",
+                              "history_only_salience",
+                              "gru_recurrent", "ssm_recurrent")]
+        strongest_conv = min(
+            conventional_rows,
+            key=lambda row: row["panels"][HARD]["active"]["mean_regret"])
+        conventional_regret = strongest_conv["panels"][HARD]["active"]["mean_regret"]
+        native_backbone_penalty = (
+            sal["panels"][HARD]["zero_backbone"]["mean_regret"]
+            - hard_s["mean_regret"])
+        specific = freeze["prospective_decision"]["native_incremental"]
+        native_specific_development_conditions = bool(
+            conventional_regret - hard_s["mean_regret"] >=
+                specific["gain_vs_strongest_fully_trained_history_only_gru_ssm"]
+            and native_backbone_penalty >=
+                specific["backbone_ablation_regret_penalty"])
         result.append({"seed": seed, "frozen_salience_transfer_pass": passed,
+                       "native_specific_development_conditions":
+                           native_specific_development_conditions,
+                       "strict_native_specific_science": "UNVERIFIED_COMPUTE_ORIGINAL_SOURCE",
+                       "strongest_trained_conventional_arm": strongest_conv["arm"],
+                       "strongest_trained_conventional_regret": conventional_regret,
+                       "native_backbone_regret_penalty": native_backbone_penalty,
                        "hard_native_salience_regret": hard_s["mean_regret"],
                        "hard_native_recurrent_regret": hard_r["mean_regret"],
                        "hard_gain": gain,
