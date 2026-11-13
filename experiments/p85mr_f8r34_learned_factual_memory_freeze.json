@@ -1,0 +1,125 @@
+{
+  "schema": "ttt-hybrid.f8r34-learned-factual-memory.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_OR_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NEURAL_FACTUAL_CAUSAL_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "0f5e7381037b8dfdd365be222a5159f2e42fe39f",
+    "r33_freeze_blob": "94e7f63370143e7423a96ecd94937d9a5a31b097",
+    "r33_source_blob": "d43638da45e91f51008b9674fbd7ccacde8c36ef",
+    "r32_neural_no_go": "0_OF_3",
+    "r33_factual_control": "DEVELOPMENT_PASS"
+  },
+  "hypothesis": "Without handcoded quartic, informed-indicator or causal-sign features, can a bounded trained native Hybrid plus learned recurrent factual-memory readout use the selected fifth action consequence to decide the correct first return? Control same learned readout on GRU, SSM and history-only, alongside frozen conventional R33.",
+  "data": {
+    "generator": "R33 unchanged factorial factual selected-effect episode stream and independent DEV/OOD groups",
+    "fit_groups_total": 64,
+    "fit_training_groups": "0..47",
+    "fit_validation_groups": "48..63",
+    "fit_episodes_total": 3072,
+    "fit_training_episodes": 2304,
+    "fit_validation_episodes": 768,
+    "train_pairs": "adjacent return_action=0/1 FIT factual episodes are two independently selected trajectories of the same generated world; loss may compare these two observed FIT returns but not evaluator-only hypothetical outcomes",
+    "train_pair_count": 1152,
+    "fit_batch_pairs": 8,
+    "fit_batch_episodes": 16,
+    "fit_selection_seed": 20779999,
+    "model_initial_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "visible_inputs": "only raw P80 factual action/effect 16D for timesteps 0..13, with step13 return effect strictly masked before prediction; no inferred q, explicit informative indicator, quartic/state-power causal basis, analytic goal-optimum or unchosen return labels",
+    "output_label": "0.1*(actually selected return effect state-goal)^2 from FIT as supervised factual direct-value target",
+    "scoring": "first return action chosen before its selected return effect; unchosen return effects evaluator-only for regret"
+  },
+  "arms": {
+    "neural": [
+      "native_factual_memory",
+      "gru_factual_memory",
+      "ssm_factual_memory",
+      "history_only"
+    ],
+    "native_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "other_seeds": [
+      985201
+    ],
+    "model_factory": "reuse R29B native_focus20/GRU_focus20/SSM_focus20 backbones, train native from scratch, add same learned 32D GRU factual-history readout and 64D MLP value head on raw P80 records plus the trainable backbone current-token prediction; history_only receives zero backbone output with matched head, not native capability",
+    "adapter_history_hidden": 32,
+    "adapter_head_hidden": 64,
+    "history_inputs": "all thirteen historical factual 16D action keys + sixteen-dimensional actually observed effects, plus only candidate return-action key and backbone preaction output",
+    "trainable_backbone": true,
+    "optimizer": "AdamW native .002, other .001, history_only .001; decay .01, clip norm1",
+    "train_updates_each": 256,
+    "checkpoints": [
+      128,
+      256
+    ],
+    "total_arms_instances": 6,
+    "total_updates": 1536,
+    "factual_value_loss": "mean squared error over two separately actually selected factual return outcomes for the same FIT world",
+    "pairwise_ranking_aux": "0.1*softplus(-signed factual difference of the two selected FIT return costs multiplied by predicted cost difference), where signs come exclusively from two factual FIT labels",
+    "pairwise_aux_scale": 0.1,
+    "optimizer_batch_size_pairs": 8,
+    "matched_training_examples_updates": true,
+    "matched_backbone_capacity_FLOPs": false,
+    "evaluate_native_adapter_with_backbone_zeroed": true,
+    "frozen_R33_factual_control_reused": true
+  },
+  "score": {
+    "panels": [
+      "dev",
+      "ood"
+    ],
+    "worlds_per_panel": 48,
+    "groups_per_panel": 12,
+    "fifth_policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "evaluate_fifth_effect_erasure": true,
+    "paired_bootstrap_draws": 10000,
+    "bootstrap_seed": 20789999,
+    "native_seed_both_panels_min": 2,
+    "native_active_regret_max_each": 0.1,
+    "native_sign_flip_pairs_min_each": 20,
+    "native_erase_regret_increase_min_each": 0.08,
+    "native_active_vs_best_fixed_gain_min_each": 0.05,
+    "native_paired_lower_vs_best_fixed_gt": 0,
+    "native_active_vs_history_only_gain_min_each": 0,
+    "report_native_backbone_ablated_gain": true,
+    "report_fit_validation_mse_128_256": true,
+    "report_cost_flops_timing_and_cold_restore": true,
+    "independent_scientific_pass": false,
+    "interpretation": "A passed source-neutral neural development criterion is not independently qualified generalization; a history-only equal result does not establish native backbone benefit"
+  },
+  "qualification": {
+    "existing_full_G4_Windows_Ubuntu": true,
+    "existing_authentic_G5_Windows_Ubuntu": true,
+    "existing_pinned_G7_Ubuntu": true,
+    "source_negative_controls": true,
+    "original_artifact_comparison": true,
+    "full_exact_SHA": true,
+    "original_R29_to_R33_results_preserved": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
