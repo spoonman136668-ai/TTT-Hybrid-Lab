@@ -1,0 +1,230 @@
+{
+  "schema": "ttt-hybrid.f8r43-factorial-transfer-prereg.v1",
+  "stage": "FROZEN_BEFORE_R43_IMPLEMENTATION_OR_NEW_SOURCE_GENERATION",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_DEVELOPMENT_ONLY",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_pr": 237,
+    "parent_sha": "d33fa9aa274179d13a55de83597a1a6cbc3dddc8",
+    "r42_original_sha": "1082fdd78217067340330c6e188cab10ae4786c3",
+    "r42_frozen_blob": "6bc8b93765acfeba7d4ef6c27f9ab1540010cf52",
+    "r42_final_science": "NATIVE_NO_GO_0_OF_2;CROSS_OS_DECISION_PARITY_FAIL_33_OF_10752",
+    "r42_corrected_observational_diagnostic": "CURRENT_G4_FINAL_WINDOWS_QUALIFICATION_NOT_IMPLIED_BY_THIS_FREEZE",
+    "r42_source_replay": "NO_R42_FIT_REPLAY_FOR_FRESH_R43_CLAIM"
+  },
+  "hypotheses": {
+    "primary": "Factor history length, salient B position and return dynamics independently to identify which change causes Native causal-action transfer failure, with the exact same held-out factual source identities in each factorial cell.",
+    "secondary": "A learned position-invariant B-measurement reader can transfer to longer histories and shifted salient positions more reliably than the original recurrent history gate while retaining causal B and fifth-measurement necessity.",
+    "native_specific": "A genuine Native-backbone component must improve the learned reader over fully trained and information-matched conventional memory controls, not merely carry a successful common readout."
+  },
+  "source": {
+    "generator": "Fresh source-neutral action-consequence worlds using the R42 selected-fifth probe and physical return laws, but independent R43 salts and group IDs; NO original F7 or external authentic first-use.",
+    "new_salts": {
+      "fit": 21710000,
+      "eval": 21720000
+    },
+    "groups": {
+      "fit": 48,
+      "fit_train": 32,
+      "fit_heldout": 16,
+      "eval": 16
+    },
+    "balanced_axes": {
+      "public_context": [
+        0,
+        1
+      ],
+      "fifth_q_sign": [
+        -1,
+        1
+      ],
+      "history_gate": [
+        -1,
+        1
+      ],
+      "candidate_return_action": [
+        0,
+        1
+      ]
+    },
+    "fit": {
+      "history_steps": 8,
+      "marker_locations": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "physics": "R42 quartic selected-return law",
+      "return_states": [
+        0.61,
+        0.73
+      ],
+      "q_magnitude": 1,
+      "worlds": 384,
+      "paired_training_worlds": 256,
+      "paired_fit_heldout_worlds": 128,
+      "selected_factual_return_episodes": 768
+    },
+    "factorial_eval": {
+      "cross_product": {
+        "history_steps": [
+          8,
+          16
+        ],
+        "marker_family": [
+          "seen_1_to_4",
+          "novel_5_to_7"
+        ],
+        "return_law": [
+          "quartic",
+          "cubic"
+        ]
+      },
+      "panels": 8,
+      "worlds_per_panel": 128,
+      "matched_gate_flips_per_panel": 64,
+      "same_group_context_q_gate_across_cells": true,
+      "identical_first_eight_B_effects_when_only_length_changes": true,
+      "identical_first_five_factual_effects_when_only_return_law_changes": true,
+      "B_signal": "One signed 0.24*hidden_gate marker, noise for other steps; append extra nuisance observations for 16-step history without moving marker.",
+      "marker_indices": {
+        "seen": "1+(group%4)",
+        "novel": "5+(group%3)"
+      },
+      "nuisance": "0.006*sin((salt+group)*0.137+step*0.271)+0.004*((step+group)%4-1.5), rounded to 8 decimals",
+      "state_and_q_constant": "Return states 0.61/0.73 by even/odd group; q-magnitude exactly 1.0 in every factor cell.",
+      "return_laws": {
+        "quartic": "Frozen R42 selected-return quartic action physics",
+        "cubic": "Frozen R41 cubic selected-return OOD physics"
+      },
+      "source_pair_rule": "For each group/public context/q/gate, generate paired alternative physics outcomes by separately actually selected returns, never provide unchosen return outcome or evaluator metadata to any learner.",
+      "negative": "Random/unregistered panel or group, source panel metadata, hidden q/gate, evaluator-only marker position, withheld return effect and future target must not reach learners.",
+      "data_reuse": "Fresh R43 FIT and frozen factorial EVAL are single-use source-neutral DEV; no post-score panel/seed/label tuning; R42 scores remain consumed and immutable."
+    }
+  },
+  "methods": {
+    "shared_pretrained_binder": "Replay verified original R38 binder on original qualified factual FIT solely as fixed reference for each R43 neural arm; report actual replay update cost; freeze its parameters.",
+    "arms": [
+      {
+        "name": "native_recurrent",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "history_only_recurrent",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "native_salience",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "history_only_salience",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "gru_recurrent",
+        "seeds": [
+          985201
+        ]
+      },
+      {
+        "name": "ssm_recurrent",
+        "seeds": [
+          985201
+        ]
+      }
+    ],
+    "salience_reader": "Shared per-observation trainable MLP score on (selected action-key,selected B effect), masked softmax over all B history rows, pooled value features, then learned scalar gate. No absolute-max oracle, no generated marker index, no panel tags, no future effects, no hand-coded gate label.",
+    "native_fusion": "Native salience arm receives the original R34 native backbone's pre-action feature in addition to the learned salience reader; zero-backbone ablation must alter held-out actions. History-only salience uses exactly the same B reader without Native.",
+    "identical_information_across_arms": true,
+    "trainable_parameters": "Measure all trainable and frozen parameters, actual AdamW steps, total CPU wall time, and any unmatched compute; equal updates alone is NOT equal compute.",
+    "budget": {
+      "new_updates_per_arm": 256,
+      "paired_factual_worlds_per_update": 16,
+      "optimizer": "AdamW lr=0.001 weight_decay=0.01 clip_norm=1",
+      "sample_seed": 21749999,
+      "init_seed_offsets": "Arm-specific deterministic offset from each original 985201/985207 seed",
+      "checkpoint_updates": [
+        128,
+        256
+      ],
+      "validation_only_no_hyperparameter_selection": true,
+      "no_sweep_after_scoring": true
+    },
+    "controls": [
+      "B erasure",
+      "B swap in matched gate-flip pairs",
+      "fifth measurement erasure",
+      "zero history gate",
+      "zero binder contrast",
+      "zero native backbone",
+      "zero salience reader",
+      "cold state restore",
+      "blocked hidden metadata",
+      "held-out source identity/split disjointness",
+      "observable factual positive-control reading selected history only"
+    ],
+    "conventional_controls": "Original recurrent Native/history-only plus independently trained GRU and SSM, all with identical FIT data and 256 updates per arm; no conventional baseline preselected by EVAL.",
+    "benchmarking": "Report complete training, replay, scoring, calibration, original baseline and test runtime; strict matched compute is UNVERIFIED unless demonstrated."
+  },
+  "prospective_decision": {
+    "factorial_diagnostics": {
+      "length_effect": "Paired mean regret (len16 - len8) holding marker family and return law constant",
+      "position_effect": "Paired mean regret (novel - seen) holding history length and return law constant",
+      "physics_effect": "Paired mean regret (cubic - quartic) holding history length and marker family constant",
+      "large_effect_abs_at_least": 0.2,
+      "significant_pairing": "Paired group bootstrap 10,000 resamples, seed 21769999, 95% interval excluding zero; report all cells without choosing favorable contrasts",
+      "interaction_rule": "If multiple main effects/interactions occur, do not attribute cause to a single factor; no post-result panel deletion."
+    },
+    "salience_transfer": {
+      "both_original_native_seeds_required": true,
+      "hardest_cell": "len16+novel_5_to_7+cubic",
+      "max_salience_regret_each_seed": 0.12,
+      "min_salience_gate_flips": 56,
+      "min_regret_gain_over_same_seed_native_recurrent": 0.1,
+      "max_loss_vs_same_seed_native_recurrent_fit_like": 0.02,
+      "min_regret_penalty_erase_B": 0.12,
+      "min_regret_penalty_zero_salience": 0.12,
+      "paired_bootstrap_lower_gain_gt": 0,
+      "all_factors_reported": true
+    },
+    "native_incremental": {
+      "both_seeds": true,
+      "gain_vs_strongest_fully_trained_history_only_gru_ssm": 0.05,
+      "backbone_ablation_regret_penalty": 0.08,
+      "information_compute_matched_required_for_strong_claim": true,
+      "floor_rule": "A zero-regret conventional control rules out positive regret superiority; mark Native incremental threshold FAIL, not workaround."
+    },
+    "engineering_qualification": "After implementation and frozen score run, mandatory exact-source G4 full Windows+Ubuntu, G5 Windows+Ubuntu, G7 pinned Mamba2 Ubuntu, original artifacts and reproducible cross-OS action-vector comparison. Do not shorten regression.",
+    "scientific_classification": "All R43 results are synthetic development only. Independent original-world, sealed fresh first-use, GPU and broad retention/scientific acceptance remain separate and UNVERIFIED.",
+    "stop_rules": "If either original seed fails frozen causal salience or conventional gain threshold, preserve NO-GO. No extra seeds, retuned laws, post-result loss changes or rerun on consumed scores.",
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "source_neutral_frozen_protocol_only": true,
+    "external_original_simulator_first_use": false,
+    "spent_F7_replay": false,
+    "R42_scored_eval_replay": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_controller": false,
+    "paid_api": false,
+    "GPU_first_use": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
