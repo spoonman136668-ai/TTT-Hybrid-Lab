@@ -8,7 +8,8 @@
     "prior_r44_freeze_blob": "049aafcb2846aa95d1e3f1cd5c5e464b9d2c71b1",
     "prior_science": "R44_NO_GO_0_OF_2; DECISION_PARITY_FAIL_517_OF_12032",
     "prior_result_consumed": true,
-    "no_reuse_as_new_science": true
+    "no_reuse_as_new_science": true,
+    "preimplementation_source_encoding_amendment": "Auxiliary P80 B reward channel masked before R45 implementation because unequal observable state tags otherwise reveal hidden gate through reward; original freeze-only snapshot retained in ancestry; current file's Git blob is the controlling protocol."
   },
   "hypothesis": {
     "primary": "A learned content-selective reader must use an observable B record tag to distinguish a causal signal from an equal-and-opposite selected distractor impulse when the position-blind pooled B observation is identical for opposite latent gates.",
@@ -49,12 +50,14 @@
       "decoy_delta": "-0.24*hidden_gate",
       "nuisance_delta": "round(0.006*sin((SALT[panel]+group)*0.137+t*0.271)+0.004*((t+group)%4-1.5),8)",
       "cue_decoy_position": "Two distinct positions drawn by hash of panel/group/salt; identical across matched opposite-gate worlds; not exposed as model metadata.",
-      "physical_observation": "_record(observed_state, selected_action, observed_state+selected_delta, context), retaining correct encoded difference semantics",
+      "physical_observation": "For each selected B record, obtain the public action key and normalized selected delta using _record(observed_state,selected_action,observed_state+selected_delta,context). Mask its auxiliary reward component effect[4] to a fixed zero for every B record before any learning/scoring; reward is outside this controlled B measurement task and otherwise leaks gate through unequal tag states. Preserve the selected physical-delta sensor, immutable action key and all other fixed channels.",
       "uniform_raw_B_action_mean_equal_for_opposite_gates": true,
       "uniform_raw_B_effect_mean_equal_for_opposite_gates": true,
       "raw_mean_nuisance_independent_of_gate": true,
       "no_single_index_shortcut": true,
-      "selected_public_cue": "B selected key encodes role state 0.42, not the latent gate. Competing selected decoy role state 0.18 also visible."
+      "selected_public_cue": "B selected key encodes role state 0.42, not the latent gate. Competing selected decoy role state 0.18 also visible.",
+      "measured_B_effect_indices": "Only normalized physically selected state-change channel effect[0] varies; auxiliary reward effect[4] is deterministically zero, and all other channels remain unchanged, across all B rows.",
+      "balanced_mean_test": "Compare full 16-channel means of B action keys and normalized B effects, paired gate +/- worlds for each group/panel. Require torch.allclose with atol=1e-7,rtol=0 on CPU and no label-conditioned aux-feature; cue and decoy impulses are exactly equal/opposite, with nuisance fixed by group."
     },
     "early_fifth": "Use separate genuinely selected R43 quartic fifth probe to identify q sign, with no hidden q access in model/loss; OOD uses R41 cubic return.",
     "factual_loss": "Train by actual separately selected physical return consequence; (decoded following state - goal)^2, no unselected action outcome in learner.",
