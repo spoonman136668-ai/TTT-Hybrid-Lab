@@ -65,7 +65,12 @@ def after(state: float, action: int, context: int, q: float) -> float:
         raise ValueError("INVALID_ACTION_CONTEXT")
     if not all(math.isfinite(x) for x in (state, q)):
         raise ValueError("INVALID_PHYSICAL_INPUT")
-    return .4 * state - .03 + ((5 / 3) * q * (state * state - .04)
+    # In exact mathematics s=+/-0.2 has zero curvature. Suppress IEEE-754
+    # cancellation residue to prevent hidden q leaking through early facts.
+    curvature = state * state - .04
+    if abs(curvature) < 1e-14:
+        curvature = 0.0
+    return .4 * state - .03 + ((5 / 3) * q * curvature
                               if action == context else 0.0)
 
 
