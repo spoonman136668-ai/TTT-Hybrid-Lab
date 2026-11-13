@@ -155,9 +155,24 @@ def _donor_map(fit,pools):
     rng=random.Random(21149998)
     out={}
     for c in (0,1):
-        donors=contexts[c].copy()
-        rng.shuffle(donors)
-        out.update(zip(contexts[c],donors))
+        originals=contexts[c]
+        if len(originals)!=288:
+            raise ValueError("F8R37_DONOR_CONTEXT_UNBALANCED")
+        for attempt in range(128):
+            selected=originals.copy()
+            rng.shuffle(selected)
+            if any(i==j for i,j in zip(originals,selected)):
+                continue
+            # This is an audit-only generator-sign check, never a model feature.
+            def _sign(pair):
+                return -1 if pair%12<6 else 1
+            local_phi=statistics.fmean(_sign(i)*_sign(j)
+                                      for i,j in zip(originals,selected))
+            if abs(local_phi)<=.1:
+                break
+        else:
+            raise ValueError("F8R37_DONOR_DERANGEMENT_UNAVAILABLE")
+        out.update(zip(originals,selected))
     if set(out)!=set(info):
         raise ValueError("F8R37_DONOR_CONTEXT_MAPPING_INCOMPLETE")
     # Sign labels derived from the known author-generated FIT enumeration

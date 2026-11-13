@@ -52,6 +52,8 @@ def test_fit_only_baseline_donor_negative_decorrelation_and_selected_return_labe
     assert abs(phi)<=.1
     assert all(x.informative_id(rows,i) for i in donor)
     assert len(set(donor.values()))==576
+    # A shuffled negative-control donor must be a DIFFERENT factual trajectory.
+    assert all(i!=j for i,j in donor.items())
     sample=pool["informative"][:16]
     a,e,y=x._batch(rows,labels,sample,donor_map=donor)
     raw_a,raw_e,raw_y=x._batch(rows,labels,sample)
