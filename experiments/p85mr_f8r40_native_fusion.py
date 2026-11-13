@@ -154,7 +154,7 @@ def _candidate_new(world,policy,erase=False):
         key=r33.b._record(world["return_state"],ret,
                           world["return_state"],context)[0]
         rows.append((torch.cat((acts,key.unsqueeze(0))),
-                     torch.cat((eff,torch.zeros((1,16)))))
+                     torch.cat((eff,torch.zeros((1,16))))))
     return torch.stack([a for a,e in rows]),torch.stack([e for a,e in rows])
 
 
