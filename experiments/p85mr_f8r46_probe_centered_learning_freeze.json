@@ -1,0 +1,158 @@
+{
+  "schema": "ttt-hybrid.f8r46-probe-centered-conditional-learning-freeze.v1",
+  "stage": "FROZEN_BEFORE_ANY_R46_IMPLEMENTATION_SOURCE_BIRTH_OR_SCORING",
+  "source_type": "FRESH_SOURCE_NEUTRAL_SYNTHETIC_DEV",
+  "lineage": {
+    "parent_pr": 240,
+    "parent_sha": "f42313838efa6c93726e028c5a004e01f90edb33",
+    "R45_frozen_science": "NO_GO_0_OF_2_ON_UBUNTU_PENDING_CROSS_OS",
+    "R45_original_source_not_replayed": true,
+    "prior_failed_R45_positive_control": "RAW_FIFTH_DELTA_SIGN_WRONG_AT_PROBE_STATE",
+    "prior_R45_original_artifact_id": 14074241205
+  },
+  "hypothesis": {
+    "primary": "A model must decode the observed resulting fifth-probe state (not the raw signed change), center it against a FIT-only selected-probe baseline, select the tagged causal B consequence rather than its cancelling decoy, and compose these two observed quantities to learn the correct later action.",
+    "negative": "If a learned reader does not improve heldout FIT, causal tag erasure/uniforming does not hurt it, or one seed fails, the claimed causal-memory mechanism is not established.",
+    "native_specific": "Native advantage is assessed only as an incremental ablation over a matched history-only reader; the scriptable physical decoder is a correctness ceiling, so Native is never claimed superior to a zero-regret deterministic control."
+  },
+  "source": {
+    "salts": {
+      "fit": 22010000,
+      "cal": 22020000,
+      "ood": 22030000
+    },
+    "panels": {
+      "fit": {
+        "groups": 32,
+        "history_length": 8
+      },
+      "cal": {
+        "groups": 12,
+        "history_length": 8
+      },
+      "ood": {
+        "groups": 12,
+        "history_length": 16
+      }
+    },
+    "balanced_context_q_gate": true,
+    "paired_opposite_gate_B_full_mean_identical": true,
+    "selected_probe_state": 0.42,
+    "public_B_cue_tag_state": 0.42,
+    "public_B_decoy_tag_state": 0.18,
+    "B_cue_delta": "0.24*gate",
+    "B_decoy_delta": "-0.24*gate",
+    "nuisance": "0.006*sin((salt+group)*.137+t*.271)+0.004*((t+group)%4-1.5), rounded 8 dp",
+    "cue_decoy_positions": "distinct SHA-256-derived positions per split and group, never model-visible",
+    "B_encoding": "_record(tag, selected_action, tag+delta, context), mask reward effect[4]=0 in all B records; selected physical delta effect[0] and observable public key remain",
+    "fifth": "_record(.42, context, after(.42,context,context,q), context). Only actually selected fifth effect enters learner; center decoded following against FIT-estimated no-q physical baseline; no hidden q input.",
+    "return_law": {
+      "fit_cal": "R32 quartic with state 0.61/0.73",
+      "ood": "R41 cubic with state 0.61/0.73"
+    },
+    "return_goal": "square(final selected return state - 1.0); original _record normalizes following minus before; no double-add",
+    "fit_groups_training": 24,
+    "fit_groups_heldout": 8,
+    "train_pairs": 192,
+    "heldout_pairs": 64,
+    "fit_selected_returns": 512,
+    "cal_worlds": 96,
+    "ood_worlds": 96,
+    "same_source_replay_forbidden": [
+      "R42",
+      "R43",
+      "R44",
+      "R45",
+      "original F7"
+    ],
+    "metadata_deny": [
+      "gate",
+      "q",
+      "group",
+      "panel",
+      "cue_index",
+      "decoy_index",
+      "unselected_return",
+      "future_effect"
+    ]
+  },
+  "methods": {
+    "FIT_only_probe_calibration": "Estimate no-q fifth-probe following-state offset solely from selected FIT observed controls (nonmatch selected probe arm) or a separate set of actually selected control returns; no generator baseline constant hardcoded into neural policy. Test exact resulting-state decode and sign discrimination on FIT heldout before scored CAL/OOD.",
+    "observational_ceiling": "Fixed deterministic public cue-tag extractor plus FIT-only probe-offset estimator applied to selected fifth and B observed effects; bound feasibility, never label this trained neural learning.",
+    "mechanism_arms": [
+      "calibrated_content_native",
+      "calibrated_content_history_only",
+      "unconditioned_content_native",
+      "trained_GRU"
+    ],
+    "two_seeds": [
+      985201,
+      985207
+    ],
+    "same_train_information_and_actions": true,
+    "train_updates_each": 192,
+    "batch_pairs": 16,
+    "sample_seed": 22049999,
+    "init_seed_provenance": "base seed plus stable disjoint arm offsets",
+    "learning": "Cross entropy on actually selected return-derived paired choice labels; probe-centered observation head explicitly observes decoded following-minus-FIT-frozen-offset, B head reads public state tag plus selected physical effect; interaction gate trainable",
+    "ablations": [
+      "zero/corrupt fifth selected effect",
+      "erase B sensor",
+      "erase public cue-role tag",
+      "uniform B pooling",
+      "swap B across paired opposite-gate worlds",
+      "zero Native backbone",
+      "zero trainable B mechanism",
+      "frozen binder/decision key",
+      "cold restore",
+      "negative unseen-return admission"
+    ],
+    "diagnostics": [
+      "heldout FIT accuracy at 64/128/192",
+      "selection entropy",
+      "gradient norms",
+      "whole process CPU runtime",
+      "params/forward compute",
+      "per-pair factual label balance",
+      "no oracle metadata"
+    ],
+    "strict_matched_compute_required_for_native_superiority": true
+  },
+  "preregistered_score": {
+    "FIT_heldout_accuracy_each_seed_at_least": 0.95,
+    "cal_mean_regret_each_seed_max": 0.12,
+    "ood_mean_regret_each_seed_max": 0.12,
+    "cal_gate_reversals_each_seed_at_least": 40,
+    "ood_gate_reversals_each_seed_at_least": 40,
+    "B_erasure_regret_penalty_at_least": 0.12,
+    "cue_tag_erasure_regret_penalty_at_least": 0.12,
+    "uniform_pool_regret_penalty_at_least": 0.12,
+    "fifth_erasure_regret_penalty_at_least": 0.12,
+    "native_backbone_penalty_at_least": 0.08,
+    "learned_reader_gain_vs_own_unconditioned_at_least": 0.12,
+    "bootstrap": {
+      "draws": 10000,
+      "seed": 22069999,
+      "lower_95_positive": true
+    },
+    "reference_ceiling_requires_exact_correct_choices_all_fit_cal_ood": true,
+    "both_seeds_required": true,
+    "if_one_seed_fails": "Preserve NO-GO; do not alter loss, seed or source and retry consumed CAL/OOD",
+    "if_reference_fails": "SOURCE_VALIDITY_FAIL; stop before training/scoring; do not assert scientific result",
+    "cross_os": "All exact categorical decisions and frozen high-level judgments must agree across Windows/Ubuntu for reproducibility PASS",
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "paid_api": false,
+    "spent_F7_or_prior_scored_source_replay": false,
+    "original_external_first_use": false,
+    "GPU_first_use": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  },
+  "qualification": "Mandatory full unchanged G4 Windows+Ubuntu, G5 Native TTT Windows+Ubuntu and G7 pinned Mamba2 Ubuntu at exact final SHA, original artifact digests and per-decision parity before acceptance"
+}
