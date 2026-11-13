@@ -69,10 +69,7 @@ def locked():
         j["nonregression_pass_requires_seeds"]!=2 or
         j["each_seed_panel_active_regret_max"]!=0 or
         j["each_seed_panel_hidden_sign_flips_min"]!=32 or
-        j["independent_scientific_pass"] is not False or
-        any(x is not False for x in f["source_and_authority"].values()
-            if type(x) is bool and x is False)==False):
-        # The last authority fence is verified explicitly below.
+        j["independent_scientific_pass"] is not False):
         raise ValueError("F8R40_FROZEN_PROTOCOL_DRIFT")
     forbidden=("external_first_use","spent_F7_replay","GPU_firstuse",
                "paid_API","new_workflow","new_runner","new_scheduler",
