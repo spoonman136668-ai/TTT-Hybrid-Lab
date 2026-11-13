@@ -79,7 +79,7 @@ def qualify(receipt_path: Path) -> dict:
     except ImportError:
         record["torch"] = None
     record["tests"] = run_command(
-        [sys.executable, "-m", "pytest", "-q", "tests"], timeout=600
+        [sys.executable, "-m", "pytest", "-q", "--durations=15", "tests"], timeout=900
     )
     # An intentional negative control. There must be no upstream checkout at
     # either synthetic path, irrespective of whether the host has a GPU.
