@@ -31,7 +31,7 @@ GOAL = 1.0
 
 
 def git_blob(raw: bytes) -> str:
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 
 def locked() -> dict:
@@ -232,7 +232,7 @@ def retain_ci_receipt(data: dict) -> None:
     path.parent.mkdir(exist_ok=True)
     if path.exists():
         raise FileExistsError("F8R29_REFUSE_RECEIPT_OVERWRITE")
-    path.write_text(json.dumps(data, indent=2, sort_keys=True, allow_nan=False) + "\\n")
+    path.write_text(json.dumps(data, indent=2, sort_keys=True, allow_nan=False) + "\n")
 
 
 def refuse_original_external_firstuse(*_args, **_kwargs):

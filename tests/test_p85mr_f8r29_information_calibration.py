@@ -23,10 +23,10 @@ def test_four_factual_probes_cannot_reveal_q_and_selected_fifth_can():
             high = x.world(panel, 2, context, 1)
             assert low["early_actual"] == high["early_actual"]
             assert low["b_history"] == high["b_history"]
-            assert x.after(x.PROBE_STATE, context, context, low["hidden_q_evaluator_only"]) != \\
+            assert x.after(x.PROBE_STATE, context, context, low["hidden_q_evaluator_only"]) != \
                    x.after(x.PROBE_STATE, context, context, high["hidden_q_evaluator_only"])
             other = 1-context
-            assert x.after(x.PROBE_STATE, other, context, low["hidden_q_evaluator_only"]) == \\
+            assert x.after(x.PROBE_STATE, other, context, low["hidden_q_evaluator_only"]) == \
                    x.after(x.PROBE_STATE, other, context, high["hidden_q_evaluator_only"])
 
 
