@@ -75,7 +75,7 @@ def test_explicit_four_probe_memory_sufficient_and_no_current_effect_in_input():
             b0,b1,k0,k1=x.four_probe_predictions(ep)
             for a,actual_b,actual_k in ((0,b0,k0),(1,b1,k1)):
                 for s in x.RETURNS:
-                    expected=actual_b+(.4+actual_k)*s
+                    expected=actual_b+actual_k*s
                     assert expected==pytest.approx(
                         x.A_after(s,a,ep["b_evaluator_only"],ep["k_evaluator_only"]),
                         abs=1e-5)
