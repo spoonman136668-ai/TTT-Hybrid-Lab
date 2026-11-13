@@ -1,0 +1,178 @@
+{
+  "schema": "ttt-hybrid.f8r36-balanced-factual-choice.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_OR_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NEURAL_FACTUAL_CHOICE_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "sha": "99dcb05cc0e16d9da33facd5482daaa9f5e2221d",
+    "r35_freeze_blob": "49b13065e78bf11f2130ffc57f169e272bfb09a0",
+    "r35_source_blob": "72af6335094bd1a2f472fc0d5d7ac9d9dff16ed8",
+    "r34_freeze_blob": "02a7528b5e1a0d9f926d6cf8bb202248490a2e70",
+    "r33_source_blob": "d43638da45e91f51008b9674fbd7ccacde8c36ef",
+    "previous_R35": "0_OF_3_NEURAL_CAUSAL_DEV_NO_GO"
+  },
+  "hypothesis": "A balanced cross-entropy choice objective from pairs of separately actually selected factual return consequences may teach raw neural, explicit-gate neural and native+recurrent models to condition return decisions on an informative fifth observation; a fifth-effect-erased model must fail the sign-dependent decision test.",
+  "data": {
+    "FIT_source": "unmodified R33",
+    "FIT_episodes": 3072,
+    "train_FIT_groups": 48,
+    "validation_FIT_groups": 16,
+    "train_factual_choice_pairs": 1152,
+    "validation_factual_choice_pairs": 384,
+    "FIT_early_states": [
+      -0.15,
+      0.15
+    ],
+    "FIT_return_states": [
+      0.54,
+      0.62,
+      0.7,
+      0.78
+    ],
+    "paired_label": "lower actual squared-goal cost of two independently selected factual FIT return trajectories with identical preaction history, one return_action=0, other=1; no unchosen evaluator return",
+    "class0_pairs": 576,
+    "class1_pairs": 576,
+    "ties": 0,
+    "informative_fifth_pairs": 576,
+    "noninformative_fifth_pairs": 576,
+    "no_hidden_sign_or_q_in_model": true,
+    "no_return_effect_as_model_input": true,
+    "model_observes_selected_fifth_only": true,
+    "score_panels": [
+      "dev",
+      "ood"
+    ],
+    "groups_per_panel": 16,
+    "worlds_per_panel": 64,
+    "dev": {
+      "return_states_by_group_parity": [
+        0.59,
+        0.71
+      ],
+      "q_abs": 1.05,
+      "B_steps": 8
+    },
+    "ood": {
+      "return_states_by_group_parity": [
+        0.57,
+        0.75
+      ],
+      "q_abs": 0.92,
+      "B_steps": 16
+    },
+    "score_B_stream": "Independent deterministic harmonic nuisance, score group salts 21050000 DEV and 21060000 OOD; not a source of hidden q or sign",
+    "score_contexts": [
+      0,
+      1
+    ],
+    "score_signs": [
+      -1,
+      1
+    ],
+    "scoring_first_return_unselected_only_evaluator": true,
+    "scoring_policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "seeded_random_probe_namespace": "f8r36",
+    "new_novel_law": false,
+    "score_not_fit": true
+  },
+  "arms": {
+    "raw_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "explicit_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "native_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "history_only_seed": 985201,
+    "erased_raw_seed": 985201,
+    "total_instances": 11,
+    "raw_model": "R35 existing 48D raw P80 fifth action, actual fifth effect, candidate return action -> 64D GELU -> 64D GELU -> score",
+    "explicit_model": "R35 raw 48D plus three public-only causal-gate features: fifth matches public context, return matches public context, joint match; no q/sign/known physics/hidden outcome",
+    "native_model": "R34 native factual-history+native backbone+learned recurrent 32D readout, exactly original raw action/effect P80",
+    "history_only_model": "R34 history-only recurrent model, native backbone absent",
+    "erased_model": "R35 raw network identical to raw arm but all fifth factual effect tensors zeroed in both FIT training and score",
+    "readout_score": "lower logit is predicted preferred factual return",
+    "capacity_FLOPs_matched_raw_explicit": false,
+    "capacity_FLOPs_matched_native_history": false,
+    "fully_converged_arms": false
+  },
+  "train": {
+    "updates_each": 512,
+    "optimizer_updates_total": 5632,
+    "pairs_per_batch": 16,
+    "episodes_per_batch": 32,
+    "sampler_seed": 21049999,
+    "optimizer": "AdamW learning rate .002 raw/explicit/erased and .001 native/history, weight_decay .01, clip_grad_norm 1",
+    "objective": "balanced categorical cross entropy over two cost logits generated from actually separately selected factual return actions; target=argmin(actual return cost0, actual return cost1)",
+    "selected_factual_cost_only": true,
+    "no_evaluator_labels_or_future_returns": true,
+    "comparison_alignment": "same pair batches and initial seeds, 512 updates, sample budget all arms; raw/explicit capacity differs 3 input features; native/history capacity not matched",
+    "fit_holdout_validation": "compare predicted preference with fully factual held-out selected return pair labels after 128,256,512 updates; no heldout samples used for weight optimization",
+    "checkpoints": [
+      128,
+      256,
+      512
+    ],
+    "regularization": "no other supervised auxiliary/analytic prior",
+    "gradient_negative": "abort on zero/nonfinite gradient and any unmasked last effect influence",
+    "train_validation_seed_disjoint": true,
+    "do_not_pick_best_checkpoint": true
+  },
+  "development": {
+    "raw_seed_pass_min": 2,
+    "explicit_seed_pass_min": 2,
+    "native_seed_pass_min": 2,
+    "model_active_regret_max_each": 0.12,
+    "model_sign_pair_flips_min_each": 28,
+    "model_erasure_regret_penalty_min_each": 0.15,
+    "model_gain_over_best_fixed_min_each": 0.12,
+    "model_bootstrap_lower_vs_best_fixed_gt": 0,
+    "erased_raw_sign_flips_max_each": 0,
+    "erased_raw_regret_min_each": 0.25,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 21079999,
+    "report_every_seed_all_policy_actions": true,
+    "report_native_backbone_zeroed": true,
+    "report_history_only": true,
+    "report_raw_vs_explicit_without_claiming_matched_FLOPs": true,
+    "report_label_class_balance": true,
+    "report_seed_cold_restore": true,
+    "report_interpolation_not_novel_law": true,
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "existing_G4_full_windows_ubuntu": true,
+    "existing_G5_windows_ubuntu": true,
+    "existing_G7_ubuntu": true,
+    "final_exact_SHA": true,
+    "source_negative_controls": true,
+    "original_artifact_windows_ubuntu_parity": true,
+    "no_early_merge": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "GPU_firstuse": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
