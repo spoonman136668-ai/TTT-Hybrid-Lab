@@ -42,7 +42,7 @@ MODELS=("legacy","indicator","centered")
 
 
 def _blob(raw):
-    return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\\0"+raw).hexdigest()
+    return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
 
 
 def locked():
@@ -413,7 +413,7 @@ def retain_ci_receipt(data):
     if path.exists():
         raise FileExistsError("F8R33_REFUSE_RECEIPT_OVERWRITE")
     path.write_text(json.dumps(data,indent=2,sort_keys=True,
-                               allow_nan=False)+"\\n")
+                               allow_nan=False)+"\n")
 
 
 def refuse_external_firstuse(*args,**kwargs):
