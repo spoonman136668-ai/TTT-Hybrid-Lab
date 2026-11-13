@@ -127,6 +127,7 @@ def fit_cohort()->list[dict]:
                             "effect":torch.tensor(ee,dtype=torch.float32),
                             "b_evaluator_only":b,"k_evaluator_only":k,
                             "q_evaluator_only":q,
+                            "z_B_evaluator_only":base["z_B_evaluator_only"],
                             "selected_fifth":fifth_action,
                             "selected_return":act,
                             "return_state":state
