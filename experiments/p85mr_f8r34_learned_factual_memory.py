@@ -117,7 +117,8 @@ class FactualMemory(nn.Module):
         )
 
     def forward(self, actions, effects, *, ablate_backbone=False):
-        if actions.ndim != 3 or actions.shape[-2:] != (14,16) or effects.shape != actions.shape:
+        if (actions.ndim != 3 or actions.shape[-1] != 16 or
+            actions.shape[1] not in (14,22) or effects.shape != actions.shape):
             raise ValueError("F8R34_EXPECT_FACTUAL_P80_ACTION_EFFECT")
         # The current return effect at index -1 cannot enter any readout.
         record = torch.cat((actions[:,:-1,:], effects[:,:-1,:]), dim=-1)

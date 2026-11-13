@@ -92,3 +92,18 @@ def test_factual_only_objective_no_evaluator_leakage_or_new_external_dispatch():
     for banned in ("workflow_dispatch(","subprocess.run(","requests.get(",
                    "urlopen(","import causal_gym","from causal_gym"):
         assert banned not in source
+
+
+def test_ood_long_B_history_is_admitted_without_current_effect_leak():
+    w=x.r33.worlds("ood")[0]
+    a,e=x.r33.candidate_inputs(w,"active_information")
+    assert a.shape==(2,22,16) and e.shape==a.shape
+    model=x.FactualMemory("history_only",x.SEEDS[0])
+    model.eval()
+    with torch.no_grad():
+        before=model(a,e)
+        modified=e.clone()
+        modified[:,-1,:]=7.
+        after=model(a,modified)
+    assert before.shape==(2,)
+    assert torch.equal(before,after)
