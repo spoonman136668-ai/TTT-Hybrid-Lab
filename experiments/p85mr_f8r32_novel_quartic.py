@@ -222,7 +222,7 @@ def fit_factual_control(fit):
         for bucket in ("safe","informed","uncertain")}
     validation=[(_ridge_features(x["action"],x["effect"]),
                  r31._physical_delta(x["physical_target"])) for x in fit[2304:]]
-    mse=statistics.fmean((sum(a*v for a,v in zip(x[0][0],w.tolist()))-y)**2
+    mse=statistics.fmean((sum(a*v for a,v in zip(x[0],w.tolist()))-y)**2
                           for x,y in validation)
     grad=(X.T@(X@w-Y)+reg@w).abs().max().item()
     return {"weights":w.tolist(),"variance":variance,
