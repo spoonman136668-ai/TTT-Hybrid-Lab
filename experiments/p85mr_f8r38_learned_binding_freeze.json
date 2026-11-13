@@ -1,0 +1,183 @@
+{
+  "schema": "ttt-hybrid.f8r38-learned-trilinear-causal-binding.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_OR_RESULT",
+  "classification": "SOURCE_NEUTRAL_NEURAL_BINDING_MECHANISM_DEVELOPMENT_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "a5bbb361387bb49c7b2fabeb820a1216c56e6ef7",
+    "r37_source_blob": "e729e715d167c7b3803eb313387968b37c668e99",
+    "r37_freeze_blob": "87216d66fb5ac4193b1b4ddccf95d316277ad710",
+    "r37_pretrain_amendment_blob": "9f69abec4d497920fa64aa88b3b3b5ce4f617175",
+    "prior_R37_result": "HAND_GATED_3_OF_3_RAW_0_OF_3",
+    "prior_R36_native": "0_OF_3"
+  },
+  "hypothesis": "Can a trainable multiplicative binding of factual fifth-action key, observed fifth physical effect and candidate return-action key learn the intervention-conditioned choice WITHOUT hard-coded public action-match indicators, and transfer to held-out synthetic altered cubic dynamics?",
+  "factual_training": {
+    "source": "unaltered R33 factual 3072 selected return episodes, 1152 pair-train and 384 pair-heldout; only 576 publicly identifiable informative FIT pairs optimized, 192 informative heldout",
+    "train_info_selector": "selected fifth action==public context, derived solely from P80 factual action keys; no generator hidden sign",
+    "same_class_counts": [
+      288,
+      288
+    ],
+    "selected_factual_paired_labels_only": true,
+    "evaluator_hidden_q_never_in_model": true,
+    "unchosen_return_effect_evaluator_only": true,
+    "return_effect_masked_before_model": true,
+    "all_arms_same_16_pair_batch_ids_per_step": true,
+    "sampler_seed": 21249999
+  },
+  "architectures": {
+    "arms": [
+      "factorized_binding_3_seeds",
+      "additive_same_projection_3_seeds",
+      "raw_48D_R35_3_seeds",
+      "native_plus_binding_1_seed",
+      "gru_plus_binding_1_seed",
+      "ssm_plus_binding_1_seed",
+      "erased_factorized_1_seed",
+      "shuffled_factorized_1_seed",
+      "engineered_public_gate_1_seed"
+    ],
+    "instances": 15,
+    "native_seed": [
+      985201
+    ],
+    "three_seed_arms": [
+      985201,
+      985203,
+      985207
+    ],
+    "other_seed": 985201,
+    "learned_bind": "each input is raw P80 16D fifth-action key, 16D selected fifth-effect, 16D return key; separate trainable Linear16->16 + tanh embeddings; elementwise triple product of 16 latent dimensions then trainable MLP64->64->1 combined with additive latent embeddings; no Boolean match/context, no learned generator hidden q labels",
+    "additive": "same three Linear16->16 projections and 64D head but replace factorized triple-product channels by simple additive embedding (matched parameters, same input); tests need for interaction, nonlinear head can still indirectly interact",
+    "raw": "unchanged R35 ProbeValueMLP as negative/control, trained informative-only",
+    "engineered": "R37 PublicGateMLP with FIT-only physically selected noninformative fifth offset; human-coded joint match × observed effect, must remain explicitly labeled engineered positive reference",
+    "native_plus_binding": "existing R34 native FactualMemory with its trainable recurrent/history readout plus learned factorized binding head; report binding-only, substrate-only and native-backbone-zeroed action ablations",
+    "gru_ssm_plus_binding": "same binding addition to existing R34 GRU/SSM history readout; one seed only; not matched model compute or capacity",
+    "erased": "same binder but fifth selected effect zeroed during training and scoring",
+    "shuffled": "same binder, deterministic R37 context-preserving deranged selected fifth-effect donor (synthetic inconsistent negative control only)",
+    "frozen_standalone_vs_native_capacity_matched": false,
+    "feature_centering_or_explicit_match_supplied_to_learned_binding": false
+  },
+  "training": {
+    "updates_each": 512,
+    "total_updates": 7680,
+    "pairs_per_step": 16,
+    "total_selected_factual_return_examples_per_step": 32,
+    "validation_updates": [
+      128,
+      256,
+      512
+    ],
+    "optimizer": "AdamW lr=.002 for standalone, raw and engineered; lr=.001 for native/GRU/SSM with binding; weight_decay=.01, clip_norm=1",
+    "loss": "binary paired categorical cross-entropy on two independently selected actual factual FIT return costs; lowest cost action label; no auxiliary simulator targets",
+    "all_models_train_from_initial": true,
+    "measure_heldout_informative_and_noninformative_choice_accuracy": true,
+    "record_training_wall_seconds_parameters_weight_hashes": true,
+    "cold_restore_actions_equal": true,
+    "retention_after_reload": true
+  },
+  "evaluation": {
+    "panels": [
+      "dev",
+      "ood",
+      "synthetic_cubic_transfer"
+    ],
+    "groups_each": 16,
+    "worlds_each": 64,
+    "dev": {
+      "return_state_even_odd": [
+        0.61,
+        0.73
+      ],
+      "q_abs": 1,
+      "B_steps": 8,
+      "B_salt": 21250000,
+      "law": "original quartic"
+    },
+    "ood": {
+      "return_state_even_odd": [
+        0.58,
+        0.76
+      ],
+      "q_abs": 0.93,
+      "B_steps": 16,
+      "B_salt": 21260000,
+      "law": "original quartic"
+    },
+    "synthetic_cubic_transfer": {
+      "return_state_even_odd": [
+        0.61,
+        0.73
+      ],
+      "q_abs": 1,
+      "B_steps": 16,
+      "B_salt": 21270000,
+      "law": "baseline .25*s-.08+.05*sin(3*s), plus 2.7*q*(s^3-.15^3) only when return or probe action==public context; this law not used by FIT, no external source",
+      "not_independent_scientific_firstuse": true
+    },
+    "policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "fifth_erasure": true,
+    "shuffle_negative": true,
+    "backbone_zeroed": true,
+    "subtrate_only": true,
+    "decision_vectors_all": true,
+    "bootstrap_seed": 21279999,
+    "bootstrap_draws": 10000,
+    "mathematical_oracle": {
+      "dev_fixed_probe_regret": 0.16645063819525227,
+      "ood_fixed_probe_regret": 0.14839803834596937,
+      "cubic_fixed_probe_regret": 0.17464143942617139,
+      "dev_erased_regret": 0.33290127639050454,
+      "ood_erased_regret": 0.29679607669193875,
+      "cubic_erased_regret": 0.34928287885234277,
+      "sign_pairs_each": 32
+    }
+  },
+  "criterion": {
+    "binder_seeds_both_original_law_panels_min": 2,
+    "binder_dev_ood_active_regret_max": 0.12,
+    "binder_sign_flips_min_each": 28,
+    "binder_fifth_erasure_regret_penalty_min_each": 0.15,
+    "binder_gain_vs_best_fixed_min_each": 0.12,
+    "binder_paired_bootstrap_lower_gt": 0,
+    "binder_gain_over_raw_same_seed_min_each": 0.05,
+    "shuffled_sign_flips_max_each": 0,
+    "shuffled_regret_min_each": 0.25,
+    "erased_sign_flips_max_each": 0,
+    "synthetic_cubic_transfer_seeds_both_panels_min": 2,
+    "synthetic_cubic_active_regret_max": 0.12,
+    "synthetic_cubic_sign_flips_min": 28,
+    "synthetic_cubic_erasure_penalty_min": 0.15,
+    "native_backbone_additional_value_requires_nonzero_delta_not_just_binding_success": true,
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "existing_G4_full_Windows_Ubuntu": true,
+    "existing_G5_both": true,
+    "existing_G7_Ubuntu": true,
+    "full_final_exact_SHA": true,
+    "source_admission_negative_controls": true,
+    "original_artifact_Windows_Ubuntu_decision_parity": true,
+    "frozen_results_no_posthoc_tuning": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
