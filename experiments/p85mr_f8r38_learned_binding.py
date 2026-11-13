@@ -266,7 +266,7 @@ def candidate_inputs(w,policy,*,erase=False):
     for act in (0,1):
         key=r33.b._record(w["return_state"],act,w["return_state"],c)[0]
         results.append((torch.cat((actions,key.unsqueeze(0))),
-                        torch.cat((effects,torch.zeros((1,16)))))
+                        torch.cat((effects,torch.zeros((1,16))))))
     return torch.stack([x[0] for x in results]),torch.stack([x[1] for x in results])
 
 
