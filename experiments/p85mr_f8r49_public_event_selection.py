@@ -143,7 +143,7 @@ def observed_history(w,*,erase_B=False,erase_tag=False,
     records.append(r33.b._record(PROBE,c,
                    r33.r32.after(PROBE,c,c,q),c))
     for tag,choice,delta in B_selected(w):
-        if swap_B and tag>0:
+        if swap_B and tag>=.08:
             delta=-delta
         public_tag=(0. if erase_tag and tag>0 else tag)
         key,effect=r33.b._record(public_tag,choice,
