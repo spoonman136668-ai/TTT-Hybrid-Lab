@@ -51,7 +51,7 @@ GROUPS = 16
 
 
 def git_blob(raw):
-    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    return hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
 
 
 def locked():
@@ -468,7 +468,7 @@ def retain_ci_receipt(x):
     path.parent.mkdir(exist_ok=True)
     if path.exists():
         raise FileExistsError("F8R42_RECEIPT_EXISTS")
-    path.write_text(json.dumps(x,sort_keys=True,indent=2,allow_nan=False)+"\\n")
+    path.write_text(json.dumps(x,sort_keys=True,indent=2,allow_nan=False)+"\n")
 
 
 def refuse_external_firstuse(*args, **kwargs):
