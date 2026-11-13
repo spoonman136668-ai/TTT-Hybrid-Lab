@@ -1,0 +1,196 @@
+{
+  "schema": "ttt-hybrid.f8r42-learned-history-binder-interaction-prereg.v1",
+  "stage": "FROZEN_BEFORE_R42_IMPLEMENTATION_OR_ANY_R42_FIT_RESULTS",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_NEURAL_HISTORY_INTERACTION_DEVELOPMENT_ONLY",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "pr": 236,
+    "sha": "88cb3c5296223d5e212b66d5126f368646e1e47c",
+    "r41_freeze_blob": "6d1af794e5747768719549b108f788df475a233e",
+    "r41_result": "NEURAL_CAUSAL_HISTORY_NO_GO_0_OF_2_ON_UBUNTU; FINAL_CROSS_OS_RERUN_PENDING_AT_PREREG"
+  },
+  "hypothesis": "A trainable multiplicative interaction of a frozen factual fifth-action binder score difference and a separately learned B-history gate can recover counterfactual-sign reversal from factual action outcomes; the Native backbone must independently add decision value against fully trained conventional history controls, not merely preserve binder predictions.",
+  "motivating_observation": "R41 adds frozen binder and learned recurrent scalar outputs; training produces no B gate decision flips despite positive fitted factual control. Binding-gradient dominance and missing learned interaction are candidate mechanisms only, NOT established causes.",
+  "scope": {
+    "source_neutral_only": true,
+    "spent_F7_source_replay": false,
+    "external_simulator_first_use": false,
+    "GPU_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_controller": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  },
+  "source": {
+    "new_cohort_salt": {
+      "fit": 21610000,
+      "dev": 21620000,
+      "ood": 21630000
+    },
+    "source_independent_of_R41_score_panels": true,
+    "fifth_probe": "Reuse R41 exactly selected fifth probe protocol and public context/fifth factual effect generation; the hidden gate must not influence any early/fifth selected observation.",
+    "b_history": {
+      "steps": {
+        "fit": 8,
+        "dev": 8,
+        "ood": 16
+      },
+      "marker_position": "FIT 1+(group%4); DEV 1+((3*group+1)%5); OOD 2+((5*group+1)%11); do not provide marker index to model.",
+      "nuisance": "0.006*sin((salt+group)*0.137+time*0.271)+0.004*((time+group)%4-1.5)",
+      "marker_effect": "nuisance+0.24*hidden_gate at marker; nuisance alone elsewhere",
+      "gate_values": [
+        -1,
+        1
+      ],
+      "gate_balanced_every_context_and_fifth_sign": true
+    },
+    "physics": {
+      "fifth": "Existing R41 R33 quartic selected-fifth physical law with evaluator-only q_sign and no gate.",
+      "return_fit_dev": "Existing R41 quartic return law with effective_q=q_sign*q_magnitude*hidden_gate",
+      "return_ood": "Existing R41 early-null cubic amended return law with effective_q=q_sign*q_magnitude*hidden_gate",
+      "return_state_even_odd": {
+        "fit": [
+          0.61,
+          0.73
+        ],
+        "dev": [
+          0.59,
+          0.74
+        ],
+        "ood": [
+          0.57,
+          0.76
+        ]
+      },
+      "q_magnitude": {
+        "fit": 1,
+        "dev": 0.94,
+        "ood": 1.07
+      },
+      "loss": "Squared distance from physical goal 1.0 computed from each actually selected factual return effect."
+    },
+    "counts": {
+      "fit_groups": 48,
+      "fit_train_groups": 32,
+      "fit_heldout_groups": 16,
+      "fit_factual_paired_worlds": 384,
+      "fit_train_pairs": 256,
+      "fit_heldout_pairs": 128,
+      "fit_separately_selected_factual_episodes": 768,
+      "dev_groups": 16,
+      "dev_worlds": 128,
+      "ood_groups": 16,
+      "ood_worlds": 128,
+      "matched_gate_flips_per_panel": 64,
+      "public_contexts": [
+        0,
+        1
+      ],
+      "fifth_q_signs": [
+        -1,
+        1
+      ],
+      "hidden_history_gates": [
+        -1,
+        1
+      ],
+      "candidate_return_actions": [
+        0,
+        1
+      ]
+    },
+    "no_hidden_gate_q_evaluator_or_unselected_return_effect_in_learner": true,
+    "never_fit_on_dev_ood": true
+  },
+  "learner": {
+    "frozen_binder": "Exact qualified R39 R38 TrainableBinding with original 512 factual pretraining updates per seed 985201 and 985207; binder weights/decision fingerprint immutable during R42.",
+    "interface": "Compute two preaction candidate scores from same frozen binder and causal history (all selected current return effects masked). Define binder contrast b1-b0. Train a gate from PUBLIC history only; output candidate pair score contrast = (b1-b0)*tanh(gate(history)). No hidden gate sign, marker index, physical law, or explicit target sign inside model. Ensure gates are learned, not formula-derived. The same gate implementation is used for native and conventional arms.",
+    "native_mechanism": "Native arm history gate must genuinely consume an original R34 native backbone output in addition to recurrent history encoding; backbone ablation must change measured actions, not just changed weights.",
+    "arms": [
+      {
+        "name": "native_pair_gate",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "history_only_pair_gate",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "gru_pair_gate",
+        "seeds": [
+          985201
+        ]
+      },
+      {
+        "name": "ssm_pair_gate",
+        "seeds": [
+          985201
+        ]
+      }
+    ],
+    "prereg_negative_controls": [
+      "zero learned history-gate output",
+      "erase selected B marker before model",
+      "swap only B marker within matched opposite-gate pair",
+      "erase selected fifth physical effect",
+      "zero Native backbone with learned history and fusion intact",
+      "zero binder contrast while keeping gate",
+      "cold restore complete learned model"
+    ],
+    "conventional_positive_control": "Fit calibration and B marker sign only from selected FIT factual measurements, score on untouched DEV/OOD, label as hand-engineered diagnostic; not proof of learned neural success.",
+    "parameter_compute_matching": "Measure trainable parameter counts, actual CPU runtime and backbone forward FLOPs where possible. Stronger/more-compute conventional controls remain fully trained. If exact matched compute/params is unachievable, mark strict native-vs-conventional science UNVERIFIED; do not call model comparison compute-matched.",
+    "budget": {
+      "new_updates_each": 384,
+      "fit_pairs_per_update": 16,
+      "optimizer": "AdamW lr=0.001 weight_decay=0.01 clip_norm=1",
+      "sample_seed": 21649999,
+      "checkpoint_updates": [
+        192,
+        384
+      ],
+      "all_arms_equal_selected_information": true,
+      "validation_only_no_checkpoint_selection": true,
+      "full_replay_original_R38_updates_per_seed": 512
+    },
+    "seed_rule": "No post-score seed replacement, criterion tuning, optimizer sweep or extra data reuse. Any later hypothesis is an independent prospective experiment."
+  },
+  "prospective_score": {
+    "panels": [
+      "dev",
+      "ood"
+    ],
+    "worlds_per_panel": 128,
+    "paired_gate_contrasts_per_panel": 64,
+    "minimum_native_both_panel_pass_seeds": 2,
+    "maximum_native_regret_each": 0.12,
+    "minimum_native_gate_pair_flips_each": 56,
+    "minimum_native_regret_penalty_erase_B_each": 0.12,
+    "minimum_native_regret_penalty_zero_gate_each": 0.12,
+    "minimum_native_regret_penalty_zero_backbone_each": 0.08,
+    "minimum_native_regret_gain_over_same_seed_history_only_each": 0.05,
+    "minimum_native_regret_gain_over_strongest_fully_trained_conventional_each": 0.05,
+    "minimum_native_regret_gain_over_binder_only_each": 0.12,
+    "minimum_native_regret_penalty_erase_fifth_each": 0.12,
+    "minimum_positive_control_gate_pair_flips": 64,
+    "fixed_bootstrap_seed": 21669999,
+    "fixed_bootstrap_resamples": 10000,
+    "paired_group_bootstrap_lower_gain_vs_strongest_conventional_gt": 0,
+    "independent_scientific_pass": false
+  },
+  "interpretive_rules": [
+    "If native fails any frozen test, neural native incremental claim NO-GO; preserve loss and all negatives.",
+    "If all learned gated arms recover but native fails unique backbone ablation or matched-controls gain, credit learned cross-channel interaction, NOT Native-specific intelligence.",
+    "If only hand-coded control succeeds, architecture/optimization remains NO-GO.",
+    "Even both-panel development success is synthetic only, not real world action-consequence learning, AGI, or independent scientific acceptance.",
+    "A successful first implementation triggers mandatory exact-SHA full G4 Windows+Ubuntu, G5 Windows+Ubuntu, G7 pinned Mamba-2 Ubuntu, original source negative controls, original artifact custody and cross-OS decision parity. No shortened-final regression."
+  ]
+}
