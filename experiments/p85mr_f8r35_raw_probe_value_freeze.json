@@ -1,0 +1,137 @@
+{
+  "schema": "ttt-hybrid.f8r35-raw-probe-value-positive.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_TRAINING_OR_RESULTS",
+  "classification": "SOURCE_NEUTRAL_NEURAL_PROBE_VALUE_LEARNABILITY_DEV_ONLY",
+  "parent": {
+    "pr": 236,
+    "head": "cdec26f67397d8bd96f419b649321fd0da68f8b6",
+    "r34_freeze_blob": "02a7528b5e1a0d9f926d6cf8bb202248490a2e70",
+    "r34_status": "NEURAL_NO_GO_0_OF_3",
+    "r33_freeze_blob": "94e7f63370143e7423a96ecd94937d9a5a31b097",
+    "r33_positive": "FactualNineFeatureDevelopmentPASS"
+  },
+  "hypothesis": "An ordinary small neural network seeing only raw selected fifth-action key, its actually observed factual effect, and raw candidate return key can learn an intervention-dependent decision when trained on properly scaled, paired factual returns; identical architecture/sampling using the historical weak R34-style target/ranking and a strong-label fifth-erased control distinguish supervision failure from information absence.",
+  "data": {
+    "generator": "R33 unchanged synthetic factual quartic-law FIT",
+    "fit_episodes": 3072,
+    "fit_groups": 64,
+    "fit_train_groups": "0..47",
+    "fit_validation_groups": "48..63",
+    "train_factual_return_pairs": 1152,
+    "validation_factual_pairs": 384,
+    "train_episodes": 2304,
+    "validation_episodes": 768,
+    "paired_definition": "Two independent selected factual return action episodes, same public world/action history, same measured selected fifth effect, opposite selected return actions; not evaluator unseen action",
+    "input_scope": "Only raw P80 16D selected fifth action key, raw 16D selected fifth factual effect (step4), raw 16D candidate return action key; exactly 48D; NO derived context, informed-indicator, q, quartic polynomial or evaluator hindsight features",
+    "fit_selected_return_effect_masked_from_model": true,
+    "score_source": "R33 score world generator and evaluator only",
+    "score_panels": [
+      "dev",
+      "ood"
+    ],
+    "worlds_each": 48,
+    "group_clusters": 12,
+    "policies": [
+      "active_information",
+      "fixed_probe0",
+      "fixed_probe1",
+      "seeded_random"
+    ],
+    "ood_longer_B": "Bypassed in minimal positive control; not a cold-memory experiment",
+    "new_law_transfer": false,
+    "score_unchosen_return_effects_evaluator_only": true
+  },
+  "arms": {
+    "compact_weak_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "compact_strong_seeds": [
+      985201,
+      985203,
+      985207
+    ],
+    "compact_erased_strong_seeds": [
+      985201
+    ],
+    "model_count": 7,
+    "architecture": "48D raw P80 -> Linear(48,64) -> GELU -> Linear(64,64) -> GELU -> Linear(64,1) factual cost; same architecture for all arms",
+    "erased_control": "Same strong loss but selected fifth factual effect all zeros in both FIT training and evaluation; selected fifth action remains, q unseen",
+    "no_analytic_causal_features": true,
+    "match_same_compact_architecture": true,
+    "match_same_sample_pairs_and_optimizer": true
+  },
+  "optimization": {
+    "updates_each": 512,
+    "total_optimizer_steps": 3584,
+    "training_batch_factual_pairs": 16,
+    "training_batch_factual_episodes": 32,
+    "sampler_seed": 20949999,
+    "optimizer": "AdamW lr0.002 all arms weight_decay0.01 gradient_clip_norm1",
+    "weak_objective": "MSE pred vs unchanged 0.1*factual selected squared goal error plus 0.1*softplus(-sign(factual_cost1-factual_cost0)*(pred1-pred0))",
+    "strong_objective": "MSE pred vs 10*original factual scaled cost = actual squared goal error plus 2.0*softplus(-sign(factual_cost1-factual_cost0)*(pred1-pred0))",
+    "checkpoints": [
+      128,
+      256,
+      512
+    ],
+    "negative_wrong_credit": false,
+    "prequential_return_effect_mask_required": true,
+    "labels_only_factual_selected_return": true,
+    "same_step_budget_all_arms": true
+  },
+  "thresholds": {
+    "score_primary_arm": "compact_strong",
+    "seed_success_min_both_panels": 2,
+    "regret_active_max_each": 0.15,
+    "active_gain_vs_weak_same_seed_min_each": 0.12,
+    "active_gain_vs_best_fixed_min_each": 0.09,
+    "erasure_regret_penalty_min_each": 0.12,
+    "active_sign_pair_flip_count_min_each": 18,
+    "paired_bootstrap_lower_vs_weak_gt": 0,
+    "bootstrap_draws": 10000,
+    "bootstrap_seed": 20979999,
+    "training_erased_control_regret_min_each": 0.27,
+    "erased_control_sign_flip_count_max_each": 0,
+    "heldout_fit_MSE_report": true,
+    "cold_restore_actions_equal_required": true,
+    "all_seeds_full_policy_action_vectors_report": true,
+    "compare_weak_and_erased_controls": true,
+    "report_fit_loss_and_walltime": true,
+    "report_parameter_count": true,
+    "independent_scientific_pass": false
+  },
+  "limits": {
+    "development_only": true,
+    "R34_negative_untouched": true,
+    "neural_positive_control_not_native_hybrid": true,
+    "uncoupled_nuisance_memory_not_tested": true,
+    "known_source_neutral_quartic_law": true,
+    "neural_capacity_FLOPs_matched_across_arms": true,
+    "fully_converged_networks_not_assumed": true,
+    "independent_mechanism_transfer_not_claimed": true
+  },
+  "qualification": {
+    "existing_G4_full_windows_ubuntu": true,
+    "existing_G5_windows_ubuntu": true,
+    "existing_G7_ubuntu": true,
+    "original_source_negative_controls": true,
+    "final_SHA_exact": true,
+    "crossplatform_artifact_decision_parity": true
+  },
+  "authority": {
+    "external_scientific_firstuse": false,
+    "spent_F7_replay": false,
+    "sealed_CAL_OOD": false,
+    "GPU_firstuse": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
