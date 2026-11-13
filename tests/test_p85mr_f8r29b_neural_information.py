@@ -72,7 +72,9 @@ def test_native_GRU_SSM_preaction_current_effect_is_masked():
             original = x._predict(arm, model,
                                   {"action": action, "effect": obs})[:, -1, 0]
             contaminated = obs.clone()
-            contaminated[:, -1] = 0.8
+            # Keep P80-mandated zero padding intact; poison only the
+            # physically valid current effect channel to test causal masking.
+            contaminated[:, -1, 0] = 0.8
             changed = x._predict(arm, model,
                                  {"action": action, "effect": contaminated})[:, -1, 0]
         assert torch.allclose(original, changed, atol=1e-7, rtol=0), arm
