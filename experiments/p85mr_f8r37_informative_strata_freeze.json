@@ -59,7 +59,7 @@
     "raw": "Unchanged R35 48D P80 raw fifth action/effect and candidate return key MLP",
     "gated": "Same R35 48D raw P80 plus 4 public factual features: fifth==context, return==context, joint indicator, joint*(inverse-normalized actual fifth physical displacement minus FIT-only safe/noninformative fifth baseline). Never pass generator q/sign, learned coefficient or return effect",
     "gated_offset": "FIT selected observed noninformative fifth consequences only, no score/heldout values",
-    "shuffled_negative": "For informative factual pairs only, use actually selected fifth effect from opposite-sign FIT episode with same g,c,magnitude,public actions/B/fifth; return labels from original factual selected pair. This destroys sign informativeness and is NEGATIVE CONTROL ONLY, never a valid factual positive experiment.",
+    "shuffled_negative": "For training sampled informative pair i (public context c, fifth=c), replace only actual fifth-effect tensor with a selected fifth-effect tensor from a deterministic preregistered SHUFFLE of all 576 informative FIT pairs of the same context c, using seed 21149998. This is drawn from a different independently factual selected trajectory, not always the opposite q sign. The shuffled donor pairing must have near-zero original-versus-donor signed q association (abs phi <=0.10 over all training informative pairs), measured by the synthetic data generator for negative-control audit only, not fed to any model. Return cost target remains original independently factual pair. This deliberately produces inconsistent composite NEGATIVE CONTROL examples, never valid positive factual trajectories.",
     "cross_architecture_capacity_FLOPs_matched": false,
     "native_training_in_this_gate": false
   },
@@ -80,7 +80,10 @@
     "heldout_validation": "192 identifiable FIT validation pairs and 192 noninformative FIT pairs reported separately, never optimized",
     "no_checkpoint_selection": true,
     "cold_restore": true,
-    "gradients_finite_nonzero": true
+    "gradients_finite_nonzero": true,
+    "shuffled_donor_seed": 21149998,
+    "shuffled_donor_max_abs_sign_phi": 0.1,
+    "shuffled_donor_constraint": "Donor context and fifth action match recipient; deterministic balanced context-within permutation, no signature leakage to learner."
   },
   "evaluation": {
     "panels": [
