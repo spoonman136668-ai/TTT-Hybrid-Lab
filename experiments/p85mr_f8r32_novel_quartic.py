@@ -147,8 +147,8 @@ def worlds(panel):
 
 
 def probe_action(policy,panel,group,context):
-    if policy not in POLICIES or panel not in PANELS or
-        group not in range(GROUPS) or context not in (0,1):
+    if (policy not in POLICIES or panel not in PANELS or
+        group not in range(GROUPS) or context not in (0,1)):
         raise ValueError("F8R32_INVALID_PROBE_POLICY")
     if policy=="active_information":
         return context
