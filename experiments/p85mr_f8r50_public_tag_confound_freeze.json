@@ -1,0 +1,184 @@
+{
+  "schema": "ttt-hybrid.f8r50-public-tag-confound-transfer-freeze.v1",
+  "stage": "FROZEN_BEFORE_GENERATOR_CODE_OR_ANY_R50_SCORE",
+  "classification": "SOURCE_NEUTRAL_PROSPECTIVE_TRANSFER_FALSIFIER_ONLY",
+  "parent": {
+    "pr": 244,
+    "source_head": "2b297ba7316c0c552522ecd2ae1a753934e88174",
+    "r49_control_blob": "6e9baac9d3761e727e95080764bb9e9a11d0ffe3",
+    "r49_original_dev": "synthetic R49 DEV pass 2/2 at zero regret, 8448/8448 action parity on both OS, Native ablation 0; not independent scientific PASS"
+  },
+  "hypothesis": {
+    "main": "The R49 three-parameter learned context reader relies on a hand-coded top-two HIGH public-tag retrieval rule and should NOT be declared event discovery without surviving held-out public tag confounding where the two highest public tags mark causally irrelevant but genuinely selected low-magnitude outcomes.",
+    "falsifier": "Retrain only R49's already frozen FIT procedure and score its frozen weights on NEW matched-gate OOD worlds with high-tag nuisance; compare with a source-observation-only positive reference that ranks genuinely observed physical effect magnitude, never private identities.",
+    "outcome_policy": "If frozen model misses threshold on either original seed, retain scientific transfer failure; do not update R49's previously qualified original distribution, tune to new panels, or rename source-specific positive control as learned intelligence.",
+    "narrower_claim": "This tests robustness of R49's HAND-CODED event selection under an explicit adversarial public-key shift, not whether attention learning can ever generalize and not real-world causal intelligence."
+  },
+  "source": {
+    "new_ood_salt": 22490011,
+    "eval_groups": 8,
+    "public_context": [
+      0,
+      1
+    ],
+    "q_signs": [
+      -1,
+      1
+    ],
+    "gate_signs": [
+      -1,
+      1
+    ],
+    "paired_worlds": 64,
+    "selected_B_length": 32,
+    "new_cue_tags": {
+      "context0_cue": 0.42,
+      "context0_decoy": 0.18,
+      "context1_cue": 0.18,
+      "context1_decoy": 0.42
+    },
+    "causal_physical_delta_magnitude": 0.12,
+    "confounding_nuisance": {
+      "count": 2,
+      "visible_tags": [
+        0.88,
+        0.77
+      ],
+      "selected_physical_deltas": [
+        0.015,
+        -0.015
+      ],
+      "placement": "SHA256(salt,group) draws 4 DISTINCT positions, first two causal cue/decoy and remaining two confounding high public tags; private position IDs never sent to model",
+      "independent_of_evaluator_hidden_gate": true
+    },
+    "remaining_nuisance": {
+      "visible_tag": ".03 for step%3==0 otherwise 0.0",
+      "selected_physical_delta": "round(.007*sin((salt+group)*.137+step*.271)+.004*((step+group)%4-1.5),8), independent of evaluator hidden gate",
+      "bounded_abs_physical_effect_less_than": 0.03
+    },
+    "observed_record": "Exactly R49 public selected _record(observed_tag, selected action t%2, after observed_tag+selected_physical_delta, public_context) with effect[4] zero; 5 original R49 selected early/probe facts and actual return-action public key also present; mask unseen return effect.",
+    "return_physics": "Original R49 quartic FIT and cubic OOD selected return evaluator, actual selected factual action consequence; no generator extra hidden q/gate to learner",
+    "original_FIT_only_training": "Use unchanged, previously frozen R49 FIT streams and original two seed training draws with no new adaptation or training on new R50 OOD source; independently reproduce original R49 trained weights from public original R49 trainer with exact original checkpoints.",
+    "original_R49_seed_slope_repro_target": {
+      "seed985201": [
+        3.3259654,
+        -3.3682196
+      ],
+      "seed985207": [
+        3.30927396,
+        -3.35185432
+      ],
+      "max_absolute_tolerance": 0.002
+    },
+    "true_positive_reference": "From selected public B history use |decoded physical effect|>.06 (top two); choose higher/lower of these tag states by public context, combine with FIT-only measured fifth, no hidden q/gate/index, require 0/64 error before model score",
+    "gate_parity": "Opposite hidden gates at fixed public context, q sign and group have equal public full 16-channel B mean and action keys, but different selected causal observations.",
+    "forbidden_inputs": [
+      "hidden q sign",
+      "hidden B gate",
+      "private causal indices",
+      "private nuisance indices",
+      "OOD group",
+      "R50 panel ID",
+      "unselected hypothetical return effects"
+    ],
+    "no_original_external_firstuse": true,
+    "independent_new_score_source": true
+  },
+  "methods": {
+    "arm_instances": [
+      {
+        "name": "event_context_selector",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "raw_context_selector",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "event_context_native",
+        "seeds": [
+          985201,
+          985207
+        ]
+      },
+      {
+        "name": "gru_context_control",
+        "seeds": [
+          985201,
+          985207
+        ]
+      }
+    ],
+    "trained_from_original_R49_FIT_only": true,
+    "original_training_seed": 22349999,
+    "updates_per_arm": 256,
+    "batch_pairs": 16,
+    "train_lr_slope_gain": 0.02,
+    "train_lr_native_GRU": 0.001,
+    "adamw_weight_decay": 0,
+    "clip_grad_norm": 1,
+    "total_replayed_training_updates": 2048,
+    "scoring": "No gradients, optimizer steps, fine-tuning, OOD label fitting, or source selection after original FIT reproduction. Score 64 new OOD worlds/arm/seed plus public tag-erasure and B/fifth erasure controls. Cold restore trained weight state and action parity.",
+    "baselines": [
+      "trained raw-context R49 3-param model on identical FIT information/actions/updates",
+      "trained Native-augmented R49 same FIT but not parameter matched",
+      "trained GRU same original FIT inputs, not compute matched",
+      "hand-coded observation-only feasibility positive reference; never claim learned upper bound"
+    ],
+    "capture": [
+      "fit offset",
+      "slopes and weights hash",
+      "exact original training-seed reproducibility",
+      "per-arm group/context regrets and gate flips",
+      "per-source original mean parity",
+      "trained parameters",
+      "CPU train+score full-process costs",
+      "all per-world original categorical decisions",
+      "cold restoration",
+      "actual update counts"
+    ]
+  },
+  "frozen_decision": {
+    "both_original_seeds_required": true,
+    "main_transfer_success_thresholds": {
+      "max_ood_mean_regret": 0.12,
+      "max_each_public_context_regret": 0.12,
+      "min_gate_pair_flips": 28
+    },
+    "source_only_feasibility_zero_errors": true,
+    "parity_cross_OS_required": true,
+    "source_neutral_DEV_only": true,
+    "independently_qualified_scientific_gain": false,
+    "if_main_fail": "Report TRANSFER_NO_GO for out-of-support public-tag confound. Preserve R49 original DEV_PASS unchanged. A failure is evidence of source-specific retrieval bias, not broad failure of all trainable causal memory.",
+    "if_main_pass": "Report provisional R50 confound robustness only on this synthetic protocol, inspect per-context/negative controls; never promote or claim Native-specific gain without positive backbone ablation and full capacity/compute parity."
+  },
+  "qualification": {
+    "unchanged_full_final_G4": [
+      "ubuntu-latest",
+      "windows-latest"
+    ],
+    "G5": "original authentic TTT CPU Windows+Ubuntu",
+    "G7": "pinned Mamba2 CPU Ubuntu",
+    "exact_final_sha_and_original_artifact_digest": true,
+    "no_untracked_evaluation": true,
+    "negative_original_source_admission": true,
+    "full_categorical_cross_OS_action_parity": true
+  },
+  "authority": {
+    "controller_change": false,
+    "runner_change": false,
+    "new_workflow": false,
+    "new_paid_API": false,
+    "GPU": false,
+    "original_external_firstuse": false,
+    "merge": false,
+    "promotion": false,
+    "external_deployment": false
+  }
+}
