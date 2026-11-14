@@ -1,0 +1,177 @@
+{
+  "schema": "ttt-hybrid.f8r56-cold-delayed-proxy-shift-freeze.v1",
+  "stage": "FROZEN_BEFORE_R56_GENERATOR_OR_SCORED_RESULTS",
+  "scope": "SOURCE_NEUTRAL_SYNTHETIC_COLD_TRANSFER_ONLY",
+  "parent": {
+    "qualified_R55_SHA": "540bc40b62ce852946402a179a91f9cbbe0ea0c0",
+    "r55_pr": 250,
+    "r55_freeze_blob": "57cbbada3b9e98e512149b508fa9313563a44ad6",
+    "R55_result": "G4/G5/G7 exact-SHA PASS, 13312/13312 cross-OS decisions, frozen DEV NO-GO both seeds: beta ablation OOD penalty zero, raw delayed reader OOD regret zero, Native backbone ablation zero.",
+    "no_spent_R49_R55_OOD_reuse": true
+  },
+  "hypothesis": {
+    "primary": "Original R55 beta attention to observed delayed target proxy magnitude may fail if high-public-tag goal-IRRELEVANT sources acquire large stable delayed proxy response, even though the original return evaluator does not depend on them.",
+    "falsifier": "Reproduce unmodified original R55 FIT weights only, score separately salted benign and high-delayed-proxy panels with ZERO new OOD adaptation. Require both original seeds pass BOTH new panels against locked regret/flips thresholds, else cold transfer NO-GO.",
+    "distinction": "An observed delayed proxy response is not evidence that the proxy mediates the ultimate objective; this exercise deliberately tests that limitation.",
+    "public_feasibility": "Handcoded FIT-known cue/decoy public tag windows .18 and .42 plus actual selected delayed proxy action contrast and original fifth effect solve both source panels, but do NOT demonstrate learned causal inference.",
+    "strong_controls": "Original trained raw delayed reader and fixed delayed-magnitude top-two reader plus Native and conventional GRU are all scored; report their competence and compute not assumed matched.",
+    "no_independent_claim": "Synthetic cold transfer does not prove general intelligence, continual retention, causal discovery, independent external transfer or Native benefit."
+  },
+  "source": {
+    "salts": {
+      "control": 23010000,
+      "delayed_proxy_confounder": 23020000
+    },
+    "worlds_each": 64,
+    "groups_each": 8,
+    "public_sources": 16,
+    "selected_upstream_actions_per_source": 2,
+    "observed_records_per_selected_action": 3,
+    "selected_B_record_count": 96,
+    "full_preaction_record_length": 102,
+    "contexts": [
+      0,
+      1
+    ],
+    "evaluator_only_q_signs": [
+      -1,
+      1
+    ],
+    "evaluator_only_gate_signs": [
+      -1,
+      1
+    ],
+    "cue_decoy_public_tag_roles": {
+      "ctx0": [
+        0.42,
+        0.18
+      ],
+      "ctx1": [
+        0.18,
+        0.42
+      ]
+    },
+    "spurious_public_tags": [
+      0.88,
+      0.77
+    ],
+    "causal_upstream_immediate_delayed_action_contrast": 0.12,
+    "spurious_upstream_action_contrast": 0.45,
+    "spurious_immediate_action_contrast": 0.52,
+    "spurious_delayed_action_contrast_control": [
+      0,
+      0
+    ],
+    "spurious_delayed_action_contrast_shift": [
+      0.5,
+      -0.48
+    ],
+    "nuisance": "Other public low tags .03 or zero, selected upstream and immediate outcomes action-invariant small source-salted offset, delayed outcome exactly zero.",
+    "position_rule": "Use distinct SHA256 R56/panel/salt/group/source index rankings for cue, decoy, spurious1 and spurious2; no source position/classification enters model.",
+    "selected_protocol": "Per source from fresh reset, SELECT upstream action 0 and observe its source/immediate (.55)/delayed (.73) public sensor effects, then SELECT action 1 and observe its source/immediate/delayed effects. All six records actually selected, no unselected prospective RETURN outcome.",
+    "evaluator": "Original R55 frozen synthetic return evaluator from public return state (.61,.73) and evaluator q×gate, squared goal loss, unseen alternate return action never model input.",
+    "gate_mean_parity": "All 16D aggregate B selected physical effects and public action keys equal across opposite hidden gate worlds within 1e-7, but individual true cue/decoy outcomes differ.",
+    "selected_early_fifth": "Original R55 4 early actually selected observations and selected fifth probe, FIT-only fifth offset and masked return effect.",
+    "feasibility_reference": "From actual public selected delayed action contrasts, use FIT-known tag windows .18 and .42 rather than ranking by delayed magnitude, select context-dependent role and selected fifth sign; require 0 errors all 64 worlds in both new panels. This is handcoded and weak.",
+    "no_new_OOD_training": true,
+    "no_old_R49_R55_scored_episodes": true,
+    "forbidden_model_inputs": [
+      "panel identifier",
+      "private source position/class",
+      "group ID",
+      "hidden evaluator q or gate",
+      "oracle return effect",
+      "unselected future action effect"
+    ]
+  },
+  "replay": {
+    "original_seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "learned_goal_mediation",
+      "raw_delayed_context",
+      "public_tag_top2",
+      "upstream_magnitude_top2",
+      "immediate_magnitude_top2",
+      "fixed_delayed_goal_top2",
+      "native_goal_mediation",
+      "gru_goal_context"
+    ],
+    "FIT_training_pairs": 128,
+    "FIT_heldout_pairs": 64,
+    "FIT_factual_returns": 384,
+    "original_draw_seed": 22949999,
+    "batch_pairs": 16,
+    "optimizer_updates_per_arm": 256,
+    "total_replayed_optimizer_attempts": 4096,
+    "optimizer": "Exactly original R55 param-specific AdamW LR .02 for slopes/beta/gain/native_gain, .001 for Native/GRU, weight decay 0, gradient clipping 1, no OOD updates.",
+    "reproduction_targets": {
+      "985201": {
+        "beta_windows": 1.9013240337371826,
+        "beta_ubuntu": 1.9013241529464722,
+        "slopes_windows": [
+          2.593564748764038,
+          -2.593008518218994
+        ],
+        "slopes_ubuntu": [
+          2.593564748764038,
+          -2.593008279800415
+        ]
+      },
+      "985207": {
+        "beta_windows": 1.891692876815796,
+        "beta_ubuntu": 1.8916926383972168,
+        "slopes_windows": [
+          2.5824878215789795,
+          -2.58202862739563
+        ],
+        "slopes_ubuntu": [
+          2.5824878215789795,
+          -2.58202862739563
+        ]
+      },
+      "beta_tolerance": 0.015,
+      "slopes_tolerance": 0.015
+    },
+    "original_R55_main_heldout_FIT_accuracy": 1,
+    "original_R55_main_OOD_regret": 0,
+    "require_cold_restored_action_parity": true
+  },
+  "frozen_decision": {
+    "both_original_seeds_required": true,
+    "maximum_each_panel_regret": 0.12,
+    "maximum_each_public_context_regret": 0.12,
+    "minimum_each_panel_gate_reversals": 28,
+    "original_R55_OOD_regret_preserved": true,
+    "positive_reference_64_of_64_each": true,
+    "paired_16D_B_mean_parity": true,
+    "all_16_arm_cross_OS_categorical_actions_exact": true,
+    "compare_original_raw_and_fixed_delayed_controls": true,
+    "zero_beta_and_zero_native_and_erase_tag_controls": true,
+    "independent_scientific_pass": false,
+    "fail_policy": "Record COLD_TRANSFER_NO_GO without changing scored data/model/seeds/thresholds or rewriting R55 source-neutral DEV NO-GO.",
+    "pass_policy": "Only synthetic cold transfer; no independent real-world, causal-learning or general intelligence claim."
+  },
+  "qualification": {
+    "G4_full_final_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_mamba2_CPU": true,
+    "exact_final_SHA": true,
+    "negative_external_source_admission": true,
+    "original_artifact_sha256": true,
+    "strict_full_cross_OS_action_parity": true
+  },
+  "authority": {
+    "controller_mod": false,
+    "runner_mod": false,
+    "scheduler_mod": false,
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "external_first_use": false,
+    "GPU_first_use": false,
+    "paid_API": false
+  }
+}
