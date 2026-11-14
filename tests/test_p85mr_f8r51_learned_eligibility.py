@@ -18,7 +18,7 @@ def test_before_training_prereg_source_and_authority():
     assert all(f["authority"].values())
     assert f["frozen_score"]["scientific_pass"] is False
     with pytest.raises(PermissionError,match="EXTERNAL_FIRSTUSE"):
-        r51.deny_external_original_firstuse()
+        r51.deny_external_original_first_use()
     with pytest.raises(ValueError,match="UNREGISTERED_GROUP"):
         r51.world("ood",r51.EVAL_GROUPS,0,1,1)
 
