@@ -1,0 +1,124 @@
+{
+  "schema": "ttt-hybrid.f8r67-trained-protected-causal-memory-dev-freeze.v1",
+  "stage": "FROZEN_BEFORE_R67_SOURCE_TRAINING_OR_DEV_SCORE",
+  "classification": "AUTHOR_SYNTHETIC_DEV_TRAINED_CAUSAL_MEMORY_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "R66_SHA": "efe7081d1a32e5ce96236bdf0a5c9024658d9afb",
+    "R66_PR": 261,
+    "R66_freeze_blob": "4b254705ba61bd4f659e044ec566cc8f7dce7831",
+    "R66_result": "ENGINEERING_PASS_SYNTHETIC_DEV_SIGNAL_ONLY",
+    "R65_result": "DEV_NO_GO",
+    "no_R66_or_earlier_scored_world_reuse": true,
+    "not_permission_to_promote_R66": true
+  },
+  "hypothesis": "Sparse learned, role-specific protected bank selection can learn causal A/B contexts using only post-action factual outcomes, outperforming strongly trained recurrent and nondirectional controls and frozen R66 manual protection on independent unfamiliar shift mechanisms without loss of stable or cold A recall.",
+  "null": "No reproducible frozen paired DEV advantage beyond strongest eligible fully trained or hand-engineered control, or direction-specific features not necessary.",
+  "source": {
+    "namespace": "ttt-hybrid/f8r67/prospective-v1",
+    "salts": {
+      "FIT": 23910000,
+      "CAL": 23920000,
+      "DEV": 23930000,
+      "PROXY_NEGATIVE": 23940000
+    },
+    "cases": {
+      "FIT": 128,
+      "CAL": 32,
+      "DEV": 96
+    },
+    "event_count": 48,
+    "phase_structure": "16 factual selected action events A, 16 B, 16 A return, public role sequence 0,1,2,3 x4 per phase; hidden change-point/shift family/scoring labels evaluator-only.",
+    "action_roles": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "law_A": "Per world independent 4x4 Gaussian N(0,.75) selected terminal effect columns + .25 diagonal; observed selected-action terminal effect adds 0.04 Gaussian noise, separate proxy Gaussian std 0.8.",
+    "switch_balance": "Each split 50% stable A-A-A, 50% A-B-A; FIT switches equally split 90-degree selected terminal rotation and sign-preserving 1.35 gain on selected goal coordinates; CAL half each; DEV switches equally split 90-degree rotation and UNSEEN cross-role linear combination B for roles 0,1: B[:,0]=.60*A[:,0]+.80*A[:,1], B[:,1]=-.80*A[:,0]+.60*A[:,1], roles 2,3 unchanged. Other DEV worlds stable.",
+    "data_admission": "Only actual public selected action and terminal effect after action; no future label, hidden phase/family, true unobserved law, unrelated proxy, or oracle interventions in model training or inference.",
+    "first_return_condition": "Score first learned cold A-return *after* first factual A return for roles 0/1 at t32 and t33; score subsequent selected pre-outcome events at 36,37,40,41,44,45. Never claim prediction of unannounced change before observing its effects.",
+    "OOD": "NO independent protected OOD or external first-use; DEV is author synthetic, newly sampled and locked before training."
+  },
+  "arms": {
+    "candidate": "TRAINED_SPARSE_DIRECTION: two 4x4 banks and 4 role selector scalars, 36 persistent fast state; 5 trainable global weights for sparse straight-through selected-bank switch. Inputs [bias, log1p(current residual MSE), log1p(alternative residual MSE), cos(current prediction, observed terminal), cos(alternative prediction, observed terminal)]. Selected role only. Pre-observation current-bank read, after factual outcome switch with hard forward sigmoid>0.5 / soft backward and update selected bank with eta=.65. No oracle phase labels.",
+    "trainable_control": "TRAINED_SPARSE_NONDIRECTION: exactly same 36 floats, 5 global trainable weights, same events/training/draws/optimizer; replace last two cosine signs by log1p current/alternate prediction norm. Separate parameter training.",
+    "recurrent_control": "TRAINED_GRU36: standard GRUCell with 36 hidden float recurrent state, selected factual role onehot+observed 4D terminal outcome input AFTER prediction; pre-action head Linear(36+4,4), fully gradient trained on exact same FIT examples/steps as candidate. More trainable parameters than candidate; report counts/compute, no equal FLOP claim.",
+    "fixed_control": "FROZEN_R66_PROTECTED_ROLE_BANK: unmodified qualified R66 public causal bank mechanism applied to newly generated R67 selected action/effects; no gradient updates; 36 fast memory floats and original eta=.65.",
+    "ablation": "DIRECTIONAL_ERASE: score trained directional candidate with sign-bearing cosine features set to their absolute values at inference, same frozen weights; compare to independently trained nondirectional control.",
+    "persistent_fast_state_candidate_and_fixed": 36,
+    "gru_hidden_fast_state": 36,
+    "selected_factual_events": 48,
+    "candidate_writes": 48,
+    "no_oracle_labels": true
+  },
+  "training": {
+    "seeds": [
+      985403,
+      985409
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.01,
+    "weight_decay": 0.005,
+    "grad_clip": 1,
+    "optimizer_steps_each_trainable_arm_seed": 96,
+    "FIT_batch_worlds": 8,
+    "draw_seed_formula": "23919999 + model_seed",
+    "sampling": "FIT with replacement; same exact batch sequence for all three trainable arms within seed",
+    "objective": "Mean causal terminal MSE before every selected factual effect across all 48 events, trained with unrolled gradients; no target-phase reweighting or DEV/CAL tuning",
+    "initialization": "Seeded CPU torch.float64 generator for all parameters. Candidate and nondirectional theta each 5 float64; GRUCell+read head more parameters but 36-state. Training device CPU, numpy pinned for original cross-platform reproducibility.",
+    "comparison": "All three trainable arms trained for 96 steps per each seed on identical FIT events with same optimizer, no equal compute time or parameter-count claim; score separately after the only frozen training routine.",
+    "CAL": "Diagnostics and training convergence evidence only, NEVER parameter updates or hyperparameter selection after CAL.",
+    "DEV": "Final evaluation only after model training; no optimizer or calibration on DEV."
+  },
+  "metrics": {
+    "score": "Equal-weight joint = switched B changed-role MSE after first B evidence t20,21,24,25,28,29 + switched A-return t36,37,40,41,44,45 + stable-world all-48 pre-action MSE.",
+    "eligible_controls": [
+      "TRAINED_SPARSE_NONDIRECTION",
+      "TRAINED_GRU36",
+      "FROZEN_R66_PROTECTED_ROLE_BANK"
+    ],
+    "strongest_control_per_seed": "smallest joint score over all three eligible controls, not chosen post-hoc by convenience",
+    "require_both_seeds": true,
+    "pass_all": {
+      "joint_relative_gain_vs_strongest_min": 0.05,
+      "B_relative_regression_max": 0.05,
+      "A_return_relative_regression_max": 0.05,
+      "stable_relative_regression_max": 0.05,
+      "directional_erase_joint_relative_degradation_min": 0.05,
+      "paired_world_bootstrap_upper_95pct_delta_below_zero": true,
+      "proxy_negative_invariant": true,
+      "cold_replay_exact": true,
+      "total_train_steps_and_selected_events_match": true
+    },
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 23949999,
+      "world_paired": true
+    },
+    "source_sanity": "Every panel equally stable/switched; DEV switched has both seen rotation and unfamiliar crossrole coupling; all fixed selected action roles seen 12 times/world; proxy erasure must not affect prediction, no fitting on evaluator law/shift labels.",
+    "report": "Per arm+seed train wallclock, eval wallclock, peak RSS if available, optimizer steps, trainable params, persistent float state, selected action event counts, B/A_return/stable MSE, strongest fixed and trained controls, per-world paired bootstrap and negative checks.",
+    "failure": "Any check fails => DEV_NO_GO, original outcome preserved; do not retune learning rate, seeds, threshold, source or score against spent DEV.",
+    "science_if_success": "DEV_TRAINED_MECHANISM_SIGNAL_ONLY; not independently qualified native Hybrid intelligence, external unseen-domain generalization or SCIENTIFIC_PASS"
+  },
+  "qualification": {
+    "G4_full_exact_SHA_windows_ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "original_both_OS_artifacts_and_SHA256": true,
+    "CPU_only": true,
+    "no_claim_before_original_artifacts": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "paid_API": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "external_scientific_firstuse": false,
+    "GPU_firstuse": false,
+    "FORGE_integration": false
+  }
+}
