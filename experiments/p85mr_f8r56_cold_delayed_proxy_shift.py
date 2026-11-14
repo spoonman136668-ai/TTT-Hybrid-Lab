@@ -261,12 +261,12 @@ def reproduce_original_FIT(arm,seed,offset,records,labels,draws,f):
         slopes=model.slopes.detach().tolist()
         if (min(abs(beta-spec["beta_windows"]),
                 abs(beta-spec["beta_ubuntu"]))>
-                      target["tolerance_beta"] or
+                      target["beta_tolerance"] or
             any(min(abs(slopes[i]-
                 spec["slopes_windows"][i]),
                 abs(slopes[i]-
                 spec["slopes_ubuntu"][i]))>
-                target["tolerance_slopes"] for i in (0,1))
+                target["slopes_tolerance"] for i in (0,1))
             or productive!=r55.UPDATES):
             raise ValueError("F8R56_ORIGINAL_R55_WEIGHT_REPRODUCTION_FAILED")
     heldout=r55.heldout(model,records,labels)
