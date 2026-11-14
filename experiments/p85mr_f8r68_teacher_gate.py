@@ -347,6 +347,7 @@ def student_rollout(model,source):
 
 
 def score(arm,model,src,traces):
+    scored_started=time.perf_counter()
     if arm==TEACHER:
         if model is not None:
             raise ValueError("F8R68_TEACHER_NEVER_USES_TRAINED_MODEL")
@@ -373,6 +374,7 @@ def score(arm,model,src,traces):
     B=mean(sw,"B")
     A=mean(sw,"A_return")
     S=mean(stable,"stable")
+    wall=time.perf_counter()-scored_started
     return {"B_MSE":B,"A_return_MSE":A,"stable_MSE":S,
             "joint_MSE":B+A+S,
             "swap_A_return_MSE":mean(swap,"A_return") if swap else None,
@@ -430,6 +432,7 @@ def judge(scores,accuracy,training,seed,freeze):
 
 
 def run():
+    started=time.perf_counter()
     freeze=locked()
     src={panel:worlds(panel) for panel in COUNTS}
     if any(sum(int(x["evaluator_switched_only"]) for x in arr)!=len(arr)//2
@@ -444,7 +447,6 @@ def run():
             for panel in ("FIT","CAL")}
     teacher_identity_all=all(teacher_identity(src[panel],traces[panel])
                              for panel in ("FIT","CAL"))
-    started=time.perf_counter()
     training={"teacher_identity":teacher_identity_all,"receipts":{}}
     accuracy={"CAL":{},"DEV":{}}
     scores={"CAL":{},"DEV":{}}
