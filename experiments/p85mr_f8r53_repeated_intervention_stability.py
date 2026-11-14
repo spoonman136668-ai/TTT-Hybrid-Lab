@@ -383,6 +383,17 @@ class Policy(nn.Module):
             weights=(torch.full_like(logits,1./logits.shape[1])
                      if force_uniform else torch.softmax(logits,dim=-1))
             signal=(weights*selected_mean).sum(-1)
+            # With every public tag removed, the two causal sources have
+            # indistinguishable roles. Opposite selected consequences cancel
+            # algebraically, but float32 softmax/sum can leave a signed
+            # one-ULP residual whose decision varies across CPU platforms.
+            # Fail closed at this *exact observable information boundary*
+            # instead of treating arbitrary rounding as a causal decision.
+            # No normal FIT/CAL/OOD record erases every public source tag.
+            if self.arm in ("learned_repeatability","native_repeatability"):
+                no_identifiable_tag_role=(tag==0).all(dim=-1)
+                signal=torch.where(no_identifiable_tag_role,
+                                   torch.zeros_like(signal),signal)
         if zero_signal:signal=torch.zeros_like(signal)
         pref=torch.tanh(F.softplus(self.gain)*40.*fifth*signal)
         if self.arm=="native_repeatability":
