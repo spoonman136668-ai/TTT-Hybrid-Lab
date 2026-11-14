@@ -1,0 +1,216 @@
+{
+  "schema": "ttt-hybrid.f8r53-repeated-selected-intervention-stability-freeze.v1",
+  "stage": "FROZEN_BEFORE_GENERATOR_MODEL_OR_SCORE",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_PROSPECTIVE_DEV_ONLY",
+  "parent": {
+    "qualified_r52_head": "316563614bd0d2fdaf56b027358ef57dc0ebb4a8",
+    "r52_pr": 247,
+    "r52_freeze_blob": "466819fe0780298279935c1e15fa06a04653ec36",
+    "r52_result": "Both original seeds: OOD regret zero and 32/32 flips but salience ablation=0, raw allpair control regret=0; frozen DEV NO_GO. Full G4 both platforms PASS, 9856/9856 decision parity, G5 and G7 PASS.",
+    "no_reuse_of_R49_R50_R51_R52_scored_cohorts": true
+  },
+  "hypothesis": {
+    "main": "A gradient-trained weight on cross-intervention repeatability can distinguish persistent selected action-dependent causal response from distractors with LARGER mean measured action contrast and high public tags but inconsistent response over repeated independent selected interventions.",
+    "mechanism": "For every public source, 3 independent repetitions of both actually selected action0 and selected action1 effects are observed. The signed action-contrast mean and its across-repetition variance are fixed transparent observable statistics. Train scalar eligibility salience from zero via factual selected-return regret along with two context role slopes, no generator hidden indices.",
+    "negative_expected": "Public-tag top2, simple top2 by observed mean-contrast magnitude and ungated raw mean-attention can be fooled by action-variant high-tag distractors. Test with same exact FIT information/draws/updates.",
+    "strong_positive_control": "Hand-coded top2 by public |mean selected action contrast|/(sqrt(within-source variance)+0.02) with trainable role slopes; if matches/equals learned, this is NOT general event discovery.",
+    "falsification": "Frozen DEV NO_GO if source reference has any error, main fails any frozen threshold or learned repeatability term ablation adds no regret, or no strict gain over trained raw all-source mean contrast. No post-score threshold/source adjustment.",
+    "not_proven": "A trained weight on a supplied fixed variance statistic is not spontaneous causal learning, general intelligence, independent external transfer, retention under continual learning, or Hybrid Native benefit."
+  },
+  "source": {
+    "fresh_salts": {
+      "fit": 22710000,
+      "cal": 22720000,
+      "ood": 22730000
+    },
+    "groups": {
+      "fit": 24,
+      "cal": 8,
+      "ood": 8
+    },
+    "fit_training_groups": 16,
+    "fit_heldout_groups": 8,
+    "worlds": {
+      "fit": 192,
+      "cal": 64,
+      "ood": 64
+    },
+    "public_source_count": {
+      "fit": 8,
+      "cal": 10,
+      "ood": 16
+    },
+    "replications_per_source": 3,
+    "actual_selected_action_consequences_per_replication": 2,
+    "selected_B_record_length": {
+      "fit": 48,
+      "cal": 60,
+      "ood": 96
+    },
+    "full_candidate_record_length": {
+      "fit": 54,
+      "cal": 66,
+      "ood": 102
+    },
+    "factorial_contexts": [
+      0,
+      1
+    ],
+    "hidden_evaluator_q_signs": [
+      -1,
+      1
+    ],
+    "hidden_evaluator_gate_signs": [
+      -1,
+      1
+    ],
+    "observable_context0_cue_tag": 0.42,
+    "observable_context0_decoy_tag": 0.18,
+    "context1_swaps_tag_roles": true,
+    "public_confounded_tag_values": [
+      0.88,
+      0.77
+    ],
+    "causal_persistent_action_contrast": {
+      "fit": 0.24,
+      "cal": 0.18,
+      "ood": 0.12
+    },
+    "distractor_alternating_action_contrast_amplitude": {
+      "fit": 0.8,
+      "cal": 0.62,
+      "ood": 0.45
+    },
+    "distractor_triple_repeats": [
+      "+A",
+      "-A",
+      "+A"
+    ],
+    "opposite_distractor_triple_repeats": [
+      "-A",
+      "+A",
+      "-A"
+    ],
+    "spurious_mean_contrast_abs_greater_than_causal": true,
+    "remaining_nuisance": "low public tag (0.03 if source%3==0 else 0), across 3 replications action-invariant selected physical effects generated from panel/group/source salt and trigonometric nuisance; never depends on hidden gate.",
+    "source_placement": "4 distinct candidate source indices from SHA256(panel/salt/group/source) ranking: cue,decoy,spurious1,spurious2. No source identities input to policy.",
+    "selected_intervention_protocol": "Observe action 0 physical effect and action 1 physical effect, in that order, from independent reset to the same public tag state, in each of 3 repeats, with both observed effects in actual record. Does not simulate or reveal unchosen *return* action outcome.",
+    "physical_selected_effect": "action0 delta=+signed_contrast, action1 delta=-signed_contrast; encoded through existing selected _record continuous physical effect channel, effect[4] set zero.",
+    "mean_parity": "For opposite evaluator hidden gates, source action keys exactly identical and all 16-dimensional mean over B effects identical. Causal source individual action contrasts change sign but opposite ± and source cue/decoy cancel. No shortcut from aggregate.",
+    "actual_fifth": "Original selected fifth probe, FIT-only calibration; no CAL/OOD calibration.",
+    "return_law": "Same R52/R51 quartic FIT-CAL and cubic OOD synthetic return evaluator with state 0.61/0.73 and action choice goal squared regret; hidden factors evaluator-only.",
+    "positive_reference": "From selected public source/repetition/action physical effects, compute per-source action contrast and sample variance. Take top 2 public ratios |mean|/(sqrt(variance)+.02), select highest/lower of those two public tags by context, multiply selected fifth measured FIT offset. Require 0 errors FIT/CAL/OOD before model scoring.",
+    "forbidden_model_inputs": [
+      "private cue index",
+      "private spurious index",
+      "hidden q",
+      "hidden gate",
+      "panel",
+      "group",
+      "unselected return consequence",
+      "oracle optimal return decision",
+      "cross-panel labels",
+      "source causal class"
+    ],
+    "no_old_OOD_source_reuse": true
+  },
+  "methods": {
+    "original_seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "learned_repeatability",
+      "raw_mean_context",
+      "public_tag_top2",
+      "mean_magnitude_top2",
+      "fixed_stability_top2",
+      "native_repeatability",
+      "gru_repetition_control"
+    ],
+    "train_updates_per_arm": 256,
+    "train_batch_pairs": 16,
+    "draw_seed": 22749999,
+    "checkpoints": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "optimizer": "AdamW context slopes, reliability salience, gain lr 0.02; Native and GRU .001, weight_decay=0, grad norm clip1; exactly matched genuine FIT selected return draws.",
+    "main": "For each source s: m_s=mean_r((effect_a0-effect_a1)/2); v_s=mean_r((contrast_r-m_s)^2); reliability_s=12*abs(m_s)/(1+20*v_s). Softmax logits slope[public_context]*source_tag + trained_beta*reliability_s; weighted signal sum_s weight_s*m_s; decision via true selected fifth and trained positive gain. Beta starts exactly zero.",
+    "raw_control": "same m_s and observed public tag to contextual learned slopes, no beta; same information/256 updates/seed.",
+    "tag_control": "top2 by highest observed public source tags, learned context role slopes.",
+    "mean_control": "top2 by highest abs of source mean action contrast; learned context role slopes.",
+    "fixed_stability": "top2 by source observable ratio abs(mean)/(sqrt(variance)+.02), learned context slopes and gain; strong handcoded comparator.",
+    "native": "main plus existing real R34 Native backbone full selected length via local adapter, backbone-zero ablation; report model params and wallclock; no shared source changes.",
+    "gru": "GRU sees public tag, measured source signed mean, variance, public context, for all sources; trained on same FIT selected information and steps, capacity unmatched; must verify competence before a science superiority claim.",
+    "ablations": [
+      "erase B",
+      "erase all B tag keys",
+      "erase fifth",
+      "zero trained beta",
+      "force top2 tag",
+      "force top2 mean magnitude",
+      "force uniform",
+      "zero native backbone",
+      "zero causal signal",
+      "cold restore"
+    ],
+    "total_optimizer_attempts": 3584,
+    "recording": "Each arm/seed all CAL/OOD active and 9 OOD ablation action vectors, loss/heldout checkpoints, productive gradients, params/time, learned beta and context slopes, Native ablation, cross-OS action parity, source reference and source means."
+  },
+  "frozen_score": {
+    "two_original_seeds_required": true,
+    "min_heldout_fit_accuracy": 0.95,
+    "max_cal_regret": 0.12,
+    "max_ood_regret": 0.12,
+    "max_ood_regret_each_context": 0.12,
+    "min_cal_gate_flips": 28,
+    "min_ood_gate_flips": 28,
+    "min_ood_erase_B_penalty": 0.12,
+    "min_ood_erase_fifth_penalty": 0.12,
+    "min_ood_zero_beta_penalty": 0.12,
+    "min_ood_force_tag_top2_penalty": 0.12,
+    "min_ood_force_mean_top2_penalty": 0.12,
+    "min_ood_gain_vs_raw_context": 0.12,
+    "paired_group_bootstrap": {
+      "draws": 10000,
+      "seed": 22769999,
+      "lower95_strict_positive": true
+    },
+    "context0_slope_min": 1,
+    "context1_slope_max": -1,
+    "beta_initial_exact_zero": true,
+    "beta_final_positive": true,
+    "real_beta_gradient_required_both_seeds": true,
+    "source_only_reference_zero_errors_all_panels": true,
+    "cross_gate_all_16D_mean_parity": true,
+    "cross_OS_all_action_decisions_identical": true,
+    "independent_scientific_pass": false,
+    "independent_qualification_requirements": "Must prospectively beat fully trained fixed public stability top2 heuristic and strongly matched fully converged conventional, show genuine cold retention under real interference and independent environment first-use; Native attribution requires positive backbone ablation and repeatable improvement.",
+    "failed_conditions": "Preserve exact negative outcome; no retune on spent score sources or recasting a trained feature weight as novel causal cognition."
+  },
+  "qualification": {
+    "full_final_g4_windows_ubuntu": true,
+    "g5_native_TTT_CPU_windows_ubuntu": true,
+    "g7_pinned_mamba2_CPU_ubuntu": true,
+    "original_artifacts_hash_verified": true,
+    "exact_final_sha": true,
+    "blocked_external_source_admission": true,
+    "full_cross_platform_action_parity": true
+  },
+  "authority": {
+    "merge": false,
+    "controller_mod": false,
+    "runner_mod": false,
+    "scheduler_mod": false,
+    "paid_API": false,
+    "GPU_first_use": false,
+    "external_F7_original_firstuse": false,
+    "promote": false,
+    "deploy": false
+  }
+}
