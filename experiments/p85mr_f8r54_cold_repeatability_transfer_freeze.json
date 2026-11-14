@@ -1,0 +1,181 @@
+{
+  "schema": "ttt-hybrid.f8r54-cold-repeatability-transfer-freeze.v1",
+  "stage": "FROZEN_BEFORE_NEW_GENERATOR_OR_ANY_R54_SCORE",
+  "scope": "PROSPECTIVE_SYNTHETIC_TRANSFER_ONLY",
+  "parent": {
+    "qualified_R53_SHA": "289f44df8b8c7217f01c40afa646c2bbd2a18272",
+    "r53_pr": 248,
+    "r53_freeze_blob": "2ae097f98fd9953181c4d6d57349cf7a23bd727d",
+    "R53_result": "G4/G5/G7 PASS, 9856/9856 decisions cross-OS, synthetic DEV PASS 2/2, fixed stability heuristic ties learned, Native backbone zero contribution"
+  },
+  "hypothesis": {
+    "primary": "A frozen R53 learned reliability model may overfit oscillatory distractor variance: if the larger-contrast high-tag distractors become equally stable across repeated selected interventions, the learned variance-weighting rule can select their action consequences instead of truly gate-dependent causal responses.",
+    "control": "Independent oscillating-distractor salt tests whether R53 learned policy retains normal synthetic OOD behavior on novel source positions with the same underlying mechanism.",
+    "falsifier": "Both original R53 seeds must meet fixed new OOD regret and gate-flip thresholds in BOTH independent salts without any R54 OOD adaptation. Any failure is a cold transfer NO-GO; do not tune or relabel as learned causality.",
+    "source_positive_reference": "A deliberately hand-coded observable public-tag reference takes the two actually observed tags in [.175,.185] and [.415,.425], independently of hidden source positions, then resolves context role using selected sixth-record contrasts and FIT-only selected fifth. This is a weak source-specific feasibility oracle, NOT a learned model or independent intelligence control.",
+    "independent_science": "Even a passing result cannot establish general causal intelligence: baselines must be fully converged, input/compute matched, and new real environments independently qualified; Native backbone attribution must be positive."
+  },
+  "source": {
+    "new_salts": {
+      "oscillating": 22810000,
+      "stationary_confounder": 22820000
+    },
+    "groups_each": 8,
+    "contexts": [
+      0,
+      1
+    ],
+    "eval_q_signs": [
+      -1,
+      1
+    ],
+    "eval_gates": [
+      -1,
+      1
+    ],
+    "worlds_each": 64,
+    "public_sources": 16,
+    "selected_repetitions_per_source": 3,
+    "actually_selected_interventions_per_repetition": 2,
+    "selected_B_events": 96,
+    "full_history_events": 102,
+    "cue_tag_ctx0": 0.42,
+    "decoy_tag_ctx0": 0.18,
+    "ctx1_tag_roles_inverted": true,
+    "spurious_tags": [
+      0.88,
+      0.77
+    ],
+    "causal_action_contrast_magnitude": 0.12,
+    "spurious_action_contrast_magnitude": 0.45,
+    "oscillating_spurious_pattern": [
+      [
+        1,
+        -1,
+        1
+      ],
+      [
+        -1,
+        1,
+        -1
+      ]
+    ],
+    "stationary_spurious_pattern": [
+      [
+        1,
+        1,
+        1
+      ],
+      [
+        -1,
+        -1,
+        -1
+      ]
+    ],
+    "remainder_nuisance": "Public low tags .03 or zero; action invariant selected physical offset round(.014*sin((salt+group)*.137+source*.271)+.004*((source+group)%4-1.5),8). Zero action contrast.",
+    "placement": "SHA256(R54/panel/salt/group/source) determines 4 distinct cue/decoy/spurious source positions. No private source ID or salt enters policy input.",
+    "record_format": "For every source and each repeat, record actually selected action0 and action1 consequence from the same reset public tag state via original _record; zero effect[4] for B only. Preserve all 4 original selected early and selected fifth probe facts; masked preaction return. 16 physical channels exact original encoder.",
+    "evaluator": "Use original R53 return physics, with fixed q×gate as evaluator-only labels, goal squared regret. Do not feed unselected return physical effects to policy.",
+    "opposite_gate_mean": "Opposite hidden gates have identical action keys and full 16D public B mean, but distinct selected cue/decoy action consequence observations. Reject non-zero mean leak >1e-7.",
+    "no_training_on_new_OOD": true,
+    "new_data_separate_from_spent_R53_R52_R51_R50_R49": true
+  },
+  "original_replay": {
+    "train_source": "Only the original R53 FIT generator and unchanged draw seed 22749999; 384 selected factual return outcomes, 128 pairs for training, 64 FIT heldout.",
+    "original_seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "learned_repeatability",
+      "raw_mean_context",
+      "public_tag_top2",
+      "mean_magnitude_top2",
+      "fixed_stability_top2",
+      "native_repeatability",
+      "gru_repetition_control"
+    ],
+    "original_fit_updates_per_arm": 256,
+    "training_draws": 16,
+    "optimizer": "Exactly R53 original AdamW per parameter lr, weight decay0, clip 1; no new hyperparameters or random seeds.",
+    "total_replayed_fit_steps": 3584,
+    "reproduction_targets": {
+      "seed985201": {
+        "beta_windows": 1.940445899963379,
+        "beta_ubuntu": 1.9541032314300537,
+        "context_slopes_windows": [
+          2.5857739448547363,
+          -2.6198740005493164
+        ],
+        "context_slopes_ubuntu": [
+          2.5735838413238525,
+          -2.6086113452911377
+        ]
+      },
+      "seed985207": {
+        "beta_windows": 1.9462871551513672,
+        "beta_ubuntu": 1.947830080986023,
+        "context_slopes_windows": [
+          2.5606143474578857,
+          -2.5958430767059326
+        ],
+        "context_slopes_ubuntu": [
+          2.5592565536499023,
+          -2.594587802886963
+        ]
+      },
+      "tolerance_beta": 0.035,
+      "tolerance_slopes": 0.04
+    },
+    "unchanged_R53_original_OOD_cold_baseline_regret": 0,
+    "source_only_positive_reference_must_be_correct": 64,
+    "cold_restore_exact_actions": true,
+    "record": [
+      "frozen model weights hash",
+      "train seconds and productive steps",
+      "same-SHA parameter count",
+      "new source parity",
+      "per-arm two OOD panels choices/regrets/flips/context",
+      "cold restore",
+      "negative_controls_zero_beta_and_zero_native",
+      "original R53 OOD preservation",
+      "whole-process runtime and source provenance"
+    ]
+  },
+  "frozen_decision": {
+    "two_seeds_required": true,
+    "max_new_each_panel_mean_regret": 0.12,
+    "max_new_each_public_context_regret": 0.12,
+    "min_new_gate_pair_flips": 28,
+    "original_R53_source_regret_must_remain_zero": true,
+    "oscillating_panel_pass_required": true,
+    "stationary_panel_pass_required": true,
+    "source_positive_reference_zero_error_each": true,
+    "full_mean_parity": true,
+    "full_14_arm_categorical_cross_OS_parity": true,
+    "fixed_heuristic_and_other_controls_recorded_without_relabeling": true,
+    "independent_scientific_pass": false,
+    "Native_specific_attribution_requires_positive_backbone_ablation": true,
+    "if_fail": "Report frozen cold transfer NO-GO, preserve the original R53 synthetic DEV PASS as distribution-specific, no source retuning nor updates on scored episodes.",
+    "if_pass": "Report two-new-source synthetic cold transfer only, no independent scientific validation without new environments and strong competency/compute-matched baselines."
+  },
+  "qualification": {
+    "G4_full_final_regression_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "negative_source_admission": true,
+    "exact_sha_original_artifact_hash": true,
+    "all_action_cross_OS_parity": true
+  },
+  "authority": {
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "paid_api": false,
+    "GPU_first_use": false,
+    "external_original_first_use": false
+  }
+}
