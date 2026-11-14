@@ -1,0 +1,110 @@
+{
+  "schema": "ttt-hybrid.f8r64-contradiction-necessity-dev-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R64_DEV_SOURCE_OR_SCORING",
+  "classification": "AUTHOR_SYNTHETIC_FIT_DEV_MECHANISM_FALSIFIER_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "r63_head_sha": "fed5b9b1bcd58ae151b62d96b44dfdf0665695cc",
+    "r63_pr": 258,
+    "r63_freeze_git_blob": "120645006a5ca8520056b6e858525f176b01bc81",
+    "r63_status": "Fresh four-law task admission PASS: original 61440/61440 cross-OS categorical agreement; no Native learning advantage.",
+    "p76_frozen_blob": "89df37558235de7a0a3d71bfc7d5f28ed80fa7cd",
+    "p76_caveat": "Historical learned write gate improved FIT/VAL, but explicit contradiction feature necessity NOT demonstrated by post-hoc ablation."
+  },
+  "hypothesis": "Under matched factual action/effect access, fixed 16-float fast-state and one causal-effect update after every observation, a directional-contradiction boost (not mere surprise) improves adaptation after an unseen selected-action causal reversal without unacceptable stable-world or cold A-return loss, and benefit vanishes when directional information is removed.",
+  "source": {
+    "namespace": "TTT_HYBRID_F8R64_DEV_V1",
+    "salts": {
+      "FIT": 23610000,
+      "DEV": 23620000,
+      "PROXY_NEGATIVE": 23630000
+    },
+    "worlds": {
+      "FIT": 128,
+      "DEV": 64,
+      "PROXY_NEGATIVE": 64
+    },
+    "phase_steps": [
+      16,
+      16,
+      16
+    ],
+    "action_roles": 4,
+    "sequence": "For each phase visit roles 0,1,2,3 four times; public role and observed post-action 4D terminal effect, separately observed noncausal proxy 4D. Only confirmed selected factual effects update fast state.",
+    "regimes": "Every world has law A (4 action-conditioned 4D terminal effect vectors) sampled independently with reproducible Gaussian amplitudes. Half DEV/FIT stable A-A-A; half intervention A-B-A with B reversing terminal effects for roles 0,1, leaving roles 2,3 unchanged. Regime identity and change points evaluator only.",
+    "observation": "At each executed public one-hot action, pre-update predict terminal effect from W@action; then observe terminal effect=selected law vector+Gaussian noise std 0.05 and noncausal proxy independent noise std 0.7. Never include proxy in write residual.",
+    "resampling": "Independent source seeds for FIT and DEV, disjoint world draws; identical model-visible action/effect streams for all arms, no future-effect/label/phase flag or hidden regime input.",
+    "negative": "PROXY_NEGATIVE is isolated DEV diagnostic with independent proxy amplitude 3.0 and same terminal causal law; thresholds frozen from FIT only, no learning on DEV.",
+    "protected_OOD": "NONE GENERATED OR ACCESSED; no external simulator or independent scientific first-use."
+  },
+  "memory": {
+    "shape": [
+      4,
+      4
+    ],
+    "floats_per_world": 16,
+    "cold_start": "all zero before any action",
+    "read_before_write": true,
+    "exact_updates_per_world": 48,
+    "rule": "For executed role k: prediction W[:,k]; after confirmed terminal goal effect y, W[:,k] += gain*(y-prediction); all arms execute one update per observed action, no hidden memory bank.",
+    "baseline": "all_write_eta_0.5",
+    "contradiction": "base gain 0.25 plus 0.5 if cosine(prediction,observed_goal)<-0.25 and norm(prediction)>=0.25. No phase/time/hidden state input.",
+    "surprise": "base gain 0.25 plus 0.5 if norm(observed_goal-prediction)>FIT-only threshold giving matching FIT fraction of boosted writes; threshold frozen before DEV.",
+    "random": "base gain 0.25 plus 0.5 for SHA256-driven independent random selector with probability equal FIT contradiction boost fraction, seed scoped per world/action; no privileged phase.",
+    "ablated": "base gain 0.25 plus 0.5 if absolute cosine(prediction,observed_goal)>0.25 (direction removed), FIT-only threshold matching contradiction boost fraction; separate diagnostic.",
+    "information": "Same public actions and confirmed terminal effects; all arms observe all events. Proxy never enters any arm.",
+    "budgets": "Same 16 persistent fast scalars and exactly 48 rank-one write operations per episode. Different selector overhead and boosted fractions measured; no unsupported equal-FLOP or matched trained-parameter assertion.",
+    "no_optimizer_training": true
+  },
+  "scoring": {
+    "principal": "Pre-observation prediction squared error at each factual selected action, never evaluate on post-update prediction for same event.",
+    "metrics": [
+      "mean B-phase changed roles MSE for intervention worlds",
+      "mean A-return first visit per role pre-update MSE",
+      "mean stable-world all-phase MSE",
+      "world-bootstrap confidence interval of paired candidate-minus-strongest-control B MSE",
+      "proxy-negative change in B MSE",
+      "boosted counts, wall-clock and memory/operation counts",
+      "cold deterministic replay"
+    ],
+    "strongest_controls": [
+      "all_write_eta_0.5",
+      "surprise_FIT_calibrated",
+      "random_FIT_calibrated"
+    ],
+    "calibration": "Compute surprise threshold and random boost probability only on FIT from fixed all_write_eta_0.5 pre-update goal residual trace; contradiction boost rate from same FIT trace; no DEV threshold search.",
+    "seed_world_controls": "Both stable and switched balanced exactly 50% in each split; role order and world identity unavailable to models; actual goal effect sign/identity differs under intervention.",
+    "pass_requirements": {
+      "changed_B_mse_reduction_vs_best_comparator_min": 0.1,
+      "stable_world_MSE_relative_increase_max": 0.05,
+      "A_return_first_visit_MSE_relative_increase_max": 0.05,
+      "directional_ablation_B_MSE_relative_increase_min": 0.1,
+      "bootstrap_pair_upper_95pct_delta_lt_zero": true,
+      "cold_replay_exact": true,
+      "proxy_magnitude_no_change_in_goal_predictions": true
+    },
+    "failure": "If any required DEV check fails, record DEV_NO_GO, preserve all scores, do NOT tune DEV, claim mechanism necessity, or open independent scientific evaluation from this evidence.",
+    "success": "DEV_MECHANISM_SIGNAL_ONLY. A distinct preregistered fresh-world trained Hybrid/TTT comparison and protected original first-use authorization remains necessary for SCIENTIFIC_PASS.",
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "local_focused_tests": true,
+    "full_original_G4_Windows_Ubuntu_on_exact_final_sha": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "source_admission_negative": true,
+    "original_artifact_custody": true,
+    "do_not_claim_pass_until_finished": true
+  },
+  "authority": {
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "external_original_first_use": false,
+    "GPU_first_use": false,
+    "paid_API": false,
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false
+  }
+}
