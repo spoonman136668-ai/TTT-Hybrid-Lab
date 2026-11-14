@@ -1,0 +1,148 @@
+{
+  "schema": "ttt-hybrid.f8r68-factual-teacher-bank-gate-freeze.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_R68_IMPLEMENTATION_AND_SCORING",
+  "classification": "DEV_SUPERVISED_CAUSAL_MEMORY_DECISION_LEARNABILITY_ONLY",
+  "parent": {
+    "exact_R66_SHA": "efe7081d1a32e5ce96236bdf0a5c9024658d9afb",
+    "R66_PR": 261,
+    "R66_result": "ENGINEERING_PASS_DEV_MECHANISM_SIGNAL_ONLY",
+    "R67_PR": 262,
+    "R67_result": "DEV_NO_GO",
+    "R67_head": "ed7dba95df62622719961b34a38f0125981f3273",
+    "R64_to_R67_all_spent": true,
+    "no_spent_cohorts_or_test_tuning": true,
+    "source_control_ancestor_only_R66": true
+  },
+  "question": "Can a parametric gate imitate the R66 fully factual protected-memory switch decision on independently sampled, unannounced causal changes, and preserve retention when closed-loop?",
+  "hypothesis": "A learned nonlinear gate over ordered, post-event current-vs-alternative bank evidence will generalize better to unseen causal-switch worlds than matched order-invariant and randomized-label controls, while staying near the fixed R66 causal-memory retention performance.",
+  "null": "A trained directional bank switch is not reliably recoverable from factual evidence, cannot preserve A on return, or has no usable advantage over matched controls.",
+  "source": {
+    "salts": {
+      "FIT": 24010000,
+      "CAL": 24020000,
+      "DEV": 24030000,
+      "PROXY_NEGATIVE": 24040000
+    },
+    "worlds": {
+      "FIT": 128,
+      "CAL": 32,
+      "DEV": 96
+    },
+    "split_balance": "Each panel half stable A-A-A and half A-B-A. FIT/CAL switched balance 90-degree physical terminal rotation and 1.35 multiplicative selected-role goal gain. DEV switched balance 90-degree rotation and unseen role 0/1 goal-column swap.",
+    "regime_schedule": "48 factual events in public role order 0,1,2,3 repeating; 16 A, 16 B, 16 A_return; phase/regime always private to scorer, not training inputs.",
+    "selected_goal": "Per-world 4x4 independent Gaussian(0, .75) causal selected action effect matrix with 0.25 diagonal; 4D observed terminal selected outcome plus Gaussian noise sigma .04; selected factual role and outcome only, post-action.",
+    "irrelevant_proxy": "4D iid normal std 0.8 with isolated DEV proxy-negative std 3.0, never forwarded to trainer or model.",
+    "unseen_DEV_family": "role column swap B[:,0]=A[:,1] and B[:,1]=A[:,0] for changed roles 0,1; FIT never sees this transformation family. This is fresh author synthetic held-out family, not external independent OOD.",
+    "admission": "Generate FIT, CAL, DEV with separate salts. Teacher labels on FIT are derived from R66 public factual prediction, after selected observed event, NEVER hidden law/regime/phase labels. CAL diagnostics only. DEV evaluated one time after weights frozen.",
+    "scored_B_indices": [
+      20,
+      21,
+      24,
+      25,
+      28,
+      29
+    ],
+    "scored_A_return_indices": [
+      36,
+      37,
+      40,
+      41,
+      44,
+      45
+    ],
+    "note": "The first unannounced A return for each changed role (t32,t33) is not scored as clairvoyance."
+  },
+  "teacher": {
+    "reference": "Unmodified qualified experiments.p85mr_f8r66_bank_identity.update_role_bank('protected_role_bank') on fresh R68 selected factual actions and outcomes.",
+    "mechanism": "R66 exact post-event switch = (inactive bank trained norm >=0.20 and inactive L2 error +0.15 < active L2 error) OR (active bank trained norm >=0.20 and active L2 error >0.75 and inactive trained norm <0.20). Switch one role's active bank, write only its newly selected bank after actual goal outcome, eta 0.65.",
+    "labels": "Binary event switch event derived from actual selected action and post-outcome bank predictions on the teacher's own state, NOT from private ground truth world/change label.",
+    "identity_check": "Teacher trace must exactly reproduce original R66 per-event pre-observation MSE, cumulative switch count and final 36-float state hash before any imitation scoring.",
+    "features_candidate": "Ten float64 inputs [log1p(norm_active),log1p(norm_inactive),log1p(err_active),log1p(err_inactive),err_active-err_inactive,err_active-0.75,norm_active-0.20,norm_inactive-0.20,err_active-err_inactive-0.15,1]. These are public AFTER the action outcome only.",
+    "features_nondirectional": "Ten float64 magnitude/invariant variants, replacing ordered signs by unordered min/max or absolute deviation; no change of event information available, but cannot encode which bank has better match as directly.",
+    "no_private_flags": true
+  },
+  "arms": {
+    "student": "FULL_ORDERED_MLP: 10->16 tanh->1 float64 binary logit, 193 trainable global weights; 36 float persistent two-bank/role-selector world state; hard switch after outcome only.",
+    "controls": [
+      "ORDER_INVARIANT_MLP: identical 10->16 tanh->1 / 193 trainable parameters with unordered features",
+      "FULL_ORDERED_LINEAR: logistic 10->1 / 11 trainable parameters with same ordered features",
+      "SHUFFLED_LABEL_MLP: identical 193-param ordered-feature MLP trained on FIT-only labels deterministically shuffled preserving FIT prevalence",
+      "FIXED_R66_ORACLE_TEACHER: source-neutral hand-engineered public-state decision, not a trained superior inference claim"
+    ],
+    "shared_fast_state_floats": 36,
+    "teacher_fixed_state_floats": 36,
+    "same_selected_factual_48_events": true,
+    "one_selected_bank_update_per_event": true,
+    "fixed_eta": 0.65,
+    "teacher_or_hidden_label_not_allowed_at_inference": true,
+    "cost_note": "Equal action information and fast-state capacity; training parameter count differs for linear, teacher has zero trainable globals. Report all train/eval wall times, steps, event exposures; no equal FLOP claim."
+  },
+  "training": {
+    "seeds": [
+      985509,
+      985519
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.015,
+    "weight_decay": 0.001,
+    "gradient_clip_norm": 1,
+    "optimizer_steps_per_seed_per_trainable_arm": 128,
+    "FIT_world_batch_per_step": 16,
+    "train_draw_seed": "24019999 + seed",
+    "init_seed": "seed + arm_id_fixed_offset",
+    "positive_BCE_weight": "min(12, max(1, FIT_negative_switch_label_count/FIT_positive_switch_label_count)), fixed FIT-only, no CAL/DEV reweighting",
+    "loss": "Weighted BCEWithLogitsLoss on all post-event factual teacher-state FIT switch/no-switch examples; no direct hidden law, future outcome, or private phase label.",
+    "shuffled_control": "FIT binary switch labels deterministically permuted by rng 24059999 + seed for each training seed; retains identical switch prevalence, same optimizer steps and FIT event draws as other trained arms.",
+    "CAL": "Read-only diagnostic, no hyperparameter choices or optimizer updates.",
+    "DEV": "Weights frozen, evaluate teacher-state label agreement and independent closed-loop student rollouts on DEV with new unseen swap family; never train on DEV."
+  },
+  "metrics": {
+    "accuracy": "Teacher-state switch label balanced accuracy, positive recall and negative specificity on fresh DEV factual teacher traces (zero positives causes source admission failure).",
+    "closed_loop": "Student read-before-outcome and role-specific post-observation update from own state; no reference teacher labels or hidden private world states at inference.",
+    "primary": "After-factual-evidence A-return changed-role MSE at t36,37,40,41,44,45; separate B changed-role MSE at t20,21,24,25,28,29 and stable-world all-48 MSE.",
+    "comparators": "Fixed R66 teacher anchor; strongest TRAINED control by total joint B+A_return+stable is chosen among invariant MLP, ordered linear and shuffled-label MLP. Candidate must beat strongest TRAINED control by 5% joint MSE; do not silently omit linear or shuffled control.",
+    "required_all_both_seeds": {
+      "teacher_trace_exact_R66": true,
+      "student_teacher_state_balanced_accuracy_min": 0.9,
+      "student_positive_recall_min": 0.75,
+      "student_negative_specificity_min": 0.95,
+      "candidate_joint_improvement_over_strongest_trained_min": 0.05,
+      "A_return_relative_regression_vs_fixed_teacher_max": 0.25,
+      "B_relative_regression_vs_fixed_teacher_max": 0.25,
+      "stable_relative_regression_vs_fixed_teacher_max": 0.1,
+      "unseen_swap_A_return_relative_regression_vs_fixed_teacher_max": 0.35,
+      "paired_2000_world_bootstrap_upper95_candidate_minus_best_trained_joint_below_zero": true,
+      "proxy_negative_goal_invariance": true,
+      "cold_start_replay_exact": true,
+      "training_step_and_factual_event_budget_equal": true
+    },
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 24049999
+    },
+    "post_result_tuning_forbidden": true,
+    "scope_if_pass": "DEV_TEACHER_IMITATION_MECHANISM_SIGNAL_ONLY, NOT independent SCIENTIFIC_PASS or trained Hybrid superiority",
+    "scope_if_fail": "DEV_NO_GO, preserve negative, do not optimize on spent DEV."
+  },
+  "qualification": {
+    "exact_head_sha": true,
+    "G4_full_windows_and_ubuntu": true,
+    "G5_authentic_CPU_both": true,
+    "G7_pinned_mamba2_CPU": true,
+    "original_zip_sha256_and_raw_scored_JSON": true,
+    "source_negative_controls": true,
+    "no_GPU_or_external_firstuse": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "GPU_firstuse": false,
+    "external_firstuse": false,
+    "paid_API": false,
+    "new_controller": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "FORGE_integration": false
+  }
+}
