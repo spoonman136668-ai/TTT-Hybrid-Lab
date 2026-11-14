@@ -1,0 +1,208 @@
+{
+  "schema": "ttt-hybrid.f8r59-multilaw-intervention-task-admission-freeze.v1",
+  "stage": "FROZEN_BEFORE_R59_FORMAL_SOURCE_OR_TRAINING",
+  "classification": "PROSPECTIVE_SOURCE_NEUTRAL_SYNTHETIC_TASK_ADMISSION_ONLY",
+  "parent": {
+    "r58_sha": "28590141cb2fdf5838cc70c7b53f2d76b662cf62",
+    "r58_pr": 253,
+    "r58_freeze_blob": "b6549f85a8f54c69ccd76efb2614be2f04106fc8",
+    "r58_result": "Original G4 full Windows/Ubuntu, G5/G7 PASS, original 5376/5376 categorical parity; 2/2 TASK_ADMISSION_NO_GO because MLP OOD .117/.203 and GRU OOD .125 despite 100% FIT interpolation; per-law anti-generalization, not infrastructure failure.",
+    "no_reuse_R49_R58_scored_cohorts": true
+  },
+  "pre_freeze_pilot": {
+    "status": "DEV_ONLY_NOT_FORMAL_SCIENTIFIC_EVIDENCE",
+    "source": "separate local prototype using distinct seeds 11,15,22; no R59 formal seeds or worlds",
+    "pilot_parameters": "4 nonlinear causal response families, three actually selected source probes, proxy nuisance, action-contrast observation noise .24, target range FIT ±.9/OOD ±1.3, MLP and GRU 1200 DEV updates",
+    "observed": {
+      "MLP_OOD": 0.8761,
+      "GRU_OOD": 0.8917,
+      "fixed_quadratic_OOD": 0.8806,
+      "single_center_probe_OOD": 0.7372
+    },
+    "purpose": "Verify approximate task difficulty and baseline competence before formal freeze, not selection/tuning based on any R59 heldout outcomes."
+  },
+  "hypothesis": "Compared to R58's held-out parity-law combination anti-generalization, training across four causal intervention response families with continuously novel world parameters and correctly observed selected action consequences should let conventional MLP/GRU learn portable target-action rules, but still leave nontrivial noisy uncertainty and fixed-expert headroom. Evaluate task admission only, not a novel mechanism.",
+  "causal_laws": {
+    "law_families": [
+      "f(x)=a+b*x",
+      "f(x)=a+b*(x^2-0.3)",
+      "f(x)=a+b*x+c*(x^2-0.3)",
+      "f(x)=a+b*tanh(3*(x-h))"
+    ],
+    "family_index_rule": "case_index mod 4 for each split, hidden evaluator-only, exact balanced family counts",
+    "coefficient_distributions": {
+      "a": "Normal(0,0.5)",
+      "b": "Normal(0,0.8)",
+      "c": "Normal(0,0.35)",
+      "h": "Uniform(-0.4,+0.4)"
+    },
+    "mechanism": "For do(action0) at public probe x, true terminal goal effect +f(x); do(action1) effect -f(x). An independent selected sensor noise and action-invariant public nuisance affect measured probe observations but not true causal law.",
+    "new_world_transfer": "FIT, FIT heldout, CAL and OOD draw independent latent a,b,c,h coefficients and proxy noise from distinct pre-frozen salts; all four functional families occur in all splits. The unfamiliar distribution changes proxy scale and widens public target x; it DOES NOT hold out an entire functional family. This is parameter/context transfer, not new-law-family discovery.",
+    "future_goal": "At an unobserved public target coordinate t, choose action0 if f(t)>=0 else action1; training labels from independent actually selected target-action0 and target-action1 trials, never included in model features; evaluation labels remain evaluator-only.",
+    "not_claimed": "A neural classifier predicting on explicitly pre-encoded selected contrasts is not autonomously discovering causal structure, true open-world intelligence, policy selection, or Native substrate gain."
+  },
+  "source": {
+    "salts": {
+      "FIT_train": 23310000,
+      "FIT_heldout": 23315000,
+      "CAL": 23320000,
+      "OOD": 23330000
+    },
+    "cases": {
+      "FIT_train": 4096,
+      "FIT_heldout": 768,
+      "CAL": 768,
+      "OOD": 1024
+    },
+    "public_probe_centers": [
+      -0.84,
+      0,
+      0.84
+    ],
+    "probe_jitter_range": [
+      -0.14,
+      0.14
+    ],
+    "public_target_ranges": {
+      "FIT_train": [
+        -0.9,
+        0.9
+      ],
+      "FIT_heldout": [
+        -0.9,
+        0.9
+      ],
+      "CAL": [
+        -0.9,
+        0.9
+      ],
+      "OOD": [
+        -1.3,
+        1.3
+      ]
+    },
+    "terminal_selected_action_noise_std": 0.33941125496954283,
+    "action_contrast_noise_std_approx": 0.24,
+    "terminal_action_invariant_nuisance_std": 0.012,
+    "proxy_selected_action_contrast_std": {
+      "FIT_train": 1.1,
+      "FIT_heldout": 1.1,
+      "CAL": 1.1,
+      "OOD": 1.6
+    },
+    "proxy_noncausal": true,
+    "selected_probe_count": 3,
+    "actually_selected_actions_each_probe": 2,
+    "terminal_and_proxy_records_each_selected_action": 2,
+    "actually_selected_factual_probe_records_per_case": 12,
+    "feature_dimension": 10,
+    "model_feature_order": "[probe0_x,probe1_x,probe2_x,selected_terminal_contrast0..2,selected_proxy_contrast0..2,public_target_t]",
+    "selected_terminal_contrast": "0.5*(actually observed action0 physical terminal effect - actually observed action1 effect) at each public source x, with two independent selected action measurement noises and a common action-invariant nuisance.",
+    "selected_proxy_contrast": "Same selected action0/action1 difference at independent noncausal proxy sensor; proxy draw independent of causal coefficients and target class, scale increases on OOD.",
+    "FIT_training_return_custody": "After three probe interventions, select target-action0 and target-action1 on two independent reset goal trials, observe noiseless ±f(target) and use only for FIT labels and optional evaluator provenance; do not append either to model feature vector.",
+    "unseen_CAL_OOD_return": "Evaluate latent target intervention objective after policy decision; no unselected target-action effect or optimal label ever in model input.",
+    "public_only_analytic_quadratic": "Public 3-point Lagrange quadratic interpolation on actually observed selected terminal contrasts at the three known x probe values; decision at public target x. A strong HANDCODED interpolator that may be as good as neural models but is not learned causal mechanism.",
+    "negative_controls": [
+      "public-center-probe sign only",
+      "public majority of 3 terminal contrast signs",
+      "constant majority target",
+      "replace all selected terminal contrast features with zeros but retain proxy/context",
+      "zero all selected proxy contrast inputs but retain terminal/context",
+      "cold restore exact actions",
+      "FIT-only label permutation diagnostic (separate smaller control budget; do not train on OOD)"
+    ],
+    "source_only_source_sanity": "All four causal families present in every split, both return labels present and 40%-60% target class balance each split, no numerical leakage of family id/coefficient/salt/return target into model features. Selected outcome records all from actually selected actions.",
+    "forbidden_model_inputs": [
+      "causal law family ID",
+      "latent a,b,c,h",
+      "split/panel",
+      "case seed",
+      "target action effect at unobserved t",
+      "target preferred label",
+      "source salt",
+      "future oracle"
+    ],
+    "no_old_heldout_reuse": true
+  },
+  "trained_controls": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "MLP_architecture": "10->64 ReLU->64 ReLU->2 logits",
+    "GRU_architecture": "3 public probe steps of 4 input values [x,terminal contrast,proxy contrast,public target t] -> 32 hidden GRU ->2 logits",
+    "arms": [
+      "mlp_selected_goal_effects",
+      "gru_selected_goal_effects"
+    ],
+    "updates_per_model": 1536,
+    "training_batch_size": 128,
+    "learning_rate": 0.003,
+    "AdamW_weight_decay": 0,
+    "gradient_clip_norm": 1,
+    "same_selected_FIT_inputs_actions_and_draws": true,
+    "FIT_draw_seed": 23349999,
+    "optimizer_attempts_total": 6144,
+    "checkpoint_steps": [
+      1,
+      256,
+      512,
+      1024,
+      1536
+    ],
+    "logit_neutral_tie_epsilon": 0.003,
+    "tie_fallback_action": 0,
+    "per_separate_label_shuffle_diagnostic_updates": 256,
+    "label_shuffle_seed": 23359999,
+    "cold_restore_unchanged": true,
+    "record": "Exact platform SHA/receipt, source-only summary, actual optimizer steps and FIT gradients, train+heldout+CAL+OOD categorical choices and metrics, all negative controls and original TRAIN/TEST source custody, model parameters and run walltime."
+  },
+  "admission": {
+    "all_four_functional_laws_present_each_split": true,
+    "public_label_balance_min": 0.4,
+    "public_label_balance_max": 0.6,
+    "MLP_FIT_train_accuracy_min": 0.85,
+    "MLP_FIT_heldout_accuracy_min": 0.82,
+    "GRU_FIT_train_accuracy_min": 0.82,
+    "GRU_FIT_heldout_accuracy_min": 0.8,
+    "MLP_CAL_accuracy_min": 0.8,
+    "MLP_OOD_accuracy_min": 0.7,
+    "MLP_OOD_accuracy_max": 0.925,
+    "GRU_OOD_accuracy_min": 0.7,
+    "GRU_OOD_accuracy_max": 0.925,
+    "fixed_polynomial_interpolation_OOD_accuracy_min": 0.75,
+    "fixed_polynomial_interpolation_OOD_accuracy_max": 0.96,
+    "single_probe_OOD_accuracy_max": 0.85,
+    "majority_probe_OOD_accuracy_max": 0.85,
+    "constant_probe_OOD_accuracy_max": 0.6,
+    "terminal_erasure_MLP_OOD_accuracy_max": 0.6,
+    "proxy_erasure_MLP_OOD_accuracy_loss_max": 0.05,
+    "label_shuffle_diagnostic_FIT_heldout_accuracy_max": 0.65,
+    "exact_all_categorical_cross_OS_parity": true,
+    "both_original_seeds_required": true,
+    "task_admission_pass_if_all_criteria": true,
+    "independent_scientific_pass": false,
+    "failure_policy": "Preserve frozen source task admission NO-GO if any prespecified check fails. Do not tune this scored cohort or claim independent learning/Native gain.",
+    "success_policy": "Admit only a benchmark for a distinct subsequently frozen mechanism comparison; include strongest fixed polynomial interpolation and fully qualified conventional controls, matched inputs/actions/compute and cold interference/retention; not independently qualified science."
+  },
+  "qualification": {
+    "G4_full_final_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_mamba2_CPU": true,
+    "original_artifact_sha256": true,
+    "exact_candidate_SHA": true,
+    "blocked_original_source_admission_negative": true,
+    "full_OS_action_parity": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "controller_mod": false,
+    "scheduler_mod": false,
+    "runner_mod": false,
+    "external_original_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false
+  }
+}
