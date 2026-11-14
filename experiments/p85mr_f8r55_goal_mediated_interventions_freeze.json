@@ -1,0 +1,216 @@
+{
+  "schema": "ttt-hybrid.f8r55-goal-mediated-selected-interventions-freeze.v1",
+  "stage": "FROZEN_BEFORE_NEW_GENERATOR_MODEL_OR_SCORE",
+  "classification": "PROSPECTIVE_SOURCE_NEUTRAL_SYNTHETIC_DEV_ONLY",
+  "parent": {
+    "r54_head": "174e8dc796f192e2f5517c0b445c545574af74fe",
+    "r54_pr": 249,
+    "r54_freeze_blob": "e88e70a4945dff1021873d9f91d44be7b4488861",
+    "r54_result": "G4/G5/G7 exact-SHA PASS, 8064/8064 OS decisions, frozen two-seed COLD_TRANSFER_NO_GO: stationary high-tag confounds yield OOD regret .6840704 and zero gate reversals; native gain FALSE",
+    "no_reuse_scored_R49_R54": true
+  },
+  "hypothesis": {
+    "primary": "A model trained to weight genuinely observed DELAYED downstream goal-proxy consequences of selected upstream interventions can ignore distracting stable source-action and immediate target effects and recover hidden-gate-relevant information on new source placements.",
+    "mechanism": "For each source, both upstream actions are separately selected. Each has a genuinely observed upstream physical consequence, immediate downstream goal-proxy observation, and delayed downstream goal-proxy observation. Learned attention coefficient beta acts on magnitude of delayed goal-proxy action CONTRAST; context slopes choose public cue tag role. No hidden source class, gate or q is a model feature.",
+    "technical_boundary": "The source action grouping, goal-proxy sensor positions, action contrast, and what counts as delayed target are explicitly engineered observable features; learned beta is not autonomous causal discovery.",
+    "falsifier": "Both original seeds must meet prospective FIT/CAL/OOD, ablation, strict raw-delayed attention advantage, and cross-OS tests. If fixed delayed-goal top-two achieves the same success, independent scientific gain remains FALSE despite any synthetic DEV success.",
+    "non_leakage": "Every scored preaction target measurement actually comes from the specifically selected upstream action, not the unselected prospective return action. No evaluator hidden source identities, unselected return consequence, optimal action or OOD labels are present."
+  },
+  "source": {
+    "salts": {
+      "fit": 22910000,
+      "cal": 22920000,
+      "ood": 22930000
+    },
+    "groups": {
+      "fit": 24,
+      "cal": 8,
+      "ood": 8
+    },
+    "fit_training_groups": 16,
+    "fit_heldout_groups": 8,
+    "worlds": {
+      "fit": 192,
+      "cal": 64,
+      "ood": 64
+    },
+    "public_sources": {
+      "fit": 8,
+      "cal": 10,
+      "ood": 16
+    },
+    "selected_actions_per_source": 2,
+    "measured_events_per_selected_action": 3,
+    "source_B_events": {
+      "fit": 48,
+      "cal": 60,
+      "ood": 96
+    },
+    "full_candidate_events": {
+      "fit": 54,
+      "cal": 66,
+      "ood": 102
+    },
+    "source_cue_tags": {
+      "context0_cue": 0.42,
+      "context0_decoy": 0.18,
+      "context1_cue": 0.18,
+      "context1_decoy": 0.42
+    },
+    "high_tag_distractors": [
+      0.88,
+      0.77
+    ],
+    "goal_target_sensor_states": {
+      "immediate": 0.55,
+      "delayed": 0.73
+    },
+    "causal_delayed_goal_proxy_contrast": {
+      "fit": 0.24,
+      "cal": 0.18,
+      "ood": 0.12
+    },
+    "causal_upstream_selected_contrast": {
+      "fit": 0.24,
+      "cal": 0.18,
+      "ood": 0.12
+    },
+    "distractor_upstream_contrast": {
+      "fit": 0.56,
+      "cal": 0.5,
+      "ood": 0.45
+    },
+    "distractor_immediate_target_contrast": {
+      "fit": 0.62,
+      "cal": 0.57,
+      "ood": 0.52
+    },
+    "distractor_delayed_goal_proxy_action_contrast": 0,
+    "remaining_action_invariant_nuisance": "Each other source: public low tag 0.03 if source%3==0 else 0; upstream and immediate target action-invariant small source-derived offset (panel salt trig), delayed goal proxy action-invariant zero. Never gate-dependent.",
+    "source_positions": "SHA256(R55/panel/salt/group/source) ranks four distinct source indices, cue,decoy,spurious1,spurious2; these never enter model features.",
+    "observed_protocol": "For each public source, actually SELECT action0 from a fresh reset source, then record upstream state transition, observed IMMEDIATE target effect, observed DELAYED target effect; reset same source and SELECT action1, observe upstream, immediate, delayed. These are all observed, ordered 6 factual records/source. Each record uses original continuous 16D key/effect encoder; B-only effect[4] zero.",
+    "causal_generation": "True cue source delayed goal contrast +AMP*gate; decoy source -AMP*gate, and both upstream contrasts mirror their delayed contrast. Distractors have higher upstream/immediate contrasts but zero delayed target action-contrast; all are independent of hidden gate.",
+    "evaluator_return": "Original R53 R32 quartic FIT/CAL and R41 cubic OOD synthetic selected return evaluator with q_sign×gate. Actual early/fifth probes only and masked preaction return effect, FIT-only fifth offset from selected returns.",
+    "gate_mean_parity": "Opposite hidden gate worlds have exactly same public action-key records and 16D aggregate B selected-effect mean, and differ in causal individual downstream delayed selected outcomes; reject leak >1e-7.",
+    "observable_positive_reference": "From public measured DELAYED target contrasts of both selected interventions, select two largest absolute action contrasts, use observed public context to choose higher/lower tagged of those two, combine original FIT-only selected fifth. 0 mistakes FIT/CAL/OOD required; this is a HANDCODED heuristic and a strong comparator, not learned model.",
+    "no_old_OOD_source_reuse": true,
+    "forbidden_model_inputs": [
+      "private source positions",
+      "private cue/decoy identities",
+      "hidden q",
+      "hidden gate",
+      "panel ID",
+      "world group ID",
+      "unselected return effect",
+      "target optimum or return evaluator loss",
+      "future adaptation on new OOD"
+    ]
+  },
+  "training": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "learned_goal_mediation",
+      "raw_delayed_context",
+      "public_tag_top2",
+      "upstream_magnitude_top2",
+      "immediate_magnitude_top2",
+      "fixed_delayed_goal_top2",
+      "native_goal_mediation",
+      "gru_goal_context"
+    ],
+    "updates_per_arm": 256,
+    "batch_pairs": 16,
+    "draw_seed": 22949999,
+    "checkpoints": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "optimizer": "AdamW slopes, beta and gain lr.02; Native/GRU parameters lr.001; weight_decay0; norm clipping1. Identical FIT factual selected-return pairs/draws across all arms, same 256 attempted steps.",
+    "main": "Two context-specific trained public source tag slopes and learned nonnegative-initialized beta (exact initial zero) multiply 12×abs(observed DELAYED target action contrast), attention softmax over all sources. Signed delayed target contrast aggregated; actual fifth selected effect sign resolves return choice via existing policy decoder.",
+    "raw": "All source delayed target contrasts with context-conditioned tag slopes and no learned beta; same FIT data and optimizer attempts.",
+    "controls": [
+      "trained top-two highest public source tags",
+      "trained top-two highest observed upstream selected action contrast",
+      "trained top-two highest observed IMMEDIATE downstream target contrast",
+      "trained top-two highest observed DELAYED goal-proxy target contrast, strongest fixed heuristic",
+      "Native R34 factual backbone plus main head and exact zero Native ablation on complete selected history, local adapter only",
+      "GRU observing all source public tags, upstream, immediate and delayed selected action contrasts and context, 256 steps; report possible incomplete convergence"
+    ],
+    "ablations": [
+      "erase selected B effects",
+      "erase B public source tags",
+      "erase selected fifth effect",
+      "erase immediate target effects only",
+      "erase delayed goal-proxy effects only",
+      "zero learned beta",
+      "force top-two public tags",
+      "force top-two upstream magnitude",
+      "force top-two immediate target magnitude",
+      "zero Native backbone",
+      "zero final causal signal",
+      "cold restore"
+    ],
+    "optimizer_attempts_total": 4096,
+    "original_firstuse": false
+  },
+  "frozen_score": {
+    "both_seeds_required": true,
+    "heldout_FIT_accuracy_min": 0.95,
+    "CAL_mean_regret_max": 0.12,
+    "OOD_mean_regret_max": 0.12,
+    "OOD_each_context_regret_max": 0.12,
+    "CAL_gate_flips_min": 28,
+    "OOD_gate_flips_min": 28,
+    "OOD_B_erase_penalty_min": 0.12,
+    "OOD_fifth_erase_penalty_min": 0.12,
+    "OOD_delayed_erase_penalty_min": 0.12,
+    "OOD_beta_zero_penalty_min": 0.12,
+    "OOD_force_public_tag_top2_penalty_min": 0.12,
+    "OOD_force_upstream_top2_penalty_min": 0.12,
+    "OOD_force_immediate_top2_penalty_min": 0.12,
+    "OOD_gain_over_raw_delayed_context_min": 0.12,
+    "group_bootstrap": {
+      "draws": 10000,
+      "seed": 22969999,
+      "lower95_positive": true
+    },
+    "context0_slope_min": 1,
+    "context1_slope_max": -1,
+    "beta_exact_initial_zero": true,
+    "beta_final_positive": true,
+    "nonzero_beta_gradient_required": true,
+    "source_only_positive_reference_zero_errors_all_panels": true,
+    "gate_mean_full_channels_parity": true,
+    "exact_cross_OS_all_categorical_decisions": true,
+    "no_early_stop_posthoc_tuning": true,
+    "independent_scientific_pass": false,
+    "independent_science_requirement": "Must outperform the strongest fully trained fixed delayed-goal-effect top-two baseline and fully converged input/whole-process compute matched conventional, plus cold retention after interference and independently qualified external environments. Native benefit additionally requires positive backbone ablation. Fixed temporal/sensor information is supplied to learner.",
+    "failure_policy": "DEV NO-GO on either seed failing any criterion; do not alter consumed source salts, science labels, thresholds, seeds or replay procedure after scored result."
+  },
+  "qualification": {
+    "G4_exact_final_full_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "negative_original_source_admission": true,
+    "all_action_cross_OS_parity": true,
+    "original_artifact_hash_custody": true
+  },
+  "authority": {
+    "controller_mod": false,
+    "runner_mod": false,
+    "scheduler_mod": false,
+    "merge": false,
+    "deploy": false,
+    "promote": false,
+    "external_original_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false
+  }
+}
