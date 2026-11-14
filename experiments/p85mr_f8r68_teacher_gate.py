@@ -379,7 +379,7 @@ def score(arm,model,src,traces):
             "joint_MSE":B+A+S,
             "swap_A_return_MSE":mean(swap,"A_return") if swap else None,
             "allocated_fast_floats":FAST,"selected_event_count":len(src)*N,
-            "total_bank_switches":sum(switches),"eval_wall_seconds":wall,
+            "total_bank_switches":int(sum(switches)),"eval_wall_seconds":wall,
             "per_world":rows}
 
 
