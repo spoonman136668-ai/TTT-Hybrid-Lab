@@ -1,0 +1,140 @@
+{
+  "schema": "ttt-hybrid.f8r62-canonical-initialization-FIT-only-replay-freeze.v1",
+  "stage": "FROZEN_BEFORE_R62_CODE_OR_FIRST_CANONICAL_REPLAY",
+  "classification": "ENGINEERING_REPLAY_PREVIOUSLY_SCORED_R60_DATA_NOT_NEW_SCIENCE",
+  "parent": {
+    "r61_sha": "0ce501be5ff11a85238d1b065cc326d9339ab760",
+    "r61_pr": 256,
+    "r61_freeze_blob": "f5907b11cc29b3a38d82a22ff459cb6dda04e932",
+    "r61_proof": "Original G4/G5/G7 all PASS. Independently verified both original OS G4 ZIP digests, original 3072-step trace. R60 FIT source hash and 1536/1536 batch draws per seed identical across Windows/Ubuntu, BUT initial MLP weight SHA256 differs on BOTH seeds BEFORE first update; first step grads and all training weight hashes differ. Initial-state custody missing in R60.",
+    "r60_status": "Original independent Windows/Ubuntu R60 source per-platform numerical task admission PASS but strict action parity FAIL 165/61440. No change or upgrade of R60 frozen NO-GO.",
+    "source": "Original unchanged R60 FIT selected interventions and original R60 FIT heldout/CAL/OOD only for engineering old-data action reproducibility measurement. All are spent, not valid new independent scientific data."
+  },
+  "hypothesis": "A single documented canonical initialization shared byte-for-byte between OS removes the demonstrated R61 step0 mismatch. Then independently compare all 1536 FIT optimizer steps and all original R60 scored action decisions under exact canonical initial source. This isolates residual arithmetic/optimizer differences without falsely attributing earlier R60 failures to initialization alone.",
+  "canonical_initializer": {
+    "salt": "F8R62_CANONICAL_V1",
+    "weights": "Apply only to original r60.Policy MLP 10->64->64->2 float64. Named tensors sorted as original r61 weights_digest. For each seed, tensor name and flat row-major index, SHA256 UTF8 'F8R62_CANONICAL_V1/{seed}/{name}/{index}', read first TWO digest bytes as little-endian unsigned integer u∈[0,65535], assign (u-32768)/(32768*denom) as exact binary-rational torch.float64.",
+    "fan_in_denominator": {
+      "head.0.weight": 4,
+      "head.0.bias": 4,
+      "head.2.weight": 8,
+      "head.2.bias": 8,
+      "head.4.weight": 8,
+      "head.4.bias": 8
+    },
+    "source_tensor_shapes": {
+      "head.0.weight": [
+        64,
+        10
+      ],
+      "head.0.bias": [
+        64
+      ],
+      "head.2.weight": [
+        64,
+        64
+      ],
+      "head.2.bias": [
+        64
+      ],
+      "head.4.weight": [
+        2,
+        64
+      ],
+      "head.4.bias": [
+        2
+      ]
+    },
+    "seed_to_exact_initial_hash": {
+      "985201": "e1dc51db89569357da6b29f6bf98232d8bef1df85a24f68a840757339571bf84",
+      "985207": "799b72a3a71125241c4527c9292c987746bcde83c7a9da2f7dfcf0ddb5f6bb96"
+    },
+    "hash_contract": "Use original r61.hash_named canonical name/dtype/shape/little-endian raw IEEE float64 bytes. Above SHA256 precomputed BEFORE creating new replay code with Python hashlib + struct on independent local developer prototype; two seeds each 4994 trainable parameters. No torch RNG or platform floating exp/log/trig/sqrt in initialization.",
+    "warning": "The canonical initializer is a NEW prospective engineering initialization, not the original R60 initializer, and old R60 learning/accuracy scores must not be mixed with this trial."
+  },
+  "replay": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arm": "mlp_selected_goal_effects",
+    "original_R60_source_salt": 23410000,
+    "original_R60_source_hash": "8d11d1b6480b7e0e788f51ac99ec773805ddcbde53aadfa24b32d0585be71775",
+    "steps_per_seed": 1536,
+    "batch_size": 128,
+    "draw_seed": 23449999,
+    "learning_rate": 0.003,
+    "weight_decay": 0,
+    "clip_grad_norm": 1,
+    "cpu_num_threads": 1,
+    "mkldnn_enabled": false,
+    "torch_deterministic_algorithms": true,
+    "torch_dtype": "float64",
+    "trace_every_step": [
+      "selected_batch_sha256",
+      "prebackprop_loss_float64",
+      "raw_preclip_gradient_sha256",
+      "poststep_model_weights_sha256",
+      "raw_gradient_l2_norm"
+    ],
+    "checkpoints": [
+      0,
+      1,
+      2,
+      4,
+      16,
+      64,
+      128,
+      256,
+      320,
+      384,
+      448,
+      512,
+      640,
+      768,
+      1024,
+      1536
+    ],
+    "evaluation_splits": [
+      "FIT_train",
+      "FIT_heldout",
+      "CAL",
+      "OOD"
+    ],
+    "OOD_ablations": [
+      "erase_selected_terminal",
+      "erase_noncausal_proxy"
+    ],
+    "fixed_action_tie_epsilon": 0.003,
+    "no_evaluator_OOD_data_optimization": true,
+    "expected_total_categorical_actions": "2 seeds × (4096 FIT_train +768 FIT_heldout +768 CAL +1024 OOD active +1024 OOD erasure terminal +1024 OOD erasure proxy)=17408; fixed controls already have exact OS parity in R60 and should not be rerun.",
+    "no_label_permutation_retrain": true
+  },
+  "qualification": {
+    "full_G4_windows_ubuntu": true,
+    "original_G5_authentic_CPU_both": true,
+    "original_G7_pinned_Mamba2_CPU": true,
+    "original_artifact_SHA256_and_source_checks": true,
+    "firstuse_negative": true,
+    "must_match_expected_canonical_initial_hash_all_seeds": true,
+    "must_match_source_SHA256_and_all_batch_indices": true,
+    "record_first_raw_gradient_and_model_hash_difference_no_matter_outcome": true,
+    "exact_17408_categorical_decisions": true,
+    "frozen_categorical_parity_pass_only_if_all_17408_match": true,
+    "full_bitwise_weight_trajectory_parity_is_diagnostic_not_claimed": true,
+    "if_fail": "Preserve causal localization diagnostic, do not tune spent source or tie epsilon after seeing results; R60/R61 NO-GO unchanged.",
+    "if_pass": "Canonical initialization removes categorical portability failure on previously spent R60 cohorts ONLY, not sufficient for independent fresh-source scientific task admission. Report whether per-step math also diverges; do not promote Native.",
+    "independent_scientific_pass": false
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "GPU_firstuse": false,
+    "external_original_firstuse": false,
+    "paid_API": false,
+    "new_controller": false,
+    "new_runner": false,
+    "new_scheduler": false
+  }
+}
