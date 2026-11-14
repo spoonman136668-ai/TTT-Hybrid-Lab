@@ -1,0 +1,233 @@
+{
+  "schema": "ttt-hybrid.f8r52-selected-intervention-contrast-freeze.v1",
+  "stage": "FROZEN_BEFORE_GENERATOR_MODEL_OR_SCORED_RESULTS",
+  "classification": "SOURCE_NEUTRAL_PAIRED_SELECTED_INTERVENTIONS_DEV_ONLY",
+  "parent": {
+    "qualified_R51_HEAD": "84b3a78a661c0f747982a9e3d0ba232f41094807",
+    "r51_pr": 246,
+    "r51_freeze_blob": "ef2905101d4dd7f2086b6759e8a496f2e3e3629e",
+    "r51_original_qualification": "full G4/G5/G7 PASS and 7680/7680 decisions both OS; synthetic DEV 2/2 pass, fixed magnitude heuristic ties, Native backbone zero attribution",
+    "R50_spent_OOD_no_reuse": true
+  },
+  "hypothesis": {
+    "main": "Gradient-trained eligibility for observed action-conditional consequence CONTRAST between two genuinely selected interventions (action 0 versus action 1 on the same public continuous state tag) can suppress misleading high public tags and misleading large action-INVARIANT physical effects, preserving hidden-gate transfer across longer histories.",
+    "learned_part": "Context-conditioned tag slopes and one salience coefficient multiplying absolute observed action-contrast difference; initialized zero. Paired-action contrast is a fixed public, transparent feature transformation rather than discovered causality.",
+    "critical_falsifier": "If source-only action-contrast reference errs or gate-paired mean leaks hidden gate, stop before scored model training. If main misses any frozen acceptance condition on either seed, report DEV NO-GO without tuning spent source.",
+    "strong_control": "Fully trained context-conditioned fixed action-contrast magnitude top-two reader, with same observed selected action pairs and 256 training updates; if it matches or beats learned salience, no independent learned event-discovery superiority.",
+    "negative_controls": "Raw single-outcome magnitude top-two, highest-tag top-two, and all-pair context contrast without salience, alongside trained GRU and Native backbone necessity ablation",
+    "scope": "Synthetic evidence cannot establish real-world causal learning, autonomy, retention, AGI or Native substrate benefit."
+  },
+  "source": {
+    "new_salts": {
+      "fit": 22610000,
+      "cal": 22620000,
+      "ood": 22630000
+    },
+    "worlds": {
+      "fit": 192,
+      "cal": 64,
+      "ood": 64
+    },
+    "group_counts": {
+      "fit": 24,
+      "cal": 8,
+      "ood": 8
+    },
+    "training_groups": 16,
+    "heldout_fit_groups": 8,
+    "paired_selected_intervention_sources_per_world": {
+      "fit": 12,
+      "cal": 16,
+      "ood": 20
+    },
+    "selected_B_record_count": {
+      "fit": 24,
+      "cal": 32,
+      "ood": 40
+    },
+    "full_candidate_event_length": {
+      "fit": 30,
+      "cal": 38,
+      "ood": 46
+    },
+    "public_contexts": [
+      0,
+      1
+    ],
+    "evaluator_q_signs": [
+      -1,
+      1
+    ],
+    "evaluator_gate_signs": [
+      -1,
+      1
+    ],
+    "cue_tag_by_context": {
+      "context0": 0.42,
+      "context1": 0.18
+    },
+    "decoy_tag_by_context": {
+      "context0": 0.18,
+      "context1": 0.42
+    },
+    "spurious_tags": [
+      0.88,
+      0.77
+    ],
+    "causal_observed_action_consequence_delta_by_panel": {
+      "fit": 0.24,
+      "cal": 0.18,
+      "ood": 0.12
+    },
+    "spurious_action_invariant_consequence_by_panel": {
+      "fit": [
+        0.3,
+        -0.27
+      ],
+      "cal": [
+        0.34,
+        -0.29
+      ],
+      "ood": [
+        0.38,
+        -0.32
+      ]
+    },
+    "nuisance_action_invariant_delta_amplitude_by_panel": {
+      "fit": 0.006,
+      "cal": 0.009,
+      "ood": 0.014
+    },
+    "placement": "SHA256(salt/panel/group/local pair index) sorted unique positions for cue, decoy, high-tag spurious1, high-tag spurious2; remaining nuisance pairs are low key and small action-invariant effect; source ordering fixed for both gate values.",
+    "paired_selected_action_protocol": "For every observed source pair, execute and record selected action0 consequence and then selected action1 consequence on its own freshly reset identical public state tag. Both selected consequences actually observed; do not simulate unchosen return action. Public state tag on both records, actions explicitly 0/1 in key, measured physical delta in observed effect[0], effect[4] zero.",
+    "causal_pair_effects": "Cue pair action0=+amp*gate, action1=-amp*gate; decoy pair reversed, so paired public B mean cancels gate.",
+    "spurious_pair_effects": "Both selected actions have exactly the same high physical effect for each confounder, independent of hidden gate; these are HIGHER |delta| than the genuine causal return-relevant action-consequence effects.",
+    "nuisance_pair_effects": "Both selected actions same round(amplitude*sin((salt+group)*.137+pair*.271)+.004*((pair+group)%4-1.5),8), independent of hidden gate.",
+    "fifth": "Original R51/R49 four factual early observations and selected fifth probe .42/context; FIT-only fifth calibration, no CAL/OOD calibration or hidden q/gate.",
+    "return_goal_law": "Original R49 quartic FIT/CAL / cubic OOD physical return law with return state (.61,.73) by group parity and squared goal error, no unobserved action result enters input.",
+    "paired_public_global_mean": "Whole 16D selected B mean and selected action-key mean must be exactly equal at fixed context,q,group across opposite hidden gate values; individual causal pair contrasts differ.",
+    "observable_reference": "From public selected action pairs, choose highest two absolute |physical_effect(action0)-physical_effect(action1)|, not highest raw effect or public tag. Tag-role max/min according to public context, multiply FIT-centered fifth; zero errors in 192 FIT+64 CAL+64 OOD worlds required.",
+    "no_spent_sources": [
+      "R49 FIT/CAL/OOD salts",
+      "R50 FIT/CAL/OOD salts",
+      "R51 FIT/CAL/OOD salts"
+    ],
+    "source_data_never_model_input": [
+      "panel/split",
+      "group ID",
+      "evaluator-only gate",
+      "evaluator-only q",
+      "private source index",
+      "source tag classification",
+      "unselected return effect",
+      "simulated return outcome"
+    ]
+  },
+  "methods": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "learned_action_contrast",
+      "raw_allpair_contrast",
+      "tag_top2_contrast",
+      "raw_effect_magnitude_top2",
+      "fixed_action_contrast_top2",
+      "native_action_contrast",
+      "gru_public_interventions"
+    ],
+    "train_updates_per_arm": 256,
+    "train_batch_pairs": 16,
+    "sampler_seed": 22649999,
+    "checkpoints": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "optim": "AdamW: context slopes, contrast salience and readout gains lr .02; Native/GRU weights lr .001; weight_decay 0; gradient clip norm 1, exact same paired FIT draws and selected consequences per arm.",
+    "model": "For each pair of genuinely selected action consequences, decode public physical deltas d0,d1 and tag. Signed contrast=(d0-d1)/2; baseline mean=(d0+d1)/2. Main logits=slope[public_context]*public_tag + learned_salience*12*abs(contrast); weights=softmax logits over ALL sources; B causal signal=weighted sum of signed contrasts. Readout uses FIT-centered measured fifth. Salience starts exactly 0 and is learned by real task gradients.",
+    "raw_control": "Uses the same per-pair signed action contrast and public tags, but no learned contrast salience term; same 3-param context attention.",
+    "tag_control": "Selects top 2 public tags before context attention and uses measured signed contrasts, cannot see lower-tag cue under confounding.",
+    "raw_magnitude_control": "Selects top 2 by largest mean(|delta0|,|delta1|), which are the high-magnitude action-independent confounders.",
+    "contrast_heuristic_control": "Hand-coded top 2 by absolute ACTION DIFFERENCE of selected effects (not labels, private source positions); then trained 2 context slopes/gain. Must be credited if it matches main.",
+    "native_control": "R34 Native factual-memory backbone with full selected 30/38/46 history adapted LOCALLY, plus learned contrast head and separately ablated original Native backbone, original shared R34 unmodified.",
+    "gru_control": "Conventional GRU on the same observed public source tag, both selected physical outcomes, context with trained readout, no evaluator metadata; report convergence and input/capacity/compute differences.",
+    "interventions": [
+      "erase all B selected consequences",
+      "erase public B tag keys",
+      "erase selected fifth",
+      "zero learned salience",
+      "force public tag top2",
+      "force raw magnitude top2",
+      "force uniform",
+      "zero original Native backbone",
+      "zero output contrast",
+      "cold restore"
+    ],
+    "total_training_optimizer_steps": 3584,
+    "record": [
+      "all action choices by panel and intervention",
+      "training gradients and checkpoints",
+      "params and times per arm",
+      "FIT/CAL/OOD scores",
+      "cross-platform parity",
+      "all selected source reference checks",
+      "Native ablation",
+      "cold restore"
+    ]
+  },
+  "frozen_score": {
+    "two_seed_DEV_pass_required": true,
+    "min_heldout_FIT_accuracy": 0.95,
+    "max_CAL_mean_regret": 0.12,
+    "max_OOD_mean_regret": 0.12,
+    "max_OOD_each_context_regret": 0.12,
+    "min_CAL_gate_flips": 28,
+    "min_OOD_gate_flips": 28,
+    "min_OOD_erase_B_regret_penalty": 0.12,
+    "min_OOD_erase_fifth_regret_penalty": 0.12,
+    "min_OOD_zero_salience_penalty": 0.12,
+    "min_OOD_force_tag_top2_penalty": 0.12,
+    "min_OOD_force_raw_magnitude_top2_penalty": 0.12,
+    "min_gain_over_raw_allpair_contrast": 0.12,
+    "paired_bootstrap": {
+      "draws": 10000,
+      "seed": 22669999,
+      "positive_lower95": true
+    },
+    "min_context0_slope": 1,
+    "max_context1_slope": -1,
+    "salience_initial_value_exact": 0,
+    "salience_final_must_be_positive": true,
+    "salience_has_real_gradient_each_seed": true,
+    "positive_reference_no_errors": true,
+    "full_B_mean_parity_required": true,
+    "all_OS_categorical_actions_identical": true,
+    "independent_scientific_pass": false,
+    "stronger_science_criterion": "A future independent claim requires positive repeatable gains vs frozen fixed action-contrast heuristic and fully competent input/compute-matched conventional, plus independent interference retention and new external first-use authorization.",
+    "fail_policy": "Preserve negative and ambiguous results unchanged; do not tune after scoring, do not claim Native-specific benefit without nonzero backbone ablation."
+  },
+  "qualification": {
+    "full_exact_SHA_final_G4_Windows_Ubuntu_required": true,
+    "G5_authentic_CPU_both_OS_required": true,
+    "G7_pinned_Mamba2_CPU_required": true,
+    "blocked_source_negative": true,
+    "original_immutable_artifacts": true,
+    "strict_cross_platform_categorical_parity": true
+  },
+  "authority": {
+    "new_controller": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "paid_APIs": false,
+    "GPU_first_use": false,
+    "external_original_first_use": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
