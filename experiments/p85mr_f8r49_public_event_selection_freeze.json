@@ -1,0 +1,181 @@
+{
+  "schema": "ttt-hybrid.f8r49-public-event-selection-freeze.v1",
+  "stage": "FROZEN_BEFORE_R49_GENERATOR_AND_MODEL_IMPLEMENTATION",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_PUBLIC_EVENT_MEMORY_DEV_ONLY",
+  "parent": {
+    "pr": 243,
+    "head": "cb03160a981b6cbda2dc923135ae14c658b5b8ad",
+    "R48_two_seed_dev": "NO_GO",
+    "R48_failure": "OOD context 1 regret .297572, 24/32 gate flips, Native backbone zero ablation",
+    "R48_original_source_spent": true
+  },
+  "hypothesis": {
+    "main": "Selecting the two highest observed public B key-states as candidate causal events before learning the public-context-dependent role preference prevents a negative context-1 attention slope from allocating most probability to numerous small-key nuisance events when history length increases.",
+    "scope": "The two-event selection is a transparent HAND-CODED architectural inductive bias, NOT learned event discovery or a Native-specific effect. Only the subsequent context-dependent role selection is learned by gradients.",
+    "falsifier": "If learned event selector fails either seed on fresh FIT/CAL/OOD, trained raw-history attention or fully trained conventional alternatives match its transfer, or causal-tag and fifth ablations do not hurt, do not claim robust learned mechanism.",
+    "context": "Public-context 0 true cue tag 0.42, decoy tag 0.18; context1 true cue tag 0.18, decoy tag 0.42. Distractors have observed keys of 0.00 or 0.03, never a private marker; choosing two strongest tags is source-specific and must NOT imply arbitrary-world robustness."
+  },
+  "source": {
+    "salts": {
+      "fit": 22310000,
+      "cal": 22320000,
+      "ood": 22330000
+    },
+    "length": {
+      "fit": 8,
+      "cal": 12,
+      "ood": 32
+    },
+    "groups": {
+      "fit": 24,
+      "cal": 8,
+      "ood": 8
+    },
+    "train_groups": 16,
+    "heldout_fit_groups": 8,
+    "FIT_worlds": 192,
+    "fit_train_pairs": 128,
+    "fit_heldout_pairs": 64,
+    "FIT_selected_factual_returns": 384,
+    "cal_worlds": 64,
+    "ood_worlds": 64,
+    "q_signs": [
+      -1,
+      1
+    ],
+    "gate_signs": [
+      -1,
+      1
+    ],
+    "public_contexts": [
+      0,
+      1
+    ],
+    "amplitudes": {
+      "fit": 0.24,
+      "cal": 0.18,
+      "ood": 0.12
+    },
+    "nuisance_amplitudes": {
+      "fit": 0.006,
+      "cal": 0.009,
+      "ood": 0.014
+    },
+    "nuisance_tag": "tag=0.03 if t%3==0 else 0.0 for non-causal selected B records, forcing eligibility to be relative rather than exact zero detection",
+    "nuisance_delta": "round(amplitude*sin((salt+group)*.137+t*.271)+.004*((t+group)%4-1.5),8) independent of hidden gate",
+    "B_cue_and_decoy": "selected physical deltas +amplitude*gate and -amplitude*gate at distinct SHA256-derived positions per panel/group, mapped context-wise onto observed tags 0.42/0.18",
+    "B_observed_encoding": "_record(observed_tag, selected_action, observed_tag+physical_delta, public_context) with effect[4] zeroed; physical effect[0] stays",
+    "paired_mean_parity": "For opposite gates at fixed context,q,group and split, entire normalized 16-channel B arithmetic means and public action-key means must match; individual selected B effects differ",
+    "fifth": "Selected probe 0.42, action=public_context, actual R32 quartic selected fifth consequence; decode measured physical following by adding real probe before state ONCE",
+    "fit_calibration": "FIT 16 training group q-balanced selected fifth outcomes only; no hidden q, generator physics constant, CAL or OOD data",
+    "return_laws": "R32 original quartic FIT/CAL; R41 original cubic OOD, return state 0.61 or 0.73 by group parity; squared distance to goal1.0",
+    "reference": "Observable-only deterministic top-two public-key and FIT-centered selected fifth rule must make zero mistakes in all 192 FIT+64 CAL+64 OOD worlds or stop before training",
+    "forbidden_model_metadata": [
+      "hidden gate",
+      "hidden q sign",
+      "split",
+      "group",
+      "private cue/decoy index",
+      "unselected return outcome"
+    ],
+    "previous_scored_source_reuse": false
+  },
+  "methods": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      {
+        "name": "event_context_selector",
+        "type": "learned slopes per public context, initialized 0, over top two selected public B keys; trainable gain"
+      },
+      {
+        "name": "raw_context_selector",
+        "type": "R48-like learned slopes per public context over all selected B history; identical factual FIT data"
+      },
+      {
+        "name": "event_global_selector",
+        "type": "one globally learned slope over top two public-key events"
+      },
+      {
+        "name": "event_uniform_control",
+        "type": "forced equal attention on top two events with trainable gain; no learned role preference"
+      },
+      {
+        "name": "event_context_native",
+        "type": "event context selector plus actual independently trainable R34 Native factual memory and fusion; Native gain must be proven by ablation"
+      },
+      {
+        "name": "gru_context_control",
+        "type": "fully trained GRU on same public selected tag/delta sequence and context, plus identical FIT-only fifth offset"
+      }
+    ],
+    "updates_per_arm": 256,
+    "batch_pairs": 16,
+    "draw_seed": 22349999,
+    "checkpoints": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "optimizer": "AdamW; slopes/gain lr .02; GRU/Native weights lr .001; weight decay 0; grad norm clip 1; all arms see identical source and draws",
+    "intervention_panels": [
+      "erase selected B effect",
+      "erase observed B public tag key",
+      "erase selected fifth effect",
+      "swap B cue+decoy physical consequence",
+      "force uniform top-2",
+      "force raw full-history attention",
+      "force same context-0 slope on both public contexts",
+      "zero Native backbone",
+      "zero key/readout",
+      "cold state restore"
+    ],
+    "full_cost": "Record trainable effective params, optimizer steps and train/test/total CPU wall; do not claim capacity/compute matched broad model superiority.",
+    "positive_control_before_scoring": true
+  },
+  "preregistered_score": {
+    "both_seeds_required": true,
+    "min_fit_heldout_accuracy": 0.95,
+    "max_cal_regret": 0.12,
+    "max_ood_regret": 0.12,
+    "max_ood_regret_each_context": 0.12,
+    "min_cal_gate_flips": 28,
+    "min_ood_gate_flips": 28,
+    "min_ood_penalty_B_erase": 0.12,
+    "min_ood_penalty_tag_erase": 0.12,
+    "min_ood_penalty_fifth_erase": 0.12,
+    "min_ood_penalty_force_uniform": 0.12,
+    "min_ood_penalty_force_raw": 0.12,
+    "min_ood_gain_vs_raw_context_selector": 0.12,
+    "bootstrap": {
+      "draws": 10000,
+      "seed": 22369999,
+      "strict_positive_lower_95_gain_vs_raw": true
+    },
+    "min_context0_final_slope": 1,
+    "max_context1_final_slope": -1,
+    "positive_control_zero_errors_all_panels": true,
+    "strict_cross_OS_categorical_decision_parity": true,
+    "if_native_zero_ablation": "Attribute benefit only to explicit event selection and context role reader; Native incremental claim FAIL",
+    "if_failed_gate": "Preserve original negative result without post-score tuning or reusing consumed cohorts",
+    "independent_scientific_pass": false
+  },
+  "qualification": "Complete unchanged G4 Ubuntu+Windows full suite; G5 authentic Native TTT CPU both OS; G7 pinned Mamba2 Ubuntu; exact candidate SHA, original artifacts and action parity required.",
+  "authority": {
+    "new_workflow": false,
+    "new_runner": false,
+    "new_controller": false,
+    "paid_API": false,
+    "GPU_training": false,
+    "external_original_firstuse": false,
+    "spent_source_reuse": false,
+    "merge": false,
+    "promotion": false,
+    "deployment": false
+  }
+}
