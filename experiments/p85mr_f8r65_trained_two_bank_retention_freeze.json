@@ -1,0 +1,129 @@
+{
+  "schema": "ttt-hybrid.f8r65-two-bank-trained-retention-dev-freeze.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_R65_SOURCE_IMPLEMENTATION_OR_SCORING",
+  "classification": "SYNTHETIC_DEV_TRAINED_MECHANISM_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "base_R63_sha": "fed5b9b1bcd58ae151b62d96b44dfdf0665695cc",
+    "R63_pr": 258,
+    "R64_failed_sha": "1994c72b5039b35593ac33ef2089a8878b2ec7ff",
+    "R64_pr": 259,
+    "R64_verdict": "DEV_NO_GO_15P2_B_IMPROVEMENT_BUT_STABLE_AND_A_RETURN_FAIL",
+    "R64_source_and_DEV_spent": true,
+    "never_reuse_R64_scored_source": true,
+    "do_not_stack_R64_branch": true
+  },
+  "hypothesis": "On separately sampled selected-action A-B-A causal worlds, a trainable two-context fast-memory selector with directional bank agreement retains the original regime while adapting to changes, beyond matched fully trained nondirectional and fixed nearest-bank controls.",
+  "null": "No reproducible joint new-regime adaptation and cold old-regime recall gain over strongest eligible matched-state control.",
+  "source": {
+    "author_synthetic_only": true,
+    "salts": {
+      "FIT": 23710000,
+      "CAL": 23720000,
+      "DEV": 23730000,
+      "PROXY_NEGATIVE": 23740000
+    },
+    "worlds": {
+      "FIT": 96,
+      "CAL": 32,
+      "DEV": 64
+    },
+    "event_count": 48,
+    "phases": [
+      "A",
+      "B",
+      "A_return"
+    ],
+    "actions_per_phase": 16,
+    "roles": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "fast_state_dim": 4,
+    "law": "Independent Gaussian 4x4 terminal selected-action law per world, stable role bias. Half worlds retain A-A-A, half use A-B-A where B is a 90 degree rotation of the 2D selected physical terminal effect subspace for action roles 0,1 only; stable roles 2,3 unchanged. This is not R64 full-vector sign reversal.",
+    "terminal_noise_std": 0.06,
+    "noncausal_proxy_std": 0.8,
+    "proxy_negative_std": 3,
+    "seeds_disjoint_R64": true,
+    "regime_identity_and_change_points_evaluator_only": true,
+    "protected_OOD": "NOT_GENERATED_NO_EXTERNAL_ORIGINAL_FIRST_USE"
+  },
+  "train": {
+    "model_seeds": [
+      985301,
+      985307
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.02,
+    "weight_decay": 0.005,
+    "grad_norm_clip": 1,
+    "optimizer_steps_per_seed_per_trainable_arm": 96,
+    "FIT_world_batch": 12,
+    "predeclared_training_target": "Uniform selected-action PRE-UPDATE terminal MSE on FIT events, all 48 steps. No evaluator labels or future effects.",
+    "selection": "Fixed deterministic FIT sample indices with replacement, draw seed 23719999+model_seed. All arms see same index order.",
+    "source_boundary": "FIT-only training; CAL diagnostic only; no CAL/DEV threshold tuning or gradient update"
+  },
+  "architectures": {
+    "fast_state_floats_per_world": 33,
+    "persistent_memory": "Two 4x4 factual fast-weight banks plus one scalar bank selector; all arms allocate and use both banks",
+    "theta_count_per_trainable_arm": 5,
+    "write_rule": "Pre-action estimate blend of two banks by the last p. After observed y, update p via sigmoid allowed factual features and update both banks with gain 0.55 and mixture weights p/(1-p), each event. No phase or private labels.",
+    "trained_arms": {
+      "directional": "[1,log1p(residual²),log1p(pred²),cos(bank0_prediction,y),cos(bank1_prediction,y)]",
+      "nondirectional_surprise": "[1,log1p(residual²),log1p(pred²),log1p(||bank0_prediction-y||²),log1p(||bank1_prediction-y||²)]",
+      "abs_direction_ablation": "[1,log1p(residual²),log1p(pred²),abs(cos(bank0_prediction,y)),abs(cos(bank1_prediction,y))]",
+      "random_negative": "[1,log1p(residual²),log1p(pred²),hash_noise0,hash_noise1]"
+    },
+    "fixed_control": "fixed_two_bank_nearest: after selected factual y, p is fixed sigmoid bank0-vs-bank1 terminal fit distance; same 33 floats, same dual-bank write/update budget",
+    "read_before_write": true,
+    "fixed_48_event_writes": true,
+    "no_proxy_input": true,
+    "no_unobserved_action_consequence": true
+  },
+  "metrics": {
+    "per_world": [
+      "B_changed_role_selected_preaction_MSE",
+      "A_return_first_selected_role_preaction_MSE",
+      "stable_world_all_events_MSE"
+    ],
+    "primary": "Equal weighted sum of switched-world B changed-role, first A-return, and stable-world overall MSE",
+    "control_selection": "For each seed choose lowest frozen DEV joint score among trained nondirectional_surprise, trained random_negative and fixed_two_bank_nearest. Strongest-of-controls is mandatory; no after-result source/model tuning.",
+    "required_per_seed": {
+      "joint_score_relative_reduction_min": 0.05,
+      "B_changed_error_regression_max": 0.05,
+      "A_return_error_regression_max": 0.05,
+      "stable_world_error_regression_max": 0.05,
+      "abs_direction_ablation_joint_relative_degradation_min": 0.05,
+      "world_bootstrap_95pct_upper_paired_joint_delta_lt_zero": true,
+      "proxy_invariance": true,
+      "cold_restore_exact": true,
+      "same_48_factual_writes": true
+    },
+    "both_seeds_required": true,
+    "bootstrap_samples": 1000,
+    "bootstrap_seed": 23749999,
+    "post_score_tuning_allowed": false,
+    "classification_even_if_pass": "DEV_TRAINED_MECHANISM_SIGNAL_ONLY"
+  },
+  "qualification": {
+    "G4_full_windows_ubuntu_exact_candidate_SHA": true,
+    "G5_CPU_authentic_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "original_artifact_hashes_and_negative_source_probes": true,
+    "cross_platform_metric_tolerance_abs": 0.0001,
+    "no_fake_CI_science_pass": true
+  },
+  "authority": {
+    "scheduled_task": false,
+    "new_controller": false,
+    "new_runner": false,
+    "paid_API": false,
+    "external_first_use": false,
+    "GPU_first_use": false,
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false
+  }
+}
