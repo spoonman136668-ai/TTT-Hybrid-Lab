@@ -1,0 +1,183 @@
+{
+  "schema": "ttt-hybrid.f8r63-fresh-fourlaw-canonical-task-admission-freeze.v1",
+  "stage": "FROZEN_BEFORE_R63_SOURCE_OR_SCORED_RESULTS",
+  "classification": "NEW_SOURCE_SYNTHETIC_TASK_ADMISSION_NOT_NATIVE_LEARNING",
+  "parent": {
+    "r62_SHA": "4f73a80360e526d7bd9332b0ca553013802a1eb6",
+    "r62_pr": 257,
+    "r62_freeze_blob": "5f6d799d2509057096b798a792463d27b48dce23",
+    "r62_result": "Original full G4/G5/G7 PASS; source/initial hash match for both OS and seeds, all 17408/17408 original categorical actions identical on SPENT R60 source. Raw weight bytes diverge at AdamW step2, gradients at step3; scientific improvement not established.",
+    "old_R59_R60_science_no_go_preserved": true,
+    "no_old_R49_R62_scored_cohorts_reused": true
+  },
+  "hypothesis": "Canonical seed-derived MLP initialization will retain exact final categorical cross-platform parity and competent learned action prediction across prospectively FRESH independent four-law world samples, without reusing R60 spent target settings or tuning thresholds. The same conventional GRU, public quadratic interpolator and negative controls must qualify. Passing admits a synthetic benchmark, not a Native mechanism.",
+  "source": {
+    "new_salts": {
+      "FIT_train": 23510000,
+      "FIT_heldout": 23515000,
+      "CAL": 23520000,
+      "OOD": 23530000
+    },
+    "cases": {
+      "FIT_train": 4096,
+      "FIT_heldout": 768,
+      "CAL": 768,
+      "OOD": 1024
+    },
+    "families": [
+      "a+b*x",
+      "a+b*(x^2-.3)",
+      "a+b*x+c*(x^2-.3)",
+      "a+b*tanh(3*(x-h))"
+    ],
+    "four_family_counts_equal": true,
+    "coefficients": {
+      "a": "normal(0,.5)",
+      "b": "normal(0,.8)",
+      "c": "normal(0,.35)",
+      "h": "uniform(-.4,.4)"
+    },
+    "probe_centers": [
+      -0.84,
+      0,
+      0.84
+    ],
+    "probe_jitter": [
+      -0.14,
+      0.14
+    ],
+    "target_ranges": {
+      "FIT_train": [
+        -0.9,
+        0.9
+      ],
+      "FIT_heldout": [
+        -0.9,
+        0.9
+      ],
+      "CAL": [
+        -0.9,
+        0.9
+      ],
+      "OOD": [
+        -1.3,
+        1.3
+      ]
+    },
+    "selected_physical_goal_noise_std": 0.33941125496954283,
+    "selected_action_invariant_sensor_nuisance_std": 0.012,
+    "noncausal_proxy_SD": {
+      "FIT_train": 1.1,
+      "FIT_heldout": 1.1,
+      "CAL": 1.1,
+      "OOD": 1.6
+    },
+    "source_selected_actions_each_public_probe": 2,
+    "source_public_probes": 3,
+    "records_per_selected_action": 2,
+    "actual_selected_observations_per_world": 12,
+    "model_feature_order": "[public_probe_x0,x1,x2, selected_actual_terminal_contrast0,1,2, selected_actual_proxy_contrast0,1,2, public_target_t]",
+    "public_decision_objective": "At unobserved public target t, choose source action0 iff f(t)>=0; labels from independent actual action0/action1 selected reset trials FIT only, never supplied to model features.",
+    "source_custody": "Use same R59/R60 4-law mechanism and actually selected terminal+proxy causal observations with NEW frozen source salts, independent coefficients and source noises. Synthesize each split once and do not load previously scored FIT/CAL/OOD source; source salting differs from R59/R60.",
+    "no_private_inputs": [
+      "law_family",
+      "a/b/c/h coefficients",
+      "source salt",
+      "split",
+      "private target return",
+      "unselected outcome",
+      "evaluator-only action label"
+    ],
+    "OOD_no_update": true,
+    "source_label_balance_min": 0.4,
+    "source_label_balance_max": 0.6
+  },
+  "models": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "MLP": "Exact r60.Policy MLP 10->64 ReLU->64 ReLU->2 float64; initialize BOTH OS with unmodified r62.canonical_init including precommitted seed hashes.",
+    "expected_MLP_initial_sha256": {
+      "985201": "e1dc51db89569357da6b29f6bf98232d8bef1df85a24f68a840757339571bf84",
+      "985207": "799b72a3a71125241c4527c9292c987746bcde83c7a9da2f7dfcf0ddb5f6bb96"
+    },
+    "GRU": "Exact r60.Policy GRU 3×4 features->hidden32->2 logits float64; original normal torch initial seed. Require exact categorical parity nonetheless, no assertion that GRU weight bytes match.",
+    "arms": [
+      "mlp_selected_goal_effects",
+      "gru_selected_goal_effects"
+    ],
+    "FIT_steps_per_arm_seed": 1536,
+    "total_optimizer_attempts": 6144,
+    "draw_seed": 23549999,
+    "optimizer": "AdamW lr=.003 weight_decay=0, clip_grad_norm=1, batch128. Source/model FP64, one CPU thread, deterministic_algorithms=True, mkldnn=False.",
+    "tie_epsilon": 0.003,
+    "default_tie_action": 0,
+    "training_only_split": "FIT_train",
+    "negative_controls": [
+      "erase selected terminal consequences",
+      "erase proxy consequences",
+      "cold restore exact action decisions",
+      "FIT-only independent 256-step permuted-target label baseline"
+    ],
+    "label_permutation_seed": 23559999,
+    "label_permutation_steps": 256,
+    "public_fixed_controls": [
+      "3-point observed actual terminal quadratic Lagrange interpolation",
+      "single center probe sign",
+      "majority three probe terminal signs",
+      "constant action0"
+    ],
+    "evaluation_arrays": "For each of four model instances: FIT_train4096, heldout768, CAL768, OOD active1024, OOD erase terminal1024, OOD erase proxy1024; plus each of four fixed controls on all four splits",
+    "expected_all_crossplatform_actions": 61440
+  },
+  "frozen_acceptance": {
+    "both_OS_full_G4_G5_G7_success": true,
+    "exact_sha_and_frozen_blob": true,
+    "original_archives_sha256": true,
+    "source_runtime_admission_negative": true,
+    "source_four_family_equal_each_split": true,
+    "label_balance_min": 0.4,
+    "label_balance_max": 0.6,
+    "MLP_FIT_train_accuracy_min": 0.85,
+    "MLP_FIT_heldout_accuracy_min": 0.82,
+    "GRU_FIT_train_accuracy_min": 0.82,
+    "GRU_FIT_heldout_accuracy_min": 0.8,
+    "MLP_CAL_accuracy_min": 0.8,
+    "MLP_OOD_accuracy_min": 0.7,
+    "MLP_OOD_accuracy_max": 0.925,
+    "GRU_OOD_accuracy_min": 0.7,
+    "GRU_OOD_accuracy_max": 0.925,
+    "fixed_quadratic_OOD_min": 0.75,
+    "fixed_quadratic_OOD_max": 0.96,
+    "single_center_OOD_max": 0.85,
+    "majority_OOD_max": 0.85,
+    "constant_OOD_max": 0.6,
+    "MLP_erased_terminal_OOD_max": 0.6,
+    "MLP_proxy_erase_accuracy_drop_max": 0.05,
+    "FIT_label_shuffle_holdout_accuracy_max": 0.65,
+    "canonical_MLP_init_hash_both_seeds_match": true,
+    "exact_all_61440_decisions_OS_parity": true,
+    "both_original_seeds_required": true,
+    "if_fail": "NO-GO, preserve all original data/score and freeze. Never retune this scored cohort, decision tie, model, seeds, source salts or thresholds.",
+    "if_pass": "Fresh synthetic four-law selected-intervention task admitted with exact action portability and competent conventional controls; new mechanism's science still requires another separately frozen, matched-information/action/compute source and stronger fixed-baseline comparison.",
+    "independent_scientific_pass": false,
+    "Native_specific_gain": false
+  },
+  "qualification": {
+    "G4_full_final_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "all_original_action_vectors_compare": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "GPU_firstuse": false,
+    "external_original_firstuse": false,
+    "paid_API": false,
+    "new_controller": false,
+    "new_scheduler": false
+  }
+}
