@@ -1,0 +1,99 @@
+{
+  "schema": "ttt-hybrid.f8r61-fp64-training-divergence-diagnostic-freeze.v1",
+  "stage": "FROZEN_BEFORE_R61_DIAGNOSTIC_CODE_OR_CROSS_PLATFORM_RUN",
+  "classification": "ENGINEERING_DIAGNOSTIC_ONLY_SPENT_R60_FIT_DATA_NOT_NEW_SCIENCE",
+  "parent": {
+    "r60_sha": "8fc3045dce2eb76d68936830aec17ac33ba4424a",
+    "r60_pr": 255,
+    "r60_freeze_blob": "bfebb073b08c2c8287e836ea60207445f3375455",
+    "r60_result": "G4 Windows966/Ubuntu967 passed, G5/G7 PASS, 61275/61440 original actions equal, all 165 mismatches in original MLP seed985207; strict portability NO-GO despite per-platform numeric pass",
+    "source": "Original R60 FIT_train source salt23410000 and original R60 FIT selected action records used ONLY for engineering diagnostic; R60 holdout/CAL/OOD NEVER used for optimization or choosing fixes"
+  },
+  "research_question": "For the independent float64 MLP training of two original seeds, are the initial weights/data/draws bitwise-identical across OS, and at which earliest optimizer update do objective, gradients, or weights diverge? Compare unaffected MLP seed985201 as positive engineering control to sensitive seed985207.",
+  "method": {
+    "source": "Import original R60 source unchanged from exact SHA parent. Read ONLY original FIT_train x,y and no FIT_heldout/CAL/OOD. Preserve all generated FIT data, initial params, gradient structure, optimizer, data sampler.",
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arm": "mlp_selected_goal_effects",
+    "model": "Unmodified original R60 MLP 10->64->64->2 float64",
+    "updates": 1536,
+    "batch_size": 128,
+    "draw_seed": 23449999,
+    "optimizer": "AdamW lr .003 weight_decay0 gradient global norm clip1, no special clipping/quantization/resets or state modifications",
+    "cpu_num_threads": 1,
+    "mkldnn_enabled": false,
+    "torch_deterministic_algorithms": true,
+    "trace_per_step": [
+      "loss_float64_before_backward",
+      "SHA256_raw_initial_weight_tensors",
+      "SHA256_raw_preclip_gradient_tensors",
+      "gradient_global_L2_norm_before_clip",
+      "SHA256_raw_poststep_weight_tensors",
+      "selected_batch_index_SHA256"
+    ],
+    "trace_at_checkpoints": [
+      0,
+      1,
+      2,
+      4,
+      16,
+      64,
+      128,
+      256,
+      320,
+      384,
+      448,
+      512,
+      640,
+      768,
+      1024,
+      1536
+    ],
+    "checkpoint_extra": [
+      "SHA256 optimizer Adam moments/steps",
+      "fixed 128-FIT-probe ReLU first and second-layer active fraction",
+      "signed first-four model logit margins on fixed FIT probes",
+      "full model parameter norm"
+    ],
+    "fixed_tensor_hash_encoding": "Canonical sorted named tensors to SHA256: UTF8 length-prefixed name, UTF8 dtype, unsigned little-endian shape dims, contiguous little-endian 64-bit IEEE raw tensor bytes. No rounded values in hash.",
+    "data_hash_encoding": "SHA256 source original FIT_train float64 x bytes and int64 label bytes in existing index order, with shapes and UTF8 type labels, independent public exact source.",
+    "all_steps_recorded": true,
+    "positive_control": "Seed 985201 expected trained categorical parity in prior R60 but no assumption that internal FP64 training bytes are bit-identical.",
+    "negative_control": "Verify imported original R60 public freeze, source SHA, no OOD access; exact original 1536 loss/training recipe, no new model architecture/learning mechanism.",
+    "no_new_source_salts": true,
+    "no_independent_scientific_claim": true
+  },
+  "decision": {
+    "isolate_first_mismatch_from_original_artifacts": true,
+    "require_exact_source_and_initial_weights_data_draw_hashes_to_classify_kernel_numerical_divergence": true,
+    "if_initial_weights_differ": "Report initialization or random state divergence, not arithmetic root cause",
+    "if_initial_identical_but_gradient_or_loss_differ_at_first_step": "Report first-step float64 numerical math divergence, not necessarily which CPU operator; later training bifurcation is downstream",
+    "if_first_n_step_agreement_then_later_divergence": "Report earliest exact differing step and trace, differentiate activation boundary if fixed-probe evidence supports it",
+    "if_hashes_equal_all_steps_but_previous_actions_mismatch": "Suspect inference/test scoring platform differences; requires later isolated canonical-checkpoint test, not assumed",
+    "no_auto_source_patch_or_tolerance_change": true,
+    "no_post_RESULT_rebaseline": true,
+    "scientific_pass": false,
+    "deployment": false
+  },
+  "qualification": {
+    "reuse_existing_G4_full_Windows_Ubuntu": true,
+    "reuse_existing_G5_authentic_CPU_both": true,
+    "reuse_existing_G7_pinned_Mamba2_CPU": true,
+    "exact_SHA_and_artifact_hash_custody": true,
+    "original_source_admission_negative": true,
+    "compare_trace_entries_by_exact_step_and_name": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "controller_mod": false,
+    "runner_mod": false,
+    "scheduler_mod": false,
+    "external_original_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false
+  }
+}
