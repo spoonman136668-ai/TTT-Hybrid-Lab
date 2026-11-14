@@ -1,0 +1,136 @@
+{
+  "schema": "ttt-hybrid.f8r57-intervention-task-admission-freeze.v1",
+  "stage": "FROZEN_BEFORE_NEW_GENERATOR_OR_BASELINE_TRAINING",
+  "goal": "QUALIFY A NEW INFORMATION-IDENTIFIABLE MULTI-LAW CAUSAL TASK BEFORE BUILDING ANY NEW LEARNING MECHANISM",
+  "parent": {
+    "r56_sha": "df0b49f35b3689c2ac75ef1c664189329455c933",
+    "r56_pr": 251,
+    "r56_freeze_blob": "e7ca7b6f1d40fd8afe72735643e73cc4c6a1ee81",
+    "r56_result": "Original G4/G5/G7 PASS, 9216/9216 categorical action parity, 2/2 frozen new delayed-proxy cold transfer NO-GO, no Native-specific gain.",
+    "no_reuse_of_R49_R56_evaluation_samples": true
+  },
+  "hypothesis": "Three independent selected two-action intervention outcomes on distinct public bridge settings can identify the correct fourth-context action under an eight-law even-sign-parity causal family without exposing the fourth-context consequence. A trained conventional baseline must fully learn FIT and leave unspent OOD headroom before a novel mechanism is warranted.",
+  "information_rule": "Eight 4-bridge sign-vector laws constrained by product(sign[0..3])=+1. The return choice at bridge3 is determined by the sign product of three genuinely observed selected bridge0/1/2 action contrasts. Law ID and target bridge3 response are evaluator-only. FIT six signed law vectors, completely unseen OOD two others; all eight are distinct causal laws, not merely relocated nuisance.",
+  "source": {
+    "law_codes": "All eight triples (s0,s1,s2) in {-1,+1}^3, with s3=s0*s1*s2; sorted lexical; fixed positive and negative action returns balanced.",
+    "FIT_law_indices": [
+      0,
+      1,
+      2,
+      5,
+      6,
+      7
+    ],
+    "OOD_law_indices": [
+      3,
+      4
+    ],
+    "FIT_train_per_law": 32,
+    "FIT_heldout_per_law": 16,
+    "CAL_per_law": 16,
+    "OOD_per_law": 64,
+    "cases": {
+      "FIT_train": 192,
+      "FIT_heldout": 96,
+      "CAL": 96,
+      "OOD": 128
+    },
+    "source_salts": {
+      "FIT_train": 23110000,
+      "FIT_heldout": 23115000,
+      "CAL": 23120000,
+      "OOD": 23130000
+    },
+    "source_physical_action_contrast": {
+      "FIT_train": 0.16,
+      "FIT_heldout": 0.16,
+      "CAL": 0.12,
+      "OOD": 0.08
+    },
+    "public_bridge_indices_observed": [
+      0,
+      1,
+      2
+    ],
+    "public_bridge_index_return": 3,
+    "selected_actions_per_observed_bridge": 2,
+    "selected_terminal_outcome_per_action": 1,
+    "selected_proxy_observation_per_action": 1,
+    "actual_selected_experiences_per_case": 6,
+    "independent_nuisance_proxy_magnitude": {
+      "FIT_train": 0.24,
+      "FIT_heldout": 0.3,
+      "CAL": 0.48,
+      "OOD": 0.72
+    },
+    "selected_terminal_effect": "On observed bridge j<3 from a fresh reset, select action0, observe terminal target consequence +contrast*law_sign[j]; reset same bridge and select action1, observe -contrast*law_sign[j]. These are genuinely selected action consequences, not unchosen return outcomes. Small deterministic selected action invariant baseline nuisance may shift both by equal amount, not the action contrast.",
+    "observed_proxy_effect": "An independent, noncausal proxy sensor is observed with both selected actions, high source/bridge/amplitude salience; sign is independent of the hidden future law return bit, with source-private deterministic SHA256 salt nuisance; proxy does not enter the return evaluator.",
+    "future_return": "Only after the model chooses unobserved bridge3 action does evaluator calculate its return preference s3. Return effect for action0/action1 is NEVER supplied to model on CAL/OOD, and is supplied solely as selected FIT factual labels after observation for training.",
+    "inputs": "Public action keys, bridge indices 0/1/2, six actually selected terminal action effects and six proxy effects; original-style continuous action/effect 16D tensors or equivalent fixed 6-channel selected intervention features. No hidden law IDs, split, future target, or private source salt.",
+    "negative_controls": [
+      "zero all selected terminal effects while retaining proxy",
+      "zero proxy effects while retaining terminal selected action outcomes",
+      "permute labels within FIT only using an independently frozen diagnostic seed",
+      "single largest observed action-contrast choice",
+      "majority sign heuristic"
+    ],
+    "no_unseen_future_action_leak": true,
+    "no_OOD_training": true,
+    "no_reuse_prior_source_salts": true
+  },
+  "controls": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "actual_FIT_training_steps": 2048,
+    "optimizer": "AdamW lr.01, zero weight decay, gradient clip norm1, fully converged competence requirement on FIT and heldout FIT, no OOD updates, no early stop based on scored CAL/OOD.",
+    "baseline_MLP": "Input all 3 selected terminal action contrasts plus all 3 selected proxy action contrasts; 6->32 ReLU->32 ReLU->2 logits; train 2048 FIT steps; report param count/time/FIT/OOD decision vectors.",
+    "baseline_GRU": "Input same 3 selected bridge factual pairs as 3 steps each with 2 channels (terminal contrast, proxy contrast); 2->32 GRU, linear 32->2 logits; train same 2048 FIT steps; separately report competence, param count, training cost.",
+    "oracle": "Source-only, nonlearned product of the signs of all three public actual terminal action contrasts must solve all 512 cases exactly, even with independent proxy nuisance.",
+    "simple_controls": "Majority sign and single largest measured contrast; require both <0.75 OOD action accuracy so test is not solvable by a trivial one-contrast rule. Fully frozen oracle is allowed to solve but prevents independent architecture supremacy on accuracy.",
+    "train_batch": 32,
+    "draw_seed": 23149999,
+    "no_metadata_or_counterfactual_access": true,
+    "compare_2_original_seeds_and_both_OS": true,
+    "negative_label_permutation_seed": 23159999
+  },
+  "admission": {
+    "source_oracle_accuracy_min": 1,
+    "negative_majority_OOD_accuracy_max": 0.749,
+    "negative_single_contrast_OOD_accuracy_max": 0.749,
+    "MLP_FIT_train_accuracy_min": 0.95,
+    "MLP_FIT_heldout_accuracy_min": 0.95,
+    "MLP_OOD_accuracy_min": 0.5,
+    "MLP_OOD_accuracy_max": 0.9,
+    "GRU_FIT_train_accuracy_min": 0.95,
+    "terminal_erasure_MLP_accuracy_max": 0.65,
+    "proxy_erasure_MLP_accuracy_loss_max": 0.05,
+    "exact_full_OS_action_parity_required": true,
+    "all_seeds_required": true,
+    "task_admissible_only_if_every_criterion_passes": true,
+    "if_FAIL": "Keep failed task admission as diagnostic. Do not optimize on spent OOD or launch a new unconventional learning mechanism. Build a separate preregistered more identifiable/harder source only after diagnosing why this source is unhelpful.",
+    "if_PASS": "Approve a *new separately preregistered* mechanism experiment on a fresh cohort with strongest competent conventional, equal inputs/actions and compute, retention and interference tests. This task admission alone is not scientific model superiority.",
+    "independent_scientific_pass": false
+  },
+  "qualification": {
+    "G4_full_windows_ubuntu": true,
+    "G5_authentic_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "original_artifact_hashes": true,
+    "exact_candidate_SHA": true,
+    "source_admission_negative": true,
+    "all_categorical_actions_exact_cross_OS": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "GPU_firstuse": false,
+    "external_original_firstuse": false,
+    "paid_API": false
+  }
+}
