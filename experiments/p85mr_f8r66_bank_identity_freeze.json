@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.f8r66-bank-identity-falsifier-freeze.v1",
+  "stage": "PROSPECTIVE_FREEZE_ONLY_BEFORE_R66_SOURCE_OR_DEV_SCORE",
+  "classification": "INDEPENDENT_AUTHOR_SYNTHETIC_DEV_MECHANISM_IDENTIFIABILITY_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "base_R63_SHA": "fed5b9b1bcd58ae151b62d96b44dfdf0665695cc",
+    "R63_PR": 258,
+    "R64_frozen_science": "DEV_NO_GO",
+    "R65_PR": 260,
+    "R65_frozen_science": "DEV_NO_GO",
+    "R65_head": "b631e5696c0365caf03a622d9af6c47bd89009f7",
+    "keep_R64_R65_unmerged_and_unmodified": true,
+    "do_not_reuse_spent_scored_cohorts": true
+  },
+  "question": "Are separately identifiable, retained causal memories an actual usable resource under factual online intervention, or do two nominal banks collapse into a mixed memory?",
+  "hypothesis": "A source-neutral event-gated, role-indexed protected second bank can preserve law A during a different law B, then retrieve it after one factual A return, under a fixed 36-float budget. It should outperform the strongest nonprotected/equally budgeted factual control in cold A recovery without losing B adaptation or stable performance.",
+  "null": "No qualifying advantage against strongest eligible control or no distinct A/B causal storage beyond simultaneous dual-bank mixing.",
+  "source": {
+    "FIT_salt": 23810000,
+    "DEV_salt": 23820000,
+    "PROXY_NEGATIVE_salt": 23830000,
+    "FIT_worlds": 48,
+    "DEV_worlds": 96,
+    "DEV_stable_worlds": 48,
+    "DEV_ABA_worlds": 48,
+    "sequence_roles": "Public roles 0,1,2,3 repeated exactly 4 visits in each 16-event A, B, A_return phase (48 selected actions total). Regime identity is evaluator-only, never model input.",
+    "physical_goal": "Selected-action 4D goal effect = independent law column plus zero-mean Gaussian noise std 0.04; law A is 4x4 normal(0,.75) + diagonal(.25); for switched worlds law B is an orthogonal 90-degree rotation of first two terminal coordinates for action roles 0,1, with roles 2,3 unchanged.",
+    "nuisance_proxy": "Independent Gaussian 4D proxy std 0.8, amplified std 3.0 under proxy-negative; never passed to learner.",
+    "train_or_calibration": "No parametric training, gradient updates, or FIT threshold sweep. Fixed protocol constants below. FIT only for source sanity and unchanged-rate control, DEV only once for scientific-development falsification.",
+    "OOD": "No protected/independent OOD, no external or GPU first-use; same structural causal family with independent world coefficients.",
+    "identifiability": "No oracle change-point cues. Score return prediction only after at least one actually observed post-shift outcome for that specific selected role; the first hidden A-return observation is NOT expected to be predictable without a public cue."
+  },
+  "memory": {
+    "shape": "Two 4x4 read/write fast-weight matrices and 4 causal-role selector scalars, exactly 36 float scalars allocated per world for ALL arms.",
+    "read_before_effect": true,
+    "write_after_actual_selected_effect": true,
+    "one_observed_event_per_write": true,
+    "events_per_world": 48,
+    "learning_gain": 0.65,
+    "bank_initial_weights": "all-zero; per-role active bank 0",
+    "novelty_threshold_l2": 0.75,
+    "confidence_threshold_l2": 0.2,
+    "return_margin_l2": 0.15,
+    "selector": "Use only actually executed role, bank predictions and observed terminal effect AFTER current prediction; no current-phase label, true law, future effect, or proxy.",
+    "candidate": "protected_role_bank: choose inactive bank when it already gives terminal prediction lower L2 by margin, or when active trained prediction mismatches by threshold and inactive bank is untrained; write ONLY selected bank for selected role.",
+    "controls": [
+      "single_allwrite: 1 active bank; second allocated but untouched",
+      "dual_mixing: write both banks 50/50 each event with same total write gain",
+      "surprise_only: novelty allocates second bank but never selects previously trained inactive bank by consequence match",
+      "global_protected: same protected rule using ONE global active bank scalar for all roles, leaving 3 selector scalars unused",
+      "erase_old_ablation: candidate gating but writes both banks for selected role (destroys protection)"
+    ],
+    "same_capacity_and_action_information": true,
+    "common_role_order_and_observations": true,
+    "matched_gradient_steps": 0,
+    "no_equal_cpu_instruction_cost_claim": true
+  },
+  "metrics": {
+    "primary": "A_return changed-role pre-observation MSE at events 36,37,40,41,44,45 after the first factual A-return evidence for each changed role at events 32 and 33.",
+    "secondary": [
+      "B changed-role MSE after first B evidence, events 20,21,24,25,28,29",
+      "Stable A-A-A all-event pre-observation MSE",
+      "Retained bank A truth-match at B end for changed roles (evaluator-only diagnostic)",
+      "Bank B truth-match at B end for changed roles (evaluator-only diagnostic)",
+      "Two-bank separation normalised L2 at B end",
+      "Cross-world paired bootstrap",
+      "Per-event count, wall time, proxy-negative invariance and cold replays"
+    ],
+    "thresholds": {
+      "A_return_MSE_relative_reduction_vs_strongest_control_min": 0.15,
+      "B_MSE_relative_regression_max": 0.05,
+      "stable_MSE_relative_regression_max": 0.05,
+      "bank_A_truth_MSE_ratio_vs_dual_mixing_max": 0.75,
+      "distinct_bank_separation_min": 0.35,
+      "ablation_return_MSE_relative_increase_min": 0.1,
+      "paired_world_bootstrap_95pct_upper_candidate_minus_strongest_control_less_than_zero": true,
+      "proxy_invariance": true,
+      "cold_replay_exact": true
+    },
+    "bootstrap_worlds_with_replacement": 2000,
+    "bootstrap_seed": 23849999,
+    "all_7_checks_required": true,
+    "source_sanity_required": true,
+    "post_DEV_adjustments_forbidden": true,
+    "science_status_if_all": "DEV_MECHANISM_SIGNAL_ONLY; NOT independent trained Native/Hybrid scientific gain",
+    "fail_status": "DEV_NO_GO; preserve as negative, no R66 DEV tuning"
+  },
+  "qualification": {
+    "exact_candidate_SHA": true,
+    "source_freeze_git_blob": true,
+    "full_G4_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "original_zip_checksum_comparison": true,
+    "do_not_claim_cross_OS_or_score_until_original_artifacts": true
+  },
+  "authority": {
+    "merge": false,
+    "live_GPU": false,
+    "external_firstuse": false,
+    "paid_API": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "new_runner": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false
+  }
+}
