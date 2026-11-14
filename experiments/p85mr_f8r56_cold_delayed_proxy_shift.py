@@ -88,7 +88,7 @@ def world(panel,group,ctx,q_sign,gate):
     positions(panel,group)
     if ctx not in (0,1) or q_sign not in (-1,1) or gate not in (-1,1):
         raise ValueError("F8R56_INVALID_FACTOR")
-    # The evaluator return physics uses exactly original R53 OOD.
+    # The evaluator return physics uses exactly original R55 OOD.
     # r56_panel is for NEW source generation only, not an action/model input.
     return {"panel":"ood","r56_panel":panel,"group":group,
             "public_context":ctx,"q_evaluator_only":q_sign,
@@ -255,7 +255,7 @@ def reproduce_original_FIT(arm,seed,offset,records,labels,draws,f):
             [p for p in model.parameters() if p.requires_grad],1.)
         optimizer.step()
     target=f["replay"]["reproduction_targets"]
-    if arm=="learned_repeatability":
+    if arm=="learned_goal_mediation":
         spec=target[str(seed)]
         beta=float(model.beta.detach())
         slopes=model.slopes.detach().tolist()
@@ -263,15 +263,15 @@ def reproduce_original_FIT(arm,seed,offset,records,labels,draws,f):
                 abs(beta-spec["beta_ubuntu"]))>
                       target["tolerance_beta"] or
             any(min(abs(slopes[i]-
-                spec["context_slopes_windows"][i]),
+                spec["slopes_windows"][i]),
                 abs(slopes[i]-
-                spec["context_slopes_ubuntu"][i]))>
+                spec["slopes_ubuntu"][i]))>
                 target["tolerance_slopes"] for i in (0,1))
             or productive!=r55.UPDATES):
             raise ValueError("F8R56_ORIGINAL_R55_WEIGHT_REPRODUCTION_FAILED")
     heldout=r55.heldout(model,records,labels)
     original=r55.score(model,"ood")
-    if (arm=="learned_repeatability" and
+    if (arm=="learned_goal_mediation" and
         (heldout!=1.0 or original["mean_regret"]!=0.)):
         raise ValueError("F8R56_ORIGINAL_R55_POLICY_NOT_REPRODUCED")
     return model,{"arm":arm,"seed":seed,
@@ -347,7 +347,7 @@ def run():
     frozen=f["frozen_decision"]
     verdict=[]
     for seed in SEEDS:
-        row=next(x for x in trained if x["arm"]=="learned_repeatability"
+        row=next(x for x in trained if x["arm"]=="learned_goal_mediation"
                  and x["seed"]==seed)
         criteria={}
         for panel in PANELS:
@@ -360,8 +360,8 @@ def run():
                        frozen["minimum_each_panel_gate_reversals"])
         verdict.append({"seed":seed,"panels_pass":criteria,
             "full_cold_transfer_pass":all(criteria.values()),
-            "oscillating_OOD":row["new_panels"]["oscillating"]["active"],
-            "stationary_OOD":row["new_panels"]["stationary_confounder"]["active"],
+            "control_OOD":row["new_panels"]["control"]["active"],
+            "delayed_proxy_confounder_OOD":row["new_panels"]["delayed_proxy_confounder"]["active"],
             "original_R55_OOD_regret":row["original_R55_OOD_regret"]})
     return {"schema":SCHEMA,"freeze_blob":FREEZE_BLOB,"parent":PARENT,
         "source_neutral_synthetic_cold_transfer_only":True,
