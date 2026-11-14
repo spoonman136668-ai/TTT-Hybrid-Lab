@@ -438,21 +438,31 @@ def run():
     if (sum(x["evaluator_family_only"]=="swap" for x in src["DEV"])!=24
         or any(x["evaluator_family_only"]=="swap" for x in src["FIT"]+src["CAL"])):
         raise ValueError("F8R68_HELD_OUT_CAUSAL_FAMILY_BROKEN")
-    traces={panel:[teacher_trace(w) for w in arr] for panel,arr in src.items()}
-    teacher_identity_all=all(teacher_identity(src[panel],traces[panel]) for panel in COUNTS)
+    # The independent DEV outcomes and teacher labels are not inspected
+    # until ALL seeds and comparator arms have frozen their FIT-trained weights.
+    traces={panel:[teacher_trace(w) for w in src[panel]]
+            for panel in ("FIT","CAL")}
+    teacher_identity_all=all(teacher_identity(src[panel],traces[panel])
+                             for panel in ("FIT","CAL"))
     started=time.perf_counter()
     training={"teacher_identity":teacher_identity_all,"receipts":{}}
     accuracy={"CAL":{},"DEV":{}}
     scores={"CAL":{},"DEV":{}}
-    negative=negative_proxy(src["DEV"])
     negatives={}
     verdicts=[]
+    models_by_seed={}
     for seed in SEEDS:
         models={}
         training["receipts"][seed]={}
         for arm in TRAINED:
             models[arm],training["receipts"][seed][arm]=train_one(
                 arm,seed,traces["FIT"])
+        models_by_seed[seed]=models
+    traces["DEV"]=[teacher_trace(w) for w in src["DEV"]]
+    training["teacher_identity"] &= teacher_identity(src["DEV"],traces["DEV"])
+    negative=negative_proxy(src["DEV"])
+    for seed in SEEDS:
+        models=models_by_seed[seed]
         for panel in ("CAL","DEV"):
             accuracy[panel][seed]={}
             scores[panel][seed]={}
