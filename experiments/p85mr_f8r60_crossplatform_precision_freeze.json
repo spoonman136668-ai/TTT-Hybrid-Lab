@@ -1,0 +1,161 @@
+{
+  "schema": "ttt-hybrid.f8r60-fp64-crossplatform-intervention-task-freeze.v1",
+  "stage": "FROZEN_BEFORE_NEW_R60_SOURCE_OR_SCORE",
+  "objective": "Isolate R59 platform-specific FP32 MLP-training drift through an independent new-cohort, same-architecture FP64 single-thread CPU reproduction; no new neural mechanism or claim of scientific superiority.",
+  "parent": {
+    "R59_SHA": "b5d708bbbbf26e0ffee91d13082742599e793a8f",
+    "R59_pr": 254,
+    "R59_freeze_blob": "e69d0debe514f8695cf0cef57f9dbfbeefc5ba8e",
+    "R59_status": "G4/G5/G7 PASS; both platform per-seed numerical task scores all pass; 166/61440 original categorical actions differ, all in MLP; strict OS parity fails; no scientific pass or promotion.",
+    "R59_original_scored_data_not_reused": true
+  },
+  "engineering_hypothesis": "FP32 platform-dependent accumulated MLP training drift makes R59 OS action parity fail. Float64 data/model/optimizer, single CPU thread, deterministic kernels and disabled MKLDNN will reduce platform numerical divergence on new independent source cohorts; strict exact categorical parity is required and is not assumed.",
+  "source": {
+    "salts": {
+      "FIT_train": 23410000,
+      "FIT_heldout": 23415000,
+      "CAL": 23420000,
+      "OOD": 23430000
+    },
+    "cases": {
+      "FIT_train": 4096,
+      "FIT_heldout": 768,
+      "CAL": 768,
+      "OOD": 1024
+    },
+    "law_families": [
+      "affine",
+      "quadratic",
+      "mixed quadratic",
+      "tanh saturating"
+    ],
+    "same_mechanistic_laws_as_R59": true,
+    "independent_latent_world_parameters": true,
+    "selected_observations_per_world": 12,
+    "source_probe_centers": [
+      -0.84,
+      0,
+      0.84
+    ],
+    "jitter": [
+      -0.14,
+      0.14
+    ],
+    "target_context_range": {
+      "FIT_train": [
+        -0.9,
+        0.9
+      ],
+      "FIT_heldout": [
+        -0.9,
+        0.9
+      ],
+      "CAL": [
+        -0.9,
+        0.9
+      ],
+      "OOD": [
+        -1.3,
+        1.3
+      ]
+    },
+    "selected_terminal_action_observation_noise_std": 0.33941125496954283,
+    "proxy_sd": {
+      "FIT_train": 1.1,
+      "FIT_heldout": 1.1,
+      "CAL": 1.1,
+      "OOD": 1.6
+    },
+    "public_feature_order": "[x0,x1,x2,observed_terminal_contrast0,1,2,independent_proxy_contrast0,1,2,target_x]",
+    "source_factual_custody": "Actually select both upstream actions on reset for each x and observe terminal and noncausal proxy; training target labels from independent selected target action0/action1 only on FIT, evaluator-only target on CAL/OOD. Private law/latent coeffs/split/return labels and unselected outcomes NEVER model features.",
+    "all_four_families_every_panel": true,
+    "public_label_balance": [
+      0.4,
+      0.6
+    ],
+    "no_old_R49_R59_OOD_data": true
+  },
+  "execution": {
+    "device": "CPU_ONLY",
+    "torch_dtype": "float64",
+    "torch_num_threads": 1,
+    "deterministic_algorithms": true,
+    "mkldnn_enabled": false,
+    "MLP_architecture": "10->64 ReLU->64 ReLU->2, exactly equivalent to prior R59 MLP except FP64 arithmetic",
+    "GRU_architecture": "3 steps×4 features -> GRU hidden32 ->2, exactly equivalent to R59 GRU except FP64 arithmetic",
+    "model_seeds": [
+      985201,
+      985207
+    ],
+    "arms": [
+      "mlp_selected_goal_effects",
+      "gru_selected_goal_effects"
+    ],
+    "FIT_updates_per_model": 1536,
+    "batch_size": 128,
+    "learning_rate": 0.003,
+    "AdamW_weight_decay": 0,
+    "clip_grad_norm": 1,
+    "draw_seed": 23449999,
+    "tie_policy": "Exact original R59 visible margin 0.003, fallback action0; do not alter after new score.",
+    "tied_evaluator_metric": "Accuracy of argmax with epsilon .003, record all category choices for FIT/CAL/OOD and OOD ablations.",
+    "source_only_controls": [
+      "quadratic interpolation of 3 public selected terminal contrasts",
+      "single center probe sign",
+      "majority selected terminal signs",
+      "constant action0"
+    ],
+    "negative_controls": [
+      "erase observed terminal contrasts",
+      "erase noncausal proxy contrasts",
+      "cold-restored action equality"
+    ],
+    "trainable_total_attempts": 6144,
+    "no_retune_post_R60_eval": true
+  },
+  "frozen_admission": {
+    "require_both_platforms_G4_G5_G7_success": true,
+    "MLP_FIT_train_min": 0.85,
+    "MLP_FIT_holdout_min": 0.82,
+    "GRU_FIT_train_min": 0.82,
+    "GRU_FIT_holdout_min": 0.8,
+    "MLP_CAL_min": 0.8,
+    "MLP_OOD_min": 0.7,
+    "MLP_OOD_max": 0.925,
+    "GRU_OOD_min": 0.7,
+    "GRU_OOD_max": 0.925,
+    "fixed_quadratic_OOD_min": 0.75,
+    "fixed_quadratic_OOD_max": 0.96,
+    "single_probe_OOD_max": 0.85,
+    "majority_probe_OOD_max": 0.85,
+    "constant_OOD_max": 0.6,
+    "terminal_erased_MLP_OOD_max": 0.6,
+    "proxy_erased_MLP_accuracy_loss_max": 0.05,
+    "both_seeds_required": true,
+    "every_decision_bitwise_equal_Windows_Ubuntu": true,
+    "frozen_source_exact_and_original_artifact_digest_required": true,
+    "failure_policy": "Reproducibility/task-admission NO-GO; preserve candidate, frozen source, original actions and all diagnostics. No post-result tie changes, no re-seeding, no source retune, no automatic retrain on evaluation cohorts.",
+    "pass_policy": "Engineering portability and synthetic task admission only; new independent mechanism/science must be prospectively designed on another fresh split. Passing conventional accuracy is NOT proof of native causal learning, transfer beyond tested parameter family, open-ended intelligence or AGI.",
+    "independent_scientific_pass": false,
+    "Native_specific_gain": false
+  },
+  "qualification": {
+    "G4_full_final_regression_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "blocked_external_source_negative": true,
+    "original_archive_SHA256": true,
+    "all_categorical_actions_compare": true
+  },
+  "authority": {
+    "new_controller": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "external_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false
+  }
+}
