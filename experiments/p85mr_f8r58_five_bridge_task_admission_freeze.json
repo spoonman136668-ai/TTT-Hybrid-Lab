@@ -1,0 +1,176 @@
+{
+  "schema": "ttt-hybrid.f8r58-five-bridge-causal-task-admission-freeze.v1",
+  "stage": "FROZEN_BEFORE_F58_SOURCE_MODEL_OR_SCORED_RESULTS",
+  "classification": "PROSPECTIVE_SOURCE_NEUTRAL_SYNTHETIC_TASK_ADMISSION_ONLY",
+  "parent": {
+    "r57_sha": "e499ea5fda031e30fec68a6deb5cdd19a83066e3",
+    "r57_pr": 252,
+    "r57_freeze_blob": "caa43052c4cf74a6cae16b0e2b9033d4fa828eb1",
+    "r57_result": "Full exact SHA G4 Windows+Ubuntu, G5/G7 PASS; source-only OOD [3,4] rejected before model training because stable first observed bridge gets 128/128 under equal action-contrast magnitudes.",
+    "r56_science": "R56 qualified scientific cold-transfer NO-GO both seeds, no deployment.",
+    "avoid_spent_R49_to_R57_evaluation_laws_and_salts": true
+  },
+  "hypothesis": "Observe genuinely selected action0/action1 consequences at five public bridge settings; infer unobserved sixth-setting preferred action from a causal five-sign parity law, while independent high-magnitude proxy observations are irrelevant. The source must support an exact public oracle yet resist ALL fixed parity rules of degree 1..4 and their inverses, plus majority and its inverse, on heldout laws. Competent converged MLP/GRU FIT training must leave substantive OOD headroom before future unconventional learner research.",
+  "source": {
+    "laws": "All 32 five-sign vectors in lexical itertools.product((-1,+1), repeat=5) order. Unobserved sixth-setting terminal sign = product of five observed signs; eight heldout OOD law codes frozen before training.",
+    "heldout_OOD_law_indices": [
+      4,
+      5,
+      6,
+      8,
+      13,
+      20,
+      25,
+      30
+    ],
+    "FIT_law_indices": [
+      0,
+      1,
+      2,
+      3,
+      7,
+      9,
+      10,
+      11,
+      12,
+      14,
+      15,
+      16,
+      17,
+      18,
+      19,
+      21,
+      22,
+      23,
+      24,
+      26,
+      27,
+      28,
+      29,
+      31
+    ],
+    "source_salting": {
+      "FIT_train": 23210000,
+      "FIT_heldout": 23215000,
+      "CAL": 23220000,
+      "OOD": 23230000
+    },
+    "cases_per_law": {
+      "FIT_train": 24,
+      "FIT_heldout": 8,
+      "CAL": 8,
+      "OOD": 16
+    },
+    "case_totals": {
+      "FIT_train": 576,
+      "FIT_heldout": 192,
+      "CAL": 192,
+      "OOD": 128
+    },
+    "number_observed_bridges": 5,
+    "number_future_return_bridge": 1,
+    "selected_upstream_actions_per_bridge": 2,
+    "observed_terminal_effect_per_selected_action": 1,
+    "observed_proxy_effect_per_selected_action": 1,
+    "observed_records_per_case": 20,
+    "terminal_action_contrast_magnitude": {
+      "FIT_train": 0.16,
+      "FIT_heldout": 0.16,
+      "CAL": 0.12,
+      "OOD": 0.08
+    },
+    "proxy_action_contrast_magnitude": {
+      "FIT_train": 0.24,
+      "FIT_heldout": 0.3,
+      "CAL": 0.48,
+      "OOD": 0.72
+    },
+    "public_observation": "For each bridge index 0..4, actually SELECT action0 from reset and observe terminal and proxy effects; reset at identical public bridge and SELECT action1 and observe terminal and proxy effects. 20 factual outcomes per case. Exact public order is bridge0..4, action0 then action1; action effects are never counterfactual unselected RETURN effects.",
+    "terminal_effect_rule": "For each observed bridge j, selected action0 effect=+amp*law_sign[j], action1=-amp*law_sign[j]. Public state-action invariant nuisance offset may be added equally to both action effects. The future sixth-bridge sign is not observed for CAL/OOD, FIT labels are from actually selected return action0/action1 from independent resets AFTER the five observed bridge interventions.",
+    "proxy_rule": "Independent pseudo-random selected action proxy contrasts ±magnitude from salt/law/case/bridge, with fixed SHA256 sign, no dependence on unseen future label beyond incidental finite-sample coincidences. Proxy effects are not causal to final return.",
+    "return_law": "Future return action0 gives physical selected terminal effect +0.16*sign5 and action1 -0.16*sign5; choose action maximizing selected terminal effect. Both future return actions evaluated as factual separately selected resets for FIT labels only. No future return effects enter any model input, OOD or CAL.",
+    "input_features": "Five public signed contrasts calculated from actually observed selected terminal action0/action1 effects and five independent proxy contrasts. Dense MLP gets 10 floats; GRU gets 5 time steps ×2 floats (same exactly). The fixed contrast decoder is supplied and not learned causal discovery.",
+    "no_metadata_inputs": [
+      "split/panel",
+      "law index",
+      "hidden sign5",
+      "source salt",
+      "sample id",
+      "return choice label outside FIT",
+      "unselected return effect"
+    ],
+    "cold_OOD_no_update": true,
+    "positive_reference": "Parity product of signs of five observed terminal selected contrasts, public source-only analytic oracle, exact on every FIT/CAL/OOD case. Not a learned model.",
+    "heuristic_audit": "Enumerate ALL 30 nonempty proper subsets of observed five bridge signs (degrees 1,2,3,4), compare each product and sign-negation to hidden return, plus observed majority and inverted majority, plus constants 0/1. Maximum OOD accuracy must not exceed 0.75. Deliberately balanced heldout law target: four positives, four negatives.",
+    "audit_before_generator_training": true
+  },
+  "trained_controls": {
+    "original_seeds": [
+      985201,
+      985207
+    ],
+    "arm_names": [
+      "mlp_selected_terminal_proxy",
+      "gru_selected_terminal_proxy"
+    ],
+    "MLP": "Input five terminal contrasts plus five proxy contrasts => 10->64 ReLU->64 ReLU->2 action logits; full FIT-trained conventional baseline, not a model-native claim.",
+    "GRU": "Input five ordered (terminal contrast, proxy contrast) source pairs => GRU(input=2,hidden=48), linear hidden48 -> action2 logits; fully FIT trained.",
+    "training_updates_each": 4096,
+    "batch_size": 32,
+    "optimizer": "AdamW lr .01 weight_decay0 gradient clipping 1; 4096 updates, no early stop on scored CAL/OOD, no OOD adaptation.",
+    "training_seed_base": 23249999,
+    "two_original_seeds": 2,
+    "total_optimizer_attempts": 16384,
+    "negative_controls": [
+      "erase true observed terminal contrasts (proxy remains)",
+      "erase proxy contrasts (terminal remains)",
+      "permute FIT labels under independently frozen label-noise seed 23259999 (diagnostic only)",
+      "all 30 proper parity shortcuts and inverses",
+      "majority and inverse",
+      "constant majority labels"
+    ],
+    "candidate_training_metric": "FIT training and heldout accuracies, CAL and OOD accuracies, per-law OOD accuracies, all OOD categorical action vectors and frozen negative controls, exact model state restore and training timings/parameters.",
+    "not_model_promotion": true
+  },
+  "admission": {
+    "public_oracle_all_cases_accuracy_required": 1,
+    "max_any_single_or_higher_degree_shortcut_OOD_accuracy": 0.75,
+    "max_majority_or_inverse_OOD_accuracy": 0.75,
+    "require_OOD_label_balance": true,
+    "MLP_FIT_train_accuracy_min": 0.95,
+    "MLP_FIT_heldout_accuracy_min": 0.95,
+    "GRU_FIT_train_accuracy_min": 0.95,
+    "GRU_FIT_heldout_accuracy_min": 0.95,
+    "MLP_OOD_accuracy_min": 0.5,
+    "MLP_OOD_accuracy_max": 0.875,
+    "terminal_erasure_MLP_OOD_accuracy_max": 0.625,
+    "proxy_erasure_MLP_OOD_accuracy_loss_max": 0.05,
+    "no_new_scored_OOD_training": true,
+    "two_seed_both_must_meet": true,
+    "exact_categorical_cross_OS_parity_required": true,
+    "task_admission_pass_only_if_every_criterion_met": true,
+    "independent_scientific_pass": false,
+    "failure_policy": "Preserve R58 task-admission NO-GO if any criterion fails; no retuning on consumed OOD or claiming a novel learner result. Requalify only for independent engineering defects without moving freeze.",
+    "success_policy": "Only a task-admission PASS; a subsequent distinct preregistered novel mechanism and matched fully converged comparator on fresh source required for any learning gain claim."
+  },
+  "qualification": {
+    "existing_G4_full_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU_both": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "source_runtime_negative": true,
+    "original_artifact_hashes": true,
+    "exact_candidate_SHA": true,
+    "cross_platform_decision_parity": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "external_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false
+  }
+}
