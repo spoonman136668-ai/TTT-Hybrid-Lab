@@ -1,0 +1,184 @@
+{
+  "schema": "ttt-hybrid.f8r51-learned-effect-magnitude-eligibility-freeze.v1",
+  "stage": "FROZEN_BEFORE_R51_MODEL_GENERATOR_OR_RESULTS",
+  "classification": "SOURCE_NEUTRAL_SYNTHETIC_FIT_CAL_OOD_DEV_ONLY",
+  "parent": {
+    "qualified_R49_head": "2b297ba7316c0c552522ecd2ae1a753934e88174",
+    "r49_pr": 244,
+    "r49_freeze_blob": "6e9baac9d3761e727e95080764bb9e9a11d0ffe3",
+    "prior_R50_pr": 245,
+    "prior_R50_head": "3023196d23c9bf8885b779cfcc50fe357d770435",
+    "R50_confounded_ubuntu_result": "top-two=0.684070 regret, raw=0.0 under new misleading-tag OOD; not reuse scored R50 worlds",
+    "r50_independent_qual_pending": true
+  },
+  "hypothesis": {
+    "main": "A gradient-trained, observable action-consequence magnitude eligibility term combined with learned context-dependent public tag-role attention can suppress large-tag small-effect distractors and retain causal B gate evidence as history length and nuisance change.",
+    "distinct_from_parent": "R49 hard retrieved the top two by public tag, zeroing out otherwise available selected physical effects; R51 uses differentiable attention on all selected public tag,selected physical-effect pairs with two context slopes and one learned magnitude coefficient.",
+    "attribution": "A truly trainable salience coefficient must change by AdamW after receiving nonzero measured task gradient, and zeroing it must incur regret. This is learned parameter adaptation on a deliberately narrow source; not generic event discovery or causality.",
+    "falsifier": "Either original seed misses frozen CAL/OOD, lacks salience gradients/ablation effect, or fails source-only negative controls => R51 DEV NO-GO, without tuning spent data. Even if DEV PASS, if hand-coded absolute-effect top-two heuristic matches or dominates, learned-event-discovery superiority over strongest simple control is NOT demonstrated."
+  },
+  "source": {
+    "panel_salts": {
+      "fit": 22510000,
+      "cal": 22520000,
+      "ood": 22530000
+    },
+    "groups": {
+      "fit": 24,
+      "cal": 8,
+      "ood": 8
+    },
+    "fit_train_groups": 16,
+    "fit_heldout_groups": 8,
+    "worlds": {
+      "fit": 192,
+      "cal": 64,
+      "ood": 64
+    },
+    "selected_B_history_length": {
+      "fit": 12,
+      "cal": 20,
+      "ood": 40
+    },
+    "original_selected_return_factual_labels": 384,
+    "causal_observable_tags": {
+      "ctx0_cue": 0.42,
+      "ctx0_decoy": 0.18,
+      "ctx1_cue": 0.18,
+      "ctx1_decoy": 0.42
+    },
+    "causal_B_delta_abs": {
+      "fit": 0.24,
+      "cal": 0.18,
+      "ood": 0.12
+    },
+    "confounding_tags": [
+      0.88,
+      0.77
+    ],
+    "confounding_B_deltas": [
+      0.015,
+      -0.015
+    ],
+    "confound_placement": "FIT: confounders in alternating groups 0,2,4,... for train AND heldout; CAL/OOD: both confounders in all groups. All positions SHA256(salt/panel/group/local step) sorted, 4 distinct; no private positions enter input.",
+    "other_tag_rule": "tag=.03 if selected t%3==0 else 0.0",
+    "other_B_delta": "round(NUISANCE[panel]*sin((salt[panel]+group)*.137+t*.271)+.004*((t+group)%4-1.5),8)",
+    "other_delta_amplitudes": {
+      "fit": 0.006,
+      "cal": 0.009,
+      "ood": 0.014
+    },
+    "observed_B_record": "Use r49.r33.b._record(public_tag,action=t%2,after=public_tag+physical_selected_delta,public_context). Zero only effect[4], preserve real effect[0].",
+    "observed_early_and_fifth": "R49 original 4 selected early observations and actual fifth 0.42 action=context consequence, not counterfactual. Return action has exact public key and zero effect.",
+    "fit_only_fifth_offset": "Calibrate from selected fifth observations of 16 balanced FIT training groups ONLY; no CAL/OOD.",
+    "factual_return": "R49's physical quartic FIT/CAL and cubic OOD, return state (.61,.73) group parity, goal 1.0, action regret using true selected after only for evaluator.",
+    "paired_gate_mean": "All 16-dimensional public B means and selected action key means exactly agree across opposite hidden gate at fixed panel/group/context,q sign, but individual selected consequence records differ.",
+    "reference": "Source-only hand-coded select two largest |decoded selected physical B effect| (since all true causal >.12, all others <=.03), choose higher or lower observed tag by public context, combine FIT-only selected fifth; zero errors on FIT/CAL/OOD before any scoring.",
+    "no_reused_R50_OOD": true,
+    "no_evaluator_only_input": [
+      "panel/split ID",
+      "group ID",
+      "hidden gate",
+      "hidden q sign",
+      "private cue/decoy positions",
+      "return unselected factual effect",
+      "oracle source marker"
+    ]
+  },
+  "training": {
+    "seeds": [
+      985201,
+      985207
+    ],
+    "arm_names": [
+      "learned_magnitude_context",
+      "raw_context_selector",
+      "tag_top_two_context",
+      "fixed_magnitude_top_two_context",
+      "learned_magnitude_native",
+      "gru_context_control"
+    ],
+    "train_updates_per_arm": 256,
+    "balanced_paired_batch": 16,
+    "training_sample_seed": 22549999,
+    "checkpoints": [
+      1,
+      32,
+      64,
+      128,
+      192,
+      256
+    ],
+    "optimizer": "AdamW; learned slope, effect salience and readout lr=.02, Native/GRU .001, weight_decay=0, gradient clipping norm1. No post-hoc adaptive updates.",
+    "main_attention": "On all selected B records only: logits=(slope[observed_public_context] * observed_tag) + (positive_salience * 12 * absolute_selected_physical_B_delta). Softmax these logits; aggregate selected signed physical B delta; multiply FIT-centered selected fifth and a trained positive readout gain. Salience initialized at exactly zero and trained by real autograd, no fixed magnitude tag class.",
+    "baseline_raw": "R49-style two context slopes over all B tags, no magnitude term, same data/draws/updates.",
+    "baseline_top_two": "R49 stable top-two public tag reader, same two context slopes, same data/draws/updates.",
+    "baseline_magnitude": "Public selected physical magnitude top-two retrieval (hand-coded fixed rule) then *trained* two context tag slopes, same data/draws/updates; not learned event discovery.",
+    "baseline_native": "Same main learned magnitude selector plus actual R34 Native factual memory with all selected observations, trainable Native weights/fusion and zero-backbone ablation; Native-specific attribution separately qualified.",
+    "baseline_gru": "Fully trained GRU over all selected (public tag,selected physical delta,public context) histories using same FIT factual data/updates; report capacity compute mismatch.",
+    "training_total": "12 arm/seed instances ×256=3072 attempted training updates",
+    "ablations": [
+      "erase B effects",
+      "erase B public tag keys",
+      "erase selected fifth physical effect",
+      "force salience coefficient exactly zero",
+      "force uniform attention",
+      "force top-two by tag",
+      "zero Native backbone",
+      "zero causal output",
+      "cold restore"
+    ],
+    "matched_view_and_budget": true,
+    "full_compute_capacity_matched": false
+  },
+  "frozen_score": {
+    "main_two_seed_required": true,
+    "min_fit_heldout_accuracy": 0.95,
+    "max_cal_regret": 0.12,
+    "max_ood_regret": 0.12,
+    "max_each_ood_context_regret": 0.12,
+    "min_cal_gate_pair_flips": 28,
+    "min_ood_gate_pair_flips": 28,
+    "min_ood_penalty_B_erase": 0.12,
+    "min_ood_penalty_fifth_erase": 0.12,
+    "min_ood_penalty_tag_erase": 0.12,
+    "min_ood_penalty_magnitude_zero": 0.12,
+    "min_ood_penalty_force_tag_top_two": 0.12,
+    "min_ood_gain_vs_trained_public_tag_top_two": 0.12,
+    "bootstrap": {
+      "draws": 10000,
+      "seed": 22569999,
+      "lower95_positive": true
+    },
+    "context0_slope_min": 1,
+    "context1_slope_max": -1,
+    "magnitude_param_must_start_at_zero": true,
+    "magnitude_param_must_finish_positive": true,
+    "salience_grad_must_be_nonzero_on_each_original_seed": true,
+    "positive_reference_zero_error_all_panels": true,
+    "group_mean_parity_required": true,
+    "all_actions_cross_OS_exact": true,
+    "independent_scientific_gain_criterion": "In addition to main two-seed pass, require OOD improvement >=.12 with positive bootstrap lower95 versus strongest fully competent 2-event |effect| hand-coded baseline and strongest input matched fully converged conventional, plus true positive Native backbone ablation for Native-specific claim. Otherwise independent SCIENTIFIC_PASS=false.",
+    "fail_policy": "Never tune scored FIT heldout CAL or OOD after original result. Preserve exact negative outcomes. If hand-coded magnitude baseline matches model, report learned parameter/procedural success at most, not general causal intelligence.",
+    "scientific_pass": false
+  },
+  "qualification": {
+    "full_final_G4_both_OS_required": true,
+    "G5_authentic_TTT_CPU_both_OS_required": true,
+    "G7_pinned_Mamba2_CPU_Ubuntu_required": true,
+    "pinned_exact_candidate_SHA": true,
+    "original_G4_artifact_digests_and_full_action_parity": true,
+    "original_external_source_blocked": true
+  },
+  "authority": {
+    "no_new_workflow": true,
+    "no_new_controller": true,
+    "no_runner_change": true,
+    "no_paid_API": true,
+    "no_GPU_first_use": true,
+    "no_original_external_first_use": true,
+    "no_merge": true,
+    "no_promotion": true,
+    "no_deployment": true
+  }
+}
