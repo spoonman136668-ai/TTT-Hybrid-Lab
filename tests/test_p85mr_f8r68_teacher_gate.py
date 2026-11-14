@@ -153,3 +153,19 @@ def test_full_frozen_teacher_imitation_dev_receipts_not_assumed_success():
         assert v["checks"]["cold_start_replay_exact"]
         assert v["all_frozen_checks"]==all(v["checks"].values())
     r68.retain_ci_receipt(result)
+
+
+def test_binary_gate_closed_loop_receipt_json_is_builtin_int():
+    """Regression for both original OS failures at SHA 69862f35: NumPy int64."""
+    import json
+
+    source = r68.worlds("FIT")
+    stable = next(x for x in source if not x["evaluator_switched_only"])
+    switched = next(x for x in source if x["evaluator_switched_only"])
+    examples = [stable, switched]
+    model = r68.BinaryGate("FULL_ORDERED_MLP", r68.SEEDS[0])
+    receipt = r68.score("FULL_ORDERED_MLP", model, examples, [])
+    assert type(receipt["total_bank_switches"]) is int
+    assert receipt["selected_event_count"] == 2*r68.N
+    assert receipt["allocated_fast_floats"] == r68.FAST
+    json.dumps(receipt, allow_nan=False)
