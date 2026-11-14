@@ -23,7 +23,7 @@ SCHEMA = "ttt-hybrid.f8r57-intervention-task-admission-freeze.v1"
 def source_only_audit():
     raw = FREEZE.read_bytes()
     blob = hashlib.sha1(b"blob " + str(len(raw)).encode() +
-                        b"\\0" + raw).hexdigest()
+                        b"\0" + raw).hexdigest()
     if blob != FREEZE_BLOB:
         raise ValueError("F8R57_FROZEN_PROTOCOL_DRIFT")
     freeze = json.loads(raw)
