@@ -311,6 +311,20 @@ class R49LongHistoryFactualMemory(r34.FactualMemory):
             dim=-1)).squeeze(-1)
 
 
+def stable_public_top_two(tag):
+    """Return highest two *observed* event tags with a chronological tie rule.
+
+    On interventions that erase all public tags, the inputs have no ranking
+    information: stable sort retains first-seen order, rather than relying
+    on platform-specific torch.topk tie behavior. No evaluator metadata,
+    hidden labels, learned values or scored-world outcomes determine ties.
+    """
+    if (tag.ndim != 2 or tag.shape[1] < 2 or
+        not bool(torch.isfinite(tag).all())):
+        raise ValueError("F8R49_INVALID_PUBLIC_EVENT_RANKING")
+    return torch.argsort(tag, dim=-1, descending=True, stable=True)[:, :2]
+
+
 class Policy(nn.Module):
     def __init__(self,arm,seed,offset):
         super().__init__()
@@ -353,7 +367,7 @@ class Policy(nn.Module):
             if self.arm!="raw_context_selector" and not force_raw_history:
                 # A public-key top-two retrieval inductive bias, not a private
                 # generator-cue index and not learned event discovery.
-                ids=torch.topk(tag,2,dim=-1).indices
+                ids=stable_public_top_two(tag)
                 active_tag=torch.gather(tag,-1,ids)
                 active_delta=torch.gather(delta,-1,ids)
             else:
