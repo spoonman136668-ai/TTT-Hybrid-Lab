@@ -42,7 +42,16 @@ TRAIN_ARMS=("HybridPilot_FULL","HybridPilot_NO_TTT","HybridPilot_NO_ATTENTION",
 
 
 def git_blob(raw):
-    return hashlib.sha1(b"blob "+str(len(raw)).encode()+b"\0"+raw).hexdigest()
+    """Verify original canonical Git text blob on Windows and Unix.
+
+    Git's Windows checkout can materialize CRLF while its committed object is
+    LF. Normalize ONLY that representation difference, never changes to
+    source content, constants, or protocol. Reject other stray CR bytes.
+    """
+    canonical=raw.replace(b"\r\n",b"\n")
+    if b"\r" in canonical:
+        raise RuntimeError("R74_UNSUPPORTED_TEXT_CARRIAGE_RETURN")
+    return hashlib.sha1(b"blob "+str(len(canonical)).encode()+b"\0"+canonical).hexdigest()
 
 
 def frozen():
