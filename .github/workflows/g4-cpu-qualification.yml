@@ -52,3 +52,49 @@ jobs:
           path: local_runs/*.json
           if-no-files-found: warn
           retention-days: 30
+
+
+  # One CPU-only development training milestone attached to the EXISTING G4
+  # qualification workflow. No new scheduled trigger, runner, controller, or
+  # privileged GPU action. Only the original R76 PR branch, once per job
+  # attempt, can run a bounded 1024-update full-width FIT training.
+  r76-first-fit-milestone:
+    name: R76 first 1024 actual FIT updates / ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.ref == 'research/r76-max-width-1024-fit-checkpoint-20261115' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    steps:
+      - name: Checkout exact candidate, no persisted credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          submodules: false
+          lfs: false
+          clean: true
+
+      - name: Pin CPU Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-cpu.txt
+
+      - name: Install original pinned CPU dependencies
+        run: python -m pip install --disable-pip-version-check --no-input -r requirements-cpu.txt --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+
+      - name: Train original full-width R75 Hybrid and both conventional controls on FIT only
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r76_fit_milestone
+
+      - name: Preserve original FIT receipt and whole optimizer/RNG checkpoints
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-hybrid-r76-original-FIT-${{ github.event.pull_request.head.sha }}-${{ github.run_id }}
+          path: |
+            local_runs/r76_fit_milestone.json
+            local_runs/r75_cumulative_fit/*.pt
+          if-no-files-found: warn
+          retention-days: 30
