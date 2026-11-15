@@ -1,0 +1,129 @@
+{
+  "schema": "ttt-hybrid.r78-2048-to-4096-two-bounded-stages.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R78_SOURCE_TEST_WORKFLOW_FIRST_USE",
+  "classification": "NATIVE_CPU_FIT_ONLY_HIGH_FIRST_CUMULATIVE_TRAINING_NOT_SCIENTIFIC_QUALIFICATION",
+  "parent": {
+    "R77_PR": 272,
+    "R77_exact_SHA": "7af6784d814224988a77aab98146d61c906325cc",
+    "R77_G4_run_id": 43719168985,
+    "R77_private_artifact_id": 14163589182,
+    "R77_private_artifact_name": "ttt-hybrid-r77-resume-7af6784d814224988a77aab98146d61c906325cc-43719168985",
+    "R77_artifact_digest": "sha256:2bde1690c31ec381c4e444853f0262b75a11d6120c4f767c05433b3e895173df",
+    "R77_artifact_bytes": 186542465,
+    "R77_freeze_git_blob": "7fc188627bc2081d2dd1f657fd430b3541df851e",
+    "R76_immutable_original_git_SHA": "b034eeb054763b5f8423a3413af2655ff0facb03",
+    "R74_freeze_git_blob": "7deb2cd19bcd06ef0800e79a1588698c74ae350d",
+    "R75_freeze_git_blob": "2cf720b2214715c7977ffc5b87ea45ed193e3087",
+    "R76_freeze_git_blob": "fde88a6cdd0a2956e91b412aaa1567275055babc",
+    "R75_math_engine_sha256": "26bf9d3c8bfeeeed1b7aecd0153e8b6a04bfa1e83557af7b4ff5a3260187747d",
+    "R75_driver_sha256": "471856df78a1b32d2663b144b40b4af700a0aaf21d2428512897a686ff8eee34",
+    "source_scientific_DEV_OOD_spent": false
+  },
+  "source_checkpoint": {
+    "original_inner_receipt": "r77_continuation_receipt.json",
+    "original_inner_api": "r77_verified_original_artifact.json",
+    "directory": "r77_intermediate",
+    "checkpoint_sha256": {
+      "HybridPilot_FULL": "4d83d86768ec02aa47d3717b63a16df0f643d45febe5aa45520e22895b9bf37f",
+      "GRU64": "80b88223110db7d9f003462ccebfb2ce426a9b8e69aaf8e4f02b80f79be3efe1",
+      "MLP64": "f50bd90580218539f869942186eb4bf94dde064eecddf034f2a8a430880ab627"
+    },
+    "checkpoint_bytes": {
+      "HybridPilot_FULL": 201872026,
+      "GRU64": 193086,
+      "MLP64": 71870
+    },
+    "measured_FIT_validation_at_2048": {
+      "HybridPilot_FULL": 0.4745944179594517,
+      "GRU64": 0.46975325932726264,
+      "MLP64": 0.6037752963602543
+    },
+    "checkpoint_original_identity_sha": "b034eeb054763b5f8423a3413af2655ff0facb03",
+    "checkpoint_R77_lineage_sha": "7af6784d814224988a77aab98146d61c906325cc",
+    "original_frozen_training_history_only_1024": true,
+    "all_models_have_2048_AdamW_and_PCG64_state": true,
+    "retain_parent_checkpoint_hashes_and_sources": true
+  },
+  "learning": {
+    "arms": [
+      "HybridPilot_FULL",
+      "GRU64",
+      "MLP64"
+    ],
+    "width": 1024,
+    "sequence": 128,
+    "batch": 2,
+    "seed": 997601,
+    "stages": [
+      {
+        "id": 1,
+        "start": 2048,
+        "end": 3072
+      },
+      {
+        "id": 2,
+        "start": 3072,
+        "end": 4096
+      }
+    ],
+    "all_stage_unseen_selected_consequences_per_arm": 262144,
+    "fully_completed_cumulative_selected_outcomes_per_arm_at_final": 1048576,
+    "FIT": "R74 frozen FIT512; unchanged selected causal action consequences and PCG64 sample positions",
+    "FIT_validation": "R74 frozen FIT_VALIDATION128; no DEV/OOD before original 7 arms x2 seeds 65536 science",
+    "optimizer": "R75 exact original AdamW lr0.001 WD0.0001 grad_clip1.0 and strictly causal triangular memory",
+    "first_stage": "Use original exact 2048 parent optimizer+PCG64. Preserve original SHA identity and R77 lineage. Output separate 3072 intermediate escrow.",
+    "second_stage": "Use exactly same-run first stage artifact after first stage SUCCESS; verify original stage1 receipt and all checkpoint SHA256, optimizer+RNG, parent chain. Append only unexecuted 3073..4096 updates. Output original frozen 4096 per-arm milestone.",
+    "no_post_result_tuning": true,
+    "no_paid_API": true,
+    "not_claim_matched_FLOPs": true,
+    "full_science_unexecuted": true
+  },
+  "execution": {
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "trigger": "ONE_EXISTING_G4_PR_ONLY; NO_NEW_WORKFLOW_SCHEDULE_RUNNER_OR_CONTROLLER",
+    "ubuntu_hosted_only": true,
+    "after_both_G4_windows_ubuntu_pass": true,
+    "G5_G7_required": true,
+    "first_original_GITHUB_RUN_ATTEMPT_only": true,
+    "same_repo_branch_exact": true,
+    "GitHub_artifact_readonly_token": "actions:read,contents:read",
+    "original_artifact_download_action_SHA": "cc203385981b70ca67e1cc392babf9cc229d5806",
+    "child_artifact_download_same_workflow_run": true,
+    "stage1_input_original_artifact_id": 14163589182,
+    "two_sequential_isolated_29min_jobs": true,
+    "max_wall_minutes_each": 29,
+    "max_parallel_fit_training_workers": 1,
+    "original_source_exact_SHA_required": true,
+    "disable_unknown_effect_replay": true,
+    "retain_private_artifacts_days": 30
+  },
+  "qualification": {
+    "G4_full_regression_both_OS_on_final_SHA": true,
+    "G5_cpu": true,
+    "G7_cpu": true,
+    "original_artifact_digest_and_exact_original_readback": true,
+    "all_3_stage1_3072_checkpoint_digest_optimizer_RNG": true,
+    "all_3_stage2_4096_checkpoint_digest_optimizer_RNG": true,
+    "validate_original_2048_fit_MSE_within_abs_1e_minus6_before_training": true,
+    "validate_stage1_3072_fit_MSE_within_abs_1e_minus6_before_second_stage": true,
+    "all_stage_outputs_finite": true,
+    "no_DEV_OOD_scored": true,
+    "on_pass": "PASS_CPU_ENGINEERING_FIT_4096_FIRST_SEED_THREE_ARMS_ONLY",
+    "on_timeout_or_failure": "INCOMPLETE_RESOURCE_CUSTODY_OR_RUNNER_LIMIT, never SCIENTIFIC_NO_GO",
+    "science": "UNVERIFIED independently of FIT_VALIDATION",
+    "original_R74_science_full_target": "7 architectures/ablations/control arms * 2 seeds * 65536 updates each",
+    "deployment": "HOLD"
+  },
+  "authority": {
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "external_science_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
