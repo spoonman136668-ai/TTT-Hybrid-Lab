@@ -397,3 +397,54 @@ jobs:
           path: local_runs/r81_paired_history_seed${{ matrix.seed }}.json
           if-no-files-found: warn
           retention-days: 30
+
+
+  # R82 genuine selected action-value policy from fresh factual worlds.
+  # Only existing G4 workflow; exact branch, two independent hosted CPU seeds,
+  # admitted AFTER mandatory both-OS full repo tests and source guards PASS.
+  r82-active-factual-value:
+    name: R82 active intervention value / seed ${{ matrix.seed }}
+    needs: cpu-qualification
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r82-active-calibration-value-20261115' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [998621, 998633]
+    runs-on: ubuntu-latest
+    timeout-minutes: 29
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout exact source without retained credentials
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          clean: true
+          submodules: false
+          lfs: false
+
+      - name: Pin original 3.11 Python CPU toolchain
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-cpu.txt
+
+      - name: Install exact CPU-only model/test dependency pins
+        run: python -m pip install --disable-pip-version-check --no-input -r requirements-cpu.txt --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+
+      - name: Train factual action-values then first-use independent policy regret
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+          R82_SEED: ${{ matrix.seed }}
+        run: python -m experiments.r82_active_policy --seed ${{ matrix.seed }}
+
+      - name: Preserve original per-seed policy choice and value receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-hybrid-r82-active-seed${{ matrix.seed }}-${{ github.event.pull_request.head.sha }}-${{ github.run_id }}
+          path: local_runs/r82_active_policy_seed${{ matrix.seed }}.json
+          if-no-files-found: warn
+          retention-days: 30
