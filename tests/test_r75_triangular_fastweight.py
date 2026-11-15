@@ -118,6 +118,53 @@ def test_exact_engine_custody_and_final_65536_gate_blocks_early(tmp_path):
         r75.deny_protected_first_use()
 
 
+
+def test_rng_optimizer_and_model_cold_checkpoint_resume_same_next_factual_step(tmp_path):
+    seed=r74.SEEDS[0]
+    fit=r74.factual_worlds("FIT",count_override=6,sequence=32)
+    one=training.optimized_model("HybridPilot_FULL",64,seed)
+    opt=torch.optim.AdamW(one.parameters(),lr=.001,weight_decay=.0001)
+    rng=np.random.default_rng(seed+24619999)
+    first=rng.integers(0,len(fit["input"]),2)
+    initial_loss=training.one_fit_update(one,opt,fit,first)
+    assert np.isfinite(initial_loss)
+    identity=training.identity("HybridPilot_FULL",64,32,seed)
+    path=tmp_path/"R75-factual-resume.pt"
+    torch.save({"identity":identity,"updates_completed":1,
+                "model_state":one.state_dict(),
+                "optimizer_state":opt.state_dict(),
+                "FIT_sampling_rng":rng.bit_generator.state,
+                "FIT_validation_history":[]},path)
+    state=torch.load(path,map_location="cpu",weights_only=True)
+    assert state["identity"]==identity
+    assert state["identity"]["engine"]==training.ENGINE
+    two=training.optimized_model("HybridPilot_FULL",64,seed)
+    restored=torch.optim.AdamW(two.parameters(),lr=.001,weight_decay=.0001)
+    two.load_state_dict(state["model_state"],strict=True)
+    restored.load_state_dict(state["optimizer_state"])
+    rng2=np.random.default_rng(1)
+    rng2.bit_generator.state=state["FIT_sampling_rng"]
+    next1=rng.integers(0,len(fit["input"]),2)
+    next2=rng2.integers(0,len(fit["input"]),2)
+    np.testing.assert_array_equal(next1,next2)
+    loss1=training.one_fit_update(one,opt,fit,next1)
+    loss2=training.one_fit_update(two,restored,fit,next2)
+    assert loss1==pytest.approx(loss2,rel=0,abs=0)
+    for x,y in zip(one.parameters(),two.parameters()):
+        assert torch.equal(x,y)
+
+
+def test_complete_scientific_scoring_fails_closed_before_source_creation(tmp_path,monkeypatch):
+    original=r74.factual_worlds
+    def no_protected_data(panel,*args,**kwargs):
+        if panel in ("DEV","OOD"):
+            raise AssertionError("R75_HOLDOUT_WAS_READ_BEFORE_FULL_MODEL_CUSTODY")
+        return original(panel,*args,**kwargs)
+    monkeypatch.setattr(r74,"factual_worlds",no_protected_data)
+    with pytest.raises(FileNotFoundError,match="R75_INCOMPLETE_65536_TRAINING"):
+        training.score_completed_heldout(1024,128,checkpoint_dir=tmp_path)
+
+
 def test_source_neutral_cpu_exact_host_profile_and_retained_original_ci_receipt():
     if os.environ.get("GITHUB_ACTIONS")!="true":
         pytest.skip("Original full-width CPU benchmark written only by G4 CI")
