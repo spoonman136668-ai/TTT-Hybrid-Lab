@@ -1,0 +1,65 @@
+{
+  "schema": "ttt-hybrid.r76-high-first-fit-milestone.v1",
+  "stage": "FROZEN_BEFORE_R76_TRAINING_PR_AND_ORIGINAL_CI",
+  "scope": "FIT_ONLY_NATIVE_CPU_LEARNING_DEV_MAX_WIDTH_FIRST_NOT_INDEPENDENT_SCIENCE",
+  "parent": {
+    "R75_PR": 270,
+    "R75_exact_SHA": "131f9f5de17073b25f7008fbe6dbcb21f22b7f43",
+    "R75_qual": "BOTH_OS_G4_G5_G7_PASS_ENGINEERING_ONLY",
+    "R75_freeze_blob": "2cf720b2214715c7977ffc5b87ea45ed193e3087",
+    "R74_freeze_blob": "7deb2cd19bcd06ef0800e79a1588698c74ae350d",
+    "R74_reference_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "R75_original_acceleration": "6.62x_Ubuntu_6.96x_Windows_single_step",
+    "prior_scored_R64_to_R73_unused": true
+  },
+  "training": {
+    "goal": "EXACT_FIRST_CUMULATIVE_1024_TRAINING_CHECKPOINT_MAX_FROZEN_WIDTH_NOT_CEILING",
+    "architecture": [
+      "HybridPilot_FULL",
+      "GRU64",
+      "MLP64"
+    ],
+    "seed": 997601,
+    "width": 1024,
+    "sequence": 128,
+    "batch": 2,
+    "optim_updates": 1024,
+    "selected_real_FIT_events_per_arm": 262144,
+    "source": "R74 original frozen synthetic FIT512 only; FIT_VALIDATION128 used only for read-only pre/post MSE, never DEV/OOD. Same exact fixed source seed and actual selected action consequence only.",
+    "optimizer": "Original R75 AdamW lr=.001 wd=.0001 grad clip1.0; same sampling RNG per arm and optimizer steps; no architecture/frozen threshold changes",
+    "engine": "R75 strict-lower triangular fastweight for Hybrid, unchanged R75 ordinary GRU64/MLP64",
+    "weights": "Original R75 driver emits full AdamW optimizer, NumPy sampling RNG, all model parameters, exact original source and SHA identity in checkpoint.",
+    "baseline": "Fully trained (same 1024 updates and data selection) GRU64 and MLP64, report unmodified FIT_validation MSE and cost; don't call fully scientifically trained.",
+    "post_training": "No DEV/OOD generated, score only FIT_validation, preserve negative/null, no tuning from measured results."
+  },
+  "execution": {
+    "owner": "EXISTING_G4_GITHUB_HOSTED_UBUNTU_CPU_QUALIFICATION_WORKFLOW_ONLY",
+    "trigger": "ONE_PULL_REQUEST_ON_R76_BRANCH_ONLY_NO_SCHEDULE_NO_WORKFLOW_DISPATCH",
+    "windows": "Existing G4 Windows full repo regression unchanged, no expensive second training",
+    "timeout_minutes": 29,
+    "source_runner": "GitHub-hosted ubuntu-latest; do not substitute self-hosted GPU or FORGE runner",
+    "no_paid_API": true,
+    "resource": "CPU only, complete inside existing 29min bounded CI job or INCOMPLETE; no automatic retry",
+    "artifact": "Immutable private GitHub Actions artifact retains original 1024-step CPU model+optimizer+RNG checkpoints and JSON receipt, 30-day retention; artifact digest and inner source SHA must be verified.",
+    "exact_SHA": "Runner checkout must be exact PR head and clean; stop if candidate drift before train or output."
+  },
+  "predeclared_interpretation": {
+    "FULL_ENGINEERING_PASS": "Exact 1024 cumulative updates with 3 matching control arms, factual FIT_validation, checkpoint source/custody and retention confirmed",
+    "RESOURCE_LIMIT": "INCOMPLETE_RESOURCE_OR_RUNNER_LIMIT, no scientific failure or performance ceiling",
+    "learning": "FIT progress is descriptive, not DEV/OOD; even large improvement is NOT learning, transfer, cold retention or intelligence qualification.",
+    "science": "UNVERIFIED; full R74/R75 target remains both seeds, all seven arms, 65536 updates each before DEV/OOD scoring.",
+    "deployment": "HOLD"
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "external_science_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "new_controller": false,
+    "FORGE_integration": false
+  }
+}
