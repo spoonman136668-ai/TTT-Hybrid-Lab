@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.r75-triangular-fastweight-engine.v1",
+  "stage": "FROZEN_AFTER_UNSCORED_LOCAL_EXPLORATORY_PROTOTYPE_BEFORE_GITHUB_IMPLEMENTATION_AND_INDEPENDENT_CI",
+  "parent": {
+    "R74_SHA": "e5982735e031a572bd0f111615fc61119450b593",
+    "R74_PR": 269,
+    "R74_original_CI": "G4_G5_G7_DUAL_OS_ENGINEERING_PASS",
+    "R74_original_freeze_git_blob": "7deb2cd19bcd06ef0800e79a1588698c74ae350d",
+    "legacy_reference_model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "R74_science": "UNEXECUTED_UNVERIFIED",
+    "no_spent_R64_to_R73_scientific_cohort_access": true
+  },
+  "hypothesis": "A strictly causal triangular linear solve computes the original native TTTLinearMemory online delta-rule read-before-write memory in O(T²W + T³) instead of creating and differentiating O(TW²) online fast-weight states, reducing full forward+backward CPU wall time and activation/RSS at width1024, sequence128, without discarding native TTT functionality.",
+  "math": {
+    "legacy": "W0=0; residual[t]=v[t]-W[t]@k[t]; read[t]=W[t]@q[t]; W[t+1]=W[t]+eta*outer(residual[t],k[t])",
+    "new": "L[t,i]=(eta*k[t]·k[i]) for i<t, L[t,t]=1, L[t,i]=0 for i>t; solve L @ residual = values; read[t]=eta*sum_{i<t}(q[t]·k[i])*residual[i]",
+    "strict_lower_triangular": true,
+    "read_before_write": true,
+    "update_false": "All memory reads exactly zero before projection, same as legacy.",
+    "parameterization": "Preserve exact original TTTLinearMemory class parameters/norm/key/query/value/proj and state_dict names. Replace only forward computation via subclass. Parent model.py untouched.",
+    "numerical": "Mathematically equivalent in real arithmetic, not bitwise identical floating-point update and not guaranteed identical many-step Adam trajectories. No claims without separate full training evaluation."
+  },
+  "qualification": {
+    "CPU_only": true,
+    "source": "Original GitHub candidate CPU torch==2.5.1+cpu, numpy==1.26.4, pytest==8.3.4, both hosted Windows/Ubuntu.",
+    "seeds": [
+      997601,
+      997607
+    ],
+    "small_widths": [
+      16,
+      32,
+      128
+    ],
+    "small_lengths": [
+      8,
+      32,
+      64
+    ],
+    "large_width": 1024,
+    "large_length": 128,
+    "batch": 2,
+    "heads": 4,
+    "exact_parameter_count": 16818178,
+    "forward_max_absolute_error": 0.00001,
+    "all_parameter_gradient_max_absolute_error": 0.00001,
+    "relative_forward_error": 0.0001,
+    "strict_prefix_negative": true,
+    "frozen_original_weights_identity": true,
+    "original_update_false_invariance": true,
+    "full_model_backward_and_update_complete": true,
+    "original_high_first_ref_profile_retained": true,
+    "full_CPU_speedup_target_min": 2,
+    "CPU_wall_budget_per_engine_seconds": 35,
+    "peak_RSS_budget_MiB": 3072,
+    "fully_original_artifact_zip_checksums_and_G4_G5_G7": true
+  },
+  "exploration_disclosure": {
+    "already_observed_before_freeze": true,
+    "environment": "Isolated Linux container (not user GPU), Python3.13, torch2.10.0+cpu, 1 CPU thread, no private R74 DEV/OOD.",
+    "component_width1024_sequence128_seconds": {
+      "serial": 2.79,
+      "triangular": 0.1027
+    },
+    "full_HybridPilot_width1024_sequence128_forward_backward_seconds": {
+      "serial": 3.9039,
+      "triangular": 0.7618
+    },
+    "output_max_abs_error": 2.384185791015625e-7,
+    "full_gradient_max_abs_error": 1.1920928955078125e-7,
+    "status": "EXPLORATORY_ENGINEERING_ONLY_NOT_PROSPECTIVE_CI_OR_SCORING"
+  },
+  "training_custody": {
+    "R74_frozen_FIT_source_and_objective_unchanged": true,
+    "new_engine_identity_required": true,
+    "different_engine_checkpoints_CANNOT_overwrite_or_replay_original_R74_engine": true,
+    "same_original_weights_and_frozen_model_config": true,
+    "any_speedup_law_vs_learning_quality_separate": true,
+    "no_DEV_OOD_scored_under_this_gate": true,
+    "status": "NO_AUTOMATIC_65536_UPDATE_DISPATCH"
+  },
+  "claims": {
+    "on_parity_and_speed": "CPU_ENGINEERING_ACCELERATION_ONLY_NOT_LEARNED_CAPABILITY",
+    "on_parity_without_speed": "ENGINEERING_MATH_COMPATIBLE_BUT_NO_VERIFIED_SPEEDUP",
+    "on_parity_failure": "ENGINEERING_NO_GO",
+    "on_science": "UNVERIFIED_UNEXECUTED"
+  },
+  "authority": {
+    "merge": false,
+    "deploy": false,
+    "promote": false,
+    "FORGE_integration": false,
+    "external_first_use": false,
+    "GPU_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
