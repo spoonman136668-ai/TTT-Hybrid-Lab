@@ -221,6 +221,9 @@ def diagnostic(seed):
         "paired_bootstrap_lower95_above_0_50":lower>=.5,
         "early_improvement_at_least_0_80":group["early"]["public_minus_best_fixed"]>=.8,
         "cold_improvement_at_least_0_80":group["cold"]["public_minus_best_fixed"]>=.8}
+    # Normalize numpy scalar predicates for canonical JSON receipts, without
+    # changing any frozen thresholds, observations, scores or decision values.
+    checks={key:bool(value) for key,value in checks.items()}
     return {
         "seed":seed,"worlds":N,
         "CALIBRATION_source_only":True,
