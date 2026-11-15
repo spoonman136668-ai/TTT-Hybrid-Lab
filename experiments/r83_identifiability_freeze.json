@@ -1,0 +1,101 @@
+{
+  "schema": "ttt-hybrid.r83-observable-action-value-identifiability-v1",
+  "stage": "PROSPECTIVE_FREEZE_AFTER_R82_NO_GO_BEFORE_NEW_SOURCE_OR_EXECUTION",
+  "classification": "BENCHMARK_INFORMATION_IDENTIFIABILITY_DIAGNOSTIC_ONLY; NO MODEL_TRAINING",
+  "parent": {
+    "R82_PR": 277,
+    "R82_SHA": "fc87351eb545d52d04467da29e05c15083fdaba2",
+    "R82_frozen_blob": "4554c4ff084b80c5b43bae6b19a884f71a2bdf28",
+    "R82_both_seed_result": "DEV_ACTIVE_POLICY_NO_GO",
+    "R82_scored_salts_spent": true,
+    "R82_trained_weights_not_reused": true,
+    "R79_gradient_surrogate_not_reused": true
+  },
+  "hypothesis": "A new physically consequential CALIBRATE-vs-EXPLOIT decision can be identified from legal actually observed history, without hidden state or unchosen reward, on sufficiently informative but noisy probe measurements. Benchmark identifiability must be proved before costly new native model training.",
+  "null": "If legal cue-based policy fails to outperform best fixed action and time-preserving shuffled-cue negative by large preregistered realized reward margins, stop this benchmark as underidentified or flawed. Do not train a large model or tune data after result.",
+  "source": {
+    "new_salts": {
+      "CALIBRATION": 25250111,
+      "QUALIFICATION": 25250211,
+      "DEV_SEALED": 25250311,
+      "OOD_SEALED": 25250411
+    },
+    "used_now": "CALIBRATION ONLY; QUALIFICATION/DEV_SEALED/OOD_SEALED not generated",
+    "seeds": [
+      999011,
+      999023
+    ],
+    "worlds_per_seed": 512,
+    "sequence": 64,
+    "early_pivot": 16,
+    "cold_pivot": 48,
+    "cold_flag": "index%2==1",
+    "initial_hidden_sign": "Balanced seeded ±1 independent of public time and world-index parity",
+    "changes": "Unseen reversible A->B->A law; for early/cold probes the current law sign is balanced and private",
+    "public_features": "13 numeric current chosen action onehot4, previous chosen action onehot4, previous factual observation4, normalized public time",
+    "probe": "Exactly one actual PROBE action1 at t=pivot-1; returns public noisy sign cue in observed dimension2 at t=pivot through previous observation; no hidden sign direct",
+    "cue_noise_standard_deviation": 0.4,
+    "prior_actions": "PROBE/exploit only, no calibrate before pivot so actuator state remains unset; no current/future reward leak",
+    "branch_actions": [
+      "CALIBRATE_0",
+      "EXPLOIT_POS_2"
+    ],
+    "physicals": "Two evaluator-only actually realized paired branches share law and all exogenous future innovations; after chosen branch eight common exploits, calibration cost -0.5; exploit reward sign and state dependent, so both actions have positive advantage on a suitable hidden-law subset",
+    "future_window": 9,
+    "exploitation_amplitude_calibrated": 1,
+    "exploitation_amplitude_unset": 0.2,
+    "exploitation_unset_penalty": -0.1,
+    "exploitation_noise_std": 0.1,
+    "hidden_state_not_legal_to_policy": true,
+    "future_branch_outcomes_not_legal_to_policy": true
+  },
+  "policies": {
+    "PUBLIC_PROBE_SIGN_RULE": "CALIBRATE if observed actual previous PROBE cue >0 else EXPLOIT_POS; only policy public prefix features",
+    "SHUFFLED_PROBE_NEGATIVE": "Same sign rule but public cue permuted between other worlds independently per seed within same pivot group, breaking cue-to-law association while preserving marginal cue/time distribution",
+    "BEST_FIXED_ACTION_EVALUATOR": "Maximum realized average reward of ALWAYS_CALIBRATE and ALWAYS_EXPLOIT on same calibration worlds; evaluator-only, thus optimistic fixed baseline",
+    "PRIVILEGED_LAW_ORACLE_EVALUATOR": "The world-by-world better actually realized branch evaluated after the fact; never visible to legal policies"
+  },
+  "gates": {
+    "two_seeds_required": true,
+    "public_probe_sign_accuracy_min": 0.8,
+    "public_rule_reward_minus_best_fixed_min": 1.5,
+    "public_rule_reward_minus_shuffled_min": 1.5,
+    "public_rule_oracle_regret_max": 0.75,
+    "paired_bootstrap_resamples": 2000,
+    "paired_bootstrap_seed": 25250555,
+    "lower95_PUBLIC_minus_best_fixed_min": 0.5,
+    "early_and_cold_reward_improvement_over_fixed_min": 0.8,
+    "prefix_future_change_negative_exact": true,
+    "public_hidden_sign_not_exposed": true,
+    "never_generate_sealed_panels": true,
+    "classification_pass": "ENGINEERING_INFORMATION_IDENTIFIABILITY_CALIBRATION_PASS_ONLY",
+    "classification_fail": "ENGINEERING_BENCHMARK_INFORMATION_NO_GO",
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "existing_G4_workflow_only": true,
+    "full_g4_dual_OS_before_diagnostic": true,
+    "g5_cpu": true,
+    "g7_cpu": true,
+    "same_repo_branch_first_attempt": true,
+    "github_hosted_ubuntu_CPU": true,
+    "max_wall_minutes": 8,
+    "no_new_workflow": true,
+    "no_new_runner": true,
+    "no_new_scheduler": true,
+    "no_paid_API": true,
+    "original_receipt_private_30_days": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "external_science_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
