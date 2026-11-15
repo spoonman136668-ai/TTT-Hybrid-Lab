@@ -1,0 +1,132 @@
+{
+  "schema": "ttt-hybrid.r81-paired-intervention-history-value-dev.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R81_SOURCE_AND_FIRST_USE",
+  "parent": {
+    "R80_PR": 275,
+    "R80_exact_SHA": "e191369166393b9f55e2108ab224399433411d39",
+    "R80_freeze_blob": "57edf593e0b68dfd2c84199cb9c762244b7d7cc3",
+    "R80_result": "DEV_ROUTER_NO_GAIN_OR_NO_GO_both_seeds",
+    "R80_scored_salts_ineligible": true,
+    "R78_4096_weight_state_not_used": true,
+    "R79_surrogate_not_used": true
+  },
+  "hypothesis": "At maximal qualified native width, a factual selected-action model with authentic prior selected consequences will infer the effect of physical intervention on subsequent rewards better than its identical-parameter no-history control and stronger trained conventional controls.",
+  "null": "If intact native does not beat its same-architecture history-blinded arm on previously unseen factual DEV/OOD and on counterfactual paired factual rollout effects, history dependence is unverified; negative outcome preserved without tuning.",
+  "models": {
+    "width": 1024,
+    "sequence": 64,
+    "batch": 2,
+    "heads": 4,
+    "seeds": [
+      998431,
+      998443
+    ],
+    "arms": [
+      "NATIVE_FULL_HISTORY",
+      "NATIVE_NO_HISTORY",
+      "GRU64_FULL_HISTORY",
+      "GRU256_FULL_HISTORY",
+      "GRU256_NO_HISTORY",
+      "MLP256_FULL_HISTORY"
+    ],
+    "original_native": "HybridPilot with original hard CausalDepthRouter, original causal SSM/attention and accelerated mathematically equivalent R75 TTT (not R79 surrogate or official fused Mamba2 GPU)",
+    "same_initial_native_full_and_blind": true,
+    "no_history": "Zero 13-column factual input fields 4..11 (previous selected action 4 and previous selected 4-vector observation); retain current action and normalized public time, no change to true targets. Applied in training and evaluation.",
+    "grus": "Conventional PyTorch nn.GRU(input_size=13,hidden_size=64 or 256,batch_first=True) plus 1-output head; explicit no-history GRU256 control.",
+    "mlp": "Conventional 13->256->256->1 Tanh MLP, no recurrent state, same full factual selected history fields.",
+    "all_models_from_scratch_no_R78_learnt_weights": true
+  },
+  "worlds": {
+    "salts": {
+      "FIT": 25210111,
+      "FIT_VALIDATION": 25210211,
+      "DEV": 25210311,
+      "OOD": 25210411
+    },
+    "pair_counts": {
+      "FIT": 192,
+      "FIT_VALIDATION": 32,
+      "DEV": 64,
+      "OOD": 64
+    },
+    "fresh_generator": "Independent new fixed-salt two-rollout causal physics. Each matched pair shares a hidden A-B-A latent law, innovations and exogenous action schedule, except at one frozen pivot t=8 (t=12 OOD): one rollout actually chooses CALIBRATE action0 (sets actuator state to current law), its pair actually chooses PROBE action1 (leaves actuator state unchanged). Both are actual factual rollouts, no counterfactual target supplied to model. Following window t=pivot+1..pivot+8 uses common selected exploit actions2/3 without recalibration so difference in subsequent selected reward is caused by the pivot intervention. Time of B/A latent transitions and noise levels shift on new OOD worlds.",
+    "law": "Initial latent sign alternates by world; subset flips A->B between steps22..29, returns to A at steps45..53; OOD B 17..24 return 39..47; public never observes law directly.",
+    "input": "13 float32: current exogenous action onehot[0:4], previous chosen action onehot[4:8], previous actually selected observation[8:12], current public normalized t[12]. No latent law, future, current reward or unselected action outcome.",
+    "outcome": "Actual chosen action returns four noisy factual observation dims; calibrate cost and sets state=law, probe cost and returns noisy law cue in obs2 (sign inverted OOD); exploit selected reward in obs0 depends on latent law, action sign, and whether actuator state matches law.",
+    "action_probabilities": [
+      0.12,
+      0.1,
+      0.39,
+      0.39
+    ],
+    "paired_window": "Exactly 8 common exploit steps after branch pivot; all innovations and hidden laws matched within pairs; perform paired prediction contrast from heldout factual rollouts, never directly train on contrast labels.",
+    "independent_generator_salts_and_pairs": true,
+    "old_R64_to_R80_scored_cohorts_forbidden": true,
+    "no_R74_DEV_OOD_firstuse": true
+  },
+  "training": {
+    "steps": 512,
+    "batch": 2,
+    "optimizer": "AdamW lr0.001 wd0.0001 grad clip1.0",
+    "source": "FIT only, same 512 preselected world indices for every arm per seed and exact observed selected rewards, no protected labels",
+    "fit_validation": "32 fresh pairs (64 trajectories) before and after each arm, no tuning",
+    "seed_specific_weights_and_world_sample_rng": true,
+    "all_models_full_512_updates_before_DEV_OOD": true,
+    "all_process_CPU_time_recorded": true
+  },
+  "evaluation": {
+    "DEV_pairs": 64,
+    "OOD_pairs": 64,
+    "heldout_after_training_only": true,
+    "metric": "mean squared error to actually selected reward, per-world and paired-intervention contrast MSE on 8 common exploit steps",
+    "cold_A_return": "subset of switched worlds after A return, actual selected-reward squared prediction loss",
+    "paired_bootstrap": {
+      "resamples": 2000,
+      "seed": 25210555,
+      "unit": "paired world (two actual intervention trajectories)",
+      "confidence_lower_quantile": 0.025
+    }
+  },
+  "frozen_gates": {
+    "NATIVE_FULL_vs_NO_HISTORY_DEV_relative_MSE_gain_min": 0.05,
+    "NATIVE_FULL_vs_NO_HISTORY_OOD_relative_MSE_gain_min": 0.05,
+    "NATIVE_FULL_vs_NO_HISTORY_cold_return_relative_MSE_gain_min": 0.05,
+    "NATIVE_FULL_vs_NO_HISTORY_paired_intervention_contrast_MSE_gain_min": 0.1,
+    "NATIVE_FULL_vs_zero_contrast_baseline_gain_min": 0.1,
+    "NATIVE_FULL_vs_strongest_trained_conventional_DEV_MSE_gain_min": 0.05,
+    "bootstrap_lower95_native_full_vs_native_blind_DEV_positive": true,
+    "both_seeds_every_check": true,
+    "initial_full_blind_params_identical": true,
+    "actual_factual_rollouts_without_leakage": true,
+    "fully_trained_512_updates_per_arm": true,
+    "classification_if_pass": "DEV_PAIRED_ACTION_HISTORY_SIGNAL_ONLY_NOT_INDEPENDENT_SCIENCE",
+    "classification_if_fail": "DEV_HISTORY_HYPOTHESIS_NO_GO",
+    "classification_if_incomplete": "INCOMPLETE_CI_OR_RESOURCE_NOT_SCIENTIFIC_NO_GO",
+    "actual_action_selection_policy_not_trained": true,
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "route": "existing original G4 pull_request, dual OS full regression then two seed-isolated GitHub-hosted Ubuntu CPU jobs only",
+    "per_seed_timeout_minutes": 29,
+    "first_attempt_only": true,
+    "same_repo_exact_branch_and_SHA": true,
+    "private_results_30_days": true,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_api": false,
+    "rerun_scored_holdouts": false
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "external_science_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
