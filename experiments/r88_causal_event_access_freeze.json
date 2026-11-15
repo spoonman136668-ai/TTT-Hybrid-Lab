@@ -1,0 +1,192 @@
+{
+  "schema": "ttt-hybrid.r88-public-causal-event-access-v1",
+  "stage": "IMMUTABLE_PROSPECTIVE_FREEZE_ONLY_BEFORE_R88_IMPLEMENTATION_TEST_CI_OR_FRESH_SOURCE",
+  "classification": "FALSIFIABLE_DEVELOPMENT_MECHANISM_DIAGNOSTIC_NO_NATIVE_MODEL_PROMOTION",
+  "parent": {
+    "R87_PR": 282,
+    "R87_source_sha": "624c3f07a6e3bbb59007233aeeb3ac54fc6099d5",
+    "R87_freeze_blob": "794719491f4c07cb36a68c405f6deb9f1c0621c8",
+    "R87_science": "R87_COMPOSITION_BOTTLENECK_NO_GO_BOTH_SEEDS_7_OF_10_FROZEN_CHECKS_PASS",
+    "R87_spent_salts": [
+      25290111,
+      25290211,
+      25290311,
+      25290411
+    ],
+    "R86_spent_salts": [
+      25280111,
+      25280211,
+      25280311,
+      25280411
+    ],
+    "R85_spent": [
+      25270111
+    ],
+    "R85_reserved_untouched": [
+      25270211,
+      25270311,
+      25270411
+    ],
+    "no_prior_weights_or_data": true
+  },
+  "hypothesis": "R87 showed a factual-return learner on legally extracted A-role factors recovered useful interventions but a full-history GRU did not. A learned role-query event retrieval layer constrained only by public A phase and role metadata should improve factual-return learning over an unmodified full public-history GRU on new long-gap causal A-B-A worlds; deterministic A slot extraction, public phase mask, and a shuffled cue-slot negative diagnose where advantage enters.",
+  "null": "If either seed fails any predeclared DEV or novel shifted OOD reward, cold, oracle-regret, legal-choice, or bootstrapped comparison threshold, record R88_EVENT_ACCESS_NO_GO, preserve it and do not tune or replay scored sources.",
+  "source": {
+    "independent_salts": {
+      "FIT": 25300111,
+      "FIT_VALIDATION": 25300211,
+      "DEV": 25300311,
+      "OOD_SHIFT": 25300411
+    },
+    "seeds": [
+      1000011,
+      1000023
+    ],
+    "counts": {
+      "FIT": 2048,
+      "FIT_VALIDATION": 256,
+      "DEV": 256,
+      "OOD_SHIFT": 256
+    },
+    "physical_length_ticks": 224,
+    "full_public_history_selected_rows": 48,
+    "A_public_PROBE_times": [
+      8,
+      16,
+      24,
+      32
+    ],
+    "B_public_PROBE_times": [
+      104,
+      112,
+      120,
+      128
+    ],
+    "OOD_A_times": [
+      12,
+      22,
+      30,
+      40
+    ],
+    "OOD_B_times": [
+      110,
+      120,
+      136,
+      148
+    ],
+    "pivots": {
+      "early": 64,
+      "cold": 192,
+      "OOD_early": 68,
+      "OOD_cold": 208
+    },
+    "worlds": "Use ONLY original R85 pure deterministic physical constructor and R86 future-only OOD shift with new independent RNG SeedSequence([salt,seed,index]); constructor supplied index%512 solely for balanced early/cold parity; original R87 legal 48-row public prefix retained. Never call old dataset APIs or reuse spent R87/R86 worlds/weights.",
+    "FIT_labels": "Random factual one-branch CALIBRATE0 or EXPLOIT_POS2 performed physically, only the chosen realized nine-step return. No oracle, hidden law, unchosen payoff, explicit parity sign or teacher outputs fed to learner.",
+    "first_use": "New separate FIT/VALID samples only inside exact SHA first-attempt hosted CI. Generate DEV/OOD worlds ONLY after all six model/optimizer train budgets complete, no scored-panel selection or retuning, no extra protected scientific first use."
+  },
+  "arms": [
+    "GRU64_FULL_PUBLIC_RAW",
+    "GRU64_A_PHASE_MASKED",
+    "GRU64_PUBLIC_A_SLOTS",
+    "GRU64_PUBLIC_A_SLOTS_SHUFFLED",
+    "LEARNED_PUBLIC_ROLE_ATTENTION",
+    "MLP64_LEGAL_A_FACTORS"
+  ],
+  "representations": {
+    "raw": "Original 48×13 public selected-action/previous observation/time rows. Strong same-width GRU64 with no event hint.",
+    "public_phase_mask": "Same 48×13 rows and GRU64. Mask previous selected 4D observations ONLY at rows that are not public A-phase probe responses; still retain original current/prior action/time and all prior positions; mask uses actually observed public marker/PROBE, not private sign.",
+    "public_A_slots": "Collect four actual selected prior A-phase probe response rows via publicly visible phase marker and role ID, sorted by role, with the original selected pivot action row as fifth token. Each full 13D legal row retains cue/noise/timestamp; no parity sign manually provided. Five-step GRU64 uses same original 13D input and GRU64 parameter count as full-history arm; different effective recurrent length and data sparsity so cost not matched.",
+    "shuffled_A_slots": "Same five-step GRU64 but A probe token quartets permuted across different physical worlds within early/cold stratum, while own chosen action/pivot row retained, using separately pinned seed/salt per data panel. No original A cues remain for the target outcome in the negative input.",
+    "learned_role_attention": "Input full 48x13 public history and pivot action. Public A-PROBE marker determines four legal event candidates. Learnable role-conditioned soft retrieval query/key and differentiable 13D->64D event encoder retrieve four A role slots; learned width64 GRU composes four retrieved slots and projected chosen pivot action into value. Public role targets .25,.50,.75,1.00 and strong learnable distance penalty are architectural priors, not spontaneous discovery; no hardcoded parity or private truth. Distinct parameter count/FLOPs from GRU64.",
+    "MLP_A_factors": "Same R87 legal raw four role-aligned A factor observations, 8D with four raw cues, current action, pivot time, one zero channel; two 64-wide GELU hidden layers. No parity feature."
+  },
+  "ablation_controls": [
+    "GRU64_FULL_PUBLIC_RAW",
+    "GRU64_A_PHASE_MASKED",
+    "GRU64_PUBLIC_A_SLOTS",
+    "GRU64_PUBLIC_A_SLOTS_SHUFFLED",
+    "MLP64_LEGAL_A_FACTORS",
+    "ALWAYS_CALIBRATE",
+    "ALWAYS_EXPLOIT_POS",
+    "LAST_A_CUE",
+    "RECENT_B_PARITY",
+    "PUBLIC_A_PARITY_RULE_EVALUATOR_ONLY",
+    "PHYSICAL_ORACLE_EVALUATOR_ONLY"
+  ],
+  "training": {
+    "all_arms_steps": 4096,
+    "batch": 16,
+    "adamw_learning_rate": 0.001,
+    "adamw_weight_decay": 0.0001,
+    "clip_grad_norm": 1,
+    "identical_private_selected_FIT_worlds_for_all_arms": true,
+    "identical_indices_and_first_4096_updates": true,
+    "checkpoints": [
+      0,
+      1024,
+      2048,
+      4096
+    ],
+    "factual_labels_only": true,
+    "GRU64_same_parameter_count_for_first_four_arms": true,
+    "MLP_vs_GRU_parameter_equal": false,
+    "LEARNED_ATTENTION_vs_GRU_parameter_equal": false,
+    "sequence_length_equal": false,
+    "whole_process_compute_equal": false,
+    "whole_process_wall_and_exposure_reported": true
+  },
+  "evaluation": {
+    "bootstrap": {
+      "resamples": 2000,
+      "salt": 25300555,
+      "lower_quantile": 0.025,
+      "compare": "LEARNED_PUBLIC_ROLE_ATTENTION minus GRU64_FULL_PUBLIC_RAW on same 256 DEV source worlds"
+    },
+    "thresholds": {
+      "both_seeds_required": true,
+      "DEV_attention_minus_raw_GRU_min": 0.75,
+      "DEV_attention_minus_masked_GRU_min": 0.4,
+      "DEV_attention_minus_shuffled_A_slots_min": 1.25,
+      "DEV_attn_minus_best_fixed_min": 1.25,
+      "DEV_attn_cold_minus_raw_GRU_min": 0.75,
+      "DEV_attention_legal_rule_choice_agreement_min": 0.85,
+      "DEV_attention_oracle_regret_max": 0.7,
+      "DEV_paired_bootstrap_lower95_attention_minus_raw_positive": true,
+      "DEV_deterministic_slots_minus_raw_GRU_min": 1.25,
+      "DEV_deterministic_slots_minus_shuffled_slots_min": 1.25,
+      "OOD_attention_minus_raw_GRU_min": 0.5,
+      "OOD_attention_cold_minus_raw_GRU_min": 0.5,
+      "DEV_legal_A_sign_identifiability_min": 0.9,
+      "on_pass": "R88_LEARNED_ROLE_EVENT_READOUT_DIAGNOSTIC_SIGNAL_ONLY",
+      "on_fail": "R88_EVENT_ACCESS_NO_GO",
+      "on_incomplete": "R88_INCOMPLETE_ENGINEERING_OR_RESOURCE_NOT_SCIENTIFIC_NEGATIVE",
+      "independent_scientific_pass": false
+    }
+  },
+  "execution": {
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "exact_branch": "research/r88-fresh-causal-event-access-20261115",
+    "GitHub_hosted_Ubuntu_CPU_seed_jobs": 2,
+    "max_minutes_per_seed": 19,
+    "G4_full_Ubuntu_Windows_before_science": true,
+    "G5_authentic_CPU_G7_pinned_Mamba2_CPU_qualification": true,
+    "exact_clean_source_SHA_and_run_attempt_one": true,
+    "artifact_retention_days": 30,
+    "no_new_workflow_or_scheduler_or_runner_or_controller": true,
+    "no_paid_API": true,
+    "no_GPU_first_use": true,
+    "never_replay_uncertain_or_spent_source": true
+  },
+  "authority": {
+    "model_promotion": false,
+    "merge": false,
+    "deployment": false,
+    "FORGE_integration": false,
+    "official_GPU_first_use": false,
+    "external_protected_scientific_first_use": false,
+    "paid_API": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false
+  }
+}
