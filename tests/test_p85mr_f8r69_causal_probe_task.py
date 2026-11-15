@@ -118,8 +118,7 @@ def test_full_frozen_task_admission_preserves_negative_outcomes():
     assert checks["cold_replay_exact"]
     assert report["admission"] in (
         "TASK_ADMISSION_NO_GO","TASK_ADMISSION_PASS_SYNTHETIC_ONLY")
-    assert report["admission"]=="TASK_ADMISSION_PASS_SYNTHETIC_ONLY" == (
-        all(checks.values()))
+    assert (report["admission"]=="TASK_ADMISSION_PASS_SYNTHETIC_ONLY") == all(checks.values())
     assert report["independent_scientific_pass"] is False
     assert report["trained_model_improvement"] is False
     assert report["GPU_first_use"] is False
