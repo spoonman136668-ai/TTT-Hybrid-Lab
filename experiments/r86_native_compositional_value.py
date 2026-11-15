@@ -89,6 +89,23 @@ def frozen() -> dict:
     return f
 
 
+def _shift_public_world(w: dict, index: int) -> dict:
+    """Pure frozen OOD shift; also unit-testable on TEST-only synthetic worlds."""
+    w = copy.deepcopy(w)
+    old = w["probe"].copy()
+    for t in old:
+        w["actions"][t] = r85.EXPLOIT_POS
+    w["probe"] = {}
+    for times, source in (([12, 22, 30, 40], r85.A_PROBES),
+                          ([110, 120, 136, 148], r85.B_PROBES)):
+        for new_t, old_t in zip(times, source):
+            w["probe"][new_t] = old[old_t]
+            w["actions"][new_t] = r85.PROBE
+    w["pivot"] = 68 if index % 2 == 0 else 208
+    w["innovations"] *= 1.35
+    return w
+
+
 def _fresh_world(panel: str, seed: int, index: int, *, custody_sha: str | None = None):
     if panel not in SALT:
         raise PermissionError("R86_PRIOR_OR_PROTECTED_PANEL_DENIED")
@@ -104,18 +121,7 @@ def _fresh_world(panel: str, seed: int, index: int, *, custody_sha: str | None =
     rng = np.random.default_rng(np.random.SeedSequence([SALT[panel], seed, index]))
     w = r85._make_synthetic_world(index, rng)
     if panel == "OOD_SHIFT":
-        # Change probe schedule and public decision timing prospectively.
-        old = w["probe"].copy()
-        for t in old:
-            w["actions"][t] = r85.EXPLOIT_POS
-        w["probe"] = {}
-        for times, source in (([12, 22, 30, 40], r85.A_PROBES),
-                              ([110, 120, 136, 148], r85.B_PROBES)):
-            for new_t, old_t in zip(times, source):
-                w["probe"][new_t] = old[old_t]
-                w["actions"][new_t] = r85.PROBE
-        w["pivot"] = 68 if index % 2 == 0 else 208
-        w["innovations"] *= 1.35
+        w = _shift_public_world(w, index)
     return w, int(rng.choice([r85.CALIBRATE, r85.EXPLOIT_POS]))
 
 
