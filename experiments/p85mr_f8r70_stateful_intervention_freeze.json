@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.f8r70-stateful-intervention-task-admission.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_SOURCE_TEST_AND_DEV_SCORING",
+  "classification": "AUTHOR_SYNTHETIC_STATEFUL_ACTION_CAUSAL_TASK_ADMISSION_NOT_MODEL_SCIENCE",
+  "parent": {
+    "R66_SHA": "efe7081d1a32e5ce96236bdf0a5c9024658d9afb",
+    "R66_PR": 261,
+    "R66_signal": "DEV_MECHANISM_SIGNAL_ONLY",
+    "R67_result": "DEV_NO_GO",
+    "R68_result": "DEV_NO_GO",
+    "R69_PR": 264,
+    "R69_result": "TASK_ADMISSION_NO_GO",
+    "R69_sha": "28025a0880bb3055a3d4c8edcfcd7cd00634e945",
+    "no_spent_R64_through_R69_scored_cohorts": true,
+    "not_permission_to_modify_prior_PRs": true
+  },
+  "hypothesis": "A consequential calibration intervention which repairs a hidden actuator coupling AND supplies an observed causal sign can improve actual selected-action return beyond strong reward-only controls, including a control which receives identical costly calibration transitions but ignores the diagnostic. The physical do-calibrate transition must independently improve later attainable outcomes.",
+  "null": "Under the same action budget and selected outcomes, calibration does not create useful causal transition value or its combined calibration+information policy fails to outperform strongest feasible reward-only baseline.",
+  "source": {
+    "salts": {
+      "FIT": 24210000,
+      "DEV": 24230000,
+      "PROXY_NEGATIVE": 24240000
+    },
+    "counts": {
+      "FIT": 64,
+      "DEV": 96
+    },
+    "episode_steps": 40,
+    "action_count": 4,
+    "terminal_dims": 4,
+    "latent_worlds": "Private sign m ∈ {-1,+1}; each panel 50% stable m and 50% unannounced A-B-A sign-change; initial sign balanced within stable/switched. B starts integer 12..15, A return starts integer 28..31. No policy receives phase or sign.",
+    "noise": "Pre-draw each time x action Gaussian standard noise for reward, diagnostic, proxy, nuisance (40 x 4 x 4). The evaluator stores these potential innovations but delivers only actual selected consequences.",
+    "transition": "Mutable physical actuator alignment h ∈ {-1,0,+1}, initialized 0. Action 0 CALIBRATE spends a step and reward mean -0.35, emits diagnostic observation m + 0.10*N, and sets h := m. The physical actuator alignment remains persistent until another real calibration, including across hidden law changes; this affects later reward attainable from exploitation.",
+    "sham": "Action 1 SHAM pays same mean -0.35 but DOES NOT change h; its proxy reads m+0.10*N on FIT, but -m+0.10*N on DEV. Additional nuisance channels independent.",
+    "exploits": "Action 2 chooses s=+1, action 3 s=-1. Observed selected goal reward = gain(h,m)*s*m + penalty(h,m) + 0.70*N, with gain 1.0 and penalty 0 when h==m; gain 0.35 and penalty -0.15 when h==0; gain 0.35 and penalty -0.65 when h!=0 and h!=m. All outcomes cost time/action opportunities.",
+    "diagnostic_and_nuisance": "Exploit observations contain random diagnostic/proxy/nuisance independent noise. Calibration has independent random proxy/nuisance; sham has independent random diagnostic/nuisance. Nuisance-proxy external independent channel is never exposed to policies.",
+    "episodes_fresh": "FIT64, DEV96 seeded independently and none of R64..R69 scored worlds. Source FIT is used only sanity/no calibration of thresholds or policy after DEV; DEV once for prospective admission.",
+    "intervention_proof": "For each DEV world, compare the same t=0 CALIBRATE vs t=0 SHAM state from h=0, then apply the SAME evaluator-selected correct exploit at t=1, with identical pre-drawn outcome innovation and same latent law. The mean future selected goal-reward contrast must be >=0.45; this is strictly a state-transition contrast, not an information-only score.",
+    "nonoracle_privacy": "Only selected action observation history and public time accepted by nonoracle policies. Private sign, phase, and unchosen action outcomes can be accessed only in evaluator-controlled structural proof and privileged reference.",
+    "protected_OOD": false,
+    "external_first_use": false
+  },
+  "policies": {
+    "CALIBRATE_CAUSAL": "Action0 at public t=0,16,32 (known guaranteed to sample A,B,A for switched worlds) and exploit 2/3 according to latest actual selected causal diagnostic sign. No private regime flag.",
+    "BLIND_CALIBRATE_REACTIVE": "Exactly same public t=0,16,32 action0 calibration and thus same physical actuator repairs/costs as candidate; ignore action0 diagnostic, infer choice sign only from factual chosen exploitation reward using EMA learning rate 0.35, choosing s=+1 on zero belief. No private states.",
+    "NO_CALIBRATE_REACTIVE": "Never calibrates; only exploits and infers law from selected reward signs using same EMA 0.35, unaware of latent transition until consequences.",
+    "SHAM_PROXY": "At same public t=0,16,32 execute equally costly action1 that does NOT repair; exploit using its factual spurious proxy signal. Dev sign reverse is a fixed prospective negative control.",
+    "RANDOM": "Uniform random public action 0,1,2,3 using independent seeded randomness; all selected actions and state transitions costed.",
+    "ORACLE_DYNAMIC_PRIVILEGED": "Evaluator-only policy may see private m and signs of latent change; performs CALIBRATE at t0 and true B/return switch points, then chooses correct exploit; not a trained agent and not a mathematically proven global optimum.",
+    "fixed_calibration_public_times": [
+      0,
+      16,
+      32
+    ],
+    "reward_reactive_ema_alpha": 0.35,
+    "no_training_or_hidden_oracle_for_nonprivileged": true,
+    "same_episode_steps": 40,
+    "all_policies_full_selected_action_budget": true,
+    "report_action_counts_and_cost_and_process_wall_time": true
+  },
+  "metrics": {
+    "primary": "Mean net actual selected reward across all 40 actions on independently fresh paired DEV worlds.",
+    "postreturn": "Mean actual selected reward on t32..39 in switched DEV worlds, after a real factual causal calibration at t32, not hidden return clairvoyance.",
+    "mechanism": "Evaluator t0 do(calibrate) vs do(sham) state perturbation, followed by same true-sign correct selected exploit at t1, same world and outcome noise; compare reward gain, no policy granted private law.",
+    "bootstrap": {
+      "seed": 24249999,
+      "resamples": 2000,
+      "worlds_paired": true
+    },
+    "required_all": {
+      "exact_40_selected_action_events": true,
+      "source_balanced_and_FIT_DEV_disjoint": true,
+      "true_phase_alignment_at_public_calibration_times": true,
+      "causal_probe_sign_accuracy_min": 0.95,
+      "physical_transition_future_reward_gain_min": 0.45,
+      "causal_episode_reward_vs_blind_same_transition_min": 0.75,
+      "causal_episode_reward_vs_no_calibrate_reactive_min": 4,
+      "causal_episode_reward_vs_sham_min": 8,
+      "causal_switched_postreturn_gain_vs_blind_min": 0.5,
+      "bootstrap_upper95_blind_minus_causal_negative": true,
+      "bootstrap_upper95_no_calibrate_minus_causal_negative": true,
+      "independent_nuisance_proxy_invariance": true,
+      "exact_cold_replay": true
+    },
+    "if_fail": "TASK_ADMISSION_NO_GO, no scored DEV hyperparameter changes, no new learning claims",
+    "if_pass": "TASK_ADMISSION_PASS_SYNTHETIC_ONLY; evidence of task identifiability and real intervention transition, NOT native Hybrid intelligence nor scientific model win",
+    "never_tune_on_scored_DEV": true
+  },
+  "qualification": {
+    "full_exact_SHA_G4_linux_windows": true,
+    "G5_authentic_TTT_CPU": true,
+    "G7_pinned_mamba2_CPU": true,
+    "original_artifact_zip_and_scored_json_SHA256": true,
+    "negative_runtime_source_admission": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "paid_API": false,
+    "GPU_first_use": false,
+    "external_science_first_use": false,
+    "new_controller": false,
+    "new_runner": false,
+    "new_scheduler": false
+  }
+}
