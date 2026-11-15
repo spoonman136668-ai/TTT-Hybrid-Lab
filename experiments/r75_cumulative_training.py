@@ -229,10 +229,103 @@ def require_all_control_checkpoints_before_holdout(checkpoint_dir,width,sequence
             "scientific_qualification":"NOT_YET_EVALUATED"}
 
 
+
+def score_completed_heldout(width,sequence=128,checkpoint_dir=CHECKPOINT_ROOT):
+    """Only after ALL 14 exactly custodied 65,536-step checkpoints exist.
+
+    Max-first training and best conventional selection use frozen R74 source,
+    objective and scientific thresholds. No failed or incomplete model is
+    silently left out. DEV and OOD are created only after preflight succeeds.
+    This is local DEV adjudication, NOT independent science/GPU promotion.
+    """
+    import gc
+
+    preflight=require_all_control_checkpoints_before_holdout(
+        checkpoint_dir,width,sequence)
+    spec=r74.frozen()["learning"]
+    thresholds=r74.frozen()["learning"]["metrics"]
+    # This is the FIRST generation/access to pre-frozen scored data here.
+    dev=r74.factual_worlds("DEV",sequence=sequence)
+    ood=r74.factual_worlds("OOD",sequence=sequence)
+    all_scores={}
+    decisions=[]
+    for seed in r74.SEEDS:
+        candidate_source={}
+        for arm in r74.TRAIN_ARMS:
+            ckpt=Path(checkpoint_dir)/checkpoint_path(
+                arm,width,sequence,seed).name
+            payload=torch.load(ckpt,map_location="cpu",weights_only=True)
+            model=optimized_model(arm,width,seed)
+            model.load_state_dict(payload["model_state"],strict=True)
+            model.eval()
+            candidate_source[arm]={
+                "DEV":r74._score_model(model,dev),
+                "OOD":r74._score_model(model,ood),
+                "parameters":sum(p.numel() for p in model.parameters()),
+                "FIT_65536_checkpoint":ckpt.name
+            }
+            del payload,model
+            gc.collect()
+        comparator=min(("GRU64","MLP64"),
+            key=lambda arm:candidate_source[arm]["DEV"]["mean_selected_reward_MSE"])
+        base=candidate_source[comparator]
+        candidate=candidate_source["HybridPilot_FULL"]
+        def relative_gain(panel,key):
+            x=base[panel][key]
+            y=candidate[panel][key]
+            if not x>0 or not np.isfinite(x) or not np.isfinite(y):
+                raise ValueError("R75_INVALID_HELDOUT_MSE_SCORE")
+            return (x-y)/x
+        d=relative_gain("DEV","mean_selected_reward_MSE")
+        o=relative_gain("OOD","mean_selected_reward_MSE")
+        c=relative_gain("DEV","cold_A_return_MSE")
+        lower=r74._bootstrap_lower_gain(
+            base["DEV"]["per_world_MSE"],
+            candidate["DEV"]["per_world_MSE"],seed)
+        checks={
+            "DEV_relative_gain_min_5pct":d>=.05,
+            "OOD_relative_gain_min_5pct":o>=.05,
+            "cold_return_relative_gain_min_5pct":c>=.05,
+            "paired_lower_bootstrap_positive":lower>0,
+            "all_14_full_65536_updates_exact_custody":True,
+            "reference_CPU_not_official_GPU":True
+        }
+        decisions.append({"seed":seed,
+           "strongest_fully_trained_conventional_control":comparator,
+           "DEV_relative_gain":d,"OOD_relative_gain":o,
+           "cold_A_return_relative_gain":c,
+           "paired_bootstrap_lower95_baseline_minus_hybrid_MSE":lower,
+           "checks":checks,"all_frozen_checks":all(checks.values())})
+        all_scores[str(seed)]={
+           arm:{
+               "params":data["parameters"],
+               "checkpoint":data["FIT_65536_checkpoint"],
+               "DEV":{k:v for k,v in data["DEV"].items()
+                      if k!="per_world_MSE"},
+               "OOD":{k:v for k,v in data["OOD"].items()
+                      if k!="per_world_MSE"}
+           } for arm,data in candidate_source.items()}
+    result=("DEV_REFERENCE_HYBRID_MECHANISM_SIGNAL_ONLY"
+            if all(d["all_frozen_checks"] for d in decisions)
+            else "DEV_SCIENTIFIC_NO_GO")
+    return {"schema":SCHEMA,"engine":ENGINE,
+        "source":"ORIGINAL_FROZEN_R74_NEW_DEV_OOD",
+        "checkpoint_preflight":preflight,
+        "source_counts":{"DEV":len(dev["input"]),"OOD":len(ood["input"])},
+        "scores":all_scores,"decisions":decisions,
+        "development_result_only":result,
+        "independent_scientific_pass":False,
+        "full_official_Mamba2_TTT_GPU_qualification":False,
+        "action_selection_learning_proven":False,
+        "deployment":"NONE"}
+
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--train",action="store_true")
     p.add_argument("--preflight",action="store_true")
+    p.add_argument("--score-complete",action="store_true")
     p.add_argument("--arm",choices=r74.TRAIN_ARMS,default="HybridPilot_FULL")
     p.add_argument("--width",type=int,default=1024)
     p.add_argument("--sequence",type=int,default=128)
@@ -244,8 +337,10 @@ def main():
     elif a.preflight:
         result=require_all_control_checkpoints_before_holdout(
             CHECKPOINT_ROOT,a.width,a.sequence)
+    elif a.score_complete:
+        result=score_completed_heldout(a.width,a.sequence)
     else:
-        p.error("use --train or --preflight")
+        p.error("use --train, --preflight or --score-complete")
     print(json.dumps(result,indent=2,sort_keys=True,allow_nan=False))
 
 
