@@ -108,7 +108,7 @@ jobs:
   r77-original-checkpoint-continuation:
     name: R77 verified original 1024→2048 FIT continuation / ubuntu-latest
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r77-verified-1024-to-2048-resume-20261115' }
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r77-verified-1024-to-2048-resume-20261115' }}
     runs-on: ubuntu-latest
     timeout-minutes: 29
     permissions:
@@ -118,7 +118,7 @@ jobs:
       - name: Checkout exact candidate without persistent credentials
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
-          ref: ${{ github.event.pull_request.head.sha }
+          ref: ${{ github.event.pull_request.head.sha }}
           persist-credentials: false
           submodules: false
           lfs: false
@@ -136,8 +136,8 @@ jobs:
 
       - name: Verify original R76 published Actions artifact digest and source
         env:
-          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python -m experiments.r77_verified_resume --verify-artifact
 
       - name: Read-only download of EXACT original R76 1024-step artifact
@@ -145,20 +145,20 @@ jobs:
         with:
           name: ttt-hybrid-r76-original-FIT-b034eeb054763b5f8423a3413af2655ff0facb03-43711769367
           run-id: 43711769367
-          github-token: ${{ secrets.GITHUB_TOKEN }
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           repository: spoonman136668-ai/TTT-Hybrid-Lab
           path: local_runs/r77_input
 
       - name: Verify all ORIGINAL checkpoint hashes then train only unseen FIT steps 1025 to 2048
         env:
-          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r77_verified_resume --run
 
       - name: Preserve private original R77 progress and new full optimizer/RNG escrow
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: ttt-hybrid-r77-resume-${{ github.event.pull_request.head.sha }-${{ github.run_id }
+          name: ttt-hybrid-r77-resume-${{ github.event.pull_request.head.sha }}-${{ github.run_id }}
           path: |
             local_runs/r77_verified_original_artifact.json
             local_runs/r77_continuation_receipt.json
