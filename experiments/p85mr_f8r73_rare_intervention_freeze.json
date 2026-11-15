@@ -1,0 +1,120 @@
+{
+  "schema": "ttt-hybrid.f8r73-rare-intervention-learning.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R73_SOURCE_TRAINING_AND_HOLDOUT",
+  "classification": "DEV_SCRIPTED_RARE_ACTION_DIAGNOSTIC_ONLY",
+  "parent": {
+    "R72_SHA": "9981ed29e7b31cfb64ae9cc0a3b08de2d99ddb4f",
+    "R72_PR": 267,
+    "R72_result": "ENGINEERING_PASS_DEV_DIAGNOSTIC_NO_GO",
+    "R72_freeze_blob": "68155d115d8216f766319c76dd253a02ad71e56f",
+    "R70_task_result": "ORIGINAL_BOTH_OS_TASK_ADMISSION_PASS_SYNTHETIC_ONLY",
+    "all_R64_to_R72_scored_cohorts_spent": true,
+    "no_reuse_scored_FIT_or_HOLDOUT": true
+  },
+  "hypothesis": "A fixed action-class reweighting of actual scripted factual calibration demonstrations improves rare calibration recall and real closed-loop reward relative to unweighted behavior cloning and matched reward-only policy gradient. This is a learnability mechanism test only, not new native causal-rule discovery.",
+  "null": "If calibrated action recall or actual selected closed-loop reward does not beat matched controls under precommitted thresholds, record diagnostic no-go; no editing thresholds after scoring.",
+  "source": {
+    "salts": {
+      "FIT": 24510000,
+      "HOLDOUT": 24530000,
+      "NEGATIVE": 24540000
+    },
+    "counts": {
+      "FIT": 128,
+      "HOLDOUT": 64
+    },
+    "steps": 40,
+    "actions": 4,
+    "selected_observation_dim": 4,
+    "worlds": "Independent hidden causal sign ±1 balanced across stable/switch worlds, fresh B starts 9..18 and return 22..35, identical original R70 persistent physical calibration law. All learner inputs only public timestep and actual selected action+observed consequence.",
+    "reference": "Nonprivileged original public-time R70 calibrate t0,16,32, selected factual observations only; three rare calibration events and 37 other events per world (7.5% calibration positives), no private oracle labels.",
+    "source_custody": "Never access R72 scored HOLDOUT, R72 FIT, R71 scored source, or protected external OOD. All model training and weight freeze before generating R73 HOLDOUT.",
+    "protected_external_OOD": false
+  },
+  "training": {
+    "arms": [
+      "STRUCTURED_CAUSAL_MEMORY",
+      "GRU16",
+      "MLP16"
+    ],
+    "objectives": [
+      "UNWEIGHTED_FACTUAL_BC",
+      "FROZEN_CLASS_WEIGHT_FACTUAL_BC",
+      "SHIFTED_LABEL_NEGATIVE_BC",
+      "SELECTED_RETURN_REINFORCE"
+    ],
+    "seeds": [
+      986101,
+      986103
+    ],
+    "optimizer": "AdamW",
+    "optimizer_steps": 64,
+    "FIT_worlds_per_step": 8,
+    "selected_observed_events_per_model": 20480,
+    "learning_rate": 0.015,
+    "weight_decay": 0.001,
+    "gradient_clip_norm": 1,
+    "world_selection_seed_formula": "24519999 + seed across ALL models, objective arms and architectures; same FIT world draws",
+    "initialization": "R71 fresh original model initialization for same architecture and seed (never saved R71/R72 weights); same init across four objectives.",
+    "BC_loss": "Teacher-forced actual selected public R70 fixed-policy action/outcome history; cross entropy per step.",
+    "class_weights_for_3_action_logits": {
+      "CALIBRATE0": 12.333333333333334,
+      "EXPLOIT2": 1,
+      "EXPLOIT3": 1
+    },
+    "class_weight_reduction": "Sum of weighted per-observation cross-entropy over each 40-step factual episode divided by sum of fixed weights of those target actions. No dynamic class weights, CAL/DEV tuning or sample selection.",
+    "negative": "Circularly shift teacher action targets +5 steps within each episode while preserving factual teacher histories and marginal action frequencies; same fixed class weights as candidate.",
+    "reward_only": "R72 original REINFORCE selected real actual reward-to-go, with same optimizer, steps, source selected action budget and entropy 0.005, no teacher labels.",
+    "all_training_FIT_only": true,
+    "no_private_oracle_actions": true,
+    "no_future_features": true,
+    "report_optimizer_and_whole_process_cost": true,
+    "matched_episodes_not_matched_information_or_FLOPs": true
+  },
+  "scoring": {
+    "both_seeds_required": true,
+    "primary": "Actual net selected episode reward on 64 fresh holdout worlds with greedy rollouts.",
+    "teacher_agreement": "Teacher-forced selected factual actions: separate calibration recall, false positive rate among 37 noncalibration steps, precision and F1; do not substitute overall agreement.",
+    "controls": "Matched unweighted BC, shifted-target weighted negative, selected-return REINFORCE for each architecture, original fixed public-time R70 CALIBRATE_CAUSAL, original no-calibrate reward-reactive.",
+    "seed_bootstrap": 24549999,
+    "paired_bootstrap_resamples": 2000,
+    "frozen_admission_all": {
+      "GRU_weighted_calibration_recall_min": 0.65,
+      "GRU_weighted_calibration_precision_min": 0.7,
+      "GRU_weighted_calibration_false_positive_max": 0.05,
+      "GRU_weighted_closed_loop_reward_fraction_of_fixed_min": 0.75,
+      "GRU_weighted_reward_gain_over_unweighted_min": 5,
+      "GRU_weighted_reward_gain_over_reward_gradient_min": 5,
+      "GRU_weighted_reward_gain_over_shifted_negative_min": 5,
+      "paired_bootstrap_lower95_weighted_minus_unweighted_above_zero": true,
+      "paired_bootstrap_lower95_weighted_minus_reward_gradient_above_zero": true,
+      "source_balance_FIT_HOLDOUT_disjoint": true,
+      "same_FIT_optimizer_steps_world_draws_actual_selected_exposures": true,
+      "unobserved_proxy_negative_invariance": true,
+      "exact_cold_replay": true,
+      "original_causal_transition_effect_preserved": true
+    },
+    "on_pass": "DEV_RARE_SCRIPTED_ACTION_LEARNABILITY_SIGNAL_ONLY, NOT native intelligence, original task independent scientific pass, unfamiliar transfer or new causal-law invention.",
+    "on_fail": "DEV_DIAGNOSTIC_NO_GO; preserve original HOLDOUT and do not retune loss weights, selection schedules or thresholds post-score.",
+    "no_post_result_tuning": true
+  },
+  "qualification": {
+    "complete_exact_SHA_G4_both_OS": true,
+    "G5_authentic_TTT_CPU": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "original_artifact_ZIP_and_DEV_SHA256": true,
+    "no_GPU_firstuse": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "paid_API": false,
+    "external_science_firstuse": false,
+    "GPU_firstuse": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
