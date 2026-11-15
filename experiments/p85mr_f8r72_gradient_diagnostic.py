@@ -345,8 +345,8 @@ def run():
             for method in METHODS+(NEGATIVE,):
                 if method==NEGATIVE and arm!=ARMS[0]:
                     continue
-                key=arm+("_PG" if method==METHODS[0] else "_BC"
-                         if method==METHODS[1] else "_SHUFFLED_LABEL_BC")
+                key=(NEGATIVE if method==NEGATIVE else
+                     arm+("_PG" if method==METHODS[0] else "_BC"))
                 model,info=train_one(arm,seed,method,fit)
                 all_models[str(seed)][key]=model
                 training[str(seed)][key]=info
