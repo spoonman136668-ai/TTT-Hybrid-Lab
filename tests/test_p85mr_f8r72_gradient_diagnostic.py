@@ -13,7 +13,7 @@ def test_frozen_source_custody_and_no_spent_or_protected_firstuse():
     freeze=r72.locked()
     assert r72.blob_sha(r72.FREEZE.read_bytes())==r72.FREEZE_BLOB
     assert freeze["source_custody"]["parent_R71_SHA"]==r72.PARENT
-    assert freeze["source_custody"]["R71_original_result"]=="ENGINEERING_PASS_DEV_NO_GO"
+    assert freeze["source_custody"]["parent_R71_original_result"]=="ENGINEERING_PASS_DEV_NO_GO"
     assert freeze["source_custody"]["all_R64_to_R71_scored_worlds_spent"]
     assert freeze["scoring"]["no_post_score_changes"]
     assert all(v is False for v in freeze["authority"].values())
