@@ -1,0 +1,100 @@
+{
+  "schema": "ttt-hybrid.r77-exact-custody-continuation-v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_R77_HANDOFF_IMPLEMENTATION_AND_EXECUTION",
+  "classification": "ENGINEERING_CONTINUATION_AND_FIT_VALIDATION_DIAGNOSTIC_ONLY",
+  "source": {
+    "original_parent_SHA": "b034eeb054763b5f8423a3413af2655ff0facb03",
+    "parent_PR": 271,
+    "original_R76_job_id": 132805236500,
+    "original_G4_run_id": 43711769367,
+    "original_artifact_id": 14160994105,
+    "original_artifact_name": "ttt-hybrid-r76-original-FIT-b034eeb054763b5f8423a3413af2655ff0facb03-43711769367",
+    "original_artifact_zip_sha256": "4f5f90514861f8f6eda1c5585cc22566042f4a9f4ae4d20169463559c08f6fcf",
+    "original_artifact_size": 186433068,
+    "original_inner_receipt": "r76_fit_milestone.json",
+    "original_inner_paths_prefix": "r75_cumulative_fit/",
+    "original_inner_sha256": {
+      "HybridPilot_FULL": "5d3e931075c35bae70ac294c3be5a969354acaba532fad8e4f576c75d3361301",
+      "GRU64": "5e0e43fe71318b256b75a98dac863801553de20672b5c96ff55034c4253fa430",
+      "MLP64": "d00bd2612e0c251cff8b6d18df24cd0f3dfa8083e0017d38a14f66bd8fe9d6ae"
+    },
+    "original_inner_bytes": {
+      "HybridPilot_FULL": 201870906,
+      "GRU64": 192426,
+      "MLP64": 71210
+    },
+    "original_FIT_validation_MSE_1024": {
+      "HybridPilot_FULL": 0.5073129967786372,
+      "GRU64": 0.4896895489655435,
+      "MLP64": 0.6501709562726319
+    },
+    "immutable_R74_freeze_blob": "7deb2cd19bcd06ef0800e79a1588698c74ae350d",
+    "immutable_R75_freeze_blob": "2cf720b2214715c7977ffc5b87ea45ed193e3087",
+    "immutable_R76_freeze_blob": "fde88a6cdd0a2956e91b412aaa1567275055babc",
+    "legacy_reference_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "original_R75_math_engine_source_sha256": "26bf9d3c8bfeeeed1b7aecd0153e8b6a04bfa1e83557af7b4ff5a3260187747d",
+    "original_R75_training_driver_sha256": "471856df78a1b32d2663b144b40b4af700a0aaf21d2428512897a686ff8eee34",
+    "original_engine": "R75_STRICT_LOWER_TRIANGULAR_FASTWEIGHT_V1",
+    "original_torch": "2.5.1+cpu",
+    "original_numpy": "1.26.4",
+    "original_source_mode": "R74 FIT512 and FIT_VALIDATION128 only; original salting, original selected actual consequence MSE and action history",
+    "all_scored_R64_to_R73_cohorts_spent": true,
+    "R74_DEV_OOD_not_yet_used": true
+  },
+  "execution": {
+    "only": "Existing G4 workflow, one same-repo first-attempt GitHub-hosted Ubuntu CPU job, AFTER full G4 Ubuntu+Windows complete PASS, no new workflow or scheduled trigger",
+    "GITHUB_actions_original_artifact_requires_read": true,
+    "github_actions_token_scope": "contents:read and actions:read only",
+    "download_pinned_action_commit": "cc203385981b70ca67e1cc392babf9cc229d5806",
+    "original_artifact_absent_expired_or_digest_drift": "FAIL_CLOSED_NO_TRAIN",
+    "from_updates": 1024,
+    "to_updates": 2048,
+    "qualification_milestone_not_science_checkpoint": true,
+    "width": 1024,
+    "sequence": 128,
+    "batch": 2,
+    "seed": 997601,
+    "arms": [
+      "HybridPilot_FULL",
+      "GRU64",
+      "MLP64"
+    ],
+    "same_FIT_sample_state_and_optimizer_state": true,
+    "max_wall_minutes": 29,
+    "max_concurrent_workers": 1,
+    "checkpoint_escrow": "distinct R77-only intermediate checkpoint namespace, never overwrite R76 original and never mislabel frozen R74 4096 scientific checkpoint",
+    "no_post_result_optimization": true,
+    "validation_before_resume": "must reproduce original FIT_VALIDATION MSE at 1024 to absolute tolerance <=1e-6 before optimizer update",
+    "retention_days": 30,
+    "classification": "FIT_ONLY_CONTINUATION_NOT_SCIENTIFIC_EVALUATION"
+  },
+  "criteria": {
+    "source_both_G4_OS_pass": true,
+    "G5_cpu_pass": true,
+    "G7_cpu_pass": true,
+    "parent_original_artifact_published_digest_and_size_match": true,
+    "all_original_checkpoint_SHA256_size_source_git_and_model_optimizer_rng_match": true,
+    "original_recorded_1024_MSE_reproduced_before_any_update": true,
+    "exactly_1024_further_updates_per_model": true,
+    "actual_selected_FIT_observations_total_per_model": 524288,
+    "all_3_checkpoint_optimizer_and_sample_RNG_saved": true,
+    "all_3_final_model_parameters_finite": true,
+    "full_original_child_checkpoint_hashes_present": true,
+    "independent_DEV_OOD_not_generated": true,
+    "scientific_result": "UNVERIFIED regardless of FIT MSE outcome",
+    "on_fail": "RESOURCE_OR_CUSTODY_INCOMPLETE; do not retry with uncertain side effects or relax protocol",
+    "on_pass": "FIT_ONLY_2048_CONTINUATION_RECEIPT_PASS; not R74 4096 admission nor independent science"
+  },
+  "authority": {
+    "merge": false,
+    "deploy": false,
+    "promote": false,
+    "GPU_firstuse": false,
+    "external_scientific_firstuse": false,
+    "paid_API": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "new_controller": false,
+    "FORGE_integration": false
+  }
+}
