@@ -99,8 +99,29 @@ def device_probe(width,length,seed=997601):
         else:
             rss/=1024
     except ImportError:
-        # RSS is explicitly unverified on Windows without a memory provider.
-        pass
+        # Native Windows GetProcessMemoryInfo; no optional paid package.
+        if os.name=="nt":
+            import ctypes
+            from ctypes import wintypes
+            class MemoryCounters(ctypes.Structure):
+                _fields_=[("cb",wintypes.DWORD),
+                          ("PageFaultCount",wintypes.DWORD),
+                          ("PeakWorkingSetSize",ctypes.c_size_t),
+                          ("WorkingSetSize",ctypes.c_size_t),
+                          ("QuotaPeakPagedPoolUsage",ctypes.c_size_t),
+                          ("QuotaPagedPoolUsage",ctypes.c_size_t),
+                          ("QuotaPeakNonPagedPoolUsage",ctypes.c_size_t),
+                          ("QuotaNonPagedPoolUsage",ctypes.c_size_t),
+                          ("PagefileUsage",ctypes.c_size_t),
+                          ("PeakPagefileUsage",ctypes.c_size_t)]
+            counter=MemoryCounters()
+            counter.cb=ctypes.sizeof(counter)
+            process=ctypes.windll.kernel32.GetCurrentProcess()
+            ok=ctypes.windll.psapi.GetProcessMemoryInfo(
+                process,ctypes.byref(counter),counter.cb)
+            if ok:
+                rss=counter.PeakWorkingSetSize/(1024*1024)
+        # Unknown other platform => UNVERIFIED_RSS, never pass falsely.
     return {"type":"ACTUAL_HYBRID_REFERENCE_CPU_FORWARD_BACKWARD_UPDATE",
             "width":width,"sequence":length,"batch":2,
             "parameters":sum(p.numel() for p in model.parameters()),
