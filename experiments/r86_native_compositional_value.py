@@ -89,15 +89,17 @@ def frozen() -> dict:
     return f
 
 
-def _fresh_world(panel: str, seed: int, index: int, *, source_admitted: bool):
+def _fresh_world(panel: str, seed: int, index: int, *, custody_sha: str | None = None):
     if panel not in SALT:
         raise PermissionError("R86_PRIOR_OR_PROTECTED_PANEL_DENIED")
-    if panel in ("DEV", "OOD_SHIFT") and not source_admitted:
-        raise PermissionError("R86_UNFROZEN_EVALUATION_FIRST_USE_DENIED")
     if seed not in SEEDS or not isinstance(index, int) or not 0 <= index < COUNT[panel]:
         raise PermissionError("R86_SOURCE_SEED_OR_INDEX_DENIED")
-    if not source_admitted:
-        raise PermissionError("R86_ORIGINAL_FIT_SOURCE_NOT_ADMITTED")
+    if (not custody_sha or custody_sha != os.getenv("EXPECTED_CANDIDATE_SHA")
+        or os.getenv("GITHUB_ACTIONS") != "true"
+        or os.getenv("GITHUB_JOB") != "r86-native-compositional-value"
+        or os.getenv("GITHUB_HEAD_REF") != BRANCH
+        or os.getenv("R86_SEED") != str(seed)):
+        raise PermissionError("R86_ORIGINAL_SOURCE_NOT_ADMITTED")
     # R85 pure physics constructor, NOT its once-used CALIBRATION generator.
     rng = np.random.default_rng(np.random.SeedSequence([SALT[panel], seed, index]))
     w = r85._make_synthetic_world(index, rng)
@@ -150,26 +152,26 @@ def _test_only_world(index: int):
     return r85._make_synthetic_world(index, rng)
 
 
-def _factual(panel: str, seed: int):
+def _factual(panel: str, seed: int, *, custody_sha: str):
     if panel not in ("FIT", "FIT_VALIDATION"):
         raise PermissionError("R86_ONLY_FIT_AND_VALIDATION_ALLOWED_FOR_LEARNING")
     x = np.empty((COUNT[panel], OBSERVED_STEPS, 13), np.float32)
     y = np.empty(COUNT[panel], np.float32)
     choices = np.empty(COUNT[panel], np.int8)
     for i in range(COUNT[panel]):
-        w, chosen = _fresh_world(panel, seed, i, source_admitted=True)
+        w, chosen = _fresh_world(panel, seed, i, custody_sha=custody_sha)
         prefix, ret = _view(w, chosen)
         x[i], y[i], choices[i] = prefix, ret, chosen
     return {"input": x, "target": y, "logged_action": choices,
             "panel": panel, "single_factual_branch_only": True}
 
 
-def _paired_scoring(panel: str, seed: int):
+def _paired_scoring(panel: str, seed: int, *, custody_sha: str):
     if panel not in ("DEV", "OOD_SHIFT"):
         raise PermissionError("R86_ONLY_FRESH_PROTECTED_EVALUATION_ALLOWED")
     worlds = []
     for i in range(COUNT[panel]):
-        w, _unused = _fresh_world(panel, seed, i, source_admitted=True)
+        w, _unused = _fresh_world(panel, seed, i, custody_sha=custody_sha)
         x0, r0 = _view(w, r85.CALIBRATE)
         x2, r2 = _view(w, r85.EXPLOIT_POS)
         if (not np.array_equal(x0[:-1], x2[:-1])
@@ -363,8 +365,8 @@ def original_ci(seed: int):
         "scientific_pass": False, "status": "INCOMPLETE_ENGINEERING_OR_RESOURCE",
         "platform": platform.platform(), "torch": str(torch.__version__)}
     try:
-        fit = _factual("FIT", seed)
-        valid = _factual("FIT_VALIDATION", seed)
+        fit = _factual("FIT", seed, custody_sha=sha)
+        valid = _factual("FIT_VALIDATION", seed, custody_sha=sha)
         if not fit["single_factual_branch_only"]:
             raise RuntimeError("R86_ILLEGAL_UNCHOSEN_FIT_LABELS")
         models = _models(seed)
@@ -377,8 +379,8 @@ def original_ci(seed: int):
         result["all_model_weights_frozen_before_DEV_OOD"] = True
         # First-use boundary: no training, checkpoint selection or updates after here.
         result["DEV_OOD_FIRST_USE"] = True
-        dev = _paired_scoring("DEV", seed)
-        ood = _paired_scoring("OOD_SHIFT", seed)
+        dev = _paired_scoring("DEV", seed, custody_sha=sha)
+        ood = _paired_scoring("OOD_SHIFT", seed, custody_sha=sha)
         d_raw, d_chosen, d_scores = _evaluate(models, dev)
         o_raw, _, o_scores = _evaluate(models, ood)
         best_conv = max(CONVS, key=lambda x: d_scores[x]["reward"])
