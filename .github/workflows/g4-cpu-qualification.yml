@@ -60,7 +60,8 @@ jobs:
   # attempt, can run a bounded 1024-update full-width FIT training.
   r76-first-fit-milestone:
     name: R76 first 1024 actual FIT updates / ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.ref == 'research/r76-max-width-1024-fit-checkpoint-20261115' }}
+    needs: cpu-qualification
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r76-max-width-1024-fit-checkpoint-20261115' }}
     runs-on: ubuntu-latest
     timeout-minutes: 29
     steps:
