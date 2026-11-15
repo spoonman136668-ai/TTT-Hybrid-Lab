@@ -1,0 +1,133 @@
+{
+  "schema": "ttt-hybrid.r82-first-active-physical-intervention-value-policy-dev.v1",
+  "stage": "PROSPECTIVE_FROZEN_AFTER_R81_NO_GO_BEFORE_R82_SOURCE_AND_FIRST_USE",
+  "scope": "FRESH_SYNTHETIC_DEV_ACTION_CHOICE_NOT_INDEPENDENT_SCIENTIFIC_QUALIFICATION",
+  "parent": {
+    "R81_PR": 276,
+    "R81_SHA": "335de19a6cc74ee7f454a6839e24044ec972c363",
+    "R81_freeze_blob": "a65fc70ac0dcdd7b409a0164630f4b884cbdb0c4",
+    "R81_outcome": "DEV_HISTORY_HYPOTHESIS_NO_GO_both_seeds",
+    "R81_scored_salts_spent": true,
+    "R79_surrogate_no_promotion": true,
+    "R78_weights_untouched": true
+  },
+  "hypothesis": "On new physical systems, a native tokenless causal-history model predicts factual intervention return-to-go and autonomously selects the CALIBRATE-vs-EXPLOIT action that leads to higher realized future reward, beating blinded native, strong trained conventional policy, and constant/coin baselines on genuinely unseen worlds.",
+  "null": "If either frozen seed fails minimum paired realized reward advantage or OOD/cold criteria, predeclare DEV_ACTIVE_POLICY_NO_GO; a favorable posterior prediction error or old passive action history alone does not prove active intervention value.",
+  "model": {
+    "width": 1024,
+    "sequence": 64,
+    "batch": 2,
+    "seeds": [
+      998621,
+      998633
+    ],
+    "arms": [
+      "NATIVE_FULL_VALUE",
+      "NATIVE_NO_HISTORY_VALUE",
+      "GRU256_FULL_VALUE",
+      "MLP256_FULL_VALUE"
+    ],
+    "native": "Original R74 HybridPilot_FULL (16,818,178 parameters) with original hard depth route, R75 exact causal triangular TTT fastweights, no R79 surrogate or R78 learnt weights.",
+    "blind": "Only previous chosen action onehot4 + previous factual observation4 input columns 4..11 zeroed; keep current candidate action and public time.",
+    "controls": "GRU256 learned action-value and MLP256 learned action-value, both trained same genuine logged action-return data, not necessarily matched params/FLOPs.",
+    "two_native_same_initial_parameters": true
+  },
+  "physics": {
+    "salts": {
+      "FIT": 25230111,
+      "FIT_VALIDATION": 25230211,
+      "DEV": 25230311,
+      "OOD": 25230411
+    },
+    "world_count": {
+      "FIT": 384,
+      "FIT_VALIDATION": 64,
+      "DEV": 128,
+      "OOD": 128
+    },
+    "sequence": 64,
+    "branch_pivot": "Half of fresh worlds fixed EARLY t12 (OOD t16), half COLD_AFTER_A_RETURN t48. Hidden law A->B at 20..27 FIT/DEV and 24..31 OOD, return B->A at36..43 FIT/DEV and 40..47 OOD.",
+    "state": "Hidden actuator state initialized zero. Previous logged actions can set it: CALIBRATE sets state to current hidden law. PROBE reveals noisy law cue but leaves actuator state. Public policy never sees hidden state directly.",
+    "candidate_actions": [
+      "CALIBRATE_0",
+      "EXPLOIT_POS_2"
+    ],
+    "return_horizon": 9,
+    "future_actions": "After candidate pivot, exactly eight future common EXPLOIT_POS_2 actions, same hidden law and innovations across paired evaluator outcomes, no adaptively selected later actions.",
+    "value": "CALIBRATE immediate reward -0.5, changes physical state. EXPLOIT_POS current selected reward depends on hidden law sign, whether actuator state matches hidden law, and noise. Correct calibration boosts magnitude, so it can improve positive-law outcomes or harm negative-law outcomes; when already calibrated, calibration cost is wasteful. Future observed consequences are actual effects.",
+    "worlds": "Fresh independent stochastic hidden state/law/noise, source split disjoint by salts. FIT and FIT_VALIDATION emit ONLY ONE genuinely logged factual pivot action/return for each world. DEV/OOD emit matched two separately realized intervention trajectories to evaluate policy regret; unchosen branch NEVER supplied to model or training loss.",
+    "input_features": "13 float32: current chosen action onehot4, previous chosen action onehot4, previous *actually selected* observation4, normalized public time1. At decision agent only receives prefix ending at candidate action, no present/future reward, hidden law, counterfactual or future rollout actions.",
+    "outputs": "Scalar predicted nine-step causal factual return-to-go from the logged pivot; actual paired evaluator scores based on realized returns after choosing each actual intervention, NOT model prediction alone.",
+    "no_R64_R81_old_data": true,
+    "independent_science_source_unaccessed": true
+  },
+  "training": {
+    "updates": 512,
+    "batch": 2,
+    "optimizer": "original AdamW lr0.001 wd0.0001 gradient_clip1.0",
+    "data": "Same exact FIT logged factual action/9-step return target and same RNG-selected world indices for all four arms, no unchosen action label used. Both native arms start with byte-identical parameter tensors.",
+    "loss": "Masked pivot-only return regression, full causal prefix to pivot available, final loss mean squared nine-step return error.",
+    "validation": "Read-only FIT_VALIDATION64 logged factual worlds; no hyperparameter tuning or first DEV/OOD access before all 4 arms complete 512 updates.",
+    "source_only_one_factual_per_world": true,
+    "same_information_actions_and_optimizer_updates": true,
+    "matched_FLOPs_or_training_time": false,
+    "record_parameters_wall_and_train_loss": true
+  },
+  "evaluation": {
+    "first_use": "After four full-trained weight sets frozen for each seed, first generate fresh independent DEV128 & OOD128 paired factual physical rollouts; no further training, no model selection from score.",
+    "choice": "At pivot, evaluate two candidate actions by model forward up through and including pivot only, choose argmax predicted nine-step return; execute selected action in independently realized paired evaluator world. No hidden/pair counterfactual outcome available at decision time.",
+    "policy_metrics": "mean actual realized 9-step return; regret to per-world better realized option, chosen-action agreement with better option, across all worlds and cold-return subset; compare actual outcomes, not Q MSE only.",
+    "baselines": [
+      "NATIVE_NO_HISTORY_VALUE",
+      "GRU256_FULL_VALUE",
+      "MLP256_FULL_VALUE",
+      "ALWAYS_CALIBRATE",
+      "ALWAYS_EXPLOIT_POS",
+      "COIN_TOSS_EXPECTED"
+    ],
+    "bootstrap": {
+      "paired_worlds": 128,
+      "resamples": 2000,
+      "seed": 25230555,
+      "lower_quantile": 0.025
+    },
+    "thresholds": {
+      "native_DEV_reward_minus_best_trained_control_at_least": 0.25,
+      "native_DEV_reward_minus_best_constant_action_at_least": 0.25,
+      "native_DEV_reward_minus_blind_native_at_least": 0.25,
+      "native_OOD_reward_minus_best_trained_control_at_least": 0.1,
+      "native_cold_DEV_reward_minus_best_trained_control_at_least": 0.1,
+      "native_mean_regret_less_than_coin_expected_by": 0.2,
+      "native_vs_strongest_control_DEV_bootstrap_lower95_positive": true,
+      "all_both_seeds": true,
+      "on_success": "DEV_ACTION_INTERVENTION_VALUE_SIGNAL_ONLY_NOT_INDEPENDENT_SCIENCE",
+      "on_fail": "DEV_ACTIVE_POLICY_NO_GO",
+      "on_incomplete": "INCOMPLETE_CI_OR_RESOURCE_NEVER_SCIENTIFIC_NO_GO",
+      "independent_scientific_pass": false
+    }
+  },
+  "execution": {
+    "route": "existing original G4 workflow, full mandatory dual-platform G4 & G5 & G7 exact SHA, then two seed-isolated first-attempt GitHub-hosted Ubuntu CPU bounded 29min jobs",
+    "no_new_workflow": true,
+    "no_new_scheduler": true,
+    "no_new_runner": true,
+    "first_attempt_only": true,
+    "exact_same_repo_branch": true,
+    "private_results_retained_days": 30,
+    "no_scored_replay": true,
+    "external_protected_first_use": false,
+    "no_paid_API": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "external_science_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
