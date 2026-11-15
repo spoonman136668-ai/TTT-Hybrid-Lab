@@ -1,0 +1,125 @@
+{
+  "schema": "ttt-hybrid.f8r71-trained-causal-action-v1",
+  "stage": "FROZEN_BEFORE_R71_SOURCE_TRAINING_AND_DEV",
+  "classification": "AUTHOR_SYNTHETIC_TRAINED_ACTION_CONSEQUENCE_DEV_ONLY",
+  "parent": {
+    "R70_SHA": "682e9c406b7ce12d55fa39aaa1232306d22ce79e",
+    "R70_PR": 265,
+    "R70_freeze_blob": "3e86a43a0a39dd3f5ed7981218e5d544c98c296e",
+    "R70_original_Ubuntu": "TASK_ADMISSION_PASS_SYNTHETIC_ONLY",
+    "R70_Windows": "PENDING_AT_FREEZE",
+    "R69_task_admission": "NO_GO",
+    "R67_science": "DEV_NO_GO",
+    "R68_science": "DEV_NO_GO",
+    "all_R64_to_R70_scored_worlds_spent": true,
+    "R70_bilateral_acceptance_required_before_science_promotion": true
+  },
+  "hypothesis": "A compact factorized causal memory policy trained from selected rewards can outperform a fully trained recurrent GRU16, a memoryless MLP, and fixed calibration/reward-only controls when actuator state persists and shift timing is unfamiliar.",
+  "null": "No 5% gain over strongest eligible trained or fixed nonoracle control on both seeds after complete source custody; preserve null.",
+  "source": {
+    "salts": {
+      "FIT": 24310000,
+      "CAL": 24320000,
+      "DEV": 24330000,
+      "PROXY_NEGATIVE": 24340000
+    },
+    "counts": {
+      "FIT": 128,
+      "CAL": 32,
+      "DEV": 96
+    },
+    "episode_steps": 40,
+    "actions": 4,
+    "observation_dim": 4,
+    "law": "Fresh worlds use original R70 physical actuator transition law: selected CALIBRATE0 costs −0.35, emits noisy actual causal sign and sets persistent actuator alignment h to hidden causal sign; SHAM1 costs same with no physical repair; chosen exploit2/3 rewards depend on h and law with .70 noise. The learner sees only selected action observation and public timestep; never h, hidden sign, stage, future/counterfactual.",
+    "shift_times": "For half worlds hidden B starts uniformly at t9..18 and A returns t22..35, wider than R70. Other half stable. Within stable/switched each initial sign balanced.",
+    "proxy": "Irrelevant unobserved nuisance proxy perturbed independently for negative control.",
+    "admission": "Fresh FIT and CAL and DEV each independently seeded, never reuse any R70 DEV. FIT only for policy-gradient optimization, CAL read-only and DEV once after ALL seeds/arms trained.",
+    "protected_external_OOD": false
+  },
+  "arms": {
+    "candidate": "STRUCTURED_CAUSAL_MEMORY: learned softmax among physical CALIBRATE0, exploit2, exploit3 based on public time, last observed selected reward, previous factual calibration sign and reward-based sign error EMA, time-since-last-factual-calibration; allocated 16 float fast state and small 8->3 trainable logit head; update fast state AFTER selected action and outcome.",
+    "GRU16": "Fully trained conventional GRUCell hidden16; input last actual selected action one-hot4, last observed consequence4, public scaled time1; head 16->3 logits for same actions. Train with same FIT episodes/steps.",
+    "MLP16": "Fully trained conventional memoryless one-hidden-layer MLP9->16 tanh->3 on same last selected action/consequence and public time; same FIT episodes/steps, no recurrence.",
+    "fixed_R70": "On fresh R71 worlds run original R70 CALIBRATE_CAUSAL t0,16,32; R70_BLIND_CALIBRATE_REACTIVE; R70_NO_CALIBRATE_REACTIVE; evaluator-only ORACLE_DYNAMIC_PRIVILEGED. Never tune fixed controls on DEV.",
+    "trainable_actions": [
+      0,
+      2,
+      3
+    ],
+    "all_policies_40_real_selected_events": true,
+    "candidate_allocated_fast_state_floats": 16,
+    "GRU_allocated_fast_state_floats": 16,
+    "report_params_wall_cost_and_selected_event_budget": true,
+    "no_equal_compute_claim": true
+  },
+  "training": {
+    "seeds": [
+      985601,
+      985607
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.015,
+    "weight_decay": 0.001,
+    "clip_grad_norm": 1,
+    "steps_per_seed_arm": 32,
+    "FIT_worlds_per_step": 8,
+    "selection_seed_formula": "24319999 + seed; same sampled FIT world index batch per optimizer step in all three learned arms",
+    "action_sampling_seed_formula": "seed + fixed arm-specific offset; Torch CPU categorical softmax; same realized action transition protocol, no counterfactual exposures",
+    "objective": "REINFORCE policy gradient on selected 40-step episode reward-to-go with batch-per-time-step mean baseline and fixed scaling 8.0, entropy bonus 0.005; no private law/action teacher or future outcome feature; each optimizer step uses exactly 8 FIT episodes and 320 selected action consequences per arm.",
+    "evaluation": "All trainable models/seeds must complete training BEFORE CAL/DEV outputs constructed. Evaluation greedy deterministic; no CAL/DEV tuning or optimizer update.",
+    "new_source_per_seed": false
+  },
+  "metrics": {
+    "primary": "Mean net actual selected goal reward across 40 actions on independently sampled DEV96.",
+    "secondary": "Switched DEV actual return-phase selected reward t36..39, stable-world full reward, real calibration action count, physical alignment and negative controls.",
+    "eligible_comparators": [
+      "GRU16",
+      "MLP16",
+      "R70_CALIBRATE_CAUSAL",
+      "R70_BLIND_CALIBRATE_REACTIVE",
+      "R70_NO_CALIBRATE_REACTIVE"
+    ],
+    "strongest": "Highest DEV mean selected episode reward among all trained and fixed eligible comparators (excluding private oracle)",
+    "bootstrap": {
+      "seed": 24349999,
+      "resamples": 2000,
+      "paired_world": true
+    },
+    "all_required_both_seeds": {
+      "candidate_relative_reward_gain_vs_best_min": 0.05,
+      "candidate_absolute_reward_gain_vs_best_min": 0.75,
+      "switched_return_relative_regression_max_absolute": 0.5,
+      "stable_world_relative_regression_max_absolute": 0.5,
+      "paired_bootstrap_upper95_best_minus_candidate_below_zero": true,
+      "exact_cold_replay": true,
+      "negative_proxy_invariance": true,
+      "identical_FIT_steps_draws_and_action_count": true,
+      "policy_no_private_law_or_future_effect": true,
+      "physical_calibration_transition_preserved": true
+    },
+    "admission_on_success": "DEV_TRAINED_POLICY_SIGNAL_ONLY; not full native Hybrid general intelligence or independent SCIENTIFIC_PASS",
+    "admission_on_failure": "DEV_NO_GO; preserve original negative, no post-score adjustment",
+    "no_post_result_tuning": true
+  },
+  "qualification": {
+    "R70_original_both_OS_checked_first": true,
+    "G4_complete_windows_ubuntu_exact_sha": true,
+    "G5_authentic_CPU": true,
+    "G7_pinned_CPU": true,
+    "original_zip_hash_and_scored_json_compare": true,
+    "CPU_only": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "external_scientific_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "new_runner": false
+  }
+}
