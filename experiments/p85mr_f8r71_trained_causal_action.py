@@ -418,7 +418,18 @@ def evaluate(scores,training,seed,freeze):
 def run():
     start=time.perf_counter()
     freeze=locked()
-    fit,cal,dev=(worlds(panel) for panel in ("FIT","CAL","DEV"))
+    fit=worlds("FIT")
+    # Source-use custody: freeze ALL arms/seeds on FIT before CAL/DEV world
+    # innovations, labels or scored consequences even exist in this process.
+    trained={}
+    training={}
+    for seed in SEEDS:
+        trained[seed]={}
+        training[seed]={}
+        for arm in TRAINED:
+            trained[seed][arm],training[seed][arm]=train_one(arm,seed,fit)
+    cal=worlds("CAL")
+    dev=worlds("DEV")
     unique=lambda w:hashlib.sha256(
        w["potential_innovations_evaluator_only"].astype("<f8").tobytes()).hexdigest()
     src_disjoint=set(map(unique,fit)).isdisjoint(map(unique,dev))
@@ -441,14 +452,7 @@ def run():
     physical_ok=bool(np.allclose(physical,.8,atol=1e-12,rtol=0.))
     if not physical_ok:
         raise ValueError("F8R71_PHYSICAL_TRANSITION_NOT_PRESERVED")
-    # All trained weights freeze before any DEV or CAL scoring.
-    trained={}
-    training={}
-    for seed in SEEDS:
-        trained[seed]={}
-        training[seed]={}
-        for arm in TRAINED:
-            trained[seed][arm],training[seed][arm]=train_one(arm,seed,fit)
+    # All trained weights froze above before CAL/DEV generation.
     scores={}
     cal_scores={}
     verdicts=[]
