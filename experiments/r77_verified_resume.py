@@ -230,6 +230,7 @@ def source_preflight():
             raise ValueError("R77_NONFINITE_ORIGINAL_WEIGHT")
         sources[arm]={"name":path.name,"bytes":path.stat().st_size,
                       "sha256":s["original_inner_sha256"][arm],
+                      "parameters":row["parameters"],
                       "initial_1024_MSE":row["final_FIT_validation_MSE"]}
         del state
         gc.collect()
@@ -243,6 +244,8 @@ def resume_one(arm,verified,input_source,validation):
     if origin["identity"]!=old_identity(arm) or origin["updates_completed"]!=START:
         raise PermissionError("R77_ORIGINAL_INPUT_DRIFT_AFTER_PREFLIGHT")
     model=train.optimized_model(arm,WIDTH,SEED)
+    if sum(p.numel() for p in model.parameters())!=verified["parameters"]:
+        raise PermissionError("R77_ORIGINAL_PARAMETER_COUNT_MISMATCH")
     optimizer=torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.0001)
     model.load_state_dict(origin["model_state"],strict=True)
     optimizer.load_state_dict(origin["optimizer_state"])
