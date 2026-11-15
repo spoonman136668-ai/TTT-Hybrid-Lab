@@ -1,0 +1,106 @@
+{
+  "schema": "ttt-hybrid.f8r69-causal-intervention-task-admission.v1",
+  "stage": "PROSPECTIVE_TASK_ADMISSION_BEFORE_SOURCE_AND_DEV",
+  "classification": "AUTHOR_SYNTHETIC_CAUSAL_TASK_ADMISSION_NOT_SCIENTIFIC_MODEL_WIN",
+  "parent": {
+    "R66_SHA": "efe7081d1a32e5ce96236bdf0a5c9024658d9afb",
+    "R66_PR": 261,
+    "R66_fixed_memory_signal": "DEV_MECHANISM_SIGNAL_ONLY",
+    "R67_PR": 262,
+    "R67_result": "DEV_NO_GO",
+    "R68_PR": 263,
+    "R68_result": "DEV_NO_GO",
+    "R68_head": "365102516a98a5dc15965ee1b85ffa5ea8eef43f",
+    "no_spent_R64_to_R68_cohorts": true
+  },
+  "problem": "Learn whether choosing informative real interventions can expose changing hidden causal laws, retain original law on cold return, and improve consequential exploitation relative to strong reactive/negative controls. This admission freezes a task and its baseline falsification before any candidate trained native Hybrid.",
+  "source": {
+    "salts": {
+      "FIT": 24110000,
+      "DEV": 24130000,
+      "PROXY_NEGATIVE": 24140000
+    },
+    "world_counts": {
+      "FIT": 64,
+      "DEV": 96
+    },
+    "total_steps": 36,
+    "action_count": 4,
+    "hidden_laws": "Initial causal sign s is balanced +/-1, unannounced B sign flips for exactly half worlds, then cold A sign returns. B begins uniformly from integer 10..13, A_return begins uniformly 23..26. Agent sees only public t, its own chosen action and that action's noisy consequence. Stage boundary and hidden sign are never passed to the policy.",
+    "regime_proportions": "Half stable A-A-A, half switched A-B-A, balanced initial signs in both source classes and panel.",
+    "action0": "Real causal diagnostic intervention; selected consequence vector [observed goal reward -0.18 +/- N(0,.02), observed diagnostic signal m + N(0,.10), unrelated proxy signal, nuisance]; agent pays real negative reward",
+    "action1": "Spurious diagnostic choice; same negative reward -0.18; diagnostic signal is independent noise, but proxy signal tracks hidden m in FIT and reverses in DEV. Negative shortcut control",
+    "action2": "Consequential exploit action; selected goal reward +0.70*m + N(0,.80), diagnostic and proxy channels independent noise",
+    "action3": "Consequential exploit action; goal reward -0.70*m + N(0,.80), diagnostic and proxy independent noise",
+    "all_counterfactual_outcomes": "Generator may create potential-outcome table across four actions for paired policy comparisons, but policies receive ONLY selected action outcome, never private table or unselected effects.",
+    "selected_terminal_dimensions": 4,
+    "nuisance": "The fourth terminal coordinate is independent N(0,1); a separate unchosen independent proxy stream may be perturbed in negative control but never accessed by policies",
+    "protected_OOD": false,
+    "external_first_use": false,
+    "source_is_new": "FIT and DEV use independent salts and no earlier scored source",
+    "min_nontriviality": "Observed exploitable reward is noisy, and obtaining the strong sign signal costs a consequential selected action. Perfect hidden-sign oracle is scorer-only, not a valid learner."
+  },
+  "policies": {
+    "ORACLE_UPPER": "Evaluator-only hidden sign each step, exploit 2 for positive, 3 for negative. Never score as learned agent.",
+    "CAUSAL_PROBE": "Pre-registered public-time actions 0 at times 0,14,28; infer sign solely from diagnostic coordinate after actually selected action0, then use corresponding exploit action. No hidden phase/ground-truth label; no training.",
+    "SPURIOUS_PROBE": "Same public-time probe budget and exploitation logic, but use selected action1's spurious proxy coordinate. No hidden state access.",
+    "REWARD_REACTIVE": "No probes. Recompute signed law estimate from only selected exploit outcomes with exponential moving update rate .35. Choose action2 for nonnegative belief, action3 otherwise. No hidden truth access.",
+    "RANDOM": "Same 36 chosen actions with reproducible uniform random selection; policy seed independent of evaluator latent sign; no hidden labels.",
+    "constant_probe_times": [
+      0,
+      14,
+      28
+    ],
+    "action_budget_per_policy": 36,
+    "causal_and_spurious_probes_each": 3,
+    "intervention_cost_as_goal_reward": true,
+    "full_process_cost_reported": true,
+    "no_parametric_model_training": true
+  },
+  "metrics": {
+    "primary": "Mean actual selected goal reward accumulated over all 36 steps, pair each policy on same fresh potential-outcome table and source worlds.",
+    "cold_return": "Mean actual selected goal reward on t28..35, after one observed selected diagnostic A-return probe at t28; no clairvoyance claim for t23..27.",
+    "diagnostic": "Error rate of action0 sign inference on *factual observed* t0,t14,t28 for switched cases with stochastically valid phase boundaries; compare action1 proxy sign inference on DEV.",
+    "intervention_value": "Causal probe (costed 3 actions) must improve net reward relative to spurious probe and reactive reward-only, not merely match oracle.",
+    "world_paired_bootstrap": {
+      "resamples": 2000,
+      "seed": 24149999
+    },
+    "required_all": {
+      "full_action_budget_and_selected_only": true,
+      "original_fit_dev_nonoverlap": true,
+      "balanced_switches_signs": true,
+      "actual_hidden_phase_guaranteed_at_probe_times": true,
+      "oracle_reward_advantage_over_random_min": 8,
+      "causal_probe_reward_advantage_over_spurious_min": 5,
+      "causal_probe_reward_advantage_over_reward_reactive_min": 1,
+      "causal_probe_cold_return_advantage_over_spurious_min": 2,
+      "causal_probe_switch_sign_accuracy_min": 0.95,
+      "causal_probe_vs_spurious_paired_bootstrap_upper95_delta_less_than_zero": true,
+      "proxy_negative_invariance": true,
+      "cold_replay_exact": true
+    },
+    "failure": "TASK_ADMISSION_NO_GO, keep original source frozen; do not retune benchmark against DEV.",
+    "pass": "TASK_ADMISSION_PASS_SYNTHETIC_ONLY. Does not show learning, reasoning, independent scientific gain, transfer, native Hybrid progress, low compute dominance or AGI.",
+    "no_post_result_tuning": true
+  },
+  "qualification": {
+    "original_G4_full_windows_ubuntu": true,
+    "G5_authentic_TTT_cpu": true,
+    "G7_pinned_mamba2_cpu": true,
+    "original_zip_hashes_and_exact_SHA": true,
+    "CPU_only": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "paid_API": false,
+    "external_first_use": false,
+    "GPU_first_use": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
