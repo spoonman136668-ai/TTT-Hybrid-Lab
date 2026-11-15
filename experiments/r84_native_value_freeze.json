@@ -1,0 +1,145 @@
+{
+  "schema": "ttt-hybrid.r84-fresh-native-learned-action-value-v1",
+  "stage": "IMMUTABLE_PROSPECTIVE_FREEZE_BEFORE_R84_SOURCE_TESTS_CI_OR_FIRST_USE",
+  "parent": {
+    "R83_PR": 278,
+    "R83_exact_SHA": "7bbece7433ec04c8fc5781535930a44809ae3737",
+    "R83_freeze_git_blob": "2f48f96697849beaa975be1d6984bcc56ecca6aa",
+    "R83_CALIBRATION_seeds": [
+      999011,
+      999023
+    ],
+    "R83_CALIBRATION_status": "ENGINEERING_INFORMATION_IDENTIFIABILITY_CALIBRATION_PASS_ONLY_7_OF_7_BOTH_SEEDS",
+    "R83_CALIBRATION_SALT_spent": 25250111,
+    "R83_RESERVED_salts_still_sealed": [
+      25250211,
+      25250311,
+      25250411
+    ],
+    "R82_DEV_OOD_spent": true,
+    "R82_learning_result": "DEV_ACTIVE_POLICY_NO_GO_BOTH_SEEDS",
+    "R79_surrogate_not_promoted": true,
+    "R78_original_4096_model_weights_untouched": true
+  },
+  "hypothesis": "After lawful factual one-branch action-return learning at max-qualified native width, the Hybrid uses a public previous-selected probe cue to select CALIBRATE versus EXPLOIT_POS interventions, preserving substantially more realized value than its identical-weight cue-history-blinded counterpart and strongly trained conventional models, on entirely new paired physical DEV and shifted OOD worlds.",
+  "null": "Any frozen seed missing a predeclared behavioral reward threshold against strongest conventional, blinded native, best evaluator-only fixed action, cue-shuffled negative, or public deterministic rule does not support a native advantage. Report DEV_LEARNED_INTERVENTION_NO_GO. No tuning after first scoring.",
+  "source": {
+    "new_independent_salts": {
+      "FIT": 25260111,
+      "FIT_VALIDATION": 25260211,
+      "DEV": 25260311,
+      "OOD_SHIFT": 25260411
+    },
+    "world_counts": {
+      "FIT": 1024,
+      "FIT_VALIDATION": 128,
+      "DEV": 128,
+      "OOD_SHIFT": 128
+    },
+    "seeds": [
+      999211,
+      999223
+    ],
+    "length": 64,
+    "batch": 2,
+    "early_pivot": 16,
+    "cold_pivot": 48,
+    "R83_law_and_physics": "Use unchanged R83 public physics _law and _public_rollout, same actuator start zero, same PROBE before pivot, cost -0.5, CALIBRATE sets hidden actuator state, EXPLOIT_POS remains uncalibrated; 8 later actual EXPLOIT_POS choices, physical cue noise std0.4.",
+    "FIT_log": "Each fresh FIT world logs exactly one factual pivot action, chosen uniformly {0,2} by private seeded independent action RNG; only that selected physical return used as supervised label, never unchosen branch. Include public prior selected observation with noisy probe immediately prior to pivot; current chosen candidate action is public. No hidden law or true signed target in learner.",
+    "public_input": "13 numeric fields current chosen action onehot4, previous chosen action onehot4, previous actual observation four floats, public normalized time. Entire prefix to pivot accessible; current selected reward and hidden law never visible.",
+    "blind": "Erase previous chosen action and previous selected observation input features [4:12] consistently during training and inference; model recurrence can still encode prior current actions, so this tests explicit history feature value, not complete removal of temporal memory.",
+    "OOD_shift": "Fresh separate salt, prior public probe cue and actual observed history unchanged; use early pivot20 and cold44, physical law reversals begin24..29 restore36..41, and innovation noise x1.35 throughout, preserving causal action semantics but shifting time and noise. Original R83 physics methods unmodified; no future probes available at decision.",
+    "zero_leak": "Train and FIT_VALIDATION generate only logged chosen branch; DEV/OOD_SHIFT generate physically realized paired evaluator outcomes only after all model/optimizer updates have finished. Law/current reward/alternate branch never given to agent.",
+    "no_R83_CALIBRATION_or_reserved_QUAL_DEV_OOD_access": true,
+    "no_R82_or_previous_scored_source_access": true
+  },
+  "models": {
+    "native_reference": "Original R74 HybridPilot_FULL width1024 heads4 and original hard depth router; R75 math-equivalent strict-causal triangular TTT memory. This is NOT official combined fused CUDA Mamba2+TTT first use.",
+    "native_parameter_count": 16818178,
+    "arms": [
+      "NATIVE_FULL_VALUE",
+      "NATIVE_OBSERVATION_BLIND",
+      "GRU64_FULL_VALUE",
+      "GRU256_FULL_VALUE",
+      "MLP256_FULL_VALUE"
+    ],
+    "initial_native_weights_equal": true,
+    "both_native_train_updates": 1024,
+    "grus_and_mlp_train_updates": 4096,
+    "optimizer": "Original AdamW lr .001 weight_decay .0001 and clip global_norm1.0",
+    "frozen_FIT_batch_selection": "Same first 1024 selected factual mini-batches for every arm per seed; conventional baselines repeat same frozen sample stream through 4096 updates. Equivalent FIT data but extra exposures for conventional controls; cannot claim matched updates/FLOPs/convergence.",
+    "FIT_VALIDATION_only": "Read-only factual return MSE at updates0,512,1024 for all; 2048,3072,4096 for conventional controls. No tuning from FIT_VALIDATION or heldout.",
+    "compute_receipts": "Full model params, FIT exposures, wall seconds per arm, state counters, total end-to-end elapsed. No speed advantage inferred from different parameter counts."
+  },
+  "evaluation": {
+    "frozen_before_scoring": true,
+    "rule": "R83 lawful PUBLIC_PROBE_SIGN_RULE on actual public prefix cue[10] >0 then CALIBRATE else EXPLOIT_POS; simple rule is diagnostic reference, NOT trained model.",
+    "controls": [
+      "NATIVE_OBSERVATION_BLIND",
+      "GRU64_FULL_VALUE",
+      "GRU256_FULL_VALUE",
+      "MLP256_FULL_VALUE",
+      "ALWAYS_CALIBRATE",
+      "ALWAYS_EXPLOIT_POS",
+      "SHUFFLED_PROBE_RULE",
+      "PUBLIC_PROBE_SIGN_RULE",
+      "EVALUATOR_ONLY_ORACLE"
+    ],
+    "policy": "Each model predicts factual cumulative selected reward on both candidate public prefix trajectories up through pivot, chooses argmax; evaluator then realizes chosen action's physical branch reward. Other branch only used for evaluator-only regret, not learning.",
+    "metrics": "DEV128 and SHIFT_OOD128 mean realized nine-step reward, early and cold subsets, regret, chosen-action agreement with public rule, oracle regret, full-process runtime and paired bootstrap confidence.",
+    "bootstrap": {
+      "worlds": 128,
+      "resamples": 2000,
+      "seed": 25260555,
+      "lower_quantile": 0.025
+    },
+    "thresholds": {
+      "both_seeds_required": true,
+      "DEV_reward_native_minus_blind_min": 0.35,
+      "DEV_reward_native_minus_strongest_trained_conventional_min": 0.2,
+      "DEV_reward_native_minus_best_fixed_min": 0.75,
+      "DEV_reward_native_minus_shuffled_rule_min": 0.75,
+      "DEV_public_rule_agreement_min": 0.85,
+      "DEV_native_reward_as_fraction_of_rule_gain_over_best_fixed_min": 0.7,
+      "DEV_paired_bootstrap_lower95_native_minus_best_conventional_positive": true,
+      "OOD_reward_native_minus_best_conventional_min": 0.1,
+      "OOD_cold_reward_native_minus_best_conventional_min": 0.1,
+      "DEV_oracle_regret_native_max": 1.25,
+      "on_positive": "DEV_LEARNED_INTERVENTION_VALUE_SIGNAL_ONLY_NOT_INDEPENDENT_SCIENTIFIC_PASS",
+      "on_negative": "DEV_LEARNED_INTERVENTION_NO_GO",
+      "on_incomplete": "INCOMPLETE_ENGINEERING_OR_RESOURCE_NOT_SCIENTIFIC_NO_GO",
+      "independent_scientific_pass": false
+    }
+  },
+  "execution": {
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "only_existing_workflow": true,
+    "original_g4_full_both_OS_required": true,
+    "G5_authentic_CPU_required": true,
+    "G7_Mamba2_CPU_required": true,
+    "same_repo_first_PR_attempt_only": true,
+    "exact_branch_SHA_clean_checkout": true,
+    "runner": "GitHub-hosted Ubuntu CPU",
+    "separate_seed_jobs": true,
+    "per_seed_timeout_minutes": 29,
+    "max_concurrent_seed_training_jobs": 2,
+    "artifact_private_retention_days": 30,
+    "no_rerun_firstuse_or_uncertain_effect_replay": true,
+    "no_paid_API": true,
+    "no_new_runner": true,
+    "no_new_scheduler": true,
+    "no_new_controller": true
+  },
+  "authority": {
+    "merge": false,
+    "model_promotion": false,
+    "deployment": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "external_protected_scientific_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
