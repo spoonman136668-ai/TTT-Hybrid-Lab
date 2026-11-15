@@ -110,12 +110,16 @@ def _make_synthetic_world(index: int, rng: np.random.Generator) -> dict:
     }
 
 
-def _world(panel: str, seed: int, index: int) -> dict:
+def _world(panel: str, seed: int, index: int, *, custody_sha: str | None = None) -> dict:
     frozen()
     if panel != "CALIBRATION":
         raise PermissionError("R85_SEALED_OR_SPENT_PANEL_ACCESS_DENIED")
     if seed not in SEEDS or not isinstance(index, int) or not 0 <= index < N:
         raise PermissionError("R85_UNFROZEN_SEED_OR_WORLD_INDEX")
+    if (not custody_sha or custody_sha != os.getenv("EXPECTED_CANDIDATE_SHA")
+        or os.getenv("GITHUB_ACTIONS") != "true"
+        or os.getenv("GITHUB_HEAD_REF") != BRANCH):
+        raise PermissionError("R85_CALIBRATION_SOURCE_NOT_ADMITTED")
     rng = np.random.default_rng(np.random.SeedSequence([SALT, seed, index]))
     return _make_synthetic_world(index, rng)
 
@@ -227,11 +231,13 @@ def _bootstrap_lower(delta: np.ndarray, seed: int) -> float:
     return float(np.quantile(delta[indices].mean(axis=1), .025))
 
 
-def _diagnostic(seed: int) -> dict:
+def _diagnostic(seed: int, *, custody_sha: str) -> dict:
+    if custody_sha != _admit():
+        raise PermissionError("R85_DIAGNOSTIC_NOT_ADMITTED")
     if seed not in SEEDS:
         raise PermissionError("R85_UNREGISTERED_FIRST_USE_SEED")
     # Invocable from ORIGINAL admitted CI only. CALIBRATION is now consumed.
-    worlds = [_world("CALIBRATION", seed, i) for i in range(N)]
+    worlds = [_world("CALIBRATION", seed, i, custody_sha=custody_sha) for i in range(N)]
     paired = [_paired_public(w) for w in worlds]
     x = [q[0] for q in paired]
     r0 = np.array([q[2] for q in paired], np.float64)
@@ -335,7 +341,7 @@ def original_ci() -> dict:
     if path.exists():
         raise FileExistsError("R85_UNCERTAIN_OR_DUPLICATE_CALIBRATION_REFUSED")
     begin = time.perf_counter()
-    results = [_diagnostic(seed) for seed in SEEDS]
+    results = [_diagnostic(seed, custody_sha=sha) for seed in SEEDS]
     pass_all = all(item["pass"] for item in results)
     g = frozen()["gates"]
     receipt = {
