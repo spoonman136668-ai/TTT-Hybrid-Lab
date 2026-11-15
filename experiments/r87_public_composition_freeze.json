@@ -1,0 +1,179 @@
+{
+  "schema": "ttt-hybrid.r87-legal-composition-representation-bottleneck-v1",
+  "stage": "IMMUTABLE_PROSPECTIVE_FREEZE_BEFORE_R87_IMPLEMENTATION_TEST_CI_OR_FIRST_USE",
+  "classification": "DEVELOPMENT_MECHANISM_DIAGNOSTIC_NOT_NATIVE_MODEL_SCIENTIFIC_PASS",
+  "parent": {
+    "R86_PR": 281,
+    "R86_exact_SHA": "6db67a26b9066057880b6124d27f3d215663e7e3",
+    "R86_freeze_blob": "69c939c5603faf306e0560b04802c1e854ae2dce",
+    "R86_two_seed_result": "DEV_NATIVE_COMPOSITIONAL_VALUE_NO_GO_BOTH_SEEDS_ALL_11_FROZEN_CHECKS_FAILED",
+    "R86_FIT_DEV_OOD_salts_spent": [
+      25280111,
+      25280211,
+      25280311,
+      25280411
+    ],
+    "R85_CALIBRATION_spent": 25270111,
+    "R85_QUAL_DEV_OOD_reserved_untouched": [
+      25270211,
+      25270311,
+      25270411
+    ],
+    "R86_weights_not_reused": true
+  },
+  "hypothesis": "A small value learner with an explicitly constructed four-factor parity feature derived only from legal public observations will outperform same-size raw-cue learner, same-size corrupted-parity learner and a fully trained GRU64, isolating compositional representation/credit assignment as a plausible reason R86 native+conventional models fell back to a fixed action.",
+  "null": "If no significant heldout advantage over best raw baseline/strong GRU64 and shuffled-composition negative under precommitted DEV and shifted OOD thresholds on BOTH seeds, report R87_COMPOSITION_BOTTLENECK_NO_GO. If it succeeds classify only a diagnostic that lawful feature engineering helps, not a learned native causal mechanism nor generalization to unfamiliar causal physics.",
+  "sources": {
+    "salts": {
+      "FIT": 25290111,
+      "FIT_VALIDATION": 25290211,
+      "DEV": 25290311,
+      "OOD_SHIFT": 25290411
+    },
+    "seeds": [
+      999811,
+      999823
+    ],
+    "world_counts": {
+      "FIT": 2048,
+      "FIT_VALIDATION": 256,
+      "DEV": 256,
+      "OOD_SHIFT": 256
+    },
+    "episode_ticks": 224,
+    "model_public_rows": 48,
+    "early_pivot": 64,
+    "cold_pivot": 192,
+    "OOD_early_pivot": 68,
+    "OOD_cold_pivot": 208,
+    "A_probe_times": [
+      8,
+      16,
+      24,
+      32
+    ],
+    "B_probe_times": [
+      104,
+      112,
+      120,
+      128
+    ],
+    "OOD_A_times": [
+      12,
+      22,
+      30,
+      40
+    ],
+    "OOD_B_times": [
+      110,
+      120,
+      136,
+      148
+    ],
+    "rollout": "Reuse unmodified pure R85/R86 physical laws and legally visible factual 13D selected-observation prefix, not their private spent panels. Every new world independent salt+seed+index RNG. R85 pure constructor receives index%512 only to balance law and early/cold across 2048 FIT; world RNG uses full index. R86 48-event public selection with timestamps.",
+    "FIT": "Uniform independent private action logging selects exactly one genuine factual CALIBRATE or EXPLOIT_POS and its actually realized nine-step return, no unchosen return or oracle. Do NOT train on hidden law, private parity truth or evaluator paired rewards. All arm training fully complete before any DEV/OOD generation.",
+    "split_access": "Tests only use independent unit fixture salt25299911, NEVER FIT/VALID/DEV/OOD official salt. Only guarded first-attempt hosted CI job generates any original panel. DEV/OOD strictly after all trained arms frozen, evaluator sees both physical branches and private sign only for score diagnostics."
+  },
+  "representations": {
+    "raw": "For each legal public 48-row prefix collect four A PROBE prior-observation cues by role; keep four raw float cue values in physical role order. Add chosen-action onehot2 and public pivot fraction. Eight-dimensional input channel7 for composition zero.",
+    "public_composition": "Same eight-dimensional raw input, but channel7=sign(cue0)*sign(cue1)*sign(cue2)*sign(cue3), a DETERMINISTIC explicit public feature derived solely from lawful selected observations, not an imported teacher or independently discovered feature.",
+    "corrupted_composition": "Same raw cue values and same channel geometry but channel7 replaced with a within-pivot-group permuted four-A parity across OTHER FIT worlds, independent from target. Shuffle separately on FIT/VAL/DEV/OOD with pre-registered new salt, preserving time/cue marginal distributions; no hidden label or branch reward involved.",
+    "GRU_input": "Strong GRU64 receives full original 48x13 legal public sequence (not privileged oracle), evaluates chosen action at last step.",
+    "equal_information_claim": "RAW and COMPOSED use the same legally observed four cues; parity is deterministic from raw inputs, thus information-equivalent but not representationally equivalent. SHUFFLED controls are deliberately contaminated with irrelevant but distribution-preserving public features. GRU has more raw physical history and differing parameters/compute.",
+    "no_native_retraining": true
+  },
+  "arms": [
+    "MLP64_RAW",
+    "MLP64_COMPOSED",
+    "MLP64_COMPOSED_SHUFFLED",
+    "GRU64_PUBLIC"
+  ],
+  "training": {
+    "batch": 16,
+    "MLP64_RAW_updates": 4096,
+    "MLP64_COMPOSED_updates": 4096,
+    "MLP64_COMPOSED_SHUFFLED_updates": 4096,
+    "GRU64_PUBLIC_updates": 4096,
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "clip_grad": 1,
+    "same_logged_FIT_samples": true,
+    "same_index_order_all_arms": true,
+    "validation_only_train_checkpoints": [
+      0,
+      1024,
+      2048,
+      4096
+    ],
+    "same_update_count": true,
+    "compute_equal": false,
+    "parameter_equal_for_MLP64_arms": true
+  },
+  "controls": [
+    "MLP64_RAW",
+    "MLP64_COMPOSED_SHUFFLED",
+    "GRU64_PUBLIC",
+    "ALWAYS_CALIBRATE",
+    "ALWAYS_EXPLOIT_POS",
+    "LAST_A_CUE",
+    "RECENT_B_PARITY",
+    "PUBLIC_A_PARITY_RULE",
+    "EVALUATOR_ONLY_ORACLE"
+  ],
+  "evaluation": {
+    "seed_isolated_DEV256_and_shifted_OOD256": true,
+    "cold_and_early_split": true,
+    "bootstrap": {
+      "resamples": 2000,
+      "salt": 25290555,
+      "lower_quantile": 0.025,
+      "paired": "COMPOSED minus stronger of RAW_MLP and GRU64 on same DEV worlds"
+    },
+    "thresholds": {
+      "both_seeds_required": true,
+      "DEV_composed_minus_strongest_raw_control_min": 0.3,
+      "DEV_composed_minus_shuffled_min": 0.75,
+      "DEV_composed_minus_best_fixed_min": 1.25,
+      "DEV_composed_cold_minus_strongest_raw_min": 0.3,
+      "DEV_composed_legal_rule_action_agreement_min": 0.85,
+      "DEV_composed_oracle_regret_max": 0.7,
+      "DEV_paired_bootstrap_lower95_above_zero": true,
+      "OOD_composed_minus_DEV_selected_raw_min": 0.2,
+      "OOD_cold_composed_minus_DEV_selected_raw_min": 0.2,
+      "DEV_legal_A_parity_probe_agreement_min": 0.9,
+      "on_positive": "R87_PUBLIC_COMPOSITION_FEATURE_DIAGNOSTIC_SIGNAL_ONLY_NOT_NATIVE_SCIENCE",
+      "on_negative": "R87_COMPOSITION_BOTTLENECK_NO_GO",
+      "on_incomplete": "R87_ENGINEERING_OR_RESOURCE_INCOMPLETE_NOT_SCIENTIFIC_NEGATIVE",
+      "independent_scientific_pass": false
+    }
+  },
+  "execution": {
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "branch": "research/r87-legal-composition-representation-diagnostic-20261115",
+    "two_seed_jobs_only": true,
+    "first_PR_attempt_only": true,
+    "source_exact_clean_SHA": true,
+    "G4_full_Ubuntu_Windows_before_first_use": true,
+    "G5_authentic_CPU_and_G7_Mamba2_CPU_required": true,
+    "runner": "original GitHub-hosted Ubuntu CPU",
+    "per_seed_timeout_minutes": 19,
+    "artifact_retention_days": 30,
+    "no_new_workflow_scheduler_runner_or_controller": true,
+    "no_paid_API": true,
+    "no_unqualified_Gpu_first_use": true,
+    "no_rerun_if_uncertain": true
+  },
+  "authority": {
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "FORGE_integration": false,
+    "official_GPU_first_use": false,
+    "external_protected_scientific_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
