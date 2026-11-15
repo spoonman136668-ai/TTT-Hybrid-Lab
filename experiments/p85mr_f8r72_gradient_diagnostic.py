@@ -55,7 +55,7 @@ def locked():
     if (f["schema"]!=SCHEMA
         or f["stage"]!="PROSPECTIVE_FREEZE_BEFORE_R72_SOURCE_TRAINING_OR_HOLDOUT"
         or c["parent_R71_SHA"]!=PARENT
-        or c["R71_original_result"]!="ENGINEERING_PASS_DEV_NO_GO"
+        or c["parent_R71_original_result"]!="ENGINEERING_PASS_DEV_NO_GO"
         or not c["all_R64_to_R71_scored_worlds_spent"]
         or c["new_source_salts"]!=SALTS or c["counts"]!=COUNTS
         or c["external_OOD_used"]
