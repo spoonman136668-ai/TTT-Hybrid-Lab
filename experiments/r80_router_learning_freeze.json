@@ -1,0 +1,107 @@
+{
+  "schema": "ttt-hybrid.r80-fresh-hard-versus-surrogate-learning-dev.v1",
+  "stage": "PRE_FROZEN_BEFORE_R80_FRESH_SOURCE_IMPLEMENTATION_AND_FIRST_USE",
+  "classification": "FRESH_SYNTHETIC_DEV_DIAGNOSTIC_ONLY_NOT_INDEPENDENT_SCIENTIFIC_PASS",
+  "parent": {
+    "R79_PR": 274,
+    "R79_exact_SHA": "9bbbe2f40c3c8016af7a4eb671ba27d57bbbfb9e",
+    "R79_freeze_blob": "68f7b6272c0854f26720d527df3b10dce187ae12",
+    "R79_mechanistic_result": "ENGINEERING_CAUSAL_ROUTER_GRADIENT_RECOVERY_ONLY_BOTH_OS",
+    "original_R78_models_unmodified": true,
+    "original_R74_DEV_OOD_protected_unaccessed": true
+  },
+  "hypothesis": "On freshly generated numeric selected action-consequence sequences, supplementing gradients to native hard-inactive depth tokens while keeping hard forward output identical during each individual step improves previously withheld prediction accuracy over unchanged hard routing, trained at identical starting parameters and observable consequences.",
+  "design": {
+    "seeds": [
+      998211,
+      998223
+    ],
+    "width": 1024,
+    "sequence": 64,
+    "batch": 2,
+    "heads": 4,
+    "arms": [
+      "HARD_NATIVE",
+      "SURROGATE_NATIVE",
+      "GRU64",
+      "MLP64"
+    ],
+    "model": "Original source model.HybridPilot native selective recurrence, causal attention, R75 strict causal TTT fastweights, original hard depth, R79 inactive-token surrogate alternative; never official fused Mamba2/TTT",
+    "initialization": "Same initial full Hybrid weights and normal original router initialization between hard/soft. NO forced inactive bias/weight; no R78 learned weights.",
+    "train_updates": 512,
+    "optimizer": "AdamW lr 0.001 weight_decay 0.0001 grad clip max_norm1.0, original R75 source",
+    "training_selection": "At each step, identical seed-derived PCG64 selected world indices for all arms, exact same factual input and reward, but no unselected action counterfactuals.",
+    "data_source": "R80 standalone author synthetic physical hidden reversible A-B-A causal law; new generator implementation frozen by this description, no R74 FIT/VALID/DEV/OOD or R64–R79 scored data used.",
+    "features": "13 numeric fields = current chosen action onehot4, previous chosen action onehot4, previous selected 4-vector real observation, public normalized time; no current reward or hidden law as feature.",
+    "task": "Given factual exogenous selected actions, predict current selected reward; NOT action-policy selection, agency, general reasoning or cold continual model weight retention.",
+    "source_salts": {
+      "FIT": 25180111,
+      "FIT_VALIDATION": 25180211,
+      "DEV": 25180311,
+      "OOD": 25180411
+    },
+    "source_sizes": {
+      "FIT": 384,
+      "FIT_VALIDATION": 64,
+      "DEV": 96,
+      "OOD": 96
+    },
+    "source_law": "Alternating latent sign A/B/A for subset of worlds; B begins within 25–45% of sequence, A returns at 70–85%. Exogenous actual CALIBRATE, PROBE, EXPLOIT_POS, EXPLOIT_NEG choices. CALIBRATE changes internal actuator state to current hidden law at cost; PROBE reveals noisy law cue; EXPLOIT reward depends on latent law, action sign and calibrated/miscalibrated actuator state. Distinct OOD changes probe cue sign, transition timing, exploitation noise and cost. Fresh independent world random streams from fixed salts. All current selected outcomes become features only at following timestep.",
+    "action_sampling_probabilities": [
+      0.12,
+      0.1,
+      0.39,
+      0.39
+    ],
+    "source_validation": "No split collision; deterministic world counts and salts; current timestep reward not in its input; future-only edit cannot affect earlier model predictions.",
+    "holdout_fence": "Generate DEV and OOD ONLY after model optimizer updates finish and weights are frozen per arm+seed, no FIT-driven retuning or second read of DEV/OOD. No protected old R74 R79 source.",
+    "evaluation": "Per-world mean selected_reward_MSE for fresh DEV and OOD, subset cold A-return world/time mask, initial and 512-step FIT_VALIDATION, original native hard utilization at end, all process training+scoring wall-clock, params, original sample outcomes and compute.",
+    "bootstrap": {
+      "resamples": 2000,
+      "seed": 25180555,
+      "paired_worlds": 96,
+      "lower_quantile": 0.025
+    },
+    "acceptance": {
+      "same_initial_HARD_SURROGATE_all_tensors": true,
+      "all_512_optimizer_steps_every_arm_per_seed": true,
+      "same_observables_actions_and_training_batches": true,
+      "same_native_width_and_parameter_count": true,
+      "hard_forward_matches_surrogate_before_training_abs_error_le": 0.000001,
+      "forward_causal_prefix_negative": true,
+      "different_backward_gradients_expected": true,
+      "all_new_FIT_DEV_OOD_salts_separated": true,
+      "surrogate_vs_hard_DEV_relative_MSE_reduction_at_least": 0.05,
+      "surrogate_vs_hard_OOD_relative_MSE_reduction_at_least": 0.05,
+      "surrogate_vs_hard_cold_A_return_relative_MSE_reduction_at_least": 0.05,
+      "surrogate_vs_strongest_trained_conventional_DEV_relative_MSE_reduction_at_least": 0.05,
+      "paired_bootstrap_DEV_95pct_lower_baseline_minus_surrogate_MSE_positive": true,
+      "both_seeds_all_checks_required": true,
+      "score_on_any_partial_timeout": "INCOMPLETE_EXECUTION_NOT_SCIENTIFIC_NO_GO",
+      "on_all_thresholds": "DEV_ROUTER_PREDICTION_SIGNAL_ONLY_NOT_INDEPENDENT_SCIENTIFIC_PASS",
+      "on_failure": "DEV_ROUTER_NO_GAIN_OR_NO_GO; do not tune spent data or claim model ceiling",
+      "no_scientific_pass": true
+    }
+  },
+  "resource": {
+    "execution": "Existing exact-SHA GitHub G4 pull_request workflow (no schedule/new runner/controller), mandatory G4 BOTH OS+G5+G7 on same SHA; 2 bounded seed-isolated hosted Ubuntu CPU jobs after G4; separate original artifacts per seed.",
+    "per_seed_training_job_timeout_minutes": 29,
+    "two_jobs_independent": true,
+    "no_paid_API": true,
+    "predeclared_budget": "512 optimizer updates ×4 arms×2 seeds, first-use fresh new FIT/DEV/OOD only.",
+    "no_auto_retry_or_scheduled_task": true,
+    "original_results_retained_private": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "external_scientific_first_use": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
