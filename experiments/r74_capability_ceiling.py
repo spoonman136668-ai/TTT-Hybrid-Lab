@@ -332,8 +332,13 @@ def factual_causality_negative(panel="FIT",sequence=32):
 
 def checkpoint_identity(arm,width,sequence,seed):
     f=frozen()
+    git=subprocess.run(["git","rev-parse","HEAD"],cwd=str(ROOT),
+                       capture_output=True,text=True,check=False)
+    commit=git.stdout.strip() if git.returncode==0 else "NO_GIT_CHECKOUT"
     return {"R74_freeze_blob":FREEZE_BLOB,"reference_model_blob":MODEL_BLOB,
-            "torch_version":torch.__version__,
+            "R74_code_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+            "candidate_source_git_SHA":commit,
+            "torch_version":str(torch.__version__),
             "arm":arm,"width":width,"sequence":sequence,"seed":seed,
             "optimizer":"AdamW","batch":2,"source_seed":f["learning"]["source"]["FIT"]["seed"]}
 
@@ -347,6 +352,8 @@ def train_bounded(arm,width,seed,steps,sequence=128,save_path=None):
     spec=frozen()
     if seed not in SEEDS or steps not in TRAIN_STEPS:
         raise PermissionError("R74_UNFROZEN_SEED_OR_TRAINING_BUDGET")
+    if width not in LEVELS:
+        raise ValueError("R74_UNFROZEN_TRAINING_WIDTH")
     if sequence not in LENGTHS:
         raise ValueError("R74_UNREGISTERED_LENGTH")
     torch.set_num_threads(1)
