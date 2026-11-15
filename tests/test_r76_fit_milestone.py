@@ -70,7 +70,7 @@ def test_protected_heldout_denied_and_original_resume_identity(tmp_path):
 def test_receipt_will_not_pretend_to_prove_unfrozen_science():
     report=json.loads(r76.FREEZE.read_text())
     assert report["training"]["post_training"].startswith("No DEV/OOD")
-    assert "INCOMPLETE_RESOURCE_OR_RUNNER_LIMIT" in report["predeclared_interpretation"]
+    assert report["predeclared_interpretation"]["RESOURCE_LIMIT"].startswith("INCOMPLETE_RESOURCE_OR_RUNNER_LIMIT")
     assert report["execution"]["no_paid_API"]
     assert not report["authority"]["external_science_firstuse"]
     assert not report["authority"]["GPU_firstuse"]
