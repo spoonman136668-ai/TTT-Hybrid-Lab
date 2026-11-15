@@ -125,8 +125,17 @@ def device_probe(width,length,seed=997601):
                           ("PeakPagefileUsage",ctypes.c_size_t)]
             counter=MemoryCounters()
             counter.cb=ctypes.sizeof(counter)
-            process=ctypes.windll.kernel32.GetCurrentProcess()
-            ok=ctypes.windll.psapi.GetProcessMemoryInfo(
+            # ctypes defaults to 32-bit c_int; this is INVALID for a
+            # 64-bit HANDLE (including pseudo-handle -1) on Windows x64.
+            # Explicit WinAPI signatures prevent silent 32-bit truncation.
+            kernel=ctypes.windll.kernel32
+            kernel.GetCurrentProcess.restype=wintypes.HANDLE
+            psapi=ctypes.windll.psapi
+            psapi.GetProcessMemoryInfo.argtypes=(
+                wintypes.HANDLE,ctypes.POINTER(MemoryCounters),wintypes.DWORD)
+            psapi.GetProcessMemoryInfo.restype=wintypes.BOOL
+            process=kernel.GetCurrentProcess()
+            ok=psapi.GetProcessMemoryInfo(
                 process,ctypes.byref(counter),counter.cb)
             if ok:
                 rss=counter.PeakWorkingSetSize/(1024*1024)
