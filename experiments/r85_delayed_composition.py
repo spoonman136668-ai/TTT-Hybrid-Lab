@@ -318,6 +318,7 @@ def _admit() -> str:
     if (os.getenv("GITHUB_ACTIONS") != "true"
         or os.getenv("GITHUB_EVENT_NAME") != "pull_request"
         or os.getenv("GITHUB_HEAD_REF") != BRANCH
+        or os.getenv("GITHUB_JOB") != "r85-delayed-compositional-calibration"
         or os.getenv("GITHUB_REPOSITORY") != "spoonman136668-ai/TTT-Hybrid-Lab"
         or os.getenv("RUNNER_OS") != "Linux"
         or os.getenv("RUNNER_ENVIRONMENT") != "github-hosted"
