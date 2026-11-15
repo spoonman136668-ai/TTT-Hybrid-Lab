@@ -399,11 +399,136 @@ def train_bounded(arm,width,seed,steps,sequence=128,save_path=None):
             "qualifier":"DEVELOPMENT_NOT_SCIENTIFIC_CEILING"}
 
 
+def checkpoint_basename(arm,width,sequence,seed):
+    if arm not in TRAIN_ARMS or seed not in SEEDS or width not in LEVELS:
+        raise PermissionError("R74_UNFROZEN_CHECKPOINT_ID")
+    if sequence not in LENGTHS:
+        raise ValueError("R74_UNFROZEN_CHECKPOINT_LENGTH")
+    return f"r74-{arm}-w{width}-t{sequence}-seed{seed}.pt"
+
+
+def _score_model(model,source):
+    x=torch.from_numpy(source["input"])
+    y=torch.from_numpy(source["selected_reward"])
+    model.eval()
+    squared=[]
+    with torch.no_grad():
+        for i in range(0,len(x),2):
+            prediction=model(x[i:i+2])
+            if prediction.shape!=y[i:i+2].shape:
+                raise ValueError("R74_SCORE_SHAPE_CHANGED")
+            if not bool(torch.isfinite(prediction).all()):
+                raise RuntimeError("R74_NONFINITE_SELECTED_REWARD_PREDICTION")
+            squared.append((prediction-y[i:i+2]).square().cpu().numpy())
+    error=np.concatenate(squared,axis=0)[:,:,0]
+    switched=source["world_switched"]
+    cold=source["cold_A_return_mask"]
+    late=error[cold]
+    if not np.any(switched) or not len(late):
+        raise RuntimeError("R74_MISSING_CAUSAL_COLD_RETURN")
+    return {"mean_selected_reward_MSE":float(np.mean(error)),
+            "cold_A_return_MSE":float(np.mean(late)),
+            "per_world_MSE":error.mean(axis=1).tolist(),
+            "selected_events":int(error.size)}
+
+
+def _bootstrap_lower_gain(baseline,hybrid,seed):
+    a=np.asarray(baseline,dtype=np.float64)
+    b=np.asarray(hybrid,dtype=np.float64)
+    if a.shape!=b.shape or a.ndim!=1 or len(a)<64:
+        raise ValueError("R74_BOOTSTRAP_SOURCE_MISMATCH")
+    rng=np.random.default_rng(24649999+seed)
+    ids=rng.integers(0,len(a),(2000,len(a)))
+    return float(np.quantile((a-b)[ids].mean(axis=1),.025))
+
+
+def final_evaluate_original_checkpoints(checkpoint_directory,width,sequence=128):
+    """Never construct protected DEV/OOD until ALL 14 final model states verified.
+
+    This executable scientific path intentionally requires 65,536 completed
+    updates per arm+seed. A checkpoint that only profiled or trained 1,024
+    steps is not a scientific candidate and cannot enter scored holdout.
+    """
+    frozen()
+    if width not in LEVELS or sequence not in LENGTHS:
+        raise ValueError("R74_UNFROZEN_EVALUATION_SIZE")
+    directory=Path(checkpoint_directory)
+    torch.set_num_threads(1)
+    models={}
+    custody={}
+    for seed in SEEDS:
+        for arm in TRAIN_ARMS:
+            file=directory/checkpoint_basename(arm,width,sequence,seed)
+            if not file.is_file():
+                raise FileNotFoundError(f"R74_INCOMPLETE_TRAINED_MODEL:{file.name}")
+            ckpt=torch.load(file,map_location="cpu",weights_only=True)
+            expected=checkpoint_identity(arm,width,sequence,seed)
+            if ckpt.get("identity")!=expected or ckpt.get("updates")!=TRAIN_STEPS[-1]:
+                raise PermissionError("R74_ORIGINAL_TRAINING_CUSTODY_INCOMPLETE")
+            model=make_model(arm,width).cpu()
+            model.load_state_dict(ckpt["model_state"],strict=True)
+            models[(seed,arm)]=model
+            custody[f"{seed}:{arm}"]={
+                "checkpoint":file.name,
+                "updates":ckpt["updates"],
+                "exact_identity":expected,
+                "trained_parameters":sum(p.numel() for p in model.parameters())}
+    # No trained weights change after this line. Only now construct the
+    # precommitted held-out DEV and OOD world outcomes.
+    dev=factual_worlds("DEV",sequence=sequence)
+    ood=factual_worlds("OOD",sequence=sequence)
+    out={}
+    results=[]
+    for seed in SEEDS:
+        score={arm:{"DEV":_score_model(models[(seed,arm)],dev),
+                    "OOD":_score_model(models[(seed,arm)],ood)}
+               for arm in TRAIN_ARMS}
+        out[str(seed)]={a:{panel:{k:v for k,v in d[panel].items()
+                                if k!="per_world_MSE"}
+                            for panel in ("DEV","OOD")}
+                        for a,d in score.items()}
+        baseline=min(("GRU64","MLP64"),
+            key=lambda arm:score[arm]["DEV"]["mean_selected_reward_MSE"])
+        candidate=score["HybridPilot_FULL"]
+        base=score[baseline]
+        rel_dev=(base["DEV"]["mean_selected_reward_MSE"]-candidate["DEV"]["mean_selected_reward_MSE"])/base["DEV"]["mean_selected_reward_MSE"]
+        rel_ood=(base["OOD"]["mean_selected_reward_MSE"]-candidate["OOD"]["mean_selected_reward_MSE"])/base["OOD"]["mean_selected_reward_MSE"]
+        rel_cold=(base["DEV"]["cold_A_return_MSE"]-candidate["DEV"]["cold_A_return_MSE"])/base["DEV"]["cold_A_return_MSE"]
+        lower=_bootstrap_lower_gain(base["DEV"]["per_world_MSE"],
+                                    candidate["DEV"]["per_world_MSE"],seed)
+        checks={"DEV_relative_gain_min_5pct":rel_dev>=.05,
+                "OOD_relative_gain_min_5pct":rel_ood>=.05,
+                "cold_A_return_relative_gain_min_5pct":rel_cold>=.05,
+                "paired_lower_bootstrap_positive":lower>0,
+                "original_65536_training_updates_all_arms":True,
+                "CPU_reference_only_no_official_GPU":True}
+        results.append({"seed":seed,"strongest_conventional_control":baseline,
+                        "DEV_relative_gain":rel_dev,"OOD_relative_gain":rel_ood,
+                        "cold_return_relative_gain":rel_cold,
+                        "paired_lower95_baseline_minus_hybrid_MSE":lower,
+                        "checks":checks,"passes_frozen_checks":all(checks.values())})
+    science=all(v["passes_frozen_checks"] for v in results)
+    return {"schema":SCHEMA,"freeze_blob":FREEZE_BLOB,
+            "source":{"DEV_worlds":len(dev["input"]),
+                      "OOD_worlds":len(ood["input"]),
+                      "sequence":sequence},
+            "model_provenance":custody,"scores":out,
+            "decisions":results,
+            "result":("DEV_REFERENCE_HYBRID_MECHANISM_SIGNAL_ONLY" if science
+                      else "DEV_SCIENTIFIC_NO_GO"),
+            "full_Mamba2_TTT_CUDA_qualification":False,
+            "action_policy_learning_proven":False,
+            "independent_scientific_pass":False,
+            "deployment":"NONE"}
+
+
 def main():
     p=argparse.ArgumentParser()
     p.add_argument("--worker",action="store_true")
     p.add_argument("--profile",action="store_true")
     p.add_argument("--train",action="store_true")
+    p.add_argument("--evaluate",action="store_true")
+    p.add_argument("--checkpoint-directory")
     p.add_argument("--width",type=int,default=64)
     p.add_argument("--sequence",type=int,default=128)
     p.add_argument("--per-seconds",type=int,default=30)
@@ -421,6 +546,11 @@ def main():
     elif args.train:
         ans=train_bounded(args.arm,args.width,args.seed,args.steps,
                           args.sequence,args.save_path)
+    elif args.evaluate:
+        if not args.checkpoint_directory:
+            p.error("--evaluate requires --checkpoint-directory")
+        ans=final_evaluate_original_checkpoints(args.checkpoint_directory,
+                                               args.width,args.sequence)
     else:
         p.error("choose --worker, --profile, or --train")
     print(json.dumps(ans,sort_keys=True,allow_nan=False))
