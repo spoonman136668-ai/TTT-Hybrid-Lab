@@ -119,7 +119,10 @@ def _fresh_world(panel: str, seed: int, index: int, *, custody_sha: str | None =
         raise PermissionError("R86_ORIGINAL_SOURCE_NOT_ADMITTED")
     # R85 pure physics constructor, NOT its once-used CALIBRATION generator.
     rng = np.random.default_rng(np.random.SeedSequence([SALT[panel], seed, index]))
-    w = r85._make_synthetic_world(index, rng)
+    # R85 constructor restricts its private CALIBRATION index to 512;
+    # R86 has 2048 independent FIT world RNG streams, so use the bounded
+    # world-stratum index only for its balanced parity/pivot assignment.
+    w = r85._make_synthetic_world(index % r85.N, rng)
     if panel == "OOD_SHIFT":
         w = _shift_public_world(w, index)
     return w, int(rng.choice([r85.CALIBRATE, r85.EXPLOIT_POS]))
