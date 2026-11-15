@@ -1,0 +1,209 @@
+{
+  "schema": "ttt-hybrid.r89-native-role-event-access-first-study.v1",
+  "stage": "IMMUTABLE_PROSPECTIVE_FREEZE_ONLY_BEFORE_R89_IMPLEMENTATION_TEST_CI_OR_SOURCE_FIRST_USE",
+  "classification": "DEVELOPMENT_NATIVE_MECHANISM_COMPARISON_ONLY_NOT_OFFICIAL_FUSED_GPU_OR_INDEPENDENT_SCIENTIFIC_PASS",
+  "parent": {
+    "R88_PR": 283,
+    "R88_qualified_head": "698eb433c3b15b5fe84679f0fe40408d13daff03",
+    "R88_freeze_blob": "bb465029814c567c7391f0be5259b046490fecf7",
+    "R88_status": "R88_LEARNED_ROLE_EVENT_READOUT_DIAGNOSTIC_SIGNAL_ONLY_BOTH_SEEDS_13_OF_13",
+    "R88_spent_salts": [
+      25300111,
+      25300211,
+      25300311,
+      25300411
+    ],
+    "R87_spent": [
+      25290111,
+      25290211,
+      25290311,
+      25290411
+    ],
+    "R86_spent": [
+      25280111,
+      25280211,
+      25280311,
+      25280411
+    ],
+    "R85_CALIBRATION_spent": 25270111,
+    "R85_still_sealed": [
+      25270211,
+      25270311,
+      25270411
+    ],
+    "no_parent_trained_weights_data_or_scorings_reused": true
+  },
+  "hypothesis": "The original width1024 16,818,178-parameter native HybridPilot_FULL hard-router R75 triangular TTT can learn useful four-factor causal action consequences on truly independent one-chosen-action records when a differentiable public role/phase event-access frontend forms a 5-row legal cue memory before the unchanged native 5-row core, outperforming identical-initialized 48-row raw native and a cross-world shuffled role-slot GRU negative, and approximating deterministic native event slots without computing parity explicitly.",
+  "null": "If either seed fails ANY predeclared DEV, cold, shifted OOD, control, oracle-regret or bootstrap threshold, R89_NATIVE_ROLE_ACCESS_NO_GO, freeze that negative and do not retune scored data. Even positive on same family of source physics is DEVELOPMENT mechanism signal only, not native-general science, official fused GPU or broad transfer.",
+  "sources": {
+    "independent_salts": {
+      "FIT": 25310111,
+      "FIT_VALIDATION": 25310211,
+      "DEV": 25310311,
+      "OOD_SHIFT": 25310411
+    },
+    "seeds": [
+      1000211,
+      1000223
+    ],
+    "counts": {
+      "FIT": 2048,
+      "FIT_VALIDATION": 256,
+      "DEV": 256,
+      "OOD_SHIFT": 256
+    },
+    "physical_episode_ticks": 224,
+    "public_selected_rows_per_episode": 48,
+    "event_rows_selected_for_role_reader": 5,
+    "original_A_PROBE_times": [
+      8,
+      16,
+      24,
+      32
+    ],
+    "B_PROBE_times": [
+      104,
+      112,
+      120,
+      128
+    ],
+    "OOD_shifted_A_PROBE_times": [
+      12,
+      22,
+      30,
+      40
+    ],
+    "OOD_shifted_B_PROBE_times": [
+      110,
+      120,
+      136,
+      148
+    ],
+    "early_pivot": 64,
+    "cold_pivot": 192,
+    "OOD_early_pivot": 68,
+    "OOD_cold_pivot": 208,
+    "new_worlds": "Only immutable pure R85 private physics constructor with independent SeedSequence([panel_salt,seed,index]), private index%512 for balanced law/pivot, original R86 pure shifted OOD; never old dataset APIs, scored R88/R87/R86 cohorts, or old weights.",
+    "training_labels": "One random actual legal CALIBRATE or EXPLOIT_POS selected at pivot, only factual physical 9-step realized reward; no alternate-action reward, hidden causal law, factor label, teacher parity target, future evaluator score or old DEV/OOD.",
+    "heldout": "Training and any validation on FIT/VALID only. NO generation of new DEV/OOD physically paired evaluator worlds until all native, GRU and MLP training budgets completed and weights frozen; once-first-use on two seeds and no scored retune.",
+    "shift_scope": "OOD probe timestamps, pivot and noise scale; product-of-four A law remains the SAME family. Unfamiliar causal-law transfer and 224 true native recurrent steps remain unqualified."
+  },
+  "arms": [
+    "NATIVE_FULL_RAW48",
+    "NATIVE_FULL_DETERMINISTIC_A_SLOTS5",
+    "NATIVE_FULL_LEARNED_ROLE_ACCESS5",
+    "GRU64_FULL_RAW48",
+    "GRU64_DETERMINISTIC_A_SLOTS5",
+    "GRU64_SHUFFLED_A_SLOTS5",
+    "GRU256_DETERMINISTIC_A_SLOTS5",
+    "MLP64_LEGAL_RAW_A_CUES"
+  ],
+  "models": {
+    "original_native": "R74 HybridPilot_FULL native width1024 four heads, original hard depth router and R75 mathematically equivalent triangular native TTT fastweight, exactly 16818178 params before event frontend; NOT fused CUDA Mamba2 or official CUDA TTT.",
+    "native_initialization": "All three native FULL cores deep-copy exact same initial random tensor values on same seed. Deterministic slots preserve native core geometry but 5 effective recurrent rows vs raw48; learned frontend adds small trainable legal query/key/role bias and feeds 5 legal 13D soft-weighted public rows into unmodified native core.",
+    "learned_frontend": "Select only prior PROBE=A phase event candidates using actually observed prior action1 and prior observation marker+1; infer public role from observed role_id, use trainable 13D->64D event embedding/role queries and softmax constrained to lawful public A events, with learned positive role-alignment penalty to build four differentiable weighted 13D rows plus original current chosen pivot action 13D row. No hand-coded parity, no private law or reward. Public phase/role are architectural priors, not autonomous feature discovery.",
+    "deterministic_control": "Four unmodified 13D A PROBE response rows sorted by actually observed public role plus actual chosen pivot row. No parity sign, uses public parser and shorter context.",
+    "shuffled_negative": "Strong GRU64 fed four public A response rows from different within-pivot-stratum worlds, retains own chosen action and original timestamp, exact fresh per-panel deterministic shuffling. Deprives legitimate A cause while preserving cue/time marginals.",
+    "conventional": "GRU64 raw full 48 and role slots 5, GRU64 shuffled 5; strong GRU256 role slots 5; MLP64 with only four legal observed raw A cues+selected action/public time. All trained on same factual data, conventional longer updates."
+  },
+  "training": {
+    "batch_size": 2,
+    "native_width": 1024,
+    "original_native_core_parameter_count": 16818178,
+    "native_updates_each": 1024,
+    "GRU64_and_GRU256_updates_each": 8192,
+    "MLP64_updates": 4096,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "global_gradient_clip": 1,
+    "first_1024_identical_seeded_FIT_index_pairs_all_arms": true,
+    "checkpoint_updates": [
+      0,
+      512,
+      1024,
+      2048,
+      4096,
+      8192
+    ],
+    "log_each_arm_model_params_event_exposures_training_wall_and_validation_MSE": true,
+    "params_matched_native_cores_only": true,
+    "params_matched_raw_slot_shuffled_GRU64": true,
+    "training_updates_or_exposures_matched_across_native_and_GRU": false,
+    "equal_FLOPs": false,
+    "strict_equal_training_wall": false,
+    "model_recurrent_unroll_raw48_event5_not_physical224": true
+  },
+  "controls": [
+    "NATIVE_FULL_RAW48",
+    "NATIVE_FULL_DETERMINISTIC_A_SLOTS5",
+    "GRU64_FULL_RAW48",
+    "GRU64_DETERMINISTIC_A_SLOTS5",
+    "GRU64_SHUFFLED_A_SLOTS5",
+    "GRU256_DETERMINISTIC_A_SLOTS5",
+    "MLP64_LEGAL_RAW_A_CUES",
+    "PUBLIC_A_PARITY_MEMORY_RULE_EVALUATOR_ONLY",
+    "LAST_A_CUE",
+    "RECENT_B_PARITY",
+    "ALWAYS_CALIBRATE",
+    "ALWAYS_EXPLOIT_POS",
+    "PAIRED_PHYSICAL_ORACLE_EVALUATOR_ONLY"
+  ],
+  "evaluation": {
+    "both_seeds_required": true,
+    "paired_bootstrap": {
+      "resamples": 2000,
+      "seed_salt": 25310555,
+      "lower_quantile": 0.025,
+      "paired": "NEW DEV native learned event minus native full raw, same physical worlds"
+    },
+    "thresholds": {
+      "DEV_learned_native_minus_raw_native_min": 1,
+      "DEV_learned_native_minus_native_deterministic_slot_min": -0.25,
+      "DEV_learned_native_minus_best_trained_slot_GRU_min": -0.35,
+      "DEV_learned_native_minus_shuffled_slot_GRU_min": 1.25,
+      "DEV_learned_native_minus_best_fixed_min": 1.25,
+      "DEV_cold_native_learned_minus_raw_min": 1,
+      "DEV_lawful_parity_rule_action_agreement_min": 0.85,
+      "DEV_learned_native_oracle_regret_max": 0.75,
+      "DEV_bootstrap_lower95_native_learned_minus_raw_positive": true,
+      "OOD_native_learned_minus_raw_min": 0.75,
+      "OOD_cold_native_learned_minus_raw_min": 0.75,
+      "OOD_native_learned_minus_trained_GRU256_slots_min": -0.5,
+      "DEV_public_A_sign_identifiability_min": 0.9,
+      "on_positive": "R89_NATIVE_ROLE_EVENT_ACCESS_DEVELOPMENT_SIGNAL_ONLY",
+      "on_negative": "R89_NATIVE_ROLE_ACCESS_NO_GO",
+      "on_incomplete": "R89_INCOMPLETE_ENGINEERING_OR_RESOURCE_NOT_SCIENTIFIC_NEGATIVE",
+      "independent_scientific_pass": false
+    }
+  },
+  "execution": {
+    "branch": "research/r89-native-role-event-access-20261115",
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "same_SHA_G4_full_Linux_Windows_required_before_original_sci": true,
+    "same_SHA_G5_authentic_CPU_Linux_Windows_required": true,
+    "same_SHA_G7_pinned_Mamba2_CPU_required": true,
+    "seed_isolated_original_GitHub_hosted_Ubuntu_CPU_jobs": 2,
+    "original_first_PR_attempt_only": true,
+    "exact_clean_head_SHA": true,
+    "timeout_minutes_each_seed": 29,
+    "no_source_rerun_if_uncertain": true,
+    "artifact_retention_days": 30,
+    "no_new_scheduler_controller_workflow_or_runner": true,
+    "no_paid_API": true,
+    "no_GPU_first_use": true
+  },
+  "authority": {
+    "cpu_scoped_factual_training_allowed_without_merge": true,
+    "merge": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "official_GPU_first_use": false,
+    "external_protected_scientific_first_use": false,
+    "paid_API": false,
+    "deployment": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "new_controller": false
+  }
+}
