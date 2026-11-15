@@ -1,0 +1,123 @@
+{
+  "schema": "ttt-hybrid.r74-capability-ceiling.v1",
+  "stage": "PRE_FROZEN_BEFORE_SOURCE_OR_PROBES",
+  "classification": "HIGH_FIRST_NATIVE_NUMERIC_REFERENCE_HYBRID_ENGINEERING_AND_SCIENCE_PREP",
+  "parent": {
+    "main_sha": "d2ede7bc2bc0f16aeeedc315681b21d7af6ec439",
+    "model_git_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "authentic_adapter_blob": "9ce1bcaff5eb4e44f161c33142ca99d48f18284a",
+    "R70": "SYNTHETIC_TASK_ADMISSION_PASS",
+    "R71": "DEV_NO_GO",
+    "R72": "DEV_DIAGNOSTIC_NO_GO",
+    "R73": "INDEPENDENT_OPEN_PR_268",
+    "no_spent_R64_to_R73_scored_source": true
+  },
+  "hypothesis": "Train the actual native reference HybridPilot from numeric selected-action consequences, find its feasible resource/learning ceiling at the largest measurable configuration, then remove model capacity and mechanisms to determine minimal structure preserving causal prediction, retention, OOD transfer, compute efficiency.",
+  "null": "If complete sufficient training fails stronger fully trained GRU/MLP controls and cold-return/OOD, no causal-learning advantage shown; OOM or too-small budget is incomplete feasibility, not scientific NO_GO.",
+  "capacity": {
+    "tier_order": "DESCENDING_HIGHEST_FIRST",
+    "widths": [
+      1024,
+      768,
+      512,
+      384,
+      256,
+      128,
+      64
+    ],
+    "sequence_lengths": [
+      128,
+      64,
+      32
+    ],
+    "batch": 2,
+    "heads": 4,
+    "components": "Existing model.HybridPilot: selective recurrent state, causal attention, TTTLinearMemory read-before-write, threshold CausalDepthRouter. Reference CPU only, NOT official Mamba2/TTT CUDA.",
+    "test": "Fresh isolated subprocess full real reference forward/backward/AdamW step, numeric continuous inputs, measured wall time / peak RSS / params and constraints. Timeout/OOM/other failure recorded faithfully.",
+    "budget": {
+      "per_tier_seconds": 30,
+      "total_seconds": 240,
+      "max_peak_RSS_MiB": 3072,
+      "workers": 1
+    },
+    "success_definition": "Largest actually PASS measured width x length on current CPU. All unprobed larger tiers remain UNVERIFIED. NOT model learning capacity or GPU capability."
+  },
+  "learning": {
+    "tokenless_inputs": "13 continuous features: 4 onehot current selected action, 4 onehot previous selected action, 4 previous selected outcome, public time/40. Labels are CURRENT actual selected reward only, never included in current input.",
+    "source": {
+      "FIT": {
+        "seed": 24610000,
+        "count": 512
+      },
+      "FIT_VALIDATION": {
+        "seed": 24620000,
+        "count": 128
+      },
+      "DEV": {
+        "seed": 24630000,
+        "count": 128
+      },
+      "OOD": {
+        "seed": 24640000,
+        "count": 128
+      }
+    },
+    "causal_worlds": "Fresh balanced stable/A-B-A laws and actuator alignment; action CALIBRATE0 physically sets alignment and incurs cost, chosen exploit +/- selected rewards depend on alignment and private sign; original R70 physical rule with independent numeric selected outcomes. OOD has shifted switch timing and causal reward/noise parameters.",
+    "train_arms": [
+      "HybridPilot_FULL",
+      "HybridPilot_NO_TTT",
+      "HybridPilot_NO_ATTENTION",
+      "HybridPilot_NO_SSM",
+      "HybridPilot_NO_DEPTH",
+      "GRU64",
+      "MLP64"
+    ],
+    "seeds": [
+      997601,
+      997607
+    ],
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "clip": 1,
+    "cumulative_training_checkpoints": [
+      1024,
+      4096,
+      16384,
+      65536
+    ],
+    "full_training_requirement": "Attempt maximum feasible width cumulative 65536 updates with checkpoint resume and frozen fit-validation stop; only then work backward on width, TTT/SSM/attention/depth. Never assert true capacity ceiling from a few updates.",
+    "saturation": "At least 16384 optimizer updates AND less than 1% relative improvement in FIT validation for two consecutive 4096-step windows before saturation claim.",
+    "compare": "Fully trained conventional GRU/MLP with matched FIT selected exposure and objective, report params/wall/FLOPs separately; old fixed policy and shuffled-history negative.",
+    "metrics": [
+      "factual_reward_MSE",
+      "A_return_cold_MSE",
+      "unfamiliar_OOD_MSE",
+      "interference",
+      "prefix_negative",
+      "whole_process_cost"
+    ],
+    "admission": "Both seeds gain >=5% DEV MSE, >=5% cold return and OOD MSE over strongest fully trained conventional control, paired bootstrap; incomplete budgets = INCOMPLETE not NO_GO.",
+    "data_custody": "Do not generate DEV/OOD until all model/ablation/control weights frozen. No prior R64-R73 scored data, no private signs or future outcome features. Freeze thresholds before scoring; never tune on DEV/OOD.",
+    "claim": "Even PASS means reference model DEV mechanism only, not full official Mamba2/TTT/GPU native agent, action selection or general intelligence."
+  },
+  "qualification": {
+    "G4_both_OS": true,
+    "G5_authentic_TTT_CPU": true,
+    "G7_pinned_import_CPU": true,
+    "exact_candidate_SHA": true,
+    "original_artifact_hash": true
+  },
+  "authority": {
+    "merge": false,
+    "promotion": false,
+    "deploy": false,
+    "GPU_first_use": false,
+    "external_science_first_use": false,
+    "FORGE_integration": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
