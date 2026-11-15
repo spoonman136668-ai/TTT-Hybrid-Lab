@@ -1,0 +1,126 @@
+{
+  "schema": "ttt-hybrid.f8r72-factual-gradient-diagnostics.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_R72_SOURCE_TRAINING_OR_HOLDOUT",
+  "classification": "DEV_LEARNING_SIGNAL_DIAGNOSTIC_ONLY_NOT_NEW_SCIENTIFIC_PASS",
+  "source_custody": {
+    "parent_R71_SHA": "220377e19217a5535da27c34ed0b8bd50d0185c6",
+    "parent_PR": 266,
+    "parent_R71_original_result": "ENGINEERING_PASS_DEV_NO_GO",
+    "R70_SHA": "682e9c406b7ce12d55fa39aaa1232306d22ce79e",
+    "R70_source_task": "ORIGINAL_BOTH_OS_TASK_ADMISSION_PASS_SYNTHETIC_ONLY",
+    "R69_result": "TASK_ADMISSION_NO_GO",
+    "all_R64_to_R71_scored_worlds_spent": true,
+    "new_source_salts": {
+      "FIT": 24410000,
+      "HOLDOUT": 24430000,
+      "PROXY_NEGATIVE": 24440000
+    },
+    "counts": {
+      "FIT": 128,
+      "HOLDOUT": 48
+    },
+    "hidden_changes": "50% unchanged, 50% A-B-A; initial sign balanced within each; B starts uniformly t9..18, A returns t22..35. All worlds generated independently of R71 scored source.",
+    "selected_task": "Reuse existing R70 exact physical actuator law and R71 model/rollout interfaces on NEW worlds; 40 selected interventions, 4 observed terminal dims, hidden law/phase/actuator state inaccessible to learned policy.",
+    "offline_behavior_source": "R70 public-time causal calibration fixed policy t0,16,32 on fresh FIT worlds; only its ACTUAL selected action/outcome teacher-forced history and public timestep are used for supervised training; no oracle hidden-state labels/actions/counterfactuals.",
+    "holdout_first_use": "Generate and score independent new HOLDOUT only after all 12 trained seed/arm/objective models are frozen; never train or tune on HOLDOUT or reinterpret R71 DEV results.",
+    "external_OOD_used": false
+  },
+  "hypothesis": "Under matched optimizer steps and source world budgets, optimizing factual supervised reference actions is learnable when sparse delayed action-return policy gradients are too noisy. A negative result indicates even this scripted behavior is not robustly learnable under the chosen capacity/training budget; neither direction proves native intelligence.",
+  "arms": {
+    "architectures": [
+      "STRUCTURED_CAUSAL_MEMORY",
+      "GRU16",
+      "MLP16"
+    ],
+    "methods": [
+      "SELECTED_RETURN_REINFORCE",
+      "FACTUAL_TEACHER_BEHAVIOR_CLONE"
+    ],
+    "negative_control": "STRUCTURED_CAUSAL_MEMORY trained on within-episode circularly shifted factual teacher action labels (by +5 steps): preserves action frequencies and observational history while breaking correct action-time pairing.",
+    "privileged_reference": "R70_CALIBRATE_CAUSAL public-time fixed factual policy as performance ceiling reference only, NOT private hidden-law oracle.",
+    "fixed_control": "R70_NO_CALIBRATE_REACTIVE, same new source; cannot be weakened or removed.",
+    "policy_action_set": [
+      0,
+      2,
+      3
+    ],
+    "learned_policy_information": "Each model sees public time, only actually selected past actions/outcomes; no actual hidden causal regime, private actuator alignment, future selected reward or unchosen outcome.",
+    "parameter_count_and_state": "Record all parameter counts, structured state 16 floats, GRU 16 floats, MLP no persistent floats; no claimed identical floating compute or training information between RL and teacher-forcing arms."
+  },
+  "training": {
+    "seeds": [
+      985601,
+      985607
+    ],
+    "optimizer": "AdamW",
+    "learning_rate": 0.015,
+    "weight_decay": 0.001,
+    "gradient_clip_norm": 1,
+    "steps_per_seed_architecture_method": 32,
+    "FIT_world_batch": 8,
+    "factual_events_per_seed_architecture_method": 10240,
+    "paired_FIT_draws_seed_formula": "24419999 + model_seed, same draws for RL/BC and 3 architectures at each optimizer step; action trajectories differ as policies act.",
+    "initialization": "Same corresponding R71 model initialization per architecture/seed for both training methods; no warm-start from R71 original scored weights.",
+    "RL_loss": "Frozen R71 REINFORCE normalized reward-to-go - per-time-step batch baseline, divide advantage by 8, entropy weight 0.005. All source exposures actual selected actions/outcomes.",
+    "BC_loss": "Cross entropy on exactly the actually selected public-time actions of the fixed R70 reference, teacher-forced with its actually observed selected consequences only. No hidden-law ground-truth or optimal private action.",
+    "shuffled_negative_loss": "Same BC cross entropy and world budget with +5 circular shift in action labels only. Factual teacher histories still unchanged. One structured arm per seed.",
+    "gradient_quality": "Before first optimizer update, measure flattened true selected-return policy-gradient vectors from two independent fresh FIT8 batches per architecture/seed; report cosine similarity and norms. Diagnostic only; no post-hoc metric-based admission.",
+    "full_cost": "Train seconds per architecture/method/seed, optimizer steps, selected action/outcome exposures, exact weights SHA and whole process duration; CPU only."
+  },
+  "scoring": {
+    "holdout_worlds": 48,
+    "all_models_train_before_holdout_generation": true,
+    "all_policies_greedy_on_holdout": true,
+    "metrics": [
+      "mean_net_selected_episode_reward",
+      "mean_factual_reference_action_agreement_on_teacher_histories",
+      "public_calibration_recall_at_0_16_32",
+      "noncalibration_false_positive_rate",
+      "switched_t36_to_39_net_return_reward",
+      "stable_episode_reward",
+      "mean_real_calibrations_per_episode",
+      "whole_process_wall_seconds"
+    ],
+    "eligibility": "Supervised BC outcomes are mechanism/training-signal diagnostics only; trained imitation is not reward-discovery or an independent causal learning improvement.",
+    "strong_controls": "Full original qualified fixed R70 public-time causal calibration, fixed no-calibration reactive; fully trained GRU16 and MLP16 under both method objectives.",
+    "bootstrap": {
+      "seed": 24449999,
+      "resamples": 2000,
+      "paired_on_same_48_holdout_worlds": true
+    },
+    "all_required_for_mechanism_signal_each_seed": {
+      "GRU16_BC_factual_action_agreement_min": 0.9,
+      "GRU16_BC_calibration_recall_min": 0.65,
+      "GRU16_BC_calibration_false_positive_max": 0.05,
+      "GRU16_BC_net_reward_fraction_of_fixed_calibration_min": 0.8,
+      "GRU16_BC_net_reward_over_GRU16_RL_min_absolute": 4,
+      "GRU16_BC_action_agreement_over_shuffled_structured_min": 0.1,
+      "GRU16_BC_minus_GRU16_RL_bootstrap_lower95_above_zero": true,
+      "all_source_qualifications_and_negative_replays": true
+    },
+    "both_seeds_required": true,
+    "outcome_on_fail": "DEV_DIAGNOSTIC_NO_GO; preserve result and no after-score tuning, do not infer cause from loss alone.",
+    "outcome_on_pass": "DEV_SCRIPTED_BEHAVIOR_LEARNABILITY_SIGNAL_ONLY; improves controlled behavior cloning but DOES NOT establish learning new causal rules, trained agent scientific superiority, efficiency or AGI.",
+    "no_post_score_changes": true
+  },
+  "qualification": {
+    "original_G4_full_Windows_Ubuntu": true,
+    "G5_authentic_TTT_CPU": true,
+    "G7_pinned_Mamba2_CPU": true,
+    "exact_SHA_artifact_hashes": true,
+    "original_scored_receipts_both_OS": true,
+    "negative_source_fences": true
+  },
+  "authority": {
+    "merge": false,
+    "promote": false,
+    "deploy": false,
+    "FORGE_integration": false,
+    "external_science_firstuse": false,
+    "GPU_firstuse": false,
+    "paid_API": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false
+  }
+}
