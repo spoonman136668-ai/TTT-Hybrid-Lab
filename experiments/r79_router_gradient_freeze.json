@@ -1,0 +1,85 @@
+{
+  "schema": "ttt-hybrid.r79-rare-depth-router-causal-gradient-diagnostic.v1",
+  "stage": "FROZEN_AFTER_R78_HOLDOUT_FREE_FIT_RECEIPT_BEFORE_R79_ENGINEERING_IMPLEMENTATION",
+  "classification": "ENGINEERING_DIAGNOSTIC_NOT_TRAINING_SCIENCE",
+  "parent": {
+    "R78_exact_SHA": "5b03322fb3f1e5e03b02c6bbb719ec61f4a577eb",
+    "R78_PR": 273,
+    "R78_G4_run": 43724482103,
+    "R78_final_artifact_id": 14166966782,
+    "R78_final_artifact_digest": "sha256:8d535f0ed6bfa8a3eadc495d33738fc140de6cd4e3f817448c42a110b0256095",
+    "R78_original_reference_model_blob": "5d9ea57b827aa1796548447868fa5ee14c251b49",
+    "R75_math_frozen_blob": "2cf720b2214715c7977ffc5b87ea45ed193e3087",
+    "R74_experiment_frozen_blob": "7deb2cd19bcd06ef0800e79a1588698c74ae350d",
+    "R78_frozen_blob": "b33ae6b2801753f9a7d3183aad75cc273248e34b",
+    "source_original_optimizer_counters": {
+      "full_model": 4096,
+      "depth_router": 39
+    },
+    "source_original_4096_FIT_val_MSE": {
+      "HybridPilot_FULL": 0.4894277546554804,
+      "GRU64": 0.45709514152258635,
+      "MLP64": 0.5957128228619695
+    },
+    "source_signals_observed_BEFORE_freeze": true,
+    "no_scored_R74_DEV_or_OOD_access": true
+  },
+  "hypothesis": "Original hard-gated CausalDepthRouter exhibits zero gradient to its norm/router/FFN when all decisions are inactive, explaining low depth optimizer step counts. An exact-forward, soft-surrogate-backward inactive-token branch can restore gradient to all depth tensors without changing original hard-gated forward outputs or native source weights.",
+  "null": "If source-matched exact-forward altered-gradient router cannot deliver nonzero finite gradient to all eight depth parameter tensors when hard routing is off, or forward parity/prefix causality/parameter equality fails, record ENGINEERING_NO_GO. Even engineering PASS does not prove improved task generalization or learned causal capability.",
+  "scope": {
+    "parent_model_untouched": true,
+    "reference": "Original model.CausalDepthRouter unchanged; source identical parameters, norm and FFN; subclass only overrides forward.",
+    "arms": [
+      "HARD_REFERENCE",
+      "INACTIVE_SOFT_SURROGATE_STRAIGHT_THROUGH"
+    ],
+    "substitution": "for hard route, use exact parent CausalDepthRouter.forward(x); add (inactive*sigmoid(router(norm(x)))*ffn(norm(x))) minus an exact detached clone of same term. No modification of numerical forward but additive gradient for unselected tokens only.",
+    "seed": [
+      997601,
+      997607
+    ],
+    "width": 1024,
+    "sequence": 128,
+    "batch": 2,
+    "heads": 4,
+    "input_features": 13,
+    "outputs": 1,
+    "initialization": "Same torch.manual_seed and exact original model tensors, then force original hard router.bias=-3.0 and router.weight=0 in BOTH models for deterministic all-off control. This is diagnostic initialization only, never original R78 learned weights.",
+    "source": "Fresh independent synthetic standard-normal 13-dimensional tokenless numeric probe, random future-target MSE, not R74 FIT/DEV/OOD and NOT a causal scientific task; no prior spent cohorts reused.",
+    "zero_route_negative": "Original hard CausalDepthRouter depth.norm,depth.router,depth.ffn all eight parameters must have no nonzero gradient on all-off probe.",
+    "surrogate_gradient_admission": "All eight depth tensors must have finite nonzero autograd gradient on identical all-off input/target at both seeds.",
+    "forward_absolute_max_diff": 0.000001,
+    "full_model_param_count": 16818178,
+    "parameter_state_identical_before_forward": true,
+    "causal_prefix_negative": "Rerun with only a later segment modified: predictions prefix must remain identical for both arms.",
+    "compute_control": "Report wall/parameter/RSS when possible; extra dense FFN backward may cost more than original hard routing. Do not claim efficiency, safe sparse training, or science.",
+    "full_forward_backward_and_AdamW_once": true,
+    "target_gradient_difference_necessarily_nonzero": true,
+    "original_FIT_training_not_replayed": true,
+    "no_protected_OOD_firstuse": true
+  },
+  "qualification": {
+    "mandatory_original_same_SHA_both_G4_OS": true,
+    "G5_native_TTT_CPU": true,
+    "G7_pinned_Mamba2_import_CPU": true,
+    "both_seeds_all_exact_controls": true,
+    "original_artifact_checksum": true,
+    "status_if_PASS": "ENGINEERING_CAUSAL_ROUTER_GRADIENT_RECOVERY_ONLY",
+    "status_if_FAIL": "ENGINEERING_NO_GO",
+    "actual_learning_score": "NOT_TESTED",
+    "independent_scientific_pass": false
+  },
+  "followup": "Any genuine learner advantage needs new prospectively frozen FIT/DEV sources, matching R79 hard + soft and strong fully trained GRU controls, identical selected information and compute accounting, two seeds, independent heldout. Do not retrofit learned R78 weights or score R78 protected DEV/OOD based on probe.",
+  "authority": {
+    "merge": false,
+    "model_promotion": false,
+    "deployment": false,
+    "GPU_firstuse": false,
+    "external_scientific_firstuse": false,
+    "FORGE_integration": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
