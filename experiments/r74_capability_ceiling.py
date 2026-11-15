@@ -53,8 +53,7 @@ def frozen():
     cap=spec["capacity"]
     learn=spec["learning"]
     if (spec["schema"]!=SCHEMA
-        or spec["stage"]!="PRE_FROZEN_BEFORE_SOURCE_OR_PROBES"
-        or spec["scope"] if False else False):
+        or spec["stage"]!="PRE_FROZEN_BEFORE_SOURCE_OR_PROBES"):
         raise RuntimeError("R74_SCHEMA_DRIFT")
     if (cap["widths"]!=list(LEVELS)
         or cap["sequence_lengths"]!=list(LENGTHS)
@@ -138,12 +137,12 @@ def high_first_probe(per_seconds=30,overall_seconds=240,max_rss_MiB=3072,
                 budget_exhausted=True
                 break
             limit=min(remaining,per_seconds)
-            argv=[sys.executable,str(Path(__file__).resolve()),"--worker",
+            argv=[sys.executable,"-m","experiments.r74_capability_ceiling","--worker",
                   "--width",str(width),"--sequence",str(length)]
             attempt=time.perf_counter()
             try:
                 result=subprocess.run(argv,capture_output=True,text=True,
-                         timeout=limit,check=False)
+                         timeout=limit,check=False,cwd=str(ROOT))
                 if result.returncode:
                     state="PROCESS_FAILED"
                     data={"exit_code":result.returncode,
