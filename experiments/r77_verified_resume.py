@@ -86,11 +86,11 @@ def frozen():
         raise RuntimeError("R77_PROSPECTIVE_SEMANTIC_FREEZE_DRIFT")
     r75.frozen()
     source_checks={
-      "R75_math_engine_source_sha256":train.canonical_sha(r75.__file__),
-      "R75_training_driver_source_sha256":train.canonical_sha(train.__file__)
+      "original_R75_math_engine_source_sha256":train.canonical_sha(r75.__file__),
+      "original_R75_training_driver_sha256":train.canonical_sha(train.__file__)
     }
     for key,value in source_checks.items():
-        if value!=s["original_"+key]:
+        if value!=s[key]:
             raise PermissionError("R77_TRAINING_ENGINE_CHANGED_NOT_COMPATIBLE")
     if str(torch.__version__)!=s["original_torch"] or np.__version__!=s["original_numpy"]:
         raise PermissionError("R77_ORIGINAL_TORCH_NUMPY_TOOLCHAIN_CHANGED")
