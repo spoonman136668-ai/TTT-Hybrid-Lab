@@ -1,0 +1,189 @@
+{
+  "schema": "ttt-hybrid.r86-native-compositional-value-learning-v1",
+  "stage": "IMMUTABLE_PROSPECTIVE_FREEZE_ONLY_BEFORE_R86_IMPLEMENTATION_TEST_CI_OR_FIRST_USE",
+  "parent": {
+    "R85_PR": 280,
+    "R85_exact_SHA": "33e3dbd20049e42bfbca48bb11e18b310fd86384",
+    "R85_freeze_blob": "7c0fcfb9dab73974f28672f038ed16473ff7384f",
+    "R85_original_status": "ENGINEERING_R85_COMPOSITIONAL_INFORMATION_CALIBRATION_PASS_ONLY_BOTH_SEEDS",
+    "R84_original_status": "DEV_LEARNED_INTERVENTION_NO_GO_BOTH_SEEDS",
+    "R85_CALIBRATION_salt_spent": 25270111,
+    "R85_reserved_salts_still_sealed": [
+      25270211,
+      25270311,
+      25270411
+    ],
+    "R84_spent_salts": [
+      25260111,
+      25260211,
+      25260311,
+      25260411
+    ],
+    "no_prior_trained_weights_or_scored_worlds": true
+  },
+  "hypothesis": "At original native maximum width and real factual action-return learning, the 16.8M-parameter hard-router fastweight Hybrid can retain and compositionally bind four separated public A causes through a distracting B regime and select valuable physical interventions at cold A return, beating an identical initialized observation-blinded native clone and fully trained GRU64/GRU256/MLP256 under independent fresh DEV and structurally shifted OOD.",
+  "null": "If either seed misses any precommitted DEV/OOD reward/cold-retention/paired-bootstrap threshold against strongest conventional, memory-blinded or legal negative controls, record DEV_NATIVE_COMPOSITIONAL_VALUE_NO_GO. No tuning on first-use panels, scientific promotion, or replay.",
+  "worlds": {
+    "new_salts": {
+      "FIT": 25280111,
+      "FIT_VALIDATION": 25280211,
+      "DEV": 25280311,
+      "OOD_SHIFT": 25280411
+    },
+    "seeds": [
+      999611,
+      999623
+    ],
+    "counts": {
+      "FIT": 2048,
+      "FIT_VALIDATION": 128,
+      "DEV": 128,
+      "OOD_SHIFT": 128
+    },
+    "episode_length": 224,
+    "pivots": {
+      "DEV_FIT_early": 64,
+      "DEV_FIT_cold": 192,
+      "OOD_early": 68,
+      "OOD_cold": 208
+    },
+    "four_A_probes": [
+      8,
+      16,
+      24,
+      32
+    ],
+    "four_B_probes": [
+      104,
+      112,
+      120,
+      128
+    ],
+    "shifted_A_probes": [
+      12,
+      22,
+      30,
+      40
+    ],
+    "shifted_B_probes": [
+      110,
+      120,
+      136,
+      148
+    ],
+    "public_dim": 13,
+    "model_observed_timesteps": 48,
+    "selection": "Deterministically sample 47 public rows at or before the pivot with all four A cue rows (and for cold all four B cue rows) included; final 48th is chosen pivot action. Include public original physical timestamp in each selected row; no hidden truth, off-trace states, unchosen factual return, or unseen future. This preserves a 224-tick world and cold latency, but does NOT measure 224 recurrent model steps.",
+    "observation": "Use original R85 physically realized world constructor and rollout with fresh R86 seeded world source; random role binding for four A and four B signed factors, noisy public probe cue, hidden A parity; original A law is current at both intervention choices. OOD changes probe schedules, pivot clocks and multiplies observation/reward innovations by 1.35. OOD structural shift is narrower than transfer to entirely new physics.",
+    "FIT_labels": "One private seeded uniformly randomized legal selected action CALIBRATE or EXPLOIT_POS and only its realized 9-step physical reward, no pair-branch labels, hidden signs, oracle, parity-rule targets, or privileged future data.",
+    "first_use": "All five complete fixed optimizer training before generating independent DEV/OOD paired evaluator-only interventions. No scored panels touched by unit tests or model selection. Never access R85 calibration, R85 sealed or R84 scored panels."
+  },
+  "models": {
+    "native_name": "Original R74 HybridPilot_FULL with R75 mathematically equivalent triangular causal fastweight TTT, width1024, hard router, 4 heads, input13 output1; NOT official fused Mamba2+TTT GPU.",
+    "native_parameter_count": 16818178,
+    "arms": [
+      "NATIVE_FULL",
+      "NATIVE_OBSERVATION_BLIND",
+      "GRU64_FULL",
+      "GRU256_FULL",
+      "MLP256_FULL"
+    ],
+    "blind": "Identical initialized cloned native parameters; erase factual previous selected action/observation features [4:12] at all timesteps; retain current action, physical timestamp and recurrent state, so not completely memoryless.",
+    "seeded_initialization": "Native and blind identical parameter tensors. GRU/MLP independent deterministic initializations.",
+    "training": {
+      "batch": 2,
+      "model_selected_steps": 48,
+      "optimizer": "AdamW",
+      "lr": 0.001,
+      "weight_decay": 0.0001,
+      "global_clip": 1,
+      "native_updates": 1024,
+      "GRU64_updates": 8192,
+      "GRU256_updates": 8192,
+      "MLP256_updates": 4096,
+      "same_FIT_worlds": true,
+      "same_first_1024_seeded_indices": true,
+      "validation_checkpoints": [
+        0,
+        512,
+        1024,
+        2048,
+        4096,
+        8192
+      ],
+      "strict_equal_FLOPs": false,
+      "strict_equal_parameter_counts": false,
+      "compute_claim": "Not matched FLOPs or parameters: report exact update count, selected event exposures, process wall seconds, parameter count and hold this limitation against scientific qualification."
+    }
+  },
+  "controls": [
+    "NATIVE_OBSERVATION_BLIND",
+    "GRU64_FULL",
+    "GRU256_FULL",
+    "MLP256_FULL",
+    "ALWAYS_CALIBRATE",
+    "ALWAYS_EXPLOIT_POS",
+    "LAST_A_CUE",
+    "RECENT_B_CUE",
+    "PUBLIC_A_PARITY_MEMORY_RULE",
+    "EVALUATOR_ONLY_ORACLE"
+  ],
+  "evaluation": {
+    "DEV_model_chosen_realized_rewards": true,
+    "OOD_model_chosen_realized_rewards": true,
+    "cold_and_early_split": true,
+    "paired_bootstrap": {
+      "resamples": 2000,
+      "seed": 25280555,
+      "lower_quantile": 0.025,
+      "compare": "DEV_NATIVE_FULL minus strongest DEV-selected trained conventional, paired by identical world"
+    },
+    "thresholds": {
+      "both_seeds_required": true,
+      "DEV_native_minus_blinded_min": 0.5,
+      "DEV_native_minus_best_trained_conventional_min": 0.2,
+      "DEV_native_minus_strongest_fixed_min": 0.75,
+      "DEV_native_minus_last_A_cue_min": 0.75,
+      "DEV_native_legal_A_parity_choice_agreement_min": 0.8,
+      "DEV_native_fraction_of_legal_rule_gain_over_fixed_min": 0.8,
+      "DEV_cold_native_minus_best_trained_conventional_min": 0.2,
+      "paired_bootstrap_lower95_native_minus_conventional_positive": true,
+      "OOD_native_minus_DEV_selected_conventional_min": 0.1,
+      "OOD_cold_native_minus_DEV_selected_conventional_min": 0.15,
+      "DEV_oracle_regret_max": 0.7,
+      "on_positive": "DEV_NATIVE_COMPOSITIONAL_VALUE_SIGNAL_ONLY_NOT_INDEPENDENT_SCIENTIFIC_PASS",
+      "on_negative": "DEV_NATIVE_COMPOSITIONAL_VALUE_NO_GO",
+      "on_incomplete": "INCOMPLETE_ENGINEERING_OR_RESOURCE_NOT_SCIENTIFIC_NO_GO",
+      "independent_scientific_pass": false
+    }
+  },
+  "execution": {
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "branch": "research/r86-fresh-compositional-native-learning-20261115",
+    "first_attempt_only": true,
+    "exact_clean_SHA": true,
+    "linux_full_G4_and_windows_full_G4_before_firstuse": true,
+    "same_SHA_G5_authentic_CPU_required": true,
+    "same_SHA_G7_Mamba2_CPU_required": true,
+    "runner": "GitHub-hosted Ubuntu CPU",
+    "seed_isolated_jobs": 2,
+    "per_seed_minutes": 29,
+    "no_new_workflow_or_runner_or_scheduler": true,
+    "original_private_receipts_days": 30,
+    "no_paid_API": true,
+    "no_GPU_first_use": true,
+    "no_automatic_rerun": true
+  },
+  "authority": {
+    "merge": false,
+    "promotion": false,
+    "FORGE_integration": false,
+    "official_GPU_first_use": false,
+    "external_protected_scientific_first_use": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "deployment": false,
+    "paid_API": false
+  }
+}
