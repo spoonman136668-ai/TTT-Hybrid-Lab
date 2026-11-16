@@ -1,0 +1,158 @@
+{
+  "schema": "ttt-hybrid.r98-native-internal-compositional-transfer.testonly.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_IMPLEMENTATION_TESTS_OR_FRESH_SOURCE_FIRST_USE",
+  "parent": {
+    "r97_qualified_nonreplaying_SHA": "ebfca5928edf6bcec7f0e3ec9340255bfad44680",
+    "r97_frozen_blob": "a73fdfbbad3a7659cc00ba98f37a01695a59154e",
+    "r97_original_scored_SHA": "7f89ba65d26d085a13994a6cbda304fe98d38f94",
+    "r97_original_scored_run": "43837200986",
+    "r97_frozen_status": "R97_UNSEEN_BINDING_CONVENTIONAL_SIGNAL_ONLY",
+    "previous_scored_source_weights_reused": false
+  },
+  "question": "Can a trainable public-role and operator encoder injected INSIDE the existing width32 native HybridPilot stem generalize to a new composition of familiar operator primitives, outperform a matched flat stem, the same role encoder as an external additive sidecar, original native, and strongest fully-trained conventional tagged set/MLP/GRU on unfamiliar operator composition and cold world?",
+  "scope": "NEW_CPU_TEST_ONLY_HOLDOUT_COMPOSITION_OF_KNOWN_MUX_PARITY_AND_NEGATION_NOT_NEVER_SEEN_PRIMITIVE_OR_OFFICIAL_NATIVE_SCIENTIFIC_PASS",
+  "source": {
+    "seeds": [
+      1001911,
+      1001923
+    ],
+    "salts": {
+      "FIT": 25390111,
+      "VALID": 25390211,
+      "DEV_SEEN": 25390311,
+      "DEV_COMPOSE": 25390411,
+      "OOD_SHIFT": 25390511,
+      "ROLE_REASSIGN": 25390611,
+      "TAG_NEGATIVE": 25390711,
+      "BATCH": 25390811,
+      "BOOTSTRAP": 25390911,
+      "UNIT_ONLY": 25399991
+    },
+    "counts": {
+      "FIT": 2048,
+      "VALID": 256,
+      "DEV_SEEN": 256,
+      "DEV_COMPOSE": 256,
+      "OOD_SHIFT": 256,
+      "ROLE_REASSIGN": 256
+    },
+    "known_train_programs": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "never_trained_program": [
+      1,
+      1
+    ],
+    "program_semantics": "base=0 is SELECTOR_MUX(A[yes] if A[selector]>0 else A[no]); base=1 is PARITY(product of all four A factors); negate=1 multiplies base result by -1. Train MUX/normal, MUX/negated, PARITY/normal; never train PARITY/negated. This tests novel composition of familiar primitives, NOT a newly invented unfamiliar primitive.",
+    "binding": "TRAIN role triples (0,1,2),(1,2,3),(2,3,0) round-robin; DEV_COMPOSE/OOD_SHIFT/ROLE_REASSIGN bind to (3,0,1), withheld. Combined operator+role binding is held out; cannot isolate which alone limits performance.",
+    "fresh_physics": "R85 pure constructor with new independent panel/seed/index RNG; independently redraw four A factors [-1,+1], replace R85 old index-law by specified public program output; no previous R85-R97 scored generator/source. Same physical probe timing/B factors except OOD shift.",
+    "public": "Original physics 224 ticks, R85 lawful preaction physical rollout and R86 selected 48x13 physical prefix; inject PUBLIC encoded instruction into the 4 observed A-probe event channel8: (tag + 4*base + 8*negate)/15, tag in {0=distractor,1=selector,2=yes,3=no}; row9 original role ID, row10 actual noisy factor cue, row11 original A phase; no outcome/hidden law injected. Every model receives same public instructions and causal factor observations. 5×13 observed A/pivot rows selected only, NOT full 224 recurrent observations.",
+    "chosen_action": "CALIBRATE iff ((world_index//4)+(seed_index))%2==0; otherwise EXPLOIT_POS; exact index design balance across cold/early, heldout law sampled independently of index. Only ONE realized nine-tick return under chosen factual intervention is available to training. Never unchosen branch, hidden law, evaluator labels or precomputed public parity/mux teacher.",
+    "test_panels": "DEV_SEEN uses familiar program and familiar role binding; DEV_COMPOSE is PARITY+NEGATED with heldout binding; shifted OOD repeats unknown combination under 68/208 pivot and increased noise; ROLE_REASSIGN changes only role assignment for an unseen PARITY+NEGATE world, which is role-invariant; must treat role-reassignment flip rate as ZERO true physical-law change control rather than falsely demand an action flip. Also include program-change counterfactual PARITY+NEGATE to MUX+NEGATE on identical physical A factors to test actual changed physical law and action responsiveness.",
+    "alternative_program_panel": "ROLE_REASSIGN evaluator changes PUBLIC base primitive from PARITY to MUX while keeping negate flag 1, role binding (3,0,1), A/B factors, noise, time and chosen-action prefix fixed; recompute physical law; truth changes in subset and allow action-flip measure.",
+    "negative": "Tag/program-blind conventional 14D MLP with four role tags and both program bits zeroed. Shared role+operator encoder with public program bits randomly flipped per world selected by seed-only RNG (not law-selected), preserving physical A probes, chosen action/time and true outcome; audit must disclose residual signal and not claim complete causal-information removal.",
+    "negative_anticipated_caveat": "Even program-bit corruption retains original physical cue information, potentially predicting law under training-family priors; only a program-disruption control, not independent causal-null.",
+    "law_audits": "Precommit per public cold/early and selected action true-law positive rates [.35,.65]; negative program-bit corruption and its induced physical-law alignment reported but NOT used to choose sampled labels, draw new data, or claim negative is independent. No post hoc reruns.",
+    "data_reuse": false
+  },
+  "arms": [
+    "NATIVE32_RAW_TAGGED_EVENTS",
+    "NATIVE32_FLAT_STEM_ADAPTER",
+    "NATIVE32_INTERNAL_ROLE_PROGRAM_STEM",
+    "NATIVE32_EXTERNAL_ROLE_PROGRAM_SIDECAR",
+    "MLP64_PUBLIC_RAW_PROGRAM",
+    "ROLE_SET_PUBLIC_PROGRAM",
+    "GRU64_PUBLIC_TAGGED_EVENTS",
+    "MLP64_PUBLIC_CANONICAL_UPPER",
+    "ROLE_SET_PROGRAM_CORRUPTED_NEGATIVE"
+  ],
+  "architecture": {
+    "native": "Original R74 HybridPilot_FULL width32, R75 exact triangular TTT replacement. Original stem (13->32), SSM, causal attention, TTT, hard depth and final original head are preserved; no edit to model.py or official source.",
+    "internal_role_program": "Within an isolated research wrapper, trainable shared four-event encoder (public noisy factor, onehot public role instruction, two public opcode bits) forms a 32D learned context, which is added to the LAST PIVOT STEM ACTIVATION before original SSM/attention/TTT/depth/head. No additive output readout, all trainable gradients enter original native trunk and native head; this is internally conditioned architecture, not proof original core invents a new operator.",
+    "flat_stem": "Same original native with comparable conventional flat 14D MLP producing 32D last-stem feature addition; account for unmatched parameter budgets explicitly.",
+    "external_sidecar": "Same role+program context encoder as the internal arm but an independent trainable scalar value readout added AFTER original native core, distinct negative for the internal-injection hypothesis.",
+    "conventional": "Fully trained 14D flat MLP64; shared tagged-role set encoder plus public program bits and own scalar value readout; GRU64 on exact same 5x13 original selected rows. All use identical FIT physical action/return minibatches.",
+    "canonical_upper": "ENGINEERED observed public tags resolve selector/yes/no roles and signs/parity; 14D canonical observation MLP must still train factual reward. NOT a model discovering operator semantics, only an explicit public-rule-based diagnostic.",
+    "negative": "Same role-set architecture/initialized weights as positive role-set, but two public opcode bits corrupted per-world by independent deterministic RNG. Does not supply private law to trainable model.",
+    "equal_inputs_actual_physics_action_samples": true,
+    "parameters_and_FLOPs_not_matched_across_architecture_families": true,
+    "original_native_weights_not_promoted": true
+  },
+  "training": {
+    "full_steps_each_arm": 3072,
+    "batch": 16,
+    "AdamW_lr": 0.001,
+    "weight_decay": 0.0001,
+    "clip_norm": 1,
+    "identical_FIT_minibatch_indices": true,
+    "validation_only_reported_no_early_stop": true,
+    "all_nine_complete_before_first_DEV": true,
+    "whole_CPU_budget_seconds_per_seed": 260
+  },
+  "evaluation": {
+    "seed_count": 2,
+    "bootstrap_resamples": 2000,
+    "mechanism_checks": {
+      "composed_internal_minus_original_native_DEV_reward_min": 0.5,
+      "composed_internal_minus_flat_native_stem_DEV_reward_min": 0.2,
+      "composed_internal_minus_external_role_sidecar_DEV_reward_min": 0.2,
+      "composed_internal_vs_strongest_conventional_DEV_reward_margin_min": 0.1,
+      "composed_internal_true_law_accuracy_min": 0.8,
+      "composed_internal_vs_original_native_shifted_cold_reward_min": 0.3,
+      "composed_internal_minus_original_native_DEV_bootstrap_lower95_min": 0.1,
+      "program_switch_true_law_change_fraction_min": 0.2,
+      "program_switch_internal_action_change_on_true_change_min": 0.65,
+      "program_switch_internal_true_law_accuracy_both_min": 0.8
+    },
+    "control_checks": {
+      "DEV_composed_program_source_is_unseen": true,
+      "no_previous_scored_or_protected_source": true,
+      "FULL_original_native_not_modified": true,
+      "all_nine_trained_before_scorers": true,
+      "both_OS_full_regression_prior_to_science_first_use": true
+    },
+    "statuses": {
+      "both": "R98_INTERNAL_NATIVE_COMPOSITION_DEVELOPMENT_SIGNAL_ONLY",
+      "no_go": "R98_INTERNAL_COMPOSITION_NO_GO",
+      "invalid": "R98_SOURCE_OR_NEGATIVE_INVALID_NOT_SCIENTIFIC_NO_GO",
+      "incomplete": "R98_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENTIFIC_VERDICT"
+    },
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r98-native-internal-compositional-operator-20261116",
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "two_fresh_seed_jobs_only_in_existing_G4": true,
+    "requires_full_G4_Linux_and_Windows_PASS_before_scored_source": true,
+    "requires_same_SHA_G5_both_OS_and_G7": true,
+    "GitHub_hosted_Ubuntu_first_attempt_only": true,
+    "exact_clean_sha": true,
+    "no_scored_replay": true,
+    "no_new_workflow_runner_scheduler_controller": true,
+    "no_official_GPU_first_use": true
+  },
+  "authority": {
+    "scoped_CPU_testonly_diagnostic": true,
+    "merge": false,
+    "model_promotion": false,
+    "scientific_approval": false,
+    "GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_controller": false,
+    "new_scheduler": false
+  }
+}
