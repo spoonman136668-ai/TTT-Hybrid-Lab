@@ -1,0 +1,43 @@
+{
+  "schema": "ttt-hybrid.r103.owner-scoped-firstuse.v1",
+  "scope": "ONE_ORIGINAL_THREE_SEED_GITHUB_HOSTED_CPU_TEST_ONLY",
+  "approved_on": "2026-11-16",
+  "owner_approval": "USER_EXPLICITLY_AUTHORIZED_R103_CPU_FIRST_USE",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "pr_number": 299,
+  "branch": "research/r103-relational-binding-20261116",
+  "seeds": [
+    1003011,
+    1003023,
+    1003037
+  ],
+  "immutable_freeze_blob": "e9a12e3e5224abf162ae00e82b0781987c00484d",
+  "exact_parent_sha": "1a2c9779c3a9b24b2e4a366cedec915b4aca057a",
+  "no_prior_source_replay": true,
+  "no_gpu_merge_promotion_forge": true,
+  "no_r102_original_cohort_reuse": true,
+  "per_seed_CPU_budget_seconds": 900,
+  "admission_requirements": {
+    "final_commit_only_authorization_manifest": true,
+    "exact_source_SHA_and_owner_GitHub_original_run": true,
+    "run_attempt_one_only": true,
+    "github_hosted_linux_CPU_only": true,
+    "dual_OS_same_source_full_G4_success": true,
+    "G5_G7_same_source_success": true,
+    "branch_ref_unmodified": true,
+    "no_dirty_source_or_freeze_drift": true,
+    "all_11_arms_fully_trained_before_scored_heldout": true,
+    "scored_seed_replay_forbidden": true
+  },
+  "excluded": [
+    "GPU original use",
+    "merge",
+    "FORGE integration",
+    "deployment",
+    "model promotion",
+    "new runner",
+    "new scheduler",
+    "new controller",
+    "paid API"
+  ]
+}
