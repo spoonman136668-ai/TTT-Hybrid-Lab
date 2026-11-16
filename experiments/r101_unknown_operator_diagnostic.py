@@ -94,16 +94,16 @@ def _world(panel, seed, index, sha=None, *, event=0, family=None):
         raise PermissionError("R101_UNFROZEN_SOURCE_INDEX_OR_SEED")
     if not isinstance(event, int) or not 0 <= event <= SUPPORT:
         raise PermissionError("R101_UNREGISTERED_PHYSICAL_EVENT")
+    # Keep historical and future original source shut before evaluating
+    # family-specific selectors. This preserves admission-negative behavior.
+    if not freeze["authority"]["protected_scored_first_use"]:
+        raise PermissionError("R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED")
     if family not in KNOWN + UNSEEN:
         raise PermissionError("R101_UNREGISTERED_PHYSICAL_FAMILY")
     if panel in ("FIT", "VALID", "DEV_FAMILIAR") and family not in KNOWN:
         raise PermissionError("R101_UNSEEN_OPERATOR_NOT_TRAINING")
     if panel in ("DEV_UNKNOWN", "OOD_SHIFT", "DELAYED_COLD", "REVERSAL") and family not in UNSEEN:
         raise PermissionError("R101_FAMILIAR_OPERATOR_NOT_HELDOUT_UNKNOWN")
-    # The prospectively frozen JSON explicitly grants PROPOSAL/UNIT_ONLY,
-    # not first use. This branch never consumes any protected scoring cohort.
-    if not freeze["authority"]["protected_scored_first_use"]:
-        raise PermissionError("R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED")
     _admit(seed=seed, candidate_sha=sha)
     rng = np.random.default_rng(np.random.SeedSequence(
         [freeze["source"]["salts"][panel], seed, index, event]))
