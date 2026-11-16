@@ -288,3 +288,67 @@ def test_conventional_comparators_have_no_dormant_trainable_parameters(arm, mode
 def test_unknown_conventional_mode_rejected():
     with pytest.raises(ValueError,match="R101_CONVENTIONAL_MODE_NOT_REGISTERED"):
         r101.ConventionalValue("unsupported")
+
+
+
+@pytest.mark.parametrize("panel", [
+    "DEV_UNKNOWN", "OOD_SHIFT", "DELAYED_COLD", "REVERSAL",
+])
+def test_unknown_operator_is_balanced_per_public_time_and_action_not_just_marginal(panel):
+    """Eliminates family leakage via observable R85/R86 pivot or query action."""
+    audit = pipe.non_scoring_design_audit()
+    pre = audit["precommitted_panel_source_design"][panel]
+    assert not pre["unknown_family_predictable_from_public_time_or_action"]
+    for seed in r101.SEEDS:
+        cells = pre["public_time_query_action_family_cells_by_seed"][str(seed)]
+        assert len(cells) == (2 if panel=="DELAYED_COLD" else 4)
+        for key,distribution in cells.items():
+            assert set(distribution) == set(r101.UNSEEN)
+            assert len(set(distribution.values())) == 1, (panel,seed,key)
+            assert min(distribution.values()) > 0
+        if panel=="DELAYED_COLD":
+            assert all(key.startswith("COLD|") for key in cells)
+        else:
+            assert any(key.startswith("EARLY|") for key in cells)
+            assert any(key.startswith("COLD|") for key in cells)
+
+
+def test_prospective_unknown_operator_assignment_removes_public_pivot_parity_code():
+    for panel in ("DEV_UNKNOWN", "OOD_SHIFT", "REVERSAL"):
+        # Adjacent even/odd episode indices have opposite public pivot times
+        # but MUST be assigned the SAME private heldout operator family.
+        for i in range(0,128,2):
+            assert pipe.operator_family(panel,i,r101.SUPPORT) == (
+                pipe.operator_family(panel,i+1,r101.SUPPORT))
+        # Every group of four indices contains both operator families,
+        # so the observable chosen query action cannot encode their identity.
+        for i in range(0,128,4):
+            assert {
+                pipe.operator_family(panel,j,r101.SUPPORT)
+                for j in range(i,i+4)} == set(r101.UNSEEN)
+    for i in range(128):
+        assert pipe.operator_family("REVERSAL",i,0) != (
+            pipe.operator_family("REVERSAL",i,r101.SUPPORT))
+
+
+def test_marginally_balanced_but_public_time_leaky_source_is_rejected(monkeypatch):
+    original = pipe.operator_family
+    def source_with_hidden_time_opcode(panel,index,event):
+        if panel=="DEV_UNKNOWN":
+            return r101.UNSEEN[index%2] # exactly exposes public EARLY/COLD
+        return original(panel,index,event)
+    monkeypatch.setattr(pipe,"operator_family",source_with_hidden_time_opcode)
+    with pytest.raises(
+        RuntimeError,
+        match="R101_PRIVATE_OPERATOR_REVEALED_BY_PUBLIC_TIME_OR_ACTION"):
+        pipe.non_scoring_design_audit()
+
+
+def test_public_time_family_audit_never_opens_any_original_scored_world(monkeypatch):
+    def disallow_physics(*_args,**_kw):
+        raise AssertionError("R101_PROTECTED_SCIENTIFIC_FIRST_USE_READ")
+    monkeypatch.setattr(r101,"_world",disallow_physics)
+    report=pipe.non_scoring_design_audit()
+    assert report["original_scored_data_accessed"] is False
+    assert report["independent_scientific_pass"] is False
+    assert not report["frozen_first_use_granted"]
