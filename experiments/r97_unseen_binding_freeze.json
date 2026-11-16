@@ -1,0 +1,174 @@
+{
+  "schema": "ttt-hybrid.r97-unseen-public-role-binding.testonly.v1",
+  "stage": "FROZEN_BEFORE_R97_IMPLEMENTATION_TESTS_OR_SOURCE_FIRST_USE",
+  "parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "original_r96_final_sha": "93b02e45a5d37299fa4edd6fb50d619ab129fa73",
+    "r96_freeze_git_blob": "523447556b00de3761097d8592217418a70cd766",
+    "r96_spent_sha": "54f52d6d8e57941aa8ab75283c9b81285793d8a7",
+    "r96_spent_run": "43833655469",
+    "original_r96_science_status": "R96_ROLE_CONDITIONAL_MECHANISM_NO_GO",
+    "R96_pr": 292,
+    "previous_training_or_scored_data_or_weights_reused": false
+  },
+  "hypothesis": "A shared trainable non-transformer tag-conditioned set learner, given public per-role causal instructions and noisy A cues but no conditional-law labels, will zero-shot transfer the known physical mux OPERATOR to a never-trained assignment of which four roles select/serve as branch targets. Test against fully trained MLP, GRU, native hard-router+TTT and shuffled/tag-removed controls; evaluate delayed cold and same-world assignment change.",
+  "scope": "NEW_TEST_ONLY_SAME_OPERATOR_UNSEEN_BINDING_NOT_NEW_OPERATOR_OR_OFFICIAL_INDEPENDENT_SCIENCE",
+  "source": {
+    "seeds": [
+      1001711,
+      1001723
+    ],
+    "salts": {
+      "FIT": 25380111,
+      "VALID": 25380211,
+      "DEV_SEEN": 25380311,
+      "DEV_HELDOUT": 25380411,
+      "OOD_SHIFT": 25380511,
+      "ROLE_REASSIGN": 25380611,
+      "TAG_PERMUTE": 25380711,
+      "BATCH": 25380811,
+      "BOOTSTRAP": 25380911,
+      "UNIT_ONLY": 25389991
+    },
+    "counts": {
+      "FIT": 2048,
+      "VALID": 256,
+      "DEV_SEEN": 256,
+      "DEV_HELDOUT": 256,
+      "OOD_SHIFT": 256,
+      "ROLE_REASSIGN": 256
+    },
+    "training_bindings": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        0
+      ]
+    ],
+    "unseen_test_binding": [
+      3,
+      0,
+      1
+    ],
+    "role_reassign_counterfactual_binding": [
+      0,
+      1,
+      2
+    ],
+    "true_law": "On fresh pure R85 test physics, independently redraw four A factor signs [-1,+1] from new independent source RNG, overriding original index parity, set law_a = A[yes] if A[selector] positive else A[no], with public per-A-role instruction tags {selector:1, yes:2, no:3, distractor:0}. Never inject hidden law into public input.",
+    "public_information": "Physical original 224-tick world, only 48 legally selected public prefix rows; four actually observed noisy A PROBE response rows encoded public role identity and normalized instruction tag at row[8], noisy A factor at row[10], phase at [11]; final pivot has actual selected intervention/time. All architectures get identical lawful public facts; no hidden law or unchosen return.",
+    "tag_protocol": "Embed instruction tags in observed A-probe response channel 8 AFTER pure R85 pre-intervention physical rollout but BEFORE pure R86 48-row public compression, not in private labels. This public task instruction is essential: no model can identify unseen law from four A cues alone. Canonical readout can reorder by tag only as labeled engineering upper bound.",
+    "factual_training": "Only one physically realized chosen intervention and its nine-tick return per FIT/VALID world, original selected action CALIBRATE iff ((index//4)+seed_index)%2==0 else EXPLOIT_POS; no other branch.",
+    "heldout_first_use": "No DEV_SEEN, DEV_HELDOUT, OOD_SHIFT or ROLE_REASSIGN physical world materialized before ALL nine fully trained arm weights frozen; evaluator only creates new paired counterfactual actions after freeze, no updates.",
+    "OOD_scope": "Unseen binding with known mux rule, 68/208 shifted pivots/probe timing/noise; not unfamiliar causal OPERATOR and not full 224-tokenless memory rollouts. Original 224 ticks condensed into 48 public selected rows and 5 extracted A/action slots.",
+    "reassignment": "On fresh heldout assignment world, keep identical A factors, B factors, noise, physical time and chosen action but switch public task binding to [0,1,2] and recompute the true physical mux law; compare actions and realized returns against private paired physical evaluator, never use counterfactual branch in training.",
+    "negative": "Public instruction tags only are randomly permuted among the four observed A roles in each world with seed/panel/index-only RNG (no hidden law-informed selection), preserving four raw noisy A factor responses, row role identity, current chosen action, time and factual reward. Train and score same-capacity tag-aware set control. Count tag-implied law vs physical true law only as frozen evaluator-only control audit; reject as invalid if within-panel agreement outside [.40,.60]; no adaptive resampling.",
+    "law_independence": "For each fresh new panel, private law positive frequency in pivot and chosen action strata must lie [.38,.62]; original index-derived R85 law never used as teacher; no source labels used for model supervision.",
+    "previous_scored_or_reserved_sources": false
+  },
+  "arms": [
+    "NATIVE32_PUBLIC_SLOTS5",
+    "NATIVE32_FLAT_TAGGED_HEAD",
+    "NATIVE32_SET_TAGGED_HEAD",
+    "MLP64_TAGGED_RAW",
+    "MLP_TAGGED_SET",
+    "MLP64_ROLE_ONLY_TAG_BLIND",
+    "MLP_TAGGED_SET_PERMUTED_NEGATIVE",
+    "GRU64_PUBLIC_SLOTS5",
+    "MLP64_PUBLIC_CANONICAL_UPPER"
+  ],
+  "architecture": {
+    "native": "Existing original nontransformer R74 HybridPilot_FULL width32 and equivalent R75 triangular TTT from R95._native; three independently re-created identical native initial tensors; no change to original native source.",
+    "flat_sidecar": "12D raw flatten (four actually observed noisy A, four public tags, chosen action flags, time and zero) conventional MLP64 head added to original native value.",
+    "tagged_set": "Trainable shared per-role MLP consumes (noisy cue, one-hot of observed public tag) for each of four observed A events, commutative sum pooled latent, final MLP with observed action/time produces factual return; no hardcoded mux or private-law teacher and no transformer/tokenization.",
+    "tagged_set_sidecar": "Same tagged-set head added to original unmodified native pivot value, separately experimental, cannot prove native core learned role transfer.",
+    "raw_MLP": "12D flattened raw-cue and tag feature MLP64, 12->64->64->1, strong conventional fully trained same factual examples.",
+    "blind_MLP": "Identical 12D MLP64 with four public instruction tag slots zeroed; cannot know unknown binding, negative baseline.",
+    "tag_permuted": "Same initialized trainable set architecture/params as actual tagged-set arm, but public tags only randomized per world, preserving factual return, causal noisy cue, role identity, action, time and tag histogram; no shuffled hidden law labels.",
+    "GRU": "R81 GRU64 on 5×13 legal raw A-event rows with tag-observation channel 8, standard trained comparator.",
+    "canonical_upper": "Public-tag-only deterministic reordering of observed four noisy cues into selector/yes/no/distractor positions and existing R87 8D MLP; explicitly supplied invariant role mapping is a diagnostic engineered upper, not autonomous invention.",
+    "no_production_model_or_weights_modified": true,
+    "matched_examples_actions_updates": true,
+    "not_matched_parameters_or_FLOPs_across_architecture_groups": true
+  },
+  "training": {
+    "all_arm_steps": 4096,
+    "batch": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "clip_global_norm": 1,
+    "all_arms_identical_FIT_minibatch_indices": true,
+    "validation_MSE_logged_only_no_early_stop": true,
+    "whole_process_CPU_ceiling_seconds_per_seed": 260,
+    "all_nine_models_frozen_before_DEV": true
+  },
+  "evaluation": {
+    "two_original_independent_seeds_required": true,
+    "bootstrap_samples": 2000,
+    "mechanism_checks": {
+      "heldout_tagged_set_minus_blind_MLP_reward_min": 0.75,
+      "heldout_tagged_set_minus_permuted_negative_reward_min": 0.75,
+      "heldout_tagged_set_minus_raw_MLP_reward_min": 0.15,
+      "heldout_tagged_set_minus_GRU_reward_min": 0.1,
+      "heldout_canonical_upper_minus_tagged_set_reward_gap_max": 0.3,
+      "heldout_tagged_set_public_instruction_accuracy_min": 0.85,
+      "shifted_OOD_cold_tagged_set_minus_permuted_reward_min": 0.5,
+      "heldout_tagged_set_vs_permuted_paired_bootstrap_lower95_min": 0.1,
+      "role_reassignment_true_law_flip_fraction_min": 0.2,
+      "role_reassignment_tagged_set_action_flip_on_law_change_min": 0.7,
+      "role_reassignment_tagged_set_private_law_accuracy_min": 0.85
+    },
+    "native_checks": {
+      "heldout_native_set_minus_native_flat_reward_min": 0.2,
+      "heldout_native_set_minus_original_native_reward_min": 0.5,
+      "shifted_OOD_cold_native_set_minus_flat_reward_min": 0.2,
+      "heldout_native_set_vs_conventional_set_reward_gap_max": 0.3
+    },
+    "statuses": {
+      "both": "R97_UNSEEN_BINDING_NATIVE_SET_AND_CONVENTIONAL_SIGNAL_ONLY",
+      "conventional": "R97_UNSEEN_BINDING_CONVENTIONAL_SIGNAL_ONLY",
+      "no_go": "R97_UNSEEN_BINDING_INCREMENTAL_NO_GO",
+      "invalid": "R97_SOURCE_OR_CONTROL_INVALID_NO_SCIENTIFIC_VERDICT",
+      "incomplete": "R97_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENTIFIC_VERDICT"
+    },
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r97-unseen-public-role-binding-20261116",
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "new_workflow_file": false,
+    "branch_scoped_original_two_seed_jobs": true,
+    "full_Linux_Windows_G4_required_before_first_USE": true,
+    "same_SHA_G5_authentic_TTT_both_platforms_and_G7_pinned_Mamba2_required": true,
+    "GitHub_hosted_Ubuntu_only_original_first_attempt": true,
+    "clean_exact_SHA_readback": true,
+    "no_replay": true,
+    "per_seed_receipt": "local_runs/r97_binding_transfer_seed<seed>.json",
+    "no_new_runner_scheduler_controller_or_paid_API": true,
+    "no_official_GPU_or_protected_scientific_first_use": true
+  },
+  "authority": {
+    "scoped_CPU_testonly_diagnostic_allowed": true,
+    "merge": false,
+    "model_promotion": false,
+    "independent_protected_science_first_use": false,
+    "official_GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false
+  }
+}
