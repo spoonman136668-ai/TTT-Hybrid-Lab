@@ -254,3 +254,31 @@ def test_role_relabel_is_an_actual_causal_physical_equivalence(family,fixture_id
         np.testing.assert_array_equal(query[0],expected)
         np.testing.assert_array_equal(query[0,-1],old[-1])
         assert not np.array_equal(query[0,:4],old[:4])
+
+
+
+def test_unit_cpu_capacity_probe_samples_only_unprotected_worlds(monkeypatch):
+    """UNIT_ONLY batch has 16 factual returns; never touches R103 FIT/DEV."""
+    from experiments import r103_capacity_probe as probe
+    def protected_forbidden(*_a,**_kw):
+        raise AssertionError("R103_PROTECTED_SCIENCE_SOURCE_WAS_OPENED")
+    monkeypatch.setattr(r103,"_world",protected_forbidden)
+    batch=probe.prepare_unit_only()
+    assert batch["x"].shape==(16,16,5,13)
+    assert batch["factual"].shape==(16,16)
+    assert batch["shuffled"].shape==(16,16)
+    assert batch["query"].shape==(16,5,13)
+    assert batch["target"].shape==(16,)
+    assert batch["units_count"]==16
+    assert batch["unit_physics_seconds"]>=0
+    assert torch.isfinite(batch["target"]).all()
+    assert not r103.frozen()["authority"]["protected_scored_first_use"]
+
+
+def test_probe_never_reports_synthetic_capacity_as_scientific_pass():
+    from experiments import r103_capacity_probe as probe
+    assert probe.STEPS_RECORDED==6
+    assert probe.WARMUP_STEPS==2
+    assert probe.MAX_PROBE_SECONDS==120
+    assert probe.SOURCE_UNIT_COUNT==16
+    assert probe.RECEIPT.name=="r103_unit_only_capacity_probe.json"
