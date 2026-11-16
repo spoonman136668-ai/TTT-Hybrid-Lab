@@ -44,6 +44,76 @@ def protocol():
     return f
 
 
+
+def non_scoring_design_audit():
+    """Exact combinatorial source-design audit; NEVER generate scored worlds.
+
+    Six randomly and independently sampled three-operand Boolean inputs
+    cannot always distinguish candidate operators. This is a mathematical
+    information limit even with hypothetical noiseless full-law feedback.
+    Real R85 factual returns and noisy public cues may add uncertainty.
+    These diagnostics do NOT change precommitted scientific thresholds.
+    """
+    f = protocol()
+    candidates = tuple(r101.KNOWN + r101.UNSEEN)
+    patterns = tuple((int(i & 4 != 0), int(i & 2 != 0),
+                      int(i & 1 != 0)) for i in range(8))
+    signatures = {}
+    for family in candidates:
+        signatures[family] = tuple(r101._operator_truth(
+            np.array([*([2*b-1 for b in p]), -1], dtype=np.int64),
+            (0, 1, 2), family) for p in patterns)
+    if len(set(signatures.values())) != len(candidates):
+        raise RuntimeError("R101_OPERATOR_FAMILIES_NOT_DISTINCT")
+    collisions = {}
+    for unseen in r101.UNSEEN:
+        comparisons = []
+        for familiar in r101.KNOWN:
+            diff = sum(a != b for a,b in zip(
+                signatures[unseen],signatures[familiar]))
+            comparisons.append({
+                "known":familiar,"different_patterns_of_eight":diff,
+                "probability_six_iid_supports_avoid_difference":
+                    ((8-diff)/8)**SUPPORT,
+                "probability_query_is_different_after_undistinguishing_support":
+                    ((8-diff)/8)**SUPPORT * (diff/8),
+            })
+        comparisons.sort(key=lambda v:(
+            -v["probability_six_iid_supports_avoid_difference"],
+            v["known"]))
+        collisions[unseen] = comparisons
+    balance = {}
+    for panel,count in f["source"]["counts"].items():
+        fams = {
+            name:sum(operator_family(panel,index,SUPPORT)==name
+                     for index in range(count))
+            for name in (r101.KNOWN if panel in
+                         ("FIT","VALID","DEV_FAMILIAR") else r101.UNSEEN)}
+        if sum(fams.values()) != count or max(fams.values())-min(fams.values())>1:
+            raise RuntimeError("R101_FROZEN_PANEL_FAMILY_BALANCE_INVALID")
+        chosen = {
+            str(action):sum(chosen_action(seed,index,SUPPORT)==action
+                            for seed in SEEDS for index in range(count))
+            for action in (r85.CALIBRATE,r85.EXPLOIT_POS)}
+        if abs(chosen[str(r85.CALIBRATE)]-chosen[str(r85.EXPLOIT_POS)])>len(SEEDS):
+            raise RuntimeError("R101_FROZEN_PANEL_QUERY_ACTION_BALANCE_INVALID")
+        balance[panel] = {"count":count,"family_counts":fams,
+                          "query_action_counts_all_three_seeds":chosen,
+                          "six_support_actions_each_episode":"3 CALIBRATE + 3 EXPLOIT_POS"}
+    return {
+        "schema":"ttt-hybrid.r101.non-scoring-source-design-audit.v1",
+        "original_scored_data_accessed":False,
+        "unit_and_combinatorial_only":True,
+        "operator_signatures_evaluator_only":True,
+        "frozen_first_use_granted":f["authority"]["protected_scored_first_use"],
+        "assumption":"six independent uniform factor triples, hypothetical exact law observations",
+        "six_supports_cannot_guarantee_family_identification":True,
+        "unseen_vs_known":collisions,
+        "precommitted_panel_source_design":balance,
+        "science_thresholds_and_frozen_source_unchanged":True,
+        "independent_scientific_pass":False
+    }
+
 def operator_family(panel, index, event):
     """Evaluator-only family selection. Never pass family code to any model."""
     f = protocol()
