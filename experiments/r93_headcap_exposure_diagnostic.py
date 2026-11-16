@@ -31,7 +31,7 @@ from experiments import r92_native_diversity_lr_diagnostic as r92
 
 ROOT=Path(__file__).resolve().parents[1]
 FREEZE=ROOT/"experiments/r93_headcap_exposure_freeze.json"
-FREEZE_BLOB="9f51f6c6850a43cf353d1555505c2360fd49071d"
+FREEZE_BLOB="1f2d6f74bb885cd434924396e03e638b7d064b96"
 SCHEMA="ttt-hybrid.r93-test-only-balanced-exposure-headgrad-v1"
 PARENT="84bf0aa6e3650fc8a9dfc8e0f97becb15b8eda30"
 BRANCH="research/r93-native-exposure-head-conditioning-20261115"
@@ -71,6 +71,12 @@ def frozen()->dict:
         or s["shuffle_salt"]!=SHUFFLE_SALT or s["batch_permutation_salt"]!=BATCH_SALT
         or s["unit_test_only_salt"]!=UNIT_TEST_SALT or s["seeds"]!=list(SEEDS)
         or s["train_worlds_max"]!=256 or s["eval_world_count"]!=64
+        or s["supersedes_preimplementation_freeze_blob"]!="9f51f6c6850a43cf353d1555505c2360fd49071d"
+        or not s["chosen_action_rule"].startswith("For seed_index 0 (1000811) / 1 (1000823)")
+        or s["balance_contract"]["train_worlds256_each_cell"]!=32
+        or s["balance_contract"]["train_worlds16_each_cell"]!=2
+        or s["balance_contract"]["dev_test_worlds64_each_cell"]!=8
+        or s["balance_contract"]["must_fail_closed_on_any_imbalance"] is not True
         or d["fullwidth_native_params"]!=16818178
         or [(q["width"],q["worlds"],q["exposures_per_distinct_world"]) for q in d["levels"]]!=list(LEVELS)
         or [q["arms"] for q in d["levels"]]!=[list(x) for x in LEVEL_ARMS.values()]
@@ -118,6 +124,43 @@ def _admit()->str:
     return sha
 
 
+def _chosen_action(seed:int,index:int)->int:
+    """Predeclared index-only action independent of early/cold and causal law.
+
+    R85 physical law stratum is (index % 512 // 2) % 2; pivot timing is
+    index % 2. Each block of 4 contains all (pivot, law) strata. Alternating
+    actions every four worlds avoids R92's action/timing confound.
+    """
+    if seed not in SEEDS or not isinstance(index,int) or index<0:
+        raise PermissionError("R93_UNREGISTERED_BALANCED_ACTION_SEED_OR_INDEX")
+    return (r85.CALIBRATE if ((index//4)+SEEDS.index(seed))%2==0
+            else r85.EXPLOIT_POS)
+
+
+def balance_preflight()->dict:
+    """Reject action confounding from indices alone, before ANY source first use."""
+    result={}
+    for seed in SEEDS:
+        result[str(seed)]={}
+        for label,indices,expected in (
+            ("TRAIN_N256",range(256),32),
+            ("TRAIN_N16",range(16),2),
+            ("DEV_TEST_N64",range(1000,1064),8)):
+            counts={}
+            for index in indices:
+                timing=index%2
+                balance_law=((index%r85.N)//2)%2
+                chosen=_chosen_action(seed,index)
+                key=(timing,balance_law,chosen)
+                counts[key]=counts.get(key,0)+1
+            if (len(counts)!=8 or any(v!=expected for v in counts.values())
+                or set(k[2] for k in counts)!={r85.CALIBRATE,r85.EXPLOIT_POS}):
+                raise PermissionError("R93_ACTION_PIVOT_LAW_STRATA_CONFOUNDED")
+            result[str(seed)][label]={"strata_count":len(counts),
+                                       "each_stratum_count":expected}
+    return result
+
+
 def _world(panel:str,seed:int,index:int,sha:str):
     if panel not in ("TRAIN","DEV_TEST"):
         raise PermissionError("R93_ALL_SPENT_PROTECTED_AND_OLD_PANELS_DENIED")
@@ -135,7 +178,7 @@ def _world(panel:str,seed:int,index:int,sha:str):
     rng=np.random.default_rng(np.random.SeedSequence([
         TRAIN_SALT if panel=="TRAIN" else DEV_SALT,seed,index]))
     world=r85._make_synthetic_world(index % r85.N,rng)
-    action=r85.CALIBRATE if (seed+index)%2==0 else r85.EXPLOIT_POS
+    action=_chosen_action(seed,index)
     return world,action
 
 
@@ -338,12 +381,16 @@ def _gain(baseline,candidate):
 
 def development_ci():
     sha=_admit()
+    # Fixed index-only action stratification must be established before
+    # constructing a single TRAIN or withheld DEV_TEST physical world.
+    balanced=balance_preflight()
     torch.set_num_threads(1)
     target=ROOT/"local_runs/r93_headcap_exposure_linux.json"
     if target.exists():
         raise FileExistsError("R93_ORIGINAL_TEST_ONLY_FIRST_USE_REPLAY_DENIED")
     started=time.perf_counter()
     out={"schema":SCHEMA,"frozen_blob":FREEZE_BLOB,"candidate_SHA":sha,
+         "pre_first_use_action_balance":balanced,
          "R92_parent_SHA":PARENT,"platform":platform.platform(),
          "torch":str(torch.__version__),"scientific_pass":False,
          "protected_or_previous_scored_source_used":False,
