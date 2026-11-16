@@ -197,3 +197,32 @@ def test_original_frozen_mechanism_native_thresholds_and_gates():
     assert n["native_role_gate_vs_conventional_gate_DEV_reward_gap_max"]==.3
     assert f["training"]["steps_per_arm"]==r96.STEPS
     assert f["training"]["per_seed_CPU_resource_ceiling_seconds"]==r96.MAX_SECONDS
+
+
+def test_r96_original_DEV_OOD_ROLE_SWAP_are_consumed_and_cannot_replay(monkeypatch):
+    assert r96.ORIGINAL_R96_SPENT_SHA=="54f52d6d8e57941aa8ab75283c9b81285793d8a7"
+    assert r96.ORIGINAL_R96_SPENT_RUN_ID=="43833655469"
+    context={
+        "GITHUB_ACTIONS":"true",
+        "GITHUB_EVENT_NAME":"pull_request",
+        "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+        "GITHUB_HEAD_REF":r96.BRANCH,
+        "GITHUB_JOB":"r96-independent-role-mux",
+        "R96_SEED":str(r96.SEEDS[0]),
+        "RUNNER_OS":"Linux",
+        "RUNNER_ENVIRONMENT":"github-hosted",
+        "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_REF":"refs/pull/292/merge",
+        "EXPECTED_CANDIDATE_SHA":"f"*40,
+        "GITHUB_RUN_ID":"43888888888",
+    }
+    for key,value in context.items():
+        monkeypatch.setenv(key,value)
+    with pytest.raises(PermissionError,match="R96_ORIGINAL_FIRST_USE_ALREADY_CONSUMED_REPLAY_DENIED"):
+        r96._admit(r96.SEEDS[0])
+    with pytest.raises(PermissionError,match="R96_NEW_SOURCE_NOT_ADMITTED"):
+        r96._world("FIT",r96.SEEDS[0],0,"f"*40)
+    with pytest.raises(PermissionError,match="R96_NEW_SOURCE_NOT_ADMITTED"):
+        r96._world("DEV",r96.SEEDS[0],0,"f"*40)
+    with pytest.raises(PermissionError,match="R96_NEW_SOURCE_NOT_ADMITTED"):
+        r96._world("ROLE_SWAP",r96.SEEDS[0],0,"f"*40)

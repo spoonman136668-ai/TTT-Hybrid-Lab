@@ -29,6 +29,9 @@ FREEZE_BLOB="523447556b00de3761097d8592217418a70cd766"
 SCHEMA="ttt-hybrid.r96-independent-mux-role-learning.testonly.v1"
 PARENT="ea09a41dc13e4329c6d1a711d3a023ba297bdfa7"
 BRANCH="research/r96-independent-mux-role-learning-20261116"
+# These original TEST-only cohorts are consumed; never score them on a new SHA/run.
+ORIGINAL_R96_SPENT_SHA="54f52d6d8e57941aa8ab75283c9b81285793d8a7"
+ORIGINAL_R96_SPENT_RUN_ID="43833655469"
 SEEDS=(1001511,1001523)
 SALT={"FIT":25370111,"VALID":25370211,"DEV":25370311,
       "OOD_SHIFT":25370411,"ROLE_SWAP":25370511}
@@ -127,6 +130,8 @@ def _admit(seed:int):
         or "/merge" not in os.getenv("GITHUB_REF","")):
         raise PermissionError("R96_ONLY_ORIGINAL_HOSTED_G4_FIRST_ATTEMPT_SCIENCE")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R96_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R96_SPENT_RUN_ID:
+        raise PermissionError("R96_ORIGINAL_FIRST_USE_ALREADY_CONSUMED_REPLAY_DENIED")
     actual=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
                           capture_output=True,text=True,timeout=10,check=False)
     clean=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -159,7 +164,9 @@ def _world(panel:str,seed:int,index:int,sha:str):
         or os.getenv("R96_SEED")!=str(seed)
         or os.getenv("RUNNER_OS")!="Linux"
         or os.getenv("RUNNER_ENVIRONMENT")!="github-hosted"
-        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"):
+        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"
+        or sha!=ORIGINAL_R96_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R96_SPENT_RUN_ID):
         raise PermissionError("R96_NEW_SOURCE_NOT_ADMITTED")
     rng=np.random.default_rng(np.random.SeedSequence([SALT[panel],seed,index]))
     w=r85._make_synthetic_world(index%r85.N,rng)

@@ -912,7 +912,7 @@ jobs:
   r96-independent-role-mux:
     name: R96 independent mux role-learning / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r96-independent-mux-role-learning-20261116' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r96-independent-mux-role-learning-20261116' && github.event.pull_request.head.sha == '54f52d6d8e57941aa8ab75283c9b81285793d8a7' && github.run_id == 43833655469 }}
     strategy:
       fail-fast: false
       matrix:
