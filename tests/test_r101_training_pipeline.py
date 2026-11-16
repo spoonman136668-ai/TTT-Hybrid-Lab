@@ -176,3 +176,69 @@ def test_design_audit_uses_no_original_physics_and_matches_frozen_panel_counts(m
             expected[panel] * 3)
         assert values["six_support_actions_each_episode"] == (
             "3 CALIBRATE + 3 EXPLOIT_POS")
+
+
+
+@pytest.mark.parametrize("family", ["MUX3", "MAJORITY3", "EXACTLY_ONE3"])
+@pytest.mark.parametrize("action", [r85.CALIBRATE, r85.EXPLOIT_POS])
+def test_public_role_relabel_matches_actual_physics(family, action):
+    """Counterfactual semantics validated on independent UNIT_ONLY worlds."""
+    import copy
+    perm = pipe.ROLE_RELABEL
+    old_slots, new_slots, old_returns, new_returns = [], [], [], []
+    for event in range(r101.SUPPORT + 1):
+        old_world = r101._unit_world(1, event, family)
+        transformed = copy.deepcopy(old_world)
+        factors = np.empty(4,dtype=np.int64)
+        for original_role in range(4):
+            factors[perm[original_role]] = old_world["factors_a"][original_role]
+        transformed["factors_a"] = factors
+        transformed["r101_roles"] = tuple(
+            perm[original_role] for original_role in old_world["r101_roles"])
+        transformed["probe"] = {
+            t:(phase,perm[role] if phase=="A" else role,marker)
+            for t,(phase,role,marker) in old_world["probe"].items()}
+        transformed["a_probe_permutation"] = np.asarray(
+            [perm[role] for role in old_world["a_probe_permutation"]],dtype=np.int64)
+        transformed["law_a"] = r101._operator_truth(
+            transformed["factors_a"], transformed["r101_roles"],family)
+        assert old_world["law_a"] == transformed["law_a"]
+        before,br = r101._public_view(old_world,action)
+        after,ar = r101._public_view(transformed,action)
+        old_slots.append(before)
+        new_slots.append(after)
+        old_returns.append(br)
+        new_returns.append(ar)
+    support = np.stack(old_slots[:r101.SUPPORT])[None]
+    query = old_slots[-1][None]
+    new_support,new_query = pipe.relabel_public_roles(support,query)
+    np.testing.assert_array_equal(new_support[0],
+                                  np.stack(new_slots[:r101.SUPPORT]))
+    np.testing.assert_array_equal(new_query[0],new_slots[-1])
+    np.testing.assert_array_equal(np.asarray(old_returns),
+                                  np.asarray(new_returns))
+    # Neither the reward nor the public action/timing rows change.
+    np.testing.assert_array_equal(new_support[:,:,-1,:],support[:,:,-1,:])
+    np.testing.assert_array_equal(new_query[:,-1,:],query[:,-1,:])
+
+
+def test_scoring_role_relabel_keeps_feedback_actions_and_public_role_integrity():
+    data = _non_scoring_unit_records()
+    ix = np.array([0,1,2,3])
+    original = pipe._inputs(data,ix,r101.NATIVE,action=r85.CALIBRATE,
+                            permute=False)
+    transformed = pipe._inputs(data,ix,r101.NATIVE,action=r85.CALIBRATE,
+                               permute=True)
+    assert torch.equal(original[1],transformed[1])
+    assert not torch.equal(original[0],transformed[0])
+    assert not torch.equal(original[2],transformed[2])
+    np.testing.assert_array_equal(
+        transformed[0].numpy()[:,:,-1,:],original[0].numpy()[:,:,-1,:])
+    np.testing.assert_array_equal(
+        transformed[2].numpy()[:,-1,:],original[2].numpy()[:,-1,:])
+    for sample in transformed[0].numpy().reshape(-1,5,13):
+        assert sorted(sample[:4,8].tolist()) == [0.,.25,.5,.75]
+        np.testing.assert_array_equal(sample[:4,9],
+                                      np.array([.25,.5,.75,1.],dtype=np.float32))
+    with pytest.raises(ValueError,match="R101_PHYSICAL_ROLE_RELABEL_INPUT_INVALID"):
+        pipe.relabel_public_roles(data["support_slots"][:1],data["query0"])
