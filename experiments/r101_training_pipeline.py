@@ -265,6 +265,44 @@ def source(panel, seed, sha):
     return common
 
 
+
+# A precommitted NON-IDENTITY bijection on the original four physical
+# A-factor roles. Mapping old index i -> new ROLE_RELABEL[i]. Each support
+# event and the heldout query in an episode receive the SAME relabel.
+ROLE_RELABEL = (2, 0, 3, 1)
+
+
+def relabel_public_roles(support_slots, query):
+    """Physical role-name symmetry; NEVER rewrite law, reward or action.
+
+    The four public A events are stored by physical role index. A valid
+    relabel must permute (a) observed cue, (b) semantic operand-position
+    marker and (c) physical role-ID encoding TOGETHER, in every factual
+    support and heldout query. The event order alone is not a role renaming.
+    """
+    if (support_slots.ndim != 4 or support_slots.shape[1:] != (SUPPORT,5,13)
+        or query.ndim != 3 or query.shape[1:] != (5,13)
+        or len(support_slots) != len(query)
+        or tuple(sorted(ROLE_RELABEL)) != (0,1,2,3)):
+        raise ValueError("R101_PHYSICAL_ROLE_RELABEL_INPUT_INVALID")
+    order = np.argsort(np.asarray(ROLE_RELABEL,dtype=np.int64))
+    slots_out = support_slots.copy()
+    query_out = query.copy()
+    slots_out[:,:,:4,:] = support_slots[:,:,order,:]
+    query_out[:,:4,:] = query[:,order,:]
+    role_tags = np.arange(1,5,dtype=np.float32) / 4.0
+    slots_out[:,:,:4,9] = role_tags[None,None,:]
+    query_out[:,:4,9] = role_tags[None,:]
+    if (not np.array_equal(slots_out[:,:,-1,:],support_slots[:,:,-1,:])
+        or not np.array_equal(query_out[:,-1,:],query[:,-1,:])
+        or not np.array_equal(np.sort(slots_out[:,:,:4,8],axis=2),
+                              np.sort(support_slots[:,:,:4,8],axis=2))
+        or not np.array_equal(np.sort(query_out[:,:4,8],axis=1),
+                              np.sort(query[:,:4,8],axis=1))):
+        raise RuntimeError("R101_PHYSICAL_RELABEL_BROKE_CAUSAL_PUBLIC_STATE")
+    return slots_out, query_out
+
+
 def _inputs(data, indices, arm, action=None, permute=False):
     slots = data["support_slots"][indices]
     rewards = (data["support_rewards_shuffled"][indices]
@@ -274,11 +312,11 @@ def _inputs(data, indices, arm, action=None, permute=False):
     else:
         query = data["query0" if action == r85.CALIBRATE else "query2"][indices]
     if permute:
-        # Representation-equivalence check only, NOT unknown-role learning.
-        slots = slots.copy()
-        query = query.copy()
-        slots[:,:,:4,:] = slots[:,:,:4,:][:,:,::-1,:]
-        query[:,:4,:] = query[:,:4,:][:,::-1,:]
+        # Apply a TRUE public role renaming, not an arbitrary event-row swap:
+        # copy each cue, its semantic operand tag AND its new physical role id.
+        # This is a representation-symmetry negative check; it does not
+        # manufacture unseen operator families or unseen scientific data.
+        slots, query = relabel_public_roles(slots, query)
     return (torch.from_numpy(np.ascontiguousarray(slots)),
             torch.from_numpy(np.ascontiguousarray(rewards)),
             torch.from_numpy(np.ascontiguousarray(query)))
