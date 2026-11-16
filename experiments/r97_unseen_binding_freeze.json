@@ -72,9 +72,13 @@
     "heldout_first_use": "No DEV_SEEN, DEV_HELDOUT, OOD_SHIFT or ROLE_REASSIGN physical world materialized before ALL nine fully trained arm weights frozen; evaluator only creates new paired counterfactual actions after freeze, no updates.",
     "OOD_scope": "Unseen binding with known mux rule, 68/208 shifted pivots/probe timing/noise; not unfamiliar causal OPERATOR and not full 224-tokenless memory rollouts. Original 224 ticks condensed into 48 public selected rows and 5 extracted A/action slots.",
     "reassignment": "On fresh heldout assignment world, keep identical A factors, B factors, noise, physical time and chosen action but switch public task binding to [0,1,2] and recompute the true physical mux law; compare actions and realized returns against private paired physical evaluator, never use counterfactual branch in training.",
-    "negative": "Public instruction tags only are randomly permuted among the four observed A roles in each world with seed/panel/index-only RNG (no hidden law-informed selection), preserving four raw noisy A factor responses, row role identity, current chosen action, time and factual reward. Train and score same-capacity tag-aware set control. Count tag-implied law vs physical true law only as frozen evaluator-only control audit; reject as invalid if within-panel agreement outside [.40,.60]; no adaptive resampling.",
+    "negative": "Public instruction tags ONLY are randomized by a seed/panel/world-index permutation among the four A roles, while raw cues/actions/return remain fixed. This disrupts correct task binding but CANNOT erase permutation-invariant signal: exact binary enumeration across four-factor configurations and all 24 tag permutations yields expected 62.5% implied-law agreement, NOT 50%. This is an honest role-binding disruption negative, not an independent causal-information destroying control. Also compare tag-blind raw-cue MLP and strong fully trained MLP/GRU. Permutations must never be chosen after target/source inspection.",
     "law_independence": "For each fresh new panel, private law positive frequency in pivot and chosen action strata must lie [.38,.62]; original index-derived R85 law never used as teacher; no source labels used for model supervision.",
-    "previous_scored_or_reserved_sources": false
+    "previous_scored_or_reserved_sources": false,
+    "negative_role_disruption_implied_law_agreement_expected": 0.625,
+    "negative_implied_law_audit_lower": 0.5,
+    "negative_implied_law_audit_upper": 0.75,
+    "negative_role_disruption_not_causal_information_independence": true
   },
   "arms": [
     "NATIVE32_PUBLIC_SLOTS5",
@@ -142,7 +146,8 @@
       "invalid": "R97_SOURCE_OR_CONTROL_INVALID_NO_SCIENTIFIC_VERDICT",
       "incomplete": "R97_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENTIFIC_VERDICT"
     },
-    "independent_scientific_pass": false
+    "independent_scientific_pass": false,
+    "confound_note": "A tag-permuted arm preserves other signal (expected private law agreement 0.625), so strong difference supports binding utility but not independent causal-information deletion. This was frozen preimplementation following exact combinatorial enumeration before new panels existed."
   },
   "execution": {
     "branch": "research/r97-unseen-public-role-binding-20261116",
