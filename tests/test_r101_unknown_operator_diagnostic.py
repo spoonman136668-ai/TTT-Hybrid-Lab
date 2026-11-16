@@ -234,3 +234,54 @@ def test_first_use_custody_is_verified_once_per_seed_and_never_persisted(monkeyp
         assert r101._admit_protected.cache_info().maxsize==3
     finally:
         r101._admit_protected.cache_clear()
+
+
+def test_first_run_api_custody_and_same_sha_g5_g7_with_offline_mock(monkeypatch):
+    """Simulated API response only, no scored worlds and no network."""
+    from experiments import r101_cpu_firstuse_admission as scope
+    candidate="a"*40
+    calls=[]
+    def fake_get(url,token):
+        calls.append(url)
+        assert token=="unit-only-placeholder"
+        if "/actions/workflows/" in url:
+            return {"workflow_runs":[
+                {"id":100,"head_sha":candidate,"run_attempt":1,
+                 "name":"G4 CPU qualification","event":"pull_request"},
+                {"id":101,"head_sha":candidate,"run_attempt":1,
+                 "name":"G4 CPU qualification","event":"pull_request"}]}
+        return {"workflow_runs":[
+            {"head_sha":candidate,"name":"G5 authentic TTT CPU",
+             "conclusion":"success"},
+            {"head_sha":candidate,"name":"G7 pinned Mamba2 CPU import",
+             "conclusion":"success"}]}
+    monkeypatch.setenv("GITHUB_TOKEN","unit-only-placeholder")
+    monkeypatch.setattr(scope,"_read_api",fake_get)
+    good=scope._first_attempt_ci_custody(candidate,100)
+    assert good["original_attempt"]==1 and good["g4_run_id"]==100
+    assert good["same_sha_G5_G7_verified"]
+    assert len(calls)==2
+    with pytest.raises(PermissionError,match="R101_NOT_CANONICAL_FIRST_RUN"):
+        scope._first_attempt_ci_custody(candidate,101)
+
+
+def test_final_approval_is_additive_exact_parent_only_not_frozen_protocol():
+    """Staging has no approval file; final clean single-file commit will."""
+    from experiments import r101_cpu_firstuse_admission as scope
+    import subprocess
+    assert not r101.frozen()["authority"]["protected_scored_first_use"]
+    if scope.AUTH_PATH.is_file():
+        approval=scope.approval()
+        parent=subprocess.run(
+            ["git","rev-parse","HEAD^"],capture_output=True,
+            text=True,cwd=scope.ROOT,check=True).stdout.strip()
+        diff=subprocess.run(
+            ["git","diff-tree","--no-commit-id","--name-only","-r","HEAD"],
+            capture_output=True,text=True,cwd=scope.ROOT,check=True).stdout.strip()
+        assert parent==approval["exact_parent_sha"]
+        assert diff==scope.APPROVAL_PATH
+        assert approval["no_gpu_merge_promotion_forge"] is True
+        assert approval["no_prior_source_replay"] is True
+    else:
+        with pytest.raises(PermissionError,match="R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
+            scope.approval()
