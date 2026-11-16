@@ -221,7 +221,7 @@ class NativeRoleKeyValue(nn.Module):
         self.value=nn.Sequential(nn.Linear(25,32),nn.GELU(),
                                  nn.Linear(32,1))
         self.log_similarity=nn.Parameter(torch.tensor(0.4))
-        self.readout=nn.Sequential(nn.Linear(24+3+2,48),nn.GELU(),
+        self.readout=nn.Sequential(nn.Linear(24+3+1+2,48),nn.GELU(),
                                    nn.Linear(48,32),nn.GELU(),nn.Linear(32,1))
     def bind(self,slots):
         if slots.ndim!=4 or slots.shape[-2:]!=(5,13):
@@ -252,6 +252,50 @@ class NativeRoleKeyValue(nn.Module):
             (qkey,q,memory,action_code),dim=-1))[:,0]
 
 
+class RoleHistoryValue(nn.Module):
+    """Strong fully trained conventional history comparator, same public role cues.
+
+    Input binding is independently learned and public, exactly like native.
+    No private mask or operator label. Conventional GRU or flat MLP gets
+    the FULL 16 factual support cues and observed rewards.
+    """
+    def __init__(self,mode):
+        super().__init__()
+        if mode not in ("gru","mlp"):
+            raise ValueError("R105_CONVENTIONAL_MODE_INVALID")
+        self.mode=mode
+        self.log_sharpness=nn.Parameter(torch.tensor(4.5))
+        if mode=="gru":
+            self.history=nn.GRU(4,64,batch_first=True)
+            self.head=nn.Sequential(nn.Linear(64+3+2,64),nn.GELU(),
+                                    nn.Linear(64,1))
+        else:
+            self.head=nn.Sequential(nn.Linear(SUPPORT*4+3+2,64),
+                                    nn.GELU(),nn.Linear(64,64),nn.GELU(),
+                                    nn.Linear(64,1))
+    def bind(self,slots):
+        tags=slots[:,:,:4,8]
+        obs=slots[:,:,:4,10]
+        target=slots.new_tensor([.25,.5,.75])
+        w=torch.softmax(-(tags.unsqueeze(-1)-target).square()
+                        *self.log_sharpness.exp().clamp(4,128),dim=-2)
+        return torch.sum(w*obs.unsqueeze(-1),dim=-2)
+    def forward(self,slots,rewards,query):
+        if (slots.ndim!=4 or slots.shape[1:]!=(SUPPORT,5,13)
+            or rewards.shape!=slots.shape[:2]
+            or query.shape!=(len(slots),5,13)):
+            raise RuntimeError("R105_CONVENTIONAL_PUBLIC_FACTUAL_INPUT_INVALID")
+        facts=self.bind(slots)
+        x=torch.cat((facts,torch.tanh(rewards.unsqueeze(-1)/5)),dim=-1)
+        q=self.bind(query.unsqueeze(1)).squeeze(1)
+        action=query[:,-1,[0,2]]
+        if self.mode=="gru":
+            h=self.history(x)[1][-1]
+        else:
+            h=x.flatten(start_dim=1)
+        return self.head(torch.cat((h,q,action),dim=-1))[:,0]
+
+
 def make_models(seed):
     if seed not in SEEDS:raise PermissionError("R105_UNREGISTERED_NEW_MODEL_SEED")
     models={}
@@ -261,9 +305,9 @@ def make_models(seed):
     torch.manual_seed(seed+105)
     models[R103]=r103.NativeRelationalValue(r95._native(seed),"gated")
     torch.manual_seed(seed+505)
-    models[GRU]=r102.ConventionalEvidenceValue("gru")
+    models[GRU]=RoleHistoryValue("gru")
     torch.manual_seed(seed+506)
-    models[MLP]=r102.ConventionalEvidenceValue("flat")
+    models[MLP]=RoleHistoryValue("mlp")
     if set(models)!=set(TRAINABLE):
         raise RuntimeError("R105_MODEL_ARM_COUNT_DRIFT")
     keys=[dict(models[n].named_parameters()) for n in (NATIVE,SHUFFLED,ZERO,NO_ROLE)]
