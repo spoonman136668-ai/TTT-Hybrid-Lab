@@ -65,12 +65,12 @@ def test_r91_original_width_and_complete_test_only_development(monkeypatch):
     assert set(result["DEV_TEST"])==set(r91.ARMS)|{
         "ALWAYS_CALIBRATE","ALWAYS_EXPLOIT_POS2",
         "PUBLIC_A_RULE_EVALUATOR_ONLY","PHYSICAL_ORACLE_EVALUATOR_ONLY"}
-    assert result["comparisons"]["checks"].keys()=={
+    assert set(result["comparisons"]["checks"])=={
         "soft_vs_hard_reward_at_least_0p5",
         "soft_vs_shuffled_reward_at_least_0p5",
         "soft_within_0p5_of_fully_trained_GRU64",
         "soft_lawful_agreement_at_least_65pct",
-        "soft_oracle_regret_at_most_1p5"}.keys()
+        "soft_oracle_regret_at_most_1p5"}
     assert all(math.isfinite(info["DEV_TEST_mean_actual_reward"])
                for info in result["DEV_TEST"].values())
     assert all(isinstance(v,bool) for v in result["comparisons"]["checks"].values())
