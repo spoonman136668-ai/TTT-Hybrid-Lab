@@ -437,3 +437,181 @@ def _train(m,arm,fit,valid,batches):
             "params":sum(p.numel() for p in m.parameters()),
             "VALID_initial_MSE":before,"FIT_final_MSE":train,
             "VALID_final_MSE":val,"fit_seconds":duration}
+
+
+def _score(models,panel):
+    selected={};metrics={};returns={}
+    for arm,model in models.items():
+        r0=_predict(model,arm,panel,"0")
+        r2=_predict(model,arm,panel,"2")
+        selected[arm]=np.where(r0>r2,r85.CALIBRATE,r85.EXPLOIT_POS)
+    raw=panel["raw0"]
+    cues=np.where(raw[:,:4]>0,1,-1)
+    public_mux=np.where(cues[:,0]>0,cues[:,1],cues[:,2])
+    true_law=panel["law"]
+    public_choice=np.where(public_mux>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    private_choice=np.where(true_law>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    selected["PUBLIC_OBSERVED_MUX_EVALUATOR_ONLY"]=public_choice
+    selected["PRIVATE_TRUE_MUX_EVALUATOR_ONLY"]=private_choice
+    selected["ALWAYS_CALIBRATE"]=np.full(len(raw),r85.CALIBRATE)
+    selected["ALWAYS_EXPLOIT_POS"]=np.full(len(raw),r85.EXPLOIT_POS)
+    oracle=np.maximum(panel["reward0"],panel["reward2"])
+    for name,actions in selected.items():
+        observed=np.where(actions==r85.CALIBRATE,panel["reward0"],panel["reward2"])
+        returns[name]=observed
+        metrics[name]={"mean_reward":float(observed.mean()),
+                       "cold_reward":float(observed[panel["cold"]].mean()),
+                       "oracle_regret":float((oracle-observed).mean()),
+                       "public_mux_agreement":float(np.mean(actions==public_choice)),
+                       "true_mux_agreement":float(np.mean(actions==private_choice))}
+    metrics["PAIRED_PHYSICAL_ORACLE_EVALUATOR_ONLY"]={
+        "mean_reward":float(oracle.mean()),"cold_reward":float(oracle[panel["cold"]].mean()),
+        "oracle_regret":0.0}
+    return {"metrics":metrics,"actions":selected,"rewards":returns}
+
+
+def _bootstrap_lower(a,b,seed):
+    if a.shape!=(COUNT["DEV"],) or b.shape!=a.shape:
+        raise RuntimeError("R96_PAIRED_BOOTSTRAP_SHAPE_MISMATCH")
+    rng=np.random.default_rng(np.random.SeedSequence([BOOTSTRAP_SALT,seed]))
+    choices=rng.integers(0,len(a),size=(2000,len(a)))
+    return float(np.quantile((a-b)[choices].mean(axis=1),.025))
+
+
+def original_ci(seed:int):
+    sha=_admit(seed)
+    preflight=balance_preflight()
+    torch.set_num_threads(1)
+    path=ROOT/f"local_runs/r96_role_mux_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R96_ORIGINAL_FIRST_USE_ALREADY_CONSUMED")
+    begun=time.perf_counter()
+    result={"schema":SCHEMA,"seed":seed,"candidate_SHA":sha,
+            "freeze_blob":FREEZE_BLOB,"R95_parent_SHA":PARENT,
+            "platform":platform.platform(),"torch":str(torch.__version__),
+            "status":"R96_ENGINEERING_OR_RESOURCE_INCOMPLETE_NOT_SCIENTIFIC_NO_GO",
+            "source_preflight":preflight[str(seed)],
+            "source_audits":{},"trained":{},
+            "all_nine_frozen_before_DEV_OOD_ROLE_SWAP":False,
+            "DEV_OOD_ROLE_SWAP_first_use":False,
+            "older_scored_source_or_weights_reused":False,
+            "scientific_pass":False}
+    try:
+        fit=_factual("FIT",seed,sha)
+        val=_factual("VALID",seed,sha)
+        if not fit["only_one_factual_return_per_world"]:
+            raise RuntimeError("R96_ILLEGAL_UNCHOSEN_FACTUAL_LABEL_IN_FIT")
+        result["source_audits"]["FIT"]=fit["audit"]
+        result["source_audits"]["VALID"]=val["audit"]
+        rng=np.random.default_rng(np.random.SeedSequence([BATCH_SALT,seed]))
+        batches=rng.integers(0,COUNT["FIT"],size=(STEPS,BATCH))
+        models=_models(seed)
+        for arm in ARMS:
+            result["trained"][arm]=_train(models[arm],arm,fit,val,batches)
+            if time.perf_counter()-begun>MAX_SECONDS:
+                raise TimeoutError("R96_PRESET_WHOLE_CPU_RESOURCE_CEILING")
+        if set(result["trained"])!=set(ARMS):
+            raise RuntimeError("R96_MISSING_FROZEN_ARM")
+        result["all_nine_frozen_before_DEV_OOD_ROLE_SWAP"]=True
+        # From here forward there are ZERO parameter changes or adaptive choices.
+        result["DEV_OOD_ROLE_SWAP_first_use"]=True
+        dev=_scored("DEV",seed,sha)
+        ood=_scored("OOD_SHIFT",seed,sha)
+        swap=_scored("ROLE_SWAP",seed,sha)
+        result["source_audits"]["DEV"]=dev["audit"]
+        result["source_audits"]["OOD_SHIFT"]=ood["audit"]
+        result["source_audits"]["ROLE_SWAP"]=swap["audit"]
+        d=_score(models,dev)
+        o=_score(models,ood)
+        before=_score(models,swap)
+        after=_score(models,swap["counter"])
+        dm,om=d["metrics"],o["metrics"]
+        observed_change=(swap["law"]!=swap["counter"]["law"])
+        changed_count=int(observed_change.sum())
+        if changed_count==0:
+            raise RuntimeError("R96_NO_ROLE_SWITCHABLE_PRIVATE_LAW_WORLDS")
+        actions_before=before["actions"][MLP_GATE]
+        actions_after=after["actions"][MLP_GATE]
+        action_flip=float(np.mean(actions_before[observed_change]!=
+                                  actions_after[observed_change]))
+        true_before=np.where(swap["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        true_after=np.where(swap["counter"]["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        role_swap_accuracy=float((
+            (actions_before==true_before).sum()+
+            (actions_after==true_after).sum())/(2*len(true_before)))
+        measures={
+            "DEV_gate_minus_sorted":dm[MLP_GATE]["mean_reward"]-dm[SORTED]["mean_reward"],
+            "DEV_gate_minus_deranged":dm[MLP_GATE]["mean_reward"]-dm[DERANGED]["mean_reward"],
+            "DEV_gate_minus_raw":dm[MLP_GATE]["mean_reward"]-dm[MLP_RAW]["mean_reward"],
+            "DEV_explicit_public_upper_minus_gate":dm[UPPER]["mean_reward"]-dm[MLP_GATE]["mean_reward"],
+            "DEV_gate_public_mux_agreement":dm[MLP_GATE]["public_mux_agreement"],
+            "OOD_cold_gate_minus_deranged":om[MLP_GATE]["cold_reward"]-om[DERANGED]["cold_reward"],
+            "DEV_gate_minus_deranged_bootstrap_lower95":_bootstrap_lower(
+                d["rewards"][MLP_GATE],d["rewards"][DERANGED],seed),
+            "ROLE_SWAP_true_law_change_fraction":changed_count/len(observed_change),
+            "ROLE_SWAP_gate_flip_when_law_changes":action_flip,
+            "ROLE_SWAP_gate_combined_true_law_accuracy":role_swap_accuracy,
+            "NATIVE_DEV_gate_minus_flat":dm[NATIVE_GATE]["mean_reward"]-dm[NATIVE_FLAT]["mean_reward"],
+            "NATIVE_DEV_gate_minus_raw":dm[NATIVE_GATE]["mean_reward"]-dm[NATIVE_RAW]["mean_reward"],
+            "NATIVE_OOD_cold_gate_minus_flat":om[NATIVE_GATE]["cold_reward"]-om[NATIVE_FLAT]["cold_reward"],
+            "NATIVE_DEV_conventional_gate_minus_native_gate":dm[MLP_GATE]["mean_reward"]-dm[NATIVE_GATE]["mean_reward"]}
+        freeze=frozen()["evaluation"]
+        t=freeze["mechanism_checks"]
+        n=freeze["native_checks"]
+        c={
+            "role_gate_vs_sorted":measures["DEV_gate_minus_sorted"]>=t["role_gate_vs_sorted_DEV_reward_min"],
+            "role_gate_vs_deranged":measures["DEV_gate_minus_deranged"]>=t["role_gate_vs_deranged_DEV_reward_min"],
+            "role_gate_vs_raw_MLP":measures["DEV_gate_minus_raw"]>=t["role_gate_vs_raw_MLP_DEV_reward_min"],
+            "role_gate_near_explicit_mux":measures["DEV_explicit_public_upper_minus_gate"]<=t["role_gate_vs_explicit_mux_upper_DEV_gap_max"],
+            "gate_matches_public_mux":measures["DEV_gate_public_mux_agreement"]>=t["role_gate_legal_mux_DEV_action_agreement_min"],
+            "gate_beats_deranged_on_shifted_cold":measures["OOD_cold_gate_minus_deranged"]>=t["role_gate_vs_deranged_OOD_cold_reward_min"],
+            "paired_bootstrap":measures["DEV_gate_minus_deranged_bootstrap_lower95"]>=t["role_gate_vs_deranged_DEV_bootstrap_lower95_min"],
+            "role_swap_changes_true_law":measures["ROLE_SWAP_true_law_change_fraction"]>=t["role_swap_true_law_change_fraction_min"],
+            "role_swap_changes_learned_action":measures["ROLE_SWAP_gate_flip_when_law_changes"]>=t["role_gate_role_swap_action_flip_on_true_change_min"],
+            "accurate_on_both_role_swap_worlds":measures["ROLE_SWAP_gate_combined_true_law_accuracy"]>=t["role_gate_role_swap_accuracy_min"]}
+        nc={
+            "native_gate_beats_flat":measures["NATIVE_DEV_gate_minus_flat"]>=n["native_role_gate_vs_flat_DEV_reward_min"],
+            "native_gate_beats_original":measures["NATIVE_DEV_gate_minus_raw"]>=n["native_role_gate_vs_raw_native_DEV_reward_min"],
+            "native_gate_cold_better":measures["NATIVE_OOD_cold_gate_minus_flat"]>=n["native_role_gate_vs_flat_OOD_cold_reward_min"],
+            "native_gate_near_conventional":measures["NATIVE_DEV_conventional_gate_minus_native_gate"]<=n["native_role_gate_vs_conventional_gate_DEV_reward_gap_max"]}
+        result["DEV"]=dm
+        result["OOD_SHIFT"]=om
+        result["ROLE_SWAP"]={
+            "original":before["metrics"],"swapped":after["metrics"],
+            "true_law_changes":changed_count,
+            "true_law_change_fraction":changed_count/len(observed_change),
+            "gate_action_flip_on_law_change":action_flip,
+            "gate_original_and_swapped_true_law_accuracy":role_swap_accuracy}
+        result["measures"]=measures
+        result["mechanism_checks"]={k:bool(v) for k,v in c.items()}
+        result["native_checks"]={k:bool(v) for k,v in nc.items()}
+        result["status"]=(freeze["statuses"]["both"]
+                          if all(c.values()) and all(nc.values()) else
+                          freeze["statuses"]["conventional"] if all(c.values())
+                          else freeze["statuses"]["no_go"])
+    except BaseException as ex:
+        result["error_type"]=type(ex).__name__
+        result["error_message"]=str(ex)
+        result["status"]=("R96_SOURCE_OR_NEGATIVE_CONTROL_INVALID_NO_SCIENTIFIC_VERDICT"
+                          if "R96_PRIVATE_LAW_" in str(ex) or "R96_NEGATIVE_LAW_" in str(ex)
+                          else "R96_ENGINEERING_OR_RESOURCE_INCOMPLETE_NOT_SCIENTIFIC_NO_GO")
+        raise
+    finally:
+        result["whole_process_seconds"]=time.perf_counter()-begun
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open("x",encoding="utf-8") as f:
+            json.dump(result,f,indent=2,sort_keys=True,allow_nan=False)
+            f.write("\n")
+    return result
+
+
+if __name__=="__main__":
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--seed",type=int,choices=SEEDS,required=True)
+    args=parser.parse_args()
+    out=original_ci(args.seed)
+    print(json.dumps({"seed":args.seed,"status":out["status"],
+                      "arms":len(out["trained"]),
+                      "DEV_first_use":out["DEV_OOD_ROLE_SWAP_first_use"],
+                      "scientific_pass":False},sort_keys=True))
