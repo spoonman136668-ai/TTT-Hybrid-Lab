@@ -1,0 +1,178 @@
+{
+  "schema": "ttt-hybrid.r99-factual-internal-microfeedback.testonly.v1",
+  "stage": "FREEZE_BEFORE_IMPLEMENTATION_TESTS_OR_PHYSICAL_SOURCE_FIRST_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "r98_final_nonreplaying_SHA": "f9276dac0f9e83bae0eb7443881735e930e14ba8",
+    "r98_original_scored_SHA": "8eda7b186605691a4ee0183440c4d897092cd01e",
+    "r98_original_scored_run": "43841693572",
+    "r98_freeze_blob": "44a2b0802efc81e2360df2a44aeed4f4507f1967",
+    "r98_status": "R98_INTERNAL_COMPOSITION_NO_GO",
+    "reuse_prior_scored_source_or_weights": false
+  },
+  "question": "Does factual-return-only intermediate internal microfeedback solve withheld PARITY+NEGATE composition on the authentic width32 native CPU reference when ordinary end-to-end reward gradients failed? Does true microfeedback beat otherwise-identical zero-feedback, stem-only feedback and scrambled-feedback controls, plus fully trained flat MLP, role-set and GRU, without additional private-law teaching?",
+  "scope": "NEW_CPU_TEST_ONLY_COMPOSITION_OF_KNOWN_PRIMITIVES_NOT_UNKNOWN_OPERATOR_OR_FULL_NATIVE_224STEP_RETENTION",
+  "source": {
+    "seeds": [
+      1002111,
+      1002123
+    ],
+    "salts": {
+      "FIT": 25400111,
+      "VALID": 25400211,
+      "DEV_SEEN": 25400311,
+      "DEV_COMPOSE": 25400411,
+      "OOD_SHIFT": 25400511,
+      "PROGRAM_SWITCH": 25400611,
+      "AUX_SHUFFLE": 25400711,
+      "BATCH": 25400811,
+      "BOOTSTRAP": 25400911,
+      "UNIT_ONLY": 25409991
+    },
+    "counts": {
+      "FIT": 2048,
+      "VALID": 256,
+      "DEV_SEEN": 256,
+      "DEV_COMPOSE": 256,
+      "OOD_SHIFT": 256,
+      "PROGRAM_SWITCH": 256
+    },
+    "train_programs": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "new_composition": [
+      1,
+      1
+    ],
+    "training_bindings": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        0
+      ]
+    ],
+    "heldout_binding": [
+      3,
+      0,
+      1
+    ],
+    "public_instruction": "Use new fresh R85 pure physical 224-tick worlds and original R98 pure preaction public operator tagging and compression, selecting the 5 original 13D public A-role/pivot rows. Four actual noisy factors/role identity/phase, explicit publicly available selector+yes+no tags and both opcode bits; never private law or unchosen payoff. All learners see exactly same legal facts.",
+    "factual_action": "CALIBRATE if ((index//4)+seed_index)%2==0 else EXPLOIT_POS, balanced cold/action strata; only one realized physical 9-tick reward under that chosen action for every FIT/VALID world.",
+    "training_law": "Independently sample A factors from new seed/panel/index RNG and recompute public MUX+NEGATE, PARITY, or withheld PARITY+NEGATE physical hidden A law with original R98.law_of pure function. Original index-coded source law overwritten. Never access R98._world or scored R98 panels.",
+    "heldout": "No DEV_SEEN, DEV_COMPOSE, OOD_SHIFT or PROGRAM_SWITCH world exists until all nine arms trained on FIT/VALID and final parameters freeze. Fresh paired legal actions for evaluator only; no return leak to training.",
+    "program_switch": "On exact same fresh heldout PARITY+NEGATE world, change public program to MUX+NEGATE while preserving A/B factors, noise, timing, chosen action prefix, and recompute true physical law; measure action flips only where the law changes, no adaptation. NOT same as full 224-step cold retention.",
+    "shift": "OOD_SHIFT uses R86 pure shifted probe/noise timing on same withheld program + role assignment, not novel physics primitive.",
+    "shuffled_microfeedback": "At the start of FIT/VALID, independently seed-only rejection-sample a zero-fixed-point derangement of example indices WITHIN publicly observed pivot time and actual chosen-action groups, no law or target inspection. Only auxiliary intermediate head losses use donor realized factual rewards, NEVER the main correct factual reward. Preserve action/pivot grouping; no adaptive selection/retry after outcome.",
+    "shuffle_independence_audit": "After fixed permutation, evaluator-only donor/recipient PRIVATE A-law agreement should lie in [0.35,0.65] per FIT and VALID; reject as invalid if failed, do not resample based on result. This is a target-shuffle negative, not proof other public cues become independent.",
+    "privacy": "No learned candidate receives hidden true law, engineered parity/mux sign, oracle unchosen return, private A factors, or test source for any training. Only lawful public input and same single factual selected payoff.",
+    "old_scored_or_reserved_sources_used": false
+  },
+  "arms": [
+    "NATIVE32_ORIGINAL_MAIN",
+    "NATIVE32_INTERNAL_MAIN_ONLY",
+    "NATIVE32_INTERNAL_FACTUAL_MICROFEEDBACK",
+    "NATIVE32_INTERNAL_DERANGED_MICROFEEDBACK",
+    "NATIVE32_INTERNAL_STEM_ONLY_MICROFEEDBACK",
+    "MLP64_PUBLIC_RAW_PROGRAM",
+    "ROLE_SET_PUBLIC_PROGRAM",
+    "GRU64_PUBLIC_TAGGED_EVENTS",
+    "MLP64_PUBLIC_CANONICAL_UPPER"
+  ],
+  "architecture": {
+    "native": "Existing exact R74 width32 HybridPilot_FULL and equivalent R75 triangular TTT core and R98 public role+program 32D injection INSIDE pivot native STEM before original SSM, causal attention, TTT and hard depth. No changes to model.py/official GPU fused architecture.",
+    "deep_microfeedback": "Separate four scalar auxiliary value heads at pivot immediately after STEM injection, after native SSM, after native attention, after native TTT (before original depth/head). Each auxiliary head predicts ONLY the SAME ACTUAL FACTUAL return already used by original output value loss. Main value MSE plus lambda 0.15 times MEAN of four intermediate factual-return MSEs, gradients reach native trunk. No extra knowledge/teacher, only deeper credit assignment.",
+    "main_only": "Bitwise identical initialization and architecture, all auxiliary heads forward-computed, but lambda 0. All nine arms see same FIT minibatches and optimizer steps; main-only head receives no auxiliary optimizer updates.",
+    "deranged": "Bitwise identical starting core/context/all auxiliary heads and exact same objective weight 0.15 but intermediate heads predict fixed cross-world donor selected factual returns within public action/time grouping. Main final value head STILL trained on its own TRUE factual return.",
+    "stem_only": "Same architecture, final loss plus lambda 0.15 on only stem head. Provides depth ablation for where feedback helps; compute all heads same as positive.",
+    "conventional": "Same FIT physical input/action/reward train 14D flat MLP64, 14D role-program conditioned learned set, and existing GRU64 5×13 public action/role observations; all full training budget.",
+    "engineered_upper": "R98 hand-coded parity/mux evaluation from legally observed noisy cues/operator/roles made public 14D engineered first feature plus 14D conventional MLP64 trained on SAME factual action reward. This is a programmed public-rule diagnostic reference, never learned invention.",
+    "matching": "Four internal adapter variants have identical parameter counts, exact initialized native/context/heads and same forward head computation. They differ ONLY auxiliary loss supervision. Conventional architectures have different params/unroll/FLOPs; disclose end-to-end cost and do not claim matched-FLOP scientific superiority.",
+    "original_model_unchanged": true
+  },
+  "training": {
+    "full_steps_per_arm": 3072,
+    "batch": 16,
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "global_clip_norm": 1,
+    "auxiliary_loss_weight": 0.15,
+    "aux_heads": 4,
+    "shuffled_and_stem_only_same_weight": 0.15,
+    "all_nine_train_before_DEV": true,
+    "identical_FIT_batch_indices": true,
+    "VALID_factual_MSE_report_only_no_early_stop": true,
+    "whole_process_CPU_limit_seconds_per_seed": 260
+  },
+  "evaluation": {
+    "seeds_required": 2,
+    "bootstrap_draws": 2000,
+    "hypothesis_checks": {
+      "factual_micro_minus_main_only_DEV_reward_min": 0.3,
+      "factual_micro_minus_deranged_DEV_reward_min": 0.3,
+      "factual_micro_minus_stem_only_DEV_reward_min": 0.15,
+      "factual_micro_minus_original_native_DEV_reward_min": 0.5,
+      "factual_micro_minus_best_fully_trained_conventional_DEV_reward_min": 0.1,
+      "programmed_upper_minus_factual_micro_DEV_reward_max": 0.35,
+      "factual_micro_true_law_accuracy_min": 0.8,
+      "shifted_cold_factual_micro_minus_main_only_reward_min": 0.25,
+      "paired_bootstrap_lower95_factual_micro_minus_main_only_min": 0.1,
+      "program_change_true_law_flip_fraction_min": 0.2,
+      "program_change_factual_micro_flip_when_law_changes_min": 0.65,
+      "program_change_true_law_accuracy_both_min": 0.8
+    },
+    "statuses": {
+      "pass": "R99_NATIVE_FACTUAL_MICROFEEDBACK_DEVELOPMENT_SIGNAL_ONLY",
+      "no_go": "R99_INTERNAL_MICROFEEDBACK_NO_GO",
+      "invalid": "R99_FRESH_SOURCE_OR_NEGATIVE_INVALID_NO_SCIENCE_VERDICT",
+      "incomplete": "R99_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENCE_VERDICT"
+    },
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r99-internal-factual-microfeedback-20261116",
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "two_original_CPU_fresh_seed_jobs": true,
+    "requires_full_same_candidate_G4_Linux_and_Windows_PASS_before_physics_first_use": true,
+    "requires_G5_authentic_TTT_CPU_both_OS_and_G7_pinned_Mamba2_same_SHA": true,
+    "runner": "GitHub-hosted Ubuntu CPU, first attempt only",
+    "clean_exact_source_SHA": true,
+    "no_replay_after_first_use": true,
+    "per_seed_receipt": "local_runs/r99_microfeedback_seed<seed>.json",
+    "no_new_workflow_or_scheduler_or_runner_or_controller": true
+  },
+  "authority": {
+    "scoped_CPU_TEST_only_original_first_use": true,
+    "merge": false,
+    "native_model_promotion": false,
+    "independent_science_acceptance": false,
+    "official_GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "paid_API": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
