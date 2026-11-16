@@ -182,7 +182,8 @@ def test_frozen_budget_checks_unit_only_without_accessing_original_sources(monke
     with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
         pipe.episode("FIT",seed,0,deadline=-1)
     arm=r103.GRU
-    model=r103.ConventionalEvidenceValue("gru")
+    from experiments import r102_contradiction_evidence_diagnostic as r102
+    model=r102.ConventionalEvidenceValue("gru")
     # Training must halt BEFORE any call to the optimizer/model even if its
     # input claims a full cohort count. All examples are unit-only placeholders.
     indices=np.zeros((pipe.STEPS,pipe.BATCH),dtype=np.int64)
