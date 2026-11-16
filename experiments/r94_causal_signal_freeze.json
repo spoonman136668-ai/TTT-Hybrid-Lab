@@ -1,0 +1,150 @@
+{
+  "schema": "ttt-hybrid.r94-factual-causal-feature-objective-testonly.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R94_IMPLEMENTATION_TESTS_OR_NEW_SOURCE_FIRST_USE",
+  "parent": {
+    "R93_engineering_SHA": "c7d372504f4f0c0b3695ca1987b3ac01a104b7ff",
+    "R93_frozen_blob": "1f2d6f74bb885cd434924396e03e638b7d064b96",
+    "R93_original_scored_SHA": "b024f4a22be51eb6053d50f2120cbd70d1c40fc7",
+    "R93_original_result": "R93_EXPOSURE_HEADCAP_DEV_NO_GO_BOTH_SEEDS",
+    "R93_final_adjudication": "https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/289#issuecomment-6905038302",
+    "older_spent_salts": [
+      25340111,
+      25340211,
+      25340311,
+      25340411,
+      25349999,
+      25330111,
+      25330211,
+      25330311,
+      25330411,
+      25319991,
+      25320991
+    ],
+    "older_model_weights_or_scored_cohorts_reused": false
+  },
+  "question": "Are actual observable four A-probe causal factors statistically sufficient to learn action-contingent realized reward, and is weak causal return learning due to feature composition or reward-objective conditioning? Compare same 4,801-parameter fully trained MLP with raw A cues vs explicit publicly composed A-sign product, each direct or TRAIN-only action-mean residual targets, versus a role/time/action-preserving cross-world composed-cue shuffled negative. No hidden-law or oracle supervised labels.",
+  "null": "If composed public-cue predictors do not reproducibly beat shuffled factual-evidence controls or TRAIN-only action constant on new DEV and shifted OOD, the observable causal signal transfer hypothesis fails. If feature signal works but residualization does not beat direct-value learning, record separate FEATURE_SIGNAL_ONLY, not an optimizer or native learning advance. Nothing herein proves independent native TTT learning, unfamiliar causal-law transfer, generalization beyond same-family synthetic OOD, or GPU efficacy.",
+  "scope": "FRESH_TEST_ONLY_MECHANISM_DIAGNOSTIC_NO_INDEPENDENT_SCIENTIFIC_ACCEPTANCE",
+  "sources": {
+    "salts": {
+      "FIT": 25350111,
+      "FIT_VALIDATION": 25350211,
+      "DEV": 25350311,
+      "OOD_SHIFT": 25350411,
+      "SHUFFLE": 25350511,
+      "BOOTSTRAP": 25350611,
+      "TRAIN_BATCHES": 25350711,
+      "UNIT_ONLY": 25359991
+    },
+    "seeds": [
+      1001111,
+      1001123
+    ],
+    "world_counts": {
+      "FIT": 2048,
+      "FIT_VALIDATION": 256,
+      "DEV": 256,
+      "OOD_SHIFT": 256
+    },
+    "world_generator": "Only R85 _make_synthetic_world(index%512, Generator(SeedSequence([panel_salt,seed,index]))) and R86 pure shift _shift_public_world in OOD; never R85-R93 admitted/scored _world, prior test fixture or old trained weights.",
+    "actual_logged_action": "CALIBRATE iff ((floor(index/4)+seed_index)%2==0), else EXPLOIT_POS; index-only action assignment balanced in 8 cells of pivot (i%2) x private law index-stratum ((i%512)//2)%2 x chosen action, preflight WITHOUT accessing physical worlds; private law never learner input/label.",
+    "FIT_each_of_8_balance_cells": 256,
+    "FIT_VALIDATION_DEV_OOD_each_of_8_balance_cells": 32,
+    "train_factual_only": "One physically realized selected 9-tick action return per independent FIT/VALID world, never both outcomes or future observation; no model-training on law label, parity teacher, private oracle or DEV/OOD outcomes.",
+    "public_observation": "R86 48x13 legal public selected timeline; R87 _legal_features selects FOUR actually observed noisy A PROBE responses in public role order, actual selected pivot action flags, public timestamp, no engineered parity in RAW; COMPOSED replaces four raw cues by one explicit deterministic product of observed cue signs, held in first of 8D MLP slots; engineered composition is a supplied diagnostic feature NOT autonomously learned.",
+    "DEV_scoring": "Only after all five arms complete full training and freeze. Actual evaluator physically realizes both legal interventions for same new physical DEV world and constructs action-specific legal public prefixes. No alternate-action return used in FIT/VALID. Compare paired policy realized reward, legal rule agreement, physical oracle regret, paired bootstrap, and cold early breakdown.",
+    "OOD_scope": "Same physical four-factor law, changed probe schedule/pivot/noise via preexisting pure R86 shift; NOT genuinely unfamiliar causal laws.",
+    "previous_scored_or_reserved_source_access": false
+  },
+  "arms": [
+    "MLP64_RAW_DIRECT",
+    "MLP64_RAW_RESIDUAL",
+    "MLP64_COMPOSED_DIRECT",
+    "MLP64_COMPOSED_RESIDUAL",
+    "MLP64_COMPOSED_SHUFFLED_RESIDUAL"
+  ],
+  "baselines": [
+    "TRAIN_ACTION_MEAN_FIXED",
+    "ALWAYS_CALIBRATE",
+    "ALWAYS_EXPLOIT_POS",
+    "PUBLIC_A_PARITY_RULE_EVALUATOR_ONLY",
+    "PAIRED_PHYSICAL_ORACLE_EVALUATOR_ONLY",
+    "LAST_A_CUE_EVALUATOR_ONLY",
+    "RECENT_B_RULE_EVALUATOR_ONLY"
+  ],
+  "method": {
+    "all_MLP_same_class": "Existing R87 PublicValueMLP, 8D->64->64->1, identical 4,801 params, same torch-seeded initial tensors in every arm, only feature and factual objective differ.",
+    "direct_target": "actual physically observed selected return",
+    "residual_target": "actual physically observed selected return - TRAIN-only mean of actual factual returns for the same chosen action; at inference add back that fixed TRAIN-only action mean. No DEV mean, no alternate action, no teacher.",
+    "composed_feature": "Only index of four A responses selected from actually public prefix. r87._legal_features deterministic sign product of noisy A factor cues, 4 raw feature slots replaced by (A-sign product,0,0,0). Private true law not accessed.",
+    "shuffled_negative": "Cross-world permutation of composed A-sign feature within observed pivot-time AND chosen-action strata, independent of private law, no change to current action or physical factual return; same 8D input and 4,801 params as real composition, train/dev/ood shuffled with independent fixed per-panel RNG.",
+    "trained_controls": "Fully trained direct and TRAIN-centered residual raw MLP variants, composed direct MLP, composed residual, composed shuffled residual. All arms identical FIT factual worlds, same ordered minibatch indices, updates, optimizer and parameter counts.",
+    "train_observed_action_baseline": "Action-specific FIT factual sample means only; fixed predictor when scoring paired DEV/OOD choices and factual MSE. Must not use heldout targets for any training decision.",
+    "same_optimizer_compute_per_MLP_arm": true,
+    "no_native_model_weights_or_forward_changes": true
+  },
+  "training": {
+    "all_arms_steps": 4096,
+    "batch": 16,
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_global_norm": 1,
+    "seeded_same_optimizer_samples": true,
+    "validation": "FIT_VALIDATION MSE logged before/after but no selection/stop, no scoring DEV/OOD before all arm weights frozen",
+    "required_all_5_arms_full_updates": true,
+    "total_process_limit_seconds_per_seed": 240,
+    "source_first_use": "Original exact-head clean GitHub-hosted Ubuntu PR G4 GATED two original seed jobs, FIRST ATTEMPT only, no replay"
+  },
+  "evaluation": {
+    "two_seed_requirement": true,
+    "paired_bootstrap_resamples": 2000,
+    "feature_checks": {
+      "composed_residual_minus_shuffled_DEV_reward_min": 0.75,
+      "composed_residual_minus_best_fixed_DEV_reward_min": 1.25,
+      "composed_residual_oracle_DEV_regret_max": 0.75,
+      "composed_residual_legal_rule_DEV_action_agreement_min": 0.85,
+      "composed_residual_minus_shuffled_bootstrap_lower95_min": 0.1,
+      "composed_residual_minus_shuffled_shifted_OOD_reward_min": 0.5,
+      "composed_residual_minus_shuffled_shifted_OOD_cold_reward_min": 0.5
+    },
+    "objective_checks": {
+      "composed_residual_minus_composed_direct_DEV_reward_min": 0.15,
+      "composed_residual_minus_raw_residual_DEV_reward_min": 0.15,
+      "composed_residual_minus_composed_direct_shifted_OOD_reward_min": 0.1
+    },
+    "status_both_feature_and_objective": "R94_FEATURE_AND_RESIDUAL_OBJECTIVE_DEV_SIGNAL_ONLY",
+    "status_feature_only": "R94_PUBLIC_CAUSAL_FEATURE_SIGNAL_ONLY",
+    "status_no_feature": "R94_PUBLIC_CAUSAL_SIGNAL_NO_GO",
+    "status_incomplete": "R94_ENGINEERING_OR_RESOURCE_INCOMPLETE_NOT_SCIENTIFIC_NO_GO",
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r94-causal-feature-residual-value-diagnostic-20261115",
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "G4_full_Linux_Windows_regression_required_before_new_scoring": true,
+    "G5_authentic_CPU_TTT_Linux_Windows_required_same_SHA": true,
+    "G7_pinned_Mamba2_CPU_required_same_SHA": true,
+    "new_workflow_file": false,
+    "new_controller": false,
+    "new_runner": false,
+    "no_schedule": true,
+    "science_jobs": "Two branch-locked seed-specific jobs appended ONLY inside existing G4 workflow, needs dual-OS cpu-qualification; GITHUB_JOB exact and separate R94_SEED, head SHA exact, source admitted only if clean and first attempt",
+    "artifact_retention_days": 30,
+    "no_GPU_first_use": true,
+    "do_not_merge_or_promote_on_test_only_signal": true
+  },
+  "authority": {
+    "cpu_scoped_test_only_development_allowed": true,
+    "merge": false,
+    "model_promotion": false,
+    "protected_science_first_use": false,
+    "official_GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "paid_API": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "new_controller": false
+  }
+}
