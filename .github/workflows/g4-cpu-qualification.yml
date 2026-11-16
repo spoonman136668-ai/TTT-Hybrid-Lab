@@ -807,7 +807,7 @@ jobs:
   r94-causal-signal:
     name: R94 public causal signal vs factual residual / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r94-causal-feature-residual-value-diagnostic-20261115' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r94-causal-feature-residual-value-diagnostic-20261115' && github.event.pull_request.head.sha == '1ea70bc3b06872e737238cc94bc3efecdd3debe3' && github.run_id == 43789681024 }}
     strategy:
       fail-fast: false
       matrix:

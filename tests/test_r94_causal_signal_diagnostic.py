@@ -173,3 +173,28 @@ def test_original_first_use_source_is_not_run_as_part_of_full_regression():
     assert r94.COUNT["DEV"]==256 and r94.COUNT["OOD_SHIFT"]==256
     with pytest.raises(PermissionError,match="R94_ONLY_INDEPENDENT_UNIT_FIXTURES"):
         r94.unit_only_world(5)
+
+
+def test_original_r94_testonly_scored_sources_are_permanently_nonreplayable(monkeypatch):
+    assert r94.ORIGINAL_R94_SPENT_SHA=="1ea70bc3b06872e737238cc94bc3efecdd3debe3"
+    assert r94.ORIGINAL_R94_SPENT_RUN_ID=="43789681024"
+    env={
+      "GITHUB_ACTIONS":"true",
+      "GITHUB_EVENT_NAME":"pull_request",
+      "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+      "GITHUB_HEAD_REF":r94.BRANCH,
+      "GITHUB_JOB":"r94-causal-signal",
+      "R94_SEED":str(r94.SEEDS[0]),
+      "RUNNER_OS":"Linux",
+      "RUNNER_ENVIRONMENT":"github-hosted",
+      "GITHUB_RUN_ATTEMPT":"1",
+      "GITHUB_REF":"refs/pull/290/merge",
+      "EXPECTED_CANDIDATE_SHA":"f"*40,
+      "GITHUB_RUN_ID":"43799999999",
+    }
+    for key,value in env.items():
+        monkeypatch.setenv(key,value)
+    with pytest.raises(PermissionError,match="R94_ALREADY_CONSUMED_FIRST_USE_DENIED"):
+        r94._admit(r94.SEEDS[0])
+    with pytest.raises(PermissionError,match="R94_NEW_SOURCE_NOT_ADMITTED_BEFORE_ORIGINAL_CI"):
+        r94._world("FIT",r94.SEEDS[0],0,"f"*40)

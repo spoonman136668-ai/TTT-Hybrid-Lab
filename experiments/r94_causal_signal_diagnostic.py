@@ -31,6 +31,10 @@ FREEZE_BLOB="3158ef1fe0ef7d0d518067a0151f217a600f3611"
 PARENT="c7d372504f4f0c0b3695ca1987b3ac01a104b7ff"
 SCHEMA="ttt-hybrid.r94-factual-causal-feature-objective-testonly.v1"
 BRANCH="research/r94-causal-feature-residual-value-diagnostic-20261115"
+# Original source first use was consumed for BOTH seeds in this exact CI run.
+# All later commits/runs are ENGINEERING-ONLY and must not reopen DEV/OOD.
+ORIGINAL_R94_SPENT_SHA="1ea70bc3b06872e737238cc94bc3efecdd3debe3"
+ORIGINAL_R94_SPENT_RUN_ID="43789681024"
 SEEDS=(1001111,1001123)
 SALT={"FIT":25350111,"FIT_VALIDATION":25350211,"DEV":25350311,
       "OOD_SHIFT":25350411}
@@ -132,6 +136,8 @@ def _admit(seed: int) -> str:
         or "/merge" not in os.getenv("GITHUB_REF","")):
         raise PermissionError("R94_ORIGINAL_FIRST_ATTEMPT_SCOPED_G4_HOSTED_JOB_REQUIRED")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R94_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R94_SPENT_RUN_ID:
+        raise PermissionError("R94_ALREADY_CONSUMED_FIRST_USE_DENIED")
     head=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
                         capture_output=True,text=True,check=False,timeout=10)
     clean=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -159,6 +165,8 @@ def _world(panel:str,seed:int,index:int,sha:str):
         or os.getenv("GITHUB_JOB")!="r94-causal-signal"
         or os.getenv("R94_SEED")!=str(seed)
         or os.getenv("GITHUB_RUN_ATTEMPT")!="1"
+        or sha!=ORIGINAL_R94_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R94_SPENT_RUN_ID
         or os.getenv("RUNNER_OS")!="Linux"
         or os.getenv("RUNNER_ENVIRONMENT")!="github-hosted"):
         raise PermissionError("R94_NEW_SOURCE_NOT_ADMITTED_BEFORE_ORIGINAL_CI")
