@@ -214,3 +214,23 @@ def test_original_science_denied_even_with_malicious_spoofed_job_env(monkeypatch
     monkeypatch.setenv("GITHUB_JOB","cpu-qualification")
     with pytest.raises(PermissionError):
         scope.admit(scope.SEEDS[0],"e"*40)
+
+
+def test_first_use_custody_is_verified_once_per_seed_and_never_persisted(monkeypatch):
+    """Unit-only mock: tests caching, NEVER opens physical source."""
+    from experiments import r101_cpu_firstuse_admission as scope
+    called=[]
+    def pretend_admitted(seed,sha):
+        called.append((seed,sha))
+        return {"seed":seed,"candidate_sha":sha,"unit_mock_only":True}
+    monkeypatch.setattr(scope,"admit",pretend_admitted)
+    r101._admit_protected.cache_clear()
+    try:
+        sha="f"*40
+        seed=r101.SEEDS[0]
+        left=r101._admit(seed=seed,candidate_sha=sha)
+        right=r101._admit(seed=seed,candidate_sha=sha)
+        assert left == right and len(called)==1
+        assert r101._admit_protected.cache_info().maxsize==3
+    finally:
+        r101._admit_protected.cache_clear()
