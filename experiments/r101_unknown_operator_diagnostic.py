@@ -307,17 +307,30 @@ class ExternalSupportValue(nn.Module):
 
 
 class ConventionalValue(nn.Module):
+    """One real, end-to-end trainable graph per conventional comparator.
+
+    Instantiate only layers invoked by this comparator. The previous common
+    constructor registered unused support/flat/head weights in other modes,
+    inflating naive capacity counts without providing trainable capacity.
+    """
     def __init__(self, mode):
         super().__init__()
+        if mode not in ("static", "flat", "gru", "set"):
+            raise ValueError("R101_CONVENTIONAL_MODE_NOT_REGISTERED")
         self.mode = mode
         self.query = PublicEncoder()
-        self.support = LearnedSupport(64 if mode == "gru" else 32,
-                                      pooled=(mode == "set"))
-        self.flat = nn.Sequential(nn.Linear(230, 64), nn.GELU(),
-                                  nn.Linear(64, 64), nn.GELU(),
-                                  nn.Linear(64, 1))
-        self.head = nn.Sequential(nn.Linear((64 if mode == "gru" else 32) + 32, 64),
-                                  nn.GELU(), nn.Linear(64, 1))
+        if mode == "flat":
+            self.support_public = PublicEncoder()
+            self.flat = nn.Sequential(nn.Linear(230, 64), nn.GELU(),
+                                      nn.Linear(64, 64), nn.GELU(),
+                                      nn.Linear(64, 1))
+        else:
+            if mode in ("gru", "set"):
+                self.support = LearnedSupport(64 if mode == "gru" else 32,
+                                              pooled=(mode == "set"))
+            width = 64 if mode == "gru" else 32
+            self.head = nn.Sequential(nn.Linear(width + 32, 64),
+                                      nn.GELU(), nn.Linear(64, 1))
 
     def forward(self, support_slots, support_rewards, query):
         q = self.query(query)
@@ -325,7 +338,7 @@ class ConventionalValue(nn.Module):
             return self.head(torch.cat((torch.zeros_like(q), q), -1))[:, 0]
         if self.mode == "flat":
             batch = len(query)
-            v = self.support.public(support_slots.reshape(-1, 5, 13)).reshape(batch, -1)
+            v = self.support_public(support_slots.reshape(-1, 5, 13)).reshape(batch, -1)
             return self.flat(torch.cat((v, support_rewards, q), -1))[:, 0]
         z = self.support(support_slots, support_rewards)
         return self.head(torch.cat((z, q), -1))[:, 0]
