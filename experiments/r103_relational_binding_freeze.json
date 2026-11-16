@@ -1,0 +1,182 @@
+{
+  "schema": "ttt-hybrid.r103-relational-binding.cpu-prospective-freeze.v1",
+  "stage": "PROSPECTIVE_FREEZE_ONLY_BEFORE_IMPLEMENTATION_AND_FIRST_USE",
+  "scientific_status": "NOT_RUN_UNVERIFIED",
+  "question": "Can a tokenless native relation-keyed, surprise-written associative memory learn unfamiliar role-conditioned causal rules from actual chosen-action consequences, outperforming R102 scalar gated state and the strongest fully trained conventional controls?",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "base_parent_R102_sealed_SHA": "4c4d41697fcab5b27c7c6912f613ef392aad4233",
+    "prior_R102_original_scored_SHA": "745ce5c9ba2c7bb0dbfa3d44433e635a079a0ce2",
+    "prior_R102_run_id": 43903611516,
+    "prior_R102_status": "R102_FRESH_UNSEEN_CAUSAL_INFERENCE_NO_GO",
+    "prior_R102_scored_cohorts_consumed": true,
+    "prior_R102_scored_source_or_weights_reused": false,
+    "R101_R102_scored_reuse_forbidden": true,
+    "architecture_north_star": "Independent tokenless native causal reasoning, persistent relationships, debuggability and low compute; conventional learners only baselines"
+  },
+  "hypotheses": {
+    "primary": "R103 native relational binding with actual feedback beats strongest fully trained nonengineered conventional comparator on genuinely new unfamiliar rule families across three independent seeds.",
+    "mechanism": "Relation-keyed online factual contradiction update beats matched ungated memory, shuffled outcomes, zero factual outcomes, cold reset, and R102 scalar gated state with identical source, actions and training steps.",
+    "native_specific": "Native internal relation memory beats an equal-parameter external relation memory, holding the native core initialization and information fixed.",
+    "retention_and_transfer": "Positive unfamiliar-rule gains persist across unseen role relabel, cold query, OOD world shift, and actual mid-episode hidden-rule reversal.",
+    "causal_identifiability": "Each hidden family has a distinct truth function not seen in FIT/VALID and is balanced within every public pivot/time/query-action stratum. No law/probe private truth is learner visible."
+  },
+  "source": {
+    "seeds": [
+      1003011,
+      1003023,
+      1003037
+    ],
+    "salts": {
+      "FIT": 26330111,
+      "VALID": 26330211,
+      "DEV_FAMILIAR": 26330311,
+      "DEV_UNKNOWN": 26330411,
+      "OOD_SHIFT": 26330511,
+      "DELAYED_COLD": 26330611,
+      "REVERSAL": 26330711,
+      "SHUFFLE": 26330811,
+      "BATCH": 26330911,
+      "BOOTSTRAP": 26331011,
+      "UNIT_ONLY": 26339991
+    },
+    "counts": {
+      "FIT": 1024,
+      "VALID": 128,
+      "DEV_FAMILIAR": 128,
+      "DEV_UNKNOWN": 192,
+      "OOD_SHIFT": 128,
+      "DELAYED_COLD": 128,
+      "REVERSAL": 128
+    },
+    "known_train_families": [
+      "MUX3",
+      "PARITY3",
+      "AND3",
+      "OR3",
+      "NAND3",
+      "MAJORITY3",
+      "EXACTLY_ONE3",
+      "EXACTLY_TWO3",
+      "ALL_EQUAL3"
+    ],
+    "new_unseen_families": [
+      "A_XNOR_B_AND_C",
+      "A_XNOR_B_OR_C"
+    ],
+    "new_unseen_semantics_evaluator_only": {
+      "A_XNOR_B_AND_C": "1-(a XOR (b AND c)), operands are public role-selected +/-1 binary factors",
+      "A_XNOR_B_OR_C": "1-(a XOR (b OR c)), operands are public role-selected +/-1 binary factors"
+    },
+    "unseen_truth_functions_min_hamming_distance_from_any_known_8_cases": 2,
+    "unseen_pair_hamming_distance_of_8": 4,
+    "physical_engine": "R85 original 224-tick synthetic physical simulator/R86 public truthful action view, independently regenerated from new R103 salts/seed/index/event; public R88 slots and role tags; never call prior scored panel constructor.",
+    "support_interventions_total": 16,
+    "support_action_schedule": "Exactly 8 CALIBRATE and 8 EXPLOIT_POS physically chosen alternating actions; one actual observed factual outcome each, common to all models.",
+    "query": "Independent physical query after 16 factual supports; TRAIN/VALID only one chosen factual query outcome, DEV evaluator-only two paired true query returns with frozen models.",
+    "source_family_balance": "Unseen family selected by (episode_index // 2) % 2; public pivot/time by index parity; query action by floor(index/4)+seed offset. Each public pivot x query-action cell contains both hidden families in equal counts for each seed.",
+    "reversal": "First eight supports use opposite registered unknown operator from the last eight; always genuinely changes at event 8, query uses the latter rule.",
+    "cold_source": "Cold pivot is independent of hidden operator and chosen query-action family.",
+    "no_replay_previous_scored_source": true,
+    "no_prior_model_weights": true,
+    "distinct_new_cohort_seed_and_salts": true,
+    "no_reward_based_resampling": true,
+    "evaluator_private_truth_not_visible_to_learner": true,
+    "no_counterfactual_reward_in_FIT_VALID": true,
+    "one_original_scientific_firstuse_per_seed": true
+  },
+  "arms": [
+    "NATIVE16_RELATIONAL_CONTRADICTION",
+    "NATIVE16_RELATIONAL_UNGATED",
+    "NATIVE16_RELATIONAL_SHUFFLED",
+    "NATIVE16_RELATIONAL_NO_OUTCOMES",
+    "NATIVE16_RELATIONAL_RESET",
+    "NATIVE16_R102_SCALAR_GATE",
+    "EXTERNAL16_RELATIONAL_MATCHED",
+    "GRU64_16_FACTUAL_HISTORY",
+    "ROLE_SET64_16_FACTUAL_HISTORY",
+    "MLP64_16_FLATTENED",
+    "STATIC_PRIOR16_NO_FEEDBACK"
+  ],
+  "mechanism": {
+    "native": "Online rule-keyed matrix/slots represent a relation between public physical role/operand cues and actual consequences; each support updates ONLY the local state via reward prediction error and learned gate; outer weights trained by ordinary fixed AdamW on chosen-action FIT observations.",
+    "non_gradient_local_memory": true,
+    "no_symbolic_operator_truth_table_in_model": true,
+    "no_teacher_operator_label_in_model": true,
+    "key_dimensions": 16,
+    "value_dimensions": 16,
+    "memory_state": "16x16 per episode, initialized zero at episode start, 16 factual writes and query-addressed read",
+    "same_capacity_controls": "Relational ungated uses same trainable architecture without residual-driven gate; zero-feedback still receives public action cues, but no rewards; shuffled feedback is deranged within public action/time strata; reset zeros episodic associative state.",
+    "native_vs_external": "Identical 16 factual support observations and same fresh native core initialization, external memory has within 10% trainable adapter capacity and same outer update steps; record active trainable parameters and compute when available.",
+    "strong_conventional": "Fully trained GRU64, role-set64, flattened MLP64 and static prior, same factual information, action schedule, FIT indices, optimizer budget; strongest comparator selected only post-training for frozen scoring.",
+    "R102_control": "Existing tokenless R102 scalar contradiction-gated model, fresh R103 initialization trained from scratch on R103 source, NEVER R102 trained weights or scored episodes."
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "steps_per_arm": 3072,
+    "batch_size": 16,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "same_train_indices_and_queries_for_all_arms": true,
+    "full_fit_before_scored_DEV": true,
+    "validation_report_only_not_model_selection": true,
+    "training_all_11_fully_trained_required_before_DEV": true,
+    "per_seed_total_CPU_wall_budget_seconds": 900,
+    "paired_bootstrap_draws": 2000,
+    "score_no_hyperparameter_tuning": true,
+    "CPU_only": true,
+    "measure_walltime_parameters_and_FLOPs_if_possible": true,
+    "no_FLOPs_no_efficiency_claim": true
+  },
+  "evaluation": {
+    "checks": {
+      "native_unknown_query_action_accuracy_min": 0.75,
+      "native_minus_strongest_conventional_reward_min": 0.15,
+      "paired_bootstrap_lower95_native_minus_strongest_min": 0.02,
+      "native_minus_r102_scalar_gate_reward_min": 0.1,
+      "native_minus_ungated_same_capacity_reward_min": 0.1,
+      "native_minus_shuffled_feedback_reward_min": 0.15,
+      "native_minus_zero_outcomes_reward_min": 0.15,
+      "native_minus_cold_reset_reward_min": 0.1,
+      "native_minus_external_matched_reward_min": 0.1,
+      "native_minus_strongest_OOD_reward_min": 0.1,
+      "reversal_native_minus_zero_outcome_reward_min": 0.1,
+      "role_relabel_action_agreement_min": 0.75
+    },
+    "all_checks_each_seed_required": true,
+    "full_seed_count": 3,
+    "new_unknown_reward_is_primary": true,
+    "source_invalid_if_hidden_family_leaks_through_public_pivot_action_roles_or_known_truth": true,
+    "independent_scientific_pass": false,
+    "statuses": {
+      "signal": "R103_NATIVE_RELATIONAL_RULE_INDUCTION_DEVELOPMENT_SIGNAL_ONLY",
+      "no_go": "R103_UNFAMILIAR_RULE_TRANSFER_NO_GO",
+      "invalid": "R103_SOURCE_OR_CONTROL_INVALID",
+      "incomplete": "R103_TRAINING_OR_RESOURCE_INCOMPLETE"
+    },
+    "no_general_intelligence_claim": true
+  },
+  "engineering": {
+    "branch": "research/r103-relational-binding-20261116",
+    "freeze_file": "experiments/r103_relational_binding_freeze.json",
+    "freeze_commit_precedes_all_implementation": true,
+    "qualify": "Existing G4 full CPU Linux/Windows then G5 native authentic TTT and G7 Mamba2 exact SHA",
+    "allowed_unit_only": "R103 UNIT_ONLY salt distinct from all original scored salts",
+    "prior_original_firstuse_replay_denied": true,
+    "no_new_workflow_or_controller_or_runner_or_scheduler": true
+  },
+  "authority": {
+    "prospective_freeze_and_isolated_CPU_engineering": true,
+    "protected_scored_first_use": false,
+    "GPU_first_use": false,
+    "merge": false,
+    "promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false
+  }
+}
