@@ -272,7 +272,8 @@ def _action_means(train:dict)->dict:
 
 
 def _offset(features:np.ndarray,means:dict)->np.ndarray:
-    return np.where(features[:,r85.CALIBRATE]>.5,
+    # Feature slot 4 (not slot 0) is the actual selected CALIBRATE action.
+    return np.where(features[:,4]>.5,
                     means[r85.CALIBRATE],means[r85.EXPLOIT_POS]).astype(np.float32)
 
 
