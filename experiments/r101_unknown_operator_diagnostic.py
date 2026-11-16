@@ -267,13 +267,14 @@ class ExternalSupportValue(nn.Module):
         super().__init__()
         self.core = core
         self.support = LearnedSupport(32)
-        self.query = PublicEncoder()
-        self.value = nn.Sequential(nn.Linear(64, 32), nn.GELU(), nn.Linear(32, 1))
+        # Nearly identical adapter parameter budget to native-internal
+        # projection; both arms share native core and lawful query access.
+        self.value = nn.Sequential(nn.Linear(32, 32), nn.GELU(),
+                                   nn.Linear(32, 1))
 
     def forward(self, support_slots, support_rewards, query):
         latent = self.support(support_slots, support_rewards)
-        return self.core(query)[:, -1, 0] + self.value(
-            torch.cat((latent, self.query(query)), -1))[:, 0]
+        return self.core(query)[:, -1, 0] + self.value(latent)[:, 0]
 
 
 class ConventionalValue(nn.Module):
@@ -314,6 +315,10 @@ def make_models(seed):
     core = r95._native(seed)
     torch.manual_seed(seed + 101)
     result[EXTERNAL] = ExternalSupportValue(core)
+    native_params = sum(p.numel() for p in result[NATIVE].parameters())
+    external_params = sum(p.numel() for p in result[EXTERNAL].parameters())
+    if abs(native_params - external_params) > .10 * max(native_params, external_params):
+        raise RuntimeError("R101_EXTERNAL_LEARNED_STATE_NOT_CAPACITY_MATCHED")
     for i, (name, mode) in enumerate(((ROLE_SET, "set"), (GRU, "gru"),
                                       (MLP, "flat"), (STATIC, "static"))):
         torch.manual_seed(seed + 150 + i)
