@@ -278,3 +278,291 @@ def _audit(law,raw,action=None,perm=None):
             "donor_private_law_match":donor_match,
             "return_shuffle_not_independent_causal_null":True,
             "source_valid":True}
+
+
+def _factual(panel,seed,sha):
+    if panel not in ("FIT","VALID"):
+        raise PermissionError("R100_TRAIN_ONLY_NEW_FIT_VALID_NOT_DEV")
+    n=COUNT[panel]
+    slots=np.empty((n,5,13),np.float32)
+    raw=np.empty((n,14),np.float32)
+    factual=np.empty(n,np.float32)
+    law=np.empty(n,np.int8)
+    action=np.empty(n,np.int8)
+    for i in range(n):
+        world,a=_world(panel,seed,i,sha)
+        observed,features,reward=_public(world,a)
+        slots[i],raw[i],factual[i],law[i],action[i]=(
+            observed,features,reward,world["law_a"],a)
+    # A fixed seed/public-stratum matching permutation, chosen BEFORE any
+    # target or true-law inspection. It scrambles ONLY auxiliary targets.
+    perm=_derange(raw,action,seed,panel)
+    audit=_audit(law,raw,action,perm)
+    return {"slots":slots,"raw":raw,"canonical":r98._canonical(raw),
+            "factual":factual,"aux_shuffled_factual":factual[perm].copy(),
+            "action":action,"audit":audit,
+            "only_one_realized_chosen_action_return":True}
+
+
+def _scored(panel,seed,sha):
+    if panel not in ("DEV_SEEN","DEV_COMPOSE","OOD_SHIFT","PROGRAM_SWITCH"):
+        raise PermissionError("R100_EVALUATOR_ONLY_NEW_HELDOUT_PANELS")
+    n=COUNT[panel]
+    slots0=np.empty((n,5,13),np.float32)
+    slots2=np.empty_like(slots0)
+    raw0=np.empty((n,14),np.float32)
+    raw2=np.empty_like(raw0)
+    ret0=np.empty(n,np.float64)
+    ret2=np.empty_like(ret0)
+    law=np.empty(n,np.int8)
+    cold=np.empty(n,bool)
+    counter=None
+    if panel=="PROGRAM_SWITCH":
+        counter={"slots0":np.empty_like(slots0),
+                 "slots2":np.empty_like(slots2),
+                 "raw0":np.empty_like(raw0),"raw2":np.empty_like(raw2),
+                 "reward0":np.empty_like(ret0),"reward2":np.empty_like(ret2),
+                 "law":np.empty_like(law),"cold":np.empty_like(cold)}
+    for i in range(n):
+        world,_=_world(panel,seed,i,sha)
+        x0,r0,val0=_public(world,r85.CALIBRATE)
+        x2,r2,val2=_public(world,r85.EXPLOIT_POS)
+        if (not np.array_equal(x0[:-1],x2[:-1])
+            or not np.array_equal(x0[-1,4:],x2[-1,4:])
+            or x0[-1,0]!=1 or x2[-1,2]!=1):
+            raise RuntimeError("R100_PUBLIC_PREFIX_LEAKS_UNCHOSEN_ACTION")
+        slots0[i],slots2[i]=x0,x2
+        raw0[i],raw2[i]=r0,r2
+        ret0[i],ret2[i]=val0,val2
+        law[i],cold[i]=world["law_a"],bool(i%2)
+        if counter is not None:
+            w=copy.deepcopy(world)
+            w["r98_op"]=(0,1)
+            w["law_a"]=r98.law_of(w["factors_a"],w["r98_roles"],(0,1))
+            z0,u0,rr0=_public(w,r85.CALIBRATE)
+            z2,u2,rr2=_public(w,r85.EXPLOIT_POS)
+            if not np.array_equal(x0[:4,9:12],z0[:4,9:12]):
+                raise RuntimeError("R100_PROGRAM_INTERVENTION_ALTERED_NOISY_FACTORS")
+            counter["slots0"][i],counter["slots2"][i]=z0,z2
+            counter["raw0"][i],counter["raw2"][i]=u0,u2
+            counter["reward0"][i],counter["reward2"][i]=rr0,rr2
+            counter["law"][i],counter["cold"][i]=w["law_a"],bool(i%2)
+    audit=_audit(law,raw0)
+    result={"slots0":slots0,"slots2":slots2,"raw0":raw0,"raw2":raw2,
+            "canonical0":r98._canonical(raw0),
+            "canonical2":r98._canonical(raw2),
+            "reward0":ret0,"reward2":ret2,
+            "law":law,"cold":cold,"audit":audit}
+    if counter is not None:
+        counter["canonical0"]=r98._canonical(counter["raw0"])
+        counter["canonical2"]=r98._canonical(counter["raw2"])
+        result["counter"]=counter
+    return result
+
+
+class FactorAlgebra(nn.Module):
+    """Deliberate observable-operator inductive bias, NOT inferred law type.
+
+    Four PUBLIC noisy A observations are calibrated by a shared learned
+    scalar. PUBLIC role tags select operands. MUX/PARITY/NEGATE operations
+    are explicitly hardcoded in differentiable algebra. The hidden true
+    factor signs, law and unchosen returns never enter training.
+    """
+    def __init__(self):
+        super().__init__()
+        self.gain=nn.Parameter(torch.tensor(2.5))
+        self.bias=nn.Parameter(torch.tensor(0.))
+        self.selector_sharpness=nn.Parameter(torch.tensor(5.))
+
+    def forward(self,raw):
+        if raw.ndim!=2 or raw.shape[1]!=14:
+            raise RuntimeError("R100_ALGEBRA_NEEDS_PUBLIC_14D")
+        tags=torch.round(raw[:,4:8]*3).long()
+        if not bool(torch.all(torch.sort(tags,dim=1).values==torch.arange(
+                4,device=raw.device).unsqueeze(0))):
+            raise RuntimeError("R100_ALGEBRA_PUBLIC_ROLES_INCOMPLETE")
+        calib=torch.tanh(self.gain*raw[:,:4]+self.bias)
+        ix=[torch.argmax((tags==k).to(torch.int64),dim=1,keepdim=True)
+            for k in (1,2,3)]
+        sel,yes,no=(torch.gather(calib,1,j)[:,0] for j in ix)
+        prob=torch.sigmoid(self.selector_sharpness*sel)
+        mux=prob*yes+(1.-prob)*no
+        parity=torch.prod(calib,dim=1)
+        # Public binary bits are themselves legally observed instructions.
+        base=(1.-raw[:,8])*mux+raw[:,8]*parity
+        return (1.-2.*raw[:,9])*base
+
+
+class NativeFactorInternal(nn.Module):
+    """Factorized internal context enters BEFORE original native SSM/TTT."""
+    def __init__(self,core):
+        super().__init__()
+        self.core=core
+        self.algebra=FactorAlgebra()
+        self.projection=nn.Sequential(nn.Linear(4,32),nn.Tanh(),
+                                      nn.Linear(32,32))
+        # All variants compute this head: only the objective differs.
+        self.sign_head=nn.Sequential(nn.Linear(4,16),nn.Tanh(),
+                                     nn.Linear(16,1))
+
+    def forward(self,slots,raw):
+        if slots.ndim!=3 or slots.shape[1:]!=(5,13):
+            raise RuntimeError("R100_NATIVE_INTERNAL_PUBLIC_EVENT_SHAPE")
+        factor=self.algebra(raw)
+        features=torch.stack((factor,raw[:,10],raw[:,11],raw[:,12]),dim=1)
+        state=self.core.stem(slots)
+        context=self.projection(features)
+        if context.shape!=(len(slots),32):
+            raise RuntimeError("R100_NATIVE_FACTORIZATION_CONTEXT_WIDTH")
+        state=torch.cat((state[:,:-1],state[:,-1:]+context[:,None]),dim=1)
+        value=r98._native_trunk(self.core,state)
+        aux=self.sign_head(features)[:,0]
+        if value.shape!=(len(slots),) or aux.shape!=value.shape:
+            raise RuntimeError("R100_NATIVE_FACTORED_VALUE_OR_MICRO_SHAPE")
+        return value,aux
+
+
+class NativeFactorExternal(nn.Module):
+    """Identical program prior in a scalar output head, not native proof."""
+    def __init__(self,core):
+        super().__init__()
+        self.core=core
+        self.algebra=FactorAlgebra()
+        self.value=nn.Sequential(nn.Linear(4,32),nn.Tanh(),
+                                 nn.Linear(32,1))
+
+    def forward(self,slots,raw):
+        z=self.algebra(raw)
+        features=torch.stack((z,raw[:,10],raw[:,11],raw[:,12]),dim=1)
+        return self.core(slots)[:,-1,0]+self.value(features)[:,0]
+
+
+def _models(seed):
+    if seed not in SEEDS:
+        raise PermissionError("R100_MODEL_SEED_NOT_PRECOMMITTED")
+    result={}
+    result[NATIVE_RAW]=r95._native(seed)
+    torch.manual_seed(seed+201)
+    result[UNSTRUCTURED]=r98.NativeStemInjection(
+        r95._native(seed),r98.RoleProgramContext())
+    for arm in FACTORED_INTERNAL_ARMS:
+        core=r95._native(seed)
+        torch.manual_seed(seed+202)
+        result[arm]=NativeFactorInternal(core)
+    core=r95._native(seed)
+    torch.manual_seed(seed+202)
+    result[EXTERNAL]=NativeFactorExternal(core)
+    torch.manual_seed(seed+203)
+    result[MLP]=r98.Flat14Value()
+    torch.manual_seed(seed+204)
+    result[SET]=r98.RoleProgramValue()
+    torch.manual_seed(seed+205)
+    result[GRU]=r81.GRU(64)
+    torch.manual_seed(seed+206)
+    result[UPPER]=r98.Flat14Value()
+    cores=[result[NATIVE_RAW],result[UNSTRUCTURED].core]
+    cores.extend(result[arm].core for arm in FACTORED_INTERNAL_ARMS)
+    cores.append(result[EXTERNAL].core)
+    base=dict(cores[0].named_parameters())
+    if any(set(dict(c.named_parameters()))!=set(base) for c in cores[1:]):
+        raise RuntimeError("R100_CORE_PARAMETER_NAMES_DIFFER")
+    for core in cores[1:]:
+        d=dict(core.named_parameters())
+        if any(not torch.equal(d[k],base[k]) for k in base):
+            raise RuntimeError("R100_IDENTICAL_ORIGINAL_NATIVE_INIT_DRIFT")
+    initial=dict(result[NOAUX].named_parameters())
+    for arm in (AUX,SHUFFLED,OPMASK):
+        other=dict(result[arm].named_parameters())
+        if other.keys()!=initial.keys() or any(
+            not torch.equal(other[k],initial[k]) for k in initial):
+            raise RuntimeError("R100_FACTORED_VARIANTS_NOT_BITWISE_EQUAL_INIT")
+    if any(not torch.equal(result[NOAUX].algebra.state_dict()[k],
+                           result[EXTERNAL].algebra.state_dict()[k])
+           for k in result[NOAUX].algebra.state_dict()):
+        raise RuntimeError("R100_INTERNAL_VS_EXTERNAL_FACTORS_NOT_EQUAL_INIT")
+    return result
+
+
+def _arrays(source,arm,suffix=""):
+    slots=source["slots"+suffix]
+    raw=source["raw"+suffix]
+    if arm==UPPER:
+        raw=source["canonical"+suffix]
+    if arm==OPMASK:
+        return _mask_program(slots,raw)
+    return slots,raw
+
+
+def _forward(model,arm,slots,raw,include_aux=False):
+    if arm in FACTORED_INTERNAL_ARMS:
+        value,aux=model(slots,raw)
+        if include_aux:
+            return value,aux
+    elif arm in (NATIVE_RAW,GRU):
+        value=model(slots)[:,-1,0]
+    elif arm in (UNSTRUCTURED,EXTERNAL):
+        value=model(slots,raw)
+    else:
+        value=model(raw)
+    if value.shape!=(len(slots),):
+        raise RuntimeError("R100_MODEL_OUTPUT_SHAPE_NONFROZEN")
+    return value
+
+
+def _predict(model,arm,panel,suffix=""):
+    slots,raw=_arrays(panel,arm,suffix)
+    model.eval()
+    found=[]
+    with torch.no_grad():
+        for i in range(0,len(slots),32):
+            x=torch.from_numpy(slots[i:i+32])
+            f=torch.from_numpy(raw[i:i+32])
+            found.extend(_forward(model,arm,x,f).tolist())
+    model.train()
+    out=np.asarray(found,np.float64)
+    if out.shape!=(len(slots),) or not np.isfinite(out).all():
+        raise RuntimeError("R100_NONFINITE_OR_INCOMPLETE_PREDICTION")
+    return out
+
+
+def _train(model,arm,fit,valid,indices):
+    slots,raw=_arrays(fit,arm)
+    x=torch.from_numpy(slots)
+    features=torch.from_numpy(raw)
+    correct=torch.from_numpy(fit["factual"])
+    shuffled=torch.from_numpy(fit["aux_shuffled_factual"])
+    opt=torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.0001)
+    before=float(np.mean((_predict(model,arm,valid)-valid["factual"])**2))
+    started=time.perf_counter()
+    for take in indices:
+        if arm in FACTORED_INTERNAL_ARMS:
+            value,logit=_forward(model,arm,x[take],features[take],include_aux=True)
+            loss=F.mse_loss(value,correct[take])
+            if arm==AUX:
+                loss=loss+LAMBDA*F.binary_cross_entropy_with_logits(
+                    logit,(correct[take]>0).float())
+            elif arm==SHUFFLED:
+                loss=loss+LAMBDA*F.binary_cross_entropy_with_logits(
+                    logit,(shuffled[take]>0).float())
+            # NOAUX/OPMASK carry IDENTICAL sign heads, but no aux gradient.
+        else:
+            value=_forward(model,arm,x[take],features[take])
+            loss=F.mse_loss(value,correct[take])
+        if not bool(torch.isfinite(loss)):
+            raise RuntimeError("R100_FROZEN_FACTUAL_TRAINING_LOSS_NONFINITE")
+        opt.zero_grad(set_to_none=True)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(),1.)
+        opt.step()
+    elapsed=time.perf_counter()-started
+    train=float(np.mean((_predict(model,arm,fit)-fit["factual"])**2))
+    val=float(np.mean((_predict(model,arm,valid)-valid["factual"])**2))
+    if not all(math.isfinite(z) for z in (before,train,val,elapsed)):
+        raise RuntimeError("R100_TRAINING_ARM_INCOMPLETE_OR_NONFINITE")
+    return {"steps":len(indices),"factual_selected_return_exposures":len(indices)*BATCH,
+            "params":sum(p.numel() for p in model.parameters()),
+            "validation_initial_MSE":before,"FIT_final_MSE":train,
+            "validation_final_MSE":val,"training_seconds":elapsed,
+            "aux_loss_weight":LAMBDA if arm in (AUX,SHUFFLED) else 0.,
+            "aux_target":"SIGN_OF_ACTUALLY_REALIZED_RETURN" if arm==AUX
+                else "DONOR_FACTUAL_RETURN_SIGN" if arm==SHUFFLED else "NONE"}
