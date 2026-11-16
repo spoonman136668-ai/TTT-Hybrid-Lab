@@ -45,6 +45,16 @@ def protocol():
     return f
 
 
+def _enforce_budget(deadline):
+    """Hard stop before the next source action, gradient update or score batch.
+
+    An in-flight simulator/BLAS call may finish before Python regains control;
+    this is not an OS hard kill or a science-completion guarantee.
+    """
+    if deadline is not None and time.perf_counter() >= deadline:
+        raise TimeoutError("R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED")
+
+
 def _observed_shuffled_outcomes(slots,actions,rewards,panel,seed,index):
     """Fixed public action/time strata, real nontrivial derangement.
 
@@ -73,7 +83,7 @@ def _observed_shuffled_outcomes(slots,actions,rewards,panel,seed,index):
     return rewards[order].copy(),order
 
 
-def episode(panel,seed,index,sha=None,*,paired=False):
+def episode(panel,seed,index,sha=None,*,paired=False,deadline=None):
     """16 independent REAL factual worlds, same latent hidden rule family.
 
     Blocked for ALL registered source panels until separate verified first-use.
@@ -86,6 +96,7 @@ def episode(panel,seed,index,sha=None,*,paired=False):
         raise PermissionError("R103_FORBIDDEN_TRAIN_COUNTERFACTUAL_QUERY")
     slots=[]; rewards=[]; actions=[]
     for event in range(SUPPORT):
+        _enforce_budget(deadline)
         action=r103.support_action(event)
         family=r103.family_for_panel(panel,index,event)
         world=r103._world(panel,seed,index,sha,event=event,family=family)
@@ -96,6 +107,7 @@ def episode(panel,seed,index,sha=None,*,paired=False):
     acts=np.asarray(actions,np.int8)
     shuffled,order=_observed_shuffled_outcomes(
         s,acts,ret,panel,seed,index)
+    _enforce_budget(deadline)
     qworld=r103._world(panel,seed,index,sha,event=SUPPORT,
                       family=r103.family_for_panel(panel,index,SUPPORT))
     out={"support_slots":s,"support_rewards":ret,
@@ -122,13 +134,17 @@ def episode(panel,seed,index,sha=None,*,paired=False):
     return out
 
 
-def source(panel,seed,sha=None):
+def source(panel,seed,sha=None,*,deadline=None):
     """Original scored generation is not admitted on this branch."""
     f=protocol()
     if panel not in r103.PANEL_COUNTS or seed not in SEEDS:
         raise PermissionError("R103_PROTECTED_SOURCE_SCOPE_NOT_REGISTERED")
-    records=[episode(panel,seed,j,sha,paired=(panel in SCORED))
-             for j in range(f["source"]["counts"][panel])]
+    _enforce_budget(deadline)
+    records=[]
+    for j in range(f["source"]["counts"][panel]):
+        _enforce_budget(deadline)
+        records.append(episode(
+            panel,seed,j,sha,paired=(panel in SCORED),deadline=deadline))
     result={k:np.stack([row[k] for row in records])
             for k in ("support_slots","support_rewards",
                       "support_rewards_shuffled","support_actions")}
@@ -190,11 +206,13 @@ def permute_public_roles(support_slots,query):
     return new_s,new_q
 
 
-def predict(model,arm,data,action=None,permuted_roles=False):
+def predict(model,arm,data,action=None,permuted_roles=False,*,deadline=None):
+    _enforce_budget(deadline)
     model.eval()
     values=[]
     with torch.no_grad():
         for i in range(0,len(data["support_slots"]),32):
+            _enforce_budget(deadline)
             subset=np.arange(i,min(len(data["support_slots"]),i+32))
             x,y,q=_inputs(data,subset,arm,action,permuted_roles)
             result=model(x,y,q)
@@ -208,7 +226,7 @@ def predict(model,arm,data,action=None,permuted_roles=False):
     return out
 
 
-def fit_arm(model,arm,fit,valid,indices):
+def fit_arm(model,arm,fit,valid,indices,*,deadline=None):
     """Actual factual FIT only; all 3072 updates, no DEV scoring."""
     if (arm not in ARMS or indices.shape!=(STEPS,BATCH)
         or set(fit)&{"reward0","reward2","query0","query2","private_law","private_family"}
@@ -216,11 +234,13 @@ def fit_arm(model,arm,fit,valid,indices):
         raise PermissionError("R103_TRAINING_INVALID_OR_PRIVILEGED_INPUT")
     if len(fit["target"])!=protocol()["source"]["counts"]["FIT"]:
         raise RuntimeError("R103_FULL_FIT_COHORT_SIZE_INVALID")
+    _enforce_budget(deadline)
     optimiser=torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.0001)
-    first_valid=float(np.mean((predict(model,arm,valid)-valid["target"])**2))
+    first_valid=float(np.mean((predict(model,arm,valid,deadline=deadline)-valid["target"])**2))
     started=time.perf_counter()
     labels=torch.from_numpy(fit["target"].astype(np.float32))
     for ix in indices:
+        _enforce_budget(deadline)
         s,r,q=_inputs(fit,ix,arm)
         v=model(s,r,q)
         loss=F.mse_loss(v,labels[ix])
@@ -231,8 +251,8 @@ def fit_arm(model,arm,fit,valid,indices):
         nn.utils.clip_grad_norm_(model.parameters(),1.)
         optimiser.step()
     seconds=time.perf_counter()-started
-    train_mse=float(np.mean((predict(model,arm,fit)-fit["target"])**2))
-    valid_mse=float(np.mean((predict(model,arm,valid)-valid["target"])**2))
+    train_mse=float(np.mean((predict(model,arm,fit,deadline=deadline)-fit["target"])**2))
+    valid_mse=float(np.mean((predict(model,arm,valid,deadline=deadline)-valid["target"])**2))
     if not all(math.isfinite(n) for n in (seconds,first_valid,train_mse,valid_mse)):
         raise RuntimeError("R103_TRAINING_TIME_OR_MSE_NONFINITE")
     total=sum(p.numel() for p in model.parameters() if p.requires_grad)
@@ -250,18 +270,22 @@ def fit_arm(model,arm,fit,valid,indices):
             "actual_FLOPs_not_measured":True}
 
 
-def score(models,panel,data):
+def score(models,panel,data,*,deadline=None):
     """Evaluator ONLY, never inspect paired outcome during training."""
     if (panel not in SCORED or set(data)&{"query","target"}
         or set(models)!=set(ARMS)):
         raise PermissionError("R103_EVALUATOR_SCORED_SOURCE_INVALID")
+    _enforce_budget(deadline)
     n=len(data["reward0"])
     raw,chosen,metrics={},{},{}
     oracle=np.maximum(data["reward0"],data["reward2"])
     true_action=np.where(data["private_law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
     for arm in ARMS:
-        value0=predict(models[arm],arm,data,action=r85.CALIBRATE)
-        value2=predict(models[arm],arm,data,action=r85.EXPLOIT_POS)
+        _enforce_budget(deadline)
+        value0=predict(models[arm],arm,data,action=r85.CALIBRATE,
+                       deadline=deadline)
+        value2=predict(models[arm],arm,data,action=r85.EXPLOIT_POS,
+                       deadline=deadline)
         action=np.where(value0>value2,r85.CALIBRATE,r85.EXPLOIT_POS)
         realized=np.where(action==r85.CALIBRATE,data["reward0"],data["reward2"])
         raw[arm],chosen[arm]=realized,action
@@ -272,8 +296,8 @@ def score(models,panel,data):
         if np.any(data["cold"]):
             metrics[arm]["cold_reward_mean"]=float(np.mean(realized[data["cold"]]))
     renamed=np.where(
-        predict(models[r103.NATIVE],r103.NATIVE,data,action=r85.CALIBRATE,permuted_roles=True)>
-        predict(models[r103.NATIVE],r103.NATIVE,data,action=r85.EXPLOIT_POS,permuted_roles=True),
+        predict(models[r103.NATIVE],r103.NATIVE,data,action=r85.CALIBRATE,permuted_roles=True,deadline=deadline)>
+        predict(models[r103.NATIVE],r103.NATIVE,data,action=r85.EXPLOIT_POS,permuted_roles=True,deadline=deadline),
         r85.CALIBRATE,r85.EXPLOIT_POS)
     return {"panel":panel,"metrics":metrics,"raw_reward":raw,"choices":chosen,
             "role_relabel_action_agreement":float(
@@ -370,14 +394,15 @@ def original_ci(seed):
         "trained":{},"evaluation":{},
     }
     cap=f["training"]["per_seed_total_CPU_wall_budget_seconds"]
+    deadline=started+cap
     def budget():
         seconds=time.perf_counter()-started
         if seconds>cap:
             raise TimeoutError("R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED")
         return seconds
     try:
-        fit=source("FIT",seed,sha)
-        valid=source("VALID",seed,sha)
+        fit=source("FIT",seed,sha,deadline=deadline)
+        valid=source("VALID",seed,sha,deadline=deadline)
         budget()
         models=r103.make_models(seed)
         minibatches=np.random.default_rng(np.random.SeedSequence([
@@ -385,7 +410,7 @@ def original_ci(seed):
                 0,len(fit["target"]),size=(STEPS,BATCH))
         for arm in ARMS:
             report["trained"][arm]=fit_arm(
-                models[arm],arm,fit,valid,minibatches)
+                models[arm],arm,fit,valid,minibatches,deadline=deadline)
             budget()
         report["all_11_arms_fully_trained"]=True
         # Heldout cohorts are born only AFTER all eleven full FIT budgets.
@@ -393,9 +418,13 @@ def original_ci(seed):
         for panel in SCORED:
             budget()
             report["scored_heldout_first_used"]=True
-            scores[panel]=score(models,panel,source(panel,seed,sha))
+            scores[panel]=score(
+                models,panel,source(panel,seed,sha,deadline=deadline),
+                deadline=deadline)
             budget()
+        budget()
         result=measures(seed,scores)
+        budget()
         report["evaluation"]={
             "all_panels":{k:v["metrics"] for k,v in scores.items()},
             "oracle_means":{k:v["oracle_mean"] for k,v in scores.items()},

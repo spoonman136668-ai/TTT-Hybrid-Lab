@@ -164,3 +164,48 @@ def test_original_still_rejects_direct_science_without_manifest(monkeypatch):
     with pytest.raises(PermissionError,
                        match="R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
         pipe.original_ci(r103.SEEDS[0])
+
+
+
+def test_frozen_budget_checks_unit_only_without_accessing_original_sources(monkeypatch):
+    """Expired budget blocks source/training/evaluation BEFORE any physics."""
+    from experiments import r103_training_pipeline as pipe
+    from experiments import r103_relational_binding_diagnostic as r103
+    import torch
+    torch.set_num_threads(1)
+    never=lambda *_a,**_kw: (_ for _ in ()).throw(
+        AssertionError("R103_PROTECTED_SOURCE_MUST_NOT_OPEN"))
+    monkeypatch.setattr(r103,"_world",never)
+    seed=r103.SEEDS[0]
+    with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
+        pipe.source("FIT",seed,deadline=-1)
+    with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
+        pipe.episode("FIT",seed,0,deadline=-1)
+    arm=r103.GRU
+    model=r103.ConventionalEvidenceValue("gru")
+    # Training must halt BEFORE any call to the optimizer/model even if its
+    # input claims a full cohort count. All examples are unit-only placeholders.
+    indices=np.zeros((pipe.STEPS,pipe.BATCH),dtype=np.int64)
+    fake_fit={"target":np.zeros(1024,dtype=np.float32)}
+    with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
+        pipe.fit_arm(model,arm,fake_fit,fake_fit,indices,deadline=-1)
+    with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
+        pipe.predict(model,arm,{},deadline=-1)
+    with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
+        pipe.score({name:model for name in r103.ARMS},
+                   "DEV_UNKNOWN",{"reward0":np.array([1.])},deadline=-1)
+
+
+def test_frozen_budget_is_monotonic_not_a_science_gate(monkeypatch):
+    from experiments import r103_training_pipeline as pipe
+    class FakeTimer:
+        n=0
+        @classmethod
+        def next(cls):
+            cls.n+=1
+            return float(cls.n)
+    monkeypatch.setattr(pipe.time,"perf_counter",FakeTimer.next)
+    pipe._enforce_budget(2.5)
+    pipe._enforce_budget(2.5)
+    with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
+        pipe._enforce_budget(2.5)
