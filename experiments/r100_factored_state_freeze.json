@@ -1,0 +1,191 @@
+{
+  "schema": "ttt-hybrid.r100-factored-native-causal-state.cpu-testonly.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_R100_CODE_TESTS_OR_SOURCE_FIRST_USE",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "qualified_r99_sealed_SHA": "772217b0dbf750e0749999fc560fec8f4b4bb7f1",
+    "r99_freeze_blob": "52531b8f3d83c17d1cc5948058ad34b53899f7c5",
+    "r99_spent_SHA": "bb5c309e178a03e413ab71e2b7fb03c4ff33e93c",
+    "r99_spent_run": "43847223165",
+    "r99_science_status": "R99_INTERNAL_MICROFEEDBACK_NO_GO",
+    "prior_scored_sources_or_weights_reused": false
+  },
+  "question": "Does an intentionally factorized role-equivariant public-program representation enable the native CPU Hybrid to exploit a withheld PARITY+NEGATE composition that prior unfactored R98/R99 native models could not? Does separately added feedback derived ONLY from the realized factual consequence outperform the same factorizer without that feedback?",
+  "scope": "CPU_TEST_ONLY_KNOWN_PROGRAM_OPERATOR_ALGEBRA_AS_ENGINEERED_INDUCTIVE_BIAS_NOT_AUTONOMOUS_RELATION_INVENTION_OR_INDEPENDENT_SCIENCE",
+  "source": {
+    "seeds": [
+      1002311,
+      1002323
+    ],
+    "salts": {
+      "FIT": 25410111,
+      "VALID": 25410211,
+      "DEV_SEEN": 25410311,
+      "DEV_COMPOSE": 25410411,
+      "OOD_SHIFT": 25410511,
+      "PROGRAM_SWITCH": 25410611,
+      "RETURN_SHUFFLE": 25410711,
+      "BATCH": 25410811,
+      "BOOTSTRAP": 25410911,
+      "UNIT_ONLY": 25419991
+    },
+    "counts": {
+      "FIT": 2048,
+      "VALID": 256,
+      "DEV_SEEN": 256,
+      "DEV_COMPOSE": 256,
+      "OOD_SHIFT": 256,
+      "PROGRAM_SWITCH": 256
+    },
+    "train_programs": [
+      [
+        0,
+        0
+      ],
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ]
+    ],
+    "heldout_program": [
+      1,
+      1
+    ],
+    "train_role_bindings": [
+      [
+        0,
+        1,
+        2
+      ],
+      [
+        1,
+        2,
+        3
+      ],
+      [
+        2,
+        3,
+        0
+      ]
+    ],
+    "heldout_roles": [
+      3,
+      0,
+      1
+    ],
+    "law": "R85 pure physical world constructor, new independent four-factor A resampling and new original source salts, actual world law recomputed with R98 PURE law_of semantics; never R98/R99 original _world or any original scored cohorts. 224 physical ticks, original publicly selected 48x13 rows and lawful 5x13 A-role/pivot input.",
+    "public": "Four observed noisy A factor cues with actual role IDs, public role selector/yes/no/distractor tags and public MUX/PARITY and NEGATE instructions in preaction probe observation channel8; chosen action and time observed. No hidden A factor signs, true law label, future observation, unchosen return or teacher parity labels supplied to any learner.",
+    "factual": "One actually selected CALIBRATE or EXPLOIT_POS intervention and its realized 9-tick return per FIT/VALID world, index-only balanced across early/cold and programs; all fully trained arms observe identical input, action, actual reward and optimizer batches.",
+    "heldout": "All nine? Actually eleven frozen arms fully trained before DEV_SEEN/DEV_COMPOSE/OOD_SHIFT/PROGRAM_SWITCH physical world first generated. Evaluation after parameters frozen, with physical evaluator-only paired returns.",
+    "shift": "R86 pure timing/noise OOD shift, same heldout new composition, NOT unfamiliar physical law, full 224-step cold memory or new primitive.",
+    "program_change": "On same new physical heldout world, operator PARITY+NEGATE changed to MUX+NEGATE, all A/B factors, noise, time and role tags preserved. Evaluator-only paired physical returns, report action changes conditional on actual changed hidden physical law.",
+    "outcome_aux": "Auxiliary binary microfeedback target is 1{observed selected factual return>0} derived ONLY from the exact same actually observed return already used by main head, with both action/time public; no hidden physical law, parity teacher, alternate payoff or privileged labels. This approximate reward-sign proxy is NOT guaranteed equal to true law, and must not be called a ground-truth causal teacher.",
+    "return_shuffle": "Fix seed-only zero-fixed-point cross-world assignment inside public pivot and actual chosen action groups WITHOUT reading reward/true-law. Shuffle ONLY the auxiliary observed return-sign target. Correct chosen actual reward remains used for main head. Postfixed private donor true-law match rates required [0.35,0.65], otherwise SOURCE_INVALID without adaptive resampling.",
+    "source_checks": "Private true-law sign balance within each public pivot and factual action [0.35,0.65] on each panel; future leakage, original cohort access and source collisions fail closed.",
+    "older_scored_sources_reused": false
+  },
+  "arms": [
+    "NATIVE32_ORIGINAL",
+    "NATIVE32_UNSTRUCTURED_STEM",
+    "NATIVE32_FACTORED_NO_AUX",
+    "NATIVE32_FACTORED_FACTUAL_SIGN_AUX",
+    "NATIVE32_FACTORED_SHUFFLED_SIGN_AUX",
+    "NATIVE32_FACTORED_OPCODE_MASK",
+    "NATIVE32_FACTORED_EXTERNAL_VALUE",
+    "MLP64_RAW_PUBLIC",
+    "ROLE_SET_PUBLIC",
+    "GRU64_PUBLIC_EVENTS",
+    "MLP64_ENGINEERED_PUBLIC_RULE_UPPER"
+  ],
+  "architecture": {
+    "native": "Original unmodified authentic CPU R74 width32 HybridPilot_FULL with R75 triangular TTT, original SSM/causal attention/TTT/depth, unchanged official model.py; no GPU fusion.",
+    "factorized_algebra": "EXPLICIT ENGINEERED OPERATOR PRIOR: shared learned per-A factor tanh calibration from legally observed noisy A cues; public role tags perform EXACT selector/yes/no canonical indexing; differentiable MUX uses selector sigmoid gate of chosen branch cues; PARITY is product of learned factor signs; public MUX/PARITY opcode selects branch; public negate bit multiplies result by -1. This supplied MUX/PARITY/NEGATE algebra is NOT learned new relation semantics or autonomous operator discovery.",
+    "internal": "One learned scalar factorized law estimate, selected public action/time are projected into a width32 native STEM context added only at last legal pivot BEFORE existing native SSM/attention/TTT/depth and native original value head. All parameters trained from scratch on factual returns; native trunk must learn how to use structured latent for action value.",
+    "feedback": "A single independent factual-sign head predicts approximate selected-return positivity from internal factorized law estimate and public chosen action/time; lambda=0.15 BCE auxiliary loss in addition to true chosen-return MSE, no extra source. Same initialized head and forward for NO_AUX, factual aux, and return-shuffled aux arms.",
+    "control": "Opcode-mask same architecture/init but both public opcode bits masked BOTH in 14D features and original four native public instruction channels; main return remains factual; seed-only auxiliary target derangement arm preserves true main reward; original native and R98 unstructured role-program STEM internal comparator are full-step trained.",
+    "external": "Same engineered factorizer and factual-observation access, but additive output value head on original native, to test whether improvement is native-specific vs any cheap explicit rule-aware head. No native superiority claim unless positive beats this externally provided equal-algebra control.",
+    "conventional": "Fully trained original R98 14D raw MLP64, R98 role-set public program and R81 GRU64 5×13 public event rows, same action/reward minibatches. R98 ENGINEERED public-law canonical MLP upper supplied deterministic observable rule sign; never count as autonomous learned baseline.",
+    "parameters_FLOPs_across_architectures_not_matched": true,
+    "equal_factual_information_actions_updates": true,
+    "equal_initial_native_parameters": true,
+    "precise_same_structure_noaux_feedback_shuffled_opcode": true,
+    "no_official_native_source_or_weights_changed": true
+  },
+  "training": {
+    "steps_each_arm": 3072,
+    "batch": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "outcome_aux_weight": 0.15,
+    "identical_minibatch_indices": true,
+    "all_11_arms_frozen_before_DEV": true,
+    "validation_logged_only_no_weight_selection": true,
+    "whole_CPU_budget_seconds_per_seed": 300
+  },
+  "evaluation": {
+    "independent_seeds": 2,
+    "bootstrap_draws": 2000,
+    "structural_checks": {
+      "noaux_minus_unstructured_DEV_reward_min": 0.5,
+      "noaux_minus_strongest_conventional_DEV_reward_min": 0.4,
+      "noaux_minus_opcode_mask_DEV_reward_min": 0.75,
+      "engineered_upper_minus_noaux_DEV_reward_gap_max": 0.5,
+      "noaux_true_law_accuracy_min": 0.8,
+      "noaux_minus_unstructured_shifted_cold_reward_min": 0.4,
+      "paired_bootstrap_lower95_noaux_minus_unstructured_min": 0.1,
+      "program_switch_true_law_changed_fraction_min": 0.2,
+      "program_switch_noaux_action_flip_when_law_changes_min": 0.7,
+      "program_switch_noaux_true_law_accuracy_both_min": 0.8
+    },
+    "feedback_checks": {
+      "factual_aux_minus_noaux_DEV_reward_min": 0.2,
+      "factual_aux_minus_shuffled_aux_DEV_reward_min": 0.2,
+      "paired_bootstrap_lower95_factual_aux_minus_noaux_min": 0.08,
+      "factual_aux_minus_noaux_shifted_cold_reward_min": 0.15
+    },
+    "native_specific_checks": {
+      "noaux_minus_external_same_algebra_DEV_reward_min": 0.15,
+      "factual_aux_minus_external_same_algebra_DEV_reward_min": 0.15
+    },
+    "statuses": {
+      "all": "R100_STRUCTURAL_AND_OUTCOME_FEEDBACK_DEVELOPMENT_SIGNAL_ONLY",
+      "structural": "R100_ENGINEERED_FACTORIZATION_STRUCTURAL_SIGNAL_ONLY",
+      "no_go": "R100_FACTORIZATION_AND_FEEDBACK_INCREMENTAL_NO_GO",
+      "source_invalid": "R100_NEW_SOURCE_OR_CONTROL_INVALID_NO_SCIENCE_VERDICT",
+      "incomplete": "R100_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENCE_VERDICT"
+    },
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r100-factored-native-causal-state-20261116",
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "only_two_branch_scoped_seed_jobs_appended": true,
+    "requires_full_G4_Linux_Windows_before_fresh_scoring": true,
+    "requires_same_SHA_G5_native_TTT_both_OS_and_G7_Mamba2": true,
+    "original_GitHub_hosted_Ubuntu_CPU_first_attempt": true,
+    "source_clean_exact_SHA": true,
+    "one_original_first_use_per_seed": true,
+    "receipt": "local_runs/r100_factored_state_seed<seed>.json",
+    "after_scoring_source_sealed_on_new_SHA_without_replaying_original_panels": true,
+    "no_new_workflow_runner_scheduler_controller_or_paid_API": true
+  },
+  "authority": {
+    "CPU_TEST_ONLY_scoped_original_first_use": true,
+    "official_GPU_first_use": false,
+    "protected_independent_science": false,
+    "merge": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "paid_API": false
+  }
+}
