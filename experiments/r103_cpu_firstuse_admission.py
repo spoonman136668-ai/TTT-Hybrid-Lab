@@ -129,54 +129,14 @@ def _first_attempt_ci_custody(sha,run_id):
         raise PermissionError("R103_INDEPENDENT_GITHUB_CUSTODY_UNAVAILABLE") from exc
 
 
+# Sealed after one-time original R103 first-use.
+SPENT_ORIGINAL_SHA="427d964fb72ecb30d4212bd11b8fbb13511e88e3"
+SPENT_RUN_ID=43970270969
+SPENT_SEEDS=SEEDS
+SEAL_PATH=ROOT/"experiments/r103_scientific_firstuse_seal.json"
+
 def admit(seed,candidate_sha=None):
-    """Only an explicit later one-file owner approval final commit can admit."""
-    from experiments import r103_relational_binding_diagnostic as r103
-    immutable=r103.frozen()
-    if (immutable["authority"]["protected_scored_first_use"]
-        or tuple(immutable["source"]["seeds"])!=SEEDS
-        or immutable["training"]["per_seed_total_CPU_wall_budget_seconds"]!=MAX_BUDGET_SECONDS):
-        raise PermissionError("R103_IMMUTABLE_FROZEN_SCOPE_DRIFT")
-    scope=approval()  # Fail before touching environment/network if absent.
-    required={
-        "GITHUB_ACTIONS":"true",
-        "GITHUB_EVENT_NAME":"pull_request",
-        "GITHUB_REPOSITORY":REPO,
-        "GITHUB_HEAD_REF":BRANCH,
-        "GITHUB_JOB":JOB,
-        "RUNNER_OS":"Linux",
-        "RUNNER_ENVIRONMENT":"github-hosted",
-        "GITHUB_RUN_ATTEMPT":"1",
-        "R103_SEED":str(seed),
-    }
-    if (seed not in SEEDS or any(os.getenv(k)!=v for k,v in required.items())
-        or os.getenv("GITHUB_REF")!=f"refs/pull/{PR}/merge"):
-        raise PermissionError("R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
-    run_id_text=os.getenv("GITHUB_RUN_ID","")
-    sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
-    if (not run_id_text.isdecimal() or int(run_id_text)<=0
-        or not isinstance(candidate_sha,str) or len(sha)!=40
-        or sha!=candidate_sha):
-        raise PermissionError("R103_EXACT_SOURCE_RUN_SEED_NOT_ADMITTED")
-    event_path=os.getenv("GITHUB_EVENT_PATH","")
-    if not event_path or not Path(event_path).is_file():
-        raise PermissionError("R103_GITHUB_PR_EVENT_MISSING")
-    event=json.loads(Path(event_path).read_text(encoding="utf-8"))
-    pr=event.get("pull_request",{})
-    if (pr.get("number")!=PR or pr.get("head",{}).get("sha")!=sha
-        or pr.get("head",{}).get("ref")!=BRANCH
-        or pr.get("head",{}).get("repo",{}).get("full_name")!=REPO):
-        raise PermissionError("R103_PR_OWNER_HEAD_SOURCE_MISMATCH")
-    if (_git("rev-parse","HEAD")!=sha
-        or _git("rev-parse","HEAD^")!=scope["exact_parent_sha"]):
-        raise PermissionError("R103_FINAL_SINGLE_FILE_APPROVAL_PARENT_MISMATCH")
-    if (_git("diff-tree","--no-commit-id","--name-only","-r","HEAD")
-        !=APPROVAL_PATH):
-        raise PermissionError("R103_FINAL_APPROVAL_COMMIT_HAS_EXTRA_CHANGES")
-    if (_git("status","--porcelain")
-        or _git("hash-object",str(r103.FREEZE))!=FROZEN_BLOB):
-        raise PermissionError("R103_DIRTY_SOURCE_OR_FROZEN_BLOB_DRIFT")
-    custody=_first_attempt_ci_custody(sha,int(run_id_text))
-    return {"seed":seed,"source_sha":sha,"original_run_id":int(run_id_text),
-            "owner_scope":scope["scope"],
-            "approval_parent":scope["exact_parent_sha"],**custody}
+    """The protected R103 source is spent. No replay, even on original SHA."""
+    raise PermissionError(
+        "R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED: "
+        "R103_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED")

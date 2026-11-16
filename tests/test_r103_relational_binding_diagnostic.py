@@ -340,3 +340,28 @@ def test_r103_frozen_true_action_accuracy_matches_real_physical_reward_oracle(fa
             if expected==r85.CALIBRATE: positives+=1
             else: negatives+=1
     assert positives>=20 and negatives>=20
+
+
+def test_r103_permanent_scientific_seal_blocks_replay(monkeypatch):
+    from experiments import r103_cpu_firstuse_admission as owner
+    import json
+    d=json.loads(owner.SEAL_PATH.read_text(encoding="utf-8"))
+    assert d["original_scored_sha"]==owner.SPENT_ORIGINAL_SHA
+    assert d["original_run_id"]==owner.SPENT_RUN_ID
+    assert d["preimplementation_freeze_blob"]==owner.FROZEN_BLOB
+    assert d["all_original_seeds_consumed"] is True
+    assert d["independent_scientific_pass"] is False
+    assert d["seeds_meeting_all_frozen_checks"]==0
+    assert set(map(int,d["by_seed"]))==set(owner.SPENT_SEEDS)
+    monkeypatch.setenv("GITHUB_ACTIONS","true")
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT","1")
+    monkeypatch.setenv("GITHUB_RUN_ID",str(owner.SPENT_RUN_ID))
+    monkeypatch.setenv("EXPECTED_CANDIDATE_SHA",owner.SPENT_ORIGINAL_SHA)
+    for seed in owner.SEEDS:
+        with pytest.raises(PermissionError,
+                           match="R103_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED"):
+            owner.admit(seed,owner.SPENT_ORIGINAL_SHA)
+        with pytest.raises(PermissionError,
+                           match="R103_PROTECTED_ORIGINAL_PHYSICAL_SOURCE_NOT_ADMITTED"):
+            r103._world("FIT",seed,0,owner.SPENT_ORIGINAL_SHA,
+                        event=0,family=r103.KNOWN[0])
