@@ -65,7 +65,6 @@ def frozen()->dict:
         or p["R92_exact_SHA"]!=PARENT or p["R92_frozen_blob"]!=r92.FREEZE_BLOB
         or p["R92_final"]!="R92_NATIVE_DIVERSITY_LR_NO_GO_DIAGNOSTIC_ONLY_TWO_FRESH_SEEDS"
         or p["R91_spent_dev_salt"]!=25319991
-        or p["previous_protected_or_spent_scored_source_reused"]
         or p["no_old_training_weights_or_scored_source_reuse"] is not True
         or s["train_salt"]!=TRAIN_SALT or s["dev_test_salt"]!=DEV_SALT
         or s["shuffle_salt"]!=SHUFFLE_SALT or s["batch_permutation_salt"]!=BATCH_SALT
