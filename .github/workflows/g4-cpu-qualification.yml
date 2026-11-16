@@ -1014,7 +1014,7 @@ jobs:
   r98-internal-program:
     name: R98 internal native program transfer / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r98-native-internal-compositional-operator-20261116' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r98-native-internal-compositional-operator-20261116' && github.event.pull_request.head.sha == '8eda7b186605691a4ee0183440c4d897092cd01e' && github.run_id == 43841693572 }}
     strategy:
       fail-fast: false
       matrix:

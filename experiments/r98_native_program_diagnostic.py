@@ -36,6 +36,9 @@ FREEZE_BLOB="44a2b0802efc81e2360df2a44aeed4f4507f1967"
 SCHEMA="ttt-hybrid.r98-native-internal-compositional-transfer.testonly.v1"
 PARENT="ebfca5928edf6bcec7f0e3ec9340255bfad44680"
 BRANCH="research/r98-native-internal-compositional-operator-20261116"
+# Original two-seed TEST-only first use is CONSUMED. Never reopen scored panels.
+ORIGINAL_R98_SPENT_SHA="8eda7b186605691a4ee0183440c4d897092cd01e"
+ORIGINAL_R98_SPENT_RUN_ID="43841693572"
 SEEDS=(1001911,1001923)
 SALT={"FIT":25390111,"VALID":25390211,"DEV_SEEN":25390311,
       "DEV_COMPOSE":25390411,"OOD_SHIFT":25390511,"ROLE_REASSIGN":25390611}
@@ -166,6 +169,8 @@ def _admit(seed:int):
         or "/merge" not in os.getenv("GITHUB_REF","")):
         raise PermissionError("R98_ORIGINAL_HOSTED_G4_FIRST_ATTEMPT_ONLY")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R98_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R98_SPENT_RUN_ID:
+        raise PermissionError("R98_SPENT_TEST_ONLY_FIRST_USE_REPLAY_DENIED")
     actual=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
                           capture_output=True,text=True,check=False,timeout=10)
     clean=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -202,7 +207,9 @@ def _world(panel:str,seed:int,index:int,sha:str):
         or os.getenv("R98_SEED")!=str(seed)
         or os.getenv("RUNNER_OS")!="Linux"
         or os.getenv("RUNNER_ENVIRONMENT")!="github-hosted"
-        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"):
+        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"
+        or sha!=ORIGINAL_R98_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R98_SPENT_RUN_ID):
         raise PermissionError("R98_FRESH_PHYSICAL_SOURCE_NOT_ADMITTED")
     rng=np.random.default_rng(np.random.SeedSequence([SALT[panel],seed,index]))
     world=r85._make_synthetic_world(index%r85.N,rng)

@@ -209,3 +209,29 @@ def test_frozen_native_internal_and_unseen_operator_thresholds():
     assert t["program_switch_internal_true_law_accuracy_both_min"]==.8
     assert f["execution"]["two_fresh_seed_jobs_only_in_existing_G4"]
     assert f["architecture"]["original_native_weights_not_promoted"]
+
+
+def test_r98_original_scored_source_was_consumed_and_all_new_runs_are_denied(monkeypatch):
+    assert r98.ORIGINAL_R98_SPENT_SHA=="8eda7b186605691a4ee0183440c4d897092cd01e"
+    assert r98.ORIGINAL_R98_SPENT_RUN_ID=="43841693572"
+    context={
+        "GITHUB_ACTIONS":"true",
+        "GITHUB_EVENT_NAME":"pull_request",
+        "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+        "GITHUB_HEAD_REF":r98.BRANCH,
+        "GITHUB_JOB":"r98-internal-program",
+        "R98_SEED":str(r98.SEEDS[0]),
+        "RUNNER_OS":"Linux",
+        "RUNNER_ENVIRONMENT":"github-hosted",
+        "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_REF":"refs/pull/294/merge",
+        "EXPECTED_CANDIDATE_SHA":"f"*40,
+        "GITHUB_RUN_ID":"43888888888",
+    }
+    for key,value in context.items():
+        monkeypatch.setenv(key,value)
+    with pytest.raises(PermissionError,match="R98_SPENT_TEST_ONLY_FIRST_USE_REPLAY_DENIED"):
+        r98._admit(r98.SEEDS[0])
+    for panel in ("FIT","VALID","DEV_SEEN","DEV_COMPOSE","OOD_SHIFT","ROLE_REASSIGN"):
+        with pytest.raises(PermissionError,match="R98_FRESH_PHYSICAL_SOURCE_NOT_ADMITTED"):
+            r98._world(panel,r98.SEEDS[0],0,"f"*40)
