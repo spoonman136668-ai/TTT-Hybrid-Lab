@@ -357,10 +357,24 @@ def make_models(seed):
     core = r95._native(seed)
     torch.manual_seed(seed + 101)
     result[EXTERNAL] = ExternalSupportValue(core)
-    native_params = sum(p.numel() for p in result[NATIVE].parameters())
-    external_params = sum(p.numel() for p in result[EXTERNAL].parameters())
-    if abs(native_params - external_params) > .10 * max(native_params, external_params):
-        raise RuntimeError("R101_EXTERNAL_LEARNED_STATE_NOT_CAPACITY_MATCHED")
+    # Compare ACTUAL trainable adapters, not the >16M-param native core
+    # shared by both arms. Counting the huge common core could conceal a
+    # material mismatch in the learned support mechanism being tested.
+    def adapter_count(model):
+        return sum(p.numel() for name, p in model.named_parameters()
+                   if not name.startswith("core.") and p.requires_grad)
+    native_params = adapter_count(result[NATIVE])
+    external_params = adapter_count(result[EXTERNAL])
+    if (native_params == 0 or external_params == 0
+        or abs(native_params - external_params) >
+            .10 * max(native_params, external_params)):
+        raise RuntimeError("R101_EXTERNAL_LEARNED_STATE_ADAPTER_NOT_CAPACITY_MATCHED")
+    ref_core = dict(result[NATIVE].core.named_parameters())
+    external_core = dict(result[EXTERNAL].core.named_parameters())
+    if (ref_core.keys() != external_core.keys()
+        or any(not torch.equal(ref_core[name],external_core[name])
+               for name in ref_core)):
+        raise RuntimeError("R101_EXTERNAL_ORIGINAL_NATIVE_CORE_INIT_DIFFERS")
     for i, (name, mode) in enumerate(((ROLE_SET, "set"), (GRU, "gru"),
                                       (MLP, "flat"), (STATIC, "static"))):
         torch.manual_seed(seed + 150 + i)
