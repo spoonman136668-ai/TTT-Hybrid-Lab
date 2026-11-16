@@ -277,3 +277,242 @@ def _audit(laws,raw,actions=None,donor=None):
             "donor_private_law_match":alignment,
             "aux_shuffle_preserves_public_action_time":True,
             "valid":True}
+
+
+def _factual(panel,seed,sha):
+    if panel not in ("FIT","VALID"):
+        raise PermissionError("R99_FACTUAL_TRAINING_CANNOT_OPEN_UNSEEN_OR_SCORED_PANEL")
+    n=COUNT[panel]
+    slots=np.empty((n,5,13),np.float32)
+    raw=np.empty((n,14),np.float32)
+    target=np.empty(n,np.float32)
+    law=np.empty(n,np.int8)
+    actions=np.empty(n,np.int8)
+    for i in range(n):
+        world,a=_world(panel,seed,i,sha)
+        obs,features,value=_observed(world,a)
+        slots[i],raw[i]=obs,features
+        target[i],law[i],actions[i]=value,world["law_a"],a
+    # The derangement is seeded and uses ONLY legally public raw and factual
+    # actions. It never inspects rewards or private law before its selection.
+    perm=derange(raw,actions,seed,panel)
+    audit=_audit(law,raw,actions,perm)
+    return {"slots":slots,"raw":raw,"canonical":r98._canonical(raw),
+            "target":target,"negative_aux_target":target[perm].copy(),
+            "factual_action":actions,"source_audit":audit,
+            "only_one_factually_observed_return_per_world":True}
+
+
+def _scored(panel,seed,sha):
+    if panel not in ("DEV_SEEN","DEV_COMPOSE","OOD_SHIFT","PROGRAM_SWITCH"):
+        raise PermissionError("R99_SCORER_CANNOT_ACCESS_FIT_OR_SPENT_PANEL")
+    n=COUNT[panel]
+    slots0=np.empty((n,5,13),np.float32)
+    slots2=np.empty_like(slots0)
+    raw0=np.empty((n,14),np.float32)
+    raw2=np.empty_like(raw0)
+    r0=np.empty(n,np.float64)
+    r2=np.empty_like(r0)
+    law=np.empty(n,np.int8)
+    cold=np.empty(n,bool)
+    counter=None
+    if panel=="PROGRAM_SWITCH":
+        counter={"slots0":np.empty_like(slots0),
+                 "slots2":np.empty_like(slots2),
+                 "raw0":np.empty_like(raw0),
+                 "raw2":np.empty_like(raw2),
+                 "reward0":np.empty_like(r0),
+                 "reward2":np.empty_like(r2),
+                 "law":np.empty_like(law),
+                 "cold":np.empty_like(cold)}
+    for i in range(n):
+        world,_=_world(panel,seed,i,sha)
+        x0,y0,value0=_observed(world,r85.CALIBRATE)
+        x2,y2,value2=_observed(world,r85.EXPLOIT_POS)
+        if (not np.array_equal(x0[:-1],x2[:-1])
+            or not np.array_equal(x0[-1,4:],x2[-1,4:])
+            or x0[-1,0]!=1 or x2[-1,2]!=1):
+            raise RuntimeError("R99_PHYSICAL_PUBLIC_INPUT_LEAKED_UNCHOSEN_ACTION")
+        slots0[i],raw0[i]=x0,y0
+        slots2[i],raw2[i]=x2,y2
+        r0[i],r2[i]=value0,value2
+        law[i],cold[i]=world["law_a"],bool(i%2)
+        if counter is not None:
+            switch=copy.deepcopy(world)
+            switch["r98_op"]=(0,1)
+            switch["law_a"]=r98.law_of(switch["factors_a"],
+                                      switch["r98_roles"],(0,1))
+            z0,u0,w0=_observed(switch,r85.CALIBRATE)
+            z2,u2,w2=_observed(switch,r85.EXPLOIT_POS)
+            if (not np.array_equal(x0[:4,9:12],z0[:4,9:12])
+                or not np.array_equal(x0[-1,4:],z0[-1,4:])):
+                raise RuntimeError("R99_PROGRAM_SWITCH_ALTERED_FACTUAL_PROBE_OR_NOISE")
+            counter["slots0"][i],counter["slots2"][i]=z0,z2
+            counter["raw0"][i],counter["raw2"][i]=u0,u2
+            counter["reward0"][i],counter["reward2"][i]=w0,w2
+            counter["law"][i],counter["cold"][i]=switch["law_a"],bool(i%2)
+    audit=_audit(law,raw0)
+    result={"slots0":slots0,"slots2":slots2,"raw0":raw0,"raw2":raw2,
+            "canonical0":r98._canonical(raw0),
+            "canonical2":r98._canonical(raw2),
+            "reward0":r0,"reward2":r2,"law":law,"cold":cold,
+            "source_audit":audit}
+    if counter is not None:
+        counter["canonical0"]=r98._canonical(counter["raw0"])
+        counter["canonical2"]=r98._canonical(counter["raw2"])
+        result["counter"]=counter
+    return result
+
+
+class NativeInternalMicro(nn.Module):
+    """Same role/program adapter inside native stem and four actual-value probes.
+
+    Intermediate probes receive the same observed chosen-action return,
+    never an engineered hidden-rule/parity/mux label. Every arm computes all
+    four heads: loss routing, not parameter capacity or forward, is ablated.
+    """
+    def __init__(self,core):
+        super().__init__()
+        self.core=core
+        self.adapter=r98.RoleProgramContext()
+        self.micro=nn.ModuleList(nn.Linear(32,1) for _ in range(4))
+
+    def forward(self,slots,raw,include_micro=True):
+        if slots.ndim!=3 or slots.shape[1:]!=(5,13) or raw.shape!=(len(slots),14):
+            raise RuntimeError("R99_NATIVE_PUBLIC_EVENT_GEOMETRY_DRIFT")
+        stem=self.core.stem(slots)
+        context=self.adapter(raw)
+        if context.shape!=(len(slots),stem.shape[-1]):
+            raise RuntimeError("R99_NATIVE_ROLE_CONTEXT_DIMENSION_DRIFT")
+        z=torch.cat((stem[:,:-1],stem[:,-1:]+context.unsqueeze(1)),dim=1)
+        features=[z[:,-1]]
+        if self.core.ssm is not None:
+            z=self.core.ssm(z)
+        features.append(z[:,-1])
+        if self.core.attn is not None:
+            z=self.core.attn(z)
+        features.append(z[:,-1])
+        if self.core.ttt is not None:
+            z=self.core.ttt(z)
+        features.append(z[:,-1])
+        if self.core.depth is not None:
+            z=self.core.depth(z)
+        main=self.core.head(z)[:,-1,0]
+        # Compute ALL four heads even for lambda=0/one-stage ablations.
+        aux=torch.stack([h(v)[:,0] for h,v in zip(self.micro,features)],dim=1)
+        if main.shape!=(len(slots),) or aux.shape!=(len(slots),4):
+            raise RuntimeError("R99_NATIVE_MAIN_OR_MICROFEEDBACK_SHAPE")
+        return (main,aux) if include_micro else main
+
+
+def _models(seed):
+    if seed not in SEEDS:
+        raise PermissionError("R99_MODEL_SEED_NOT_FROZEN")
+    models={}
+    models[NATIVE_RAW]=r95._native(seed)
+    for arm in MICRO_ARMS:
+        core=r95._native(seed)
+        torch.manual_seed(seed+62)
+        models[arm]=NativeInternalMicro(core)
+    torch.manual_seed(seed+71)
+    models[MLP]=r98.Flat14Value()
+    torch.manual_seed(seed+72)
+    models[SET]=r98.RoleProgramValue()
+    torch.manual_seed(seed+73)
+    models[GRU]=r81.GRU(64)
+    torch.manual_seed(seed+74)
+    models[UPPER]=r98.Flat14Value()
+    native_params=dict(models[NATIVE_RAW].named_parameters())
+    for arm in MICRO_ARMS:
+        c=dict(models[arm].core.named_parameters())
+        if c.keys()!=native_params.keys() or any(
+            not torch.equal(c[k],native_params[k]) for k in c):
+            raise RuntimeError("R99_NATIVE_CORE_INITIAL_WEIGHTS_NOT_IDENTICAL")
+    baseline=dict(models[MAIN_ONLY].named_parameters())
+    for arm in (FACTUAL,DERANGED,STEM_ONLY):
+        p=dict(models[arm].named_parameters())
+        if p.keys()!=baseline.keys() or any(
+            not torch.equal(p[k],baseline[k]) for k in baseline):
+            raise RuntimeError("R99_MICROFEEDBACK_ABLATION_STARTING_TENSORS_DIFFER")
+    return models
+
+
+def _arrays(panel,arm,suffix=""):
+    return (panel["slots"+suffix],
+            panel[("canonical" if arm==UPPER else "raw")+suffix])
+
+
+def _forward(model,arm,slots,raw,aux=False):
+    if arm in MICRO_ARMS:
+        result=model(slots,raw)
+        if aux:
+            return result
+        value=result[0]
+    elif arm in (NATIVE_RAW,GRU):
+        value=model(slots)[:,-1,0]
+    else:
+        value=model(raw)
+    if value.shape!=(len(slots),):
+        raise RuntimeError("R99_MODEL_VALUE_SHAPE_DRIFT")
+    return value
+
+
+def _predict(model,arm,panel,suffix=""):
+    slots,raw=_arrays(panel,arm,suffix)
+    model.eval()
+    out=[]
+    with torch.no_grad():
+        for k in range(0,len(slots),32):
+            x=torch.from_numpy(slots[k:k+32])
+            f=torch.from_numpy(raw[k:k+32])
+            out.extend(_forward(model,arm,x,f).tolist())
+    model.train()
+    out=np.asarray(out,np.float64)
+    if out.shape!=(len(slots),) or not np.isfinite(out).all():
+        raise RuntimeError("R99_NONFINITE_OR_INCOMPLETE_PREDICTION")
+    return out
+
+
+def _train(model,arm,fit,valid,batches):
+    x,y=_arrays(fit,arm)
+    slots=torch.from_numpy(x)
+    raw=torch.from_numpy(y)
+    factual=torch.from_numpy(fit["target"])
+    negative=torch.from_numpy(fit["negative_aux_target"])
+    opt=torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.0001)
+    before=float(np.mean((_predict(model,arm,valid)-valid["target"])**2))
+    started=time.perf_counter()
+    for batch in batches:
+        if arm in MICRO_ARMS:
+            main,aux=_forward(model,arm,slots[batch],raw[batch],aux=True)
+            loss=F.mse_loss(main,factual[batch])
+            if arm==FACTUAL:
+                loss=loss+AUX_WEIGHT*F.mse_loss(aux,factual[batch,None].expand_as(aux))
+            elif arm==DERANGED:
+                loss=loss+AUX_WEIGHT*F.mse_loss(aux,negative[batch,None].expand_as(aux))
+            elif arm==STEM_ONLY:
+                loss=loss+AUX_WEIGHT*F.mse_loss(aux[:,0],factual[batch])
+            # MAIN_ONLY: same four auxiliary forward heads / parameter count,
+            # with no intermediate microfeedback loss or gradient.
+        else:
+            prediction=_forward(model,arm,slots[batch],raw[batch])
+            loss=F.mse_loss(prediction,factual[batch])
+        if not bool(torch.isfinite(loss)):
+            raise RuntimeError("R99_FACTUAL_RETURN_OR_AUXILIARY_LOSS_NONFINITE")
+        opt.zero_grad(set_to_none=True)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(),1.)
+        opt.step()
+    elapsed=time.perf_counter()-started
+    train=float(np.mean((_predict(model,arm,fit)-fit["target"])**2))
+    val=float(np.mean((_predict(model,arm,valid)-valid["target"])**2))
+    if not all(math.isfinite(z) for z in (before,train,val,elapsed)):
+        raise RuntimeError("R99_FROZEN_ARM_TRAINING_NONFINITE")
+    return {"steps":len(batches),
+            "factual_action_return_exposures":len(batches)*BATCH,
+            "params":sum(p.numel() for p in model.parameters()),
+            "VALID_before_MSE":before,"FIT_after_MSE":train,
+            "VALID_after_MSE":val,"training_seconds":elapsed,
+            "aux_loss_weight":AUX_WEIGHT if arm in (FACTUAL,DERANGED,STEM_ONLY) else 0.,
+            "aux_target":"FACTUAL" if arm in (FACTUAL,STEM_ONLY) else
+                        "DERANGED_FACTUAL" if arm==DERANGED else "NONE"}
