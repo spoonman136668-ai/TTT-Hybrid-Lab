@@ -108,6 +108,9 @@ def _first_attempt_ci_custody(sha, run_id):
                 raise PermissionError("R101_SAME_SHA_G5_G7_FAIL")
             time.sleep(5)
         raise PermissionError("R101_SAME_SHA_G5_G7_NOT_YET_VERIFIED")
+    except PermissionError:
+        # Deliberate custody rejection is NOT a transport problem.
+        raise
     except (OSError,ValueError,KeyError) as exc:
         raise PermissionError(
             "R101_INDEPENDENT_GITHUB_CI_CUSTODY_UNAVAILABLE") from exc

@@ -26,6 +26,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 2
           persist-credentials: false
 
       - name: Pin Python
@@ -1174,6 +1175,7 @@ jobs:
         uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
         with:
           ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 2
           clean: true
           persist-credentials: false
           submodules: false
