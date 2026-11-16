@@ -599,3 +599,165 @@ def _train(model,arm,fit,valid,batches):
             "params":sum(p.numel() for p in model.parameters()),
             "initial_VALID_MSE":before,"final_FIT_MSE":train,
             "final_VALID_MSE":val,"fit_wall_seconds":elapsed}
+
+
+def _score(models,data):
+    actions={};metrics={};returns={}
+    for name,model in models.items():
+        v0=_predict(model,name,data,"0")
+        v2=_predict(model,name,data,"2")
+        actions[name]=np.where(v0>v2,r85.CALIBRATE,r85.EXPLOIT_POS)
+    public_sign=_private_public_rule(data["raw0"])
+    public_action=np.where(public_sign>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    true_action=np.where(data["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    actions["PUBLIC_PROGRAM_RULE_EVALUATOR_ONLY"]=public_action
+    actions["PRIVATE_PHYSICAL_LAW_EVALUATOR_ONLY"]=true_action
+    actions["ALWAYS_CALIBRATE"]=np.full(len(public_action),r85.CALIBRATE)
+    actions["ALWAYS_EXPLOIT_POS"]=np.full(len(public_action),r85.EXPLOIT_POS)
+    oracle=np.maximum(data["reward0"],data["reward2"])
+    for name,pick in actions.items():
+        realized=np.where(pick==r85.CALIBRATE,data["reward0"],data["reward2"])
+        returns[name]=realized
+        metrics[name]={"mean_realized_reward":float(realized.mean()),
+                       "cold_mean_reward":float(realized[data["cold"]].mean()),
+                       "oracle_regret":float((oracle-realized).mean()),
+                       "public_program_agreement":float(np.mean(pick==public_action)),
+                       "true_physical_law_agreement":float(np.mean(pick==true_action))}
+    metrics["PHYSICAL_PAIRED_ORACLE_EVALUATOR_ONLY"]={
+        "mean_realized_reward":float(oracle.mean()),
+        "cold_mean_reward":float(oracle[data["cold"]].mean()),
+        "oracle_regret":0.}
+    return {"metrics":metrics,"actions":actions,"returns":returns}
+
+
+def _bootstrap_lower(a,b,seed):
+    if a.shape!=(COUNT["DEV_COMPOSE"],) or b.shape!=a.shape:
+        raise RuntimeError("R98_FROZEN_PAIRED_BOOTSTRAP_SHAPE")
+    rng=np.random.default_rng(np.random.SeedSequence([BOOTSTRAP_SALT,seed]))
+    rows=rng.integers(0,len(a),size=(2000,len(a)))
+    return float(np.quantile((a-b)[rows].mean(axis=1),.025))
+
+
+def original_ci(seed:int):
+    sha=_admit(seed)
+    preflight=balance_preflight()
+    torch.set_num_threads(1)
+    path=ROOT/f"local_runs/r98_internal_program_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R98_ORIGINAL_NEW_SCIENCE_REPLAY_OR_UNCERTAIN_EFFECT_DENIED")
+    started=time.perf_counter()
+    result={"schema":SCHEMA,"seed":seed,"candidate_source_SHA":sha,
+            "freeze_blob":FREEZE_BLOB,"R97_parent_SHA":PARENT,
+            "platform":platform.platform(),"torch":str(torch.__version__),
+            "preflight":preflight[str(seed)],
+            "status":"R98_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENTIFIC_VERDICT",
+            "trained":{},"source_audits":{},
+            "all_nine_frozen_before_new_DEV_OOD":False,
+            "new_DEV_COMPOSE_OOD_ROLE_REASSIGN_first_use":False,
+            "older_scored_source_or_weights_used":False,
+            "scientific_pass":False}
+    try:
+        fit=_factual("FIT",seed,sha)
+        valid=_factual("VALID",seed,sha)
+        if not fit["only_one_observed_factual_return"]:
+            raise RuntimeError("R98_ILLEGAL_UNCHOSEN_BRANCH_TRAINING_TARGET")
+        result["source_audits"]["FIT"]=fit["audit"]
+        result["source_audits"]["VALID"]=valid["audit"]
+        rng=np.random.default_rng(np.random.SeedSequence([BATCH_SALT,seed]))
+        batches=rng.integers(0,COUNT["FIT"],size=(STEPS,BATCH))
+        models=_models(seed)
+        for arm in ARMS:
+            result["trained"][arm]=_train(models[arm],arm,fit,valid,batches)
+            if time.perf_counter()-started>MAX_SECONDS:
+                raise TimeoutError("R98_PRESET_CPU_RESOURCE_CEILING_EXCEEDED")
+        if set(result["trained"])!=set(ARMS):
+            raise RuntimeError("R98_FROZEN_ARM_INCOMPLETE")
+        result["all_nine_frozen_before_new_DEV_OOD"]=True
+        # First fresh heldout / shifted world exists ONLY after every arm's
+        # full factual-return optimizer training and all weights freezing.
+        result["new_DEV_COMPOSE_OOD_ROLE_REASSIGN_first_use"]=True
+        seen=_scored("DEV_SEEN",seed,sha)
+        dev=_scored("DEV_COMPOSE",seed,sha)
+        ood=_scored("OOD_SHIFT",seed,sha)
+        switched=_scored("ROLE_REASSIGN",seed,sha)
+        result["source_audits"].update({
+            "DEV_SEEN":seen["audit"],"DEV_COMPOSE":dev["audit"],
+            "OOD_SHIFT":ood["audit"],"ROLE_REASSIGN":switched["audit"]})
+        scored_seen=_score(models,seen)
+        scored_dev=_score(models,dev)
+        scored_ood=_score(models,ood)
+        before=_score(models,switched)
+        after=_score(models,switched["counter"])
+        dm=scored_dev["metrics"];om=scored_ood["metrics"]
+        changed=switched["law"]!=switched["counter"]["law"]
+        if not changed.any():
+            raise RuntimeError("R98_PHYSICAL_PROGRAM_SWITCH_DID_NOT_CHANGE_LAW")
+        native_before=before["actions"][NATIVE_INTERNAL]
+        native_after=after["actions"][NATIVE_INTERNAL]
+        physical_before=np.where(switched["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        physical_after=np.where(switched["counter"]["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        conventional=max(dm[x]["mean_realized_reward"] for x in (
+            MLP,SET,GRU,UPPER))
+        measures={
+            "internal_minus_original_DEV":dm[NATIVE_INTERNAL]["mean_realized_reward"]-dm[NATIVE_RAW]["mean_realized_reward"],
+            "internal_minus_flat_stem_DEV":dm[NATIVE_INTERNAL]["mean_realized_reward"]-dm[NATIVE_FLAT]["mean_realized_reward"],
+            "internal_minus_external_sidecar_DEV":dm[NATIVE_INTERNAL]["mean_realized_reward"]-dm[NATIVE_SIDECAR]["mean_realized_reward"],
+            "internal_minus_strongest_conventional_DEV":dm[NATIVE_INTERNAL]["mean_realized_reward"]-conventional,
+            "internal_true_law_accuracy_DEV":dm[NATIVE_INTERNAL]["true_physical_law_agreement"],
+            "internal_minus_original_shifted_OOD_cold":om[NATIVE_INTERNAL]["cold_mean_reward"]-om[NATIVE_RAW]["cold_mean_reward"],
+            "internal_minus_original_paired_bootstrap_lower95":_bootstrap_lower(
+                scored_dev["returns"][NATIVE_INTERNAL],scored_dev["returns"][NATIVE_RAW],seed),
+            "program_switch_physical_law_change_fraction":float(changed.mean()),
+            "program_switch_internal_action_flips_when_law_changes":float(np.mean(
+                native_before[changed]!=native_after[changed])),
+            "program_switch_internal_true_law_accuracy_both":float((
+                (native_before==physical_before).sum()+
+                (native_after==physical_after).sum())/(2*len(changed)))}
+        f=frozen()["evaluation"]
+        t=f["mechanism_checks"]
+        checks={
+          "beats_original_native":measures["internal_minus_original_DEV"]>=t["composed_internal_minus_original_native_DEV_reward_min"],
+          "beats_flat_native_stem":measures["internal_minus_flat_stem_DEV"]>=t["composed_internal_minus_flat_native_stem_DEV_reward_min"],
+          "beats_same_role_encoder_external_sidecar":measures["internal_minus_external_sidecar_DEV"]>=t["composed_internal_minus_external_role_sidecar_DEV_reward_min"],
+          "beats_strongest_conventional":measures["internal_minus_strongest_conventional_DEV"]>=t["composed_internal_vs_strongest_conventional_DEV_reward_margin_min"],
+          "accurate_on_new_composition":measures["internal_true_law_accuracy_DEV"]>=t["composed_internal_true_law_accuracy_min"],
+          "shifted_cold_gain":measures["internal_minus_original_shifted_OOD_cold"]>=t["composed_internal_vs_original_native_shifted_cold_reward_min"],
+          "paired_bootstrap_positive":measures["internal_minus_original_paired_bootstrap_lower95"]>=t["composed_internal_minus_original_native_DEV_bootstrap_lower95_min"],
+          "physical_program_switch_changes_law":measures["program_switch_physical_law_change_fraction"]>=t["program_switch_true_law_change_fraction_min"],
+          "model_changes_action_with_program":measures["program_switch_internal_action_flips_when_law_changes"]>=t["program_switch_internal_action_change_on_true_change_min"],
+          "two_programs_true_law_accuracy":measures["program_switch_internal_true_law_accuracy_both"]>=t["program_switch_internal_true_law_accuracy_both_min"]}
+        result["DEV_SEEN"]=scored_seen["metrics"]
+        result["DEV_COMPOSE"]=dm
+        result["OOD_SHIFT"]=om
+        result["ROLE_REASSIGN"]={"original":before["metrics"],
+            "changed_program":after["metrics"],
+            "true_law_changed_worlds":int(changed.sum())}
+        result["metrics"]=measures
+        result["frozen_mechanism_checks"]={k:bool(v) for k,v in checks.items()}
+        result["status"]=f["statuses"]["both"] if all(checks.values()) else f["statuses"]["no_go"]
+    except BaseException as e:
+        result["error_type"]=type(e).__name__
+        result["error_message"]=str(e)
+        result["status"]=(frozen()["evaluation"]["statuses"]["invalid"]
+            if "R98_PRIVATE_LAW_" in str(e) or "R98_NEGATIVE_CHANGED" in str(e)
+            else frozen()["evaluation"]["statuses"]["incomplete"])
+        raise
+    finally:
+        result["whole_process_seconds"]=time.perf_counter()-started
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open("x",encoding="utf-8") as f:
+            json.dump(result,f,indent=2,sort_keys=True,allow_nan=False)
+            f.write("\n")
+    return result
+
+
+if __name__=="__main__":
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--seed",required=True,type=int,choices=SEEDS)
+    args=parser.parse_args()
+    x=original_ci(args.seed)
+    print(json.dumps({"seed":args.seed,"status":x["status"],
+                      "arms":len(x["trained"]),
+                      "scored":x["new_DEV_COMPOSE_OOD_ROLE_REASSIGN_first_use"],
+                      "scientific_pass":False},sort_keys=True))
