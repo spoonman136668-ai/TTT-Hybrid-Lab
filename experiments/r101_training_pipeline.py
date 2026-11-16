@@ -97,8 +97,41 @@ def non_scoring_design_audit():
             for action in (r85.CALIBRATE,r85.EXPLOIT_POS)}
         if abs(chosen[str(r85.CALIBRATE)]-chosen[str(r85.EXPLOIT_POS)])>len(SEEDS):
             raise RuntimeError("R101_FROZEN_PANEL_QUERY_ACTION_BALANCE_INVALID")
+        # Check JOINT observable cells rather than only marginal source
+        # balance. In the original R101 draft, an unknown family used
+        # index%2 while R85/R86 public pivot time also used index%2.
+        # Marginal family/action/time balance alone could not detect it.
+        cells_by_seed = {}
+        for seed in SEEDS:
+            cells = {}
+            for index in range(count):
+                time = ("COLD" if panel=="DELAYED_COLD" or index%2
+                        else "EARLY")
+                action = chosen_action(seed,index,SUPPORT)
+                family = operator_family(panel,index,SUPPORT)
+                key = f"{time}|QUERY_ACTION={action}"
+                if key not in cells:
+                    cells[key] = {fam:0 for fam in fams}
+                cells[key][family] += 1
+            for key,observed in cells.items():
+                if (any(v==0 for v in observed.values())
+                    or max(observed.values())-min(observed.values()) >
+                        (2 if panel in ("FIT","VALID","DEV_FAMILIAR")
+                         else 0)):
+                    raise RuntimeError(
+                        "R101_PRIVATE_OPERATOR_REVEALED_BY_PUBLIC_TIME_OR_ACTION")
+                if panel=="REVERSAL":
+                    for index in range(count):
+                        before = operator_family(panel,index,0)
+                        after = operator_family(panel,index,SUPPORT)
+                        if before==after:
+                            raise RuntimeError(
+                                "R101_REVERSAL_HAS_NO_PHYSICAL_OPERATOR_CHANGE")
+            cells_by_seed[str(seed)] = cells
         balance[panel] = {"count":count,"family_counts":fams,
                           "query_action_counts_all_three_seeds":chosen,
+                          "public_time_query_action_family_cells_by_seed":cells_by_seed,
+                          "unknown_family_predictable_from_public_time_or_action":False,
                           "six_support_actions_each_episode":"3 CALIBRATE + 3 EXPLOIT_POS"}
     return {
         "schema":"ttt-hybrid.r101.non-scoring-source-design-audit.v1",
