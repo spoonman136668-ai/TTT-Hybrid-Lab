@@ -51,6 +51,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r103_capacity_probe
 
+      - name: R104 independent 256-operator physical information audit (UNIT_ONLY)
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 300 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r104-operator-identifiability-20261116' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r104_operator_identifiability_diagnostic
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02

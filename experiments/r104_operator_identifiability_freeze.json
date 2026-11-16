@@ -1,0 +1,101 @@
+{
+  "schema": "ttt-hybrid.r104.operator-identifiability.unit-only-prospective-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R104_IMPLEMENTATION_OR_OBSERVATION",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "branch": "research/r104-operator-identifiability-20261116",
+  "base_R103_scientific_sealed_SHA": "69c02f7a30ada55e1b0995b0ebad1b373a9e6958",
+  "scope": "Independent unit-only information-sufficiency diagnosis. No R104 protected original science authorized.",
+  "lineage": {
+    "R103_original_source_SHA": "427d964fb72ecb30d4212bd11b8fbb13511e88e3",
+    "R103_original_run": 43970270969,
+    "R103_result": "R103_UNFAMILIAR_RULE_TRANSFER_NO_GO",
+    "R103_heldout_accuracy_mean": 0.60069444,
+    "R103_realized_reward_advantage_mean": 0.44583246,
+    "R103_scored_cohorts_consumed": true,
+    "no_R101_R102_R103_scored_samples_or_trained_weights": true
+  },
+  "hypotheses": {
+    "information": "Sixteen actual chosen-action factual consequences and noisy PUBLIC operand/role observations suffice to identify many unfamiliar three-input Boolean rules, without any private operator ID/heldout truth and without sharing the evaluator's eight selected families.",
+    "negative_controls": "Factual posterior query accuracy exceeds (a) no feedback, (b) action-stratum-shuffled feedback and (c) lost physical role tags, demonstrating information from consequences and role binding rather than shortcut.",
+    "dose": "Using 16 supports performs at least as well as using the same first 6, with a predefined positive margin.",
+    "broad_world": "Analyse truth-table collisions among all 256 Boolean operators and quantify the theoretical probability that 6 or 16 iid uniform public operand patterns fail to distinguish candidate laws; separate noiseless theory from physical empirical accuracy."
+  },
+  "source": {
+    "UNIT_ONLY": true,
+    "unit_only_salt": 26349991,
+    "seeds": [
+      1004011,
+      1004023,
+      1004037,
+      1004049
+    ],
+    "units_per_seed": 128,
+    "total_units": 512,
+    "hidden_evaluator_only_truth_masks_hex": [
+      "1b",
+      "66",
+      "2d",
+      "55",
+      "8e",
+      "a3",
+      "b4",
+      "c9"
+    ],
+    "truth_table_encoding": "mask bit p for p=(a<<2)|(b<<1)|c, positive is +1 when bit=1; all 256 masks enumerated in inference.",
+    "hidden_family_assignment": "episode_index % 8; 16 episodes per family per seed; unit-only physical pivot from (episode_index//8)%2 balances all families in each public pivot stratum.",
+    "unit_episode_physics": "fresh R85 pure world via independent SeedSequence([unit_only_salt,seed,episode_index,event]) and R86 real rollout; independent physical roles and four hidden +/-1 factors per event; replace law_a with private evaluator-only mask of three role-selected factors.",
+    "supports": 16,
+    "actions": "Exactly 8 CALIBRATE and 8 EXPLOIT_POS, alternating, one actual factual chosen-action consequence per support.",
+    "query": "Independent 17th physical world; both potential returns computed for EVALUATION ONLY after inference; no paired returns supplied to inference.",
+    "public_factors": "Noisy role-indexed factor readings at public slots[:4,10], role-binding public tags slots[:4,8], query action in last row.",
+    "privileged_metadata": "Only evaluator knows hidden mask, noiseless factors, true causal law and counterfactual rewards. All forbidden from inference.",
+    "non_scoring_statement": "Fresh UNIT_ONLY is an engineering identifiability diagnostic, not a protected first-use scientific training or independent SCIENTIFIC_PASS.",
+    "max_unit_only_probe_wall_seconds_per_seed": 180,
+    "no_FIT_VALID_DEV_original_worlds": true,
+    "no_replay_R101_R102_R103_original_cohorts": true
+  },
+  "inference": {
+    "prior": "Uniform over all 256 possible three-bit Boolean truth tables (not selected subset).",
+    "evidence": "For each support, infer public operand signs from observed pre-action noisy factors and role tags; infer action consequence sign from actually chosen factual reward only.",
+    "likelihood": "For each candidate mask and each support, P(observed consequence sign | inferred pattern) = 0.85 if candidate output matches, 0.15 otherwise; posterior normalized stably.",
+    "decision": "For independent query, decoded noisy public operand signs imply a pattern. Choose CALIBRATE if posterior expectation of law sign is positive, else EXPLOIT_POS. Tie resolves using a family-independent deterministic balanced query-index parity.",
+    "shuffled_control": "Derange factual rewards only within same public action strata (8 in each), preserve observed factors, actions, time/pivot and marginal outcomes.",
+    "no_feedback_control": "Keep cues/actions and full 256-mask prior; withhold the factual rewards.",
+    "role_missing_control": "Replace public role-binding tags with zeros; decode fixed first three physical roles without using operator truth; give exactly same factual rewards and action schedule.",
+    "six_support_control": "First six of the identical 16 physical observations; no extra samples or tuning.",
+    "privileged_physics_oracle": "True law used evaluator-only to compute exact optimal action. Not a learner or scientific comparator.",
+    "all_256_pairwise": "For each Hamming distance d among 0..8, exact no-distinguishing-observation chance is ((8-d)/8)^n for n=6 and n=16 under iid uniform noiseless operand patterns. Enumerate all 256*255/2 pairs."
+  },
+  "prespecified_unit_only_checks": {
+    "mean_16_factual_accuracy_min": 0.7,
+    "factual_minus_no_feedback_accuracy_min": 0.1,
+    "factual_minus_action_stratum_shuffled_accuracy_min": 0.1,
+    "factual_minus_role_missing_accuracy_min": 0.05,
+    "factual_16_minus_first6_accuracy_min": 0.03,
+    "prior_or_no_feedback_chance_accuracy_max": 0.6,
+    "hidden_family_public_pivot_balance": "Equal representation of 8 evaluator-only families across both public pivot strata",
+    "role_noisy_observation": "No evaluator truth/role metadata passed as inference inputs",
+    "per_seed_threshold_policy": "Every one of four independent UNIT_ONLY seeds must meet the checks for a DEV_DIAGNOSTIC_SIGNAL, not scientific acceptance."
+  },
+  "negative_and_stop_rules": {
+    "timeout": "Stop the UNIT_ONLY run, report PARTIAL_RESOURCE_DIAGNOSTIC, do not extend budget post-observation.",
+    "invalidity": "Fail the engineering audit if private truth leaks, wrong physical action is optimal for registered hidden law, source seed salts match earlier original sources, or hidden operator index leaks through pivot/action.",
+    "falsification": "If public factual inference fails its predeclared controls or mean accuracy, report NO_UNIT_ONLY_IDENTIFIABILITY_SIGNAL and preserve null/negative values, not an adaptive threshold revision.",
+    "future_science": "R105 or R104 protected scored research requires a new frozen native-learner protocol, new independent first-use cohorts and separate explicit owner scope; do not upgrade this unit-only oracle to evidence of learned intelligence."
+  },
+  "authority": {
+    "unit_only_CPU_software_engineering": true,
+    "protected_original_scientific_first_use": false,
+    "GPU_first_use": false,
+    "R103_replay": false,
+    "merge": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_runner": false,
+    "new_workflow": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false
+  }
+}
