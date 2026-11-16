@@ -126,4 +126,6 @@ SPENT_SEEDS = SEEDS
 
 def admit(seed, candidate_sha=None):
     """All attempted R101 first-use cohorts are spent; no science replay."""
-    raise PermissionError("R101_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED")
+    raise PermissionError(
+        "R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED: "
+        "R101_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED")

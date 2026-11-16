@@ -24,7 +24,7 @@
   "independent_scientific_pass": false,
   "final_science_status": "R101_UNSEEN_OPERATOR_INFERENCE_NO_GO",
   "no_replay": true,
-  "no_GUP_firstuse_merge_promotion_forge_deployment": true,
+  "no_GPU_firstuse_merge_promotion_forge_deployment": true,
   "total_CPU_process_seconds_sum": 376.979543768,
   "per_seed_budget_seconds": 600,
   "all_three_require_all_frozen_checks": true,
