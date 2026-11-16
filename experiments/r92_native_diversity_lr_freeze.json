@@ -1,0 +1,154 @@
+{
+  "schema": "ttt-hybrid.r92-test-only-diversity-lr-diagnostic.v1",
+  "stage": "IMMUTABLE_PROSPECTIVE_FREEZE_BEFORE_R92_IMPLEMENTATION_REGRESSION_AND_TEST_FIRST_USE",
+  "parent": {
+    "R91_sha": "d3bc7eb068ffe14b37adde556765f97f477e7f5c",
+    "R91_freeze_blob": "75fe01dd3ee9fb9d3563d1e992282b9dd809fac3",
+    "R91_original_status": "R91_SOFT_ROUTING_DEV_NO_GO_BOTH_OS",
+    "R91_adjudication_url": "https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/287#issuecomment-6904369858",
+    "R90_credit_path_source": "f3de743eb2fb11d21a4f6e6399d2353fbfb79194",
+    "R89_science": "R89_NATIVE_ROLE_ACCESS_NO_GO_BOTH_SEEDS",
+    "R91_test_only_used_salt": 25319991,
+    "R91_test_only_train_range": [
+      64,
+      192
+    ],
+    "R91_test_only_dev_range": [
+      256,
+      320
+    ],
+    "R90_test_only_used_indices": [
+      0,
+      1
+    ],
+    "previous_protected_or_spent_scored_source_reused": false,
+    "previous_model_weights_reused": false
+  },
+  "hypothesis": "Original native 1024-width factual multiworld training instability may depend on LR and world diversity rather than hard router alone. At fixed factual update/exposure budget, 0.0001 AdamW native hard and soft readouts are distinguishable from 0.001 hard under 256 diverse worlds; same seen-world MSE and new withheld factual return MSE separate optimization from generalization. High-first 256 worlds then 16 world backoff, with 32-wide exploratory 256,64,16,4 for resource bounded decomposition.",
+  "null": "If at 256 worlds low LR native variants fail to improve frozen factual TRAIN and new withheld DEV_TEST MSE over high LR and constant-action controls on BOTH seeds, classify R92_NATIVE_DIVERSITY_LR_NO_GO_DIAGNOSTIC_ONLY. Neither a positive nor a negative on synthetic TEST-only same-family physics establishes independent causal generalization/scientific pass or architectural dominance.",
+  "scope": "ENGINEERING_DEVELOPMENT_DIAGNOSTIC_NO_PROTECTED_SCIENCE_FIRST_USE",
+  "source": {
+    "train_salt": 25330111,
+    "test_salt": 25330211,
+    "sampling_salt": 25330311,
+    "shuffle_salt": 25330411,
+    "seeds": [
+      1000611,
+      1000623
+    ],
+    "pure_physical_generator": "Only r85._make_synthetic_world(index%r85.N, np.random.default_rng(SeedSequence([panel_salt, seed, index]))) and r89._view, r88._public_slots, no r89._test_world or r89._world or previously consumed source",
+    "train_worlds_max": 256,
+    "dev_test_worlds": 64,
+    "train_world_subset_indices": "0..(n-1), nested for all n",
+    "dev_test_world_indices": "1000..1063 in separately salted test panel; never any train index",
+    "action_rule": "CALIBRATE on even (seed+index) parity; EXPLOIT_POS on odd; one physically realized chosen action nine-tick reward only in training, no unchosen reward or hidden causal law",
+    "legal_public_view": "4 actual A-probe response role-sorted rows plus actually chosen action; 5 x 13 observations selected from 48 observed timeline rows",
+    "DEV_TEST_access": "No DEV_TEST physical worlds constructed until ALL scheduled training arms across all levels/seeds are fully trained, frozen and deleted; no DEV_TEST used in optimization, early stopping or model selection",
+    "forbidden": [
+      "R89 FIT/VALID/DEV/OOD",
+      "R88 FIT/VALID/DEV/OOD",
+      "R87 FIT/VALID/DEV/OOD",
+      "R86 FIT/VALID/DEV/OOD",
+      "R91 TEST source salt 25319991 and original scored DEV_TEST",
+      "R90 previous TEST-only indexes and salt",
+      "all previous model weights"
+    ]
+  },
+  "design": {
+    "widths": [
+      1024,
+      32
+    ],
+    "world_counts_by_width": {
+      "32": [
+        256,
+        64,
+        16,
+        4
+      ],
+      "1024": [
+        256,
+        16
+      ]
+    },
+    "order": "maximum-width highest world count first; back off after exhausting single-program bounded CPU wall; publish incomplete where skipped, never pretend complete",
+    "model_arms": [
+      "NATIVE_HARD_LR_1E3",
+      "NATIVE_HARD_LR_1E4",
+      "NATIVE_SOFT_LR_1E4",
+      "GRU64_SLOTS5",
+      "GRU64_SHUFFLED_A_SLOTS5"
+    ],
+    "native_core": "original R74 HybridPilot_FULL + R75 triangular TTT, hard/source parameters identical initial all arms for given seed,width,world-count",
+    "soft_router": "same native core parameters, R90 differentiable dense soft routing via SoftDiagnosticRouter. Different routing FLOPs; not matched compute.",
+    "grp_model": "R81 original GRU64 reference, same selected factual targets, 5 rows, different width/capacity from native.",
+    "shuffle_negative": "GRU64 original A rows replaced with other train world rows within same early/cold stratum; own selected factual action retained. Recompute same deterministic shuffle in DEV_TEST. Diagnostic only.",
+    "full_native_gru_matched_capacity": false,
+    "full_native_gru_matched_compute": false,
+    "persistent_model_checkpoints": false
+  },
+  "training": {
+    "native_updates_per_arm": 96,
+    "GRU_updates_per_arm": 768,
+    "batch": 2,
+    "adamw_weight_decay": 0.0001,
+    "clip_gradient_norm": 1,
+    "learning_rates": {
+      "NATIVE_HARD_LR_1E3": 0.001,
+      "NATIVE_HARD_LR_1E4": 0.0001,
+      "NATIVE_SOFT_LR_1E4": 0.0001,
+      "GRU64_SLOTS5": 0.001,
+      "GRU64_SHUFFLED_A_SLOTS5": 0.001
+    },
+    "same_draws_for_first_96_training_steps_all_arms_at_given_seed_world_count": true,
+    "all_arms_full_96_native_steps_if_executed": true,
+    "all_arms_full_768_GRU_steps_if_executed": true,
+    "report_initial_and_final_train_MSE": true,
+    "report_group_gradient_head_router_stem_TTT": true,
+    "report_model_parameters_wall_seconds_and_event_exposures": true,
+    "resource_cap_entire_R92_diagnostic_seconds": 360,
+    "qualification_budget_existing_G4_pytest_seconds": 600
+  },
+  "analysis": {
+    "frozen_thresholds": {
+      "width1024_world256_lowLR_hard_vs_highLR_hard_DEV_factual_MSE_relative_gain_min": 0.05,
+      "width1024_world256_lowLR_hard_vs_constant_DEV_factual_MSE_relative_gain_min": 0.05,
+      "width1024_world256_lowLR_hard_train_MSE_relative_gain_min": 0.1,
+      "width1024_world256_softLR_vs_hardLR_DEV_factual_MSE_relative_gain_min": 0.05,
+      "replication_required_both_seeds": true,
+      "independent_scientific_pass": false
+    },
+    "outcome_codes": [
+      "R92_NATIVE_DIVERSITY_LR_DEV_SIGNAL_ONLY",
+      "R92_NATIVE_DIVERSITY_LR_NO_GO_DIAGNOSTIC_ONLY",
+      "R92_INCOMPLETE_RESOURCE_NOT_SCIENTIFIC_NO_GO"
+    ],
+    "interpretation": "Loss curves and heldout factual MSE on synthetic TEST-only worlds, NOT policy reward/value-action comparisons or unfamiliar-laws transfer; exactly 96 native updates vs 768 GRU updates, unequal exposures, parameter counts, FLOPs and compute."
+  },
+  "execution": {
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "new_workflow_or_job_created": false,
+    "original_full_Linux_Windows_regression": true,
+    "original_G5_TTT_CPU_and_G7_Mamba2_qualification": true,
+    "R91_original_DEV_TEST_replay_denied_outside_original_R91_branch": true,
+    "run_original_R92_only_on_R92_G4_Linux": true,
+    "original_R92_exact_clean_sha_and_first_attempt": true,
+    "use_existing_G4_artifact_local_runs_glob": true,
+    "no_new_runner_scheduler_controller": true,
+    "no_paid_API": true,
+    "no_GPU_first_use": true
+  },
+  "authority": {
+    "CPU_test_only_development_allowed": true,
+    "merge": false,
+    "source_promotion": false,
+    "independent_scientific_first_use": false,
+    "GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false
+  }
+}

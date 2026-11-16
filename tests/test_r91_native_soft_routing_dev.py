@@ -1,5 +1,6 @@
 """R91 full-regression TEST-only native multiworld routing comparison."""
 import json
+import os
 import math
 
 import numpy as np
@@ -39,6 +40,8 @@ def test_r91_modified_protocol_rejected_before_any_source(monkeypatch,tmp_path):
 
 
 def test_r91_original_width_and_complete_test_only_development(monkeypatch):
+    if os.getenv("GITHUB_HEAD_REF") != r91.BRANCH:
+        pytest.skip("R91 original scored DEV_TEST is spent; never replay it on a later branch")
     def forbidden(*_args,**_kwargs):
         raise AssertionError("R91_ACCESSED_PROTECTED_R89_SOURCE")
     monkeypatch.setattr(r91.r89,"_world",forbidden)
