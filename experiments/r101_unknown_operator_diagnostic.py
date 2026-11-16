@@ -80,13 +80,42 @@ def _admit(*_unused, **_kw):
     raise PermissionError("R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
 
 
-def _world(panel, seed, index, sha=None):
-    """Never expose a newly scored FIT/DEV cohort in a unit or CI run."""
-    if panel not in frozen()["source"]["counts"]:
+def _world(panel, seed, index, sha=None, *, event=0, family=None):
+    """Prospective original source constructor; ALWAYS sealed on this branch.
+
+    Once a separately qualified, original first-use route exists, the
+    immutable source identity, run and owner scope must be admitted before
+    ANY original physical world is constructed. UNIT_ONLY is elsewhere.
+    """
+    freeze = frozen()
+    if panel not in freeze["source"]["counts"]:
         raise PermissionError("R101_OLD_SCORED_OR_PROTECTED_SOURCE_DENIED")
-    if seed not in SEEDS or not isinstance(index, int) or not 0 <= index < frozen()["source"]["counts"][panel]:
+    if seed not in SEEDS or not isinstance(index, int) or not 0 <= index < freeze["source"]["counts"][panel]:
         raise PermissionError("R101_UNFROZEN_SOURCE_INDEX_OR_SEED")
-    raise PermissionError("R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED")
+    if not isinstance(event, int) or not 0 <= event <= SUPPORT:
+        raise PermissionError("R101_UNREGISTERED_PHYSICAL_EVENT")
+    if family not in KNOWN + UNSEEN:
+        raise PermissionError("R101_UNREGISTERED_PHYSICAL_FAMILY")
+    if panel in ("FIT", "VALID", "DEV_FAMILIAR") and family not in KNOWN:
+        raise PermissionError("R101_UNSEEN_OPERATOR_NOT_TRAINING")
+    if panel in ("DEV_UNKNOWN", "OOD_SHIFT", "DELAYED_COLD", "REVERSAL") and family not in UNSEEN:
+        raise PermissionError("R101_FAMILIAR_OPERATOR_NOT_HELDOUT_UNKNOWN")
+    # The prospectively frozen JSON explicitly grants PROPOSAL/UNIT_ONLY,
+    # not first use. This branch never consumes any protected scoring cohort.
+    if not freeze["authority"]["protected_scored_first_use"]:
+        raise PermissionError("R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED")
+    _admit(seed=seed, candidate_sha=sha)
+    rng = np.random.default_rng(np.random.SeedSequence(
+        [freeze["source"]["salts"][panel], seed, index, event]))
+    pivot_selector = 1 if panel == "DELAYED_COLD" else index % 2
+    physics_index = (2 * (index % (r85.N // 2)) + pivot_selector) % r85.N
+    world = r85._make_synthetic_world(physics_index, rng)
+    world["factors_a"] = rng.choice([-1, 1], size=4).astype(np.int64)
+    world["r101_roles"] = tuple(int(k) for k in rng.permutation(4)[:3])
+    world["law_a"] = _operator_truth(world["factors_a"], world["r101_roles"], family)
+    if panel == "OOD_SHIFT":
+        world = r86._shift_public_world(world, index)
+    return world
 
 
 def _operator_truth(factors, roles, family):
