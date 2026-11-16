@@ -63,6 +63,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r105_native_role_binding_diagnostic
 
+      - name: R106 frozen three-seed eight-trainable-arm eight-slot UNIT_ONLY pilot
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 302 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r106-eight-slot-causal-memory-20261116' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r106_eight_slot_causal_memory_diagnostic
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
