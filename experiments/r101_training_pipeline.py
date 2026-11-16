@@ -369,9 +369,16 @@ def fit_arm(model, arm, fit, valid, indices):
     valid_mse = float(np.mean((predict(model,arm,valid)-valid["target"])**2))
     if not all(math.isfinite(x) for x in (elapsed,train_mse,valid_mse,initial_valid)):
         raise RuntimeError("R101_NONFINITE_TRAINING_METRIC")
+    trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    active = sum(p.numel() for p in model.parameters()
+                 if p.requires_grad and p.grad is not None)
+    if arm in (r101.ROLE_SET,r101.GRU,r101.MLP,r101.STATIC) and active != trainable:
+        raise RuntimeError("R101_CONVENTIONAL_COMPARATOR_HAS_DORMANT_PARAMETERS")
     return {"steps":STEPS,"batches":STEPS,"factual_query_exposures":STEPS*BATCH,
             "support_factual_exposures":STEPS*BATCH*SUPPORT,
-            "trainable_parameters":sum(p.numel() for p in model.parameters()),
+            "trainable_parameters":trainable,
+            "active_gradient_parameters":active,
+            "dormant_gradient_parameters":trainable-active,
             "fit_MSE":train_mse,"valid_MSE":valid_mse,
             "valid_before_MSE":initial_valid,
             "training_wall_seconds":elapsed,
