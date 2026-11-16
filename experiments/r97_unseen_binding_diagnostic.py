@@ -557,3 +557,188 @@ def _train(model,arm,fit,valid,batches):
             "parameters":sum(p.numel() for p in model.parameters()),
             "valid_initial_MSE":before,"fit_final_MSE":train_mse,
             "valid_final_MSE":valid_mse,"fit_wall_seconds":elapsed}
+
+
+def _policy_from_public_instruction(raw:np.ndarray)->np.ndarray:
+    tags=np.rint(raw[:,4:8]*3).astype(int)
+    cues=np.where(raw[:,:4]>0,1,-1)
+    signs=np.empty(len(raw),np.int8)
+    for i in range(len(raw)):
+        roles={tag:int(np.flatnonzero(tags[i]==tag)[0]) for tag in (1,2,3)}
+        signs[i]=cues[i,roles[2]] if cues[i,roles[1]]>0 else cues[i,roles[3]]
+    return np.where(signs>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+
+
+def _score(models,data):
+    decisions={};metrics={};realized={}
+    for name,model in models.items():
+        v0=_predict(model,name,data,"0")
+        v2=_predict(model,name,data,"2")
+        decisions[name]=np.where(v0>v2,r85.CALIBRATE,r85.EXPLOIT_POS)
+    public_instruction=_policy_from_public_instruction(data["raw0"])
+    physical_law=np.where(data["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    decisions["PUBLIC_INSTRUCTION_MUX_EVALUATOR_ONLY"]=public_instruction
+    decisions["PRIVATE_TRUE_MUX_EVALUATOR_ONLY"]=physical_law
+    decisions["ALWAYS_CALIBRATE"]=np.full(len(physical_law),r85.CALIBRATE)
+    decisions["ALWAYS_EXPLOIT_POS"]=np.full(len(physical_law),r85.EXPLOIT_POS)
+    oracle=np.maximum(data["reward0"],data["reward2"])
+    for name,choice in decisions.items():
+        ret=np.where(choice==r85.CALIBRATE,data["reward0"],data["reward2"])
+        realized[name]=ret
+        metrics[name]={"mean_reward":float(np.mean(ret)),
+                       "cold_reward":float(np.mean(ret[data["cold"]])),
+                       "oracle_regret":float(np.mean(oracle-ret)),
+                       "public_instruction_agreement":float(np.mean(choice==public_instruction)),
+                       "true_physical_law_agreement":float(np.mean(choice==physical_law))}
+    metrics["PHYSICAL_PAIRED_ORACLE_EVALUATOR_ONLY"]={
+        "mean_reward":float(np.mean(oracle)),
+        "cold_reward":float(np.mean(oracle[data["cold"]])),
+        "oracle_regret":0.}
+    return {"metrics":metrics,"actions":decisions,"rewards":realized}
+
+
+def _bootstrap_lower(a,b,seed):
+    if a.shape!=(COUNT["DEV_HELDOUT"],) or b.shape!=a.shape:
+        raise RuntimeError("R97_FROZEN_PAIRED_BOOTSTRAP_SHAPE")
+    rng=np.random.default_rng(np.random.SeedSequence([BOOTSTRAP_SALT,seed]))
+    index=rng.integers(0,len(a),size=(2000,len(a)))
+    return float(np.quantile((a-b)[index].mean(axis=1),.025))
+
+
+def original_ci(seed:int)->dict:
+    sha=_admit(seed)
+    preflight=balance_preflight()
+    torch.set_num_threads(1)
+    path=ROOT/f"local_runs/r97_binding_transfer_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R97_FIRST_USE_SOURCE_ALREADY_CONSUMED_OR_UNCERTAIN")
+    started=time.perf_counter()
+    result={"schema":SCHEMA,"seed":seed,"source_sha":sha,"freeze_blob":FREEZE_BLOB,
+            "R96_parent_SHA":PARENT,"platform":platform.platform(),
+            "torch":str(torch.__version__),
+            "source_preflight":preflight[str(seed)],
+            "status":"R97_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENTIFIC_VERDICT",
+            "training":{},"source_audits":{},
+            "all_nine_weights_frozen_before_first_DEV":False,
+            "DEV_HELDOUT_OOD_ROLE_REASSIGN_first_use":False,
+            "older_scored_source_or_weights_used":False,"scientific_pass":False}
+    try:
+        fit=_factual("FIT",seed,sha)
+        valid=_factual("VALID",seed,sha)
+        if not fit["only_one_factually_selected_action_return"]:
+            raise RuntimeError("R97_UNCHOSEN_BRANCH_SUPERVISION")
+        result["source_audits"]["FIT"]=fit["audit"]
+        result["source_audits"]["VALID"]=valid["audit"]
+        batch_rng=np.random.default_rng(np.random.SeedSequence([BATCH_SALT,seed]))
+        batches=batch_rng.integers(0,COUNT["FIT"],size=(STEPS,BATCH))
+        models=_models(seed)
+        for arm in ARMS:
+            result["training"][arm]=_train(models[arm],arm,fit,valid,batches)
+            if time.perf_counter()-started>MAX_SECONDS:
+                raise TimeoutError("R97_FROZEN_WHOLE_CPU_PROCESS_BUDGET_EXCEEDED")
+        if set(result["training"])!=set(ARMS):
+            raise RuntimeError("R97_NINE_ARM_FULL_TRAINING_INCOMPLETE")
+        result["all_nine_weights_frozen_before_first_DEV"]=True
+        # ALL parameters frozen; no heldout world or paired unchosen branch
+        # created or evaluated at any prior time.
+        result["DEV_HELDOUT_OOD_ROLE_REASSIGN_first_use"]=True
+        seen=_paired("DEV_SEEN",seed,sha)
+        heldout=_paired("DEV_HELDOUT",seed,sha)
+        shifted=_paired("OOD_SHIFT",seed,sha)
+        reassigned=_paired("ROLE_REASSIGN",seed,sha)
+        result["source_audits"].update({
+            "DEV_SEEN":seen["audit"],"DEV_HELDOUT":heldout["audit"],
+            "OOD_SHIFT":shifted["audit"],"ROLE_REASSIGN":reassigned["audit"]})
+        sm=_score(models,seen)
+        hm=_score(models,heldout)
+        om=_score(models,shifted)
+        rm=_score(models,reassigned)
+        swapped=_score(models,reassigned["counter"])
+        d=hm["metrics"];o=om["metrics"]
+        original_choice=rm["actions"][MLP_SET]
+        changed_choice=swapped["actions"][MLP_SET]
+        private_changed=reassigned["law"]!=reassigned["counter"]["law"]
+        if not private_changed.any():
+            raise RuntimeError("R97_NO_GENUINELY_CHANGED_PHYSICAL_ROLE_LAWS")
+        true_before=np.where(reassigned["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        true_after=np.where(reassigned["counter"]["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        measures={
+            "HELDOUT_set_minus_blind_reward":d[MLP_SET]["mean_reward"]-d[BLIND]["mean_reward"],
+            "HELDOUT_set_minus_tag_permuted_reward":d[MLP_SET]["mean_reward"]-d[NEGATIVE]["mean_reward"],
+            "HELDOUT_set_minus_raw_MLP_reward":d[MLP_SET]["mean_reward"]-d[MLP_RAW]["mean_reward"],
+            "HELDOUT_set_minus_GRU_reward":d[MLP_SET]["mean_reward"]-d[GRU]["mean_reward"],
+            "HELDOUT_canonical_upper_minus_set_reward":d[UPPER]["mean_reward"]-d[MLP_SET]["mean_reward"],
+            "HELDOUT_set_public_instruction_agreement":d[MLP_SET]["public_instruction_agreement"],
+            "SHIFTED_COLD_set_minus_tag_permuted_reward":o[MLP_SET]["cold_reward"]-o[NEGATIVE]["cold_reward"],
+            "HELDOUT_set_vs_tag_permuted_bootstrap_lower95":_bootstrap_lower(
+                hm["rewards"][MLP_SET],hm["rewards"][NEGATIVE],seed),
+            "ROLE_REASSIGN_private_law_change_fraction":float(private_changed.mean()),
+            "ROLE_REASSIGN_set_action_flip_given_true_law_change":float(np.mean(
+                original_choice[private_changed]!=changed_choice[private_changed])),
+            "ROLE_REASSIGN_set_private_law_accuracy_both":float((
+                (original_choice==true_before).sum()+
+                (changed_choice==true_after).sum())/(2*len(private_changed))),
+            "NATIVE_HELDOUT_set_minus_flat_reward":d[NATIVE_SET]["mean_reward"]-d[NATIVE_FLAT]["mean_reward"],
+            "NATIVE_HELDOUT_set_minus_original_reward":d[NATIVE_SET]["mean_reward"]-d[NATIVE_RAW]["mean_reward"],
+            "NATIVE_SHIFTED_COLD_set_minus_flat_reward":o[NATIVE_SET]["cold_reward"]-o[NATIVE_FLAT]["cold_reward"],
+            "NATIVE_HELDOUT_conventional_set_minus_native_set_reward":d[MLP_SET]["mean_reward"]-d[NATIVE_SET]["mean_reward"]}
+        e=frozen()["evaluation"]
+        t=e["mechanism_checks"]
+        nc=e["native_checks"]
+        m={
+          "heldout_set_beats_role_blind":measures["HELDOUT_set_minus_blind_reward"]>=t["heldout_tagged_set_minus_blind_MLP_reward_min"],
+          "heldout_set_beats_tag_disrupted":measures["HELDOUT_set_minus_tag_permuted_reward"]>=t["heldout_tagged_set_minus_permuted_negative_reward_min"],
+          "heldout_set_beats_strong_raw_MLP":measures["HELDOUT_set_minus_raw_MLP_reward"]>=t["heldout_tagged_set_minus_raw_MLP_reward_min"],
+          "heldout_set_beats_GRU":measures["HELDOUT_set_minus_GRU_reward"]>=t["heldout_tagged_set_minus_GRU_reward_min"],
+          "heldout_set_near_engineered_upper":measures["HELDOUT_canonical_upper_minus_set_reward"]<=t["heldout_canonical_upper_minus_tagged_set_reward_gap_max"],
+          "heldout_set_public_instruction_agreement":measures["HELDOUT_set_public_instruction_agreement"]>=t["heldout_tagged_set_public_instruction_accuracy_min"],
+          "shifted_cold_outperforms_tag_disruption":measures["SHIFTED_COLD_set_minus_tag_permuted_reward"]>=t["shifted_OOD_cold_tagged_set_minus_permuted_reward_min"],
+          "heldout_paired_bootstrap":measures["HELDOUT_set_vs_tag_permuted_bootstrap_lower95"]>=t["heldout_tagged_set_vs_permuted_paired_bootstrap_lower95_min"],
+          "physical_assignment_changes_law":measures["ROLE_REASSIGN_private_law_change_fraction"]>=t["role_reassignment_true_law_flip_fraction_min"],
+          "model_changes_action_with_law":measures["ROLE_REASSIGN_set_action_flip_given_true_law_change"]>=t["role_reassignment_tagged_set_action_flip_on_law_change_min"],
+          "correct_on_original_and_reassigned":measures["ROLE_REASSIGN_set_private_law_accuracy_both"]>=t["role_reassignment_tagged_set_private_law_accuracy_min"]}
+        n={
+          "native_set_beats_flat_head":measures["NATIVE_HELDOUT_set_minus_flat_reward"]>=nc["heldout_native_set_minus_native_flat_reward_min"],
+          "native_set_beats_unmodified_core":measures["NATIVE_HELDOUT_set_minus_original_reward"]>=nc["heldout_native_set_minus_original_native_reward_min"],
+          "native_set_beats_flat_shifted_cold":measures["NATIVE_SHIFTED_COLD_set_minus_flat_reward"]>=nc["shifted_OOD_cold_native_set_minus_flat_reward_min"],
+          "native_set_near_conventional_set":measures["NATIVE_HELDOUT_conventional_set_minus_native_set_reward"]<=nc["heldout_native_set_vs_conventional_set_reward_gap_max"]}
+        result["DEV_SEEN"]=sm["metrics"]
+        result["DEV_HELDOUT"]=hm["metrics"]
+        result["OOD_SHIFT"]=om["metrics"]
+        result["ROLE_REASSIGN"]={"original":rm["metrics"],
+            "counterfactual":swapped["metrics"],
+            "law_changed_n":int(private_changed.sum())}
+        result["measures"]=measures
+        result["mechanism_checks"]={k:bool(v) for k,v in m.items()}
+        result["native_checks"]={k:bool(v) for k,v in n.items()}
+        status=e["statuses"]
+        result["status"]=(status["both"] if all(m.values()) and all(n.values())
+                          else status["conventional"] if all(m.values())
+                          else status["no_go"])
+    except BaseException as exc:
+        result["error_type"]=type(exc).__name__
+        result["error_message"]=str(exc)
+        result["status"]=("R97_SOURCE_OR_CONTROL_INVALID_NO_SCIENTIFIC_VERDICT"
+                          if "R97_PRIVATE_LAW_" in str(exc) or
+                          "R97_ROLE_DISRUPTION_NEGATIVE_CONTROL_INVALID" in str(exc)
+                          else "R97_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENTIFIC_VERDICT")
+        raise
+    finally:
+        result["whole_process_seconds"]=time.perf_counter()-started
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open("x",encoding="utf-8") as fp:
+            json.dump(result,fp,indent=2,sort_keys=True,allow_nan=False)
+            fp.write("\n")
+    return result
+
+
+if __name__=="__main__":
+    import argparse
+    p=argparse.ArgumentParser()
+    p.add_argument("--seed",type=int,choices=SEEDS,required=True)
+    args=p.parse_args()
+    result=original_ci(args.seed)
+    print(json.dumps({"seed":args.seed,"status":result["status"],
+                      "trained":len(result["training"]),
+                      "DEV_first_use":result["DEV_HELDOUT_OOD_ROLE_REASSIGN_first_use"],
+                      "scientific_pass":False},sort_keys=True))
