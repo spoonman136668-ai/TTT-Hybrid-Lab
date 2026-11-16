@@ -334,9 +334,15 @@ def development_ci()->dict:
                     metrics,state=_train(arm,width,seed,n,train)
                     result["completed"][key][str(seed)][arm]=metrics
                     saved[(seed,width,n,arm)]=state
-        # Drop TRAIN panel before any new DEV_TEST is constructed.
+        # Capture the factual TRAIN-only baseline once. Never regenerate TRAIN
+        # after DEV_TEST first-use, nor fit a constant on test targets.
+        train_mean_by_seed={}
         for seed in SEEDS:
-            saved.pop((seed,"TRAIN"),None)
+            panel=saved.pop((seed,"TRAIN"),None)
+            if panel is None:
+                raise RuntimeError("R92_TRAIN_ONLY_BASELINE_MISSING")
+            train_mean_by_seed[seed]=float(np.mean(panel["target"]))
+            del panel
         if len(result["completed"])!=len(LEVELS):
             result["status"]="R92_INCOMPLETE_RESOURCE_NOT_SCIENTIFIC_NO_GO"
         else:
@@ -347,8 +353,7 @@ def development_ci()->dict:
                 dev=_panel("DEV_TEST",seed,sha)
                 baseline=float(np.mean((dev["target"]-dev["target"].mean())**2))
                 # Constant predictor trained on TRAIN labels only, not DEV mean.
-                train=_panel("TRAIN",seed,sha)
-                true_constant=float(np.mean((dev["target"]-train["target"].mean())**2))
+                true_constant=float(np.mean((dev["target"]-train_mean_by_seed[seed])**2))
                 result.setdefault("DEV_TEST",{})[str(seed)]={"constant_TRAIN_mean_MSE":true_constant,
                     "DEV_TEST_variance_DIAGNOSTIC_ONLY":baseline,"n":len(dev["target"])}
                 for width,n in LEVELS:
