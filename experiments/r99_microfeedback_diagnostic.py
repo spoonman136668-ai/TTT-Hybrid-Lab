@@ -516,3 +516,171 @@ def _train(model,arm,fit,valid,batches):
             "aux_loss_weight":AUX_WEIGHT if arm in (FACTUAL,DERANGED,STEM_ONLY) else 0.,
             "aux_target":"FACTUAL" if arm in (FACTUAL,STEM_ONLY) else
                         "DERANGED_FACTUAL" if arm==DERANGED else "NONE"}
+
+
+def _score(models,panel):
+    actions={};results={};realized={}
+    for arm,model in models.items():
+        v0=_predict(model,arm,panel,"0")
+        v2=_predict(model,arm,panel,"2")
+        actions[arm]=np.where(v0>v2,r85.CALIBRATE,r85.EXPLOIT_POS)
+    public_law=r98._private_public_rule(panel["raw0"])
+    public_action=np.where(public_law>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    true_action=np.where(panel["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    actions["PUBLIC_PROGRAM_RULE_EVALUATOR_ONLY"]=public_action
+    actions["PRIVATE_PHYSICAL_LAW_EVALUATOR_ONLY"]=true_action
+    actions["ALWAYS_CALIBRATE"]=np.full(len(true_action),r85.CALIBRATE)
+    actions["ALWAYS_EXPLOIT_POS"]=np.full(len(true_action),r85.EXPLOIT_POS)
+    oracle=np.maximum(panel["reward0"],panel["reward2"])
+    for name,pick in actions.items():
+        ret=np.where(pick==r85.CALIBRATE,panel["reward0"],panel["reward2"])
+        realized[name]=ret
+        results[name]={"mean_reward":float(np.mean(ret)),
+                       "cold_mean_reward":float(np.mean(ret[panel["cold"]])),
+                       "oracle_regret":float(np.mean(oracle-ret)),
+                       "agreement_with_public_program":float(np.mean(pick==public_action)),
+                       "agreement_with_private_true_law":float(np.mean(pick==true_action))}
+    results["PAIRED_PHYSICAL_ORACLE_EVALUATOR_ONLY"]={
+        "mean_reward":float(np.mean(oracle)),
+        "cold_mean_reward":float(np.mean(oracle[panel["cold"]])),
+        "oracle_regret":0.}
+    return {"actions":actions,"metrics":results,"realized":realized}
+
+
+def _lower95(a,b,seed):
+    if a.shape!=(COUNT["DEV_COMPOSE"],) or b.shape!=a.shape:
+        raise RuntimeError("R99_FROZEN_PAIRED_BOOTSTRAP_ARRAY_SHAPE_DRIFT")
+    rng=np.random.default_rng(np.random.SeedSequence([BOOTSTRAP_SALT,seed]))
+    ix=rng.integers(0,len(a),size=(2000,len(a)))
+    return float(np.quantile((a-b)[ix].mean(axis=1),.025))
+
+
+def original_ci(seed):
+    sha=_admit(seed)
+    preflight=design_preflight()
+    torch.set_num_threads(1)
+    path=ROOT/f"local_runs/r99_microfeedback_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R99_FRESH_SOURCE_ALREADY_USED_OR_EFFECT_UNCERTAIN")
+    started=time.perf_counter()
+    result={"schema":SCHEMA,"seed":seed,"candidate_source_SHA":sha,
+            "freeze_blob":FREEZE_BLOB,"r98_parent_SHA":PARENT,
+            "platform":platform.platform(),"torch":str(torch.__version__),
+            "design_preflight":preflight[str(seed)],
+            "status":"R99_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENCE_VERDICT",
+            "trained":{},"source_audits":{},
+            "all_nine_frozen_before_DEV":False,
+            "DEV_COMPOSE_OOD_PROGRAM_SWITCH_first_use":False,
+            "older_scored_sources_or_weights_used":False,
+            "scientific_pass":False}
+    try:
+        fit=_factual("FIT",seed,sha)
+        valid=_factual("VALID",seed,sha)
+        if not fit["only_one_factually_observed_return_per_world"]:
+            raise RuntimeError("R99_UNCHOSEN_REWARD_OR_ORACLE_SUPERVISION")
+        result["source_audits"]["FIT"]=fit["source_audit"]
+        result["source_audits"]["VALID"]=valid["source_audit"]
+        rng=np.random.default_rng(np.random.SeedSequence([BATCH_SALT,seed]))
+        minibatches=rng.integers(0,COUNT["FIT"],size=(STEPS,BATCH))
+        models=_models(seed)
+        for arm in ARMS:
+            result["trained"][arm]=_train(models[arm],arm,fit,valid,minibatches)
+            if time.perf_counter()-started>MAX_SECONDS:
+                raise TimeoutError("R99_FROZEN_WHOLE_PROCESS_CPU_CEILING")
+        if set(result["trained"])!=set(ARMS):
+            raise RuntimeError("R99_ALL_NINE_FROZEN_ARMS_NOT_FULLY_TRAINED")
+        result["all_nine_frozen_before_DEV"]=True
+        # No parameter update / adaptive selection after first unseen panel.
+        result["DEV_COMPOSE_OOD_PROGRAM_SWITCH_first_use"]=True
+        seen=_scored("DEV_SEEN",seed,sha)
+        dev=_scored("DEV_COMPOSE",seed,sha)
+        ood=_scored("OOD_SHIFT",seed,sha)
+        change=_scored("PROGRAM_SWITCH",seed,sha)
+        result["source_audits"].update({
+            "DEV_SEEN":seen["source_audit"],
+            "DEV_COMPOSE":dev["source_audit"],
+            "OOD_SHIFT":ood["source_audit"],
+            "PROGRAM_SWITCH":change["source_audit"]})
+        sv=_score(models,seen)
+        dv=_score(models,dev)
+        ov=_score(models,ood)
+        change_before=_score(models,change)
+        change_after=_score(models,change["counter"])
+        d=dv["metrics"];o=ov["metrics"]
+        changed=change["law"]!=change["counter"]["law"]
+        if not changed.any():
+            raise RuntimeError("R99_PROGRAM_SWITCH_CHANGED_NO_PHYSICAL_LAWS")
+        true_before=np.where(change["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        true_after=np.where(change["counter"]["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        current=change_before["actions"][FACTUAL]
+        swapped=change_after["actions"][FACTUAL]
+        conventional=max(d[v]["mean_reward"] for v in (MLP,SET,GRU))
+        measure={
+          "FACTUAL_minus_MAIN_ONLY_DEV_reward":d[FACTUAL]["mean_reward"]-d[MAIN_ONLY]["mean_reward"],
+          "FACTUAL_minus_DERANGED_DEV_reward":d[FACTUAL]["mean_reward"]-d[DERANGED]["mean_reward"],
+          "FACTUAL_minus_STEM_ONLY_DEV_reward":d[FACTUAL]["mean_reward"]-d[STEM_ONLY]["mean_reward"],
+          "FACTUAL_minus_original_native_DEV_reward":d[FACTUAL]["mean_reward"]-d[NATIVE_RAW]["mean_reward"],
+          "FACTUAL_minus_best_learned_conventional_DEV_reward":d[FACTUAL]["mean_reward"]-conventional,
+          "engineered_public_upper_minus_FACTUAL_DEV_reward":d[UPPER]["mean_reward"]-d[FACTUAL]["mean_reward"],
+          "FACTUAL_private_law_accuracy":d[FACTUAL]["agreement_with_private_true_law"],
+          "SHIFTED_COLD_FACTUAL_minus_MAIN_ONLY_reward":o[FACTUAL]["cold_mean_reward"]-o[MAIN_ONLY]["cold_mean_reward"],
+          "FACTUAL_minus_MAIN_ONLY_bootstrap_lower95":_lower95(
+                dv["realized"][FACTUAL],dv["realized"][MAIN_ONLY],seed),
+          "PROGRAM_SWITCH_true_law_changed_fraction":float(np.mean(changed)),
+          "PROGRAM_SWITCH_FACTUAL_action_flips_given_law_change":float(np.mean(
+                current[changed]!=swapped[changed])),
+          "PROGRAM_SWITCH_FACTUAL_private_true_law_accuracy_both":float((
+                (current==true_before).sum()+
+                (swapped==true_after).sum())/(2*len(changed)))}
+        e=frozen()["evaluation"]
+        t=e["hypothesis_checks"]
+        c={
+          "factual_beats_main_only":measure["FACTUAL_minus_MAIN_ONLY_DEV_reward"]>=t["factual_micro_minus_main_only_DEV_reward_min"],
+          "factual_beats_shuffled_microfeedback":measure["FACTUAL_minus_DERANGED_DEV_reward"]>=t["factual_micro_minus_deranged_DEV_reward_min"],
+          "factual_beats_stem_only_microfeedback":measure["FACTUAL_minus_STEM_ONLY_DEV_reward"]>=t["factual_micro_minus_stem_only_DEV_reward_min"],
+          "factual_beats_original_native":measure["FACTUAL_minus_original_native_DEV_reward"]>=t["factual_micro_minus_original_native_DEV_reward_min"],
+          "factual_beats_strongest_learned_conventional":measure["FACTUAL_minus_best_learned_conventional_DEV_reward"]>=t["factual_micro_minus_best_fully_trained_conventional_DEV_reward_min"],
+          "factual_near_engineered_public_upper":measure["engineered_public_upper_minus_FACTUAL_DEV_reward"]<=t["programmed_upper_minus_factual_micro_DEV_reward_max"],
+          "factual_true_law_accuracy":measure["FACTUAL_private_law_accuracy"]>=t["factual_micro_true_law_accuracy_min"],
+          "factual_cold_improvement":measure["SHIFTED_COLD_FACTUAL_minus_MAIN_ONLY_reward"]>=t["shifted_cold_factual_micro_minus_main_only_reward_min"],
+          "factual_paired_bootstrap_positive":measure["FACTUAL_minus_MAIN_ONLY_bootstrap_lower95"]>=t["paired_bootstrap_lower95_factual_micro_minus_main_only_min"],
+          "program_switch_actually_changes_law":measure["PROGRAM_SWITCH_true_law_changed_fraction"]>=t["program_change_true_law_flip_fraction_min"],
+          "factual_changes_action_with_law":measure["PROGRAM_SWITCH_FACTUAL_action_flips_given_law_change"]>=t["program_change_factual_micro_flip_when_law_changes_min"],
+          "factual_correct_on_both_programs":measure["PROGRAM_SWITCH_FACTUAL_private_true_law_accuracy_both"]>=t["program_change_true_law_accuracy_both_min"]}
+        result["DEV_SEEN"]=sv["metrics"]
+        result["DEV_COMPOSE"]=d
+        result["OOD_SHIFT"]=o
+        result["PROGRAM_SWITCH"]={
+            "before":change_before["metrics"],
+            "after":change_after["metrics"],
+            "actual_physical_law_changes":int(changed.sum())}
+        result["measures"]=measure
+        result["frozen_checks"]={k:bool(v) for k,v in c.items()}
+        result["status"]=e["statuses"]["pass"] if all(c.values()) else e["statuses"]["no_go"]
+    except BaseException as error:
+        result["error_type"]=type(error).__name__
+        result["error_message"]=str(error)
+        result["status"]=(frozen()["evaluation"]["statuses"]["invalid"]
+                          if "R99_PRIVATE_LAW_" in str(error) or
+                          "R99_AUX_SHUFFLE_PRIVATE_LAW_" in str(error)
+                          else frozen()["evaluation"]["statuses"]["incomplete"])
+        raise
+    finally:
+        result["whole_process_seconds"]=time.perf_counter()-started
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open("x",encoding="utf-8") as f:
+            json.dump(result,f,indent=2,sort_keys=True,allow_nan=False)
+            f.write("\n")
+    return result
+
+
+if __name__=="__main__":
+    import argparse
+    p=argparse.ArgumentParser()
+    p.add_argument("--seed",type=int,choices=SEEDS,required=True)
+    args=p.parse_args()
+    info=original_ci(args.seed)
+    print(json.dumps({"seed":args.seed,"status":info["status"],
+                      "trained_arms":len(info["trained"]),
+                      "fresh_scoring":info["DEV_COMPOSE_OOD_PROGRAM_SWITCH_first_use"],
+                      "scientific_pass":False},sort_keys=True))
