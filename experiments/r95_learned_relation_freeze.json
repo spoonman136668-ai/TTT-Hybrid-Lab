@@ -62,7 +62,7 @@
     "GRU": "Existing R81 GRU64 on original 5x13 public slots, 15233 parameters; stronger conventional sequence reader, same legal factual observations",
     "no_hidden_true_law_factor_or_parity_label_in_trainable_arms": true,
     "role_identity_prior": "A events already selected/sorted using public role ID; cannot claim learned role discovery",
-    "no_structural_change_to_main_native": false,
+    "no_structural_change_to_main_native": true,
     "isolated_experimental_additive_sidecar_only": true,
     "full_native_width1024_not_claimed": true
   },
