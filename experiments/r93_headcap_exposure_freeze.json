@@ -39,9 +39,24 @@
     "dev_indices": "1000..1063, independent panel salt, NEVER used in training or checkpoint choice",
     "world_generator": "r85._make_synthetic_world(index % r85.N, numpy Generator(SeedSequence([new_panel_salt,seed,index]))) ONLY, not r89._world/r89._test_world/r91 scored panels",
     "view": "r89._view exact factual chosen physical 9-tick return, r88._public_slots returns four actually observed A response rows in role order plus selected factual pivot action row",
-    "chosen_action_rule": "CALIBRATE when (seed+index) parity even else EXPLOIT_POS; one physical chosen action and one observed return per independent world, no counterfactual payoff or private law trained",
+    "chosen_action_rule": "For seed_index 0 (1000811) / 1 (1000823), CALIBRATE iff (floor(index/4)+seed_index)%2==0, otherwise EXPLOIT_POS. Exactly one actually observed chosen action and its physical return; action is orthogonal to index%2 pivot timing and (index%512//2)%2 hidden-law stratum. Never use hidden law as input or label.",
     "heldout": "DEV_TEST 64 fresh separate worlds per seed may be constructed ONLY ONCE AFTER EVERY FROZEN ARM/LEVEL FINISHES, NO scoring, training, early stopping, hyperparameter tuning or rerun on already scored DEV_TEST",
-    "old_source_salts_disjoint": true
+    "old_source_salts_disjoint": true,
+    "balance_contract": {
+      "before_first_use": "Assert index-only 2x2x2 cross-stratum counts for each declared seed and panel, WITHOUT constructing physical world or accessing DEV_TEST labels.",
+      "stratum_keys": [
+        "early_or_cold=index%2",
+        "law_balancing_key=(index%512//2)%2",
+        "selected_action=(floor(index/4)+seed_index)%2"
+      ],
+      "train_worlds256_each_cell": 32,
+      "train_worlds16_each_cell": 2,
+      "dev_test_worlds64_each_cell": 8,
+      "must_fail_closed_on_any_imbalance": true,
+      "action_chosen_using_only_index_and_public_protocol_seed_index": true
+    },
+    "supersedes_preimplementation_freeze_blob": "9f51f6c6850a43cf353d1555505c2360fd49071d",
+    "supersession_reason": "Original R93 prospective freeze action=(seed+index)%2 was exactly confounded with early/cold timing, as in spent R92; replaced before R93 code, regression or source first use. Original frozen bytes remain auditable in ancestor fa4fad57adb15b7e9aebea131a8a48465b930074."
   },
   "design": {
     "order": "HIGHEST_WIDTH_1024_WORLDS256_ONE_EXPOSURE_PER_WORLD_FIRST, then width32 worlds256/eight exposures, worlds256/one exposure, worlds16/eight exposures, worlds16/one exposure",
