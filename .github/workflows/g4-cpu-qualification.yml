@@ -963,7 +963,7 @@ jobs:
   r97-unseen-binding:
     name: R97 unseen public role binding / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r97-unseen-public-role-binding-20261116' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r97-unseen-public-role-binding-20261116' && github.event.pull_request.head.sha == '7f89ba65d26d085a13994a6cbda304fe98d38f94' && github.run_id == 43837200986 }}
     strategy:
       fail-fast: false
       matrix:

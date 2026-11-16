@@ -237,3 +237,30 @@ def test_frozen_heldout_transfer_thresholds_and_no_official_native_promotion():
     assert f["source"]["OOD_scope"].startswith("Unseen binding")
     assert f["execution"]["new_workflow_file"] is False
     assert f["evaluation"]["independent_scientific_pass"] is False
+
+
+def test_original_R97_testonly_first_use_source_cannot_replay(monkeypatch):
+    # All six original R97 source panels were spent in the original G4 run.
+    assert r97.ORIGINAL_R97_SPENT_SHA=="7f89ba65d26d085a13994a6cbda304fe98d38f94"
+    assert r97.ORIGINAL_R97_SPENT_RUN_ID=="43837200986"
+    allowed_shape={
+        "GITHUB_ACTIONS":"true",
+        "GITHUB_EVENT_NAME":"pull_request",
+        "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+        "GITHUB_HEAD_REF":r97.BRANCH,
+        "GITHUB_JOB":"r97-unseen-binding",
+        "R97_SEED":str(r97.SEEDS[0]),
+        "RUNNER_OS":"Linux",
+        "RUNNER_ENVIRONMENT":"github-hosted",
+        "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_REF":"refs/pull/293/merge",
+        "EXPECTED_CANDIDATE_SHA":"f"*40,
+        "GITHUB_RUN_ID":"43899999999",
+    }
+    for key,value in allowed_shape.items():
+        monkeypatch.setenv(key,value)
+    with pytest.raises(PermissionError,match="R97_SPENT_FIRST_USE_SOURCE_REPLAY_DENIED"):
+        r97._admit(r97.SEEDS[0])
+    for panel in ("FIT","VALID","DEV_SEEN","DEV_HELDOUT","OOD_SHIFT","ROLE_REASSIGN"):
+        with pytest.raises(PermissionError,match="R97_NEW_SCORING_SOURCE_NOT_ADMITTED"):
+            r97._world(panel,r97.SEEDS[0],0,"f"*40)
