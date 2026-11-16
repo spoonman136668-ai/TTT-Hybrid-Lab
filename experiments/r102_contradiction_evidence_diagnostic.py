@@ -91,14 +91,42 @@ def _admit(*_args,**_kwargs):
     raise PermissionError("R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
 
 
-def _world(panel,seed,index,*_args,**_kwargs):
+def _world(panel,seed,index,sha=None,*,event=0,family=None):
+    """Prospective truly new panel constructor, protected pre-first-use."""
     f=frozen()
     if panel not in f["source"]["counts"]:
         raise PermissionError("R102_OLD_SPENT_OR_NONREGISTERED_SOURCE_DENIED")
     if (seed not in SEEDS or not isinstance(index,int)
         or not 0 <= index < f["source"]["counts"][panel]):
         raise PermissionError("R102_UNREGISTERED_SEED_OR_INDEX")
-    raise PermissionError("R102_PROTECTED_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED")
+    # This route is unconditional DENIAL on the development branch, even if
+    # the source/SHA/environment appears legitimate. Do not open scored world.
+    try:
+        _admit(seed=seed,candidate_sha=sha)
+    except PermissionError as exc:
+        raise PermissionError(
+            "R102_PROTECTED_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED") from exc
+    if not isinstance(event,int) or not 0<=event<=SUPPORT:
+        raise PermissionError("R102_SCORED_EVENT_OUTSIDE_FROZEN_SOURCE")
+    if family not in KNOWN+UNSEEN:
+        raise PermissionError("R102_PROTECTED_UNREGISTERED_OPERATOR")
+    if panel in ("FIT","VALID","DEV_FAMILIAR") and family not in KNOWN:
+        raise PermissionError("R102_UNSEEN_FAMILY_IN_FIT")
+    if panel in ("DEV_UNKNOWN","OOD_SHIFT","DELAYED_COLD","REVERSAL") and family not in UNSEEN:
+        raise PermissionError("R102_KNOWN_FAMILY_IN_UNKNOWN_HELDOUT")
+    rng=np.random.default_rng(np.random.SeedSequence([
+        f["source"]["salts"][panel],seed,index,event]))
+    pivot=index%2 if panel!="DELAYED_COLD" else 1
+    physics_index=(2*(index%(r85.N//2))+pivot)%r85.N
+    world=r85._make_synthetic_world(physics_index,rng)
+    roles=tuple(int(k) for k in rng.permutation(4)[:3])
+    facts=rng.choice([-1,1],size=4).astype(np.int64)
+    world["factors_a"]=facts
+    world["r102_roles"]=roles
+    world["law_a"]=_operator_truth(facts,roles,family)
+    if panel=="OOD_SHIFT":
+        world=r86._shift_public_world(world,index)
+    return world
 
 
 def original_ci(*_args,**_kwargs):
