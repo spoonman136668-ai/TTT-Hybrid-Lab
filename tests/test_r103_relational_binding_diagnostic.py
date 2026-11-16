@@ -277,3 +277,61 @@ def test_r103_custody_checks_first_canonical_G4_dual_platform_G5_G7(monkeypatch)
     with pytest.raises(PermissionError,
                        match="R103_NOT_FIRST_CANONICAL_G4_FOR_EXACT_SHA"):
         owner._first_attempt_ci_custody(sha,200)
+
+
+
+@pytest.mark.parametrize("action",(r85.CALIBRATE,r85.EXPLOIT_POS))
+def test_r103_unseen_operator_has_only_causal_reward_effect_not_public_lookahead(action):
+    """Matched UNIT_ONLY physical interventions prove causal source separation.
+
+    Hold the entire physical world, actual pre-action probes, operand roles
+    and noise fixed. Change ONLY the evaluator's hidden 3-factor operator.
+    Observed pre-choice inputs must be bitwise identical. Only the actual
+    chosen action consequence can differ, and ONLY if the operator output
+    differs. No FIT, VALID, DEV, or prior spent source is accessed.
+    """
+    contrasts=0
+    equal_laws=0
+    for index in range(11):
+        for event in range(r103.SUPPORT+1):
+            a=r103._unit_world(index,event,r103.UNSEEN[0])
+            b=r103._unit_world(index,event,r103.UNSEEN[1])
+            np.testing.assert_array_equal(a["factors_a"],b["factors_a"])
+            assert a["r103_roles"]==b["r103_roles"]
+            assert a["probe"]==b["probe"]
+            observed_a,reward_a=r103.public_view(a,action)
+            observed_b,reward_b=r103.public_view(b,action)
+            np.testing.assert_array_equal(observed_a,observed_b)
+            if a["law_a"]==b["law_a"]:
+                equal_laws+=1
+                assert reward_a==reward_b
+            else:
+                contrasts+=1
+                assert abs(reward_a-reward_b)>1.0
+                assert np.sign(reward_a-reward_b)==np.sign(
+                    a["law_a"]-b["law_a"])
+    assert contrasts>=20, "R103_UNIT_ONLY_UNSEEN_OPERATOR_NOT_CAUSALLY_IDENTIFIABLE"
+    assert equal_laws>=20, "R103_UNIT_ONLY_OPERATOR_HAS_ARTIFICIAL_REWARD_SHORTCUT"
+
+
+@pytest.mark.parametrize("family",r103.UNSEEN)
+def test_r103_frozen_true_action_accuracy_matches_real_physical_reward_oracle(family):
+    """Frozen true-law action label must coincide with rewarded best action.
+
+    This is a physics-identity check on new UNIT_ONLY streams, not a model
+    result or permission to peek at a protected evaluator cohort.
+    """
+    positives=negatives=0
+    for index in range(11):
+        for event in range(r103.SUPPORT+1):
+            world=r103._unit_world(index,event,family)
+            c0,r0=r103.public_view(world,r85.CALIBRATE)
+            c2,r2=r103.public_view(world,r85.EXPLOIT_POS)
+            np.testing.assert_array_equal(c0[:4],c2[:4])
+            np.testing.assert_array_equal(c0[-1,4:],c2[-1,4:])
+            expected=r85.CALIBRATE if world["law_a"]>0 else r85.EXPLOIT_POS
+            actual=r85.CALIBRATE if r0>r2 else r85.EXPLOIT_POS
+            assert expected==actual, "R103_FROZEN_TRUE_ACTION_NOT_REWARD_OPTIMAL"
+            if expected==r85.CALIBRATE: positives+=1
+            else: negatives+=1
+    assert positives>=20 and negatives>=20
