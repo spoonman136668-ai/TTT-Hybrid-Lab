@@ -1,0 +1,148 @@
+{
+  "schema": "ttt-hybrid.r105.native-role-binding.unit-only-development-freeze.v1",
+  "stage": "PROSPECTIVELY_FROZEN_BEFORE_IMPLEMENTATION_OR_ANY_UNIT_ONLY_MODEL_FIT",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r105-role-aligned-native-inference-20261116",
+    "base_R104_qualified_SHA": "d8f4f22b365daf078ac5c84ba9fd92c57ae51952",
+    "R104_preceding_pr": 300,
+    "R103_sealed_science_SHA": "69c02f7a30ada55e1b0995b0ebad1b373a9e6958",
+    "R103_original_scored_SHA": "427d964fb72ecb30d4212bd11b8fbb13511e88e3",
+    "R103_scientific_result": "R103_UNFAMILIAR_RULE_TRANSFER_NO_GO",
+    "R103_scored_replay_forbidden": true,
+    "R104_unit_only_posterior_mean_accuracy": 0.896484375
+  },
+  "objective": "Is a TRAINABLE tokenless native role-aligned factual relation key/value readout able to approximate public causal-rule identification from 16 actual action-consequence observations, including on completely new Boolean laws, better than same-capacity lost feedback, lost roles, scrambled outcome controls, scratch R103 native scalar, fully trained conventional GRU and MLP, and a strong hand-engineered 256-function Bayesian comparison?",
+  "hypothesis": {
+    "mechanism": "Role-aligned public factor binding plus learned smooth relation-key readout will use actual factual consequences to transfer to new 3-operand causal operators without private rule truth or rule id.",
+    "value": "Native role-aligned learner will surpass fully trained strongest conventional baseline and scratch R103 native on heldout rule action accuracy with matched training steps and public source.",
+    "falsification": "Failure to beat negative controls or conventional baselines means the mechanism is insufficient even if Bayes inference identifies the truth; preserve failure and do not retroactively lower thresholds."
+  },
+  "data": {
+    "scope": "UNIT_ONLY_DEV_NOT_ORIGINAL_PROTECTED_SCIENCE",
+    "seeds": [
+      1005011,
+      1005023,
+      1005037
+    ],
+    "panel_salts": {
+      "UNIT_FIT": 26501101,
+      "UNIT_VALID": 26501107,
+      "UNIT_UNSEEN": 26501113,
+      "UNIT_BATCH": 26501119,
+      "UNIT_SHUFFLE": 26501123
+    },
+    "train_truth_masks_hex": [
+      "ca",
+      "96",
+      "80",
+      "fe",
+      "7f",
+      "e8",
+      "16",
+      "68",
+      "81",
+      "87",
+      "e1"
+    ],
+    "unseen_truth_masks_hex": [
+      "0f",
+      "33",
+      "3c",
+      "59",
+      "65",
+      "95",
+      "9a",
+      "a6"
+    ],
+    "exclude_prior_R104_unit_only_hidden_masks_hex": [
+      "1b",
+      "66",
+      "2d",
+      "55",
+      "8e",
+      "a3",
+      "b4",
+      "c9"
+    ],
+    "heldout_min_hamming_from_any_train_rule": 2,
+    "heldout_min_pair_hamming": 4,
+    "train_episodes_per_seed": 176,
+    "valid_episodes_per_seed": 88,
+    "heldout_episodes_per_seed": 128,
+    "episode_support_count": 16,
+    "support_action_schedule": "Eight CALIBRATE and eight EXPLOIT_POS chosen factual interventions alternating; shared across every learning arm.",
+    "query": "A fresh physical query world after 16 supports, with actual chosen action consequence alone as FIT/VALID regression target; paired actions+returns only in UNIT_ONLY_UNSEEN evaluator.",
+    "physical_source": "R85 pure physical simulator/R86 actual action returns with fresh R105 RNGs; public role tags + noisy factor readings in R88 public slots; no prior original source or weights.",
+    "family_allocation": "TRAIN index % 11 -> familiar; HELDOUT index % 8 -> unfamiliar, 16 episodes per heldout rule; public pivot parity via floor(index / number_of_families) % 2, balanced within each hidden family.",
+    "true_mask_label_evaluator_only": true,
+    "no_hidden_truth_to_learners": true,
+    "no_counterfactual_to_FIT_VALID": true,
+    "no_prior_scored_cohorts_or_trained_weights": true,
+    "no_source_resampling_after_observations": true,
+    "original_science_salts_or_seed_reuse": false
+  },
+  "architecture": {
+    "native_role_binding": "Trainable differentiable 3-role key embedding from PUBLIC noisy factor observations and public role-index tags. Uses smooth role binding to three operand slots; query-conditioned memory read over 16 factual supports. No symbolic Boolean operator label, truth table, engineered parity, or future outcome in native model.",
+    "memory": "Within-episode learned support-to-query similarity with outcome-conditioned values, no autoregressive next-token or Transformer foundation, no retained source outside episode.",
+    "explicit_decision_readout": "Trainable action-value readout on physical public query action and factual memory, learned solely through chosen-action reward regression.",
+    "model_init": "Fresh deterministic seed per arm, no R103 trained checkpoints. Scratch R103 native model used as a baseline, not donor weights.",
+    "all_models_public_information": "All trainable models see exactly same 16 support public slots, actual chosen outcomes and query public slots unless explicitly ablated.",
+    "Bayes256": "R104 hand-engineered full-256-function posterior is an evidence-sufficiency upper comparator only, not a learned native arm, and sees the same public 16 factual supports/roles.",
+    "negative_controls": [
+      "native full",
+      "native reward shuffled within chosen action",
+      "native feedback zeroed",
+      "native public role tags lost",
+      "fresh R103 native relational memory",
+      "fully trained GRU64 factual history",
+      "fully trained MLP64 flattened history",
+      "Bayes256 engineered diagnostic"
+    ]
+  },
+  "training": {
+    "trainable_arms": 7,
+    "total_arms": 8,
+    "optimizer": "AdamW",
+    "steps_per_trainable_arm": 512,
+    "batch_size": 16,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "fully_train_all_seven_before_unit_heldout": true,
+    "one_seed_max_wall_seconds": 240,
+    "torch_cpu_num_threads": 1,
+    "development_not_original_science": true,
+    "trained_weights_not_promoted": true
+  },
+  "evaluation": {
+    "threshold_policy": "All checks required in ALL THREE UNIT_ONLY seeds for DEV signal only.",
+    "checks": {
+      "native_unseen_action_accuracy_min": 0.75,
+      "native_minus_best_conventional_accuracy_min": 0.1,
+      "native_minus_r103_native_accuracy_min": 0.1,
+      "native_minus_shuffled_accuracy_min": 0.1,
+      "native_minus_zero_feedback_accuracy_min": 0.1,
+      "native_minus_missing_roles_accuracy_min": 0.1,
+      "Bayes256_unseen_accuracy_min": 0.75
+    },
+    "failure": "R105_NO_NATIVE_UNIT_ONLY_TRANSFER_SIGNAL",
+    "success": "R105_UNIT_ONLY_NATIVE_TRANSFER_DEVELOPMENT_SIGNAL",
+    "resource": "R105_UNIT_ONLY_TRAINING_OR_RESOURCE_INCOMPLETE",
+    "not_independent_scientific_acceptance": true
+  },
+  "authority": {
+    "unit_only_CPU_software_engineering": true,
+    "protected_original_scientific_first_use": false,
+    "GPU_first_use": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "merge": false,
+    "deployment": false,
+    "new_workflow": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "new_runner": false,
+    "paid_API": false
+  }
+}
