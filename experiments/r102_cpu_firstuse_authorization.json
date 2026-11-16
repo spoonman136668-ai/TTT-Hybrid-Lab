@@ -1,0 +1,45 @@
+{
+  "schema": "ttt-hybrid.r102.owner-scoped-firstuse.v1",
+  "scope": "ONE_ORIGINAL_THREE_SEED_GITHUB_HOSTED_CPU_TEST_ONLY",
+  "approved_on": "2026-11-16",
+  "owner_approval": "USER_EXPLICITLY_AUTHORIZED_R102_CPU_FIRST_USE",
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "pr_number": 298,
+  "branch": "research/r102-contradiction-gated-evidence-20261116",
+  "seeds": [
+    1002711,
+    1002723,
+    1002737
+  ],
+  "immutable_freeze_blob": "9e4a74c4b903a8c205807f5ec0ba87d1ff028f82",
+  "exact_parent_sha": "a83ad0ce6a0e793db34853f0d7b9f49a9272b4b1",
+  "no_prior_source_replay": true,
+  "no_gpu_merge_promotion_forge": true,
+  "no_r101_original_cohort_reuse": true,
+  "per_seed_CPU_budget_seconds": 900,
+  "admission_requirements": {
+    "direct_parent_and_only_one_auth_file": true,
+    "final_source_SHA_and_GitHub_FIRST_run_id": true,
+    "original_first_attempt_only": true,
+    "GitHub_hosted_Ubuntu_CPU_only": true,
+    "prior_G4_linux_windows_success_on_final_SHA": true,
+    "prior_G5_G7_success_on_final_SHA": true,
+    "no_dirty_worktree_or_freeze_drift": true,
+    "original_11_arms_fully_trained_before_DEV": true,
+    "strict_frozen_900s_cap": true,
+    "no_replay_after_any_partial_first_use": true
+  },
+  "explicitly_not_authorized": [
+    "GPU first use",
+    "independent scientific qualification",
+    "merge",
+    "production promotion",
+    "FORGE integration",
+    "deployment",
+    "new workflow",
+    "new controller",
+    "new scheduler",
+    "new runner",
+    "paid API"
+  ]
+}
