@@ -1061,7 +1061,7 @@ jobs:
   r99-factual-microfeedback:
     name: R99 internal factual microfeedback / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r99-internal-factual-microfeedback-20261116' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r99-internal-factual-microfeedback-20261116' && github.event.pull_request.head.sha == 'bb5c309e178a03e413ab71e2b7fb03c4ff33e93c' && github.run_id == 43847223165 }}
     strategy:
       fail-fast: false
       matrix:

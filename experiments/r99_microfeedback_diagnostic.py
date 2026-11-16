@@ -35,6 +35,10 @@ FREEZE_BLOB="52531b8f3d83c17d1cc5948058ad34b53899f7c5"
 SCHEMA="ttt-hybrid.r99-factual-internal-microfeedback.testonly.v1"
 PARENT="f9276dac0f9e83bae0eb7443881735e930e14ba8"
 BRANCH="research/r99-internal-factual-microfeedback-20261116"
+# Both original one-shot TEST-only seeds have consumed every source panel.
+# Never repeat FIT/VALID/DEV/shifted OOD/program-switch on another run/SHA.
+ORIGINAL_R99_SPENT_SHA="bb5c309e178a03e413ab71e2b7fb03c4ff33e93c"
+ORIGINAL_R99_SPENT_RUN_ID="43847223165"
 SEEDS=(1002111,1002123)
 SALT={"FIT":25400111,"VALID":25400211,"DEV_SEEN":25400311,
       "DEV_COMPOSE":25400411,"OOD_SHIFT":25400511,
@@ -163,6 +167,8 @@ def _admit(seed):
         or "/merge" not in os.getenv("GITHUB_REF","")):
         raise PermissionError("R99_ORIGINAL_G4_HOSTED_FIRST_ATTEMPT_CPU_ONLY")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R99_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R99_SPENT_RUN_ID:
+        raise PermissionError("R99_SPENT_ORIGINAL_SCIENCE_FIRST_USE_REPLAY_DENIED")
     head=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
                         capture_output=True,text=True,timeout=10,check=False)
     clean=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -199,7 +205,9 @@ def _world(panel,seed,index,sha):
         or os.getenv("R99_SEED")!=str(seed)
         or os.getenv("RUNNER_OS")!="Linux"
         or os.getenv("RUNNER_ENVIRONMENT")!="github-hosted"
-        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"):
+        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"
+        or sha!=ORIGINAL_R99_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R99_SPENT_RUN_ID):
         raise PermissionError("R99_FIRST_USE_PHYSICAL_SOURCE_NOT_ADMITTED")
     rng=np.random.default_rng(np.random.SeedSequence([SALT[panel],seed,index]))
     world=r85._make_synthetic_world(index%r85.N,rng)

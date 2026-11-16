@@ -212,3 +212,29 @@ def test_R99_precommitted_mechanism_thresholds_and_no_scientific_promotion():
     assert t["program_change_true_law_accuracy_both_min"]==.8
     assert f["execution"]["no_new_workflow_or_scheduler_or_runner_or_controller"]
     assert f["evaluation"]["independent_scientific_pass"] is False
+
+
+def test_R99_all_original_scored_panels_are_consumed_and_replay_is_denied(monkeypatch):
+    assert r99.ORIGINAL_R99_SPENT_SHA=="bb5c309e178a03e413ab71e2b7fb03c4ff33e93c"
+    assert r99.ORIGINAL_R99_SPENT_RUN_ID=="43847223165"
+    context={
+        "GITHUB_ACTIONS":"true",
+        "GITHUB_EVENT_NAME":"pull_request",
+        "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+        "GITHUB_HEAD_REF":r99.BRANCH,
+        "GITHUB_JOB":"r99-factual-microfeedback",
+        "R99_SEED":str(r99.SEEDS[0]),
+        "RUNNER_OS":"Linux",
+        "RUNNER_ENVIRONMENT":"github-hosted",
+        "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_REF":"refs/pull/295/merge",
+        "EXPECTED_CANDIDATE_SHA":"f"*40,
+        "GITHUB_RUN_ID":"43899999999",
+    }
+    for k,v in context.items():
+        monkeypatch.setenv(k,v)
+    with pytest.raises(PermissionError,match="R99_SPENT_ORIGINAL_SCIENCE_FIRST_USE_REPLAY_DENIED"):
+        r99._admit(r99.SEEDS[0])
+    for panel in ("FIT","VALID","DEV_SEEN","DEV_COMPOSE","OOD_SHIFT","PROGRAM_SWITCH"):
+        with pytest.raises(PermissionError,match="R99_FIRST_USE_PHYSICAL_SOURCE_NOT_ADMITTED"):
+            r99._world(panel,r99.SEEDS[0],0,"f"*40)
