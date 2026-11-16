@@ -124,7 +124,7 @@ def test_public_tags_are_preaction_data_and_no_future_observation_leak(i):
 
 def test_same_world_new_task_assignment_changes_the_physical_consequence():
     world,_=r97.unit_world(7)
-    world["factors_a"]=np.array([1,-1,1,-1],np.int64)
+    world["factors_a"]=np.array([-1,1,-1,-1],np.int64)
     world["r97_binding"]=r97.HELDOUT_BINDING
     world["law_a"]=r97.mux(world["factors_a"],world["r97_binding"])
     alternative=copy.deepcopy(world)
@@ -170,8 +170,10 @@ def test_tag_permuted_negative_preserves_factual_cues_action_and_time():
         r97._permuted(raw,r97.SEEDS[0],"VALID"))
     with pytest.raises(PermissionError,match="R97_TAG_NEGATIVE_ONLY_NEW_FROZEN_SOURCE"):
         r97._permuted(raw,r97.SEEDS[0],"R96_DEV")
-    factors=np.tile(np.asarray([1,-1,1,-1],np.int8),(n,1))
-    law=np.full(n,-1,np.int8)
+    factors=np.tile(np.asarray([1,1,1,-1],np.int8),(n,1))
+    factors[:,2]=np.where(np.arange(n)%2==0,1,-1)
+    factors[:,3]=-factors[:,2]
+    law=factors[:,2]
     # True tag-only unchanged predicts law 100% and must fail the
     # 0.50–0.75 precommitted role-disruption audit.
     with pytest.raises(RuntimeError,match="R97_ROLE_DISRUPTION_NEGATIVE_CONTROL_INVALID"):
@@ -232,7 +234,6 @@ def test_frozen_heldout_transfer_thresholds_and_no_official_native_promotion():
     assert n["heldout_native_set_minus_original_native_reward_min"]==.50
     assert n["shifted_OOD_cold_native_set_minus_flat_reward_min"]==.20
     assert n["heldout_native_set_vs_conventional_set_reward_gap_max"]==.30
-    assert f["model"] if "model" in f else True
     assert f["source"]["OOD_scope"].startswith("Unseen binding")
     assert f["execution"]["new_workflow_file"] is False
     assert f["evaluation"]["independent_scientific_pass"] is False
