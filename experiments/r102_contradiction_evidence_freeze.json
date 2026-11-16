@@ -1,0 +1,169 @@
+{
+  "schema": "ttt-hybrid.r102-contradiction-gated-evidence.cpu-prospective-freeze.v1",
+  "stage": "PROSPECTIVE_FREEZE_ONLY_BEFORE_IMPLEMENTATION_AND_FIRST_USE",
+  "scientific_status": "NOT_RUN_UNVERIFIED",
+  "question": "Does native contradiction-gated factual memory learn TWO fresh unfamiliar causal operator families more reliably from 16 matched chosen-action consequences than ungated native memory and fully trained conventional controls, and does 16 improve over 6 on same sources?",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R101_sealed_SHA": "d6362f1ce587ea9a8ae00fcbe48aba2d5427e04e",
+    "prior_R101_original_scored_SHA": "ad21af19d342d239207629d562a0b4990e5fd163",
+    "prior_R101_run_id": 43893297635,
+    "prior_R101_status": "R101_UNSEEN_OPERATOR_INFERENCE_NO_GO",
+    "prior_cohorts_consumed": true,
+    "prior_scored_sources_or_weights_reused": false,
+    "architecture": "Independent native tokenless causal memory; no copying language model or symbolic operator engine"
+  },
+  "hypotheses": {
+    "primary": "Native contradiction-gated 16-observation memory exceeds the strongest fully trained nonengineered 16-observation conventional comparator on unfamiliar heldout operators in each of 3 seeds.",
+    "microfeedback": "Contradiction-gated native memory beats equal-capacity ungated, zero-outcome, shuffled-feedback and memory-reset arms with same source/action/compute.",
+    "informativeness": "Native-16 improves over native-6 from the identical first six factual support outcomes and same heldout query; no query adaptation or extra private labels.",
+    "native_specific": "Native internal memory improves over an external learned-memory adapter at equal trainable capacity, information and compute.",
+    "retention_and_reversal": "Native gain survives delayed cold queries, physics role changes, and a genuine precommitted mid-support hidden-operator reversal."
+  },
+  "source": {
+    "seeds": [
+      1002711,
+      1002723,
+      1002737
+    ],
+    "salts": {
+      "FIT": 25620111,
+      "VALID": 25620211,
+      "DEV_FAMILIAR": 25620311,
+      "DEV_UNKNOWN": 25620411,
+      "OOD_SHIFT": 25620511,
+      "DELAYED_COLD": 25620611,
+      "REVERSAL": 25620711,
+      "SUPPORT_SHUFFLE": 25620811,
+      "BATCH": 25620911,
+      "BOOTSTRAP": 25621011,
+      "UNIT_ONLY": 25629991
+    },
+    "counts": {
+      "FIT": 1024,
+      "VALID": 128,
+      "DEV_FAMILIAR": 128,
+      "DEV_UNKNOWN": 192,
+      "OOD_SHIFT": 128,
+      "DELAYED_COLD": 128,
+      "REVERSAL": 128
+    },
+    "known_train_families": [
+      "MUX3",
+      "PARITY3",
+      "AND3",
+      "OR3",
+      "NAND3",
+      "MAJORITY3",
+      "EXACTLY_ONE3"
+    ],
+    "new_unseen_families": [
+      "EXACTLY_TWO3",
+      "ALL_EQUAL3"
+    ],
+    "support_interventions_total": 16,
+    "support_actions": "Exactly 8 CALIBRATE and 8 EXPLOIT_POS fixed alternating factual physical actions; one actual selected return each. Same episode hidden operator with independently regenerated physical factor worlds.",
+    "six_support_control": "Only first 6 of the same 16 chosen support actions and their factual rewards; never show indices 6..15 or missingness correlated with operator.",
+    "family_assignment": "Balanced joint public pivot/time x chosen heldout query action x hidden operator, not determined by public index parity or any stable role/time code.",
+    "query": "Independently drawn heldout physical state after all supports, only chosen FIT/VALID query return for training. Evaluator-only paired query returns on heldout DEV after all models fully trained.",
+    "truth_policy": "Boolean family truth tables, private law and physical factors implemented evaluator-only, never called or copied into learner. No teacher/algebra/privileged counterfactual in learner.",
+    "freshness": "Distinct R102 salts, seeds and source from R101 all panels; absolutely no prior R101 world/unit fixture/weights or scored cohort reuse.",
+    "observation": "Public noisy R85 224-tick physical A cues/operand-role markers and selected action/time. No private opcode or hidden family identifier.",
+    "reversal": "Hidden operator changes after 8 factual supports from the opposite registered unknown family; must change in 100% of reversal episodes.",
+    "source_generation": "Deterministic per registered panel/seed/index/event without reward-based redraw or postscore adjustment.",
+    "source_balances": "Pre-first-use joint family-by-observable pivot/time/action and role labels must pass; fail closed on any shortcut.",
+    "no_prior_cohort_replay": true,
+    "one_first_use_per_seed": true
+  },
+  "models": {
+    "reference": "R74 native width32 TTT+SSM+causal attention+depth, used only as isolated CPU source adapter; model.py untouched.",
+    "native_gate": "Differentiable online gate predicted from public preaction cues, previously predicted factual return and actually realized selected return; never hidden truth.",
+    "same_capacity_ungated": "Same width and actively trainable gate network, with contradiction residual removed but same factual reward and public cues; same optimizer/steps.",
+    "external": "Same native core and factual observations, actively trained external episode-state adapter within 10% parameters and verified active compute where possible.",
+    "conventional": "Full-step trainable GRU64, role-set64, flattened 16-support MLP and static prior, all with same information and action history; strongest is the control.",
+    "six_vs_sixteen": "Native 6-support has the same architecture and initialization and first 6 same factual observations; no extra private info."
+  },
+  "arms": [
+    "NATIVE16_CONTRADICTION_GATED",
+    "NATIVE16_UNGATED_SAME_CAPACITY",
+    "NATIVE16_SHUFFLED_FACTUAL_OUTCOMES",
+    "NATIVE16_ZERO_OUTCOMES",
+    "NATIVE16_RESET_EPISODE_MEMORY",
+    "NATIVE6_CONTRADICTION_GATED",
+    "EXTERNAL16_CONTRADICTION_GATED_MATCHED",
+    "GRU64_16_FACTUAL_HISTORY",
+    "ROLE_SET64_16_FACTUAL_HISTORY",
+    "MLP64_16_FLATTENED",
+    "STATIC_PRIOR16_NO_FEEDBACK"
+  ],
+  "training": {
+    "optimizer": "AdamW",
+    "steps_per_arm": 3072,
+    "batch_size": 16,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "grad_clip": 1,
+    "same_fit_indices_and_queries": true,
+    "fully_trained_all_11_arms_before_heldout_scoring": true,
+    "valid_report_only": true,
+    "per_seed_total_CPU_wall_budget_s": 900,
+    "max_original_hosted_CPU_jobs": 3,
+    "active_trainable_capacity_and_CPU_wall_accounting": true,
+    "FLOPs_required_for_efficiency_claim": true,
+    "no_DEV_selection": true,
+    "no_saved_prior_scored_weights": true
+  },
+  "evaluation": {
+    "independent_seeds": 3,
+    "paired_bootstrap_draws": 2000,
+    "primary": "Physically realized heldout DEV_UNKNOWN selected-action reward on truly fresh EXACTLY_TWO3 and ALL_EQUAL3 after 16 factual support interventions",
+    "checks": {
+      "native_unknown_query_action_accuracy_min": 0.75,
+      "native_minus_strongest_conventional_reward_min": 0.15,
+      "paired_bootstrap_lower95_native_minus_strongest_min": 0.02,
+      "native_minus_ungated_same_capacity_reward_min": 0.1,
+      "native_minus_shuffled_feedback_reward_min": 0.15,
+      "native_minus_zero_outcome_reward_min": 0.15,
+      "native_minus_reset_cold_reward_min": 0.1,
+      "native16_minus_native6_same_query_reward_min": 0.1,
+      "native_minus_external_matched_reward_min": 0.1,
+      "native_minus_best_OOD_reward_min": 0.1,
+      "reversal_native_minus_zero_outcome_reward_min": 0.1,
+      "role_relabel_action_agreement_min": 0.75
+    },
+    "all_frozen_checks_required_in_every_seed": true,
+    "source_invalid_if_public_family_leak_or_imbalance": true,
+    "no_postresult_tuning": true,
+    "independent_scientific_pass": false,
+    "statuses": {
+      "signal": "R102_FRESH_CONTRADICTION_MECHANISM_DEVELOPMENT_SIGNAL_ONLY",
+      "no_go": "R102_FRESH_UNSEEN_CAUSAL_INFERENCE_NO_GO",
+      "invalid": "R102_SOURCE_AND_CONTROLS_INVALID",
+      "incomplete": "R102_TRAINING_OR_RESOURCE_INCOMPLETE"
+    },
+    "bounded_not_AGI": true
+  },
+  "engineering": {
+    "branch": "research/r102-contradiction-gated-evidence-20261116",
+    "freeze_path": "experiments/r102_contradiction_evidence_freeze.json",
+    "freeze_only_commit_first": true,
+    "qualifications": "Existing G4 Linux and Windows full final regression, G5 authentic TTT CPU, G7 Mamba2 CPU",
+    "UNIT_ONLY_engineering_salt_distinct": true,
+    "any_original_scored_source_access_without_separate_firstuse_denied": true,
+    "no_new_workflow_controller_runner_scheduler_paid_API": true
+  },
+  "authority": {
+    "prospective_freeze_and_isolated_CPU_engineering": true,
+    "protected_scored_first_use": false,
+    "GPU_first_use": false,
+    "independent_scientific_acceptance": false,
+    "merge": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_controller": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_API": false
+  }
+}
