@@ -192,7 +192,7 @@ def test_scalar_and_all_conventional_models_keep_factual_unit_only_interface():
 
 
 
-def test_r103_firstuse_admission_requires_separate_owner_manifest(monkeypatch):
+def test_r103_firstuse_admission_requires_separate_owner_manifest(monkeypatch,tmp_path):
     from experiments import r103_cpu_firstuse_admission as owner
     assert owner.REPO=="spoonman136668-ai/TTT-Hybrid-Lab"
     assert owner.PR==299
@@ -200,6 +200,8 @@ def test_r103_firstuse_admission_requires_separate_owner_manifest(monkeypatch):
     assert owner.FROZEN_BLOB==r103.FREEZE_BLOB
     assert owner.SEEDS==r103.SEEDS
     assert owner.MAX_BUDGET_SECONDS==900
+    # Exercise missing authorization, regardless of the PR's real state.
+    monkeypatch.setattr(owner,"AUTH_PATH",tmp_path/"missing-r103-approval.json")
     assert not owner.AUTH_PATH.is_file()
     for var in ("GITHUB_ACTIONS","GITHUB_TOKEN","GITHUB_REPOSITORY",
                 "GITHUB_RUN_ID","GITHUB_EVENT_PATH"):
@@ -209,8 +211,11 @@ def test_r103_firstuse_admission_requires_separate_owner_manifest(monkeypatch):
         owner.admit(r103.SEEDS[0],"a"*40)
 
 
-def test_r103_future_firstuse_cannot_run_from_spoofed_runner_with_missing_manifest(monkeypatch):
+def test_r103_future_firstuse_cannot_run_from_spoofed_runner_with_missing_manifest(monkeypatch,tmp_path):
     from experiments import r103_cpu_firstuse_admission as owner
+    # Both development and approved source commits must prove no manifest
+    # means no first use, even if GitHub runner variables are impersonated.
+    monkeypatch.setattr(owner,"AUTH_PATH",tmp_path/"missing-r103-approval.json")
     for k,v in (
         ("GITHUB_ACTIONS","true"),("GITHUB_EVENT_NAME","pull_request"),
         ("GITHUB_REPOSITORY",owner.REPO),("GITHUB_HEAD_REF",owner.BRANCH),

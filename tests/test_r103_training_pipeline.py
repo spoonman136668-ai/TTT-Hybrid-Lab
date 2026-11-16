@@ -263,6 +263,13 @@ def test_unit_cpu_capacity_probe_samples_only_unprotected_worlds(monkeypatch):
     def protected_forbidden(*_a,**_kw):
         raise AssertionError("R103_PROTECTED_SCIENCE_SOURCE_WAS_OPENED")
     monkeypatch.setattr(r103,"_world",protected_forbidden)
+    if (probe.ROOT/"experiments/r103_cpu_firstuse_authorization.json").is_file():
+        # Correct behavior AFTER owner approval: the unit capacity probe
+        # itself must refuse to run. No original FIT/DEV opened.
+        with pytest.raises(
+                PermissionError,match="R103_CAPACITY_PROBE_NOT_FOR_ORIGINAL_FIRSTUSE"):
+            probe.prepare_unit_only()
+        return
     batch=probe.prepare_unit_only()
     assert batch["x"].shape==(16,16,5,13)
     assert batch["factual"].shape==(16,16)
