@@ -35,6 +35,10 @@ FREEZE_BLOB="1f2d6f74bb885cd434924396e03e638b7d064b96"
 SCHEMA="ttt-hybrid.r93-test-only-balanced-exposure-headgrad-v1"
 PARENT="84bf0aa6e3650fc8a9dfc8e0f97becb15b8eda30"
 BRANCH="research/r93-native-exposure-head-conditioning-20261115"
+# Original two-seed R93 TRAIN and DEV_TEST source was consumed on this exact
+# first-use candidate, original G4 run 43787112857. New SHAs must NEVER rerun.
+ORIGINAL_R93_SPENT_SHA="b024f4a22be51eb6053d50f2120cbd70d1c40fc7"
+ORIGINAL_R93_SPENT_RUN_ID="43787112857"
 SEEDS=(1000811,1000823)
 TRAIN_SALT=25340111
 DEV_SALT=25340211
@@ -114,6 +118,8 @@ def _admit()->str:
         or os.getenv("GITHUB_RUN_ATTEMPT")!="1"):
         raise PermissionError("R93_ONLY_ORIGINAL_CLEAN_HOSTED_LINUX_G4_FIRST_ATTEMPT")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R93_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R93_SPENT_RUN_ID:
+        raise PermissionError("R93_ORIGINAL_TEST_ONLY_FIRSTUSE_CONSUMED_NO_NEW_CANDIDATE_OR_RUN")
     head=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
                         capture_output=True,text=True,check=False,timeout=10)
     dirty=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -167,6 +173,8 @@ def _world(panel:str,seed:int,index:int,sha:str):
         or not (0<=index<256 if panel=="TRAIN" else 1000<=index<1064)):
         raise PermissionError("R93_UNREGISTERED_SEED_OR_WORLD_INDEX")
     if (not sha or sha!=os.getenv("EXPECTED_CANDIDATE_SHA")
+        or sha!=ORIGINAL_R93_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R93_SPENT_RUN_ID
         or os.getenv("GITHUB_ACTIONS")!="true"
         or os.getenv("GITHUB_HEAD_REF")!=BRANCH
         or os.getenv("GITHUB_JOB")!="cpu-qualification"

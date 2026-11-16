@@ -25,7 +25,7 @@ def test_prospective_immutable_frozen_protocol_and_reuse_denials():
     assert f["source"]["dev_test_salt"]==r93.DEV_SALT
     assert f["source"]["batch_permutation_salt"]==r93.BATCH_SALT
     assert f["source"]["type"]=="FRESH_TEST_ONLY_NONPROTECTED_DIAGNOSTIC"
-    assert not f["parent"]["previous_protected_or_spent_scored_source_reused"]
+    assert f["parent"]["no_old_training_weights_or_scored_source_reuse"] is True
     assert f["design"]["fullwidth_native_params"]==16818178
     assert f["frozen_evaluation"]["mandatory_level"]=="w32_n256_e8"
     assert not f["frozen_evaluation"]["independent_scientific_pass"]
@@ -149,7 +149,11 @@ def test_frozen_double_seed_thresholds_and_dev_only_statuses():
 def test_only_original_single_full_width_test_only_diagnostic_in_same_sha_linux_g4(monkeypatch):
     if not (os.getenv("GITHUB_ACTIONS")=="true"
             and os.getenv("GITHUB_HEAD_REF")==r93.BRANCH
-            and os.getenv("RUNNER_OS")=="Linux"):
+            and os.getenv("RUNNER_OS")=="Linux"
+            and os.getenv("EXPECTED_CANDIDATE_SHA")==r93.ORIGINAL_R93_SPENT_SHA
+            and os.getenv("GITHUB_RUN_ID")==r93.ORIGINAL_R93_SPENT_RUN_ID):
+        # Scored R93 DEV_TEST is already consumed at b024f4a / run 43787112857.
+        # New SHA engineering qualification MUST NOT re-open those worlds.
         pytest.skip("R93 new diagnostic original first-use only on exact first-attempt Linux G4")
     def denied(*a,**k):
         raise AssertionError("R93_REOPENED_OLD_R89_R91_R92_SOURCE")
