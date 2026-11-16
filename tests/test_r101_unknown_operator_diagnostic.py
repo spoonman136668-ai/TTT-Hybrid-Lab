@@ -266,11 +266,22 @@ def test_first_run_api_custody_and_same_sha_g5_g7_with_offline_mock(monkeypatch)
 
 
 def test_final_approval_is_additive_exact_parent_only_not_frozen_protocol():
-    """Staging has no approval file; final clean single-file commit will."""
+    """Original immutable freeze stays false; sealed source is never replayed."""
     from experiments import r101_cpu_firstuse_admission as scope
     import subprocess
     assert not r101.frozen()["authority"]["protected_scored_first_use"]
-    if scope.AUTH_PATH.is_file():
+    if scope.SEAL_PATH.is_file():
+        seal=__import__("json").loads(scope.SEAL_PATH.read_text(encoding="utf-8"))
+        assert seal["original_scored_SHA"] == scope.SPENT_ORIGINAL_SHA
+        assert seal["original_run_id"] == scope.SPENT_RUN_ID
+        assert seal["all_three_original_seeds_consumed"] is True
+        assert seal["independent_scientific_pass"] is False
+        assert seal["final_science_status"] == "R101_UNSEEN_OPERATOR_INFERENCE_NO_GO"
+        assert tuple(map(int,seal["by_seed"].keys())) == scope.SEEDS
+        assert len(seal["by_seed"])==3
+        with pytest.raises(PermissionError,match="R101_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED"):
+            scope.admit(scope.SEEDS[0],scope.SPENT_ORIGINAL_SHA)
+    elif scope.AUTH_PATH.is_file():
         approval=scope.approval()
         parent=subprocess.run(
             ["git","rev-parse","HEAD^"],capture_output=True,
@@ -285,3 +296,16 @@ def test_final_approval_is_additive_exact_parent_only_not_frozen_protocol():
     else:
         with pytest.raises(PermissionError,match="R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
             scope.approval()
+
+
+def test_original_scientific_source_sealed_no_new_runs_even_with_spoofed_owner(monkeypatch):
+    from experiments import r101_cpu_firstuse_admission as scope
+    if not scope.SEAL_PATH.is_file():
+        return
+    monkeypatch.setenv("GITHUB_ACTIONS","true")
+    monkeypatch.setenv("GITHUB_RUN_ID",str(scope.SPENT_RUN_ID))
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT","1")
+    with pytest.raises(PermissionError,match="R101_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED"):
+        scope.admit(scope.SEEDS[0],scope.SPENT_ORIGINAL_SHA)
+    with pytest.raises(PermissionError,match="R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED"):
+        r101._world("FIT",scope.SEEDS[0],0,scope.SPENT_ORIGINAL_SHA)

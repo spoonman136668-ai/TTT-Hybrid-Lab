@@ -1160,7 +1160,7 @@ jobs:
   r101-unknown-original:
     name: R101 unknown operator original / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.number == 297 && github.event.pull_request.head.ref == 'research/r101-unknown-operator-induction-20261116' && github.run_attempt == 1 }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.number == 297 && github.event.pull_request.head.ref == 'research/r101-unknown-operator-induction-20261116' && github.event.pull_request.head.sha == 'ad21af19d342d239207629d562a0b4990e5fd163' && github.run_id == 43893297635 && github.run_attempt == 1 }}
     strategy:
       fail-fast: false
       matrix:

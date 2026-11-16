@@ -22,6 +22,7 @@ JOB = "r101-unknown-original"
 PR = 297
 APPROVAL_PATH = "experiments/r101_cpu_firstuse_authorization.json"
 AUTH_PATH = ROOT / APPROVAL_PATH
+SEAL_PATH = ROOT / "experiments/r101_scientific_firstuse_seal.json"
 FIRSTUSE_SCHEMA = "ttt-hybrid.r101.owner-scoped-firstuse.v1"
 # Separate proposal freeze remains unchanged, including its original false
 # authority flags. The user expressly approved only this one CPU experiment.
@@ -116,53 +117,13 @@ def _first_attempt_ci_custody(sha, run_id):
             "R101_INDEPENDENT_GITHUB_CI_CUSTODY_UNAVAILABLE") from exc
 
 
+# Original R101 scientific source is permanently consumed. This is the
+# post-scoring source seal, NOT a new scientific source authorization.
+SPENT_ORIGINAL_SHA = "ad21af19d342d239207629d562a0b4990e5fd163"
+SPENT_RUN_ID = 43893297635
+SPENT_SEEDS = SEEDS
+
+
 def admit(seed, candidate_sha=None):
-    from experiments import r101_unknown_operator_diagnostic as r101
-    f = r101.frozen()
-    # Original freeze-only proposal is historical, never retroactively edited.
-    if (f["authority"]["protected_scored_first_use"]
-        or f["source"]["seeds"]!=list(SEEDS)):
-        raise PermissionError("R101_IMMUTABLE_PROPOSAL_STAGE_DRIFT")
-    scope = approval()
-    values = {
-        "GITHUB_ACTIONS":"true",
-        "GITHUB_EVENT_NAME":"pull_request",
-        "GITHUB_REPOSITORY":REPO,
-        "GITHUB_HEAD_REF":BRANCH,
-        "GITHUB_JOB":JOB,
-        "RUNNER_OS":"Linux",
-        "RUNNER_ENVIRONMENT":"github-hosted",
-        "GITHUB_RUN_ATTEMPT":"1",
-        "R101_SEED":str(seed),
-    }
-    if (seed not in SEEDS or any(os.getenv(k)!=v for k,v in values.items())
-        or "/merge" not in os.getenv("GITHUB_REF","")):
-        raise PermissionError("R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
-    run_id_text=os.getenv("GITHUB_RUN_ID","")
-    sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
-    if (not run_id_text.isdecimal() or int(run_id_text)<=0
-        or len(sha)!=40 or sha!=candidate_sha):
-        raise PermissionError("R101_EXACT_RUN_SHA_OR_SEED_NOT_ADMITTED")
-    event_path=os.getenv("GITHUB_EVENT_PATH","")
-    if not event_path or not Path(event_path).is_file():
-        raise PermissionError("R101_NO_SIGNED_GITHUB_PR_EVENT")
-    event=json.loads(Path(event_path).read_text(encoding="utf-8"))
-    data=event.get("pull_request",{})
-    if (data.get("number")!=PR or data.get("head",{}).get("sha")!=sha
-        or data.get("head",{}).get("ref")!=BRANCH
-        or data.get("head",{}).get("repo",{}).get("full_name")!=REPO):
-        raise PermissionError("R101_UNVERIFIED_PR_HEAD_OR_OWNER")
-    if (_git("rev-parse","HEAD")!=sha
-        or _git("rev-parse","HEAD^")!=scope["exact_parent_sha"]):
-        raise PermissionError("R101_NOT_DIRECT_SINGLE_AUTHORIZATION_COMMIT")
-    # The final commit must change ONLY the new approval JSON. No code,
-    # test, workflow or frozen source can drift after qualification staging.
-    changed=_git("diff-tree","--no-commit-id","--name-only","-r","HEAD")
-    if changed.splitlines()!=[APPROVAL_PATH]:
-        raise PermissionError("R101_FIRST_USE_COMMIT_HAS_UNSCOPED_SOURCE_CHANGE")
-    if _git("status","--porcelain") or _git("hash-object",str(r101.FREEZE))!=FROZEN_BLOB:
-        raise PermissionError("R101_DIRTY_SOURCE_OR_FROZEN_BLOB_DRIFT")
-    report=_first_attempt_ci_custody(sha,int(run_id_text))
-    return {"candidate_sha":sha,"run_id":int(run_id_text),"seed":seed,
-            "exact_parent_sha":scope["exact_parent_sha"],
-            "owner_scope":scope["scope"],**report}
+    """All attempted R101 first-use cohorts are spent; no science replay."""
+    raise PermissionError("R101_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED")
