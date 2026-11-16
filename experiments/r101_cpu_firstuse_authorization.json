@@ -1,0 +1,39 @@
+{
+  "schema": "ttt-hybrid.r101.owner-scoped-firstuse.v1",
+  "scope": "ONE_ORIGINAL_THREE_SEED_GITHUB_HOSTED_CPU_TEST_ONLY",
+  "approved_on": "2026-11-16",
+  "owner_approval": "USER_EXPLICITLY_AUTHORIZED_R101_CPU_FIRST_USE",
+  "pr_number": 297,
+  "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+  "branch": "research/r101-unknown-operator-induction-20261116",
+  "seeds": [
+    1002511,
+    1002523,
+    1002537
+  ],
+  "immutable_freeze_blob": "38146a196b59bc78ca66d43d2179e8e465dd54fa",
+  "exact_parent_sha": "38bbaf5623e96010e3e621bc31914a9c9c69fe2a",
+  "no_prior_source_replay": true,
+  "no_gpu_merge_promotion_forge": true,
+  "admission_requirements": {
+    "candidate_commit_must_be_direct_child_of_exact_parent": true,
+    "last_commit_must_only_add_this_authorization_file": true,
+    "both_g4_platforms_must_qualify_on_candidate_sha": true,
+    "g5_g7_must_succeed_on_candidate_sha": true,
+    "github_hosted_ubuntu_first_attempt_only": true,
+    "single_canonical_first_g4_run_for_candidate_sha": true,
+    "one_scientific_first_use_each_seed": true,
+    "max_CPU_seconds_per_seed": 600,
+    "old_frozen_protocol_unchanged": true,
+    "no_new_workflow_runner_scheduler_controller_paid_API": true
+  },
+  "disallowed": [
+    "GPU first use",
+    "independent scientific acceptance",
+    "merge",
+    "model promotion",
+    "FORGE integration",
+    "deployment",
+    "replay after partial execution"
+  ]
+}
