@@ -74,10 +74,13 @@ def frozen():
     return f
 
 
-def _admit(*_unused, **_kw):
-    """No scored first-use admission on engineering-only candidate."""
+def _admit(*_unused, seed=None, candidate_sha=None, **_kw):
+    """Owner-scoped supplementary first-use only; freeze-only JSON unmodified."""
     frozen()
-    raise PermissionError("R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    if seed not in SEEDS or not candidate_sha:
+        raise PermissionError("R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    from experiments import r101_cpu_firstuse_admission
+    return r101_cpu_firstuse_admission.admit(seed, candidate_sha)
 
 
 def _world(panel, seed, index, sha=None, *, event=0, family=None):
@@ -94,17 +97,19 @@ def _world(panel, seed, index, sha=None, *, event=0, family=None):
         raise PermissionError("R101_UNFROZEN_SOURCE_INDEX_OR_SEED")
     if not isinstance(event, int) or not 0 <= event <= SUPPORT:
         raise PermissionError("R101_UNREGISTERED_PHYSICAL_EVENT")
-    # Keep historical and future original source shut before evaluating
-    # family-specific selectors. This preserves admission-negative behavior.
-    if not freeze["authority"]["protected_scored_first_use"]:
-        raise PermissionError("R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED")
+    # The immutable proposal freeze remains FALSE. An additional exact-source
+    # owner approval, original GitHub first-run custody and CPU qualification
+    # must ALL pass before the first physical FIT/DEV source is constructed.
+    try:
+        _admit(seed=seed, candidate_sha=sha)
+    except PermissionError as exc:
+        raise PermissionError("R101_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED") from exc
     if family not in KNOWN + UNSEEN:
         raise PermissionError("R101_UNREGISTERED_PHYSICAL_FAMILY")
     if panel in ("FIT", "VALID", "DEV_FAMILIAR") and family not in KNOWN:
         raise PermissionError("R101_UNSEEN_OPERATOR_NOT_TRAINING")
     if panel in ("DEV_UNKNOWN", "OOD_SHIFT", "DELAYED_COLD", "REVERSAL") and family not in UNSEEN:
         raise PermissionError("R101_FAMILIAR_OPERATOR_NOT_HELDOUT_UNKNOWN")
-    _admit(seed=seed, candidate_sha=sha)
     rng = np.random.default_rng(np.random.SeedSequence(
         [freeze["source"]["salts"][panel], seed, index, event]))
     pivot_selector = 1 if panel == "DELAYED_COLD" else index % 2

@@ -352,3 +352,11 @@ def test_public_time_family_audit_never_opens_any_original_scored_world(monkeypa
     assert report["original_scored_data_accessed"] is False
     assert report["independent_scientific_pass"] is False
     assert not report["frozen_first_use_granted"]
+
+
+def test_original_training_entrypoint_does_not_open_science_on_dev_host(monkeypatch):
+    from experiments import r101_cpu_firstuse_admission as scope
+    monkeypatch.delenv("GITHUB_ACTIONS",raising=False)
+    with pytest.raises(PermissionError):
+        pipe.original_ci(r101.SEEDS[0])
+    assert scope.JOB == "r101-unknown-original"

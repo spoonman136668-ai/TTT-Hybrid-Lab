@@ -181,3 +181,36 @@ def test_learned_state_comparator_matches_actual_adapter_not_shared_native_core(
     b = dict(external.core.named_parameters())
     assert a.keys() == b.keys()
     assert all(torch.equal(a[k],b[k]) for k in a)
+
+
+def test_supplementary_approval_does_not_mutate_original_freeze(monkeypatch):
+    from experiments import r101_cpu_firstuse_admission as scope
+    assert not r101.frozen()["authority"]["protected_scored_first_use"]
+    assert scope.FROZEN_BLOB == r101.FREEZE_BLOB
+    assert scope.SEEDS == r101.SEEDS
+    assert scope.APPROVAL_PATH == "experiments/r101_cpu_firstuse_authorization.json"
+    for key in ("GITHUB_ACTIONS","GITHUB_EVENT_NAME","GITHUB_REPOSITORY",
+                "GITHUB_JOB","RUNNER_ENVIRONMENT"):
+        monkeypatch.delenv(key,raising=False)
+    with pytest.raises(PermissionError):
+        scope.admit(r101.SEEDS[0],"e"*40)
+
+
+def test_original_science_denied_even_with_malicious_spoofed_job_env(monkeypatch):
+    from experiments import r101_cpu_firstuse_admission as scope
+    for key,val in (
+        ("GITHUB_ACTIONS","true"),("GITHUB_EVENT_NAME","pull_request"),
+        ("GITHUB_REPOSITORY",scope.REPO),("GITHUB_HEAD_REF",scope.BRANCH),
+        ("GITHUB_JOB",scope.JOB),("R101_SEED",str(scope.SEEDS[0])),
+        ("RUNNER_OS","Linux"),("RUNNER_ENVIRONMENT","github-hosted"),
+        ("GITHUB_RUN_ATTEMPT","2"),("EXPECTED_CANDIDATE_SHA","e"*40),
+        ("GITHUB_RUN_ID","12345"),("GITHUB_REF","refs/pull/297/merge")):
+        monkeypatch.setenv(key,val)
+    with pytest.raises(PermissionError):
+        scope.admit(scope.SEEDS[0],"e"*40)
+    # Frozen original first use is separately scoped and cannot run in G4
+    # qualification even if the seed is valid.
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT","1")
+    monkeypatch.setenv("GITHUB_JOB","cpu-qualification")
+    with pytest.raises(PermissionError):
+        scope.admit(scope.SEEDS[0],"e"*40)

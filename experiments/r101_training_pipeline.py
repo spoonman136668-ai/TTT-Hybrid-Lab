@@ -529,23 +529,19 @@ def measures(seed, scores):
 
 
 def original_ci(seed):
-    """Intentionally not executable: original protected first-use NOT granted.
-
-    After separate scope/owner verification, exact-SHA/run/source custody and
-    project-specific first-use admission must be implemented IN A NEW candidate
-    and fully qualified BEFORE touching protected scored cohorts.
-    """
-    r101._admit(seed=seed)
-    # No side effects before successful owner/source admission.
+    """Owner-authorized FIRST GitHub-hosted CPU attempt only; never replay."""
+    sha = os.getenv("EXPECTED_CANDIDATE_SHA","")
+    custody = r101._admit(seed=seed,candidate_sha=sha)
+    # No FIT/VALID/DEV source side effects occur before the verified custody.
     freeze = protocol()
     torch.set_num_threads(1)
-    sha = os.getenv("EXPECTED_CANDIDATE_SHA","")
     path = ROOT / f"local_runs/r101_unknown_operator_seed{seed}.json"
     if path.exists():
         raise FileExistsError("R101_ORIGINAL_SCIENCE_REPLAY_OR_UNCERTAIN_EFFECT")
     started = time.perf_counter()
     report = {
         "schema":r101.SCHEMA,"candidate_SHA":sha,"seed":seed,
+        "first_use_custody":custody,
         "preimplementation_freeze_blob":r101.FREEZE_BLOB,
         "parent_r100_sealed_SHA":r101.PARENT,
         "status":"R101_ENGINEERING_OR_RESOURCE_INCOMPLETE",
@@ -591,3 +587,17 @@ def original_ci(seed):
         path.parent.mkdir(parents=True,exist_ok=True)
         path.write_text(json.dumps(report,sort_keys=True,indent=2)+"\n",encoding="utf-8")
     return report
+
+if __name__ == "__main__":
+    import argparse
+    p=argparse.ArgumentParser(description="R101 original one-time authorized CPU")
+    p.add_argument("--seed",type=int,choices=SEEDS,required=True)
+    args=p.parse_args()
+    receipt=original_ci(args.seed)
+    print(json.dumps({
+        "schema":receipt["schema"],"source_sha":receipt["candidate_SHA"],
+        "seed":receipt["seed"],"run_id":receipt["first_use_custody"]["run_id"],
+        "all_nine_arms_fully_trained":receipt["all_nine_arms_fully_trained"],
+        "scored_heldout_first_used":receipt["scored_heldout_first_used"],
+        "status":receipt["status"],"scientific_pass":receipt["scientific_pass"],
+        "whole_process_seconds":receipt["whole_process_seconds"]},sort_keys=True))
