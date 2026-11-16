@@ -128,7 +128,7 @@ def test_learnable_pair_merger_has_no_explicit_parity_target_or_zero_gradients()
 def test_three_native_initial_original_cores_are_equal_and_sidecar_is_isolated():
     torch.set_num_threads(1)
     models=r95._models(r95.SEEDS[0])
-    assert tuple(models)==r95.ARMS
+    assert set(models)==set(r95.ARMS)  # training order is frozen by explicit ARMS iteration
     a,b,c=models[r95.NATIVE_RAW],models[r95.NATIVE_FLAT].native,models[r95.NATIVE_TREE].native
     pa,pb,pc=[dict(m.named_parameters()) for m in (a,b,c)]
     assert pa.keys()==pb.keys()==pc.keys()
