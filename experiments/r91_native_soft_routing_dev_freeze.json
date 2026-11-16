@@ -1,0 +1,131 @@
+{
+  "schema": "ttt-hybrid.r91-native-soft-routing-multiworld-dev-freeze.v1",
+  "stage": "FROZEN_SOURCE_ONLY_BEFORE_R91_IMPLEMENTATION_TEST_OR_TEST_WORLD_FIRST_USE",
+  "parent": {
+    "R90_candidate_SHA": "f3de743eb2fb11d21a4f6e6399d2353fbfb79194",
+    "R90_freeze_blob": "577f7b99670cbec335c91600ba282baf2e6afd77",
+    "R90_PR": 285,
+    "R90_status": "ENGINEERING_PASS_SCIENCE_UNVERIFIED",
+    "R89_original_science": "R89_NATIVE_ROLE_ACCESS_NO_GO_BOTH_SEEDS"
+  },
+  "hypothesis": "Full-width reference native Hybrid soft routing restores optimization on many factual causal event histories and improves unseen TEST-only legal intervention decisions compared to identical-initialized native hard routing; soft plus learned public role reader is a separate mechanistic ablation, not an accepted architecture.",
+  "null": "No development signal if frozen soft native decision metrics fail threshold; preserve negative and do not retune same DEV_TEST panel to claim independent science.",
+  "sources": {
+    "world": "Existing original R89 _test_world(index) TEST-only salt 25319991; existing R85 immutable physics, no protected source",
+    "test_train_indices": {
+      "start": 64,
+      "stop_exclusive": 192,
+      "count": 128
+    },
+    "test_dev_indices": {
+      "start": 256,
+      "stop_exclusive": 320,
+      "count": 64
+    },
+    "previous_R90_test_indexes": [
+      0,
+      1
+    ],
+    "actions": [
+      0,
+      2
+    ],
+    "train_action_rule": "Independent deterministic SeedSequence([25329991,world_index]) randomized chosen physical action; one actual selected reward only",
+    "test_dev": "Only TEST-world paired evaluator rewards after ALL model weights freeze; no DEV_TEST as training or early stopping",
+    "protected_science_sources_used": false,
+    "prior_R85_to_R89_FIT_VALID_DEV_OOD_reuse": false,
+    "new_protected_independent_salts": false,
+    "hidden_law_or_oracle_training_labels": false,
+    "previous_trained_weights": false
+  },
+  "models": {
+    "native_reference_width": 1024,
+    "native_core_params": 16818178,
+    "native_core": "R74 original HybridPilot_FULL hard router and R75 triangular causal TTT",
+    "arms": [
+      "NATIVE_HARD_SLOTS5",
+      "NATIVE_SOFT_SLOTS5",
+      "NATIVE_SOFT_ROLE_READER48",
+      "GRU64_SLOTS5",
+      "GRU64_SHUFFLED_SLOTS5"
+    ],
+    "same_initial_core_tensors": true,
+    "soft_router": "R90 SoftDiagnosticRouter with same initialized native router parameters, dense sigmoid gates not compute-matched to sparse hard",
+    "role_reader": "Existing R89 public role/phase attention frontend, new trainable parameters, public data only",
+    "negative_control": "GRU64 gets A event rows shuffled within same pivot stratum; own selected action preserved"
+  },
+  "training": {
+    "seed": 1000211,
+    "mini_batch": 2,
+    "native_updates_per_arm": 384,
+    "GRU_updates_per_arm": 4096,
+    "optimizer": "AdamW",
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "grad_clip": 1,
+    "same_first_384_FIT_indices_for_all_arms": true,
+    "checkpoint_updates": [
+      0,
+      128,
+      256,
+      384,
+      1024,
+      2048,
+      4096
+    ],
+    "early_stopping": false,
+    "initial_and_final_training_MSE": true,
+    "time_and_parameters_recorded": true,
+    "native_vs_GRU_training_steps_or_FLOPs_matched": false,
+    "no_persistent_trained_checkpoint": true,
+    "existing_G4_full_regression_timeout_seconds": 600
+  },
+  "evaluation": {
+    "dev_worlds": 64,
+    "only_once_after_all_training": true,
+    "metrics": [
+      "DEV_TEST_mean_actual_intervention_reward",
+      "DEV_TEST_cold_reward",
+      "DEV_TEST_action_agreement_vs_public_A_rule_evaluator_only",
+      "DEV_TEST_oracle_regret",
+      "DEV_TEST_factual_selected_action_MSE",
+      "paired_bootstrap_lower95_soft_minus_hard",
+      "training_wall_and_exposures"
+    ],
+    "paired_bootstrap_resamples": 1000,
+    "bootstrap_seed_salt": 25329993,
+    "soft_vs_hard_mean_reward_min": 0.5,
+    "soft_vs_shuffled_mean_reward_min": 0.5,
+    "soft_vs_GRU64_mean_reward_min": -0.5,
+    "soft_rule_agreement_min": 0.65,
+    "soft_oracle_regret_max": 1.5,
+    "positive_status": "R91_SOFT_ROUTING_DEV_SIGNAL_ONLY",
+    "negative_status": "R91_SOFT_ROUTING_DEV_NO_GO",
+    "incomplete_status": "R91_INCOMPLETE_ENGINEERING_RESOURCE_NOT_NEGATIVE",
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r91-native-soft-routing-multiworld-dev-20261115",
+    "workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "use_existing_full_dual_OS_pytest": true,
+    "new_workflow_or_jobs": false,
+    "science_first_use": false,
+    "exact_source_sha_required": true,
+    "original_source_artifact_retention_days": 30,
+    "official_GPU_first_use": false,
+    "FORGE_integration": false,
+    "controller_or_runner_change": false
+  },
+  "authority": {
+    "existing_TEST_only_dev_training": true,
+    "protected_source_first_use": false,
+    "merge": false,
+    "model_promotion": false,
+    "official_GPU": false,
+    "FORGE_integration": false,
+    "controller_change": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_API": false
+  }
+}
