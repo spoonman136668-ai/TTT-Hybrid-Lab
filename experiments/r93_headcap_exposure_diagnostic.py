@@ -224,7 +224,15 @@ def _shuffle_A(x:np.ndarray,seed:int,tag:int)->np.ndarray:
     rng=np.random.default_rng(np.random.SeedSequence([SHUFFLE_SALT,seed,tag]))
     for timepoint in np.unique(strata):
         ids=np.flatnonzero(strata==timepoint)
-        index[ids]=rng.permutation(ids)
+        if len(ids)<2:
+            raise RuntimeError("R93_SHUFFLE_STRATUM_TOO_SMALL_FOR_CAUSAL_NEGATIVE")
+        proposed=rng.permutation(ids)
+        # A random within-stratum permutation can leave the complete 4-row
+        # A history unchanged. A causal-missing negative MUST replace every
+        # world's A rows, including 2-world unit fixtures.
+        if np.any(proposed==ids):
+            proposed=np.roll(ids,1)
+        index[ids]=proposed
     out=x.copy()
     out[:,:4]=x[index,:4]
     if not np.array_equal(out[:,-1],x[:,-1]):
