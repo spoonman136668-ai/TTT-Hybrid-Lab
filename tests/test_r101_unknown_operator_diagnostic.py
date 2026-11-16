@@ -156,3 +156,24 @@ def test_no_original_science_or_production_write_from_dev_module():
     assert r101.STEPS == 3072 and r101.BATCH == 16
     assert not hasattr(r101, "run_scored")
     assert not hasattr(r101, "promote")
+
+
+
+def test_learned_state_comparator_matches_actual_adapter_not_shared_native_core():
+    torch.set_num_threads(1)
+    models = r101.make_models(r101.SEEDS[0])
+    native = models[r101.NATIVE]
+    external = models[r101.EXTERNAL]
+    count = lambda m: sum(p.numel() for name,p in m.named_parameters()
+                          if not name.startswith("core.") and p.requires_grad)
+    native_adapter = count(native)
+    external_adapter = count(external)
+    assert native_adapter > 0 and external_adapter > 0
+    assert abs(native_adapter-external_adapter) <= .10*max(native_adapter,external_adapter)
+    # Critical: the 16M+ common native core must NOT dominate capacity parity.
+    native_full = sum(p.numel() for p in native.parameters())
+    assert native_full > native_adapter * 10
+    a = dict(native.core.named_parameters())
+    b = dict(external.core.named_parameters())
+    assert a.keys() == b.keys()
+    assert all(torch.equal(a[k],b[k]) for k in a)
