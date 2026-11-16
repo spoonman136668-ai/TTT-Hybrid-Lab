@@ -84,7 +84,7 @@ def test_future_physical_effect_never_changes_legal_prior_observation():
 
 def test_predeclared_diagnostic_not_proof_of_native_reasoning_or_promotion():
     f=r90.frozen()
-    assert "NOT" in f["null"]
+    assert "not evidence" in f["null"]
     assert "SCIENCE" in f["thresholds"]["on_original_hard_fit_both_seeds"] or (
         f["thresholds"]["independent_scientific_pass"] is False)
     assert f["execution"]["existing_G4_only"]
