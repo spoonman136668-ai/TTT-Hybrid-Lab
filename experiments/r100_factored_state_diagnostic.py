@@ -566,3 +566,194 @@ def _train(model,arm,fit,valid,indices):
             "aux_loss_weight":LAMBDA if arm in (AUX,SHUFFLED) else 0.,
             "aux_target":"SIGN_OF_ACTUALLY_REALIZED_RETURN" if arm==AUX
                 else "DONOR_FACTUAL_RETURN_SIGN" if arm==SHUFFLED else "NONE"}
+
+
+def _score(models,panel):
+    decisions={};metrics={};rewards={}
+    for arm,model in models.items():
+        v0=_predict(model,arm,panel,"0")
+        v2=_predict(model,arm,panel,"2")
+        decisions[arm]=np.where(v0>v2,r85.CALIBRATE,r85.EXPLOIT_POS)
+    public_sign=r98._private_public_rule(panel["raw0"])
+    true_sign=panel["law"]
+    public_action=np.where(public_sign>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    true_action=np.where(true_sign>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+    decisions["PUBLIC_PROGRAM_RULE_EVALUATOR_ONLY"]=public_action
+    decisions["PRIVATE_TRUE_LAW_EVALUATOR_ONLY"]=true_action
+    decisions["ALWAYS_CALIBRATE"]=np.full(len(true_action),r85.CALIBRATE)
+    decisions["ALWAYS_EXPLOIT_POS"]=np.full(len(true_action),r85.EXPLOIT_POS)
+    oracle=np.maximum(panel["reward0"],panel["reward2"])
+    for arm,choice in decisions.items():
+        ret=np.where(choice==r85.CALIBRATE,panel["reward0"],panel["reward2"])
+        rewards[arm]=ret
+        metrics[arm]={
+            "mean_realized_reward":float(ret.mean()),
+            "cold_mean_reward":float(ret[panel["cold"]].mean()),
+            "regret_to_physical_oracle":float((oracle-ret).mean()),
+            "public_program_action_agreement":float(np.mean(choice==public_action)),
+            "private_true_law_action_agreement":float(np.mean(choice==true_action))}
+    metrics["PHYSICAL_PAIRED_ORACLE_EVALUATOR_ONLY"]={
+        "mean_realized_reward":float(oracle.mean()),
+        "cold_mean_reward":float(oracle[panel["cold"]].mean()),
+        "regret_to_physical_oracle":0.}
+    return {"decisions":decisions,"metrics":metrics,"rewards":rewards}
+
+
+def _bootstrap_lower(a,b,seed,part=0):
+    if a.shape!=(COUNT["DEV_COMPOSE"],) or b.shape!=a.shape:
+        raise RuntimeError("R100_PAIRED_BOOTSTRAP_SHAPE_NOT_PRECOMMITTED")
+    rng=np.random.default_rng(np.random.SeedSequence([BOOTSTRAP_SALT,seed,part]))
+    ix=rng.integers(0,len(a),size=(2000,len(a)))
+    return float(np.quantile((a-b)[ix].mean(axis=1),.025))
+
+
+def original_ci(seed):
+    sha=_admit(seed)
+    torch.set_num_threads(1)
+    preflight=design_preflight()
+    path=ROOT/f"local_runs/r100_factored_state_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R100_FIRST_USE_ALREADY_CONSUMED_OR_UNCERTAIN")
+    started=time.perf_counter()
+    result={
+        "schema":SCHEMA,"seed":seed,"candidate_source_SHA":sha,
+        "freeze_blob":FREEZE_BLOB,"r99_sealed_parent_SHA":PARENT,
+        "torch":str(torch.__version__),"platform":platform.platform(),
+        "preflight":preflight[str(seed)],"source_audits":{},"trained":{},
+        "status":"R100_ENGINEERING_OR_RESOURCE_INCOMPLETE_NO_SCIENCE_VERDICT",
+        "all_eleven_frozen_before_DEV":False,
+        "DEV_COMPOSE_OOD_PROGRAM_SWITCH_original_first_use":False,
+        "older_scored_source_or_weights_used":False,
+        "scientific_pass":False}
+    try:
+        fit=_factual("FIT",seed,sha)
+        valid=_factual("VALID",seed,sha)
+        if not fit["only_one_realized_chosen_action_return"]:
+            raise RuntimeError("R100_PRIVILEGED_OR_UNCHOSEN_REWARD_TRAINING")
+        result["source_audits"]["FIT"]=fit["audit"]
+        result["source_audits"]["VALID"]=valid["audit"]
+        rng=np.random.default_rng(np.random.SeedSequence([BATCH_SALT,seed]))
+        indices=rng.integers(0,COUNT["FIT"],size=(STEPS,BATCH))
+        models=_models(seed)
+        for arm in ARMS:
+            result["trained"][arm]=_train(models[arm],arm,fit,valid,indices)
+            if time.perf_counter()-started>MAX_SECONDS:
+                raise TimeoutError("R100_FROZEN_MAX_WHOLE_CPU_TIME_EXCEEDED")
+        if set(result["trained"])!=set(ARMS):
+            raise RuntimeError("R100_NOT_ALL_ELEVEN_FULLY_TRAINED")
+        result["all_eleven_frozen_before_DEV"]=True
+        # No DEV/shifted/program intervention is even constructed until all
+        # trainable arms have completed and parameters have been frozen.
+        result["DEV_COMPOSE_OOD_PROGRAM_SWITCH_original_first_use"]=True
+        seen=_scored("DEV_SEEN",seed,sha)
+        dev=_scored("DEV_COMPOSE",seed,sha)
+        ood=_scored("OOD_SHIFT",seed,sha)
+        switch=_scored("PROGRAM_SWITCH",seed,sha)
+        result["source_audits"].update({
+            "DEV_SEEN":seen["audit"],"DEV_COMPOSE":dev["audit"],
+            "OOD_SHIFT":ood["audit"],"PROGRAM_SWITCH":switch["audit"]})
+        seen_res=_score(models,seen)
+        dev_res=_score(models,dev)
+        ood_res=_score(models,ood)
+        original=_score(models,switch)
+        changed=_score(models,switch["counter"])
+        d=dev_res["metrics"]
+        o=ood_res["metrics"]
+        physical_changed=switch["law"]!=switch["counter"]["law"]
+        if not physical_changed.any():
+            raise RuntimeError("R100_PHYSICAL_PROGRAM_SWITCH_WITHOUT_LAW_CHANGE")
+        true_before=np.where(switch["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        true_after=np.where(switch["counter"]["law"]>0,r85.CALIBRATE,r85.EXPLOIT_POS)
+        choices_before=original["decisions"][NOAUX]
+        choices_after=changed["decisions"][NOAUX]
+        r=lambda x:d[x]["mean_realized_reward"]
+        cold=lambda x:o[x]["cold_mean_reward"]
+        best_conventional=max(r(k) for k in (MLP,SET,GRU))
+        measures={
+            "noaux_minus_unstructured_DEV_reward":r(NOAUX)-r(UNSTRUCTURED),
+            "noaux_minus_best_conventional_DEV_reward":r(NOAUX)-best_conventional,
+            "noaux_minus_opcode_mask_DEV_reward":r(NOAUX)-r(OPMASK),
+            "engineered_upper_minus_noaux_DEV_reward":r(UPPER)-r(NOAUX),
+            "noaux_true_law_action_accuracy":d[NOAUX]["private_true_law_action_agreement"],
+            "noaux_minus_unstructured_shifted_cold_reward":cold(NOAUX)-cold(UNSTRUCTURED),
+            "bootstrap_lower95_noaux_minus_unstructured":_bootstrap_lower(
+                dev_res["rewards"][NOAUX],dev_res["rewards"][UNSTRUCTURED],seed,0),
+            "program_switch_true_law_changed_fraction":float(physical_changed.mean()),
+            "program_switch_noaux_action_flip_given_true_change":float(np.mean(
+                choices_before[physical_changed]!=choices_after[physical_changed])),
+            "program_switch_noaux_true_law_accuracy_both":float((
+                (choices_before==true_before).sum()+
+                (choices_after==true_after).sum())/(2*len(physical_changed))),
+            "factual_aux_minus_noaux_DEV_reward":r(AUX)-r(NOAUX),
+            "factual_aux_minus_shuffled_aux_DEV_reward":r(AUX)-r(SHUFFLED),
+            "bootstrap_lower95_aux_minus_noaux":_bootstrap_lower(
+                dev_res["rewards"][AUX],dev_res["rewards"][NOAUX],seed,1),
+            "factual_aux_minus_noaux_shifted_cold_reward":cold(AUX)-cold(NOAUX),
+            "noaux_minus_external_same_algebra_DEV_reward":r(NOAUX)-r(EXTERNAL),
+            "factual_aux_minus_external_same_algebra_DEV_reward":r(AUX)-r(EXTERNAL)}
+        f=frozen()["evaluation"]
+        t=f["structural_checks"]
+        u=f["feedback_checks"]
+        n=f["native_specific_checks"]
+        structural={
+          "factor_noaux_beats_unstructured":measures["noaux_minus_unstructured_DEV_reward"]>=t["noaux_minus_unstructured_DEV_reward_min"],
+          "factor_noaux_beats_strongest_conventional":measures["noaux_minus_best_conventional_DEV_reward"]>=t["noaux_minus_strongest_conventional_DEV_reward_min"],
+          "factor_noaux_beats_opcode_mask":measures["noaux_minus_opcode_mask_DEV_reward"]>=t["noaux_minus_opcode_mask_DEV_reward_min"],
+          "factor_noaux_near_engineered_upper":measures["engineered_upper_minus_noaux_DEV_reward"]<=t["engineered_upper_minus_noaux_DEV_reward_gap_max"],
+          "factor_noaux_true_physical_law_accuracy":measures["noaux_true_law_action_accuracy"]>=t["noaux_true_law_accuracy_min"],
+          "shifted_cold_noaux_gain":measures["noaux_minus_unstructured_shifted_cold_reward"]>=t["noaux_minus_unstructured_shifted_cold_reward_min"],
+          "paired_bootstrap_noaux_gain":measures["bootstrap_lower95_noaux_minus_unstructured"]>=t["paired_bootstrap_lower95_noaux_minus_unstructured_min"],
+          "physical_program_switch_changes_law":measures["program_switch_true_law_changed_fraction"]>=t["program_switch_true_law_changed_fraction_min"],
+          "noaux_changes_action_with_law":measures["program_switch_noaux_action_flip_given_true_change"]>=t["program_switch_noaux_action_flip_when_law_changes_min"],
+          "noaux_correct_on_both_programs":measures["program_switch_noaux_true_law_accuracy_both"]>=t["program_switch_noaux_true_law_accuracy_both_min"]}
+        feedback={
+          "outcome_sign_aux_beats_same_factor_noaux":measures["factual_aux_minus_noaux_DEV_reward"]>=u["factual_aux_minus_noaux_DEV_reward_min"],
+          "outcome_sign_aux_beats_shuffled_return_sign":measures["factual_aux_minus_shuffled_aux_DEV_reward"]>=u["factual_aux_minus_shuffled_aux_DEV_reward_min"],
+          "paired_bootstrap_outcome_sign_gain":measures["bootstrap_lower95_aux_minus_noaux"]>=u["paired_bootstrap_lower95_factual_aux_minus_noaux_min"],
+          "shifted_cold_outcome_sign_gain":measures["factual_aux_minus_noaux_shifted_cold_reward"]>=u["factual_aux_minus_noaux_shifted_cold_reward_min"]}
+        native={
+          "native_internal_factor_noaux_beats_external_same_algebra":measures["noaux_minus_external_same_algebra_DEV_reward"]>=n["noaux_minus_external_same_algebra_DEV_reward_min"],
+          "native_internal_factor_aux_beats_external_same_algebra":measures["factual_aux_minus_external_same_algebra_DEV_reward"]>=n["factual_aux_minus_external_same_algebra_DEV_reward_min"]}
+        result["DEV_SEEN"]=seen_res["metrics"]
+        result["DEV_COMPOSE"]=d
+        result["OOD_SHIFT"]=o
+        result["PROGRAM_SWITCH"]={
+            "before":original["metrics"],
+            "changed_program":changed["metrics"],
+            "physical_law_changed_worlds":int(physical_changed.sum())}
+        result["measures"]=measures
+        result["structural_checks"]={k:bool(v) for k,v in structural.items()}
+        result["feedback_checks"]={k:bool(v) for k,v in feedback.items()}
+        result["native_specific_checks"]={k:bool(v) for k,v in native.items()}
+        status=f["statuses"]
+        result["status"]=(status["all"] if all(structural.values()) and all(feedback.values())
+                          else status["structural"] if all(structural.values())
+                          else status["no_go"])
+    except BaseException as error:
+        result["error_type"]=type(error).__name__
+        result["error_message"]=str(error)
+        status=frozen()["evaluation"]["statuses"]
+        result["status"]=(status["source_invalid"]
+                          if "R100_PRIVATE_LAW_" in str(error) or
+                          "R100_RETURN_SHUFFLE_PRIVATE_LAW_" in str(error)
+                          else status["incomplete"])
+        raise
+    finally:
+        result["whole_process_seconds"]=time.perf_counter()-started
+        path.parent.mkdir(parents=True,exist_ok=True)
+        with path.open("x",encoding="utf-8") as out:
+            json.dump(result,out,indent=2,sort_keys=True,allow_nan=False)
+            out.write("\n")
+    return result
+
+
+if __name__=="__main__":
+    import argparse
+    parser=argparse.ArgumentParser()
+    parser.add_argument("--seed",required=True,type=int,choices=SEEDS)
+    args=parser.parse_args()
+    receipt=original_ci(args.seed)
+    print(json.dumps({"seed":args.seed,"status":receipt["status"],
+                      "fully_trained_arms":len(receipt["trained"]),
+                      "first_heldout_source_used":receipt["DEV_COMPOSE_OOD_PROGRAM_SWITCH_original_first_use"],
+                      "independent_scientific_pass":False},sort_keys=True))
