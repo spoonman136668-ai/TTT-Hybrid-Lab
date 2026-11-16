@@ -1,0 +1,195 @@
+{
+  "schema": "ttt-hybrid.r93-test-only-balanced-exposure-headgrad-v1",
+  "stage": "PROSPECTIVE_IMMUTABLE_PROTOCOL_BEFORE_R93_CODE_REGRESSION_OR_TEST_FIRST_USE",
+  "parent": {
+    "R92_PR": 288,
+    "R92_exact_SHA": "84bf0aa6e3650fc8a9dfc8e0f97becb15b8eda30",
+    "R92_frozen_blob": "149ea5161cd26fef343a60e0b6c93d01b91e620a",
+    "R92_final": "R92_NATIVE_DIVERSITY_LR_NO_GO_DIAGNOSTIC_ONLY_TWO_FRESH_SEEDS",
+    "R92_adjudication": "https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/288#issuecomment-6904676891",
+    "R92_spent_new_test_salts": [
+      25330111,
+      25330211,
+      25330311,
+      25330411
+    ],
+    "R91_spent_dev_salt": 25319991,
+    "R90_credit_TEST_salt": 25319991,
+    "R90_tiny_TEST_salt": 25320991,
+    "R89_science_frozen_NO_GO": true,
+    "no_old_training_weights_or_scored_source_reuse": true
+  },
+  "question": "At fixed physical facts and exactly balanced 1 or 8 observed factual exposures PER DISTINCT world, does a readout-head-gradient cap preserve backbone gradient updates and reproducibly improve true heldout factual-return regression compared with the identical original hard core and a conventional GRU, when world diversity is 256 vs 16? Preserve separate full-width (1024) high-first baseline with 1 exposure/world.",
+  "null": "A tiny/synthetic TEST-only factual-return MSE gain is not policy value learning, transfer to novel laws, native independent scientific qualification, official CUDA fused Mamba2+TTT, or permission to promote. If both frozen independent seeds do not satisfy EVERY 32w/256world/8exposure criterion, record R93_EXPOSURE_HEADCAP_DEV_NO_GO regardless of favorable later post hoc levels. If resource limit interrupts mandatory levels or source invalid, status R93_INCOMPLETE_RESOURCE_NOT_SCIENTIFIC_NO_GO.",
+  "hypothesis": "R92 showed full native selected-return training often worsens after globally clipping a >80-120 norm head gradient and only 0.75 sampled exposures per world. Direct readout-head cap at pre-global gradient norm1, with exact balanced eight action-return exposures/world, should improve independent TEST-only factual-return MSE without leakage compared to globally clipped original hard native; if not, evidence points away from this isolated optimizer adjustment.",
+  "source": {
+    "type": "FRESH_TEST_ONLY_NONPROTECTED_DIAGNOSTIC",
+    "train_salt": 25340111,
+    "dev_test_salt": 25340211,
+    "shuffle_salt": 25340311,
+    "batch_permutation_salt": 25340411,
+    "unit_test_only_salt": 25349999,
+    "seeds": [
+      1000811,
+      1000823
+    ],
+    "train_worlds_max": 256,
+    "eval_world_count": 64,
+    "train_indices": "0..255",
+    "dev_indices": "1000..1063, independent panel salt, NEVER used in training or checkpoint choice",
+    "world_generator": "r85._make_synthetic_world(index % r85.N, numpy Generator(SeedSequence([new_panel_salt,seed,index]))) ONLY, not r89._world/r89._test_world/r91 scored panels",
+    "view": "r89._view exact factual chosen physical 9-tick return, r88._public_slots returns four actually observed A response rows in role order plus selected factual pivot action row",
+    "chosen_action_rule": "For seed_index 0 (1000811) / 1 (1000823), CALIBRATE iff (floor(index/4)+seed_index)%2==0, otherwise EXPLOIT_POS. Exactly one actually observed chosen action and its physical return; action is orthogonal to index%2 pivot timing and (index%512//2)%2 hidden-law stratum. Never use hidden law as input or label.",
+    "heldout": "DEV_TEST 64 fresh separate worlds per seed may be constructed ONLY ONCE AFTER EVERY FROZEN ARM/LEVEL FINISHES, NO scoring, training, early stopping, hyperparameter tuning or rerun on already scored DEV_TEST",
+    "old_source_salts_disjoint": true,
+    "balance_contract": {
+      "before_first_use": "Assert index-only 2x2x2 cross-stratum counts for each declared seed and panel, WITHOUT constructing physical world or accessing DEV_TEST labels.",
+      "stratum_keys": [
+        "early_or_cold=index%2",
+        "law_balancing_key=(index%512//2)%2",
+        "selected_action=(floor(index/4)+seed_index)%2"
+      ],
+      "train_worlds256_each_cell": 32,
+      "train_worlds16_each_cell": 2,
+      "dev_test_worlds64_each_cell": 8,
+      "must_fail_closed_on_any_imbalance": true,
+      "action_chosen_using_only_index_and_public_protocol_seed_index": true
+    },
+    "supersedes_preimplementation_freeze_blob": "9f51f6c6850a43cf353d1555505c2360fd49071d",
+    "supersession_reason": "Original R93 prospective freeze action=(seed+index)%2 was exactly confounded with early/cold timing, as in spent R92; replaced before R93 code, regression or source first use. Original frozen bytes remain auditable in ancestor fa4fad57adb15b7e9aebea131a8a48465b930074."
+  },
+  "design": {
+    "order": "HIGHEST_WIDTH_1024_WORLDS256_ONE_EXPOSURE_PER_WORLD_FIRST, then width32 worlds256/eight exposures, worlds256/one exposure, worlds16/eight exposures, worlds16/one exposure",
+    "levels": [
+      {
+        "width": 1024,
+        "worlds": 256,
+        "exposures_per_distinct_world": 1,
+        "arms": [
+          "NATIVE_HARD_GLOBAL1",
+          "NATIVE_HARD_HEADCAP1",
+          "NATIVE_NO_DEPTH_GLOBAL1"
+        ]
+      },
+      {
+        "width": 32,
+        "worlds": 256,
+        "exposures_per_distinct_world": 8,
+        "arms": [
+          "NATIVE_HARD_GLOBAL1",
+          "NATIVE_HARD_HEADCAP1",
+          "NATIVE_NO_DEPTH_GLOBAL1",
+          "GRU64_SLOTS5",
+          "GRU64_SHUFFLED_A_SLOTS5"
+        ]
+      },
+      {
+        "width": 32,
+        "worlds": 256,
+        "exposures_per_distinct_world": 1,
+        "arms": [
+          "NATIVE_HARD_GLOBAL1",
+          "NATIVE_HARD_HEADCAP1",
+          "NATIVE_NO_DEPTH_GLOBAL1",
+          "GRU64_SLOTS5",
+          "GRU64_SHUFFLED_A_SLOTS5"
+        ]
+      },
+      {
+        "width": 32,
+        "worlds": 16,
+        "exposures_per_distinct_world": 8,
+        "arms": [
+          "NATIVE_HARD_GLOBAL1",
+          "NATIVE_HARD_HEADCAP1",
+          "NATIVE_NO_DEPTH_GLOBAL1",
+          "GRU64_SLOTS5",
+          "GRU64_SHUFFLED_A_SLOTS5"
+        ]
+      },
+      {
+        "width": 32,
+        "worlds": 16,
+        "exposures_per_distinct_world": 1,
+        "arms": [
+          "NATIVE_HARD_GLOBAL1",
+          "NATIVE_HARD_HEADCAP1",
+          "NATIVE_NO_DEPTH_GLOBAL1",
+          "GRU64_SLOTS5",
+          "GRU64_SHUFFLED_A_SLOTS5"
+        ]
+      }
+    ],
+    "native_reference": "R74 original HybridPilot_FULL original hard depth router, R75 triangular native reference TTT, original same-seed initial tensors, same 5 legal original observed event rows per model",
+    "headcap": "After backward and BEFORE the original global 1.0 clip, apply independent L2 norm cap 1.0 to head parameters only; then apply original global 1.0 to all. No other changes to optimizer/model; train via factual-return MSE only.",
+    "no_depth": "Ablation deletes depth module but retains original other same-seeded native weights; different model parameter count; no formal compute match.",
+    "GRU64": "R81 original GRU64 receives same lawful 5 event rows, identical model architecture for shuffled negative; no extra training budget, matched training records and per-world factual exposure across all arms.",
+    "shuffled_negative": "Replace true 4 observed A event rows with other independent train-world A rows inside early/cold pivot stratum; retain own chosen factual action and exact role/time observation geometry; shuffle deterministically independent of truth.",
+    "all_models_seed_initialized_independently_from_same_core_for_native_arms": true,
+    "no_architecture_promotion": true,
+    "headcap_only_changes_optimization_not_forward": true,
+    "fullwidth_native_params": 16818178
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "batch": 2,
+    "global_clip_norm": 1,
+    "head_grad_clip_norm_when_applicable": 1,
+    "balanced_deterministic_epochs": "For each epoch, each of the n training worlds appears exactly once; repeat e independent seeded full permutations; per-arm for a given seed/level reuses identical ordered minibatches and factual selected-return labels",
+    "updates_formula": "world_count*exposures_per_distinct_world/2; e.g. 1024w256n1=128, 32w256n8=1024, 32w16n8=64",
+    "first_group_gradients": "Record first-batch head vs all non-head norm BEFORE head cap, pre-global total norm, headclip activation, global clip activation, and initial stem/router/TTT gradients; report head share of final clipped gradient",
+    "per_arm_metrics": "Full TRAIN before and after factual-return MSE, fresh DEV_TEST factual-return MSE, model params, updates, true per-world exposures, full train-loop wall time, numeric finiteness, head clip fraction/global clip fraction",
+    "memory": "Only ephemeral in-RAM state_dict needed for heldout readback; no external model weights or persistent checkpoints",
+    "cpu_total_resource_cap_seconds": 330,
+    "existing_G4_pytest_max_seconds": 600,
+    "without_DEV_when_incomplete": true,
+    "strict_one_shot_first_attempt": true
+  },
+  "frozen_evaluation": {
+    "both_independent_seeds_required": true,
+    "mandatory_level": "w32_n256_e8",
+    "thresholds": {
+      "headcap_vs_global_DEV_MSE_relative_gain_min": 0.08,
+      "headcap_vs_constant_TRAIN_mean_DEV_MSE_relative_gain_min": 0.05,
+      "headcap_vs_global_TRAIN_MSE_relative_gain_min": 0.1,
+      "headcap_vs_GRU64_DEV_MSE_relative_gain_min": -0.1,
+      "headcap_head_clip_activation_fraction_min": 0.25,
+      "headcap_head_grad_reduction_fraction_min": 0.2
+    },
+    "compare_and_report": "Gains are (baseline_mse - candidate_mse) / max(abs(baseline_mse),epsilon). Neither constant from DEV mean nor oracle action payoffs trained. Additional width1024/256/1 and width32/16 and 1-exposure comparisons descriptive only, no post hoc successes.",
+    "success_code": "R93_HEAD_GRAD_CONDITIONING_DEV_SIGNAL_ONLY",
+    "negative_code": "R93_EXPOSURE_HEADCAP_DEV_NO_GO",
+    "incomplete_code": "R93_INCOMPLETE_RESOURCE_NOT_SCIENTIFIC_NO_GO",
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r93-native-exposure-head-conditioning-20261115",
+    "existing_G4_Linux_Windows_full_pytest_required": true,
+    "G5_authentic_TTT_CPU_and_G7_pinned_Mamba2_CPU_same_SHA_required": true,
+    "original_R93_dev_ONLY_existing_G4_first_attempt_clean_head_Linux": true,
+    "windows_r93_full_test_and_source_negatives_but_NO_DEV_reuse": true,
+    "old_R91_R92_DEV_test_experiment_branch_fenced": true,
+    "receipt": "local_runs/r93_headcap_exposure_linux.json",
+    "existing_local_runs_artifact_upload": true,
+    "new_workflow_or_job": false,
+    "new_schedule_or_runner": false,
+    "official_GPU_first_use": false,
+    "protected_science_first_use": false,
+    "no_paid_API": true
+  },
+  "authority": {
+    "CPU_test_only_diagnostic_allowed": true,
+    "merge": false,
+    "model_weight_promotion": false,
+    "independent_scientific_first_use": false,
+    "official_GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_controller": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "paid_API": false
+  }
+}
