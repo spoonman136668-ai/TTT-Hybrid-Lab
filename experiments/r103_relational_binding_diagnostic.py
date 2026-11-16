@@ -88,13 +88,43 @@ def _admit(*_args,**_kw):
 
 
 def _world(panel,seed,index,sha=None,*,event=0,family=None):
-    """Original physical cohort prohibited, including FIT, VALID and DEV."""
+    """Prospective fresh physical source: never opens without owner admission.
+
+    R103 original FIT/DEV is DENIED at _admit on this engineering candidate.
+    The independent deterministic construction below is therefore unreachable
+    until later separately authorized and exact-source-qualified first-use.
+    """
     f=frozen()
     if panel not in PANEL_COUNTS:
         raise PermissionError("R103_PRIOR_SPENT_OR_UNKNOWN_PANEL_DENIED")
     if seed not in SEEDS or not isinstance(index,int) or not 0<=index<PANEL_COUNTS[panel]:
         raise PermissionError("R103_UNREGISTERED_SEED_OR_EPISODE")
-    raise PermissionError("R103_PROTECTED_ORIGINAL_PHYSICAL_SOURCE_NOT_ADMITTED")
+    try:
+        _admit(seed=seed,candidate_sha=sha)
+    except PermissionError as exc:
+        raise PermissionError(
+            "R103_PROTECTED_ORIGINAL_PHYSICAL_SOURCE_NOT_ADMITTED") from exc
+    if not isinstance(event,int) or not 0<=event<=SUPPORT:
+        raise PermissionError("R103_SCORED_SOURCE_EVENT_NOT_FROZEN")
+    if family not in KNOWN+UNSEEN:
+        raise PermissionError("R103_SCORED_SOURCE_FAMILY_NOT_FROZEN")
+    if panel in ("FIT","VALID","DEV_FAMILIAR") and family not in KNOWN:
+        raise PermissionError("R103_UNSEEN_RELATION_LEAKED_INTO_FIT")
+    if panel in ("DEV_UNKNOWN","OOD_SHIFT","DELAYED_COLD","REVERSAL") and family not in UNSEEN:
+        raise PermissionError("R103_FAMILIAR_RELATION_LEAKED_INTO_UNKNOWN_DEV")
+    rng=np.random.default_rng(np.random.SeedSequence([
+        f["source"]["salts"][panel],seed,index,event]))
+    pivot_parity=1 if panel=="DELAYED_COLD" else index%2
+    physical_index=(2*(index%(r85.N//2))+pivot_parity)%r85.N
+    world=r85._make_synthetic_world(physical_index,rng)
+    roles=tuple(int(k) for k in rng.permutation(4)[:3])
+    factors=rng.choice([-1,1],size=4).astype(np.int64)
+    world["factors_a"]=factors
+    world["r103_roles"]=roles
+    world["law_a"]=_operator_truth(factors,roles,family)
+    if panel=="OOD_SHIFT":
+        world=r86._shift_public_world(world,index)
+    return world
 
 
 def original_ci(*_args,**_kwargs):

@@ -127,3 +127,32 @@ def test_unit_query_role_relabel_is_public_only():
     np.testing.assert_array_equal(
         np.sort(moved[:,:,:4,8],axis=2),
         np.sort(sample[:,:,:4,8],axis=2))
+
+
+
+def test_all_eleven_models_take_one_actual_UNIT_ONLY_factual_optimizer_step():
+    """Engineering-only DEV smoke; NO FIT/DEV original samples or scored claim."""
+    torch.set_num_threads(1)
+    f=r103.unit_fixture(9)
+    p=f["public"]
+    x=torch.from_numpy(p["support_slots"][None])
+    r=torch.from_numpy(p["support_rewards"][None])
+    q=torch.from_numpy(p["query0"][None])
+    # The physical CALIBRATE chosen action supplies the only target.
+    target=torch.tensor([f["evaluator_only"]["return0"]],dtype=torch.float32)
+    models=r103.make_models(r103.SEEDS[0])
+    for arm,model in models.items():
+        opt=torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.0001)
+        out=model(x,r,q)
+        assert out.shape==(1,) and bool(torch.isfinite(out).all()),arm
+        loss=torch.nn.functional.mse_loss(out,target)
+        assert bool(torch.isfinite(loss)),arm
+        opt.zero_grad(set_to_none=True)
+        loss.backward()
+        assert any(v.grad is not None and bool(torch.isfinite(v.grad).all())
+                   for v in model.parameters()),arm
+        torch.nn.utils.clip_grad_norm_(model.parameters(),1.)
+        opt.step()
+        with torch.no_grad():
+            after=model(x,r,q)
+            assert bool(torch.isfinite(after).all()),arm
