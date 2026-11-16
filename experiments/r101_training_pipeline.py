@@ -124,11 +124,17 @@ def operator_family(panel, index, event):
         raise PermissionError("R101_NONFROZEN_SUPPORT_EVENT")
     if panel in ("FIT", "VALID", "DEV_FAMILIAR"):
         return r101.KNOWN[index % len(r101.KNOWN)]
-    target = r101.UNSEEN[index % len(r101.UNSEEN)]
-    # On REVERSAL, physical law changes halfway through observed factual
-    # supports. The query obeys the NEW family. All weights remain fixed.
+    # DO NOT use index parity here. R85/R86 publicly reveal the pivot
+    # time stratum selected by index parity, so index%2 would expose the
+    # unknown family through public time even without an explicit opcode.
+    # Consecutive even/odd episodes share a hidden family; each operator
+    # occurs equally in EACH public timing and query-action cell.
+    target_id = (index // 2) % len(r101.UNSEEN)
+    target = r101.UNSEEN[target_id]
+    # Physical REVERSAL switches families halfway through factual support.
+    # Its initial family must differ from the target regardless of parity.
     if panel == "REVERSAL" and event < SUPPORT // 2:
-        return r101.UNSEEN[(index + 1) % len(r101.UNSEEN)]
+        return r101.UNSEEN[(target_id + 1) % len(r101.UNSEEN)]
     return target
 
 
