@@ -170,9 +170,13 @@ def test_learned_state_comparator_matches_actual_adapter_not_shared_native_core(
     external_adapter = count(external)
     assert native_adapter > 0 and external_adapter > 0
     assert abs(native_adapter-external_adapter) <= .10*max(native_adapter,external_adapter)
-    # Critical: the 16M+ common native core must NOT dominate capacity parity.
+    # Core size is measured, not presumed. Comparing adapter capacity to
+    # total core+adapter capacity can mask a mismatch at either core scale.
     native_full = sum(p.numel() for p in native.parameters())
-    assert native_full > native_adapter * 10
+    external_full = sum(p.numel() for p in external.parameters())
+    assert native_full > native_adapter
+    assert external_full > external_adapter
+    assert native_full - native_adapter == external_full - external_adapter
     a = dict(native.core.named_parameters())
     b = dict(external.core.named_parameters())
     assert a.keys() == b.keys()
