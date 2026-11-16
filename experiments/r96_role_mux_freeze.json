@@ -1,0 +1,141 @@
+{
+  "schema": "ttt-hybrid.r96-independent-mux-role-learning.testonly.v1",
+  "stage": "PROSPECTIVE_FREEZE_BEFORE_IMPLEMENTATION_TESTS_AND_SOURCE_FIRST_USE",
+  "parent": {
+    "R95_final_engineering_sha": "ea09a41dc13e4329c6d1a711d3a023ba297bdfa7",
+    "R95_frozen_blob": "e2968738694b67b2557d7c976378b9664dec0860",
+    "R95_spent_original_sha": "bc80edd63101cb8f293769a1e6345689acca0705",
+    "R95_spent_run_id": "43792098794",
+    "R95_status": "R95_RAW_RELATION_NO_GO",
+    "R95_control_flaw": "index-tied law and roll-fallback produced anti-correlated instead of information-removed shuffled A cues",
+    "old_scored_source_or_weights_reused": false
+  },
+  "question": "Can the nontransformer width32 native core with a role-conditioned learned sidecar learn a genuinely ordered-role conditional consequence from factual action/reward alone, beating a flat native sidecar and fully trained conventional raw-cue controls on fresh early/cold and role-swap evaluations? Does a separately measured and validated deranged raw-A negative destroy conditional-law signal?",
+  "source": {
+    "scope": "FRESH_TEST_ONLY_COLD_ROLE_SWAP_DIAGNOSTIC_NOT_PROTECTED_INDEPENDENT_SCIENCE",
+    "seeds": [
+      1001511,
+      1001523
+    ],
+    "salts": {
+      "FIT": 25370111,
+      "VALID": 25370211,
+      "DEV": 25370311,
+      "OOD_SHIFT": 25370411,
+      "ROLE_SWAP": 25370511,
+      "DERANGE": 25370611,
+      "BOOTSTRAP": 25370711,
+      "BATCH": 25370811,
+      "UNIT": 25379991
+    },
+    "world_counts": {
+      "FIT": 2048,
+      "VALID": 256,
+      "DEV": 256,
+      "OOD_SHIFT": 256,
+      "ROLE_SWAP": 256
+    },
+    "physical_constructor": "R85._make_synthetic_world(index%512, independent SeedSequence([panel_salt,seed,index])) ONLY pure physics, then independently resample four A factors from same RNG; override original index-law and set law_a = factor_A_role1 IF factor_A_role0 positive ELSE factor_A_role2; role3 independent nuisance; original world B factors, time order and R85 rollout remain. No original R85-R95 _world/_test_world nor scored source.",
+    "independent_law_mechanism": "a=np RNG.choice([-1,1],size=4); mux(a): a[1] if a[0]>0 else a[2]; P(law_a=+1)=.5 independent of index, public early/cold pivot, and logged action; role1<->role2 swap changes law for half of worlds when a1!=a2.",
+    "chosen_factual_action": "CALIBRATE if ((index//4)+seed_index)%2==0 else EXPLOIT_POS, balanced action x early/cold pivot x old index-only stratum in design, but index-derived stratum is NOT a hidden law now.",
+    "public": "original lawful R86 48-row selected timeline (not full 224 recurrent ticks), R88 pure role-extracted 5x13 actual A probe/current action, R95 pure raw 8D four noisy A responses and action/time. No hidden mux sign/law/teacher in any learned arm.",
+    "FIT_labels": "actual observed 9-tick return under ONE chosen factual action only, never unchosen branch, hidden law, private index stratum or evaluator oracle.",
+    "DEV_scoring": "only after all arms trained and frozen create 256 new paired physical worlds and both factual intervention returns for evaluator. OOD_SHIFT uses existing R86 pure 68/208-pivot noise/probe time shift same mux law; not unfamiliar law transfer.",
+    "ROLE_SWAP": "after all weights frozen, fresh 256 worlds; for evaluator calculate both legal physical returns for original world and for a counterfactual world swapping A role1<->role2 factor values and recomputing true mux law, holding B/time order/noise fixed. Report policy action change conditional on true law change, accuracy on both worlds, and comparison to sorted-role-invariant negative.",
+    "negative_shuffle": "independent seed-only random derangement within public pivot+logged-action groups for FIT/VALID; public pivot only for paired evaluator DEV/OOD, never compare to hidden target law to SELECT or modify permutation. Rejection-sample until zero fixed points within each group; no fallback rotation. Preserve chosen action/time/observed role ids but replace four A cue values with donor world.",
+    "source_independence_audit": "measure original private law frequency across pivot/action and source index bins and donor-vs-original law alignment ONLY for audit, not learner input. Each group law-positive fraction 0.40..0.60, donor law equality fraction 0.40..0.60 on FIT/DEV/OOD; if violated, stop as invalid, never try a new shuffle or rerun scored panel.",
+    "previous_scored_or_reserved_access": false
+  },
+  "arms": [
+    "NATIVE32_RAW_SLOTS5",
+    "NATIVE32_FLAT_SIDECAR",
+    "NATIVE32_ROLE_GATE_SIDECAR",
+    "MLP64_RAW_CUES",
+    "MLP_ROLE_GATE_RAW_CUES",
+    "MLP64_SORTED_CUES_NEGATIVE",
+    "MLP_ROLE_GATE_DERANGED_A_NEGATIVE",
+    "GRU64_SLOTS5",
+    "MLP64_PUBLIC_MUX_UPPER"
+  ],
+  "model": {
+    "native": "R74 original HybridPilot_FULL width32 + R75 equivalent causal triangular TTT, original hard depth router; native main unchanged; all three native core initial tensor values equal",
+    "flat_sidecar": "R87 identical 8D PublicValueMLP additive to original native readout",
+    "role_gate": "Trainable generic role-conditioned selector over FOUR noisy A role cues, conditioned on ALL four observed cues through a small MLP gate and feature MLP, softmax role weighting; readout conditions on learned attended value, selected action flags and public time. No fixed conditional mux, parity sign, private law labels or teacher targets supplied; role-ordered extraction is a prior.",
+    "role_gate_sidecar": "Same learned gate sidecar added to original native pivot readout, separate experimental readout; any gain is not proof native core independently learned role binding.",
+    "raw_mlp": "Existing R87 PublicValueMLP 8D legal raw cue baseline",
+    "sorted_negative": "Existing same 4801-param MLP fed four sorted noisy A cues (roles removed, action/time unchanged), fully trained",
+    "deranged_negative": "Identical role gate architecture/params as real gate, 4 raw A cue values replaced by independent donor within public strata, original current action/returns unchanged",
+    "GRU": "Existing R81 GRU64 on exact same 5x13 lawful role event rows, 15,233 params",
+    "upper": "Existing R87 same-4801-param MLP fed explicitly hand-coded mux sign of observed (noisy) A cues, only diagnostic upper and never supplied to trainable role gate; not physical oracle",
+    "comparison_caveat": "Original core, sidecars, 4801-param MLP, role gate and GRU differ in parameter count/FLOPs. SAME labeled examples, batches/optimizer updates; report param/elapsed; no formal FLOP/parameter matched native superiority claim."
+  },
+  "training": {
+    "steps_per_arm": 4096,
+    "batch": 16,
+    "AdamW_lr": 0.001,
+    "weight_decay": 0.0001,
+    "clip_norm": 1,
+    "identical_seeded_batch_indices_each_arm": true,
+    "VALID_only_MSE_no_early_stop": true,
+    "train_all_nine_before_DEV_OOD_ROLE_SWAP": true,
+    "per_seed_CPU_resource_ceiling_seconds": 260,
+    "full_existing_G4_pytest_timeout_seconds": 600
+  },
+  "evaluation": {
+    "two_seeds_required": true,
+    "bootstrap_samples": 2000,
+    "mechanism_checks": {
+      "role_gate_vs_sorted_DEV_reward_min": 0.75,
+      "role_gate_vs_deranged_DEV_reward_min": 0.75,
+      "role_gate_vs_raw_MLP_DEV_reward_min": 0.15,
+      "role_gate_vs_explicit_mux_upper_DEV_gap_max": 0.35,
+      "role_gate_legal_mux_DEV_action_agreement_min": 0.85,
+      "role_gate_vs_deranged_OOD_cold_reward_min": 0.5,
+      "role_gate_vs_deranged_DEV_bootstrap_lower95_min": 0.1,
+      "role_swap_true_law_change_fraction_min": 0.2,
+      "role_gate_role_swap_action_flip_on_true_change_min": 0.65,
+      "role_gate_role_swap_accuracy_min": 0.8
+    },
+    "native_checks": {
+      "native_role_gate_vs_flat_DEV_reward_min": 0.2,
+      "native_role_gate_vs_raw_native_DEV_reward_min": 0.5,
+      "native_role_gate_vs_flat_OOD_cold_reward_min": 0.2,
+      "native_role_gate_vs_conventional_gate_DEV_reward_gap_max": 0.3
+    },
+    "statuses": {
+      "both": "R96_ROLE_GATE_NATIVE_SIDECAR_AND_CONVENTIONAL_DEV_SIGNAL_ONLY",
+      "conventional": "R96_CONVENTIONAL_NONCOMMUTATIVE_ROLE_SIGNAL_ONLY",
+      "no_go": "R96_ROLE_CONDITIONAL_MECHANISM_NO_GO",
+      "invalid": "R96_SOURCE_OR_NEGATIVE_CONTROL_INVALID_NO_SCIENTIFIC_VERDICT",
+      "incomplete": "R96_ENGINEERING_OR_RESOURCE_INCOMPLETE_NOT_SCIENTIFIC_NO_GO"
+    },
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r96-independent-mux-role-learning-20261116",
+    "existing_G4": ".github/workflows/g4-cpu-qualification.yml",
+    "new_workflow_file": false,
+    "two_original_first_use_seed_jobs_in_existing_workflow": true,
+    "requires_dual_OS_G4_FULL_PASS_prior_to_DEV_first_use": true,
+    "requires_G5_authentic_TTT_CPU_both_OS_and_G7_pinned_Mamba2_same_SHA": true,
+    "GitHub_hosted_Ubuntu_original_first_attempt_only": true,
+    "clean_exact_source_SHA": true,
+    "no_duplicate_scorer_or_replay": true,
+    "receipts": "local_runs/r96_role_mux_seed<seed>.json",
+    "no_official_GPU_first_use": true,
+    "no_scheduler_runner_controller_or_paid_API": true
+  },
+  "authority": {
+    "scoped_cpu_testonly_research_allowed": true,
+    "merge": false,
+    "model_promotion": false,
+    "independent_protected_science_first_use": false,
+    "GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "live_controller": false,
+    "paid_API": false,
+    "new_scheduler": false,
+    "new_runner": false
+  }
+}
