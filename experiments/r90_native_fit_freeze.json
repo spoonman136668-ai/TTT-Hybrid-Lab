@@ -1,0 +1,125 @@
+{
+  "schema": "ttt-hybrid.r90-basic-factual-fit-diagnostic-v1",
+  "stage": "PROSPECTIVELY_FROZEN_BEFORE_R90_CODE_TESTS_OR_QUALIFICATION",
+  "parent": {
+    "R89_exact_candidate": "3b75351cc09979a505c7c1ea5e95f779afbb22c1",
+    "R89_freeze_blob": "72ed933c253a6f447bca0647a149b75dde732db7",
+    "R89_original_result": "R89_NATIVE_ROLE_ACCESS_NO_GO_TWO_SEEDS_TWO_OF_THIRTEEN",
+    "R89_original_adjudication": "https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/284#issuecomment-6903929763",
+    "older_scored_source_never_accessed": true
+  },
+  "question": "Can original 1024-width 16,818,178-param CPU reference native Hybrid even overfit four lawful one-action factual return records, and how do inactive router gradients and TTT update/no-depth ablations differ? Compare fixed independently seeded input/target, same updates, no scored DEV or OOD.",
+  "null": "Training four TEST-ONLY factual records is an optimizer/gradient diagnostic, not evidence of causal composition, generalization, transfer or SCIENTIFIC_PASS. A failed 64-step overfit cannot by itself prove architecture impossible to train; a pass cannot show action learning under unseen worlds.",
+  "seeds": [
+    1000411,
+    1000423
+  ],
+  "source": {
+    "kind": "TEST_ONLY_DEVELOPMENT_FIXTURE_NOT_PROTECTED_SCIENCE",
+    "R90_test_fixture_salt": 25320991,
+    "worlds_per_seed": 4,
+    "R85_pure_physical_constructor_reuse_only": true,
+    "source_rng": "SeedSequence([25320991,seed,index])",
+    "world_stratum_index": "index%512",
+    "selected_action": "CALIBRATE if index even else EXPLOIT_POS; one physically realized nine-step return per world",
+    "public_input": "R86 48 legal selected public rows reduced by lawful public R88 _public_slots to 5 full 13-dimensional real observation rows, four role-tagged A cues and selected pivot action",
+    "private_labels_hidden": true,
+    "never_call_R85_R89_protected_world_or_pairing": true,
+    "only_test_fixture_no_DEV_OOD": true,
+    "control_future_only_intervention_noise_perturbation": true
+  },
+  "arms": [
+    "NATIVE_HARD_TTT",
+    "NATIVE_TTT_UPDATES_OFF",
+    "NATIVE_NO_DEPTH",
+    "NATIVE_INACTIVE_SOFT_SURROGATE",
+    "GRU64_PUBLIC_SLOTS"
+  ],
+  "control_geometry": {
+    "native_width": 1024,
+    "native_heads": 4,
+    "native_core_parameter_count": 16818178,
+    "original_core": "R74 HybridPilot_FULL with R75 triangular fastweight mathematically equivalent TTT reference, no model.py replacement or fusion",
+    "surrogate": "R79 InactiveSoftSurrogateRouter source, copied exact native hard router tensors, router weight forced to zero and bias forced to -3.0 on BOTH reference hard and surrogate so forward is identical at initialization; surrogate enables backward gradients on inactive tokens, no new inference architectural claim",
+    "no_depth": "Same native seeded initialized source with depth=None",
+    "no_TTT_updates": "Same original native seeded initial parameters; call forward with ttt_update=False; TTT projection still exists and may contribute a bias, NOT equivalently deleting TTT",
+    "GRU": "Full legal four-A 13D public role slots and selected pivot; 64-hidden same tiny factual records, different size/compute; strong small overfit comparator",
+    "initial_weights": "All native variants recreated from same torch seed; parameter equality pre-intervention checked; no pretrained or R89 weights reused"
+  },
+  "training": {
+    "batch": 4,
+    "steps": 64,
+    "optimizer": "AdamW",
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "clip_gradient_norm": 1,
+    "forward_factual_MSE_only": true,
+    "same_examples_and_order_all_arms": true,
+    "model_forward_5_steps_not_physical_224": true,
+    "checkpoint_indices": [
+      0,
+      1,
+      8,
+      16,
+      32,
+      64
+    ],
+    "no_scientific_protected_first_use": true
+  },
+  "measurements": [
+    "initial_loss",
+    "loss_at_predeclared_update_steps",
+    "final_train_MSE",
+    "per_example_errors",
+    "train_elapsed_seconds",
+    "full_param_count",
+    "head_grad_norm_initial",
+    "stem_grad_norm_initial",
+    "depth_router_grad_max_initial",
+    "depth_ffn_grad_max_initial",
+    "depth_utilization_initial",
+    "native_other_group_gradient_reachability",
+    "all_finite",
+    "source_hidden_label_negative",
+    "reference_vs_surrogate_initial_forward_max_error",
+    "reference_vs_surrogate_initial_core_identity"
+  ],
+  "thresholds": {
+    "per_arm_basic_fit_final_MSE_absolute_max": 4,
+    "per_arm_basic_fit_final_to_initial_MSE_ratio_max": 0.25,
+    "both_seeds_required_for_suggestive_fit": true,
+    "hard_forward_surrogate_initial_absolute_error_max": 0.000001,
+    "surrogate_off_route_router_initial_grad_positive": true,
+    "hard_off_route_router_initial_grad_zero": true,
+    "all_params_initial_identical_if_present": true,
+    "on_original_hard_fit_both_seeds": "R90_REFERENCE_HARD_TINY_FIT_POSSIBLE_ONLY",
+    "on_only_ablation_fits": "R90_ABLATION_ASSISTED_TINY_FIT_DIAGNOSTIC_ONLY",
+    "on_no_native_fits": "R90_NATIVE_TINY_FIT_NO_GO_DIAGNOSTIC_ONLY",
+    "on_incomplete": "R90_ENGINEERING_INCOMPLETE",
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "existing_G4_only": true,
+    "no_new_jobs_workflows_schedules_controllers_runners": true,
+    "full_Linux_and_Windows_regression_on_exact_candidate": true,
+    "CI_test_emits_original_receipt_in_local_runs": true,
+    "local_pytest_skips_full_width_on_non_qualified_branch": true,
+    "original_same_SHA_and_worktree_required": true,
+    "read_only_original_test_worlds_no_protected_source": true,
+    "no_gpu_firstuse": true,
+    "no_paid_API": true
+  },
+  "authority": {
+    "merge": false,
+    "promotion": false,
+    "deployment": false,
+    "FORGE_integration": false,
+    "GPU_first_use": false,
+    "protected_science_first_use": false,
+    "paid_API": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false
+  }
+}
