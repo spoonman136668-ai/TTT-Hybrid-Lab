@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from functools import lru_cache
 
 import numpy as np
 import torch
@@ -74,13 +75,24 @@ def frozen():
     return f
 
 
+@lru_cache(maxsize=3)
+def _admit_protected(seed, candidate_sha):
+    """One independent GitHub custody check per seed/source in ONE process.
+
+    Otherwise thousands of support worlds would repeat a network/API query
+    and violate the frozen whole-process 600-second science budget.
+    Errors are never cached. No cross-process or cross-run persistence.
+    """
+    from experiments import r101_cpu_firstuse_admission
+    return r101_cpu_firstuse_admission.admit(seed, candidate_sha)
+
+
 def _admit(*_unused, seed=None, candidate_sha=None, **_kw):
     """Owner-scoped supplementary first-use only; freeze-only JSON unmodified."""
     frozen()
     if seed not in SEEDS or not candidate_sha:
         raise PermissionError("R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
-    from experiments import r101_cpu_firstuse_admission
-    return r101_cpu_firstuse_admission.admit(seed, candidate_sha)
+    return _admit_protected(seed,candidate_sha)
 
 
 def _world(panel, seed, index, sha=None, *, event=0, family=None):
