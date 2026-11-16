@@ -357,9 +357,9 @@ def make_models(seed):
     core = r95._native(seed)
     torch.manual_seed(seed + 101)
     result[EXTERNAL] = ExternalSupportValue(core)
-    # Compare ACTUAL trainable adapters, not the >16M-param native core
-    # shared by both arms. Counting the huge common core could conceal a
-    # material mismatch in the learned support mechanism being tested.
+    # Compare ACTUAL trainable adapters, not the shared native core.
+    # Counting common core weights can conceal a material mismatch in
+    # the learned support mechanisms being tested.
     def adapter_count(model):
         return sum(p.numel() for name, p in model.named_parameters()
                    if not name.startswith("core.") and p.requires_grad)
