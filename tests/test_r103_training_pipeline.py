@@ -210,3 +210,47 @@ def test_frozen_budget_is_monotonic_not_a_science_gate(monkeypatch):
     pipe._enforce_budget(2.5)
     with pytest.raises(TimeoutError,match="R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED"):
         pipe._enforce_budget(2.5)
+
+
+@pytest.mark.parametrize("family",r103.UNSEEN)
+@pytest.mark.parametrize("fixture_id",(9,10))
+def test_role_relabel_is_an_actual_causal_physical_equivalence(family,fixture_id):
+    """Metamorphic physical oracle, UNIT_ONLY. Never open FIT/DEV.
+
+    A mere permutation of feature rows is insufficient: transform the R85
+    physical factors, every pre-pivot A probe's role, and the registered
+    three-factor operand assignment, then verify both chosen-action returns.
+    Only after that compare the alleged role-invariance transformation.
+    """
+    from copy import deepcopy
+
+    physical=r103._unit_world(fixture_id,3,family)
+    transformed=deepcopy(physical)
+    role_map=(2,0,3,1)  # Old physical role -> newly named physical role
+    new_factors=np.empty(4,dtype=np.int64)
+    for old_role,new_role in enumerate(role_map):
+        new_factors[new_role]=physical["factors_a"][old_role]
+    transformed["factors_a"]=new_factors
+    transformed["r103_roles"]=tuple(
+        role_map[i] for i in physical["r103_roles"])
+    transformed["probe"]={
+        tick:(phase,role_map[role] if phase=="A" else role,marker)
+        for tick,(phase,role,marker) in physical["probe"].items()
+    }
+    transformed["a_probe_permutation"]=np.asarray(
+        [role_map[int(i)] for i in physical["a_probe_permutation"]],
+        dtype=np.int64)
+    transformed["law_a"]=r103._operator_truth(
+        new_factors,transformed["r103_roles"],family)
+    assert transformed["law_a"]==physical["law_a"]
+
+    for chosen in (r85.CALIBRATE,r85.EXPLOIT_POS):
+        old,actual=r103.public_view(physical,chosen)
+        expected,transformed_actual=r103.public_view(transformed,chosen)
+        assert transformed_actual==actual
+        support=np.repeat(old[None,None],pipe.SUPPORT,axis=1)
+        out,query=pipe.permute_public_roles(support,old[None])
+        np.testing.assert_array_equal(out[0,0],expected)
+        np.testing.assert_array_equal(query[0],expected)
+        np.testing.assert_array_equal(query[0,-1],old[-1])
+        assert not np.array_equal(query[0,:4],old[:4])
