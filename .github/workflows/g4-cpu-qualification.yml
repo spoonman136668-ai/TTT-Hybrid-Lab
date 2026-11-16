@@ -1212,7 +1212,7 @@ jobs:
   r102-contradiction-original:
     name: R102 contradiction gate original / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.number == 298 && github.event.pull_request.head.ref == 'research/r102-contradiction-gated-evidence-20261116' && github.run_attempt == 1 }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.number == 298 && github.event.pull_request.head.ref == 'research/r102-contradiction-gated-evidence-20261116' && github.event.pull_request.head.sha == '745ce5c9ba2c7bb0dbfa3d44433e635a079a0ce2' && github.run_id == 43903611516 && github.run_attempt == 1 }}
     strategy:
       fail-fast: false
       matrix:

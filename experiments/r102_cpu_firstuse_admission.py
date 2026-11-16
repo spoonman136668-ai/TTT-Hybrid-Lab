@@ -129,54 +129,19 @@ def _first_attempt_ci_custody(sha,run_id):
         raise PermissionError("R102_INDEPENDENT_GITHUB_CUSTODY_UNAVAILABLE") from exc
 
 
+# Post-first-use terminal seal; prior owner manifest stays for audit only.
+SPENT_ORIGINAL_SHA="745ce5c9ba2c7bb0dbfa3d44433e635a079a0ce2"
+SPENT_RUN_ID=43903611516
+SPENT_SEEDS=SEEDS
+SEAL_PATH=ROOT/"experiments/r102_scientific_firstuse_seal.json"
+
+
 def admit(seed,candidate_sha=None):
-    from experiments import r102_contradiction_evidence_diagnostic as r102
-    protocol=r102.frozen()
-    if (protocol["authority"]["protected_scored_first_use"]
-        or protocol["source"]["seeds"]!=list(SEEDS)
-        or protocol["training"]["per_seed_total_CPU_wall_budget_s"]
-            != MAX_BUDGET_SECONDS):
-        raise PermissionError("R102_IMMUTABLE_PROPOSAL_DRIFT")
-    scope=approval()
-    required={
-        "GITHUB_ACTIONS":"true",
-        "GITHUB_EVENT_NAME":"pull_request",
-        "GITHUB_REPOSITORY":REPO,
-        "GITHUB_HEAD_REF":BRANCH,
-        "GITHUB_JOB":JOB,
-        "RUNNER_OS":"Linux",
-        "RUNNER_ENVIRONMENT":"github-hosted",
-        "GITHUB_RUN_ATTEMPT":"1",
-        "R102_SEED":str(seed),
-    }
-    if (seed not in SEEDS or any(os.getenv(k)!=v for k,v in required.items())
-        or os.getenv("GITHUB_REF")!=f"refs/pull/{PR}/merge"):
-        raise PermissionError("R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
-    run_id_text=os.getenv("GITHUB_RUN_ID","")
-    sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
-    if (not run_id_text.isdecimal() or int(run_id_text)<=0 or
-        not isinstance(candidate_sha,str) or len(sha)!=40 or
-        candidate_sha!=sha):
-        raise PermissionError("R102_EXACT_SOURCE_SHA_RUN_SEED_NOT_ADMITTED")
-    path=os.getenv("GITHUB_EVENT_PATH","")
-    if not path or not Path(path).is_file():
-        raise PermissionError("R102_MISSING_GITHUB_PR_EVENT")
-    event=json.loads(Path(path).read_text(encoding="utf-8"))
-    pr=event.get("pull_request",{})
-    if (pr.get("number")!=PR or pr.get("head",{}).get("sha")!=sha
-        or pr.get("head",{}).get("ref")!=BRANCH
-        or pr.get("head",{}).get("repo",{}).get("full_name")!=REPO):
-        raise PermissionError("R102_PR_OWNER_OR_EXACT_HEAD_MISMATCH")
-    if (_git("rev-parse","HEAD")!=sha
-        or _git("rev-parse","HEAD^")!=scope["exact_parent_sha"]):
-        raise PermissionError("R102_FINAL_SINGLE_FILE_AUTHORIZATION_PARENT_DRIFT")
-    if (_git("diff-tree","--no-commit-id","--name-only","-r","HEAD")
-        != APPROVAL_PATH):
-        raise PermissionError("R102_FIRSTUSE_FINAL_COMMIT_EXTRA_EDITS")
-    if (_git("status","--porcelain") or
-        _git("hash-object",str(r102.FREEZE))!=FROZEN_BLOB):
-        raise PermissionError("R102_DIRTY_OR_FROZEN_SOURCE_DRIFT")
-    custody=_first_attempt_ci_custody(sha,int(run_id_text))
-    return {"source_sha":sha,"run_id":int(run_id_text),"seed":seed,
-            "authorization_parent":scope["exact_parent_sha"],
-            "owner_scope":scope["scope"],**custody}
+    """Original R102 FIT/DEV source and all three original seeds are spent.
+
+    Never dispatch, restore, or replay this source. A new experiment requires
+    a separately frozen hypothesis, distinct seeds/salts and owner authority.
+    """
+    raise PermissionError(
+        "R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED: "
+        "R102_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED")

@@ -331,7 +331,23 @@ def test_r102_original_cpu_run_verifies_first_sha_dual_os_and_native_controls(mo
 def test_r102_final_manifest_strict_parent_and_single_file_commit_or_absent():
     from experiments import r102_cpu_firstuse_admission as admission
     import subprocess
-    if admission.AUTH_PATH.exists():
+    if hasattr(admission,"SEAL_PATH") and admission.SEAL_PATH.is_file():
+        receipt=__import__("json").loads(
+            admission.SEAL_PATH.read_text(encoding="utf-8"))
+        assert receipt["original_scored_SHA"] == admission.SPENT_ORIGINAL_SHA
+        assert receipt["original_run_id"] == admission.SPENT_RUN_ID
+        assert tuple(receipt["original_seeds"]) == admission.SPENT_SEEDS
+        assert receipt["all_original_seeds_consumed"] is True
+        assert receipt["independent_scientific_pass"] is False
+        assert receipt["final_science_status"] == (
+            "R102_FRESH_UNSEEN_CAUSAL_INFERENCE_NO_GO")
+        assert set(map(int,receipt["by_seed"]))==set(admission.SPENT_SEEDS)
+        assert not any(s["all_frozen_checks_pass"] for s in
+                       receipt["by_seed"].values())
+        with pytest.raises(PermissionError,
+                           match="R102_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED"):
+            admission.admit(admission.SEEDS[0],admission.SPENT_ORIGINAL_SHA)
+    elif admission.AUTH_PATH.exists():
         manifest=admission.approval()
         parent=subprocess.run(["git","rev-parse","HEAD^"],cwd=admission.ROOT,
                               capture_output=True,text=True,check=True).stdout.strip()
@@ -344,3 +360,18 @@ def test_r102_final_manifest_strict_parent_and_single_file_commit_or_absent():
     else:
         with pytest.raises(PermissionError,match="R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
             admission.approval()
+
+
+def test_r102_permanent_seal_blocks_replay_even_with_spoofed_original_environment(monkeypatch):
+    from experiments import r102_cpu_firstuse_admission as admission
+    if not hasattr(admission,"SEAL_PATH") or not admission.SEAL_PATH.is_file():
+        return
+    monkeypatch.setenv("GITHUB_ACTIONS","true")
+    monkeypatch.setenv("GITHUB_RUN_ID",str(admission.SPENT_RUN_ID))
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT","1")
+    monkeypatch.setenv("EXPECTED_CANDIDATE_SHA",admission.SPENT_ORIGINAL_SHA)
+    with pytest.raises(PermissionError,match="R102_ORIGINAL_FIRST_USE_PERMANENTLY_CONSUMED"):
+        admission.admit(admission.SEEDS[0],admission.SPENT_ORIGINAL_SHA)
+    with pytest.raises(PermissionError,match="R102_PROTECTED_SCORED_PHYSICAL_SOURCE_NOT_ADMITTED"):
+        r102._world("FIT",admission.SEEDS[0],0,admission.SPENT_ORIGINAL_SHA)
+
