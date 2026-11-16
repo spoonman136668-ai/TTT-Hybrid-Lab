@@ -178,3 +178,13 @@ def test_paired_2000_bootstrap_reproducible_in_UNIT_ONLY_and_rejects_bad_seed():
         a,b,r102.SEEDS[0])
     with pytest.raises(ValueError,match="R102_BOOTSTRAP_NONMATCHED_COHORT"):
         pipe.bootstrap_lower(a,b,42)
+
+
+
+def test_r102_original_entrypoint_still_denies_ci_unit_and_unqualified_hosts(monkeypatch):
+    from experiments import r102_cpu_firstuse_admission as admission
+    monkeypatch.delenv("GITHUB_ACTIONS",raising=False)
+    with pytest.raises(PermissionError):
+        pipe.original_ci(r102.SEEDS[0])
+    assert admission.JOB=="r102-contradiction-original"
+    assert pipe.protocol()["evaluation"]["independent_scientific_pass"] is False

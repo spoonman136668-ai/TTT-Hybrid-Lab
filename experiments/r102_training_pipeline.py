@@ -340,10 +340,91 @@ def measures(seed,scores):
 
 
 def original_ci(seed):
-    """Do NOT run. No protected original source/first-use authority exists."""
-    r102._admit(seed=seed)
-    raise PermissionError("R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    """Owner-scoped FIRST original GitHub-hosted CPU attempt ONLY, no rerun."""
+    sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    custody=r102._admit(seed=seed,candidate_sha=sha)
+    f=protocol()
+    torch.set_num_threads(1)
+    path=ROOT/f"local_runs/r102_contradiction_original_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R102_FIRST_USE_RECEIPT_ALREADY_EXISTS_OR_REPLAY")
+    started=time.perf_counter()
+    report={
+        "schema":r102.SCHEMA,
+        "original_scored_candidate_SHA":sha,
+        "original_run_id":custody["run_id"],
+        "seed":seed,
+        "owner_custody":custody,
+        "preimplementation_freeze_blob":r102.FREEZE_BLOB,
+        "R101_original_source_spent_sha":r102.R101_SPENT,
+        "R101_scored_source_or_weights_reused":False,
+        "all_11_arms_fully_trained":False,
+        "scored_heldout_first_used":False,
+        "official_GPU":False,
+        "scientific_pass":False,
+        "status":"R102_TRAINING_OR_RESOURCE_INCOMPLETE",
+        "torch":str(torch.__version__),"platform":platform.platform(),
+        "trained":{},"evaluation":{},
+    }
+    cap=f["training"]["per_seed_total_CPU_wall_budget_s"]
+    def budget():
+        elapsed=time.perf_counter()-started
+        if elapsed>cap:
+            raise TimeoutError("R102_ORIGINAL_FROZEN_900_S_CPU_BUDGET_EXCEEDED")
+        return elapsed
+    try:
+        fit=source("FIT",seed,sha)
+        valid=source("VALID",seed,sha)
+        budget()
+        models=r102.make_models(seed)
+        minibatches=np.random.default_rng(np.random.SeedSequence([
+            f["source"]["salts"]["BATCH"],seed])).integers(
+                0,len(fit["target"]),size=(STEPS,BATCH))
+        for arm in ARMS:
+            report["trained"][arm]=fit_arm(
+                models[arm],arm,fit,valid,minibatches)
+            budget()
+        report["all_11_arms_fully_trained"]=True
+        # Unseen heldout cohorts first opened only after FULL 11-arm training.
+        reports={}
+        for panel in SCORED:
+            budget()
+            report["scored_heldout_first_used"]=True
+            reports[panel]=score(models,panel,source(panel,seed,sha))
+            budget()
+        values=measures(seed,reports)
+        report["evaluation"]={
+            "all_panels":{k:v["metrics"] for k,v in reports.items()},
+            "oracle_means":{k:v["oracle_mean"] for k,v in reports.items()},
+            "native_vs_controls":values,
+        }
+        report["status"]=(
+            "R102_FRESH_CONTRADICTION_MECHANISM_DEVELOPMENT_SIGNAL_ONLY"
+            if values["all_pass"] else
+            "R102_FRESH_UNSEEN_CAUSAL_INFERENCE_NO_GO")
+    finally:
+        report["whole_process_CPU_seconds"]=time.perf_counter()-started
+        if path.exists():
+            raise FileExistsError("R102_ORIGINAL_RECEIPT_REPLAY_OR_UNCERTAIN_EFFECT")
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps(report,sort_keys=True,indent=2)+"\n",
+                        encoding="utf-8")
+    return report
 
 
 if __name__=="__main__":
-    raise PermissionError("R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    import argparse
+    p=argparse.ArgumentParser(description="R102 original bounded CPU first use")
+    p.add_argument("--seed",type=int,choices=SEEDS,required=True)
+    args=p.parse_args()
+    result=original_ci(args.seed)
+    print(json.dumps({
+        "source_sha":result["original_scored_candidate_SHA"],
+        "original_run_id":result["original_run_id"],
+        "seed":result["seed"],
+        "all_11_arms_fully_trained":result["all_11_arms_fully_trained"],
+        "scored_heldout_first_used":result["scored_heldout_first_used"],
+        "status":result["status"],
+        "scientific_pass":result["scientific_pass"],
+        "whole_process_CPU_seconds":result["whole_process_CPU_seconds"]},
+        sort_keys=True))

@@ -239,3 +239,108 @@ def test_new_16_factual_history_conventional_models_trainable_unit_only(mode):
     opt.step()
     assert any(not torch.equal(init[name],param)
                for name,param in m.named_parameters())
+
+
+
+def test_supplementary_owner_cpu_firstuse_does_not_modify_frozen_authority(monkeypatch):
+    """The original immutable freeze stays FALSE before and after admission."""
+    from experiments import r102_cpu_firstuse_admission as admission
+    assert r102.FREEZE_BLOB==admission.FROZEN_BLOB
+    assert r102.SEEDS==admission.SEEDS
+    assert r102.frozen()["authority"]["protected_scored_first_use"] is False
+    for key in ("GITHUB_ACTIONS","GITHUB_REPOSITORY","GITHUB_JOB",
+                "GITHUB_EVENT_NAME","RUNNER_ENVIRONMENT"):
+        monkeypatch.delenv(key,raising=False)
+    with pytest.raises(PermissionError):
+        admission.admit(r102.SEEDS[0],"e"*40)
+
+
+def test_r102_original_first_attempt_denies_spoofed_owner_environment(monkeypatch):
+    from experiments import r102_cpu_firstuse_admission as admission
+    for key,value in (
+        ("GITHUB_ACTIONS","true"),("GITHUB_EVENT_NAME","pull_request"),
+        ("GITHUB_REPOSITORY",admission.REPO),
+        ("GITHUB_HEAD_REF",admission.BRANCH),
+        ("GITHUB_JOB",admission.JOB),
+        ("RUNNER_OS","Linux"),("RUNNER_ENVIRONMENT","github-hosted"),
+        ("GITHUB_RUN_ATTEMPT","2"),
+        ("GITHUB_REF","refs/pull/298/merge"),
+        ("R102_SEED",str(r102.SEEDS[0])),
+        ("GITHUB_RUN_ID","12345"),
+        ("EXPECTED_CANDIDATE_SHA","e"*40)):
+        monkeypatch.setenv(key,value)
+    with pytest.raises(PermissionError):
+        admission.admit(r102.SEEDS[0],"e"*40)
+    monkeypatch.setenv("GITHUB_RUN_ATTEMPT","1")
+    monkeypatch.setenv("GITHUB_JOB","cpu-qualification")
+    with pytest.raises(PermissionError):
+        admission.admit(r102.SEEDS[0],"e"*40)
+
+
+def test_r102_firstuse_custody_is_inprocess_only_and_errors_not_cached(monkeypatch):
+    from experiments import r102_cpu_firstuse_admission as admission
+    calls=[]
+    def mocked(seed,sha):
+        calls.append((seed,sha))
+        return {"mock_unit_only":True,"seed":seed,"sha":sha}
+    monkeypatch.setattr(admission,"admit",mocked)
+    r102._admit_protected.cache_clear()
+    try:
+        sha="f"*40
+        one=r102._admit(seed=r102.SEEDS[0],candidate_sha=sha)
+        two=r102._admit(seed=r102.SEEDS[0],candidate_sha=sha)
+        assert one==two and len(calls)==1
+        assert r102._admit_protected.cache_info().maxsize==3
+    finally:
+        r102._admit_protected.cache_clear()
+
+
+def test_r102_original_cpu_run_verifies_first_sha_dual_os_and_native_controls(monkeypatch):
+    from experiments import r102_cpu_firstuse_admission as admission
+    sha="c"*40
+    url_seen=[]
+    def mocked_api(url,token):
+        url_seen.append(url)
+        assert token=="unit-only-token"
+        if "/actions/workflows/" in url:
+            return {"workflow_runs":[
+                {"id":100,"head_sha":sha,"run_attempt":1,
+                 "name":"G4 CPU qualification","event":"pull_request"},
+                {"id":101,"head_sha":sha,"run_attempt":1,
+                 "name":"G4 CPU qualification","event":"pull_request"}]}
+        if "/actions/runs/100/jobs" in url:
+            return {"jobs":[
+                {"name":"CPU qualification / ubuntu-latest","conclusion":"success"},
+                {"name":"CPU qualification / windows-latest","conclusion":"success"}]}
+        if url.endswith("/git/ref/heads/"+admission.BRANCH):
+            return {"object":{"sha":sha}}
+        return {"workflow_runs":[
+            {"head_sha":sha,"name":"G5 authentic TTT CPU","conclusion":"success"},
+            {"head_sha":sha,"name":"G7 pinned Mamba2 CPU import","conclusion":"success"}]}
+    monkeypatch.setenv("GITHUB_TOKEN","unit-only-token")
+    monkeypatch.setattr(admission,"_read_api",mocked_api)
+    receipt=admission._first_attempt_ci_custody(sha,100)
+    assert receipt["same_source_G4_linux_windows"] is True
+    assert receipt["same_source_G5_G7"] is True
+    assert receipt["original_G4_run_id"]==100
+    assert len(url_seen)==4
+    with pytest.raises(PermissionError,match="R102_NOT_FIRST_CANONICAL_G4"):
+        admission._first_attempt_ci_custody(sha,101)
+
+
+def test_r102_final_manifest_strict_parent_and_single_file_commit_or_absent():
+    from experiments import r102_cpu_firstuse_admission as admission
+    import subprocess
+    if admission.AUTH_PATH.exists():
+        manifest=admission.approval()
+        parent=subprocess.run(["git","rev-parse","HEAD^"],cwd=admission.ROOT,
+                              capture_output=True,text=True,check=True).stdout.strip()
+        changed=subprocess.run(["git","diff-tree","--no-commit-id","--name-only",
+                                "-r","HEAD"],cwd=admission.ROOT,
+                               capture_output=True,text=True,check=True).stdout.strip()
+        assert manifest["exact_parent_sha"]==parent
+        assert changed==admission.APPROVAL_PATH
+        assert manifest["no_r101_original_cohort_reuse"] is True
+    else:
+        with pytest.raises(PermissionError,match="R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
+            admission.approval()

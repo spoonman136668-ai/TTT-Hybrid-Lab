@@ -86,9 +86,18 @@ def frozen():
     return f
 
 
-def _admit(*_args,**_kwargs):
+@__import__("functools").lru_cache(maxsize=3)
+def _admit_protected(seed,candidate_sha):
+    """One trusted custody read per seed/SHA in this process, no replay cache."""
+    from experiments import r102_cpu_firstuse_admission
+    return r102_cpu_firstuse_admission.admit(seed,candidate_sha)
+
+
+def _admit(*_args,seed=None,candidate_sha=None,**_kwargs):
     frozen()
-    raise PermissionError("R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    if seed not in SEEDS or not candidate_sha:
+        raise PermissionError("R102_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    return _admit_protected(seed,candidate_sha)
 
 
 def _world(panel,seed,index,sha=None,*,event=0,family=None):
@@ -99,8 +108,9 @@ def _world(panel,seed,index,sha=None,*,event=0,family=None):
     if (seed not in SEEDS or not isinstance(index,int)
         or not 0 <= index < f["source"]["counts"][panel]):
         raise PermissionError("R102_UNREGISTERED_SEED_OR_INDEX")
-    # This route is unconditional DENIAL on the development branch, even if
-    # the source/SHA/environment appears legitimate. Do not open scored world.
+    # Original preimplementation freeze remains false. A separate single
+    # exact-SHA first-use owner approval plus matching original G4/G5/G7
+    # source custody is REQUIRED before ANY FIT/DEV physical world exists.
     try:
         _admit(seed=seed,candidate_sha=sha)
     except PermissionError as exc:
