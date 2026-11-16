@@ -136,3 +136,43 @@ def test_unit_only_paired_bootstrap_is_deterministic_and_not_science():
 def test_original_scored_runner_remains_disabled_and_no_receipts_created():
     with pytest.raises(PermissionError,match="R101_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
         pipe.original_ci(r101.SEEDS[0])
+
+
+
+def test_pre_first_use_design_audit_quantifies_operator_nonidentifiability():
+    out = pipe.non_scoring_design_audit()
+    assert out["original_scored_data_accessed"] is False
+    assert out["unit_and_combinatorial_only"] is True
+    assert out["operator_signatures_evaluator_only"] is True
+    assert out["frozen_first_use_granted"] is False
+    assert out["six_supports_cannot_guarantee_family_identification"] is True
+    nearest = out["unseen_vs_known"]["EXACTLY_ONE3"][0]
+    assert nearest["known"] == "PARITY3"
+    assert nearest["different_patterns_of_eight"] == 1
+    assert nearest["probability_six_iid_supports_avoid_difference"] == pytest.approx(
+        (7 / 8)**6, rel=1e-12)
+    assert nearest["probability_query_is_different_after_undistinguishing_support"] == pytest.approx(
+        (7 / 8)**6 / 8, rel=1e-12)
+    majority = out["unseen_vs_known"]["MAJORITY3"][0]
+    assert majority["known"] == "MUX3"
+    assert majority["different_patterns_of_eight"] == 2
+    assert majority["probability_six_iid_supports_avoid_difference"] == pytest.approx(
+        (6 / 8)**6, rel=1e-12)
+    assert out["science_thresholds_and_frozen_source_unchanged"]
+    assert out["independent_scientific_pass"] is False
+
+
+def test_design_audit_uses_no_original_physics_and_matches_frozen_panel_counts(monkeypatch):
+    def deny_all_original_worlds(*_args, **_kwargs):
+        raise AssertionError("R101_FIRST_USE_SOURCE_ILLEGALLY_CREATED_IN_AUDIT")
+    monkeypatch.setattr(r101, "_world", deny_all_original_worlds)
+    result = pipe.non_scoring_design_audit()
+    expected = pipe.protocol()["source"]["counts"]
+    assert {p:d["count"] for p,d in
+            result["precommitted_panel_source_design"].items()} == expected
+    for panel,values in result["precommitted_panel_source_design"].items():
+        assert sum(values["family_counts"].values()) == expected[panel]
+        assert sum(values["query_action_counts_all_three_seeds"].values()) == (
+            expected[panel] * 3)
+        assert values["six_support_actions_each_episode"] == (
+            "3 CALIBRATE + 3 EXPLOIT_POS")
