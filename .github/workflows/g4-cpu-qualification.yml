@@ -955,3 +955,54 @@ jobs:
           path: local_runs/r96_role_mux_seed${{ matrix.seed }}.json
           if-no-files-found: warn
           retention-days: 30
+
+
+  # R97 new TEST-only unseen public binding of a known conditional-mux law.
+  # Original two fresh seed first uses ONLY AFTER the full existing G4 dual-OS
+  # regression; no new workflow/scheduler, controller, runners, GPU or paid API.
+  r97-unseen-binding:
+    name: R97 unseen public role binding / seed ${{ matrix.seed }}
+    needs: cpu-qualification
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r97-unseen-public-role-binding-20261116' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [1001711, 1001723]
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout original clean candidate without persistence
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          persist-credentials: false
+          clean: true
+          submodules: false
+          lfs: false
+
+      - name: Pin original CPU Python 3.11
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: requirements-cpu.txt
+
+      - name: Install already pinned CPU-only dependencies
+        run: python -m pip install --disable-pip-version-check --no-input -r requirements-cpu.txt --index-url https://download.pytorch.org/whl/cpu --extra-index-url https://pypi.org/simple
+
+      - name: Train all nine on actual chosen FIT before any new unseen or shifted panel
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+          R97_SEED: ${{ matrix.seed }}
+        run: python -m experiments.r97_unseen_binding_diagnostic --seed ${{ matrix.seed }}
+
+      - name: Preserve original independently seeded first-use source receipt
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: ttt-hybrid-r97-unseen-binding-seed${{ matrix.seed }}-${{ github.event.pull_request.head.sha }}-${{ github.run_id }}
+          path: local_runs/r97_binding_transfer_seed${{ matrix.seed }}.json
+          if-no-files-found: warn
+          retention-days: 30
