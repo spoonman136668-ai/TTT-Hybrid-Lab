@@ -156,3 +156,11 @@ def test_all_eleven_models_take_one_actual_UNIT_ONLY_factual_optimizer_step():
         with torch.no_grad():
             after=model(x,r,q)
             assert bool(torch.isfinite(after).all()),arm
+
+
+
+def test_original_still_rejects_direct_science_without_manifest(monkeypatch):
+    monkeypatch.delenv("EXPECTED_CANDIDATE_SHA",raising=False)
+    with pytest.raises(PermissionError,
+                       match="R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
+        pipe.original_ci(r103.SEEDS[0])

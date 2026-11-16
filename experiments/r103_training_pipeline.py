@@ -338,10 +338,95 @@ def measures(seed,scores):
             "frozen_source":True}
 
 
-def original_ci(*_args,**_kwargs):
-    """R103 original FIT/VALID/DEV not authorized; no action or side effects."""
-    raise PermissionError("R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+def original_ci(seed):
+    """One-time owner-first-use CPU, fully trained before any heldout exposure.
+
+    Without separate owner approval manifest this fails before any work.
+    """
+    sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    custody=r103._admit(seed=seed,candidate_sha=sha)
+    f=protocol()
+    torch.set_num_threads(1)
+    path=ROOT/f"local_runs/r103_relational_original_seed{seed}.json"
+    if path.exists():
+        raise FileExistsError("R103_ORIGINAL_FIRST_USE_RECEIPT_ALREADY_EXISTS")
+    started=time.perf_counter()
+    report={
+        "schema":r103.SCHEMA,
+        "original_scored_candidate_SHA":sha,
+        "original_run_id":custody["original_run_id"],
+        "seed":seed,
+        "owner_custody":custody,
+        "preimplementation_freeze_blob":r103.FREEZE_BLOB,
+        "prior_original_R102_spent_SHA":r103.R102_SPENT,
+        "R102_scored_source_or_weights_reused":False,
+        "all_11_arms_fully_trained":False,
+        "scored_heldout_first_used":False,
+        "official_GPU":False,
+        "independent_scientific_pass":False,
+        "status":"R103_TRAINING_OR_RESOURCE_INCOMPLETE",
+        "torch":str(torch.__version__),
+        "platform":platform.platform(),
+        "trained":{},"evaluation":{},
+    }
+    cap=f["training"]["per_seed_total_CPU_wall_budget_seconds"]
+    def budget():
+        seconds=time.perf_counter()-started
+        if seconds>cap:
+            raise TimeoutError("R103_FROZEN_WHOLE_PROCESS_CPU_900_S_EXCEEDED")
+        return seconds
+    try:
+        fit=source("FIT",seed,sha)
+        valid=source("VALID",seed,sha)
+        budget()
+        models=r103.make_models(seed)
+        minibatches=np.random.default_rng(np.random.SeedSequence([
+            f["source"]["salts"]["BATCH"],seed])).integers(
+                0,len(fit["target"]),size=(STEPS,BATCH))
+        for arm in ARMS:
+            report["trained"][arm]=fit_arm(
+                models[arm],arm,fit,valid,minibatches)
+            budget()
+        report["all_11_arms_fully_trained"]=True
+        # Heldout cohorts are born only AFTER all eleven full FIT budgets.
+        scores={}
+        for panel in SCORED:
+            budget()
+            report["scored_heldout_first_used"]=True
+            scores[panel]=score(models,panel,source(panel,seed,sha))
+            budget()
+        result=measures(seed,scores)
+        report["evaluation"]={
+            "all_panels":{k:v["metrics"] for k,v in scores.items()},
+            "oracle_means":{k:v["oracle_mean"] for k,v in scores.items()},
+            "frozen_checks":result
+        }
+        report["status"]=(
+            "R103_NATIVE_RELATIONAL_RULE_INDUCTION_DEVELOPMENT_SIGNAL_ONLY"
+            if result["all_pass"] else "R103_UNFAMILIAR_RULE_TRANSFER_NO_GO")
+    finally:
+        report["whole_process_CPU_seconds"]=time.perf_counter()-started
+        if path.exists():
+            raise FileExistsError("R103_UNCERTAIN_ORIGINAL_EFFECT_OR_REPLAY")
+        path.parent.mkdir(parents=True,exist_ok=True)
+        path.write_text(json.dumps(report,sort_keys=True,indent=2)+"\n",
+                        encoding="utf-8")
+    return report
 
 
 if __name__=="__main__":
-    raise PermissionError("R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    import argparse
+    p=argparse.ArgumentParser(description="R103 owner-gated first-use CPU")
+    p.add_argument("--seed",type=int,required=True,choices=SEEDS)
+    args=p.parse_args()
+    result=original_ci(args.seed)
+    print(json.dumps({
+        "source_sha":result["original_scored_candidate_SHA"],
+        "original_run_id":result["original_run_id"],
+        "seed":result["seed"],
+        "all_11_arms_fully_trained":result["all_11_arms_fully_trained"],
+        "scored_heldout_first_used":result["scored_heldout_first_used"],
+        "status":result["status"],
+        "scientific_pass":result["independent_scientific_pass"],
+        "whole_process_CPU_seconds":result["whole_process_CPU_seconds"],
+    },sort_keys=True))

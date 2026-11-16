@@ -82,9 +82,18 @@ def frozen():
     return f
 
 
-def _admit(*_args,**_kw):
+@__import__("functools").lru_cache(maxsize=3)
+def _admit_protected(seed,candidate_sha):
+    # Cache only inside this one original owner process, never across runs.
+    from experiments import r103_cpu_firstuse_admission
+    return r103_cpu_firstuse_admission.admit(seed,candidate_sha)
+
+
+def _admit(*_args,seed=None,candidate_sha=None,**_kw):
     frozen()
-    raise PermissionError("R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    if seed not in SEEDS or not candidate_sha:
+        raise PermissionError("R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED")
+    return _admit_protected(seed,candidate_sha)
 
 
 def _world(panel,seed,index,sha=None,*,event=0,family=None):

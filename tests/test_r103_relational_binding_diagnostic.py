@@ -189,3 +189,91 @@ def test_scalar_and_all_conventional_models_keep_factual_unit_only_interface():
         v=static(slots,rewards,q)
         # Static truly cannot use factual support outcome changes.
         assert torch.equal(v,static(slots,rewards*0+1000,q))
+
+
+
+def test_r103_firstuse_admission_requires_separate_owner_manifest(monkeypatch):
+    from experiments import r103_cpu_firstuse_admission as owner
+    assert owner.REPO=="spoonman136668-ai/TTT-Hybrid-Lab"
+    assert owner.PR==299
+    assert owner.BRANCH=="research/r103-relational-binding-20261116"
+    assert owner.FROZEN_BLOB==r103.FREEZE_BLOB
+    assert owner.SEEDS==r103.SEEDS
+    assert owner.MAX_BUDGET_SECONDS==900
+    assert not owner.AUTH_PATH.is_file()
+    for var in ("GITHUB_ACTIONS","GITHUB_TOKEN","GITHUB_REPOSITORY",
+                "GITHUB_RUN_ID","GITHUB_EVENT_PATH"):
+        monkeypatch.delenv(var,raising=False)
+    with pytest.raises(PermissionError,
+                       match="R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
+        owner.admit(r103.SEEDS[0],"a"*40)
+
+
+def test_r103_future_firstuse_cannot_run_from_spoofed_runner_with_missing_manifest(monkeypatch):
+    from experiments import r103_cpu_firstuse_admission as owner
+    for k,v in (
+        ("GITHUB_ACTIONS","true"),("GITHUB_EVENT_NAME","pull_request"),
+        ("GITHUB_REPOSITORY",owner.REPO),("GITHUB_HEAD_REF",owner.BRANCH),
+        ("GITHUB_JOB",owner.JOB),("RUNNER_OS","Linux"),
+        ("RUNNER_ENVIRONMENT","github-hosted"),
+        ("GITHUB_RUN_ATTEMPT","1"),("R103_SEED",str(r103.SEEDS[0])),
+        ("GITHUB_REF","refs/pull/299/merge"),
+        ("GITHUB_RUN_ID","100"),("EXPECTED_CANDIDATE_SHA","b"*40),
+        ("GITHUB_TOKEN","placeholder")):
+        monkeypatch.setenv(k,v)
+    with pytest.raises(PermissionError,
+                       match="R103_PROTECTED_ORIGINAL_FIRST_USE_NOT_AUTHORIZED"):
+        owner.admit(r103.SEEDS[0],"b"*40)
+
+
+def test_r103_protected_admission_caches_only_inside_one_unit_process(monkeypatch):
+    from experiments import r103_cpu_firstuse_admission as owner
+    calls=[]
+    def unit_admit(seed,sha):
+        calls.append((seed,sha))
+        return {"R103_UNIT_ONLY_CUSTODY":True}
+    monkeypatch.setattr(owner,"admit",unit_admit)
+    r103._admit_protected.cache_clear()
+    try:
+        first=r103._admit(seed=r103.SEEDS[0],candidate_sha="c"*40)
+        second=r103._admit(seed=r103.SEEDS[0],candidate_sha="c"*40)
+        assert first==second
+        assert len(calls)==1
+        assert r103._admit_protected.cache_info().maxsize==3
+    finally:
+        r103._admit_protected.cache_clear()
+
+
+def test_r103_custody_checks_first_canonical_G4_dual_platform_G5_G7(monkeypatch):
+    from experiments import r103_cpu_firstuse_admission as owner
+    sha="d"*40
+    calls=[]
+    def fake_read(url,token):
+        calls.append(url)
+        assert token=="r103-unit-token"
+        if "/actions/workflows/" in url:
+            return {"workflow_runs":[
+                {"id":100,"head_sha":sha,"run_attempt":1,"event":"pull_request",
+                 "name":"G4 CPU qualification"},
+                {"id":200,"head_sha":sha,"run_attempt":1,"event":"pull_request",
+                 "name":"G4 CPU qualification"}]}
+        if "/actions/runs/100/jobs" in url:
+            return {"jobs":[
+                {"name":"CPU qualification / ubuntu-latest","conclusion":"success"},
+                {"name":"CPU qualification / windows-latest","conclusion":"success"}]}
+        if "/git/ref/heads/" in url:
+            return {"object":{"sha":sha}}
+        return {"workflow_runs":[
+            {"head_sha":sha,"name":"G5 authentic TTT CPU","conclusion":"success"},
+            {"head_sha":sha,"name":"G7 pinned Mamba2 CPU import",
+             "conclusion":"success"}]}
+    monkeypatch.setenv("GITHUB_TOKEN","r103-unit-token")
+    monkeypatch.setattr(owner,"_read_api",fake_read)
+    result=owner._first_attempt_ci_custody(sha,100)
+    assert result["same_source_G4_linux_windows"] is True
+    assert result["same_source_G5_G7"] is True
+    assert result["original_G4_run_id"]==100
+    assert len(calls)==4
+    with pytest.raises(PermissionError,
+                       match="R103_NOT_FIRST_CANONICAL_G4_FOR_EXACT_SHA"):
+        owner._first_attempt_ci_custody(sha,200)
