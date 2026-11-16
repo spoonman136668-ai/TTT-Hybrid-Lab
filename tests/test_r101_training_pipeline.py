@@ -242,3 +242,49 @@ def test_scoring_role_relabel_keeps_feedback_actions_and_public_role_integrity()
                                       np.array([.25,.5,.75,1.],dtype=np.float32))
     with pytest.raises(ValueError,match="R101_PHYSICAL_ROLE_RELABEL_INPUT_INVALID"):
         pipe.relabel_public_roles(data["support_slots"][:1],data["query0"])
+
+
+
+@pytest.mark.parametrize("arm,mode", [
+    (r101.ROLE_SET, "set"),
+    (r101.GRU, "gru"),
+    (r101.MLP, "flat"),
+    (r101.STATIC, "static"),
+])
+def test_conventional_comparators_have_no_dormant_trainable_parameters(arm, mode):
+    """One REAL unit-only optimizer update, never training on frozen FIT/DEV."""
+    torch.set_num_threads(1)
+    model = r101.ConventionalValue(mode)
+    fixture = r101.unit_fixture(2)
+    public = fixture["public"]
+    # One factual chosen query action; other query return stays evaluator-only.
+    chosen = r85.CALIBRATE
+    x = torch.from_numpy(public["support_slots"])[None]
+    y = torch.from_numpy(public["support_rewards"])[None]
+    query = torch.from_numpy(public["query0"])[None]
+    selected_return = torch.tensor(
+        [fixture["evaluator_only"]["return0"]], dtype=torch.float32)
+    initial = {name: p.detach().clone() for name,p in model.named_parameters()}
+    optimizer = torch.optim.AdamW(model.parameters(),lr=.001,weight_decay=.0001)
+    pred = model(x,y,query)
+    assert pred.shape == (1,), arm
+    loss = torch.nn.functional.mse_loss(pred, selected_return)
+    assert bool(torch.isfinite(loss)), arm
+    optimizer.zero_grad(set_to_none=True)
+    loss.backward()
+    named = dict(model.named_parameters())
+    assert named, arm
+    assert all(p.requires_grad and p.grad is not None
+               and torch.isfinite(p.grad).all() for p in named.values()), arm
+    # None of these baseline variants is allowed to hide substantial
+    # dormant parameters behind a misleading overall capacity count.
+    assert sum(p.numel() for p in named.values()) == sum(
+        p.numel() for p in named.values() if p.grad is not None), arm
+    optimizer.step()
+    assert any(not torch.equal(initial[name],p) for name,p in named.items()),arm
+    assert all(torch.isfinite(p).all() for p in named.values()), arm
+
+
+def test_unknown_conventional_mode_rejected():
+    with pytest.raises(ValueError,match="R101_CONVENTIONAL_MODE_NOT_REGISTERED"):
+        r101.ConventionalValue("unsupported")
