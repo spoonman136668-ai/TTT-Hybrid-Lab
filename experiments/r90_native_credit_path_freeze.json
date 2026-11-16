@@ -1,0 +1,87 @@
+{
+  "schema": "ttt-hybrid.r90-native-credit-path-diagnostic-freeze.v1",
+  "stage": "FROZEN_BEFORE_R90_DIAGNOSTIC_IMPLEMENTATION_OR_RUN",
+  "parent": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "R89_candidate_sha": "3b75351cc09979a505c7c1ea5e95f779afbb22c1",
+    "R89_freeze_blob": "72ed933c253a6f447bca0647a149b75dde732db7",
+    "R89_original_result": "R89_NATIVE_ROLE_ACCESS_NO_GO_BOTH_SEEDS",
+    "R89_PR": 284
+  },
+  "question": "Where does selected physical-return gradient fail to reach a native hard-routed reference Hybrid, and can tiny controlled factual examples be memorized before new independent science is attempted?",
+  "scope": "ENGINEERING_DEV_DIAGNOSTIC_ONLY",
+  "source": {
+    "only": "R89_EXISTING_TEST_WORLD_GENERATOR_25319991",
+    "indexes": [
+      0,
+      1
+    ],
+    "actions": [
+      "CALIBRATE0",
+      "EXPLOIT_POS2"
+    ],
+    "no_original_frozen_fit_validation_dev_ood": true,
+    "no_new_salt_or_protected_first_use": true,
+    "no_evaluator_only_law_or_oracle_labels": true,
+    "no_prior_trained_weights": true
+  },
+  "design": {
+    "native_reference_widths": [
+      32,
+      1024
+    ],
+    "native_core": "original R74 HybridPilot_FULL with R75 triangular TTT equivalent",
+    "diagnostic_arms": [
+      "HARD_ROUTER",
+      "NO_DEPTH",
+      "SOFT_ROUTER"
+    ],
+    "same_initial_state_before_router_ablation": true,
+    "learning_rate": 0.001,
+    "training_steps_width32": 64,
+    "training_steps_width1024": 0,
+    "loss": "MSE of one actually selected nine-step factual physical return",
+    "gradient_components": [
+      "stem",
+      "ssm",
+      "attn",
+      "ttt",
+      "depth.router",
+      "depth.ffn",
+      "head"
+    ],
+    "additional_readout_check": "R89 learned public role-event query/key gradients on test-only raw history",
+    "operations": "No model checkpoints; no persistent science weights; read-only output diagnostic JSON"
+  },
+  "diagnostic_outputs": [
+    "initial_mse",
+    "final_mse",
+    "overfit_loss_ratio",
+    "first_step_grad_norms",
+    "hard_router_utilization",
+    "zero_or_missing_grad_components",
+    "same_initial_parameter_tensors",
+    "source_and_frozen_commit_receipts",
+    "device_and_wall_time"
+  ],
+  "diagnostic_decision": "A measured bottleneck is a mechanism hypothesis; a one-example fit is engineering-only and never counts as generalization or scientific pass",
+  "future_science": {
+    "new_independent_source_required": true,
+    "freeze_before_first_use": true,
+    "held_out_unseen_transfer": true,
+    "matched_strong_controls": true,
+    "whole_process_cost": true,
+    "both_seed_reproducibility": true,
+    "no_thresholds_adjusted_after_result": true
+  },
+  "authority": {
+    "dev_cpu_test_only": true,
+    "official_gpu_first_use": false,
+    "external_protected_science": false,
+    "merge_to_main": false,
+    "promote_to_FROGE_or_product": false,
+    "controller_or_scheduler_change": false,
+    "new_workflow": false,
+    "paid_api": false
+  }
+}
