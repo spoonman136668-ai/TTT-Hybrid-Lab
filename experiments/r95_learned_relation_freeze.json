@@ -1,0 +1,141 @@
+{
+  "schema": "ttt-hybrid.r95-raw-causal-conjunction-learning.testonly.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_R95_IMPLEMENTATION_TESTS_CI_OR_NEW_SOURCE_FIRST_USE",
+  "parent": {
+    "R94_final_source_sha": "bc93585f62cb12bd6b04905ab0fa3d79c84372c9",
+    "R94_freeze_blob": "3158ef1fe0ef7d0d518067a0151f217a600f3611",
+    "R94_original_scored_source_sha": "1ea70bc3b06872e737238cc94bc3efecdd3debe3",
+    "R94_original_result": "R94_PUBLIC_CAUSAL_FEATURE_SIGNAL_ONLY",
+    "R94_final_adjudication": "https://github.com/spoonman136668-ai/TTT-Hybrid-Lab/pull/290#issuecomment-6905388260",
+    "previous_scored_training_validation_development_OOD_or_weights_reused": false
+  },
+  "question": "Can a trainable two-level pairwise conjunction module learn the relation of four actually observed raw noisy causal A cues, without receiving an explicit four-way parity product, under factual selected-action reward alone? Does a frozen experimental sidecar on original 32-wide nontransformer native Hybrid improve over strong same-input native flat sidecar and fully trained conventional MLP/GRU controls?",
+  "null": "An engineered binary interaction tree is a strong structural prior, not invention of a new relation type. The original parity law is commutative, so role-binding and causal importance of ordered roles are NOT identifiable here. This program tests TEST-only same-family causal cue composition, not unfamiliar causal law, whole 224-tick native cold retention, independent native intelligence, fused GPU or production efficiency.",
+  "source": {
+    "type": "NEW_INDEPENDENT_TEST_ONLY_PHYSICAL_WORLD",
+    "salts": {
+      "FIT": 25360111,
+      "FIT_VALIDATION": 25360211,
+      "DEV": 25360311,
+      "OOD_SHIFT": 25360411,
+      "SHUFFLE": 25360511,
+      "BATCHES": 25360611,
+      "BOOTSTRAP": 25360711,
+      "UNIT_ONLY": 25369991
+    },
+    "seeds": [
+      1001311,
+      1001323
+    ],
+    "world_counts": {
+      "FIT": 2048,
+      "FIT_VALIDATION": 256,
+      "DEV": 256,
+      "OOD_SHIFT": 256
+    },
+    "public_input": "Original R86 48 selected real timeline rows compressed to 5 actually observed A probe and factual chosen pivot rows via R88 pure lawful _public_slots; for learnable conjunction, only actual observed noisy role-indexed cues at slot[:4,10], selected action flags from pivot row, public pivot time; NO computed parity, private law, alternate reward or teacher labels to learned tree arms",
+    "selected_training_action": "CALIBRATE iff ((floor(index/4)+seed_index)%2==0), otherwise EXPLOIT_POS, stratum balance by pivot (index%2), public-unseen source law index stratum ((index%512)//2)%2, selected action; private law only design/evaluator, not model input",
+    "independent_salts_other_than_all_prior_R85_R94": true,
+    "FIT_worlds_per_joint_8_cell": 256,
+    "other_panels_worlds_per_joint_8_cell": 32,
+    "factual_supervision": "One chosen intervention and actually realized 9-tick reward per training world only; no paired/unselected return in FIT/FIT_VALIDATION",
+    "heldout_first_use": "Generate NEW DEV and NEW shifted OOD (same four-factor law with different probe timing/noise) only AFTER all eight arms fully trained and weights frozen, independent two seeds",
+    "prohibited": "Never call prior _world/_test_world, original spent source panels, reserved science source or access old weights"
+  },
+  "arms": [
+    "NATIVE32_RAW_SLOTS5",
+    "NATIVE32_FLAT_SIDECAR",
+    "NATIVE32_TREE_SIDECAR",
+    "MLP64_RAW_CUES",
+    "MLP_TREE_RAW_CUES",
+    "MLP64_PUBLIC_PARITY_UPPER",
+    "MLP_TREE_SHUFFLED_A_NEGATIVE",
+    "GRU64_RAW_SLOTS5"
+  ],
+  "architecture": {
+    "native_core": "Existing R74 original HybridPilot_FULL width32 + R75 mathematically equivalent causal triangular TTT, original hard depth router, no native source modification; three native arms same initial native core parameters and same 5x13 publicly observed rows",
+    "sidecar": "TRAINABLE separate residual value head added to original native core pivot readout, not proof of internal native representation learning. Flat sidecar gets same raw four cues+actual action+timestamp; tree sidecar learns pair encodings from raw four noisy cues using a shared two-input MLP and a second learned two-pair merger then reads with action/time; no hand-coded parity/multiplication in either trainable sidecar",
+    "MLP_raw": "Existing R87 PublicValueMLP 8D raw A cues/action/time, 4801 parameters and factual return",
+    "MLP_tree": "Same two-stage learned pair encoding with factual return readout as sidecar; same raw factual information as MLP raw, different parameter count, disclose",
+    "MLP_upper": "Existing R87 4801-param MLP with PUBLIC deterministic product of 4 observed cue signs; evaluator-style diagnostic ceiling only, explicitly programmed",
+    "shuffled_negative": "Same trainable tree architecture/optimizer as MLP_TREE, but cross-world A cue vectors exchanged within actually public pivot+logged-action groups for training and within pivot group in evaluator-only paired DEV/OOD, preserve current action and actual factual return; no hidden labels",
+    "GRU": "Existing R81 GRU64 on original 5x13 public slots, 15233 parameters; stronger conventional sequence reader, same legal factual observations",
+    "no_hidden_true_law_factor_or_parity_label_in_trainable_arms": true,
+    "role_identity_prior": "A events already selected/sorted using public role ID; cannot claim learned role discovery",
+    "no_structural_change_to_main_native": false,
+    "isolated_experimental_additive_sidecar_only": true,
+    "full_native_width1024_not_claimed": true
+  },
+  "training": {
+    "per_arm_steps": {
+      "NATIVE32_RAW_SLOTS5": 1024,
+      "NATIVE32_FLAT_SIDECAR": 1024,
+      "NATIVE32_TREE_SIDECAR": 1024,
+      "MLP64_RAW_CUES": 4096,
+      "MLP_TREE_RAW_CUES": 4096,
+      "MLP64_PUBLIC_PARITY_UPPER": 4096,
+      "MLP_TREE_SHUFFLED_A_NEGATIVE": 4096,
+      "GRU64_RAW_SLOTS5": 4096
+    },
+    "batch": 16,
+    "AdamW_lr": 0.001,
+    "weight_decay": 0.0001,
+    "global_grad_clip_norm": 1,
+    "identical_ordered_first_1024_FIT_minibatches_all_arms": true,
+    "validation_factual_return_MSE_logged_no_selection": true,
+    "no_early_stopping_all_arms_required": true,
+    "whole_program_CPU_budget_seconds_per_seed": 240,
+    "matched_FIT_observations_across_arms": true,
+    "matched_params_compute": false,
+    "report_params_forward_wall_and_exposures": true
+  },
+  "evaluation": {
+    "two_independent_seeds_required": true,
+    "bootstrap_resamples": 2000,
+    "conventional_checks": {
+      "MLP_tree_minus_raw_DEV_reward_min": 0.2,
+      "MLP_tree_minus_shuffled_DEV_reward_min": 0.75,
+      "MLP_tree_minus_shuffled_OOD_cold_reward_min": 0.5,
+      "MLP_tree_vs_explicit_public_parity_DEV_reward_gap_max": 0.35,
+      "MLP_tree_legal_DEV_action_agreement_min": 0.9,
+      "MLP_tree_minus_shuffled_DEV_paired_bootstrap_lower95_min": 0.1
+    },
+    "native_sidecar_checks": {
+      "native_tree_minus_native_flat_DEV_reward_min": 0.2,
+      "native_tree_minus_native_raw_DEV_reward_min": 0.75,
+      "native_tree_minus_native_flat_OOD_cold_reward_min": 0.2,
+      "native_tree_vs_conventional_MLP_tree_DEV_reward_gap_max": 0.3
+    },
+    "status_both": "R95_NATIVE_TREE_SIDECAR_AND_CONVENTIONAL_SIGNAL_ONLY",
+    "status_conventional": "R95_CONVENTIONAL_RAW_RELATION_SIGNAL_ONLY",
+    "status_no_go": "R95_RAW_RELATION_NO_GO",
+    "status_incomplete": "R95_ENGINEERING_OR_RESOURCE_INCOMPLETE_NOT_SCIENTIFIC_NO_GO",
+    "independent_scientific_pass": false
+  },
+  "execution": {
+    "branch": "research/r95-learned-causal-conjunction-20261115",
+    "existing_workflow": ".github/workflows/g4-cpu-qualification.yml",
+    "two_new_seed_jobs_in_existing_G4_only": true,
+    "dual_OS_full_G4_PASS_before_first_use": true,
+    "same_SHA_G5_TTT_CPU_and_G7_Mamba2_required": true,
+    "source_first_use_only_original_first_attempt_GitHub_hosted_Ubuntu_science_jobs_clean_SHA": true,
+    "original_science_receipts": "local_runs/r95_learned_relation_seed<seed>.json",
+    "no_new_workflow_file": true,
+    "no_new_runner_schedule_controller": true,
+    "no_paid_API": true,
+    "no_official_GPU_first_use": true
+  },
+  "authority": {
+    "scoped_cpu_testonly_diagnostic_allowed": true,
+    "merge": false,
+    "model_promotion": false,
+    "independent_protected_scientific_first_use": false,
+    "GPU_first_use": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_schedule": false,
+    "new_runner": false,
+    "new_controller": false,
+    "paid_API": false
+  }
+}
