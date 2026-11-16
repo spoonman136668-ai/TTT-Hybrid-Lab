@@ -230,3 +230,29 @@ def test_frozen_separate_structural_feedback_and_native_specific_verdicts():
     assert e["native_specific_checks"]["noaux_minus_external_same_algebra_DEV_reward_min"]==.15
     assert e["independent_scientific_pass"] is False
     assert r100.frozen()["architecture"]["precise_same_structure_noaux_feedback_shuffled_opcode"]
+
+
+def test_original_R100_scored_source_spent_and_all_new_SHA_run_replays_denied(monkeypatch):
+    assert r100.ORIGINAL_R100_SPENT_SHA=="e231895bddfaf6d41ac6d3ffcce8858eaaf4b784"
+    assert r100.ORIGINAL_R100_SPENT_RUN_ID=="43851236967"
+    env={
+        "GITHUB_ACTIONS":"true",
+        "GITHUB_EVENT_NAME":"pull_request",
+        "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+        "GITHUB_HEAD_REF":r100.BRANCH,
+        "GITHUB_JOB":"r100-factored-native",
+        "R100_SEED":str(r100.SEEDS[0]),
+        "RUNNER_OS":"Linux",
+        "RUNNER_ENVIRONMENT":"github-hosted",
+        "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_REF":"refs/pull/296/merge",
+        "EXPECTED_CANDIDATE_SHA":"f"*40,
+        "GITHUB_RUN_ID":"43899999999",
+    }
+    for k,v in env.items():
+        monkeypatch.setenv(k,v)
+    with pytest.raises(PermissionError,match="R100_SPENT_ORIGINAL_SOURCE_REPLAY_DENIED"):
+        r100._admit(r100.SEEDS[0])
+    for panel in ("FIT","VALID","DEV_SEEN","DEV_COMPOSE","OOD_SHIFT","PROGRAM_SWITCH"):
+        with pytest.raises(PermissionError,match="R100_NEW_SCIENCE_SOURCE_NOT_ADMITTED"):
+            r100._world(panel,r100.SEEDS[0],0,"f"*40)

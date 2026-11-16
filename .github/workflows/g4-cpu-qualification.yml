@@ -1112,7 +1112,7 @@ jobs:
   r100-factored-native:
     name: R100 factored native causal state / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r100-factored-native-causal-state-20261116' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r100-factored-native-causal-state-20261116' && github.event.pull_request.head.sha == 'e231895bddfaf6d41ac6d3ffcce8858eaaf4b784' && github.run_id == 43851236967 }}
     strategy:
       fail-fast: false
       matrix:

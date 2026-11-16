@@ -34,6 +34,9 @@ FREEZE_BLOB="9c9ffd09fadc95d9f94662560480d0ba6e4be54b"
 SCHEMA="ttt-hybrid.r100-factored-native-causal-state.cpu-testonly.v1"
 PARENT="772217b0dbf750e0749999fc560fec8f4b4bb7f1"
 BRANCH="research/r100-factored-native-causal-state-20261116"
+# Both original first-use cohorts are consumed. New SHA/run source replay DENIED.
+ORIGINAL_R100_SPENT_SHA="e231895bddfaf6d41ac6d3ffcce8858eaaf4b784"
+ORIGINAL_R100_SPENT_RUN_ID="43851236967"
 SEEDS=(1002311,1002323)
 SALT={"FIT":25410111,"VALID":25410211,"DEV_SEEN":25410311,
       "DEV_COMPOSE":25410411,"OOD_SHIFT":25410511,
@@ -158,6 +161,8 @@ def _admit(seed):
         or "/merge" not in os.getenv("GITHUB_REF","")):
         raise PermissionError("R100_GITHUB_HOSTED_CPU_ORIGINAL_FIRST_USE_ONLY")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R100_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R100_SPENT_RUN_ID:
+        raise PermissionError("R100_SPENT_ORIGINAL_SOURCE_REPLAY_DENIED")
     head=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
                         text=True,capture_output=True,timeout=10,check=False)
     clean=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -194,7 +199,9 @@ def _world(panel,seed,index,sha):
         or os.getenv("R100_SEED")!=str(seed)
         or os.getenv("RUNNER_OS")!="Linux"
         or os.getenv("RUNNER_ENVIRONMENT")!="github-hosted"
-        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"):
+        or os.getenv("GITHUB_RUN_ATTEMPT")!="1"
+        or sha!=ORIGINAL_R100_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R100_SPENT_RUN_ID):
         raise PermissionError("R100_NEW_SCIENCE_SOURCE_NOT_ADMITTED")
     rng=np.random.default_rng(np.random.SeedSequence([SALT[panel],seed,index]))
     world=r85._make_synthetic_world(index%r85.N,rng)
