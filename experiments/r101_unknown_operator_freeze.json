@@ -1,0 +1,169 @@
+{
+  "schema": "ttt-hybrid.r101-unknown-operator-induction.cpu-testonly.v1",
+  "stage": "PROSPECTIVE_FREEZE_ONLY_BEFORE_R101_IMPLEMENTATION_TESTS_AND_FIRST_USE",
+  "scope": "ISOLATED_CPU_TEST_ONLY_TRUE_UNKNOWN_OPERATOR_LEARNING_NOT_PRODUCTION_OR_INDEPENDENT_SCIENTIFIC_ACCEPTANCE",
+  "question": "Can the native Hybrid infer an unfamiliar causal operator from a short, matched history of actual action-consequence observations, generalizing to held-out input bindings and delayed queries, without any engineered operator algebra, privileged teacher or old scored data?",
+  "parent": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "r100_sealed_parent_SHA": "f56274e1d6ee67d8f6bf70d3e1b39cb07de12b82",
+    "r100_original_scored_SHA": "e231895bddfaf6d41ac6d3ffcce8858eaaf4b784",
+    "r100_original_scored_run": "43851236967",
+    "r100_science": "R100_ENGINEERED_FACTORIZATION_STRUCTURAL_SIGNAL_ONLY",
+    "original_r100_frozen_blob": "9c9ffd09fadc95d9f94662560480d0ba6e4be54b",
+    "prior_scored_source_or_weights_reused": false
+  },
+  "scientific_hypotheses": {
+    "primary": "A learned native memory mechanism infers unseen operator behavior from six actual factual interventions in one episode and beats the strongest adequately trained non-handcoded memory/control on new physical heldout operator families.",
+    "mechanistic": "True support consequence observations provide an incremental gain versus otherwise identical shuffled, zero-consequence and zero-memory controls, with adaptation persisting through a query delay.",
+    "identity": "A native-internal learned mechanism outperforms an information-matched EXTERNAL learned representation/control; merely matching its performance is not native-specific benefit."
+  },
+  "source": {
+    "seeds": [
+      1002511,
+      1002523,
+      1002537
+    ],
+    "salts": {
+      "FIT": 25420111,
+      "VALID": 25420211,
+      "DEV_FAMILIAR": 25420311,
+      "DEV_UNKNOWN": 25420411,
+      "OOD_SHIFT": 25420511,
+      "DELAYED_COLD": 25420611,
+      "REVERSAL": 25420711,
+      "SUPPORT_SHUFFLE": 25420811,
+      "BATCH": 25420911,
+      "BOOTSTRAP": 25421011,
+      "UNIT_ONLY": 25429991
+    },
+    "counts": {
+      "FIT": 1024,
+      "VALID": 128,
+      "DEV_FAMILIAR": 128,
+      "DEV_UNKNOWN": 128,
+      "OOD_SHIFT": 128,
+      "DELAYED_COLD": 128,
+      "REVERSAL": 128
+    },
+    "support_factual_interventions": 6,
+    "support_policy": "SIX deterministic precommitted probe actions per episode; public action/time and only its own actually realized nine-tick reward are exposed. Same episode latent operator applies to independently physically regenerated A-factor views; no oracle counterfactual or future query results.",
+    "query_policy": "One heldout independently regenerated causal input/binding and choice after six support actions; 9-tick realized reward observed ONLY by evaluator after all weights and within-episode adaptation have frozen. Paired unchosen actions evaluator-only.",
+    "known_function_families": [
+      "MUX3",
+      "PARITY3",
+      "AND3",
+      "OR3",
+      "NAND3"
+    ],
+    "unseen_function_families": [
+      "MAJORITY3",
+      "EXACTLY_ONE3"
+    ],
+    "families_for_train": "Only known families above; new unseen families appear first in heldout DEV_UNKNOWN/OOD_SHIFT/DELAYED_COLD/REVERSAL after all learned parameters, hyperparameters and selected hypotheses fixed.",
+    "operator_implementation": "Evaluator/physical-world generator only: deterministic 3-argument Boolean action-consequence semantics; no public opcode MUX/PARITY/NEGATION, precomputed law sign, truth table, operator ID, embedded operator function, or engineered algebra in the learner features. Evaluator implementation is isolated from model imports.",
+    "cue_roles": "Public noisy actual A-factor cues, three role assignments and chosen action/timing; equivariant role handling may be learned with shared weights/permutation pooling, never hard-coded Boolean functions.",
+    "operator_identity": "No unique episode- or family-stable code exposed. Inference must use within-episode factual support evidence and public input/action/roles, never a memorized family label.",
+    "physics": "Use R85 224-tick pure physical simulator and R86 pure permitted shifts as independently regenerated new worlds; never call any prior _world panel/cached scored state. Each support observation results from an actual selected intervention and actual 9-tick physical return.",
+    "episode_construction": "Support and query are separate independent physics draws conditioned only on the same hidden causal operator family. Source indexes, role permutations and time strata are fixed by seed/panel/index; no reward-selected rejection sampling or adaptive source choice.",
+    "train_validation_access": "FIT/VALID factual support + actual chosen query returns solely for supervised learning. VALID is report-only, no parameter selection, no early stopping. DEV/OOD/COLD/REVERSAL are never used by optimizer or for posthoc model selection.",
+    "unseen_scope": "Unseen Boolean operator definitions (not new physical dynamical laws); no general AGI, 224-tick recurrent retention or official GPU conclusion.",
+    "public_identifiability_audit": "Before scoring, report source balance and whether support observations distinguish candidate operator definitions under observed noisy rewards; source invalid if predefined balanced action/time/role coverage or deterministic suite integrity fails. Never redraw cohorts after seeing outcomes.",
+    "no_prior_cohort_replay": true,
+    "one_original_first_use_per_seed": true
+  },
+  "models": {
+    "native_reference": "Unmodified original R74 width32 HybridPilot_FULL plus R75 triangular TTT, SSM/causal attention/TTT/depth; isolate trainable support-memory adapter from the production model; no model.py changes.",
+    "learned_relation": "Neural shared equivariant support encoder + learned bounded episode state updated sequentially from PUBLIC chosen action, actual selected reward, cue and role observations. No explicit Boolean function/law operation, custom reward-sign oracle or evaluator import inside model.",
+    "probe_cost": "Every arm receives the exact six interventions and factual rewards and identical new query cues/action choices; active actions, number of observations and memory capacity constraints held fixed.",
+    "parameter_compute": "Match native-internal learned-state and external learned-state adapters within 10% trainable parameters and active FLOPs when possible; record all params, actual total measured CPU wall time, active FLOPs and source-generation cost; otherwise performance is only TEST development and cannot claim compute-superior science.",
+    "conventional": "Train full-step role-equivariant support-set, GRU64 support history, and flattened MLP memory controls without engineered operator programs. Strongest qualified one is the scientific comparator.",
+    "engineered_upper": "Physical evaluator truth-table oracle is diagnostic ONLY, explicitly receives hidden law; not counted as learned or used for selection/training."
+  },
+  "arms": [
+    "NATIVE32_LEARNED_SUPPORT_MEMORY",
+    "NATIVE32_SAME_INIT_SHUFFLED_SUPPORT_OUTCOMES",
+    "NATIVE32_SAME_INIT_NO_SUPPORT_OUTCOMES",
+    "NATIVE32_SAME_INIT_STATE_RESET_BEFORE_QUERY",
+    "EXTERNAL_LEARNED_SUPPORT_STATE_SAME_CAPACITY",
+    "ROLE_EQUIVARIANT_SUPPORT_SET",
+    "GRU64_FACTUAL_SUPPORT",
+    "MLP64_FLATTENED_FACTUAL_SUPPORT",
+    "STATIC_PRIOR_NO_FEEDBACK"
+  ],
+  "training": {
+    "optimizer": "AdamW",
+    "steps_each_arm": 3072,
+    "batch": 16,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "same_factual_actions_rewards_batch_indices": true,
+    "initialization_matched_for_native_ablations": true,
+    "all_nine_arms_fully_trained_before_any_DEV_first_use": true,
+    "no_validation_selection": true,
+    "no_saved_prior_scored_weights": true,
+    "whole_process_CPU_seconds_per_seed_cap": 600,
+    "max_original_GitHub_hosted_CPU_jobs": 3
+  },
+  "controls": {
+    "support_shuffle": "Deterministic seed-only derangement among support observation slots matched for public action/time strata, independent of reward/private law. Scramble ONLY support outcome pairings, preserve query factual reward; audit nontrivial perturbation and no fixed points before score.",
+    "no_outcome": "Identical state updater input/architecture and query access with support rewards masked to constant; preserve six support observations/action access.",
+    "state_reset": "Same trained and initialized native architecture with episode memory reset before query, no change to query inputs.",
+    "role_permutation": "All arms tested on unseen role permutations and independently sampled physical factors; operator identity never exposed.",
+    "strong_baselines": "Fully trained nonhandcoded role-set, GRU and MLP plus external same-capacity learned-state comparator.",
+    "evaluator_truth_oracle": "Evaluator-only upper, never train/feature input, never claimed as discovery.",
+    "negative_controls_required": true
+  },
+  "evaluation": {
+    "independent_seeds": 3,
+    "paired_bootstrap_draws": 2000,
+    "primary": "Mean physically realized reward on independent DEV_UNKNOWN from pre-query action selection, after fixed six factual supports.",
+    "checks": {
+      "native_minus_strongest_nonengineered_DEV_UNKNOWN_reward_min": 0.25,
+      "paired_bootstrap_lower95_native_minus_strongest_min": 0.05,
+      "native_unknown_query_action_accuracy_min": 0.7,
+      "native_minus_no_support_outcome_DEV_UNKNOWN_min": 0.3,
+      "native_minus_shuffled_support_outcomes_DEV_UNKNOWN_min": 0.3,
+      "native_minus_state_reset_DELAYED_COLD_min": 0.2,
+      "native_minus_external_learned_state_DEV_UNKNOWN_min": 0.15,
+      "native_minus_best_baseline_OOD_SHIFT_min": 0.15,
+      "role_permutation_action_agreement_min": 0.7,
+      "reversal_adaptation_above_no_feedback_min": 0.2
+    },
+    "all_three_seeds_require_every_primary_mechanistic_check": true,
+    "relation_inference_not_invention": "Even all PASS means bounded unfamiliar-family behavior inference from short factual interventions, not invention of arbitrary new operator types/AGI; hidden families are evaluator-defined.",
+    "statuses": {
+      "qualified_development_signal": "R101_UNKNOWN_OPERATOR_INFERENCE_DEVELOPMENT_SIGNAL_ONLY",
+      "conventional_only": "R101_CONVENTIONAL_OR_EXTERNAL_LEARNER_ONLY",
+      "no_go": "R101_UNSEEN_OPERATOR_INFERENCE_NO_GO",
+      "invalid": "R101_SOURCE_CONTROL_OR_COMPUTE_MATCH_INVALID",
+      "incomplete": "R101_ENGINEERING_OR_RESOURCE_INCOMPLETE"
+    },
+    "independent_scientific_pass": false
+  },
+  "engineering": {
+    "branch": "research/r101-unknown-operator-induction-20261116",
+    "freeze_json_path": "experiments/r101_unknown_operator_freeze.json",
+    "requires_separate_freeze_only_commit_before_implementation": true,
+    "implementation_scope": "Isolated new experiments/r101_unknown_operator_diagnostic.py and tests/test_r101_unknown_operator_diagnostic.py plus branch-scoped seed jobs in EXISTING G4 after complete G4 Linux/Windows; no overwrite existing model/core or tests.",
+    "admission": "Never generate new scored DEV/unknown panels until exact source clean SHA, original GitHub-hosted Ubuntu CPU first-attempt, matching branch/job/seed/run and successful G4 dual-OS source/negative-controls qualification are verified.",
+    "original_first_use_run_and_sha": "Must be pinned once from independently verified original G4 job; no replay on changed source or subsequent run; prior scored cohorts remain permanently fenced.",
+    "G5_G7": "Same exact SHA native authentic TTT CPU both platforms and pinned Mamba2 import qualification separately; no GPU first use.",
+    "post_scoring": "Source seal on a subsequent SHA, regression without replaying DEV scored cohorts, preserve signed receipts and both negative findings and gains.",
+    "no_new_runner_scheduler_controller_workflow_or_paid_api": true
+  },
+  "authority": {
+    "prospective_protocol_freeze_and_isolated_CPU_engineering_proposal": true,
+    "protected_scored_first_use": false,
+    "official_GPU_first_use": false,
+    "independent_scientific_acceptance": false,
+    "merge": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_controller": false,
+    "new_scheduler": false,
+    "new_runner": false,
+    "paid_API": false
+  }
+}
