@@ -194,3 +194,51 @@ def test_precommitted_thresholds_and_without_scored_data_we_do_not_claim_science
     assert f["training"]["matched_params_compute"] is False
     assert f["evaluation"]["two_independent_seeds_required"]
     assert f["evaluation"]["independent_scientific_pass"] is False
+
+
+def test_r95_spent_first_use_is_denied_on_any_new_commit_or_run(monkeypatch):
+    assert r95.ORIGINAL_R95_SPENT_SHA=="bc80edd63101cb8f293769a1e6345689acca0705"
+    assert r95.ORIGINAL_R95_SPENT_RUN_ID=="43792098794"
+    values={
+        "GITHUB_ACTIONS":"true",
+        "GITHUB_EVENT_NAME":"pull_request",
+        "GITHUB_REPOSITORY":"spoonman136668-ai/TTT-Hybrid-Lab",
+        "GITHUB_HEAD_REF":r95.BRANCH,
+        "GITHUB_JOB":"r95-learned-relation",
+        "R95_SEED":str(r95.SEEDS[0]),
+        "RUNNER_OS":"Linux",
+        "RUNNER_ENVIRONMENT":"github-hosted",
+        "GITHUB_RUN_ATTEMPT":"1",
+        "GITHUB_REF":"refs/pull/291/merge",
+        "EXPECTED_CANDIDATE_SHA":"a"*40,
+        "GITHUB_RUN_ID":"43799999999",
+    }
+    for key,val in values.items():
+        monkeypatch.setenv(key,val)
+    with pytest.raises(PermissionError,match="R95_SPENT_TEST_ONLY_FIRST_USE_REPLAY_DENIED"):
+        r95._admit(r95.SEEDS[0])
+    with pytest.raises(PermissionError,match="R95_SOURCE_NOT_ADMITTED_FOR_ORIGINAL_SCIENCE"):
+        r95._world("FIT",r95.SEEDS[0],0,"a"*40)
+
+
+def test_known_r95_shuffled_negative_has_index_law_anticorrelation_without_opening_scored_data():
+    # SOURCE-DESIGN AUDIT, not old world readback:
+    # Under the immutable R85 pure constructor the physical A-law index
+    # stratum alternates by index//2; the fallback np.roll inside a public
+    # pivot group maps to a neighboring index with often opposite law.
+    # Thus cross-world "shuffle" is NOT a valid uninformative causal negative.
+    # Keep its observed result frozen and do NOT rescore its spent worlds.
+    for seed in r95.SEEDS:
+        for panel in ("DEV","OOD_SHIFT"):
+            n=r95.COUNT[panel]
+            ix=np.arange(n)
+            raw=np.zeros((n,8),np.float32)
+            raw[:,6]=np.where(ix%2==0,.3,.9)
+            move=r95._shuffle_index(raw,seed,panel,None)
+            orig=((ix//2)%2)
+            moved=((move//2)%2)
+            anticorrelated=float(np.mean(moved!=orig))
+            assert anticorrelated>0.70
+            # This negative has a predictable relation to the simulator's
+            # index-based law. It cannot establish causal cue destruction.
+            assert (move!=ix).all()

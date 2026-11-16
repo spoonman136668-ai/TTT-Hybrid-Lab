@@ -36,6 +36,9 @@ FREEZE_BLOB="e2968738694b67b2557d7c976378b9664dec0860"
 PARENT="bc93585f62cb12bd6b04905ab0fa3d79c84372c9"
 SCHEMA="ttt-hybrid.r95-raw-causal-conjunction-learning.testonly.v1"
 BRANCH="research/r95-learned-causal-conjunction-20261115"
+# Original independently verified two-seed TEST-only first use is spent.
+ORIGINAL_R95_SPENT_SHA="bc80edd63101cb8f293769a1e6345689acca0705"
+ORIGINAL_R95_SPENT_RUN_ID="43792098794"
 SEEDS=(1001311,1001323)
 SALT={"FIT":25360111,"FIT_VALIDATION":25360211,
       "DEV":25360311,"OOD_SHIFT":25360411}
@@ -137,6 +140,8 @@ def _admit(seed:int)->str:
         or "/merge" not in os.getenv("GITHUB_REF","")):
         raise PermissionError("R95_ORIGINAL_HOSTED_FIRST_ATTEMPT_G4_JOB_REQUIRED")
     sha=os.getenv("EXPECTED_CANDIDATE_SHA","")
+    if sha!=ORIGINAL_R95_SPENT_SHA or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R95_SPENT_RUN_ID:
+        raise PermissionError("R95_SPENT_TEST_ONLY_FIRST_USE_REPLAY_DENIED")
     actual=subprocess.run(["git","rev-parse","HEAD"],cwd=ROOT,
         capture_output=True,text=True,check=False,timeout=10)
     clean=subprocess.run(["git","diff","--quiet","HEAD","--"],cwd=ROOT,
@@ -164,6 +169,8 @@ def _world(panel:str,seed:int,index:int,sha:str):
         or os.getenv("GITHUB_JOB")!="r95-learned-relation"
         or os.getenv("R95_SEED")!=str(seed)
         or os.getenv("GITHUB_RUN_ATTEMPT")!="1"
+        or sha!=ORIGINAL_R95_SPENT_SHA
+        or os.getenv("GITHUB_RUN_ID")!=ORIGINAL_R95_SPENT_RUN_ID
         or os.getenv("RUNNER_OS")!="Linux"
         or os.getenv("RUNNER_ENVIRONMENT")!="github-hosted"):
         raise PermissionError("R95_SOURCE_NOT_ADMITTED_FOR_ORIGINAL_SCIENCE")

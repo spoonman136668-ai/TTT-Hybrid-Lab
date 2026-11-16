@@ -860,7 +860,7 @@ jobs:
   r95-learned-relation:
     name: R95 learned raw-cue relation vs native sidecar / seed ${{ matrix.seed }}
     needs: cpu-qualification
-    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r95-learned-causal-conjunction-20261115' }}
+    if: ${{ github.event_name == 'pull_request' && github.repository == 'spoonman136668-ai/TTT-Hybrid-Lab' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r95-learned-causal-conjunction-20261115' && github.event.pull_request.head.sha == 'bc80edd63101cb8f293769a1e6345689acca0705' && github.run_id == 43792098794 }}
     strategy:
       fail-fast: false
       matrix:
