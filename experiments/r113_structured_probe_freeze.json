@@ -1,0 +1,176 @@
+{
+  "schema": "ttt-hybrid.r113.structured-compositional-active-causal-intervention.unit-only-prospective-freeze.v1",
+  "stage": "PREIMPLEMENTATION_FROZEN_UNIT_ONLY_DEV_NO_PROTECTED_FIRST_USE",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r113-structured-causal-active-probe-20261117",
+    "base_R112_sha": "b3fcadaac9441c31579a12b3d9b7f982037de7ac",
+    "base_R112_pr": 308,
+    "R111_scientific_no_go": true,
+    "R111_float_cross_os_fail": true,
+    "R112_integer_validation_parity_pass": true,
+    "no_R101_to_R112_scored_or_protected_heldout_reuse": true,
+    "no_prior_model_weights": true,
+    "all_prior_scored_cohorts_spent": true
+  },
+  "hypothesis": "For genuinely composed two-stage intervention mechanisms whose stage operator identities appeared individually in FIT but whose combinations never did, an eight-address native learned tokenless policy trained using only public chosen-action histories can select informative interventions and generalize to new compositions. Require gain over matched random, low-count, fixed, trained GRU/MLP controls; compare with a public Bayesian information-gain expert, old-context retention and whole-process cost. No claim of broader causal discovery from a synthetic benchmark.",
+  "source": {
+    "seeds": [
+      1130011,
+      1130023,
+      1130037
+    ],
+    "panel_salts": {
+      "UNIT_FIT": 27301101,
+      "UNIT_VALID": 27301107,
+      "UNIT_UNSEEN": 27301113,
+      "UNIT_BATCH": 27301119,
+      "UNIT_CHOICES": 27301123,
+      "UNIT_OUTCOMES": 27301129,
+      "UNIT_QUERIES": 27301131,
+      "UNIT_COLD": 27301137
+    },
+    "operators": [
+      "AND",
+      "OR",
+      "XOR",
+      "NAND",
+      "NOR",
+      "XNOR"
+    ],
+    "structural_mechanism": "Three independent binary treatments A,B,C; intervene do(A=a,B=b,C=c), hidden mediator Z=op1(A,B), observed signed outcome Y=2*op2(Z,C)-1 then independent deterministic-key flip probability 0.15. Stage1 and stage2 are hidden Boolean operators chosen for each context; no direct Z/outcome counterfactual observation. The actor sees offered A/B/C vectors and own previously chosen Y signs. Sealed unrelated final query treatment shown only after six chosen probes per context. Source is synthetic with explicit structural equations, not real-world causal grounding.",
+    "unseen_compositions": [
+      [
+        "AND",
+        "XOR"
+      ],
+      [
+        "OR",
+        "NAND"
+      ],
+      [
+        "NAND",
+        "OR"
+      ],
+      [
+        "NOR",
+        "AND"
+      ],
+      [
+        "XNOR",
+        "NOR"
+      ],
+      [
+        "XOR",
+        "AND"
+      ],
+      [
+        "NAND",
+        "NOR"
+      ],
+      [
+        "NOR",
+        "NAND"
+      ]
+    ],
+    "unseen_composition_truth_masks_hex": [
+      "6a",
+      "57",
+      "bf",
+      "02",
+      "14",
+      "28",
+      "40",
+      "fd"
+    ],
+    "train_compositions": "All 36 ordered pairs from operators cartesian product EXCEPT each pair whose complete three-factor truth table matches ANY eight reserved unseen composition masks. This leaves 27 FIT operator pairs, 22 distinct FIT truth tables, zero heldout truth-table overlap; every primitive occurs in both positions in FIT. VALID uses FIT combinations, never reserved unseen.",
+    "unseen_source_generated_only_after_every_trainable_arm_512_updates": true,
+    "worlds_per_seed": {
+      "UNIT_FIT": 176,
+      "UNIT_VALID": 88,
+      "UNIT_UNSEEN": 128
+    },
+    "changed_unchanged_unseen_balanced_per_seed": 64,
+    "public_phase_count": 2,
+    "chosen_action_budget_per_phase": 6,
+    "chosen_action_budget_per_world": 12,
+    "candidate_actions_per_step": 2,
+    "outcome_flip_probability": 0.15,
+    "outcome_noise_keyed_by_chosen_action": true,
+    "private_mechanism_labels_evaluator_only": true,
+    "query_sealed_until_support_done": true,
+    "no_unseen_world_generation_in_tests": true,
+    "no_spent_R111_original_unseen_replay": true
+  },
+  "training": {
+    "native_policy": "New trained shared per-candidate scorer over 8-address public chosen feedback count/sum, proposed 3-bit treatment and phase/step; no access to latent graph, private operator label, query outcome, unchosen rewards, or oracle target at inference.",
+    "fully_trained_controls": [
+      "role-aware native eight-address policy",
+      "history-vector MLP",
+      "observation-sequence GRU"
+    ],
+    "fit_trajectories": "All 3 models trained on identical public FIT randomized chosen interventions, 176*2*6=2112 public states/seed, analytic expected all-36-compositional-templates Bayesian posterior information gain targets on two currently offered interventions. Teacher/IG reference has stronger hand-coded hypothesis class and is disclosed, and does NOT pass private law identity or heldout answers to learner.",
+    "trainable_arms": 3,
+    "AdamW_updates_each": 512,
+    "batch_size": 16,
+    "learning_rate": 0.002,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "CPU_threads": 1,
+    "CPU_wall_budget_seconds_per_seed": 240,
+    "fixed_controls": [
+      "public exact all-36-composition IG",
+      "count-only low-coverage",
+      "seeded matched random",
+      "always-first offered",
+      "native learned with physical feedback signs blinded for action selection"
+    ],
+    "matching": "Same public candidate pairs and per-world action budget, same FIT training histories/targets/updates for 3 trainable arms, all final prediction heads use one common fixed all-36-operator Bayesian evidence readout, no future query or unchosen feedback. Record different trainable parameters, wall time and compute limitations.",
+    "native_inference": "New integer Q=384 quantized scorer with 8-address public vector inputs and integer hard-swish, signed nearest; reuse R112 portable-source preadmission lessons. Require strict source-bound Linux/Windows action, score and parameter hash equality, not floating-score tie control."
+  },
+  "evaluation": {
+    "kind": "UNIT_ONLY_DEV_ORIGINAL_FRESH_NOT_PROTECTED_INDEPENDENT_SCIENCE",
+    "per_seed_criteria_all_three_required": {
+      "native_new_accuracy_min": 0.68,
+      "native_minus_random_new_accuracy_min": 0.03,
+      "native_minus_lowcount_new_accuracy_min": 0.02,
+      "native_minus_fixed_first_new_accuracy_min": 0.02,
+      "native_minus_best_conventional_new_accuracy_min": 0.02,
+      "native_minus_exact_IG_new_accuracy_min": -0.03,
+      "native_minus_feedback_blind_new_accuracy_min": 0.02,
+      "native_changed_law_minus_random_min": 0.02,
+      "native_unchanged_law_minus_random_min": 0,
+      "native_old_before_accuracy_min": 0.68,
+      "old_before_minus_old_after_accuracy_max": 0,
+      "exact_IG_minus_random_new_accuracy_min": 0.03,
+      "native_random_action_divergence_min": 12,
+      "native_quantized_cold_reload_mismatches_max": 0,
+      "all_arms_exact_12_chosen_probe_budget": true
+    },
+    "report_per_arm_per_seed": [
+      "action correct counts (new,old-before,old-after,changed,unchanged)",
+      "changed/unchanged counterfactual whole-context difficulty",
+      "all 6 chosen feedback probe counts/context",
+      "native vs random action divergence",
+      "full process CPU and trainable parameter counts",
+      "public oracle IG and no-feedback controls",
+      "isolated fresh-process integer parity",
+      "all 15 frozen criteria, no retrospective retuning"
+    ],
+    "cross_platform": "Require all native quantized weight hashes, native complete action hashes, integer correct counts, control outcomes, native action divergence, cold restore mismatches and frozen criterion values match exactly across Linux/Windows; if any drift preserve NO-GO/PARITY_FAIL even if CI workflows green. Floating GRU/MLP drifting is science portability failure, not waived.",
+    "pass_status": "R113_STRUCTURED_CAUSAL_ACTIVE_PROBE_UNIT_ONLY_DEV_SIGNAL",
+    "fail_status": "R113_NO_STRUCTURED_CAUSAL_ACTIVE_PROBE_UNIT_ONLY_DEV_SIGNAL",
+    "no_post_result_threshold_change": true,
+    "protected_scientific_pass_from_unit_only": false
+  },
+  "authority": {
+    "protected_original_scientific_first_use": false,
+    "GPU_first_use": false,
+    "merge_authorized": false,
+    "forge_integration_authorized": false,
+    "model_promotion_authorized": false,
+    "deployment_authorized": false,
+    "new_workflows_runners_controllers_scheduler_authorized": false,
+    "paid_API_authorized": false
+  }
+}
