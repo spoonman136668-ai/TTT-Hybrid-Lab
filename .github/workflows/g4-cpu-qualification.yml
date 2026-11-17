@@ -69,6 +69,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r106_eight_slot_causal_memory_diagnostic
 
+      - name: R107 fresh two-phase correction retention UNIT_ONLY causal experiment
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.number == 303 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r107-phase-correction-retention-20261116' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r107_phase_correction_retention_diagnostic
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
