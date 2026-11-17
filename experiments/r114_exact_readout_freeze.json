@@ -1,0 +1,97 @@
+{
+  "schema": "ttt-hybrid.r114.exact-integer-compositional-bayes-readout.fit-valid-only-freeze.v1",
+  "stage": "PROSPECTIVE_PREIMPLEMENTATION_FIT_VALID_ONLY_NO_R113_UNSEEN_REUSE",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r114-exact-causal-bayes-readout-20261117",
+    "parent_R113_exact_sha": "2910f2974da86bcd74c1b3411784d821b1d002f9",
+    "parent_R113_draft_pr": 309,
+    "parent_R113_science": "R113_NO_STRUCTURED_CAUSAL_ACTIVE_PROBE_UNIT_ONLY_DEV_SIGNAL",
+    "parent_R113_cross_os": "STRICT_SCIENCE_SCORE_PARITY_FAIL",
+    "parent_R113_native_weight_and_all_action_traces_cross_os_equal": true,
+    "parent_R113_unseen_original_consumed": true,
+    "no_replay_R113_original_unit_unseen": true,
+    "no_change_R113_freeze_source_or_scores": true
+  },
+  "hypothesis": "Bit-exact rational/integer posterior prediction for the shared composed-causal 36-template model eliminates Linux/Windows FIT/VALID prediction/tie inconsistencies that persisted after R112-style native integer action selection. This isolates numerical portability of a fixed Bayesian readout, not intelligence gain.",
+  "source": {
+    "seeds": [
+      1130011,
+      1130023,
+      1130037
+    ],
+    "R113_train_public_fit_worlds_per_seed": 176,
+    "R113_public_valid_worlds_per_seed": 88,
+    "allowed_panels": [
+      "UNIT_FIT",
+      "UNIT_VALID"
+    ],
+    "forbidden_panels": [
+      "UNIT_UNSEEN",
+      "original_protected",
+      "R111_original",
+      "R113_consumed"
+    ],
+    "R113_no_scored_holdout_generated": true,
+    "action_budget_per_world": 12,
+    "training_updates_per_trainable_arm": 512,
+    "trainable_arms": 3,
+    "actor_policy_names": [
+      "R113_NATIVE_INTEGER",
+      "R113_MLP_TRAINED",
+      "R113_GRU_TRAINED",
+      "R113_COMPOSITION_BAYES_IG",
+      "R113_LOW_COUNT_COVERAGE",
+      "R113_MATCHED_RANDOM",
+      "R113_FIXED_FIRST",
+      "R113_NATIVE_FEEDBACK_BLIND"
+    ]
+  },
+  "exact_prediction": {
+    "likelihood_match_integer": 17,
+    "likelihood_mismatch_integer": 3,
+    "likelihood_denominator_integer": 20,
+    "known_template_count": 36,
+    "observed_feedback_sign_plus_is_one": true,
+    "support_sample_limit_per_phase": 6,
+    "posterior_weight_formula": "For each of 36 precommitted stage-op templates, integer weight=17**(number of observed signed outcomes agreeing with that truth table)*3**(number disagreeing); all templates uniform prior; each support has equal length, so denominator 20**n cancels. Predict +1 iff 2*sum(weights for templates outputting +1 for sealed query) >= sum(weights for all templates); otherwise -1. Exact integer tie returns +1.",
+    "never_float_in_final_score": true,
+    "no_unseen_query_access": true,
+    "quantized_policy_R113_unchanged": true,
+    "report_float_original_comparator": "For FIT/VALID same chosen histories only, record original R113 float readout disagreements and number of exact 50/50 integer posterior ties. Do not use its score for acceptance or alter R113 old negative.",
+    "no_private_mechanism_identification_inference": true
+  },
+  "evaluation": {
+    "kind": "FIT_VALID_ONLY_ENGINEERING_DIAGNOSTIC_NO_SCIENTIFIC_PROMOTION",
+    "same_matched_policy_fresh_FIT_training_512_each": true,
+    "compared_validation_worlds_per_seed": 88,
+    "require_all_OS_exact": [
+      "3 per-seed native quantized-weight SHA256",
+      "8 per-arm per-seed 1056-choice full action-history SHA256",
+      "8 per-arm per-seed exact integer positive-and-correctness history SHA256",
+      "8 per-arm per-seed old/new integer correct counts",
+      "3 per-seed per-arm feedback interventions and chosen physical-action budgets",
+      "all standalone integer readout cold checks zero"
+    ],
+    "local_quality_checks": {
+      "integer_vs_float_VALID_new_accuracy_drop_max": 0.05,
+      "every_policy_exact_chosen_probe_budget": true,
+      "integer_prediction_pure_public_history": true,
+      "no_heldout_scored_or_generated": true
+    },
+    "original_scientific_PASS_from_fit_valid": false,
+    "pass_status": "R114_EXACT_BAYES_READOUT_FIT_VALID_PORTABILITY_PASS",
+    "fail_status": "R114_EXACT_BAYES_READOUT_FIT_VALID_PORTABILITY_FAIL",
+    "no_post_result_threshold_changes": true
+  },
+  "authority": {
+    "protected_scientific_first_use": false,
+    "GPU_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "forge_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_workflows_runners_controllers_scheduler_authorized": false,
+    "paid_API_authorized": false
+  }
+}
