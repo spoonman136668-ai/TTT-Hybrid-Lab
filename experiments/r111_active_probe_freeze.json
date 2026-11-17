@@ -1,0 +1,230 @@
+{
+  "schema": "ttt-hybrid.r111.active-physical-causal-probes.unit-only-preimplementation-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_UNIT_ONLY_DEV_NO_PROTECTED_FIRST_USE",
+  "lineage": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r111-active-causal-probing-20261116",
+    "base_R110_exact_sha": "95e2187f9364cd26d5898282a58c62d5c573c461",
+    "base_R110_draft_pr": 306,
+    "R110_development_result": "R110_NO_PUBLIC_CONTRADICTION_CREDIT_UNIT_ONLY_DEV_SIGNAL",
+    "main_at_freeze": "d2ede7bc2bc0f16aeeedc315681b21d7af6ec439",
+    "no_R101_to_R110_scored_source_reuse": true,
+    "no_prior_model_weights": true
+  },
+  "hypothesis": "Training an eight-address tokenless/native-style policy on information value from previous physically chosen intervention consequences makes it choose informative experiments in an unfamiliar causal law, yielding higher cold-after-B prediction than matched count-only, random, fixed, Bayes-IG and fully trained conventional active policies. All arms receive exactly the same public candidate interventions and same budget; their factual feedback differs only because of what they chose. One shared fixed readout across policies isolates value of experiment selection from better prediction heads.",
+  "source": {
+    "seeds": [
+      1011011,
+      1011023,
+      1011037
+    ],
+    "panel_salts": {
+      "UNIT_FIT": 27101101,
+      "UNIT_VALID": 27101107,
+      "UNIT_UNSEEN": 27101113,
+      "UNIT_BATCH": 27101119,
+      "UNIT_COLD": 27101123,
+      "UNIT_CHOICES": 27101129,
+      "UNIT_OUTCOMES": 27101131,
+      "UNIT_QUERIES": 27101137
+    },
+    "train_masks_hex": [
+      "ca",
+      "96",
+      "80",
+      "fe",
+      "7f",
+      "e8",
+      "16",
+      "68",
+      "81",
+      "87",
+      "e1"
+    ],
+    "fresh_unseen_masks_hex": [
+      "04",
+      "0b",
+      "32",
+      "3d",
+      "51",
+      "5e",
+      "ae",
+      "cd"
+    ],
+    "spent_prior_unseen_masks_hex": {
+      "R104": [
+        "1b",
+        "66",
+        "2d",
+        "55",
+        "8e",
+        "a3",
+        "b4",
+        "c9"
+      ],
+      "R105": [
+        "0f",
+        "33",
+        "3c",
+        "59",
+        "65",
+        "95",
+        "9a",
+        "a6"
+      ],
+      "R106": [
+        "1d",
+        "27",
+        "3a",
+        "4b",
+        "71",
+        "93",
+        "a9",
+        "c5"
+      ],
+      "R107": [
+        "15",
+        "3e",
+        "46",
+        "6b",
+        "8c",
+        "a2",
+        "d9",
+        "f4"
+      ],
+      "R108": [
+        "09",
+        "db",
+        "24",
+        "4e",
+        "ed",
+        "b1",
+        "e2",
+        "d4"
+      ],
+      "R109": [
+        "02",
+        "0d",
+        "31",
+        "54",
+        "5b",
+        "67",
+        "98",
+        "a4"
+      ],
+      "R110": [
+        "03",
+        "0c",
+        "30",
+        "5a",
+        "99",
+        "a5",
+        "aa",
+        "c6"
+      ]
+    },
+    "minimum_unseen_hamming_from_train": 2,
+    "minimum_pairwise_unseen_hamming": 4,
+    "worlds_per_seed": {
+      "UNIT_FIT": 176,
+      "UNIT_VALID": 88,
+      "UNIT_UNSEEN": 128
+    },
+    "two_public_context_phases": true,
+    "hidden_law_changes_balanced_64_each_seed": true,
+    "support_probe_budget_per_phase": 6,
+    "total_chosen_physical_probes_per_arm_per_world": 12,
+    "candidate_actions_at_each_step": 2,
+    "address_count": 8,
+    "physical_intervention": "Agent selects one of two publicly visible do(role_factor_triplet = binary_pattern) interventions. Environment executes exactly the chosen intervention and returns ONE physically caused signed action outcome under the hidden Boolean causal law. Unchosen intervention outcomes NEVER computed or handed to the agent. Candidate pairs, outcome noise key and sealed query address are fixed by seed/world/phase/step but only the chosen outcome is observed.",
+    "outcome_noise_flip_probability": 0.15,
+    "sealed_prediction_query_revealed_only_after_phase_support": true,
+    "no_unseen_world_or_queries_until_all_trainable_models_complete": true,
+    "no_protected_scientific_first_use": true
+  },
+  "training": {
+    "model_native": "Learned eight-address tokenless shared scoring function over PUBLIC per-address observed count and signed-feedback memory. No private law mask, reserved query, unchosen outcomes, hidden changed-law regime or literal word tokens; 8 signed role-pattern addresses are internal fixed-size vector features.",
+    "trained_baselines": [
+      "public-evidence native learned probe policy",
+      "fully trained conventional public-history MLP",
+      "fully trained conventional public-history GRU"
+    ],
+    "exact_training_steps_each": 512,
+    "optimizer": "AdamW",
+    "batch_size": 16,
+    "learning_rate": 0.002,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "CPU_threads": 1,
+    "seeded_same_FIT_public_offline_histories_for_all_trainable_arms": true,
+    "factual_training_trajectory_policy": "Public deterministic random interventions on FIT-only worlds. For each of 6 rounds/phase compute public information-gain targets for the two available do interventions from past observed signed outcomes. Choose one action, then and only then observe its physically generated effect; no unseen/protected episodes.",
+    "target": "A known-reference 256-rule public Bayes expected entropy reduction on the two offered interventions, with independent prior on each Boolean address, causal observation flip 0.15. Information gain targets depend ONLY on public prior chosen-action consequences and current public candidate probes. This is supervised policy acquisition, not proof of discovery or learnable world-model induction.",
+    "scoring_readout": "All policy arms use the exact same fixed posterior per-address and equal tie rule to predict heldout query signs. Different final predictions are attributable only to different chosen probes and observed consequences.",
+    "nontrained_controls": [
+      "exact public Bayesian expected information gain",
+      "greedy never-observed or lowest-count address",
+      "seeded random choice",
+      "fixed choose first candidate",
+      "native learned policy with factual signs blinded to the selector (same fixed prediction readout)"
+    ],
+    "same_per_world_observation_budget_for_all_arms": true,
+    "fit_ONLY_training_gradients": true,
+    "no_training_updates_on_UNIT_UNSEEN": true,
+    "capture_trainable_parameters_training_time_and_whole_process_cost": true,
+    "maximum_CPU_seconds_per_seed": 240
+  },
+  "evaluation": {
+    "kind": "UNIT_ONLY_FRESH_DEV_NOT_ORIGINAL_SCIENCE",
+    "required_all_checks_per_seed_all_three": true,
+    "frozen_checks_all_seeds": {
+      "native_unfamiliar_new_accuracy_min": 0.62,
+      "native_minus_random_unfamiliar_accuracy_min": 0.03,
+      "native_minus_lowcount_unfamiliar_accuracy_min": 0.02,
+      "native_minus_fixed_first_unfamiliar_accuracy_min": 0.02,
+      "native_minus_strongest_trained_conventional_min": 0.02,
+      "native_minus_information_gain_oracle_min": -0.01,
+      "native_minus_feedback_blind_unfamiliar_min": 0.02,
+      "native_changed_law_minus_random_min": 0.03,
+      "native_unchanged_law_minus_random_min": 0,
+      "native_old_before_accuracy_min": 0.62,
+      "old_before_minus_old_after_accuracy_max": 0,
+      "information_gain_oracle_minus_random_min": 0.03,
+      "native_vs_random_probe_choice_divergence_count_min": 12,
+      "independent_process_cold_restore_mismatch_count_max": 0,
+      "every_policy_executed_exact_chosen_physical_probe_budget": true
+    },
+    "report_per_seed_all_arms": [
+      "new query accuracy and integer correct",
+      "old-before and old-after accuracy",
+      "changed and unchanged new rule accuracy",
+      "mean unique causal probes",
+      "mean public feedback signs",
+      "probe selection divergence",
+      "heldout query oracle regret",
+      "parameter count and 512 optimization steps",
+      "whole-process CPU seconds"
+    ],
+    "cross_platform_exact": [
+      "all integer correct counts",
+      "all fixed metrics derived from integer counts",
+      "frozen criteria and their values",
+      "policy probe divergences",
+      "chosen action budget counts",
+      "cold restore mismatch count"
+    ],
+    "status_dev_pass": "R111_ACTIVE_PROBE_POLICY_UNIT_ONLY_DEV_SIGNAL",
+    "status_dev_fail": "R111_NO_ACTIVE_PROBE_POLICY_UNIT_ONLY_DEV_SIGNAL",
+    "original_protected_scientific_pass_from_unit_only": false,
+    "never_post_result_retune_thresholds": true
+  },
+  "authority": {
+    "protected_scientific_first_use": false,
+    "GPU_scientific_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "forge_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_or_scheduled_task_authorized": false,
+    "paid_API_authorized": false
+  }
+}
