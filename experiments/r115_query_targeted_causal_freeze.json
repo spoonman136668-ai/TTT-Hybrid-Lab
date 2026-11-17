@@ -1,0 +1,190 @@
+{
+  "schema": "ttt-hybrid.r115.query-targeted-four-factor-causal-voi.unit-only-preimplementation-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_UNIT_ONLY_DEV_NO_PROTECTED_FIRST_USE",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r115-query-targeted-active-causality-20261117",
+    "parent_R114_pr": 310,
+    "parent_R114_exact_sha": "c6da381aa584625fe4904d99951c7be17b6ae579",
+    "parent_R114_tree": "0a6120d456c53009cccf4d8ea564a4556d03a769",
+    "parent_R114_FIT_VALID_exact_parity": true,
+    "parent_R113_original_science_NO_GO": true,
+    "all_R101_to_R114_scored_heldout_spent": true,
+    "do_not_replay_prior_scored_sources": true,
+    "no_prior_trained_weights": true
+  },
+  "hypothesis": "Publicly revealing the intended query intervention BEFORE a limited support-action budget creates a falsifiable value-of-information decision. In a genuinely new four-factor, three-stage compositional SCM, a trained native tokenless action policy using observed consequences and a query goal will select better support interventions than random/count/fixed and fully trained MLP/GRU policies on unfamiliar structural compositions, while an exact full-structural Bayesian policy verifies that the source truly rewards informed action. This is synthetic UNIT_ONLY development, not accepted causal intelligence.",
+  "source": {
+    "seeds": [
+      1150011,
+      1150023,
+      1150037
+    ],
+    "salts": {
+      "UNIT_FIT": 27501101,
+      "UNIT_VALID": 27501107,
+      "UNIT_UNSEEN": 27501113,
+      "UNIT_BATCH": 27501119,
+      "UNIT_CHOICES": 27501123,
+      "UNIT_OUTCOMES": 27501129,
+      "UNIT_QUERIES": 27501131,
+      "UNIT_COLD": 27501137
+    },
+    "operators": [
+      "AND",
+      "OR",
+      "XOR",
+      "NAND",
+      "NOR",
+      "XNOR"
+    ],
+    "mechanism": "Four binary treatments A,B,C,D; hidden U=op1(A,B); hidden V=op2(C,D); observed Y=op3(U,V). Each support intervention do(A,B,C,D) is one of 2 uniformly offered assignments. Only the chosen action receives a signed factual Y subject to independent 10% Bernoulli noise seeded with panel/seed/world/phase/step/chosen action. No unchosen returns or mediator revealed. Intended query treatment Q is PUBLIC before the first support action, its correct sign sealed until after all five chosen support actions for that phase. Two phases and public phase switch, each can have different hidden composed functions.",
+    "unseen_triples": [
+      [
+        "AND",
+        "OR",
+        "XOR"
+      ],
+      [
+        "OR",
+        "NAND",
+        "NOR"
+      ],
+      [
+        "XOR",
+        "XNOR",
+        "AND"
+      ],
+      [
+        "NAND",
+        "XOR",
+        "OR"
+      ],
+      [
+        "NOR",
+        "AND",
+        "NAND"
+      ],
+      [
+        "XNOR",
+        "NOR",
+        "XNOR"
+      ],
+      [
+        "AND",
+        "XNOR",
+        "NOR"
+      ],
+      [
+        "XOR",
+        "NAND",
+        "XNOR"
+      ]
+    ],
+    "unseen_truth_masks_hex": [
+      "1eee",
+      "0008",
+      "0990",
+      "6fff",
+      "fff7",
+      "1ee1",
+      "0666",
+      "8778"
+    ],
+    "FIT_rule": "All 216 ordered triples of listed primitive operators, excluding EVERY triple whose full 16-bit truth table duplicates any of eight reserved unseen three-stage truth tables. FIT=194 triples/82 distinct 16-bit functions; every primitive appears in each stage of FIT; random FIT public probing trajectories sample each FIT triple at least once per seed. VALID draws FIT only.",
+    "worlds_per_seed": {
+      "UNIT_FIT": 256,
+      "UNIT_VALID": 96,
+      "UNIT_UNSEEN": 128
+    },
+    "balanced_changed_unchanged_unseen_per_seed": 64,
+    "chosen_probes_per_phase": 5,
+    "phases": 2,
+    "total_chosen_probes_per_world": 10,
+    "candidate_actions_per_step": 2,
+    "outcome_noise_probability": 0.1,
+    "query_public_before_support": true,
+    "query_true_outcome_hidden_until_all_probes": true,
+    "unseen_generation_forbidden_until_every_trainable_arm_512_steps_complete": true,
+    "tests_may_generate_only_FIT_and_VALID": true,
+    "original_protected_scientific_firstuse": false
+  },
+  "training": {
+    "three_fresh_trainable_policies": [
+      "NATIVE_PUBLIC_QUERY_INTEGER",
+      "MLP_PUBLIC_QUERY_FULL",
+      "GRU_PUBLIC_QUERY_SEQUENCE"
+    ],
+    "FIT_training_examples_per_seed": 2560,
+    "updates_per_arm": 512,
+    "batch_size": 16,
+    "optimizer": "AdamW",
+    "learning_rate": 0.002,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "CPU_threads": 1,
+    "per_seed_CPU_wall_budget_seconds": 360,
+    "teacher": "Exact public-knowledge Bayes expected decrease in target-query 0-1 classification error from next chosen action, evaluated over 194 FIT triple hypotheses only; all expected likelihoods use exact integer 9:1 signed-observation weights. Use teacher labels ONLY for FIT and share identical observable randomized FIT chosen-action histories/targets/updates between trained arms. This teacher explicitly knows the compositional functional class, so trained imitation is not discovery of unknown operator families.",
+    "teacher_target_scale": 20,
+    "strong_reference": "Bayes query-specific expected-error-reduction selector and posterior answer over FULL 216 operator triples at evaluation. Hand-coded stronger hypothesis class disclosed; score like-for-like on physically chosen public feedback only. Must beat random to establish experimental informativeness.",
+    "native": "Per-candidate 45 public signed-and-count address features (16 bins), 4 query bits, 4 offered intervention bits, current phase, step and factual candidate counts; Q=384 exact integer quantized 45-48-24-1 scorer at evaluation. No query sign, unchosen outcomes, or hidden operator triple in policy.",
+    "conventional": "Fully scratch-trained 90-input MLP and 5-step public event-history 18-input GRU with same public query/candidate offers; same FIT rollout/targets/updates; report trainable params and wall-clock differences; do not claim matched FLOPs if they are not measured.",
+    "fixed_controls": [
+      "Bayes 216 known-structure query-specific VOI selector",
+      "uniform seeded random intervention",
+      "low-count-only action",
+      "always-first offered",
+      "same-trained-native with query bits masked",
+      "same-trained-native with factual feedback signs masked"
+    ],
+    "all_controls_same_public_action_observation_budget": true,
+    "no_heldout_optimizer_updates": true,
+    "no_other_models_loaded": true
+  },
+  "evaluation": {
+    "stage": "UNIT_ONLY_DEV_NOT_INDEPENDENT_PROTECTED_SCIENCE",
+    "precommitted_each_seed_all_required": {
+      "native_new_accuracy_min": 0.75,
+      "native_minus_random_new_accuracy_min": 0.05,
+      "native_minus_lowcount_new_accuracy_min": 0.04,
+      "native_minus_fixed_first_new_accuracy_min": 0.04,
+      "native_minus_best_fully_trained_conventional_new_accuracy_min": 0.02,
+      "native_minus_query_blind_new_accuracy_min": 0.06,
+      "native_minus_feedback_blind_new_accuracy_min": 0.03,
+      "native_minus_full_Bayes_VOI_new_accuracy_min": -0.05,
+      "full_Bayes_VOI_minus_random_new_accuracy_min": 0.06,
+      "native_changed_law_minus_random_min": 0.03,
+      "native_unchanged_law_minus_random_min": 0.03,
+      "native_old_before_accuracy_min": 0.75,
+      "old_before_minus_old_after_accuracy_max": 0,
+      "native_vs_random_probe_divergence_min": 10,
+      "native_integer_independent_cold_reload_mismatches_max": 0,
+      "all_policy_actual_chosen_probe_budget_exact": true
+    },
+    "report": [
+      "correct counts/accuracy per arm per seed on new/old-before/old-after and balanced changed/no-change",
+      "per-seed fixed action and whole factual-observation SHA256",
+      "public target-query VOI, query-blind and feedback-blind action ablation",
+      "fit-only supervised information budget from 194/216 class",
+      "native weight SHA256 and process-isolated cold integer reload",
+      "trained parameter counts and whole process CPU time",
+      "all prospective criteria, even if negative"
+    ],
+    "platform_reproducibility": "At exact candidate SHA require Linux/Windows bitwise equal native quantized weights, complete selected action and return traces, all per-arm prediction counts, all gate decision criteria and independent cold reload. Any difference is scientific score parity FAIL even if CI green. Platform wall seconds not exact.",
+    "pass_status": "R115_QUERY_TARGETED_NATIVE_ACTIVE_CAUSAL_UNIT_ONLY_DEV_SIGNAL",
+    "fail_status": "R115_NO_QUERY_TARGETED_NATIVE_ACTIVE_CAUSAL_UNIT_ONLY_DEV_SIGNAL",
+    "no_threshold_changes_after_scoring": true,
+    "protected_scientific_pass_from_unit_only": false,
+    "no_retention_claim_from_read_only_old_state_replay": true
+  },
+  "authority": {
+    "protected_original_scientific_first_use": false,
+    "GPU_firstuse_authorized": false,
+    "merge_authorized": false,
+    "FORGE_integration_authorized": false,
+    "model_promotion_authorized": false,
+    "deployment_authorized": false,
+    "new_runners_workflows_controllers_scheduler_authorized": false,
+    "paid_API_authorized": false
+  }
+}
