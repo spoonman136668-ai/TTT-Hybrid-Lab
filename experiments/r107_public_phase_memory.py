@@ -25,7 +25,13 @@ EXPECTED_SEEDS = (1007011, 1007023, 1007037)
 
 def audit_freeze():
     raw = FREEZE.read_bytes()
-    actual = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
+    # Git's Windows checkout may map checked-in LF to CRLF. Authenticate
+    # canonical Git bytes, accepting ONLY that deterministic conversion.
+    canonical = raw.replace(b"\r\n", b"\n")
+    if b"\r" in canonical:
+        raise RuntimeError("R107_FREEZE_NONCANONICAL_LINE_ENDING")
+    actual = hashlib.sha1(b"blob " + str(len(canonical)).encode()
+                          + b"\0" + canonical).hexdigest()
     if actual != FREEZE_BLOB:
         raise RuntimeError("R107_PREIMPLEMENTATION_FREEZE_BLOB_DRIFT")
     f = json.loads(raw)
