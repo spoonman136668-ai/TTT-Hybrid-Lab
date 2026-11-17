@@ -241,6 +241,14 @@ def _worker_payload():
     torch.set_num_threads(1)
     results={str(seed):{mode:trace(seed,mode) for mode in MODES}
              for seed in SEEDS}
+    # Both policy arms MUST receive bitwise-identical first-step public
+    # inputs, canonical initialized parameters, forward, loss, and the entire
+    # raw gradient tensor. Clipping is downstream of stage index 12.
+    for seed in SEEDS:
+        lhs=results[str(seed)][MODES[0]]["all_actual_frozen_stages"]
+        rhs=results[str(seed)][MODES[1]]["all_actual_frozen_stages"]
+        if [x["sha256"] for x in lhs[:13]]!=[x["sha256"] for x in rhs[:13]]:
+            raise RuntimeError("R121_MATCHED_CLIP_METHOD_UPSTREAM_SOURCE_DRIFT")
     return {"seeds":results,
             "environment":{
                 "python":sys.version.split()[0],
