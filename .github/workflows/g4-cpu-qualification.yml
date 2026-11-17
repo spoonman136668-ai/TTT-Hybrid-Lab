@@ -129,6 +129,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r116_feedback_probe_diagnostic
 
+      - name: R117 frozen FIT-VALID only original native weight and integer portability diagnosis
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r117-fit-valid-native-weight-portability-20261117' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r117_native_weight_portability_diagnostic
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
