@@ -14,6 +14,7 @@ import math
 import os
 from pathlib import Path
 import subprocess
+import sys
 import time
 
 import numpy as np
@@ -464,22 +465,39 @@ def evaluate(models,data,deadline):
 
 
 def cold_prediction_parity(model,data,deadline):
-    # Only a fresh development model state is roundtripped; no accepted
-    # original owner weights or promoted checkpoints are loaded/mutated.
+    """Exact cold prediction parity in a NEW isolated Python process.
+
+    Fresh development state only: no owner, production or prior scored weights.
+    Evaluate both actions and old/new contexts, including old-before-B state.
+    """
+    _deadline(deadline)
     model.eval()
     ix=np.arange(min(8,len(data["support_slots"])))
-    sample=_inputs(data,ix,NATIVE,0,r85.CALIBRATE)
+    cases=((0,r85.CALIBRATE,True),(0,r85.EXPLOIT_POS,True),
+           (0,r85.CALIBRATE,False),(0,r85.EXPLOIT_POS,False),
+           (1,r85.CALIBRATE,False),(1,r85.EXPLOIT_POS,False))
+    samples=[_inputs(data,ix,NATIVE,context,action,before)
+             for context,action,before in cases]
     with torch.no_grad():
-        orig=model(*sample).clone()
+        original=torch.stack([model(*sample) for sample in samples])
     stream=io.BytesIO()
-    torch.save(model.state_dict(),stream)
-    stream.seek(0)
-    restored=NativePhaseValue("two")
-    restored.load_state_dict(torch.load(stream,map_location="cpu",weights_only=True))
-    restored.eval()
-    with torch.no_grad():
-        after=restored(*sample)
-    return int(torch.count_nonzero(orig!=after).item())
+    torch.save({"state":model.state_dict(),"samples":samples},stream)
+    code=("import io,sys,torch\\n"
+          "from experiments.r107_phase_correction_retention_diagnostic import NativePhaseValue\\n"
+          "torch.set_num_threads(1)\\n"
+          "payload=torch.load(io.BytesIO(sys.stdin.buffer.read()),map_location='cpu',weights_only=True)\\n"
+          "model=NativePhaseValue('two')\\n"
+          "model.load_state_dict(payload['state']); model.eval()\\n"
+          "with torch.no_grad(): after=torch.stack([model(*s) for s in payload['samples']])\\n"
+          "torch.save(after,sys.stdout.buffer)\\n")
+    result=subprocess.run([sys.executable,"-c",code],
+        cwd=ROOT,input=stream.getvalue(),capture_output=True,
+        check=True,timeout=30)
+    restored=torch.load(io.BytesIO(result.stdout),map_location="cpu",weights_only=True)
+    if original.shape!=restored.shape:
+        raise RuntimeError("R107_ISOLATED_COLD_RESTORE_SHAPE_DRIFT")
+    _deadline(deadline)
+    return int(torch.count_nonzero(original!=restored).item())
 
 
 def frozen_checks(evals,cold_mismatch):
