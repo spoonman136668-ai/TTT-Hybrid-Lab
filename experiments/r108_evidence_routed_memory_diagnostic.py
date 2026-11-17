@@ -520,7 +520,7 @@ def cold_prediction_parity(model,data,deadline):
     stream=io.BytesIO()
     torch.save({"state":model.state_dict(),"samples":samples},stream)
     code=("import io,sys,torch\n"
-          "from experiments.r108_phase_correction_retention_diagnostic import NativePhaseValue\n"
+          "from experiments.r108_evidence_routed_memory_diagnostic import NativePhaseValue\n"
           "torch.set_num_threads(1)\n"
           "payload=torch.load(io.BytesIO(sys.stdin.buffer.read()),map_location='cpu',weights_only=True)\n"
           "model=NativePhaseValue('adaptive')\n"
