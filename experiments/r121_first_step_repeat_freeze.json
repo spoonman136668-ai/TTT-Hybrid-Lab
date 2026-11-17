@@ -1,0 +1,106 @@
+{
+  "schema": "ttt-hybrid.r121.first-FIT-step-independent-process-source-and-grad-repeat.v1",
+  "stage": "PROSPECTIVE_PREIMPLEMENTATION_FIT_ONLY_DIAGNOSTIC_NOT_SCIENTIFIC_FIRST_USE",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R120_SHA": "99fcefefc49d38f199b79ffbee456c084a8d1128",
+    "parent_R120_tree": "e6678dc6012bebf2e2d2c49c7e112e3792be80d4",
+    "parent_PR": 316,
+    "parent_R120_result": "R120_CANONICAL_CLIP_NATIVE_FULL_FIT_PORTABILITY_NO_GO",
+    "R116_original_UNIT_UNSEEN_spent": true,
+    "no_R116_original_replay": true,
+    "R119_R120_original_frozen_evidence_unchanged": true
+  },
+  "research_question": "R119 captured identical FP32 original native raw gradients cross OS from one execution, but R120 compensated source-ordered gradient norms differed cross OS. Determine whether the public FIT minibatch, native initial parameter bytes, forward/loss, actual raw gradients, original clipping norm, canonical float64 norm, or first AdamW update differ across two independent processes within each platform and across Linux/Windows. Do not infer an OS kernel cause without evidence.",
+  "source": {
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "allowed_panel": "UNIT_FIT",
+    "FIT_sample_count": 256,
+    "seeded_original_R116_first_minibatch_indices": "np.random.default_rng(SeedSequence([27601119, seed, 116])).integers(0,256,size=(512,16))[0]",
+    "public_origin": "R116 public actually chosen intervention FIT history and original known-class public Bayes teacher",
+    "initial_model": "R118 original canonical SHA256 fixedgrid per-parameter FP32 initial NativePolicy 45-48-24-1",
+    "model_train_mode": true,
+    "optimizer": "Original AdamW lr=0.002 weight_decay=0.0001, first step only",
+    "two_clip_methods": [
+      "torch_original_clip_grad_norm_one",
+      "r120_fsum_f64_canonical_clip"
+    ],
+    "original_R116_TEST_UNSEEN_forbidden": true,
+    "protected_science_firstuse_forbidden": true,
+    "number_independent_processes_per_platform": 2,
+    "number_original_adamw_steps_per_process_seed_clip_mode": 1,
+    "no_full_512_update_replay": true,
+    "never_train_on_public_VALID": true
+  },
+  "capture": {
+    "frozen_stages": [
+      "FIT_first_batch_n",
+      "FIT_first_batch_m",
+      "FIT_first_batch_g",
+      "FIT_first_batch_target",
+      "FIT_first_batch_indices",
+      "initial_native_FP32_named_parameters",
+      "forward_linear1",
+      "forward_gelu1",
+      "forward_linear2",
+      "forward_gelu2",
+      "forward_linear3_logits",
+      "MSE_loss_FP32",
+      "all_raw_FP32_named_gradients",
+      "global_raw_grad_norm_F64_fsum_squared_IEEE754",
+      "original_torch_global_raw_gradient_norm_FP32",
+      "actual_clip_coefficient_FP32",
+      "all_clipped_FP32_named_gradients",
+      "all_post_AdamW_FP32_named_parameters",
+      "optimizer_exp_avg_FP32",
+      "optimizer_exp_avg_sq_FP32",
+      "optimizer_step_scalar"
+    ],
+    "capture_entire_3409_gradients_by_name_as_canonical_FP32_little_endian_base64": true,
+    "hash_canonical_tensor_name_dimensions_dtype_rawbytes": true,
+    "parallel_thread_count": 1,
+    "reference_no_hooks_same_model_math_first_update_required": true,
+    "math_fsum_signed_gradient_source_order": "model.named_parameters and flat row-major FP32 bits to float64, math.fsum(g*g), math.sqrt",
+    "torch_clip_mode": "Original R116 torch.nn.utils.clip_grad_norm_(model.parameters(),1.)",
+    "canonical_clip_mode": "Unmodified R120 canonical_clip_grad_norm_(model)",
+    "source_sha_pin_env": "EXPECTED_CANDIDATE_SHA",
+    "worker_stdout_json_one_record_no_side_effect_artifacts": true
+  },
+  "controls": {
+    "two_independent_processes_per_OS_must_use_same_source_and_seed": true,
+    "each_process_traces_all_three_seeds_and_both_clipping_methods": true,
+    "default_torch_method_and_r120_method_must_have_identical_RAW_gradient_before_clip_within_process": true,
+    "read_only_hooks_must_not_change_first_updated_FP32_weights_against_unhooked": true,
+    "one_update_only": true,
+    "no_R116_spent_science_generated": true,
+    "no_new_runner_or_workflow": true
+  },
+  "evaluation": {
+    "scope": "ENGINEERING_FIT_ONLY_SOURCE_DIAGNOSTIC",
+    "retain_original_2_worker_receipts_per_OS": true,
+    "same_platform_stage_and_named_tensor_first_mismatch_per_seed_mode": true,
+    "cross_platform_stage_and_named_tensor_first_mismatch_per_seed_mode": true,
+    "validate_full_raw_gradient_equality_before_any_claim_about_clip": true,
+    "find_earliest_divergence_from_frozen_stages_not_later_weight_scores": true,
+    "actual_binary_different_element_count_and_first_index": true,
+    "strict_original_R116_NO_GO_and_R120_NO_GO_unchanged": true,
+    "report_zero_diff_if_identical": true,
+    "run_full_existing_G4_Linux_Windows_and_G5_G7_at_exact_SHA": true,
+    "engineering_pass_only_if_complete_evidence_and_negative_controls": true,
+    "scientific_pass": false
+  },
+  "authority": {
+    "protected_science_firstuse": false,
+    "GPU_firstuse": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_scheduler_controller_workflow_authorized": false,
+    "paid_API_authorized": false
+  }
+}
