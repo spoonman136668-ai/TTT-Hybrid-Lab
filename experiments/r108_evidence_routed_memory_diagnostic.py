@@ -60,7 +60,7 @@ def frozen():
         or src["support_consequences_per_episode"]!=SUPPORT
         or (train["updates_per_trainable_arm"],train["batch_size"],
             train["CPU_wall_budget_seconds_per_seed"])!=(512,16,300)
-        or not src["unseen_always_generated_only_after_all_trainable_arms_complete"]
+        or not src["no_unseen_world_generation_until_every_trainable_arm_finishes"]
         or f["authority"]["protected_original_scientific_first_use"] is not False):
         raise PermissionError("R108_FROZEN_SOURCE_OR_AUTHORITY_DRIFT")
     return f
