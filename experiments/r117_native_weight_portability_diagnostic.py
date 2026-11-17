@@ -219,6 +219,15 @@ def run_seed(seed):
         native_training["parameters"]!=3409):
         raise PermissionError("R117_FROZEN_TRAINABLE_BUDGET_MISMATCH")
     original_layers,original_Q384_sha=r115.quantize_native(models[r116.NATIVE])
+    # Diagnose possible observation effects without touching scored original:
+    # create a separate same-seed native model and invoke the exact original
+    # R116 trainer, preserving its original public FIT inputs/minibatches.
+    original_reference_models=r116.new_models(seed)
+    original_reference_native=original_reference_models[r116.NATIVE]
+    initial_original_reference_raw=raw_fp32_sha256(original_reference_native)
+    original_reference_train=r116.train_arm(
+        original_reference_native,r116.NATIVE,fit,batches)
+    reference_R116_SHA=r115.quantize_native(original_reference_native)[1]
     osname=platform.system().lower()
     if osname not in ("linux","windows"):
         raise PermissionError("R117_UNSUPPORTED_CROSS_PLATFORM_OWNER")
@@ -228,7 +237,15 @@ def run_seed(seed):
     # Fail closed *before* generating permitted VALID when original source
     # optimizer/backend is inconsistent with the qualified historical source.
     if not original_source_reproduced:
-        raise RuntimeError("R117_R116_ORIGINAL_FIT_ONLY_QUANTIZED_HASH_NOT_REPRODUCED")
+        raise RuntimeError(
+            "R117_R116_ORIGINAL_FIT_ONLY_QUANTIZED_HASH_NOT_REPRODUCED"
+            +f" seed={seed} expected={expected}"
+            +f" observed_trainer={original_Q384_sha}"
+            +f" exact_original_trainer={reference_R116_SHA}"
+            +f" original_reference_initial_raw={initial_original_reference_raw}"
+            +f" instrumented_initial_raw={snapshots['0']}"
+            +f" instrumented_final_raw={snapshots['512']}"
+            +f" original_updates={original_reference_train['updates']}")
     baseline=public_VALID_trial(seed,384,original_layers)
     scales={};layers_for_restore={}
     tolerance=custody.audit_freeze()["diagnostics"]
