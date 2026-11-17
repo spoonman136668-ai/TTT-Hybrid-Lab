@@ -16,7 +16,7 @@ def test_R110_frozen_novelty_authority_and_spent_panels(monkeypatch):
     assert len(a["fresh_unseen_masks"])==8
     assert not a["protected_firstuse"] and not a["scientific_pass"]
     assert f["evaluation"]["protected_scientific_pass_from_unit_only"] is False
-    assert f["authority"]["no_new_runner_controller_or_scheduled_task"]
+    assert f["authority"]["no_new_runner_controller_scheduler_or_paid_api"]
     assert len(r110.TRAINABLE)==13 and len(r110.ARMS)==14
     monkeypatch.setattr(custody,"FREEZE_BLOB","0"*40)
     with pytest.raises(RuntimeError,match="FREEZE_BLOB_DRIFT"):
@@ -129,7 +129,7 @@ def test_R110_frozen_checks_map_and_no_science_promotion():
                "new_after_accuracy":.5,"new_after_oracle_regret":1.,
                "changed_law_new_after_accuracy":.5,
                "unchanged_law_new_after_accuracy":.5} for arm in r110.ARMS}
-    r=r110.frozen_checks(base,0,{"feedback_action_flip_count":0})
+    r=r110.frozen_checks(base,0,{"feedback_action_flip_count":0,"gate_knockout_action_flip_count":0})
     assert set(r["checks"])==set(
         r110.frozen()["evaluation"]["frozen_checks_all_seeds"])
     assert not r["scientific_pass"] and not r["all_unit_only_checks_pass"]
