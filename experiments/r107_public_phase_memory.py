@@ -25,7 +25,7 @@ EXPECTED_SEEDS = (1007011, 1007023, 1007037)
 
 def audit_freeze():
     raw = FREEZE.read_bytes()
-    actual = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\\0" + raw).hexdigest()
+    actual = hashlib.sha1(b"blob " + str(len(raw)).encode() + b"\0" + raw).hexdigest()
     if actual != FREEZE_BLOB:
         raise RuntimeError("R107_PREIMPLEMENTATION_FREEZE_BLOB_DRIFT")
     f = json.loads(raw)
