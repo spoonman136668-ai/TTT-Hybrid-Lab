@@ -17,7 +17,8 @@ def test_R107_freeze_authority_and_novelty_before_any_unit_unseen():
 
 
 def test_R107_actual_physics_two_visible_contexts_fit_only():
-    p,e=r107.episode("UNIT_FIT",r107.SEEDS[0],12)
+    record=r107.episode("UNIT_FIT",r107.SEEDS[0],12)
+    p,e=record["public"],record["evaluator_only"]
     assert p["support_slots"].shape==(16,5,13)
     assert p["support_context"].shape==(16,)
     assert np.count_nonzero(p["support_context"]==0) in (6,8,10)
