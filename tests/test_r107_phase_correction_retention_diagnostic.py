@@ -98,3 +98,20 @@ def test_R107_frozen_checks_map_exactly_and_cannot_report_scientific_pass():
         r107.frozen()["evaluation"]["frozen_checks_all_seeds"])
     assert result["scientific_pass"] is False
     assert not result["all_unit_only_checks_pass"]
+
+
+def test_R107_isolated_cold_reload_on_FIT_public_fixture_only():
+    torch.set_num_threads(1)
+    public=r107.episode("UNIT_FIT",r107.SEEDS[0],7)["public"]
+    q0=public["query"].copy()
+    q2=public["query"].copy()
+    q0[:,-1,0]=1.0
+    q0[:,-1,2]=0.0
+    q2[:,-1,0]=0.0
+    q2[:,-1,2]=1.0
+    fixture={k:np.stack([public[k]]) for k in
+             ("support_slots","support_rewards","support_context")}
+    fixture["query0"]=q0[None]
+    fixture["query2"]=q2[None]
+    models,_=r107.make_models(r107.SEEDS[0])
+    assert r107.cold_prediction_parity(models[r107.NATIVE],fixture,None)==0
