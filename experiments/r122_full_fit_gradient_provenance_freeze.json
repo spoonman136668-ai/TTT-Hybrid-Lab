@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.r122.all-512-public-FIT-native-stable-clip-gradient-boundaries.v1",
+  "stage": "PREIMPLEMENTATION_FROZEN_ENGINEERING_FIT_ONLY",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R121_source_sha": "7a34405e687878ac05a4489d1603beacb1b04e11",
+    "parent_R121_tree": "9609b505e2c1d33828e5412465f00d993028ce6e",
+    "parent_R121_PR": 317,
+    "R121_first_step": "Within and across OS all three seed raw FP32 gradients and R120 actual fixed-order clip results identical first-step when public FIT inputs match; original torch clipping norm 1 ULP variation",
+    "R120_original_full_model_qualification": "NO_GO",
+    "R116_original_scored_UNIT_UNSEEN_spent": true,
+    "original_R116_R117_R118_R119_R120_verdicts_must_remain_unchanged": true
+  },
+  "question": "At which first original public FIT update, and which actual numeric boundary, do full-length R120 stable-clipped native FP32 training trajectories differ within independent same-OS processes and between Linux and Windows, after verified source-equal initial parameters and frozen identical 512x16 minibatch indices?",
+  "inputs": {
+    "allowed_panels": [
+      "UNIT_FIT"
+    ],
+    "forbidden_panels": [
+      "UNIT_VALID",
+      "UNIT_UNSEEN",
+      "original_scientific",
+      "protected_science"
+    ],
+    "seed_ids": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "FIT_world_count": 256,
+    "original_source": "R116 public physical FIT action-sign histories, exact public known-class Bayesian teacher and public 512x16 seeded minibatches from SeedSequence([27601119,seed,116])",
+    "native_model": "Unchanged R116 45-48-24-1 GELU NativePolicy",
+    "canonical_initial": "Identical exact R118 SHA256-derived model parameters from seed, native arm name, parameter name and flat index",
+    "optimizer": "Unchanged R120 native AdamW lr=.002 weight_decay=.0001, 512 public FIT updates, fixed-order compensated F64 gradient L2 clipping with once-rounded FP32 coefficient",
+    "trainable_native_parameter_count": 3409,
+    "one_CPU_thread": true,
+    "num_workers_each_OS": 2,
+    "model_updates_per_seed_each_worker": 512,
+    "number_modes": 1,
+    "mode_name": "R120_F64_fsum_clipped_native",
+    "no_R116_original_scored_UNSEEN_replay": true,
+    "no_new_original_sci_qualification": true
+  },
+  "capture": {
+    "initial_fit_source_and_teacher_SHA256": true,
+    "initial_canonical_model_SHA256": true,
+    "each_minibatch_source_indices_sha256": true,
+    "ordered_step_stages": [
+      "minibatch_indices_int64",
+      "pre_update_named_FP32_weights",
+      "forward_linear1",
+      "forward_gelu1",
+      "forward_linear2",
+      "forward_gelu2",
+      "forward_linear3_logits",
+      "MSE_loss_FP32",
+      "raw_named_FP32_gradients",
+      "canonical_fsum_squares_F64",
+      "canonical_sqrt_norm_F64",
+      "canonical_clip_coefficient_FP32",
+      "clipped_named_FP32_gradients",
+      "post_AdamW_named_FP32_weights",
+      "post_AdamW_exp_avg_FP32",
+      "post_AdamW_exp_avg_sq_FP32",
+      "post_AdamW_step_FP32"
+    ],
+    "actual_numeric_method": "Read-only native forward module hooks, unchanged F.mse_loss/torch autograd and R120 stable clip and native original AdamW step, identical first raw source and optimizer architecture",
+    "tensor_hash": "Canonical SHA256 stage/name/dtype/shape/little-endian FP32/FP64/int64 raw bytes, per-named-parameter digests, no modifying trained values or optimization",
+    "all_512_updates_all_stages": true,
+    "first_divergence_by_seed_and_worker_and_stage": true,
+    "step0_source_initial_hashes_required": true,
+    "read_only_hooks_unhooked_negative_control_first_1_update": true,
+    "per_process_training_wall_seconds_report": true,
+    "max_worker_seconds": 180,
+    "negative_controls": [
+      "No original UNIT_UNSEEN or VALID sampled",
+      "No training data, model, target, optimizer hyperparameter or clip method changed",
+      "Independent worker A and B are genuinely distinct subprocesses",
+      "All 512 public FIT minibatch digests match each platform",
+      "First-step read-only hooks agree with uninstrumented R120 trainer native FP32 weights",
+      "On each OS canonical inputs and initial raw weights exactly equal between workers"
+    ]
+  },
+  "acceptance": {
+    "scope": "DEVELOPMENT_ENGINEERING_TRACE_ONLY_NOT_MODEL_PORTABILITY",
+    "complete_two_distinct_worker_original_receipts_both_OS_required": true,
+    "full_512_updates_all_three_seeds_both_workers_per_OS_required": true,
+    "all_stages_recorded_per_update": true,
+    "strict_full_native_FP32_model_portability_only_if_both_OS_all_worker_full_weight_SHA_match": true,
+    "first_source_or_gradient_or_norm_divergence_position_report_not_assumed": true,
+    "if_within_OS_diff_report_rerun_nondeterminism_before_claiming_platform_cause": true,
+    "full_existing_G4_Linux_Windows_G5_G7_required_on_candidate_SHA": true,
+    "original_R120_full_model_portability_NO_GO_unchanged": true,
+    "scientific_pass": false,
+    "model_promotion": false,
+    "success_diagnostic_status": "R122_FULL_FIT_TRACE_COMPLETE_ORIGINAL_CROSS_PLATFORM_COMPARISON_REQUIRED",
+    "failed_diagnostic_status": "R122_CUSTODY_OR_ORIGINAL_TRACE_FAILURE"
+  },
+  "authority": {
+    "protected_science_firstuse": false,
+    "GPU_firstuse": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_workflow_runner_scheduler_controller_authorized": false,
+    "paid_API_authorized": false
+  }
+}
