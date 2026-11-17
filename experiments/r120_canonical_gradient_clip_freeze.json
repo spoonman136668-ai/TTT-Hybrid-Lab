@@ -1,0 +1,109 @@
+{
+  "schema": "ttt-hybrid.r120.canonical-gradient-L2-norm-clip-FIT-VALID.v1",
+  "stage": "PROSPECTIVE_PREIMPLEMENTATION_FIT_VALID_ENGINEERING_ONLY",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R119_exact_SHA": "9d3547baf8fd0914ce33aa0f4000ff217ade84ea",
+    "parent_R119_tree": "04120f49362a26c850adc88b3f976260008b12b5",
+    "parent_PR": 315,
+    "parent_R119_first_divergence": "R119_THREE_SEEDS_ALL_PUBLIC_FIT_FORWARD_LOSS_RAW_GRADS_IDENTICAL_FIRST_CLIP_GRAD_NORM_DIFF_ONE_ULP",
+    "prior_R116_science_NO_GO": true,
+    "R117_source_reproduction_fail": true,
+    "R118_trained_model_portability_fail": true,
+    "never_replay_original_R116_UNSEEN": true
+  },
+  "hypothesis": "Replacing solely original torch FP32 global clipping-norm reduction by explicitly fixed-order Python float64 math.fsum squared raw FP32 gradients, math.sqrt, and a controlled FP32 scalar coefficient makes original native tokenless model training weights reproducible on Linux and Windows through all 512 AdamW FIT updates at R118 canonical shared initial weights, without loss of public VALID causality action behavior. Strongest other architectures unchanged, scientific efficacy not assessed.",
+  "source": {
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "allowed_panels": [
+      "UNIT_FIT",
+      "UNIT_VALID"
+    ],
+    "forbid_scored_R116_UNIT_UNSEEN": true,
+    "forbid_protected_original_science": true,
+    "public_FIT_samples_per_seed": 256,
+    "public_VALID_worlds_per_seed": 96,
+    "original_native_architecture": "R116 NativePolicy 45→48→24→1 GELU; identical FIT public query and physical consequence history",
+    "initialization": "Exact R118 canonical signed uint16-derived FP32 parameters from SHA256 seed/arm/name/index",
+    "trainer": "Original R116 AdamW lr .002 weight_decay .0001, clip max 1.0, 512 updates, minibatch 16 from unmodified R116 512x16 seeded sequence",
+    "three_scratch_policies": [
+      "R116_NATIVE_SIGN_INTEGER",
+      "R116_CONVENTIONAL_MLP",
+      "R116_CONVENTIONAL_GRU"
+    ],
+    "other_policy_training_identical_to_R116": true,
+    "only_native_gradient_L2_clipping_implementation_changed": true,
+    "source_and_teacher_unmodified": true,
+    "new_clipping": {
+      "accumulation_order": "Deterministic model.named_parameters order; within every parameter row-major ravel() of original FP32 raw gradients; convert each FP32 to exact Python float64 value; compute math.fsum(g*g for gradients in that order) and math.sqrt; no backend norm op.",
+      "epsilon": 0.000001,
+      "max_norm": 1,
+      "coefficient": "min(1.0,1.0/(global_norm+1e-6)); round to IEEE754 FP32 using numpy.float32 once; multiply every original PyTorch FP32 gradient tensor in place with that same rounded coefficient, otherwise original AdamW and all training unchanged",
+      "overflow_guard": "Fail if any nonfinite FP32 raw gradient, squared sum, norm, coefficient or optimizer state; no silent clip bypass",
+      "no_norm_threshold_or_hyperparameter_tuning": true
+    },
+    "public_VALID_physical_interventions_per_world": 4,
+    "query_public_fixed_do15": true,
+    "original_calibration_do": [
+      8,
+      9,
+      7
+    ],
+    "last_action_choice": [
+      12,
+      14
+    ],
+    "readout": "Unchanged R116 full-known-structure public exact Bayesian query decoder; actual one chosen fourth intervention factual result used, no future private target outcome prior to action."
+  },
+  "snapshot": {
+    "native_initial_raw_FP32_update": 0,
+    "post_step_indices": [
+      1,
+      32,
+      128,
+      256,
+      512
+    ],
+    "native_raw_FP32_SHA256_all_snapshots": true,
+    "first_step_canonical_norm_and_FP32_coefficient_bits": true,
+    "post512_native_quantized_Q384_weight_SHA256": true,
+    "post512_other_models_raw_FP32_SHA256": true,
+    "independent_native_cold_integer_reload_mismatch_count": 0,
+    "full_PUBLIC_VALID_actual_chosen_action_sha256": true,
+    "full_PUBLIC_VALID_signed_return_sha256": true,
+    "full_PUBLIC_VALID_query_correctness_sha256": true,
+    "VALID_accuracy_min_per_seed": 1,
+    "unmodified_torch_clip_negative_control": "Single native initial FIT step with original torch.clip_grad_norm_, record original FP32 norm SHA and native first-step FP32 weight hash for comparison only; NOT original R116 heldout nor user model promotion",
+    "process_wall_budget_seconds_per_seed": 180
+  },
+  "evaluation": {
+    "scope": "FIT_VALID_CPU_ENGINEERING_ONLY",
+    "require_exact_first_step_native_FP32_all_3_seeds": true,
+    "require_exact_native_FP32_after_512_all_3_seeds": true,
+    "require_native_Q384_integer_weight_SHA256_equal_all_3_seeds": true,
+    "require_PUBLIC_VALID_action_return_correctness_SHA256_equal_all_3_seeds": true,
+    "require_96_of_96_public_VALID_correct_each_seed_both_OS": true,
+    "require_all_3_trainable_arms_512_updates": true,
+    "require_independent_integer_cold_reload_mismatch_0": true,
+    "first_output_differences_preserved_when_found": true,
+    "exact_candidate_SHA_full_G4_CPU_Linux_Windows_G5_G7_required": true,
+    "scientific_pass_from_FIT_VALID": false,
+    "pass_status": "R120_DETERMINISTIC_CLIP_NATIVE_FULL_FIT_PORTABILITY_ENGINEERING_PASS",
+    "fail_status": "R120_CANONICAL_CLIP_NATIVE_FULL_FIT_PORTABILITY_NO_GO",
+    "original_R116_R117_R118_science_and_parity_verdicts_unchanged": true
+  },
+  "authority": {
+    "protected_science_first_use": false,
+    "GPU_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_workflow_scheduler_controller_authorized": false,
+    "paid_API_authorized": false
+  }
+}
