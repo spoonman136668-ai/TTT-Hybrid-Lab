@@ -417,7 +417,7 @@ def _bayes_public(data,index,phase,before=False):
     guess=((choices[:,None]>>pattern[None,:])&1)>0
     ll=np.where(guess==(returns[None,:]>0),math.log(.85),math.log(.15)).sum(axis=1)
     weights=np.exp(ll-ll.max());weights/=weights.sum()
-    predicted=float(weights@(2*((choices>>query)&1)-1).astype(np.float64))
+    predicted=float(weights@(2*((choices>>query)&1).astype(np.float64)-1))
     if abs(predicted)<1e-12:
         return r85.CALIBRATE if int(query)%2==0 else r85.EXPLOIT_POS
     return r85.CALIBRATE if predicted>0 else r85.EXPLOIT_POS
