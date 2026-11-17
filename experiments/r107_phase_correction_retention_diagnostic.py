@@ -482,14 +482,14 @@ def cold_prediction_parity(model,data,deadline):
         original=torch.stack([model(*sample) for sample in samples])
     stream=io.BytesIO()
     torch.save({"state":model.state_dict(),"samples":samples},stream)
-    code=("import io,sys,torch\\n"
-          "from experiments.r107_phase_correction_retention_diagnostic import NativePhaseValue\\n"
-          "torch.set_num_threads(1)\\n"
-          "payload=torch.load(io.BytesIO(sys.stdin.buffer.read()),map_location='cpu',weights_only=True)\\n"
-          "model=NativePhaseValue('two')\\n"
-          "model.load_state_dict(payload['state']); model.eval()\\n"
-          "with torch.no_grad(): after=torch.stack([model(*s) for s in payload['samples']])\\n"
-          "torch.save(after,sys.stdout.buffer)\\n")
+    code=("import io,sys,torch\n"
+          "from experiments.r107_phase_correction_retention_diagnostic import NativePhaseValue\n"
+          "torch.set_num_threads(1)\n"
+          "payload=torch.load(io.BytesIO(sys.stdin.buffer.read()),map_location='cpu',weights_only=True)\n"
+          "model=NativePhaseValue('two')\n"
+          "model.load_state_dict(payload['state']); model.eval()\n"
+          "with torch.no_grad(): after=torch.stack([model(*s) for s in payload['samples']])\n"
+          "torch.save(after,sys.stdout.buffer)\n")
     result=subprocess.run([sys.executable,"-c",code],
         cwd=ROOT,input=stream.getvalue(),capture_output=True,
         check=True,timeout=30)
