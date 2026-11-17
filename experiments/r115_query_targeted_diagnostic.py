@@ -47,7 +47,7 @@ def frozen():
         or t["updates_per_arm"]!=512 or t["batch_size"]!=16
         or t["per_seed_CPU_wall_budget_seconds"]!=360
         or t["teacher_target_scale"]!=20
-        or t["three_fresh_trainable_policies"]!=list(TRAINABLE)
+        or t["three_fresh_trainable_policies"]!=["NATIVE_PUBLIC_QUERY_INTEGER","MLP_PUBLIC_QUERY_FULL","GRU_PUBLIC_QUERY_SEQUENCE"]
         or f["source"]["candidate_actions_per_step"]!=2
         or f["source"]["query_public_before_support"] is not True):
         raise PermissionError("R115_FROZEN_TRAINING_AND_SOURCE_DRIFT")
