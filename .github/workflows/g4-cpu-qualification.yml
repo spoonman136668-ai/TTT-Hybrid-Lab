@@ -135,6 +135,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r117_native_weight_portability_diagnostic
 
+      - name: R118 frozen byte-identical shared initialization original FIT-VALID optimizer qualification
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r118-canonical-init-native-optimizer-20261117' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r118_shared_init_optimizer_diagnostic
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
