@@ -1,0 +1,201 @@
+{
+  "schema": "ttt-hybrid.r107.phase-correction-retention.unit-only-preimplementation-freeze.v1",
+  "stage": "FROZEN_BEFORE_IMPLEMENTATION_UNIT_ONLY_DEV_NO_PROTECTED_FIRST_USE",
+  "lineage": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r107-phase-correction-retention-20261116",
+    "base_R106_exact_sha": "0194a20abe8f317ffb474f205858415c524367b8",
+    "base_R106_draft_pr": 302,
+    "base_R106_freeze_sha": "e1a64a93a5d12474613be98351f3d421d0a8e6fb",
+    "base_R106_result": "R106_NO_EIGHT_SLOT_UNIT_ONLY_DEV_SIGNAL",
+    "R106_native_mean_accuracy": 0.8307291667,
+    "R106_gate_blind_mean_accuracy": 0.8307291667,
+    "R106_fresh_R105_mean_accuracy": 0.7578125,
+    "R106_Bayes256_mean_accuracy": 0.9401041667,
+    "R106_original_science_pass": false,
+    "do_not_reuse_R101_R102_R103_scored_cohorts": true,
+    "do_not_reuse_R104_R105_R106_heldout_episodes_or_weights": true,
+    "do_not_revise_R106_frozen_protocol_or_results": true
+  },
+  "hypothesis": "A tokenless, eight-address causal memory with PUBLIC, physically observed context transitions can preserve older causal rules while updating decisions under later contradictory factual outcomes. Without learned contradiction gating, separately addressable context-indexed factual memories should improve post-switch action selection AND old-context cold retention, relative to fully trained single-bank, role-aware recurrent/feedforward, phase-blind, no-feedback and randomized-feedback controls given the same actual information, action sequence and training budget.",
+  "design": {
+    "experiment_type": "UNIT_ONLY_SYNTHETIC_CAUSAL_DEVELOPMENT_NOT_ORIGINAL_FIRST_USE",
+    "episode_physical_sequence": "Exactly 16 real chosen-action support consequences: first context A, then context B. Public context identifier and a visible transition event identify the regime. The environment's private causal Boolean operator is selected independently for each context; same-operator and changed-operator episodes are both scored. Timing is varied and is not a hidden label.",
+    "support_phase_A_counts": [
+      6,
+      8,
+      10
+    ],
+    "support_phase_B_count": "16 - support_phase_A_count",
+    "context_pair_allocation": "Balanced within each seed over 3 switch positions, 8 heldout operator families, same-law vs changed-law and two opposing decision pivots. Each unseen family must occur as old and new context; no family shortcuts.",
+    "public_observation": "R85/R86 physical cues, R88 role tags/noisy factor probes, chosen support action and its actual scalar consequence, public 2-context indicator and change marker; all arms receive exactly these public fields unless the arm is a declared negative ablation.",
+    "private_evaluator_only": "Old and new Boolean truth masks, paired action outcomes, optimal actions, phase switch truth and hidden query answers. No private truth, future query reward, paired alternative reward or hidden mask is available during fitting or online memory writes.",
+    "training_queries": "FIT/VALID provide one physically chosen factual query return per context, each after the relevant factual support observations. Neither query provides the unchosen action's return. Public query features and chosen action are given to all trainable arms.",
+    "heldout_queries": "After all arms complete training, evaluator opens heldout worlds with old context query before B evidence, old context recall query after B evidence, and new context query after B evidence. Paired action returns are evaluator-only. Old-before and old-after share identical public query and old truth to isolate interference.",
+    "memory_repair": "Updates use real B-context consequences; old A-state must remain accessible under A context after B updates. B-corrected choice, A recall and A pre/post interference are separately scored. A synthetic contradiction alone without informative outcome may not count as successful repair.",
+    "cold_restore": "Serialize and reload detached memory state in an isolated development process (no promoted model, persistent owner state or runtime mutation); require identical predictions before and after cold reload, across identical query inputs.",
+    "architecture_under_test": "R106 eight sign-pattern addresses per physical context; remove its unearned learned discrepancy gate; public context-addressed independent write/read state with bounded eight-slot factual estimates; optional trainable retrieval head with all parameters included in cost. No hidden truth table, operator ID, prior trained checkpoint or private counterfactuals.",
+    "single_bank_control": "Newly trained R106 gate-blind eight-slot mechanism using same 16 factual observations and public context features; no context-separated write states. Same initialization for common weights and same optimization schedule.",
+    "matched_conventional": "Newly trained public-role-aware GRU and MLP get all 16 ordered factual supports, timing markers and query context. Choose hidden width from predeclared [32,64,96] to minimize parameter-count disparity before any unseen queries; log trained parameter counts and end-to-end process cost.",
+    "strong_engineered_reference": "Newly initialized full 256-rule public-evidence Bayesian posterior conditioned on the visible context, using ONLY that context's actual factual consequences; report as nonlearned ceiling comparator, not proof of native learning.",
+    "negative_controls": [
+      "Same-initialization no context marker",
+      "Same-initialization factual rewards shuffled within action and context, preserving marginal counts",
+      "Same-initialization all factual returns zeroed",
+      "Same-initialization public role tags removed",
+      "Predeclared single-bank scratch R106 gate-blind",
+      "Fully trained public role-aware GRU",
+      "Fully trained public role-aware MLP",
+      "Fixed 256-rule public Bayesian comparator"
+    ],
+    "no_new_controller_or_task": true,
+    "no_model_architecture_replacement": true
+  },
+  "source": {
+    "seeds": [
+      1007011,
+      1007023,
+      1007037
+    ],
+    "panel_salts": {
+      "UNIT_FIT": 26701101,
+      "UNIT_VALID": 26701107,
+      "UNIT_UNSEEN": 26701113,
+      "UNIT_BATCH": 26701119,
+      "UNIT_SHUFFLE": 26701123,
+      "UNIT_COLD": 26701129
+    },
+    "known_fit_masks_hex": [
+      "ca",
+      "96",
+      "80",
+      "fe",
+      "7f",
+      "e8",
+      "16",
+      "68",
+      "81",
+      "87",
+      "e1"
+    ],
+    "unseen_heldout_masks_hex": [
+      "15",
+      "3e",
+      "46",
+      "6b",
+      "8c",
+      "a2",
+      "d9",
+      "f4"
+    ],
+    "prior_disjoint_unseen_masks_hex": {
+      "R104": [
+        "1b",
+        "66",
+        "2d",
+        "55",
+        "8e",
+        "a3",
+        "b4",
+        "c9"
+      ],
+      "R105": [
+        "0f",
+        "33",
+        "3c",
+        "59",
+        "65",
+        "95",
+        "9a",
+        "a6"
+      ],
+      "R106": [
+        "1d",
+        "27",
+        "3a",
+        "4b",
+        "71",
+        "93",
+        "a9",
+        "c5"
+      ]
+    },
+    "min_unseen_hamming_from_train": 2,
+    "min_unseen_pairwise_hamming": 4,
+    "episodes_per_seed": {
+      "UNIT_FIT": 176,
+      "UNIT_VALID": 88,
+      "UNIT_UNSEEN": 128
+    },
+    "support_consequences_per_episode": 16,
+    "unseen_always_generated_only_after_all_trainable_arms_complete": true,
+    "all_source_panels_fresh_never_visited_by_prior_R_series": true,
+    "no_prior_synthetic_heldout_replay": true,
+    "no_external_original_scientific_source_firstuse": true
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "updates_per_trainable_arm": 512,
+    "batch_size": 16,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "torch_CPU_threads": 1,
+    "required_fit_equalized_updates": true,
+    "CPU_wall_budget_seconds_per_seed": 240,
+    "fully_trained_baselines_before_unseen": true,
+    "no_unseen_gradient_updates": true,
+    "record_model_parameter_count_and_training_wall_time": true,
+    "record_all_input_actions_observations_and_seed_custody": true
+  },
+  "evaluation": {
+    "qualification_type": "UNIT_ONLY_DEV_ONLY_NOT_SCIENTIFIC_PASS",
+    "scoring": "For each seed score old-before, old-after, new-after action accuracy on new laws; changed-law vs no-change separately; measured mean oracle regret and whole-process CPU wall-clock. Require every threshold in ALL 3 seeds without pooling exceptions.",
+    "frozen_checks_all_seeds": {
+      "new_context_unseen_action_accuracy_min": 0.7,
+      "old_context_recall_action_accuracy_min": 0.7,
+      "new_context_minus_strongest_fully_trained_conventional_min": 0.05,
+      "new_context_minus_single_bank_R106_min": 0.05,
+      "new_context_minus_no_context_min": 0.1,
+      "new_context_minus_shuffled_outcomes_min": 0.1,
+      "new_context_minus_zero_outcomes_min": 0.1,
+      "old_before_minus_old_after_accuracy_max": 0.02,
+      "Bayes256_new_context_action_accuracy_min": 0.75,
+      "cold_restore_any_action_mismatch_count_max": 0
+    },
+    "negative_controls_required": "All same-initialization and fully trained controls, including no-change worlds and switch-time confound checks; no failure is discarded.",
+    "cross_OS_policy": "Both Linux and Windows on exact final candidate SHA; compare all arms, each seed, all three queries and all frozen dispositions. >2/128 action disagreements for any arm/seed/query or any criterion status drift means engineering reproducibility FAIL.",
+    "pass_status": "R107_UNIT_ONLY_PHASE_REPAIR_AND_RETENTION_DEV_SIGNAL_ONLY",
+    "fail_status": "R107_NO_PHASE_REPAIR_OR_RETENTION_DEV_SIGNAL",
+    "resource_fail_status": "R107_RESOURCE_STOP_NO_SCIENCE_ACCEPTANCE",
+    "scientific_pass_always": false,
+    "frozen_thresholds_must_never_change_after_first_heldout": true,
+    "never_tune_on_scored_panels": true,
+    "report_separately_gain_vs_bayes_and_gain_vs_strongest_trained_control": true
+  },
+  "qualification": {
+    "run_full_existing_G4_CPU_Linux_Windows_regression_on_final_SHA": true,
+    "run_existing_G5_authentic_TTT_CPU": true,
+    "run_existing_G7_pinned_Mamba2_CPU": true,
+    "no_extra_workflow_required": true,
+    "no_GPU_firstuse": true,
+    "same_source_tree_across_required_platforms": true,
+    "execution_not_authorized_by_this_document": true,
+    "freeze_only_commit_is_not_implementation_or_CI_acceptance": true
+  },
+  "authority": {
+    "unit_only_CPU_software_engineering": true,
+    "protected_original_scientific_first_use": false,
+    "GPU_first_use": false,
+    "merge": false,
+    "promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_workflow": false,
+    "new_runner": false,
+    "new_scheduler": false,
+    "new_controller": false,
+    "paid_API": false,
+    "owner_custody_before_protected_science": "separate source-bound original scientific authorization"
+  }
+}
