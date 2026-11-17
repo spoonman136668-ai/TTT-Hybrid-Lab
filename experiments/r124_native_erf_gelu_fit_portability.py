@@ -121,8 +121,8 @@ def _train_new_native(model,fit,batches):
             first_clip=clip
         opt.step()
         hashes.append(r117.raw_fp32_sha256(model))
-    if len(hashes)!=STEPS+1 or
-        sum(p.numel() for p in model.parameters())!=3409:
+    if (len(hashes)!=STEPS+1 or
+        sum(p.numel() for p in model.parameters())!=3409):
         raise RuntimeError("R124_ORIGINAL_NATIVE_TRAINING_BUDGET_OR_ARCHITECTURE_DRIFT")
     return {
       "updates":STEPS,"parameters":3409,
