@@ -1,0 +1,108 @@
+{
+  "schema": "ttt-hybrid.r124.native-explicit-erf-GELU-original-FIT-VALID-portability.v1",
+  "stage": "PREIMPLEMENTATION_FROZEN_NATIVE_ONLY_CPU_DEVELOPMENT",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R123_SHA": "179c3c886da1701fdf0f6c34b16626c82c7245d9",
+    "parent_R123_tree": "9a110f97ddf9c96a11d320cfe44dec77e7752f45",
+    "parent_R123_PR": 319,
+    "parent_R123_frozen_verdict": "Strict all-layer primitive cross-OS parity NO-GO because GELU2 input already differs, but first identical-input GELU1 explicit torch.erf and Decimal exact FP32 forward/gradient across OS while original torch GELU first output differs in 3750/4608 values max 8 ULP",
+    "R116_original_scientific_NO_GO_unchanged": true,
+    "R120_R122_original_trained_weight_NO_GO_unchanged": true,
+    "spent_R116_original_UNIT_UNSEEN": true
+  },
+  "hypothesis": "Replacing ONLY both R116 native nn.GELU layers with the measured R123 explicit float32 PyTorch torch.erf expression, keeping R118 byte-identical initial raw FP32 parameters and R120 compensated clipping, makes full 512-step native training weights exactly portable across Linux and Windows while preserving actual public VALID causal intervention behavior and 96/96 reference accuracy per seed. This is engineering portability not native learning superiority.",
+  "source": {
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "panels": [
+      "UNIT_FIT",
+      "UNIT_VALID"
+    ],
+    "forbidden": [
+      "UNIT_UNSEEN",
+      "original_scientific",
+      "protected",
+      "previous_scored"
+    ],
+    "FIT_examples_per_seed": 256,
+    "VALID_worlds_per_seed": 96,
+    "R116_source_generation_unmodified": true,
+    "public_teacher_unmodified": true,
+    "minibatches": "np.random.default_rng(SeedSequence([27601119,seed,116])).integers(0,256,size=(512,16))",
+    "trainable_arms": [
+      "new_native_erf",
+      "original_native_GELU_control",
+      "conventional_MLP",
+      "conventional_GRU"
+    ],
+    "AdamW_steps_per_arm": 512,
+    "train_minibatch_size": 16,
+    "training_on_VALID_forbidden": true,
+    "new_native_architecture": "R116 NativePolicy scorer 45→48→24→1 identical Linear layers; replace scorer[1] and scorer[3] nn.GELU only, no new trainable parameters",
+    "new_GELU_exact_expression": "(0.5 * x) * (1.0 + torch.erf(x / math.sqrt(2.0))) in actual native torch FP32 forward; original PyTorch autograd on same graph, no manual backward modification",
+    "first_primitive_from_R123": "torch_explicit_erf",
+    "original_native_control": "Unchanged R116 nn.GELU(approximate='none'), R120 canonical clipping native FIT trainer",
+    "canonical_initialization": "R118 preexisting SHA256-derived exactly FP32 native initial parameter bytes; both native GELU and erf arms start with the same model weights, no RNG-based accepted initial source",
+    "native_clipping": "Original R120 fixed-order FP64 fsum, math.sqrt, once-rounded FP32 clip multiplier for BOTH native arms",
+    "optimizer": "Original AdamW lr=.002 weight_decay=.0001, 512 unchanged FIT steps",
+    "conventional_controls": "Original R116 MLP and GRU scratch-trained from R118 canonical weights, same FIT source/batches and 512 unchanged original PyTorch clipping updates",
+    "model_parameters_native_expected": 3409,
+    "no_original_spent_R116_UNSEEN_reuse": true
+  },
+  "capture": {
+    "both_native_initial_named_FP32_sha": true,
+    "model_forward_match_to_R123_explicit_erf_on_same_public_source": true,
+    "all_native_513_model_FP32_training_weight_SHA_by_update": true,
+    "new_native_quantized_Q384_full_weight_SHA": true,
+    "original_native_quantized_Q384_full_weight_SHA": true,
+    "public_VALID_physical_chosen_interventions_per_world": 4,
+    "public_VALID_query": 15,
+    "public_VALID_calibration": [
+      8,
+      9,
+      7
+    ],
+    "public_VALID_offers": [
+      12,
+      14
+    ],
+    "public_VALID_actual_action_sign_result_SHA": true,
+    "public_VALID_correctness_SHA_and_accuracy": true,
+    "independent_integer_cold_restart_no_mismatches": true,
+    "training_receipts_for_all_4_arms": true,
+    "source_fit_and_batches_sha": true,
+    "CPU_1_thread": true,
+    "elapsed_wall_seconds_report": true
+  },
+  "evaluation": {
+    "scope": "ENGINEERING_FIT_VALID_ONLY_NO_NEW_SCIENTIFIC_FIRSTUSE",
+    "strict_native_raw_FP32_all_513_model_weight_hashes_per_seed_exact_cross_OS": true,
+    "strict_native_final_Q384_full_weight_SHA_exact_cross_OS": true,
+    "strict_PUBLIC_VALID_actual_chosen_action_sign_correctness_hash_exact_cross_OS": true,
+    "public_VALID_new_native_correct_min_per_seed": 96,
+    "public_VALID_new_native_cannot_drop_below_original_GELU_native_correct": true,
+    "strong_conventional_control_FIT_update_count_512_each": true,
+    "independent_integer_cold_restore_mismatch_zero": true,
+    "first_mismatch_step_must_be_reported_if_raw_FP32_not_equal": true,
+    "all_R116_original_negative_results_immutable": true,
+    "full_existing_G4_Linux_Windows_G5_both_G7_required": true,
+    "pass_status": "R124_NATIVE_EXPLICIT_ERF_GELU_FULL_FIT_WEIGHT_AND_VALID_PORTABILITY_ENGINEERING_PASS",
+    "no_go_status": "R124_EXPLICIT_ERF_NATIVE_WEIGHT_OR_VALID_PORTABILITY_NO_GO",
+    "scientific_pass": false,
+    "all_qualification_draft_unmerged": true
+  },
+  "authority": {
+    "protected_original_scientific_firstuse": false,
+    "GPU_original_firstuse": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_workflow_runner_scheduler_controller_authorized": false,
+    "paid_API_authorized": false
+  }
+}

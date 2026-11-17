@@ -171,6 +171,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r123_gelu_primitive_diagnostic
 
+      - name: R124 frozen full 512-step native explicit erf GELU public FIT and 96-world VALID CPU portability
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r124-explicit-erf-gelu-native-fit-portability-20261117' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r124_native_erf_gelu_fit_portability
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
