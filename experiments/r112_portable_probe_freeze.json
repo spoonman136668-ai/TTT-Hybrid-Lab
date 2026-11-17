@@ -1,0 +1,98 @@
+{
+  "schema": "ttt-hybrid.r112.portable-fixed-point-active-probe.fit-valid-only-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_FIT_VALID_ONLY_NO_HELDOUT_OR_PROTECTED_FIRST_USE",
+  "lineage": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r112-portable-probe-selection-20261117",
+    "base_R111_exact_sha": "557e79e2be25851fa57eef0be0997936cf36af41",
+    "base_R111_draft_pr": 307,
+    "base_R111_result": "R111_NO_ACTIVE_PROBE_POLICY_UNIT_ONLY_DEV_SIGNAL",
+    "base_R111_reproducibility": "STRICT_CROSS_OS_PROBE_SCORE_PARITY_FAIL",
+    "original_R111_scored_source_spent": true,
+    "do_not_replay_any_R111_UNIT_UNSEEN": true,
+    "do_not_change_R111_frozen_source_or_results": true
+  },
+  "hypothesis": "Integer-only fixed-point inference for a supervised native probe scorer, fed public factual eight-address evidence, eliminates platform-dependent probe tie behavior and establishes auditable exact Linux/Windows FIT/VALID decision parity before any new scientific first-use. This is a portability engineering qualification, not a scientific improvement.",
+  "source": {
+    "seeds": [
+      1011011,
+      1011023,
+      1011037
+    ],
+    "public_panels_allowed": [
+      "UNIT_FIT",
+      "UNIT_VALID"
+    ],
+    "public_panels_forbidden": [
+      "UNIT_UNSEEN",
+      "original_scientific_source",
+      "protected"
+    ],
+    "R111_fit_worlds_per_seed": 176,
+    "R111_valid_worlds_per_seed": 88,
+    "steps_per_phase": 6,
+    "phases": 2,
+    "chosen_action_budget_per_world": 12,
+    "no_original_R111_unseen_reuse": true,
+    "fit_trainable_native_AdamW_steps": 512,
+    "fixed_public_features": "native probe history counts, observed signed feedback, queried candidate address and publicly shown phase; no private law mask/answer/query before support.",
+    "validation_actor_evaluates_unseen_never": false
+  },
+  "portable_inference": {
+    "fixed_point_scale": 384,
+    "fixed_point_weight_quantization": "np.rint(w*384), convert to little-endian signed int64 with declared layer order, no float inference after conversion",
+    "bias_and_features": "bias rounded to same Q; public normalized count and signed outcome features exactly integer multiples of Q/6=64, phase in {0,384}",
+    "layers": [
+      5,
+      32,
+      16,
+      1
+    ],
+    "nonlinearity": "integer hard-swish after each hidden layer: x*clip(x+2Q,0,4Q)/(4Q), signed-nearest integer division; replaces floating point GELU ONLY at validation/inference, not original R111 training",
+    "linear": "quantized integer matmul; symmetric round to nearest integer, unsigned denominator Q; int64 accumulators",
+    "decision": "choose larger integer score; on equal integer score choose first publicly offered address; no private tie labels or floating epsilon",
+    "training": "Use R111 native 737-param scorer trained anew on FIT-only public histories, exactly 512 AdamW steps per seed. Do not train on VALID, UNIT_UNSEEN, protected or original R111 weights.",
+    "original_float_comparator": "R111 original freshly trained same-seed native policy on UNIT_VALID only, for descriptive fidelity, not scientific qualification",
+    "hash": "SHA256 canonical packed layer signed little-endian int64 quantized weights and biases, order locked, plus SHA256 full active FIT/VALID chosen-action signature per seed",
+    "zero_oracle_training": true
+  },
+  "evaluation": {
+    "stage": "ENGINEERING_PORTABILITY_FIT_VALID_ONLY_NOT_SCIENTIFIC_PASS",
+    "frozen_preconditions": [
+      "all source custody validates",
+      "no unit unseen generated",
+      "all native models train 512 FIT only",
+      "all quantized state tensors signed integer Q=384",
+      "quantized scorer uses integer operations only after source read",
+      "no floating score threshold at decision",
+      "same public offer/physical probe budget for original and new variants"
+    ],
+    "per_seed_required": [
+      "cross_platform_quantized_weight_SHA256_exact",
+      "cross_platform_integer_choice_SHA256_exact",
+      "cross_platform_integer_correct_counts_exact",
+      "cross_platform_feedback_sensitivity_counts_exact",
+      "cross_platform_full_metric_counts_exact",
+      "independent_cold_reload_quantized_score_mismatch_zero",
+      "valid_query_accuracy_degradation_from_R111_same_seed_native_at_most_0.10",
+      "exact_12_chosen_actions_per_valid_world_per_arm"
+    ],
+    "old_source_first_use_never_authorizes_fresh_science": true,
+    "SCIENCE_PASS_from_THIS_study": false,
+    "preferred_follow_up": "Only after exact portable inference parity passes, freeze a new genuinely structured unfamiliar causal dependency hypothesis with new protected-independent seeds/heldouts. Do not rerun R111 spent cohort, claim native model acceptance or conflate active synthetic action with real scientific discovery.",
+    "pass_status": "R112_PORTABLE_PROBE_FIT_VALID_ENGINEERING_PASS",
+    "fail_status": "R112_PORTABLE_PROBE_FIT_VALID_ENGINEERING_FAIL",
+    "platform_wall_times_not_exact": true,
+    "negative_results_preserved": true
+  },
+  "authority": {
+    "protected_scientific_first_use": false,
+    "GPU_scientific_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "forge_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_or_scheduled_task_authorized": false,
+    "paid_API_authorized": false
+  }
+}
