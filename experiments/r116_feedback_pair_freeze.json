@@ -1,0 +1,202 @@
+{
+  "schema": "ttt-hybrid.r116.paired-factual-feedback-conditional-probing.unit-only-prospective-freeze.v1",
+  "stage": "PROSPECTIVE_PREIMPLEMENTATION_UNIT_ONLY_DEV_NEVER_PROTECTED_SCIENCE",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r116-feedback-conditioned-probe-20261117",
+    "base_R115_exact_sha": "89adbdb916b9fb21ab4e383cfd2577eaf12f9d77",
+    "base_R115_tree_sha": "7e92caf80608ba856f304e139508fd9280341447",
+    "base_R115_pr": 311,
+    "base_R115_result": "R115_NO_QUERY_TARGETED_NATIVE_ACTIVE_CAUSAL_UNIT_ONLY_DEV_SIGNAL",
+    "base_R115_native_321_of_384_vs_feedback_blind_321_of_384": true,
+    "no_R115_heldout_replay": true,
+    "no_previous_scored_models_or_weights": true
+  },
+  "hypothesis": "Conditional on the same known target query and identical public action counts, the signed return from an actually chosen diagnostic intervention changes which next intervention is informative. A trained tokenless native policy using that factual sign should change its chosen next intervention and improve exact public posterior query correctness over feedback-blind, sign-swapped, fixed-action and fully trained conventional controls, on prospectively reserved causal mechanisms; reproducible on Linux/Windows. Synthetic targeted task only, not independent causal discovery or general intelligence.",
+  "source": {
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "salt": {
+      "UNIT_FIT": 27601101,
+      "UNIT_VALID": 27601107,
+      "UNIT_UNSEEN": 27601113,
+      "UNIT_BATCH": 27601119,
+      "UNIT_COLD": 27601137
+    },
+    "synthetic_mechanism": "Three-stage four-variable binary SCM from R115 structural operators: U=op1(A,B); V=op2(C,D); Y=op3(U,V). 216 possible compositions with 90 distinct 16-bit truth tables. Each do-treatment is followed by an actual deterministic signed physical simulator consequence; no hidden operator, mediator, unchosen action outcome or query truth provided.",
+    "query_pattern": 15,
+    "public_calibration_actions": [
+      8,
+      9
+    ],
+    "public_diagnostic_action": 7,
+    "public_next_offered_actions": [
+      12,
+      14
+    ],
+    "per_world_total_physical_actions": 4,
+    "public_calibration_expected_signs": [
+      1,
+      -1
+    ],
+    "unseen_masks_branch_negative_hex": [
+      "0110",
+      "111e",
+      "e111",
+      "f111"
+    ],
+    "unseen_masks_branch_positive_hex": [
+      "0999",
+      "6996",
+      "9990",
+      "f999"
+    ],
+    "unseen_composition_representatives": [
+      [
+        "XOR",
+        "NOR",
+        "AND"
+      ],
+      [
+        "OR",
+        "OR",
+        "XOR"
+      ],
+      [
+        "AND",
+        "OR",
+        "XNOR"
+      ],
+      [
+        "AND",
+        "NOR",
+        "OR"
+      ],
+      [
+        "AND",
+        "XOR",
+        "NOR"
+      ],
+      [
+        "XOR",
+        "XOR",
+        "XOR"
+      ],
+      [
+        "OR",
+        "XNOR",
+        "AND"
+      ],
+      [
+        "AND",
+        "XNOR",
+        "OR"
+      ]
+    ],
+    "prior_R115_scored_reserved_truth_masks_hex": [
+      "1eee",
+      "0008",
+      "0990",
+      "6fff",
+      "fff7",
+      "1ee1",
+      "0666",
+      "8778"
+    ],
+    "fit_rule": "Select all 216 possible stage-triple descriptions except any whose full 16-bit truth function is one of 8 R116 heldout or 8 spent R115 reserved masks; then keep only compositions yielding observed calibration responses do(8)=+1 and do(9)=-1. This leaves exactly 24 FIT descriptions from 9 unique full functions with balanced 12/12 diagnostic sign; each FIT world is a fresh seeded index among those descriptions. Query=do(15) is public, target sign sealed.",
+    "novelty": "Reserved 8 heldout masks are disjoint from FIT and R115 reserved. Four heldout mechanisms yield diagnostic do(7)=-1, four yield +1, each branch balances two query-sign +1 and two -1. Exact known-class information-gain reference chooses do(14) after negative and do(12) after positive for the fixed initial public observations. This is a deliberately structured identifiable intervention-dependency fixture; no broad extrapolation claimed.",
+    "FIT_worlds_per_seed": 256,
+    "VALID_worlds_per_seed": 96,
+    "UNIT_UNSEEN_worlds_per_seed": 128,
+    "paired_unit_unseen_worlds_per_seed": 64,
+    "heldout_world_count_per_reserved_mask_per_seed": 16,
+    "noise_probability": 0,
+    "prior_scored_source_reuse": false,
+    "never_generate_UNIT_UNSEEN_in_tests": true,
+    "UNIT_UNSEEN_generation_only_after_all_trainable_512_updates": true,
+    "public_feedback_signs_visible_only_after_actually_chosen_actions": true,
+    "final_query_answer_sealed_until_after_4th_action": true
+  },
+  "training": {
+    "trainable_policies": [
+      "R116_NATIVE_SIGN_INTEGER",
+      "R116_CONVENTIONAL_MLP",
+      "R116_CONVENTIONAL_GRU"
+    ],
+    "fit_samples_per_seed": 256,
+    "updates_per_trainable_arm": 512,
+    "optimizer": "AdamW",
+    "batch_size": 16,
+    "learning_rate": 0.002,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "torch_CPU_threads": 1,
+    "training_target": "Per FIT world, teacher computes exact public 216-composition 9:1 likelihood-based targeted 0-1 posterior error reduction of fourth do(12) vs do(14) given three already-observed actual factual signed calibration/diagnostic interventions; no private law or final query truth. Identical FIT observation histories and targets train each policy.",
+    "native": "Q384 integer inference of 16-address signed feedback history, public query bits, next-offered action bits and probe-order/context bits, 45-to-48-to-24-to-1 native scorer. Exact ties choose first offered.",
+    "conventional": "Fully trained public MLP and observation-sequence GRU from scratch; equal FIT histories, teacher targets and 512 updates; measured param/time different, not claimed matched FLOPs.",
+    "controls": [
+      "Exact known-class 216-composition Bayes-targeted VOI oracle",
+      "Hard-coded factual sign rule do(14) after negative diagnostic, else do(12)",
+      "Always do(12)",
+      "Always do(14)",
+      "Seeded random do(12)/do(14)",
+      "Same learned native weights with factual sign history hidden",
+      "Same learned native weights with diagnostic factual sign inverted",
+      "Count-only static action heuristic"
+    ],
+    "all_arms_exact_same_public_first_three_chosen_interventions": true,
+    "all_arms_only_one_adaptive_final_chosen_action": true,
+    "same_query_for_every_pair": true,
+    "report_training_parameters_and_full_process_cost": true,
+    "no_heldout_training_updates": true
+  },
+  "evaluation": {
+    "stage": "UNIT_ONLY_DEV_NOT_ACCEPTED_INDEPENDENT_SCIENTIFIC_FIRSTUSE",
+    "all_3_seed_checks_frozen": {
+      "native_new_query_accuracy_min": 0.85,
+      "native_minus_feedback_blind_query_accuracy_min": 0.1,
+      "native_minus_diagnostic_sign_inverted_accuracy_min": 0.1,
+      "native_minus_random_query_accuracy_min": 0.1,
+      "native_minus_best_fixed_query_accuracy_min": 0.1,
+      "native_minus_best_conventional_query_accuracy_min": 0.02,
+      "native_minus_exact_bayes_oracle_query_accuracy_min": -0.05,
+      "native_minus_hardcoded_factual_rule_query_accuracy_min": -0.05,
+      "oracle_minus_random_accuracy_min": 0.15,
+      "native_next_action_changes_for_opposite_diagnostic_sign_pairs_min": 40,
+      "native_correct_on_both_members_of_pair_count_min": 48,
+      "native_same_public_calibration_actions": true,
+      "all_policies_exact_four_chosen_actions": true,
+      "native_cold_integer_score_mismatches_max": 0,
+      "all_training_arms_fully_trained_512_steps": true
+    },
+    "all_15_checks_required_on_every_seed": true,
+    "per_seed_metrics": [
+      "all arm 128-query correctness and errors",
+      "positive/negative diagnostic branch accuracy",
+      "native paired sign-contingent action flips and both-correct pair counts",
+      "full actual chosen intervention history SHA256 and signed observed effect history SHA256",
+      "public exact-216 Bayes decoder query sign and correctness SHA256",
+      "cold independent integer scorer restore mismatches",
+      "trained FLOP limitations, parameters and full-process CPU time",
+      "all immutable frozen criteria and source exclusion"
+    ],
+    "cross_platform": "All evaluation acceptance fields, native integer parameter hash, chosen-action history hashes, exact query predictions, feedback flips and frozen check booleans must be literal identical between Linux and Windows; timing excluded only. Source-scoped scientific NO-GO on any drift.",
+    "pass_status": "R116_CONSEQUENCE_CONDITIONED_PROBING_UNIT_ONLY_DEV_SIGNAL",
+    "fail_status": "R116_NO_CONSEQUENCE_CONDITIONED_PROBING_UNIT_ONLY_DEV_SIGNAL",
+    "never_post_result_retune_or_replay": true,
+    "protected_scientific_PASS_from_UNIT_ONLY": false
+  },
+  "authority": {
+    "protected_science_first_use": false,
+    "GPU_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "forge_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runners_workflows_controllers_scheduler_authorized": false,
+    "paid_API_authorized": false
+  }
+}
