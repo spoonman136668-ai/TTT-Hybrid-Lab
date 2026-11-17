@@ -1,0 +1,134 @@
+{
+  "schema": "ttt-hybrid.r118.canonical-same-bytes-initialization-FIT-VALID-only.v1",
+  "stage": "PROSPECTIVE_PREIMPLEMENTATION_DIAGNOSTIC_NO_SCIENTIFIC_FIRST_USE",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R117_exact_SHA": "8a0da2dc2f907ce342bcfcd21bf1970e8c44a1c3",
+    "parent_R117_tree": "217e7a5748fb63406f42cc7ba55e27eabfadea04",
+    "parent_R117_pr": 313,
+    "parent_R117_frozen_verdict": "R117_SOURCE_REPRODUCIBILITY_PRECONDITION_FAIL_FIT_ONLY",
+    "original_R116_unit_unseen_spent": true,
+    "forbid_R116_UNSEEN_and_any_protected_science": true,
+    "do_not_reinterpret_R116_R117_acceptance": true
+  },
+  "hypothesis": "A single canonical source-derived byte-exact initial model checkpoint makes Linux and Windows native FP32 trajectories initially identical. Test whether unmodified FP32 AdamW+GELU then diverges and whether Q384 INT64 posttraining weights and public VALID action consequences reproduce. Discriminate initial-condition drift vs post-init optimizer/backend drift; not evidence of causal transfer.",
+  "source": {
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "allowed_panels": [
+      "UNIT_FIT",
+      "UNIT_VALID"
+    ],
+    "forbidden_panels": [
+      "UNIT_UNSEEN",
+      "R116_original_spent",
+      "original_scientific",
+      "protected"
+    ],
+    "trainable_arms": [
+      "R116_NATIVE_SIGN_INTEGER",
+      "R116_CONVENTIONAL_MLP",
+      "R116_CONVENTIONAL_GRU"
+    ],
+    "FIT_examples_per_seed": 256,
+    "VALID_examples_per_seed": 96,
+    "exact_FIT_AdamW_updates_per_arm": 512,
+    "exact_minibatch_shape": [
+      512,
+      16
+    ],
+    "FIT_histories_and_teacher_unchanged_from_R116": true,
+    "canonical_init_recipe": {
+      "version": "r118.seed-sha256-fixedgrid-per-parameter-v1",
+      "key": "SHA256(utf8('R118|V1|')+utf8(seed)+'|'+utf8(arm)+'|'+utf8(parameter-name)+'|'+utf8(index))",
+      "signed_integer": "int.from_bytes(digest[0:2],'little') - 32768",
+      "model_parameter_value": "exact signed_integer / 262144, representable in FP32",
+      "architecture": "Use existing R116 model architectures; replace only initial parameter values on newly initialized scratch models in canonical named_parameters order."
+    },
+    "canonical_init_never_dependent_on_OS_randomness": true,
+    "canonical_initialization_applies_to_all_three_arms": true,
+    "FP32_model_optimizer_unchanged_from_R116": true,
+    "prior_R116_original_SHA_not_reproduced_by_design": true
+  },
+  "diagnostic": {
+    "all_native_raw_snapshot_update_indices": [
+      0,
+      1,
+      32,
+      128,
+      256,
+      512
+    ],
+    "all_native_snapshots_raw_FP32_bytes_le": true,
+    "full_3_arm_initial_FP32_sha256": true,
+    "all_3_arm_after_512_raw_FP32_sha256": true,
+    "Q384_original_R116_quantizer_native": true,
+    "additional_integer_scales_descending": [
+      384,
+      256,
+      128,
+      64,
+      32,
+      16,
+      8
+    ],
+    "posttraining_integer_scores_from_R117_unchanged": true,
+    "public_VALID_actual_chosen_probe_budget": 4,
+    "public_VALID_actual_calibration_actions": [
+      8,
+      9,
+      7
+    ],
+    "public_VALID_offers": [
+      12,
+      14
+    ],
+    "public_VALID_query": 15,
+    "actual_physical_SIM_outcomes_only": true,
+    "public_QUERY_answer_sealed_until_all_four_chosen_probes": true,
+    "only_unscored_R116_public_VALID": true,
+    "per_seed_test_run_budget_seconds": 180,
+    "negative_controls": [
+      "Canonical initial bytes match independent pure Python reproducer",
+      "Changing seed or parameter name changes initial bytes",
+      "Unmodified R116 optimizer 512 identical FIT updates",
+      "No original scored UNIT_UNSEEN world constructed"
+    ]
+  },
+  "evaluation": {
+    "kind": "ENGINEERING_FIT_VALID_ONLY",
+    "exact_initialization_required_all_three_seeds_all_three_arms": true,
+    "full_training_update_budget_required": true,
+    "Q384_qualify_if": [
+      "all 3 seeds native Q384 weights SHA256 identical across OS",
+      "all 3 seeds Q384 VALID chosen action/factual feedback SHA256 identical",
+      "all 3 seeds Q384 VALID query predictions/correctness SHA256 identical",
+      "all 3 seeds raw initial native and conventional parameters SHA256 identical"
+    ],
+    "other_integer_scales_are_diagnostic_no_posthoc_promotion": true,
+    "model_training_portability_requires": [
+      "all native FP32 final raw SHA256 identical",
+      "all MLP and GRU FP32 final raw SHA256 identical"
+    ],
+    "all_artifact_fields_except_wall_times_compared": true,
+    "portable_Q384_status": "R118_SHARED_INIT_Q384_NATIVE_VALID_PARITY_PASS",
+    "Q384_fail_status": "R118_SHARED_INIT_POSTTRAIN_Q384_PARITY_FAIL",
+    "initial_fail_status": "R118_SHARED_INITIAL_MODEL_BYTES_FAIL",
+    "source_error_status": "R118_SOURCE_CUSTODY_FAIL",
+    "scientific_acceptance": false,
+    "all_original_prior_negative_results_unchanged": true
+  },
+  "authority": {
+    "protected_science_first_use": false,
+    "GPU_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_workflow_scheduler_controller_authorized": false,
+    "paid_API_authorized": false
+  }
+}
