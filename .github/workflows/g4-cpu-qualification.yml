@@ -111,6 +111,12 @@ jobs:
           EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
         run: python -m experiments.r113_structured_active_probe_diagnostic
 
+      - name: R114 original FIT-VALID only exact integer Bayesian readout portability
+        if: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'research/r114-exact-causal-bayes-readout-20261117' }}
+        env:
+          EXPECTED_CANDIDATE_SHA: ${{ github.event.pull_request.head.sha }}
+        run: python -m experiments.r114_exact_readout_diagnostic
+
       - name: Store immutable run artifact
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
