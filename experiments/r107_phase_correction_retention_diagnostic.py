@@ -369,7 +369,7 @@ def train_arm(model,arm,fit,minibatches,deadline):
         _deadline(deadline)
         losses=[]
         for context in (0,1):
-            inp=_inputs(fit,index,arm,context)
+            inp=_inputs(fit,index,arm,context,before=(context==0))
             estimate=model(*inp)
             target=torch.from_numpy(fit["target"][index,context].astype(np.float32))
             if estimate.shape!=target.shape:
@@ -455,9 +455,11 @@ def evaluate(models,data,deadline):
                              data["reward2"][:,idx])
             result[name][stage+"_oracle_regret"]=float(np.mean(
                 np.maximum(data["reward0"][:,idx],data["reward2"][:,idx])-returns))
+        changed=data["private_switched"]
         result[name]["changed_law_new_after_accuracy"]=float(np.mean(
-            scores["new_after"][data["private_switched"]]
-            ==truth["new_after"][data["private_switched"]]))
+            scores["new_after"][changed]==truth["new_after"][changed]))
+        result[name]["unchanged_law_new_after_accuracy"]=float(np.mean(
+            scores["new_after"][~changed]==truth["new_after"][~changed]))
     return result
 
 
