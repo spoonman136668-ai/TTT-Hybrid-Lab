@@ -1,0 +1,149 @@
+{
+  "schema": "ttt-hybrid.r117.fit-valid-native-optimizer-rounding-portability.preregistered-v1",
+  "stage": "FROZEN_PREIMPLEMENTATION_FIT_VALID_ONLY_NO_ORIGINAL_HELDOUT_FIRSTUSE",
+  "source": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r117-fit-valid-native-weight-portability-20261117",
+    "parent_exact_R116_source_sha": "653c240fcddb75e3888f74b0a36ee00d93f42215",
+    "parent_exact_R116_tree_sha": "3e8bbd436b2e841106759a83bba44b3edc57fac0",
+    "parent_PR": 312,
+    "parent_R116_science": "R116_NO_CONSEQUENCE_CONDITIONED_PROBING_UNIT_ONLY_DEV_SIGNAL",
+    "parent_R116_raw_platform_behavior": "All eleven intervention arms choices, physical results, query scores and frozen criteria matched across Linux/Windows, but 2/3 native Q384 trained weight SHA256 fingerprints differed",
+    "R116_original_UNIT_UNSEEN_spent": true,
+    "do_not_generate_R116_UNIT_UNSEEN": true,
+    "provenance_R116_original_quantized_sha256": {
+      "1160011": {
+        "linux": "4fbc811c1366ed90261348ee1bc924defb8f034b7233b12416b529924f2fa88b",
+        "windows": "4fbc811c1366ed90261348ee1bc924defb8f034b7233b12416b529924f2fa88b"
+      },
+      "1160023": {
+        "linux": "d980b3a9eee5459c25c3c19565c4473cdbbae1994af2bea4f1c1d1441812e863",
+        "windows": "a646d6ecf71db88bf17f7bd1dbb57be29fa49704869ba0d3b11eacdcc8a98f92"
+      },
+      "1160037": {
+        "linux": "709158a2c71d95e5f1c41d4679f4563897c21f56fc71d4441adf04e8784f816c",
+        "windows": "9ea30b54833c3a8d9da363f6a0ea167be0ec6de567ef6c936f154063b8300952"
+      }
+    },
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "allowed_panels": [
+      "UNIT_FIT",
+      "UNIT_VALID"
+    ],
+    "forbidden_panels": [
+      "UNIT_UNSEEN",
+      "original_scientific",
+      "R116_consumed",
+      "prior_scored"
+    ],
+    "FIT_worlds_per_seed": 256,
+    "VALID_worlds_per_seed": 96,
+    "FIT_256_public_examples_per_seed": true,
+    "same_three_scratch_architectures": [
+      "R116_NATIVE_SIGN_INTEGER",
+      "R116_CONVENTIONAL_MLP",
+      "R116_CONVENTIONAL_GRU"
+    ],
+    "trainable_arms": 3,
+    "AdamW_updates_per_arm": 512,
+    "matched_trainable_minibatch_size": 16,
+    "single_thread_CPU": true,
+    "trainer_identical_to_R116": true,
+    "no_new_training_on_VALID": true,
+    "per_VALID_world_physical_actions": 4,
+    "VALID_same_public_calibration": [
+      8,
+      9,
+      7
+    ],
+    "VALID_fourth_action_candidates": [
+      12,
+      14
+    ],
+    "VALID_public_query": 15,
+    "no_original_unseen_generation_tests": true,
+    "no_replay_R116_original_science_results": true
+  },
+  "question": "Did platform-specific raw FP32 AdamW/GELU training trajectories diverge before the original Q384 quantization, or are original trained FP32 weights identical but sitting at platform-dependent integer rounding boundaries? Can one preregistered portable integer posttraining scale represent the freshly trained model with fidelity on public VALID without original scientific first use?",
+  "diagnostics": {
+    "snapshot_native_raw_FP32_at_updates": [
+      0,
+      1,
+      32,
+      128,
+      256,
+      512
+    ],
+    "raw_float_digest": "Canonical little-endian float32 bit pattern of all ordered native Linear weight/bias tensors; includes shapes and names; never trained/scored original heldout",
+    "candidate_integer_scales_descending": [
+      384,
+      256,
+      192,
+      128,
+      96,
+      64,
+      48,
+      32,
+      24,
+      16,
+      8
+    ],
+    "quantization": "round-to-nearest-ties-even of each trained FP32 parameter times candidate integer scale, canonical little-endian int64 serialized with named dims and independent SHA256 for each candidate scale",
+    "numeric_signals": [
+      "raw FP32 weight bytes digest by optimizer checkpoint",
+      "original R116 Q384 quantized SHA256 reproduction against exact published Linux/Windows reference",
+      "all Q384 signed quantized integers to locate cross-platform divergent coordinates",
+      "min abs distance to half-integer rounding boundary per scale",
+      "number of parameters within 1e-4 scaled units of a half-integer",
+      "all candidate scale weight SHA256 and exact original public VALID actions/outcomes/correct counts",
+      "cold exact scaled integer scorer score mismatch count"
+    ],
+    "quantized_native_inference": "Int64 deterministic selected scale, public original Q384 features rescaled with symmetric integer rounding; scaled integer matrix ops and scaled hard-swish only, no model logits floating-point",
+    "public_validation": "Only 96 R116 public VALID worlds/seed with actual three chosen calibration/diagnostic sign returns and one scale-dependent chosen do(12) or do(14), then fixed R116 known-class integer public posterior query decoder; no reserved original unseen events",
+    "fidelity_min_per_seed": 0.98,
+    "VALID_correct_drop_from_original_R116_Q384_max_per_seed": 0.020833333333333332,
+    "deterministic_scale_selection": "Among candidate scales in frozen descending order choose first meeting all three seeds' per-OS VALID action fidelity >= .98 and VAL accuracy loss <= 2/96 AND bitwise equal per-seed quantized hashes / actions / correctness across both OS. Do not choose from original UNIT_UNSEEN or postscore thresholds.",
+    "no_R116_unit_unseen_replay": true
+  },
+  "evaluation": {
+    "kind": "FIT_VALID_ONLY_ENGINEERING_NOT_INDEPENDENT_SCIENCE",
+    "local_checks": [
+      "R116 Q384 original baseline digest on each platform must exactly match its original published-source digest at R116 original SHA",
+      "exactly 512 native AdamW FIT updates each seed",
+      "all 3 trainable arms were trained scratch exactly 512 matched steps",
+      "quantized standalone fresh Python process zero integer-score drift",
+      "each native candidate scale physically selects only public offered fourth probes",
+      "no original scored or protected panel generated"
+    ],
+    "strict_cross_platform_checks": [
+      "all complete initial native FP32 hashes (should reveal any initialization drift)",
+      "all listed optimizer snapshot hashes (diagnostic, not required to match for portable selection)",
+      "all 3 selected normalized integer weight hashes exact",
+      "all 3 selected complete VALID 4-action histories exact",
+      "all 3 selected returned physical effects and exact posterior query correctness histories exact",
+      "all 3 selected VALID per-seed correctness and fidelity match",
+      "all source freeze and acceptance status fields exact"
+    ],
+    "pass_status": "R117_FIT_VALID_PORTABLE_NATIVE_WEIGHT_AND_ACTION_ENGINEERING_PASS",
+    "no_candidate_status": "R117_NO_FIT_VALID_PORTABLE_NATIVE_WEIGHT_CANDIDATE",
+    "parity_fail_status": "R117_FIXED_POINT_WEIGHT_PORTABILITY_PARITY_FAIL",
+    "original_R116_scientific_negative_unchanged": true,
+    "original_R116_crossOS_weight_drift_unchanged": true,
+    "scientific_pass_from_this_study": false,
+    "R116_original_heldout_must_remain_unopened": true
+  },
+  "authority": {
+    "protected_scientific_first_use": false,
+    "GPU_scientific_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_scheduler_controller_or_workflow_authorized": false,
+    "paid_API_authorized": false
+  }
+}
