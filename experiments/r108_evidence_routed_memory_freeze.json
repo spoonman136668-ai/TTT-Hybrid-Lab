@@ -1,0 +1,198 @@
+{
+  "schema": "ttt-hybrid.r108.evidence-routed-memory.unit-only-preimplementation-freeze.v1",
+  "stage": "PROSPECTIVE_FROZEN_BEFORE_IMPLEMENTATION_UNIT_ONLY_DEV_NO_PROTECTED_FIRST_USE",
+  "lineage": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "branch": "research/r108-evidence-routed-memory-20261116",
+    "base_R107_exact_sha": "64473bfec5557f60a303f868281edf1e1f38024e",
+    "base_R107_source_tree": "a15cfaff54e9ad066c9c49a4357bae783bfe1983",
+    "base_R107_draft_pr": 303,
+    "base_R107_result": "R107_NO_PHASE_REPAIR_OR_RETENTION_DEV_SIGNAL",
+    "base_R107_native_two_bank_mean_new_accuracy": 0.6927083333,
+    "base_R107_single_bank_mean_new_accuracy": 0.7552083333,
+    "base_R107_context_blind_mean_new_accuracy": 0.765625,
+    "base_R107_Bayes256_mean_new_accuracy": 0.8098958333,
+    "prior_R107_heldout_spent": true,
+    "prior_R101_to_R103_protected_scored_spent": true,
+    "do_not_reuse_prior_R101_to_R107_heldout_or_weights": true,
+    "do_not_change_R107_freeze_or_results": true
+  },
+  "hypothesis": "On fresh unfamiliar causal laws, a trainable eight-slot public factual memory that learns to mix common and context-specific evidence from previous physically observed chosen-action consequences will improve changed-law action selection without losing unchanged-law transfer or old-context cold recall, relative to freshly trained same-budget single-bank, two-bank, context-blind and conventional controls. Any claimed advantage must be caused by informative factual feedback, not visible phase labels or synthetic change timing.",
+  "design": {
+    "experiment_type": "UNIT_ONLY_SYNTHETIC_DEVELOPMENT_NOT_ORIGINAL_SCIENTIFIC_FIRST_USE",
+    "independent_native_tokenless_architecture": true,
+    "physical_sequence": "16 actually chosen factual action-consequence supports: publicly visible context A then context B at positions 6,8,10; no future or unchosen outcomes supplied to learners",
+    "public_features": "R85/R86 physical cues, R88 observed factor probes and role tags, chosen action and actual scalar reward, public phase and switch marker; same information and order for comparable arms",
+    "evaluator_private": "Old/new law masks, change/unchanged truth, both counterfactual query action outcomes, optimal actions, heldout score and hidden right answer are evaluator-only after training",
+    "adaptive_router": "Shared eight-slot and separately addressable eight-slot factual memory are BOTH derived from previously observed support rewards. A trainable scalar mix gate for each query receives only public current-query context plus shared/private memory, counts and evidence mismatch. It must not read old/new operator IDs, private changed flag, hidden truth table or future rewards. The gate is fitted on the same factual FIT labels and optimizer budget as all controls; all router parameters count toward CPU cost.",
+    "outcomes": "Old-before-B, old-after-B, new-after-B optimal action accuracy; changed-vs-unchanged law slices; old-memory interference; actual query oracle regret; whole-process time; parameter counts; cold restart exact parity",
+    "primary_controls": [
+      "fresh single-bank R106-style gate-blind",
+      "fresh unconditional two-bank R107-style",
+      "fresh context-blind same-init",
+      "same-init random or constant-gate ablation with unchanged network capacity",
+      "same-init feedback shuffled within action and public context",
+      "same-init factual outcomes zeroed",
+      "same-init public-role tags removed",
+      "fresh fully trained role-aware GRU with matched inputs",
+      "fresh fully trained role-aware MLP with matched inputs",
+      "fixed nonlearned full 256-rule public-evidence Bayesian posterior"
+    ],
+    "diagnosis": "Report gate distribution separately by changed vs unchanged regimes only in evaluator analysis, never as an input or training target. Include no-phase/mislabeled public switch negative and a noncausal switch-only control, both without access to private law changes.",
+    "restrictions": [
+      "No prior original or development heldout data replay",
+      "No prior trained weights",
+      "No hidden truth or paired counterfactual training labels",
+      "No optimizer updates on unseen",
+      "No new controller, runner, scheduled task, paid API or FORGE coupling",
+      "Never promote a negative development result"
+    ]
+  },
+  "source": {
+    "seeds": [
+      1008011,
+      1008023,
+      1008037
+    ],
+    "panel_salts": {
+      "UNIT_FIT": 26801101,
+      "UNIT_VALID": 26801107,
+      "UNIT_UNSEEN": 26801113,
+      "UNIT_BATCH": 26801119,
+      "UNIT_SHUFFLE": 26801123,
+      "UNIT_COLD": 26801129
+    },
+    "known_fit_masks_hex": [
+      "ca",
+      "96",
+      "80",
+      "fe",
+      "7f",
+      "e8",
+      "16",
+      "68",
+      "81",
+      "87",
+      "e1"
+    ],
+    "unseen_heldout_masks_hex": [
+      "09",
+      "db",
+      "24",
+      "4e",
+      "ed",
+      "b1",
+      "e2",
+      "d4"
+    ],
+    "prior_disjoint_unseen_masks_hex": {
+      "R104": [
+        "1b",
+        "66",
+        "2d",
+        "55",
+        "8e",
+        "a3",
+        "b4",
+        "c9"
+      ],
+      "R105": [
+        "0f",
+        "33",
+        "3c",
+        "59",
+        "65",
+        "95",
+        "9a",
+        "a6"
+      ],
+      "R106": [
+        "1d",
+        "27",
+        "3a",
+        "4b",
+        "71",
+        "93",
+        "a9",
+        "c5"
+      ],
+      "R107": [
+        "15",
+        "3e",
+        "46",
+        "6b",
+        "8c",
+        "a2",
+        "d9",
+        "f4"
+      ]
+    },
+    "min_unseen_hamming_from_train": 2,
+    "min_unseen_pairwise_hamming": 4,
+    "episodes_per_seed": {
+      "UNIT_FIT": 176,
+      "UNIT_VALID": 88,
+      "UNIT_UNSEEN": 128
+    },
+    "support_consequences_per_episode": 16,
+    "balanced_changed_unchanged_unseen_per_seed": [
+      64,
+      64
+    ],
+    "no_unseen_world_generation_until_every_trainable_arm_finishes": true,
+    "no_protected_scientific_first_use": true
+  },
+  "training": {
+    "optimizer": "AdamW",
+    "updates_per_trainable_arm": 512,
+    "batch_size": 16,
+    "learning_rate": 0.001,
+    "weight_decay": 0.0001,
+    "gradient_clip": 1,
+    "torch_CPU_threads": 1,
+    "required_same_support_splits_and_equal_updates": true,
+    "fully_train_all_conventional_and_same_architecture_controls_before_unseen": true,
+    "CPU_wall_budget_seconds_per_seed": 300,
+    "record_wall_clock_separately_per_arm": true,
+    "record_trainable_parameter_counts": true,
+    "record_query_regret_and_cold_restart": true,
+    "no_holdout_gradient_updates": true
+  },
+  "evaluation": {
+    "qualification_type": "UNIT_ONLY_DEV_ONLY_NOT_SCIENTIFIC_PASS",
+    "pass_requires_all_checks_in_each_of_three_seeds": true,
+    "frozen_checks_all_seeds": {
+      "new_after_unseen_action_accuracy_min": 0.75,
+      "new_after_minus_best_single_or_two_bank_min": 0.03,
+      "new_after_minus_context_blind_min": 0.03,
+      "new_after_minus_strongest_conventional_min": 0.08,
+      "new_after_minus_shuffled_min": 0.08,
+      "new_after_minus_zero_feedback_min": 0.08,
+      "new_after_minus_missing_roles_min": 0.08,
+      "changed_law_native_minus_best_single_or_two_bank_min": 0.03,
+      "unchanged_law_native_minus_best_single_or_two_bank_min": -0.02,
+      "old_after_action_accuracy_min": 0.7,
+      "old_before_minus_old_after_accuracy_max": 0.02,
+      "native_new_oracle_regret_max": 0.5,
+      "cold_reload_mismatch_count_max": 0,
+      "fixed_bayes256_new_after_accuracy_min": 0.75
+    },
+    "report_all_arms_and_all_seeds_even_on_failure": true,
+    "cross_os_reproducibility": "Require exact count parity across Linux and Windows for every accuracy subgroup, all gate conditions and each frozen pass/fail; note wall clock variability separately",
+    "pass_status": "R108_EVIDENCE_ROUTER_UNIT_ONLY_DEV_SIGNAL",
+    "fail_status": "R108_NO_EVIDENCE_ROUTER_UNIT_ONLY_DEV_SIGNAL",
+    "science_acceptance_from_unit_only": false,
+    "no_threshold_change_after_scoring": true,
+    "accept_negative_result_as_valid": true
+  },
+  "authority": {
+    "protected_original_scientific_first_use": false,
+    "GPU_training_authorized_by_this_freeze": false,
+    "model_promotion_authorized": false,
+    "merge_authorized_by_this_freeze": false,
+    "deployment_authorized": false,
+    "forge_integration_authorized": false,
+    "existing_native_runner_preferred": true,
+    "no_scheduled_task_creation": true
+  }
+}
