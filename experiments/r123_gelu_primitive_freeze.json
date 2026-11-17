@@ -1,0 +1,102 @@
+{
+  "schema": "ttt-hybrid.r123.GELU-primitive-forward-gradient-CPU-bitwise-FIT-only.v1",
+  "stage": "PROSPECTIVE_PREIMPLEMENTATION_PUBLIC_FIT_ONLY",
+  "lineage": {
+    "repository": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R122_source_sha": "4b0225b3d34bc640d3a7c0bc18a43178525b7448",
+    "parent_R122_tree": "010bd73da185a6c12deef60adcf8376e5bb96cbe",
+    "parent_R122_pr": 318,
+    "parent_R122": "Full 512 update R120-stable-clip within-OS dual-process exact for each OS; cross OS first divergence update 1 first GELU output for 3/3 seeds; exact trained FP32 weights not portable",
+    "spent_R116_scientific_original_replayed": false,
+    "R116_original_unseen_spent": true,
+    "prior_R116_R117_R118_R119_R120_R121_R122_science_and_engineering_verdicts_unchanged": true
+  },
+  "hypothesis": "For byte-identical original first-step public FIT inputs and R118 canonical native FP32 initialized weights, the native PyTorch GELU exact=none output can differ across OS at the primitive boundary. Capture raw FP32 inputs, GELU forward values and input gradients, quantify per-element ULP. Compare preregistered implementation alternatives without altering/training a model or scoring heldout science. Test if a Python Decimal 70-digit 96-term series and its analytic derivative provide cross-OS exact binary32 values sufficiently close to original exact GELU on original public FIT inputs.",
+  "source": {
+    "allowed_panel": "UNIT_FIT",
+    "forbidden_panels": [
+      "UNIT_VALID",
+      "UNIT_UNSEEN",
+      "protected",
+      "original_science"
+    ],
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "public_FIT_worlds_per_seed": 256,
+    "first_minibatch": "R116 original SeedSequence([27601119,seed,116]) 512x16 public FIT schedule first row, identical source as R122",
+    "model_initialization": "R118 deterministic per-parameter hash-driven exactly FP32 native NativePolicy initial state, 45→48→24→1 GELU",
+    "model_inference_only_no_optimizer_step": true,
+    "original_model_GELU_approximate_none": true,
+    "actual_original_input_capture": "Read-only pre forward hook on native model.scorer[1] and model.scorer[3]; record actual input and actual model forward output, no modifications",
+    "tensor_count_per_seed_two_native_GELU_activations": 2304,
+    "worker_count_per_OS": 2,
+    "original_scored_unseen_access_prohibited": true
+  },
+  "candidates": [
+    {
+      "name": "torch_original_GELU_none",
+      "method": "torch.nn.functional.gelu(x,approximate='none') and autograd d.sum/dx on actual FP32 input"
+    },
+    {
+      "name": "torch_GELU_tanh",
+      "method": "torch.nn.functional.gelu(x,approximate='tanh') and autograd d.sum/dx"
+    },
+    {
+      "name": "torch_explicit_erf",
+      "method": "0.5*x*(1 + torch.erf(x/sqrt(2) torch float32)) autograd d.sum/dx, math.sqrt(2) Python const once"
+    },
+    {
+      "name": "decimal_erf_series_96",
+      "method": "For each exact float32 input x use Decimal.from_float(float(x)), localcontext precision=70, z=x/Decimal(2).sqrt(), erf(z)=(2/sqrt(pi))*sum(n=0..95)[(-1)^n*z^(2n+1)/(n!*(2n+1))], computed with recurrence t_n=t_(n-1)*(-z*z)/n; GELU=x*(1+erf)/2, derivative=(1+erf)/2 + x*exp(-x*x/2)/(sqrt(2*pi)), cast each to float32 ONCE; pi fixed 80-digit literal; pure Decimal context for transcendental and series"
+    }
+  ],
+  "capture": {
+    "each_candidate_forward_and_analytic_or_autograd_input_gradient": true,
+    "canonical_LE_FP32_raw_base64_full_per_seed_per_layer_candidate": true,
+    "individual_element_count_and_SHA256": true,
+    "capture_actual_model_forward_output_and_input_raw_FP32": true,
+    "include_all_output_and_input_gradient_full_raw_arrays": true,
+    "independent_unhooked_model_forward_must_equal_observed_original_GELU_output": true,
+    "source_and_candidate_SHA256_include_names_shapes_dtype": true,
+    "compute_signed_IEEE754_ulp_distance_and_max_absolute_error_vs_original": true,
+    "OS_python_torch_numpy_architecture_versions": true,
+    "torch_mkldnn_enabled_and_float32_precision": true,
+    "trace_only_first_original_public_FIT_batch_per_seed": true,
+    "high_precision_pi": "3.14159265358979323846264338327950288419716939937510582097494459230781640628620899",
+    "decimal_precision": 70,
+    "decimal_erf_taylor_terms": 96,
+    "pass_max_decimal_forward_abs_error": 0.00001,
+    "pass_max_decimal_gradient_abs_error": 0.00001,
+    "decimal_input_abs_overflow_limit": 5
+  },
+  "evaluation": {
+    "kind": "ENGINEERING_PRIMITIVE_DIAGNOSTIC_ONLY",
+    "cross_OS_exact_input_FP32_source_required": true,
+    "within_OS_two_independent_workers_full_raw_bitwise_parity_required": true,
+    "strict_decimal_forward_and_gradient_FP32_cross_OS_bitwise_parity_required_all_seeds_all_layers": true,
+    "strict_original_GELU_forward_and_gradient_cross_OS_result_must_be_REPORTED_not_assumed": true,
+    "decimal_reference_within_frozen_max_abs_error_required": true,
+    "report_every_native_forward_first_differing_element_and_ULP_if_any": true,
+    "report_exact_first_forward_input_drift_if_source_differs": true,
+    "candidate_full_model_training_NOT_QUALIFIED": true,
+    "scientific_learning_claim_forbidden": true,
+    "full_existing_G4_Linux_Windows_G5_both_G7_required": true,
+    "original_prior_science_and_weight_NO_GO_unchanged": true,
+    "success_primitive_only_status": "R123_DECIMAL_GELU_PRIMITIVE_FIT_CROSS_OS_BITWISE_AND_FIDELITY_PASS",
+    "negative_status": "R123_GELU_PRIMITIVE_FIT_PARITY_OR_FIDELITY_NO_GO",
+    "scientific_pass": false
+  },
+  "authority": {
+    "protected_scientific_first_use": false,
+    "GPU_first_use": false,
+    "merge_authorized": false,
+    "model_promotion_authorized": false,
+    "FORGE_integration_authorized": false,
+    "deployment_authorized": false,
+    "new_runner_workflow_scheduler_controller_authorized": false,
+    "paid_API_authorized": false
+  }
+}
