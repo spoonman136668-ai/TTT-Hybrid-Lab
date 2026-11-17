@@ -1,7 +1,7 @@
 """R109 prospective UNIT_ONLY 2-context factual correction and retention study.
 
 R109 never loads R101/R102/R103 original scored cases, prior model weights,
-or R104/R105/R106 heldout worlds. It trains ten fresh arms on physical
+or R104–R108 heldout worlds. It trains eleven fresh arms on physical
 chosen-action factual returns only. Private truth is evaluator-only, withheld
 until EVERY control finishes the frozen 512 training steps. This is not
 protected original science, GPU training, deployment, or model promotion.
