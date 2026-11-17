@@ -237,15 +237,38 @@ def run_seed(seed):
     # Fail closed *before* generating permitted VALID when original source
     # optimizer/backend is inconsistent with the qualified historical source.
     if not original_source_reproduced:
-        raise RuntimeError(
-            "R117_R116_ORIGINAL_FIT_ONLY_QUANTIZED_HASH_NOT_REPRODUCED"
-            +f" seed={seed} expected={expected}"
-            +f" observed_trainer={original_Q384_sha}"
-            +f" exact_original_trainer={reference_R116_SHA}"
-            +f" original_reference_initial_raw={initial_original_reference_raw}"
-            +f" instrumented_initial_raw={snapshots['0']}"
-            +f" instrumented_final_raw={snapshots['512']}"
-            +f" original_updates={original_reference_train['updates']}")
+        # The precommitted source-reproduction check is a HARD FAIL, not a
+        # threshold to waive. Preserve all three seeds' FIT-only diagnostic
+        # receipts before returning; NEVER generate even a VALID source
+        # because this gate did not establish authentic original provenance.
+        candidate_fit_only={}
+        for scale in SCALES:
+            _,candidate_sha,vector,margin=quantized_layers(
+                models[r116.NATIVE],scale)
+            candidate_fit_only[str(scale)]={
+                "candidate_scale":scale,
+                "quantized_weight_sha256":candidate_sha,
+                "rounding_margin":margin,
+                "Q384_integer_parameter_vector":vector if scale==384 else None}
+        return {
+            "seed":seed,
+            "preflight_status":"R117_R116_ORIGINAL_FIT_ONLY_SOURCE_REPRODUCTION_FAIL",
+            "original_R116_expected_Q384_sha256":expected,
+            "instrumented_trainer_Q384_sha256":original_Q384_sha,
+            "independent_exact_original_R116_trainer_Q384_sha256":reference_R116_SHA,
+            "native_same_init_raw_sha256":(
+                initial_original_reference_raw==snapshots["0"]),
+            "original_reference_initial_raw":initial_original_reference_raw,
+            "native_raw_FP32_sha256_by_update":snapshots,
+            "all_three_FIT_training_receipts":training,
+            "original_reference_extra_native_training":original_reference_train,
+            "FIT_diagnostic_signed_counts":calibration,
+            "candidate_scales_FIT_weight_only":candidate_fit_only,
+            "public_VALID_worlds_created":False,
+            "original_spent_R116_UNIT_UNSEEN_replayed":False,
+            "cold_independent_integer_score_mismatches":None,
+            "scientific_pass":False,
+            "whole_process_wall_seconds":time.perf_counter()-started}
     baseline=public_VALID_trial(seed,384,original_layers)
     scales={};layers_for_restore={}
     tolerance=custody.audit_freeze()["diagnostics"]
@@ -297,10 +320,19 @@ def run_all():
     if expected and sha!=expected:
         raise PermissionError("R117_EXACT_CANDIDATE_SHA_DRIFT")
     result={str(seed):run_seed(seed) for seed in SEEDS}
+    all_authentic=all(v["R116_original_FIT_training_reproduced_on_this_OS"]
+                      for v in result.values() if
+                      "R116_original_FIT_training_reproduced_on_this_OS" in v)
+    all_authentic=all_authentic and all(
+        "R116_original_FIT_training_reproduced_on_this_OS" in v
+        for v in result.values())
+    status=("R117_FIT_VALID_LOCAL_DIAGNOSTIC_COMPLETE_NEEDS_DUAL_OS_EXACT_REVIEW"
+            if all_authentic else
+            "R117_SOURCE_REPRODUCIBILITY_PRECONDITION_FAIL_FIT_ONLY")
     return {"schema":"ttt-hybrid.r117.FIT_VALID_optimizer_quantization_diagnostic.v1",
             "exact_scored_engineering_source_sha":sha,
             "preimplementation_freeze_blob":custody.FREEZE_BLOB,
-            "status":"R117_FIT_VALID_LOCAL_DIAGNOSTIC_COMPLETE_NEEDS_DUAL_OS_EXACT_REVIEW",
+            "status":status,
             "cross_OS_candidate_qualification_not_assumed":True,
             "by_seed":result,"original_R116_spent_heldout_reused":False,
             "protected_science_firstuse":False,
@@ -317,11 +349,15 @@ def main():
         "exact_sha":report["exact_scored_engineering_source_sha"],
         "status":report["status"],
         "seeds":{k:{
-            "R116_native_reproduced":v["R116_original_FIT_training_reproduced_on_this_OS"],
-            "original_Q384_sha":v["original_R116_Q384_SHA256"],
-            "local_eligible_scales":[int(s) for s,c in v["candidates"].items()
+            "preflight_status":v.get("preflight_status","ORIGINAL_R116_BASELINE_REPRODUCED"),
+            "R116_native_reproduced":v.get(
+                "R116_original_FIT_training_reproduced_on_this_OS",False),
+            "original_Q384_sha":v.get(
+                "original_R116_Q384_SHA256",v.get("instrumented_trainer_Q384_sha256")),
+            "independent_R116_reference_SHA":v.get(
+                "independent_exact_original_R116_trainer_Q384_sha256"),
+            "local_eligible_scales":[int(s) for s,c in v.get("candidates",{}).items()
                                        if c["local_fidelity_pass"]],
-            "q384_rounding_margin":v["candidates"]["384"]["numeric_rounding_margin"],
             "raw_initial_SHA":v["native_raw_FP32_sha256_by_update"]["0"],
             "raw_final_SHA":v["native_raw_FP32_sha256_by_update"]["512"],
             "cold":v["cold_independent_integer_score_mismatches"]}
