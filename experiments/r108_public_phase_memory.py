@@ -16,9 +16,9 @@ from pathlib import Path
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
-FREEZE = ROOT / "experiments/r108_phase_correction_retention_freeze.json"
+FREEZE = ROOT / "experiments/r108_evidence_routed_memory_freeze.json"
 FREEZE_BLOB = "04d31d52df674c72dfc4abaac2f50d81312fd340"
-SCHEMA = "ttt-hybrid.r108.phase-correction-retention.unit-only-preimplementation-freeze.v1"
+SCHEMA = "ttt-hybrid.r108.evidence-routed-memory.unit-only-preimplementation-freeze.v1"
 STATE_SCHEMA = "ttt-hybrid.r108.public-factual-phase-memory.unit-baseline.v1"
 EXPECTED_SEEDS = (1008011, 1008023, 1008037)
 
