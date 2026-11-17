@@ -1,0 +1,112 @@
+{
+  "schema": "ttt-hybrid.r119.first-update-FIT-only-numerical-boundary.v1",
+  "stage": "PROSPECTIVELY_FROZEN_BEFORE_DIAGNOSTIC_IMPLEMENTATION",
+  "lineage": {
+    "repo": "spoonman136668-ai/TTT-Hybrid-Lab",
+    "parent_R118_SHA": "eca962608adfb1f409003f112bf30e2edd59e33b",
+    "parent_R118_tree": "e6d851228d601acb41bb0a0cc7a3f84dbc72ab31",
+    "parent_PR": 314,
+    "parent_G4_run": 44074549801,
+    "parent_R118": "NATIVE_INITIAL_FP32_3OF3_CROSS_OS_IDENTICAL_BUT_AFTER_FIRST_UPDATE_0OF3_EQUAL",
+    "prior_science_original_R116_spent": true,
+    "original_R116_R117_R118_verdicts_unchanged": true
+  },
+  "hypothesis": "Starting from byte-identical canonical native parameters and public FIT examples, the first Linux/Windows numerical divergence is measurable at a specific first-step boundary (FIT input, first F.linear, first GELU, further linear/GELU, loss, raw gradient, gradient clipping, AdamW moment or updated model weight). Frozen first-divergence attribution only, not new scientific efficacy.",
+  "inputs": {
+    "seeds": [
+      1160011,
+      1160023,
+      1160037
+    ],
+    "panels": [
+      "UNIT_FIT"
+    ],
+    "FIT_worlds_per_seed": 256,
+    "fit_generation": "Unmodified R116 physical public FIT histories and target-query Bayes teacher",
+    "initial": "Exact R118 deterministic SHA256 fixed-point FP32 named-parameter initialization, no torch random accepted",
+    "initial_model_architecture": "Unmodified R116 native 45-48-24-1 GELU scorer with per-offer 2x45 real public features",
+    "FIT_minibatch": "First row of exact precommitted R116 512x16 numpy PCG64 SeedSequence([27601119,seed,116]) draws, identical to original R118",
+    "optimizer": "R116 native AdamW lr=.002, weight_decay=.0001, clip_grad_norm_=1, original torch CPU one-thread, exactly ONE optimizer update",
+    "no_heldout_scored_data": true,
+    "no_original_R116_UNIT_UNSEEN": true,
+    "no_earlier_original_replay": true,
+    "forbidden_sources": [
+      "UNIT_UNSEEN",
+      "protected_scientific",
+      "previous_scored"
+    ],
+    "compute_budget": "Only 1 native AdamW update/seed and tests; do not rerun 512-update R118 originals"
+  },
+  "trace": {
+    "stages": [
+      "fit_n_first_batch",
+      "fit_m_first_batch",
+      "fit_g_first_batch",
+      "fit_target_first_batch",
+      "fit_minibatch_indices",
+      "before_first_update_native_raw_FP32_parameters",
+      "forward.linear1_FP32_output",
+      "forward.gelu1_FP32_output",
+      "forward.linear2_FP32_output",
+      "forward.gelu2_FP32_output",
+      "forward.linear3_FP32_logits",
+      "mse_loss_FP32_scalar",
+      "raw_gradient_native_named_parameters",
+      "raw_gradient_global_norm_FP32",
+      "clip_returned_preclip_norm_FP32",
+      "clipped_gradient_native_named_parameters",
+      "after_AdamW_step_native_named_parameters",
+      "after_AdamW_step_optimizer_exp_avg_by_parameter",
+      "after_AdamW_step_optimizer_exp_avg_sq_by_parameter",
+      "after_AdamW_step_optimizer_step_by_parameter"
+    ],
+    "primitive_capture": "Actual untouched R116 NativePolicy.forward call, forward hooks read-only for each original Sequential layer in scorer. Capture .detach().cpu().numpy() FP32 no output modifications, no math substitutions. Other stages capture live tensor values before/after original optimizer operations.",
+    "canonical_tensor": "SHA256 over stage-name UTF8, FP32 dtype, little-endian shape, contiguous IEEE754 binary32 raw bytes; include raw byte base64 payload per stage for first exact differing element/bit ULP classification, and SHA for source-bound evidence; optimizer steps are FP32 scalar tensors or typed int64 handled explicitly",
+    "negative_controls": [
+      "Same-seed hook capture leaves first AdamW parameter and moment hashes exactly equal to a fresh unhooked R116 original first step on the same OS",
+      "Changing seed changes original initial checksum",
+      "Initial canonical parameters and FIT first minibatch have identical hashes both OS",
+      "No altered optimizer method, source FIT or seeded batches",
+      "Zero heldout/precommitted-science source emitted"
+    ],
+    "math_backend_context": [
+      "sys.platform",
+      "python version",
+      "torch version",
+      "numpy version",
+      "CPU threads",
+      "torch MKLDNN enabled",
+      "torch deterministic algorithms setting",
+      "torch float32 matmul precision",
+      "environment CPU architecture"
+    ],
+    "max_first_step_seconds_per_seed": 45,
+    "no_model_updates_beyond_first_step": true
+  },
+  "evaluation": {
+    "scope": "ENGINEERING_FIT_ONLY_ROOT_CAUSE_DIAGNOSTIC_NOT_SCIENCE",
+    "all_3_original_platform_receipts_required": true,
+    "exact_all_3_seed_stage_order_comparison": true,
+    "first_mismatch_is_earliest_stage_in_declared_list_with_NONIDENTICAL_IEEE754_binary_payload": true,
+    "if_first_stage_not_forward": "Report as upstream FIT/input/initial instead; never assume kernel problem",
+    "first_step_unchanged_R116_control_required": true,
+    "first_boundary_all_seeds_consistent_required_for_single_root_cause_claim": true,
+    "poststep_hash_parity_not_required_for_diagnostic_success": true,
+    "diagnostic_completed_status": "R119_FIRST_NUMERICAL_DIFFERENCE_BOUNDARY_ISOLATED_FIT_ONLY",
+    "diagnostic_no_single_common_cause_status": "R119_DIFFERENT_FIRST_NUMERICAL_BOUNDARIES_BY_SEED",
+    "diagnostic_no_diff_status": "R119_NO_FIRST_UPDATE_NUMERICAL_DIVERGENCE_OBSERVED",
+    "no_claim_of_actual_kernel_root_cause_without_independent_operation_control": true,
+    "original_R118_frozen_weight_parity_fail_unchanged": true,
+    "scientific_pass": false
+  },
+  "authority": {
+    "protected_original_first_use": false,
+    "GPU_original_first_use": false,
+    "merge": false,
+    "model_promotion": false,
+    "FORGE_integration": false,
+    "deployment": false,
+    "new_runner_workflow_scheduler_controller": false,
+    "paid_API": false
+  }
+}
