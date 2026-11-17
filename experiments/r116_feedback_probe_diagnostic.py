@@ -154,7 +154,7 @@ def _digest(values):
 def evaluate(models,layers,seed,_token):
     if _token is not source._SCORER_ONLY or seed not in SEEDS:
         raise PermissionError("R116_HELDOUT_PRIOR_TO_ALL_512_UPDATES")
-    by_arm={};actions={}
+    by_arm={};actions={};native_correctness=None
     for arm in ARMS:
         chosen=[];physical=[];predictions=[];correctness=[]
         calibrated=0;correct=0;negcorrect=0;poscorrect=0
@@ -182,6 +182,8 @@ def evaluate(models,layers,seed,_token):
             poscorrect+=ok if diag>0 else 0
             correctness.append(ok);predictions.append(int(guess>0))
         actions[arm]=[chosen[i*4+3] for i in range(128)]
+        if arm==NATIVE:
+            native_correctness=tuple(correctness)
         by_arm[arm]={
             "correct":int(correct),"query_accuracy":correct/128,
             "negative_branch_correct":int(negcorrect),
@@ -199,18 +201,14 @@ def evaluate(models,layers,seed,_token):
         for pair in range(4):
             left=8*cycle+pair;right=left+4
             flipped+=int(native_actions[left]!=native_actions[right])
-            # Need complete native scoring for both members, so re-read the
-            # binary public correctness SHA is insufficient; tracked below.
-    return by_arm,actions,flipped
+            both_correct+=int(native_correctness[left] and native_correctness[right])
+    return by_arm,actions,flipped,both_correct
 
 
 def evaluate_with_pairs(models,layers,seed):
     # Evaluate only after all trainables are frozen and cold restored.
-    metrics,actions,flipped=evaluate(models,layers,seed,source._SCORER_ONLY)
-    # Exact deterministic recomputation of *paired native* correctness on
-    # original first-use evaluation is forbidden: retain per-world binary
-    # correctness in memory on the ORIGINAL pass instead. Filled below.
-    return metrics,actions,flipped
+    metrics,actions,flipped,both=evaluate(models,layers,seed,source._SCORER_ONLY)
+    return metrics,actions,flipped,both
 
 
 def frozen_checks(metrics,flips,both,cold,trained):
@@ -262,10 +260,9 @@ def run_seed(seed):
         raise PermissionError("R116_ORIGINAL_HELDOUT_NOT_ADMITTED")
     layers,weight_sha=r115.quantize_native(models[NATIVE])
     cold=r115.integer_cold_restore(layers)
-    metrics,actions,flips=evaluate_with_pairs(models,layers,seed)
-    # The native score uses a fixed decoded query and cannot be claimed as
-    # separate model retention.
-    paired_both=0
+    metrics,actions,flips,paired_both=evaluate_with_pairs(models,layers,seed)
+    # This is paired query correctness on a single heldout scoring pass;
+    # it is not a memory-retention or continual-learning metric.
     checks=frozen_checks(metrics,flips,paired_both,cold,trained)
     return {"seed":seed,"status":(
         freeze()["evaluation"]["pass_status"] if checks["all_unit_only_checks_pass"]
